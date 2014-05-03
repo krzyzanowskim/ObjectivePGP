@@ -1,0 +1,420 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		756299B91914DE1A00C5AD3B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B81914DE1A00C5AD3B /* Foundation.framework */; };
+		756299BE1914DE1A00C5AD3B /* OpenPGPKeyring.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 756299BD1914DE1A00C5AD3B /* OpenPGPKeyring.h */; };
+		756299C01914DE1A00C5AD3B /* OpenPGPKeyring.m in Sources */ = {isa = PBXBuildFile; fileRef = 756299BF1914DE1A00C5AD3B /* OpenPGPKeyring.m */; };
+		756299C71914DE1A00C5AD3B /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299C61914DE1A00C5AD3B /* XCTest.framework */; };
+		756299C81914DE1A00C5AD3B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B81914DE1A00C5AD3B /* Foundation.framework */; };
+		756299CA1914DE1A00C5AD3B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299C91914DE1A00C5AD3B /* UIKit.framework */; };
+		756299CD1914DE1A00C5AD3B /* libOpenPGPKeyring.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B51914DE1A00C5AD3B /* libOpenPGPKeyring.a */; };
+		756299D31914DE1A00C5AD3B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 756299D11914DE1A00C5AD3B /* InfoPlist.strings */; };
+		756299D51914DE1A00C5AD3B /* OpenPGPKeyringTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 756299D41914DE1A00C5AD3B /* OpenPGPKeyringTests.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		756299CB1914DE1A00C5AD3B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 756299AD1914DE1A00C5AD3B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 756299B41914DE1A00C5AD3B;
+			remoteInfo = OpenPGPKeyring;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		756299B31914DE1A00C5AD3B /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "include/$(PRODUCT_NAME)";
+			dstSubfolderSpec = 16;
+			files = (
+				756299BE1914DE1A00C5AD3B /* OpenPGPKeyring.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		756299B51914DE1A00C5AD3B /* libOpenPGPKeyring.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libOpenPGPKeyring.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		756299B81914DE1A00C5AD3B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		756299BC1914DE1A00C5AD3B /* OpenPGPKeyring-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OpenPGPKeyring-Prefix.pch"; sourceTree = "<group>"; };
+		756299BD1914DE1A00C5AD3B /* OpenPGPKeyring.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpenPGPKeyring.h; sourceTree = "<group>"; };
+		756299BF1914DE1A00C5AD3B /* OpenPGPKeyring.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OpenPGPKeyring.m; sourceTree = "<group>"; };
+		756299C51914DE1A00C5AD3B /* OpenPGPKeyringTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OpenPGPKeyringTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		756299C61914DE1A00C5AD3B /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
+		756299C91914DE1A00C5AD3B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
+		756299D01914DE1A00C5AD3B /* OpenPGPKeyringTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "OpenPGPKeyringTests-Info.plist"; sourceTree = "<group>"; };
+		756299D21914DE1A00C5AD3B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		756299D41914DE1A00C5AD3B /* OpenPGPKeyringTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = OpenPGPKeyringTests.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		756299B21914DE1A00C5AD3B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				756299B91914DE1A00C5AD3B /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		756299C21914DE1A00C5AD3B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				756299C71914DE1A00C5AD3B /* XCTest.framework in Frameworks */,
+				756299CA1914DE1A00C5AD3B /* UIKit.framework in Frameworks */,
+				756299C81914DE1A00C5AD3B /* Foundation.framework in Frameworks */,
+				756299CD1914DE1A00C5AD3B /* libOpenPGPKeyring.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		756299AC1914DE1A00C5AD3B = {
+			isa = PBXGroup;
+			children = (
+				756299BA1914DE1A00C5AD3B /* OpenPGPKeyring */,
+				756299CE1914DE1A00C5AD3B /* OpenPGPKeyringTests */,
+				756299B71914DE1A00C5AD3B /* Frameworks */,
+				756299B61914DE1A00C5AD3B /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		756299B61914DE1A00C5AD3B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				756299B51914DE1A00C5AD3B /* libOpenPGPKeyring.a */,
+				756299C51914DE1A00C5AD3B /* OpenPGPKeyringTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		756299B71914DE1A00C5AD3B /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				756299B81914DE1A00C5AD3B /* Foundation.framework */,
+				756299C61914DE1A00C5AD3B /* XCTest.framework */,
+				756299C91914DE1A00C5AD3B /* UIKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		756299BA1914DE1A00C5AD3B /* OpenPGPKeyring */ = {
+			isa = PBXGroup;
+			children = (
+				756299BD1914DE1A00C5AD3B /* OpenPGPKeyring.h */,
+				756299BF1914DE1A00C5AD3B /* OpenPGPKeyring.m */,
+				756299BB1914DE1A00C5AD3B /* Supporting Files */,
+			);
+			path = OpenPGPKeyring;
+			sourceTree = "<group>";
+		};
+		756299BB1914DE1A00C5AD3B /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				756299BC1914DE1A00C5AD3B /* OpenPGPKeyring-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		756299CE1914DE1A00C5AD3B /* OpenPGPKeyringTests */ = {
+			isa = PBXGroup;
+			children = (
+				756299D41914DE1A00C5AD3B /* OpenPGPKeyringTests.m */,
+				756299CF1914DE1A00C5AD3B /* Supporting Files */,
+			);
+			path = OpenPGPKeyringTests;
+			sourceTree = "<group>";
+		};
+		756299CF1914DE1A00C5AD3B /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				756299D01914DE1A00C5AD3B /* OpenPGPKeyringTests-Info.plist */,
+				756299D11914DE1A00C5AD3B /* InfoPlist.strings */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		756299B41914DE1A00C5AD3B /* OpenPGPKeyring */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 756299D81914DE1A00C5AD3B /* Build configuration list for PBXNativeTarget "OpenPGPKeyring" */;
+			buildPhases = (
+				756299B11914DE1A00C5AD3B /* Sources */,
+				756299B21914DE1A00C5AD3B /* Frameworks */,
+				756299B31914DE1A00C5AD3B /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OpenPGPKeyring;
+			productName = OpenPGPKeyring;
+			productReference = 756299B51914DE1A00C5AD3B /* libOpenPGPKeyring.a */;
+			productType = "com.apple.product-type.library.static";
+		};
+		756299C41914DE1A00C5AD3B /* OpenPGPKeyringTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 756299DB1914DE1A00C5AD3B /* Build configuration list for PBXNativeTarget "OpenPGPKeyringTests" */;
+			buildPhases = (
+				756299C11914DE1A00C5AD3B /* Sources */,
+				756299C21914DE1A00C5AD3B /* Frameworks */,
+				756299C31914DE1A00C5AD3B /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				756299CC1914DE1A00C5AD3B /* PBXTargetDependency */,
+			);
+			name = OpenPGPKeyringTests;
+			productName = OpenPGPKeyringTests;
+			productReference = 756299C51914DE1A00C5AD3B /* OpenPGPKeyringTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		756299AD1914DE1A00C5AD3B /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0510;
+				ORGANIZATIONNAME = "Marcin Krzyżanowski";
+			};
+			buildConfigurationList = 756299B01914DE1A00C5AD3B /* Build configuration list for PBXProject "OpenPGPKeyring" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 756299AC1914DE1A00C5AD3B;
+			productRefGroup = 756299B61914DE1A00C5AD3B /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				756299B41914DE1A00C5AD3B /* OpenPGPKeyring */,
+				756299C41914DE1A00C5AD3B /* OpenPGPKeyringTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		756299C31914DE1A00C5AD3B /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				756299D31914DE1A00C5AD3B /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		756299B11914DE1A00C5AD3B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				756299C01914DE1A00C5AD3B /* OpenPGPKeyring.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		756299C11914DE1A00C5AD3B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				756299D51914DE1A00C5AD3B /* OpenPGPKeyringTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		756299CC1914DE1A00C5AD3B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 756299B41914DE1A00C5AD3B /* OpenPGPKeyring */;
+			targetProxy = 756299CB1914DE1A00C5AD3B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		756299D11914DE1A00C5AD3B /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				756299D21914DE1A00C5AD3B /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		756299D61914DE1A00C5AD3B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		756299D71914DE1A00C5AD3B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		756299D91914DE1A00C5AD3B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/OpenPGPKeyring.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "OpenPGPKeyring/OpenPGPKeyring-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		756299DA1914DE1A00C5AD3B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				DSTROOT = /tmp/OpenPGPKeyring.dst;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "OpenPGPKeyring/OpenPGPKeyring-Prefix.pch";
+				OTHER_LDFLAGS = "-ObjC";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		756299DC1914DE1A00C5AD3B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "OpenPGPKeyring/OpenPGPKeyring-Prefix.pch";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = "OpenPGPKeyringTests/OpenPGPKeyringTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Debug;
+		};
+		756299DD1914DE1A00C5AD3B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+					"$(DEVELOPER_FRAMEWORKS_DIR)",
+				);
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "OpenPGPKeyring/OpenPGPKeyring-Prefix.pch";
+				INFOPLIST_FILE = "OpenPGPKeyringTests/OpenPGPKeyringTests-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = xctest;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		756299B01914DE1A00C5AD3B /* Build configuration list for PBXProject "OpenPGPKeyring" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				756299D61914DE1A00C5AD3B /* Debug */,
+				756299D71914DE1A00C5AD3B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		756299D81914DE1A00C5AD3B /* Build configuration list for PBXNativeTarget "OpenPGPKeyring" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				756299D91914DE1A00C5AD3B /* Debug */,
+				756299DA1914DE1A00C5AD3B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+		756299DB1914DE1A00C5AD3B /* Build configuration list for PBXNativeTarget "OpenPGPKeyringTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				756299DC1914DE1A00C5AD3B /* Debug */,
+				756299DD1914DE1A00C5AD3B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 756299AD1914DE1A00C5AD3B /* Project object */;
+}
