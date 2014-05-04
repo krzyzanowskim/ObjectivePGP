@@ -5,37 +5,35 @@
 //  Created by Marcin Krzyzanowski on 04/05/14.
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
-// Packet tag 6
 
 #import "PGPPublicKey.h"
 #import "PGPTypes.h"
 #import "PGPMPI.h"
 
-@interface PGPPublicKey ()
-@property (assign, readwrite) UInt8 version;
-@property (assign, readwrite) UInt32 timestamp;
-@property (assign, readwrite) PGPPublicKeyAlgorithm algorithm;
-@end
-
 @implementation PGPPublicKey
 
-- (void) readPacketBody:(NSData *)packetBody
+- (PGPPacketTag)tag
+{
+    return PGPPublicKeyPacketTag;
+}
+
+- (void) parsePacketBody:(NSData *)packetBody
 {
     //UInt8 *bytes = (UInt8 *)packetBody.bytes;
     // A one-octet version number (4).
     UInt8 version;
     [packetBody getBytes:&version range:(NSRange){0,1}];
-    self.version = version;
+    _version = version;
 
     // A four-octet number denoting the time that the key was created.
     UInt32 timestamp = 0;
     [packetBody getBytes:&timestamp range:(NSRange){1,4}];
-    self.timestamp = CFSwapInt32BigToHost(timestamp);
+    _timestamp = CFSwapInt32BigToHost(timestamp);
 
     // A one-octet number denoting the public-key algorithm of this key.
     UInt8 algorithm = 0;
     [packetBody getBytes:&algorithm range:(NSRange){5,1}];
-    self.algorithm = algorithm;
+    _algorithm = algorithm;
 
     // A series of multiprecision integers comprising the key material.
     switch (self.algorithm) {
@@ -78,8 +76,6 @@
             @throw [NSException exceptionWithName:@"Unknown Algorithm" reason:@"Given algorithm is not supported" userInfo:nil];
             break;
     }
-
-    //
 }
 
 @end

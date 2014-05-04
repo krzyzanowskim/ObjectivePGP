@@ -8,6 +8,7 @@
 
 #import "OpenPGPKeyring.h"
 #import "PGPPublicKey.h"
+#import "PGPPublicSubKey.h"
 
 @implementation OpenPGPKeyring
 
@@ -125,11 +126,18 @@
 - (BOOL) readPacketType:(PGPPacketTag)packetTag packetBody:(NSData *)packetBody
 {
     NSLog(@"Reading packet tag %#x", packetTag);
+    
     switch (packetTag) {
         case PGPPublicKeyPacketTag:
         {
             PGPPublicKey *publicKey = [[PGPPublicKey alloc] init];
-            [publicKey readPacketBody:packetBody];
+            [publicKey parsePacketBody:packetBody];
+        }
+            break;
+        case PGPPublicSubkeyPacketTag:
+        {
+            PGPPublicSubKey *publicSubKey = [[PGPPublicSubKey alloc] init];
+            [publicSubKey parsePacketBody:packetBody];
         }
             break;
 
