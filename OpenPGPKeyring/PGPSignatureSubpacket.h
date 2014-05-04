@@ -12,6 +12,7 @@
 @interface PGPSignatureSubpacket : NSObject
 
 @property (assign, readonly) PGPSignatureSubpacketType type;
+@property (strong, readonly) id value;
 
 - (instancetype) initWithBody:(NSData *)packetBody type:(PGPSignatureSubpacketType)type;
 - (void) parseSubpacketBody:(NSData *)packetBody;
