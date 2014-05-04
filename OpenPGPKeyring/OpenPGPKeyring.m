@@ -120,25 +120,25 @@
     if (firstOctet < 192) {
         // 4.2.2.1.  One-Octet Length
         // bodyLen = 1st_octet;
-        bodyLength        = firstOctet;
+        bodyLength   = firstOctet;
         headerLength = 1 + 1;
     } else if (firstOctet >= 192 && firstOctet <= 223) {
         // 4.2.2.2.  Two-Octet Lengths
         // bodyLen = ((1st_octet - 192) << 8) + (2nd_octet) + 192
-        bodyLength        = ((firstOctet - 192) << 8) + (secondOctet) + 192;
+        bodyLength   = ((firstOctet - 192) << 8) + (secondOctet) + 192;
         headerLength = 1 + 2;
     } else if (firstOctet >= 223 && firstOctet < 255) {
         // 4.2.2.4.  Partial Body Length
         // partialBodyLen = 1 << (1st_octet & 0x1F);
         UInt32 partianBodyLength = CFSwapInt32BigToHost(firstOctet << (firstOctet & 0x1F));
         bodyLength               = partianBodyLength;
-        headerLength        = 1 + 1;
+        headerLength             = 1 + 1;
         isPartialBodyLength      = YES;
     } else if (firstOctet == 255) {
         // 4.2.2.3.  Five-Octet Length
         // bodyLen = (2nd_octet << 24) | (3rd_octet << 16) |
         //           (4th_octet << 8)  | 5th_octet
-        bodyLength        = (secondOctet << 24) | (thirdOctet << 16) | (fourthOctet << 8)  | fifthOctet;
+        bodyLength   = (secondOctet << 24) | (thirdOctet << 16) | (fourthOctet << 8)  | fifthOctet;
         headerLength = 1 + 5;
     }
     *length = bodyLength;

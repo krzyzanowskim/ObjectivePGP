@@ -39,17 +39,13 @@
     //TODO: V3 keys are deprecated; an implementation MUST NOT generate a V3 key, but MAY accept it.
 
     NSUInteger position = 0;
-    //UInt8 *bytes = (UInt8 *)packetBody.bytes;
     // A one-octet version number (2,3,4).
-    UInt8 version;
-    [packetBody getBytes:&version range:(NSRange){position,1}];
-    _version = version;
+    [packetBody getBytes:&_version range:(NSRange){position,1}];
     position = position + 1;
 
     // A four-octet number denoting the time that the key was created.
-    UInt32 timestamp = 0;
-    [packetBody getBytes:&timestamp range:(NSRange){position,4}];
-    _timestamp = CFSwapInt32BigToHost(timestamp);
+    [packetBody getBytes:&_timestamp range:(NSRange){position,4}];
+    _timestamp = CFSwapInt32BigToHost(_timestamp);
     position = position + 4;
 
     if (_version == 0x03) {
@@ -62,9 +58,7 @@
     }
 
     // A one-octet number denoting the public-key algorithm of this key.
-    UInt8 algorithm = 0;
-    [packetBody getBytes:&algorithm range:(NSRange){position,1}];
-    _algorithm = algorithm;
+    [packetBody getBytes:&_algorithm range:(NSRange){position,1}];
     position = position + 1;
 
     // A series of multiprecision integers comprising the key material.
@@ -86,20 +80,37 @@
         case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmECDSA:
         {
-            //TODO: DSA
             // - MPI of DSA prime p;
+            PGPMPI *mpiP = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            position = position + mpiP.length;
+
             // - MPI of DSA group order q (q is a prime divisor of p-1);
+            PGPMPI *mpiQ = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            position = position + mpiQ.length;
+
             // - MPI of DSA group generator g;
+            PGPMPI *mpiG = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            position = position + mpiG.length;
+
             // - MPI of DSA public-key value y (= g**x mod p where x is secret).
+            PGPMPI *mpiY = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            position = position + mpiY.length;
         }
             break;
         case PGPPublicKeyAlgorithmElgamal:
         case PGPPublicKeyAlgorithmElgamalEncryptOnly:
         {
-            //TODO: Elgamal
             // - MPI of Elgamal prime p;
+            PGPMPI *mpiP = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            position = position + mpiP.length;
+
             // - MPI of Elgamal group generator g;
+            PGPMPI *mpiG = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            position = position + mpiG.length;
+
             // - MPI of Elgamal public key value y (= g**x mod p where x is secret).
+            PGPMPI *mpiY = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            position = position + mpiY.length;
         }
             break;
         default:

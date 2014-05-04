@@ -63,4 +63,59 @@ typedef NS_ENUM(UInt8, PGPPublicKeyAlgorithm) {
     PGPPublicKeyAlgorithmPrivate11          = 110
 };
 
+typedef NS_ENUM(UInt8, PGPHashAlgorithm) {
+    PGPHashMD5       = 1, //MD5  - deprecated
+    PGPHashSHA1      = 2, //SHA1 - required
+    PGPHashRIPEMD160 = 3, //RIPEMD160
+    PGPHashSHA256    = 8, //SHA256
+    PGPHashSHA384    = 9, //SHA384
+    PGPHashSHA512    = 10,//SHA512
+    PGPHashSHA224    = 11 //SHA224
+};
+
+typedef NS_ENUM(UInt8, PGPSignatureType) {
+    PGPSignatureBinaryDocument                          = 0x00,
+    PGPSignatureCanonicalTextDocument                   = 0x01,
+    PGPSignatureStandalone                              = 0x02,
+    PGPSignatureGenericCertificationUserIDandPublicKey  = 0x10,
+    PGPSignaturePersonalCertificationUserIDandPublicKey = 0x11,
+    PGPSignatureCasualCertificationUserIDandPublicKey   = 0x12,
+    PGPSignaturePositiveCertificationUserIDandPublicKey = 0x13,
+    PGPSignatureSubkeyBinding                           = 0x18,
+    PGPSignaturePrimaryKeyBinding                       = 0x19,
+    PGPSignatureDirectlyOnKey                           = 0x1F,
+    PGPSignatureKeyRevocation                           = 0x20,
+    PGPSignatureSubkeyRevocation                        = 0x28,
+    PGPSignatureClarificationRecocation                 = 0x30,
+    PGPSignatureTimestamp                               = 0x40,
+    PGPSignature3PartyConfirmation                      = 0x50
+};
+
+typedef NS_ENUM(UInt8, PGPSignatureSubpacketType) {
+    PGPSignatureSubpacketCreationTime                  = 2,
+    PGPSignatureSubpacketExpirationTime                = 3,
+    PGPSignatureSubpacketExportableCertification       = 4,
+    PGPSignatureSubpacketTrustSignature                = 5,
+    PGPSignatureSubpacketRegularExpression             = 6,
+    PGPSignatureSubpacketRevocable                     = 7,
+    PGPSignatureSubpacketKeyExpirationTime             = 9,
+    PGPSignatureSubpacketPreferredSymetricAlgorithm    = 11,
+    PGPSignatureSubpacketRevocationKey                 = 12,
+    PGPSignatureSubpacketIssuer                        = 16,
+    PGPSignatureSubpacketNotationData                  = 20,
+    PGPSignatureSubpacketPreferredHashAlgorithm        = 21,
+    PGPSignatureSubpacketPreferredCompressionAlgorithm = 22,
+    PGPSignatureSubpacketKeyServerPreference           = 23,
+    PGPSignatureSubpacketPreferredKeyServer            = 24,
+    PGPSignatureSubpacketPrimaryUserID                 = 25,
+    PGPSignatureSubpacketPolicyURI                     = 26,
+    PGPSignatureSubpacketKeyFlags                      = 27,
+    PGPSignatureSubpacketSignerUserID                  = 28,
+    PGPSignatureSubpacketReasonForRevocation           = 29,
+    PGPSignatureSubpacketFeatures                      = 30,
+    PGPSignatureSubpacketSignatureTarget               = 31,
+    PGPSignatureSubpacketEmbeddedSignature             = 32
+
+};
+
 #endif

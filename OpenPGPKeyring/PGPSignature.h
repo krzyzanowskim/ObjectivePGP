@@ -12,6 +12,13 @@
 
 @interface PGPSignature : NSObject <PGPPacket>
 
+@property (assign, readonly) UInt8 version;
+@property (assign, readonly) PGPSignatureType signatureType;
+@property (assign, readonly) PGPPublicKeyAlgorithm publicKeyAlgorithm;
+@property (assign, readonly) PGPHashAlgorithm hashAlgoritm;
+@property (strong, readonly, nonatomic) NSMutableArray *hashedSubpackets;
+@property (strong, readonly, nonatomic) NSMutableArray *unhashedSubpackets;
+
 - (instancetype) initWithBody:(NSData *)packetData;
 
 @end
