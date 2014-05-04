@@ -7,7 +7,7 @@
 //
 
 #import "OpenPGPKeyring.h"
-#import "OpenPGPPublicKey.h"
+#import "PGPPublicKey.h"
 
 @implementation OpenPGPKeyring
 
@@ -128,7 +128,7 @@
     switch (packetTag) {
         case PGPPublicKeyPacketTag:
         {
-            OpenPGPPublicKey *publicKey = [[OpenPGPPublicKey alloc] init];
+            PGPPublicKey *publicKey = [[PGPPublicKey alloc] init];
             [publicKey readPacketBody:packetBody];
         }
             break;
