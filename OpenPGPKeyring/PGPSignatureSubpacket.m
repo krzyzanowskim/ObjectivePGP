@@ -8,13 +8,17 @@
 
 #import "PGPSignatureSubpacket.h"
 
+@interface PGPSignatureSubpacket ()
+@property (strong, readwrite) id value;
+@end
+
 @implementation PGPSignatureSubpacket
 
 - (instancetype) initWithBody:(NSData *)packetBody type:(PGPSignatureSubpacketType)type
 {
     if (self = [self init]) {
-        [self parseSubpacketBody:packetBody];
         self->_type = type;
+        [self parseSubpacketBody:packetBody];
     }
     return self;
 }
@@ -26,6 +30,34 @@
  */
 - (void) parseSubpacketBody:(NSData *)packetBody
 {
+    switch (self.type) {
+        case PGPSignatureSubpacketCreationTime: // NSNumber
+        {
+            //  5.2.3.4.  Signature Creation Time
+            UInt32 signatureCreationTimestamp = 0;
+            [packetBody getBytes:&signatureCreationTimestamp length:4];
+            signatureCreationTimestamp = CFSwapInt32BigToHost(signatureCreationTimestamp);
+            self.value = @(signatureCreationTimestamp);
+        }
+            break;
+        case PGPSignatureSubpacketIssuer: // NSData
+        {
+            //  5.2.3.5.  Issuer
+            //TODO: check big endian
+            self.value = [packetBody subdataWithRange:(NSRange){0,8}];
+        }
+            break;
+        case PGPSignatureSubpacketPrimaryUserID: // NSNumber BOOL
+        {
+            // 5.2.3.19.  Primary User ID
+            UInt8 primaryUserIDValue = 0;
+            [packetBody getBytes:&primaryUserIDValue length:1];
+            self.value = @(primaryUserIDValue);
+        }
+            break;
+        default:
+            break;
+    }
     //TODO: parse subpacket
 }
 
@@ -60,6 +92,18 @@
     //TODO: Bit 7 of the subpacket type is the "critical" bit.
     PGPSignatureSubpacketType subpacketType = 0;
     [headerData getBytes:&subpacketType range:(NSRange){position, 1}];
+    *headerLength = *headerLength + 1;
+
+    // Note: "The length includes the type octet but not this length"
+    // Example: 02 19 01
+    // length 0x02 = 2
+    // type 0x19   = 25
+    // body: 0x01  = 1
+    // so... given body length is = 2 but body length is in fact = 1
+    // this is because given body length include type octet which is from header namespace, not body really.
+    // I'm drunk, or person who defined it this way was drunk.
+    *subpacketLen = *subpacketLen - 1;
+    
     return subpacketType;
 }
 

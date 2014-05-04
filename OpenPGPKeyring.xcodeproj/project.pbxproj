@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		530608F022BB406DA76684F0 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AFC8E128B0F4211888984C0 /* libPods.a */; };
 		7502CEFF1916DCE9001B32D7 /* PGPSignatureSubpacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 7502CEFE1916DCE9001B32D7 /* PGPSignatureSubpacket.m */; };
+		7502CF021916EFD5001B32D7 /* NSData+NSValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7502CF011916EFD5001B32D7 /* NSData+NSValue.m */; };
 		756299B91914DE1A00C5AD3B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B81914DE1A00C5AD3B /* Foundation.framework */; };
 		756299BE1914DE1A00C5AD3B /* OpenPGPKeyring.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 756299BD1914DE1A00C5AD3B /* OpenPGPKeyring.h */; };
 		756299C01914DE1A00C5AD3B /* OpenPGPKeyring.m in Sources */ = {isa = PBXBuildFile; fileRef = 756299BF1914DE1A00C5AD3B /* OpenPGPKeyring.m */; };
@@ -56,6 +57,8 @@
 		4AFC8E128B0F4211888984C0 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7502CEFD1916DCE9001B32D7 /* PGPSignatureSubpacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSignatureSubpacket.h; sourceTree = "<group>"; };
 		7502CEFE1916DCE9001B32D7 /* PGPSignatureSubpacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSignatureSubpacket.m; sourceTree = "<group>"; };
+		7502CF001916EFD5001B32D7 /* NSData+NSValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+NSValue.h"; sourceTree = "<group>"; };
+		7502CF011916EFD5001B32D7 /* NSData+NSValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+NSValue.m"; sourceTree = "<group>"; };
 		756299B51914DE1A00C5AD3B /* libOpenPGPKeyring.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libOpenPGPKeyring.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		756299B81914DE1A00C5AD3B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		756299BC1914DE1A00C5AD3B /* OpenPGPKeyring-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OpenPGPKeyring-Prefix.pch"; sourceTree = "<group>"; };
@@ -196,6 +199,8 @@
 			children = (
 				759DBA121915B5BD00305549 /* NSData+Bytes.h */,
 				759DBA131915B5BD00305549 /* NSData+Bytes.m */,
+				7502CF001916EFD5001B32D7 /* NSData+NSValue.h */,
+				7502CF011916EFD5001B32D7 /* NSData+NSValue.m */,
 			);
 			name = Utility;
 			sourceTree = "<group>";
@@ -343,6 +348,7 @@
 				759DBA181915CBDF00305549 /* PGPMPI.m in Sources */,
 				759DBA141915B5BD00305549 /* NSData+Bytes.m in Sources */,
 				7502CEFF1916DCE9001B32D7 /* PGPSignatureSubpacket.m in Sources */,
+				7502CF021916EFD5001B32D7 /* NSData+NSValue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

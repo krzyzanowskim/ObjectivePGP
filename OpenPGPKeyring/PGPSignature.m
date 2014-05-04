@@ -83,25 +83,27 @@
     position = position + 2;
 
     // Hashed subpacket data set (zero or more subpackets)
-    NSData *hashedSubpacketData = nil;
+    NSData *hashedSubpacketsData = nil;
     if (hashedOctetCount > 0) {
-        hashedSubpacketData = [packetBody subdataWithRange:(NSRange){position,hashedOctetCount}];
+        hashedSubpacketsData = [packetBody subdataWithRange:(NSRange){position,hashedOctetCount}];
         position = position + hashedOctetCount;
 
-        // Loop subpackets
         NSUInteger positionSubpackets = 0;
-        while (positionSubpackets < hashedSubpacketData.length) {
+        while (positionSubpackets < hashedSubpacketsData.length) {
+            NSRange headerRange = (NSRange) {positionSubpackets, MIN(6,hashedSubpacketsData.length - positionSubpackets) }; // up to 5+1 octets
             UInt32 headerLength    = 0;
             UInt32 subpacketLength = 0;
-            NSUInteger rangeLength = MIN(5,hashedSubpacketData.length - positionSubpackets); // up to 5 octets
-            PGPSignatureSubpacketType subpacketType = [PGPSignatureSubpacket parseSubpacketHeader:[hashedSubpacketData subdataWithRange:(NSRange){positionSubpackets,rangeLength}]
+            PGPSignatureSubpacketType subpacketType = [PGPSignatureSubpacket parseSubpacketHeader:[hashedSubpacketsData subdataWithRange:headerRange]
                                                                                      headerLength:&headerLength
                                                                                   subpacketLength:&subpacketLength];
 
-            PGPSignatureSubpacket *subpacket = [[PGPSignatureSubpacket alloc] initWithBody:hashedSubpacketData type:subpacketType];
+
+            NSRange bodyRange = (NSRange){positionSubpackets + headerLength,subpacketLength};
+            PGPSignatureSubpacket *subpacket = [[PGPSignatureSubpacket alloc] initWithBody:[hashedSubpacketsData subdataWithRange:bodyRange]
+                                                                                      type:subpacketType];
             [self.hashedSubpackets addObject:subpacket];
 
-            positionSubpackets = positionSubpackets + headerLength + subpacketLength;
+            positionSubpackets = bodyRange.location + bodyRange.length;
         }
     }
 
