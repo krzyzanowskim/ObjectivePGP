@@ -7,7 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "OpenPGPTypes.h"
 
 @interface OpenPGPKeyring : NSObject
+
+- (BOOL) open:(NSString *)path;
 
 @end
