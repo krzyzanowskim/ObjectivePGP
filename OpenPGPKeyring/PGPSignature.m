@@ -89,19 +89,19 @@
         position = position + hashedOctetCount;
 
         // Loop subpackets
-        NSUInteger position = 0;
-        while (position < hashedSubpacketData.length) {
+        NSUInteger positionSubpackets = 0;
+        while (positionSubpackets < hashedSubpacketData.length) {
             UInt32 headerLength    = 0;
             UInt32 subpacketLength = 0;
-            NSUInteger rangeLength = MIN(5,hashedSubpacketData.length - position); // up to 5 octets
-            PGPSignatureSubpacketType subpacketType = [PGPSignatureSubpacket parseSubpacketHeader:[hashedSubpacketData subdataWithRange:(NSRange){position,rangeLength}]
+            NSUInteger rangeLength = MIN(5,hashedSubpacketData.length - positionSubpackets); // up to 5 octets
+            PGPSignatureSubpacketType subpacketType = [PGPSignatureSubpacket parseSubpacketHeader:[hashedSubpacketData subdataWithRange:(NSRange){positionSubpackets,rangeLength}]
                                                                                      headerLength:&headerLength
                                                                                   subpacketLength:&subpacketLength];
 
             PGPSignatureSubpacket *subpacket = [[PGPSignatureSubpacket alloc] initWithBody:hashedSubpacketData type:subpacketType];
             [self.hashedSubpackets addObject:subpacket];
 
-            position = position + headerLength + subpacketLength;
+            positionSubpackets = positionSubpackets + headerLength + subpacketLength;
         }
     }
 
@@ -118,19 +118,19 @@
         position = position + unhashedOctetCount;
 
         // Loop subpackets
-        NSUInteger position = 0;
-        while (position < unhashedSubpacketData.length) {
+        NSUInteger positionSubpackets = 0;
+        while (positionSubpackets < unhashedSubpacketData.length) {
             UInt32 headerLength    = 0;
             UInt32 subpacketLength = 0;
-            NSUInteger rangeLength = MIN(5,unhashedSubpacketData.length - position); // up to 5 octets
-            PGPSignatureSubpacketType subpacketType = [PGPSignatureSubpacket parseSubpacketHeader:[unhashedSubpacketData subdataWithRange:(NSRange){position,rangeLength}]
+            NSUInteger rangeLength = MIN(5,unhashedSubpacketData.length - positionSubpackets); // up to 5 octets
+            PGPSignatureSubpacketType subpacketType = [PGPSignatureSubpacket parseSubpacketHeader:[unhashedSubpacketData subdataWithRange:(NSRange){positionSubpackets,rangeLength}]
                                                                                      headerLength:&headerLength
                                                                                   subpacketLength:&subpacketLength];
 
             PGPSignatureSubpacket *subpacket = [[PGPSignatureSubpacket alloc] initWithBody:unhashedSubpacketData type:subpacketType];
             [self.unhashedSubpackets addObject:subpacket];
 
-            position = position + headerLength + subpacketLength;
+            positionSubpackets = positionSubpackets + headerLength + subpacketLength;
         }
     }
 
