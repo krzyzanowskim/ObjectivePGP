@@ -37,15 +37,18 @@
 
     NSUInteger offset = 0;
 
-    //TODO: add loop here to read all packets from file
-    //      whole keyring is parsed at once, for big files it may be a problem
-    NSUInteger bodyLength = 0;
-    PGPPacketTag packetTag = 0;
-    NSData *packetHeaderData = [keyringData subdataWithRange:(NSRange) {offset + 0,MIN(6,keyringData.length)}]; // up to 6 octets for complete header
-    NSUInteger headerLength = [self parsePacketHeader:packetHeaderData bodyLength:&bodyLength packetTag:&packetTag];
+    //TODO: whole keyring is parsed at once, for big files it may be a memory issue, change to stream later
+    while (offset < keyringData.length) {
+        NSUInteger bodyLength = 0;
+        PGPPacketTag packetTag = 0;
+        NSData *packetHeaderData = [keyringData subdataWithRange:(NSRange) {offset + 0,6}]; // up to 6 octets for complete header
+        NSUInteger headerLength = [self parsePacketHeader:packetHeaderData bodyLength:&bodyLength packetTag:&packetTag];
 
-    NSData *packetBodyData = [keyringData subdataWithRange:(NSRange) {offset + headerLength,bodyLength}];
-    [self parsePacketTag:packetTag packetBody:packetBodyData];
+        NSData *packetBodyData = [keyringData subdataWithRange:(NSRange) {offset + headerLength,bodyLength}];
+        [self parsePacketTag:packetTag packetBody:packetBodyData];
+
+        offset = offset + headerLength + bodyLength;
+    }
     return ret;
 }
 
@@ -159,19 +162,19 @@
  */
 - (void) parsePacketTag:(PGPPacketTag)packetTag packetBody:(NSData *)packetBody
 {
-    NSLog(@"Reading packet tag %#x", packetTag);
+    NSLog(@"Reading packet tag %d", packetTag);
     
     switch (packetTag) {
         case PGPPublicKeyPacketTag:
         {
-            PGPPublicKey *publicKey = [[PGPPublicKey alloc] init];
-            [publicKey parsePacketBody:packetBody];
+            PGPPublicKey *publicKey = [[PGPPublicKey alloc] initWithBody:packetBody];
+            NSLog(@"Public key timestamp %@", [NSDate dateWithTimeIntervalSince1970:publicKey.timestamp]);
         }
             break;
         case PGPPublicSubkeyPacketTag:
         {
-            PGPPublicSubKey *publicSubKey = [[PGPPublicSubKey alloc] init];
-            [publicSubKey parsePacketBody:packetBody];
+            PGPPublicSubKey *publicSubKey = [[PGPPublicSubKey alloc] initWithBody:packetBody];
+            NSLog(@"Public subkey timestamp %@", [NSDate dateWithTimeIntervalSince1970:publicSubKey.timestamp]);
         }
             break;
 
