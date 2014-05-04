@@ -10,30 +10,74 @@
 #import "PGPPublicKey.h"
 #import "PGPPublicSubKey.h"
 
+@interface OpenPGPKeyring () <NSStreamDelegate>
+@property (strong) NSInputStream *keyringStream;
+@end
+
 @implementation OpenPGPKeyring
 
 - (BOOL) open:(NSString *)path
 {
     NSString *fullPath = [path stringByExpandingTildeInPath];
-    NSData *ringData = [NSData dataWithContentsOfFile:fullPath];
-    if (!ringData) {
+
+    if (![[NSFileManager defaultManager] fileExistsAtPath:fullPath]) {
         return NO;
     }
 
-    [self readPacket:ringData];
+    self.keyringStream = [[NSInputStream alloc] initWithFileAtPath:fullPath];
+    [self.keyringStream setDelegate:self];
+    [self.keyringStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+    [self.keyringStream open];
+
+//    NSData *ringData = [NSData dataWithContentsOfFile:fullPath];
+//    if (!ringData) {
+//        return NO;
+//    }
+//
+//    [self parseKeyring:ringData];
     return YES;
 }
 
-- (BOOL) readPacket:(NSData *)packetData
+#pragma mark - NSStreamDelegate
+
+- (void)stream:(NSInputStream *)stream handleEvent:(NSStreamEvent)eventCode
+{
+    switch (eventCode) {
+        case NSStreamEventHasBytesAvailable:
+        {
+            NSUInteger bufLength = 1;
+            UInt8 *buf[bufLength];
+            NSInteger readBytes = [stream read:(UInt8 *)buf maxLength:bufLength];
+            if (readBytes > 0) {
+                [self parsePacketHeader:[NSData dataWithBytes:buf length:bufLength]];
+            }
+        }
+            break;
+        case NSStreamEventEndEncountered:
+        {
+            [stream close];
+            [stream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
+            stream = nil;
+        }
+            break;
+        default:
+            break;
+    }
+}
+
+#pragma mark - Parse keyring
+
+//TODO: whole keyring is parsed at once, for big files it may be a problem
+- (BOOL) parseKeyring:(NSData *)keyringData
 {
     BOOL ret = NO;
-    PGPFormatType formatType = [self readPacketHeader:packetData];
+    PGPFormatType formatType = [self parsePacketHeader:keyringData];
     switch (formatType) {
         case PGPFormatNew:
-            ret = [self readNewFormatPacket:packetData];
+            ret = [self readNewFormatPacket:keyringData];
             break;
         case PGPFormatOld:
-            ret = [self readOldFormatPacket:packetData];
+            ret = [self readOldFormatPacket:keyringData];
             break;
         default:
             ret = NO;
@@ -43,7 +87,7 @@
 }
 
 // 4.2.  Packet Headers
-- (PGPFormatType) readPacketHeader:(NSData *)packetData
+- (PGPFormatType) parsePacketHeader:(NSData *)packetData
 {
     UInt8 *headerBytes = (UInt8 *)[packetData subdataWithRange:NSMakeRange(0, 1)].bytes;
     UInt8 headerByte = headerBytes[0];
