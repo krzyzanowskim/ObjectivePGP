@@ -10,10 +10,6 @@
 #import "PGPPublicKey.h"
 #import "PGPPublicSubKey.h"
 
-@interface OpenPGPKeyring () <NSStreamDelegate>
-@property (strong) NSInputStream *keyringStream;
-@end
-
 @implementation OpenPGPKeyring
 
 - (BOOL) open:(NSString *)path
@@ -24,104 +20,92 @@
         return NO;
     }
 
-    self.keyringStream = [[NSInputStream alloc] initWithFileAtPath:fullPath];
-    [self.keyringStream setDelegate:self];
-    [self.keyringStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-    [self.keyringStream open];
-
-//    NSData *ringData = [NSData dataWithContentsOfFile:fullPath];
-//    if (!ringData) {
-//        return NO;
-//    }
-//
-//    [self parseKeyring:ringData];
-    return YES;
-}
-
-#pragma mark - NSStreamDelegate
-
-- (void)stream:(NSInputStream *)stream handleEvent:(NSStreamEvent)eventCode
-{
-    switch (eventCode) {
-        case NSStreamEventHasBytesAvailable:
-        {
-            NSUInteger bufLength = 1;
-            UInt8 *buf[bufLength];
-            NSInteger readBytes = [stream read:(UInt8 *)buf maxLength:bufLength];
-            if (readBytes > 0) {
-                [self parsePacketHeader:[NSData dataWithBytes:buf length:bufLength]];
-            }
-        }
-            break;
-        case NSStreamEventEndEncountered:
-        {
-            [stream close];
-            [stream removeFromRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-            stream = nil;
-        }
-            break;
-        default:
-            break;
+    NSData *ringData = [NSData dataWithContentsOfFile:fullPath];
+    if (!ringData) {
+        return NO;
     }
+
+    [self parseKeyring:ringData];
+    return YES;
 }
 
 #pragma mark - Parse keyring
 
-//TODO: whole keyring is parsed at once, for big files it may be a problem
 - (BOOL) parseKeyring:(NSData *)keyringData
 {
     BOOL ret = NO;
-    PGPFormatType formatType = [self parsePacketHeader:keyringData];
-    switch (formatType) {
-        case PGPFormatNew:
-            ret = [self readNewFormatPacket:keyringData];
-            break;
-        case PGPFormatOld:
-            ret = [self readOldFormatPacket:keyringData];
-            break;
-        default:
-            ret = NO;
-            break;
-    }
+
+    NSUInteger offset = 0;
+
+    //TODO: add loop here to read all packets from file
+    //      whole keyring is parsed at once, for big files it may be a problem
+    NSUInteger bodyLength = 0;
+    PGPPacketTag packetTag = 0;
+    NSData *packetHeaderData = [keyringData subdataWithRange:(NSRange) {offset + 0,MIN(6,keyringData.length)}]; // up to 6 octets for complete header
+    NSUInteger headerLength = [self parsePacketHeader:packetHeaderData bodyLength:&bodyLength packetTag:&packetTag];
+
+    NSData *packetBodyData = [keyringData subdataWithRange:(NSRange) {offset + headerLength,bodyLength}];
+    [self parsePacketTag:packetTag packetBody:packetBodyData];
     return ret;
 }
 
+#pragma mark - Packet header
+
 // 4.2.  Packet Headers
-- (PGPFormatType) parsePacketHeader:(NSData *)packetData
+/**
+ *  Parse header
+ *
+ *  @param headerData header data
+ *  @param length     return packet body length
+ *  @param tag        return packet tag
+ *
+ *  @return Header length
+ */
+- (NSUInteger) parsePacketHeader:(NSData *)headerData bodyLength:(NSUInteger *)length packetTag:(PGPPacketTag *)tag
 {
-    UInt8 *headerBytes = (UInt8 *)[packetData subdataWithRange:NSMakeRange(0, 1)].bytes;
+    UInt8 *headerBytes = (UInt8 *)[headerData subdataWithRange:NSMakeRange(0, 1)].bytes;
     UInt8 headerByte = headerBytes[0];
 
     BOOL isPGPHeader = !!(headerByte & PGPHeaderPacketTagAllwaysSet);
     BOOL isNewFormat = !!(headerByte & PGPHeaderPacketTagNewFormat);
 
+    *length = 0;
+
     if (!isPGPHeader) {
-        return PGPFormatUnknown;
+        return 0;
     }
 
+    NSUInteger headerLength = 0;
     if (isNewFormat) {
-        return PGPFormatNew;
+        headerLength = [self parseNewFormatHeaderPacket:headerData bodyLength:length packetTag:tag];
     } else {
-        return PGPFormatOld;
+        headerLength = [self parseOldFormatHeaderPacket:headerData bodyLength:length packetTag:tag];
     }
 
-    return PGPFormatUnknown;
+    return headerLength;
 }
 
-// 4.2.  Packet Headers
-- (BOOL) readNewFormatPacket:(NSData *)packetData
+/**
+ *  4.2.  Packet Headers
+ *
+ *  @param packetData Packet header
+ *
+ *  @return Header length
+ */
+- (NSUInteger) parseNewFormatHeaderPacket:(NSData *)headerData bodyLength:(NSUInteger *)length packetTag:(PGPPacketTag *)tag
 {
-    UInt8 *headerBytes = (UInt8 *)[packetData subdataWithRange:NSMakeRange(0, 1)].bytes;
+    UInt8 *headerBytes = (UInt8 *)[headerData subdataWithRange:NSMakeRange(0, 1)].bytes;
     // Bits 5-0 -- packet tag
     UInt8 packetTag = (headerBytes[0] << 2);
     packetTag = (packetTag >> 2);
+    *tag = packetTag;
 
     // body length
-    BOOL isPartialBodyLength    = NO;
-    UInt32 bodyLength           = 0;
-    NSInteger packetBodyByteIdx = 2;
+    BOOL isPartialBodyLength = NO;
+    UInt32 bodyLength        = 0;
+    NSInteger headerLength   = 2;
 
-    UInt8 *lengthOctets = (UInt8 *)[packetData subdataWithRange:NSMakeRange(1, 5)].bytes;
+    UInt8 *lengthOctets = (UInt8 *)[headerData subdataWithRange:NSMakeRange(1, 5)].bytes;
 
     UInt8 firstOctet  = lengthOctets[0];
     UInt8 secondOctet = lengthOctets[1];
@@ -133,41 +117,47 @@
         // 4.2.2.1.  One-Octet Length
         // bodyLen = 1st_octet;
         bodyLength        = firstOctet;
-        packetBodyByteIdx = 1 + 1;
+        headerLength = 1 + 1;
     } else if (firstOctet >= 192 && firstOctet <= 223) {
         // 4.2.2.2.  Two-Octet Lengths
         // bodyLen = ((1st_octet - 192) << 8) + (2nd_octet) + 192
         bodyLength        = ((firstOctet - 192) << 8) + (secondOctet) + 192;
-        packetBodyByteIdx = 1 + 2;
+        headerLength = 1 + 2;
     } else if (firstOctet >= 223 && firstOctet < 255) {
         // 4.2.2.4.  Partial Body Length
         // partialBodyLen = 1 << (1st_octet & 0x1F);
         UInt32 partianBodyLength = CFSwapInt32BigToHost(firstOctet << (firstOctet & 0x1F));
         bodyLength               = partianBodyLength;
-        packetBodyByteIdx        = 1 + 1;
+        headerLength        = 1 + 1;
         isPartialBodyLength      = YES;
     } else if (firstOctet == 255) {
         // 4.2.2.3.  Five-Octet Length
         // bodyLen = (2nd_octet << 24) | (3rd_octet << 16) |
         //           (4th_octet << 8)  | 5th_octet
         bodyLength        = (secondOctet << 24) | (thirdOctet << 16) | (fourthOctet << 8)  | fifthOctet;
-        packetBodyByteIdx = 1 + 5;
+        headerLength = 1 + 5;
     }
-
-    [self readPacketType:packetTag packetBody:[packetData subdataWithRange:NSMakeRange(packetBodyByteIdx, bodyLength)]];
-
-    return YES;
+    *length = bodyLength;
+    return headerLength;
 }
 
 // 4.2.  Packet Headers
-//TODO: read old format
-- (BOOL) readOldFormatPacket:(NSData *)packetData
+- (NSUInteger) parseOldFormatHeaderPacket:(NSData *)packetData bodyLength:(NSUInteger *)length packetTag:(PGPPacketTag *)tag
 {
+    //TODO: read old format
     @throw [NSException exceptionWithName:@"PGPUnknownFormat" reason:@"Old format is not supported" userInfo:nil];
-    return NO;
+    return 0;
 }
 
-- (BOOL) readPacketType:(PGPPacketTag)packetTag packetBody:(NSData *)packetBody
+#pragma mark - Packet body
+
+/**
+ *  Determine packet type
+ *
+ *  @param packetTag  Packet tag
+ *  @param packetBody Packet Body
+ */
+- (void) parsePacketTag:(PGPPacketTag)packetTag packetBody:(NSData *)packetBody
 {
     NSLog(@"Reading packet tag %#x", packetTag);
     
@@ -188,7 +178,6 @@
         default:
             break;
     }
-    return YES;
 }
 
 @end
