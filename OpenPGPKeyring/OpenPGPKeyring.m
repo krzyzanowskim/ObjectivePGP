@@ -9,6 +9,7 @@
 #import "OpenPGPKeyring.h"
 #import "PGPPublicKey.h"
 #import "PGPPublicSubKey.h"
+#import "PGPSignature.h"
 
 @implementation OpenPGPKeyring
 
@@ -175,6 +176,11 @@
         {
             PGPPublicSubKey *publicSubKey = [[PGPPublicSubKey alloc] initWithBody:packetBody];
             NSLog(@"Public subkey timestamp %@", [NSDate dateWithTimeIntervalSince1970:publicSubKey.timestamp]);
+        }
+            break;
+        case PGPSignaturePacketTag:
+        {
+            PGPSignature *signature = [[PGPSignature alloc] initWithBody:packetBody];
         }
             break;
 

@@ -10,6 +10,10 @@
 #import "PGPTypes.h"
 #import "PGPMPI.h"
 
+@interface PGPPublicKey ()
+@property (assign) UInt16 V3validityPeriod;
+@end
+
 @implementation PGPPublicKey
 
 - (instancetype) initWithBody:(NSData *)packetData
@@ -25,23 +29,43 @@
     return PGPPublicKeyPacketTag;
 }
 
+/**
+ *  5.5.2.  Public-Key Packet Formats
+ *
+ *  @param packetBody Packet body
+ */
 - (void) parsePacketBody:(NSData *)packetBody
 {
+    //TODO: V3 keys are deprecated; an implementation MUST NOT generate a V3 key, but MAY accept it.
+
+    NSUInteger position = 0;
     //UInt8 *bytes = (UInt8 *)packetBody.bytes;
-    // A one-octet version number (4).
+    // A one-octet version number (2,3,4).
     UInt8 version;
-    [packetBody getBytes:&version range:(NSRange){0,1}];
+    [packetBody getBytes:&version range:(NSRange){position,1}];
     _version = version;
+    position = position + 1;
 
     // A four-octet number denoting the time that the key was created.
     UInt32 timestamp = 0;
-    [packetBody getBytes:&timestamp range:(NSRange){1,4}];
+    [packetBody getBytes:&timestamp range:(NSRange){position,4}];
     _timestamp = CFSwapInt32BigToHost(timestamp);
+    position = position + 4;
+
+    if (_version == 0x03) {
+        //  A two-octet number denoting the time in days that this key is
+        //  valid.  If this number is zero, then it does not expire.
+        UInt16 validityPeriod;
+        [packetBody getBytes:&validityPeriod range:(NSRange){position,2}];
+        _V3validityPeriod = validityPeriod;
+        position = position + 2;
+    }
 
     // A one-octet number denoting the public-key algorithm of this key.
     UInt8 algorithm = 0;
-    [packetBody getBytes:&algorithm range:(NSRange){5,1}];
+    [packetBody getBytes:&algorithm range:(NSRange){position,1}];
     _algorithm = algorithm;
+    position = position + 1;
 
     // A series of multiprecision integers comprising the key material.
     switch (self.algorithm) {
@@ -50,8 +74,6 @@
         case PGPPublicKeyAlgorithmRSASignOnly:
         {
             // Algorithm-Specific Fields for RSA public keys:
-            NSUInteger position = 6;
-
             // MPI of RSA public modulus n;
             PGPMPI *mpiN = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
             position = position + mpiN.length;

@@ -24,6 +24,7 @@
 		759DBA141915B5BD00305549 /* NSData+Bytes.m in Sources */ = {isa = PBXBuildFile; fileRef = 759DBA131915B5BD00305549 /* NSData+Bytes.m */; };
 		759DBA181915CBDF00305549 /* PGPMPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 759DBA171915CBDF00305549 /* PGPMPI.m */; };
 		75E7B6B81916493600C96BAB /* PGPPublicSubKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 75E7B6B71916493600C96BAB /* PGPPublicSubKey.m */; };
+		75E7B6BB19167EFF00C96BAB /* PGPSignature.m in Sources */ = {isa = PBXBuildFile; fileRef = 75E7B6BA19167EFF00C96BAB /* PGPSignature.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -75,6 +76,9 @@
 		759DBA171915CBDF00305549 /* PGPMPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPMPI.m; sourceTree = "<group>"; };
 		75E7B6B61916493600C96BAB /* PGPPublicSubKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPublicSubKey.h; sourceTree = "<group>"; };
 		75E7B6B71916493600C96BAB /* PGPPublicSubKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPublicSubKey.m; sourceTree = "<group>"; };
+		75E7B6B919167EFF00C96BAB /* PGPSignature.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSignature.h; sourceTree = "<group>"; };
+		75E7B6BA19167EFF00C96BAB /* PGPSignature.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSignature.m; sourceTree = "<group>"; };
+		75E7B6BC19167F1700C96BAB /* PGPPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPacket.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -196,10 +200,13 @@
 		75E7B6B51916478D00C96BAB /* Packet Tags */ = {
 			isa = PBXGroup;
 			children = (
+				75E7B6BC19167F1700C96BAB /* PGPPacket.h */,
 				756299E51915AF0700C5AD3B /* PGPPublicKey.h */,
 				756299E61915AF0700C5AD3B /* PGPPublicKey.m */,
 				75E7B6B61916493600C96BAB /* PGPPublicSubKey.h */,
 				75E7B6B71916493600C96BAB /* PGPPublicSubKey.m */,
+				75E7B6B919167EFF00C96BAB /* PGPSignature.h */,
+				75E7B6BA19167EFF00C96BAB /* PGPSignature.m */,
 			);
 			name = "Packet Tags";
 			sourceTree = "<group>";
@@ -324,6 +331,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				75E7B6BB19167EFF00C96BAB /* PGPSignature.m in Sources */,
 				756299E71915AF0700C5AD3B /* PGPPublicKey.m in Sources */,
 				75E7B6B81916493600C96BAB /* PGPPublicSubKey.m in Sources */,
 				756299C01914DE1A00C5AD3B /* OpenPGPKeyring.m in Sources */,

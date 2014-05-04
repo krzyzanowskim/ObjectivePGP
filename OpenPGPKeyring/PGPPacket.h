@@ -1,16 +1,18 @@
 //
-//  PGPPublicSubKey.h
+//  PGPPacket.h
 //  OpenPGPKeyring
 //
 //  Created by Marcin Krzyzanowski on 04/05/14.
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
-//  Tag 14
 
 #import <Foundation/Foundation.h>
-#import "PGPPublicKey.h"
-#import "PGPPacket.h"
+#import "PGPTypes.h"
 
-@interface PGPPublicSubKey : PGPPublicKey <PGPPacket>
+@protocol PGPPacket <NSObject>
+
+@required
+@property (assign, readonly, nonatomic) PGPPacketTag tag;
+- (void) parsePacketBody:(NSData *)packetBody;
 
 @end
