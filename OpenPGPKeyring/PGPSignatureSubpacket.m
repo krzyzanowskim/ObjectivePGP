@@ -54,7 +54,7 @@
         {
             //  5.2.3.5.  Issuer
 
-            PGPKeyID *keyID = [[PGPKeyID alloc] initWithData:packetBody];
+            PGPKeyID *keyID = [[PGPKeyID alloc] initWithLongKey:packetBody];
             self.value = keyID; //[packetBody subdataWithRange:(NSRange){0,8}];
 
             /*

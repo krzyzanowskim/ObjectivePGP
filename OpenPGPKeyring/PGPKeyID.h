@@ -10,11 +10,11 @@
 
 @interface PGPKeyID : NSObject
 
-@property (readonly, nonatomic) NSData *longKey;
+@property (readonly) NSData *longKey;
 @property (readonly, nonatomic) NSString *longKeyString;
 @property (readonly, nonatomic) NSData *shortKey;
 @property (readonly, nonatomic) NSString *shortKeyString;
 
-- (instancetype) initWithData:(NSData *)longKeyData;
+- (instancetype) initWithLongKey:(NSData *)longKeyData;
 
 @end

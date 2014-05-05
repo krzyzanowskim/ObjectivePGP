@@ -13,8 +13,12 @@
 
 @implementation PGPKeyID
 
-- (instancetype) initWithData:(NSData *)longKeyData
+- (instancetype) initWithLongKey:(NSData *)longKeyData
 {
+    if (longKeyData.length != 8) {
+        return nil;
+    }
+
     if (self = [self init]) {
         _longKey = longKeyData;
     }
