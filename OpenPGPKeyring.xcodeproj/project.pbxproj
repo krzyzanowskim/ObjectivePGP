@@ -10,6 +10,7 @@
 		530608F022BB406DA76684F0 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AFC8E128B0F4211888984C0 /* libPods.a */; };
 		7502CEFF1916DCE9001B32D7 /* PGPSignatureSubpacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 7502CEFE1916DCE9001B32D7 /* PGPSignatureSubpacket.m */; };
 		7502CF021916EFD5001B32D7 /* NSData+NSValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7502CF011916EFD5001B32D7 /* NSData+NSValue.m */; };
+		7507B72819170FE3003A2DC7 /* PGPUserIDPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 7507B72719170FE3003A2DC7 /* PGPUserIDPacket.m */; };
 		756299B91914DE1A00C5AD3B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B81914DE1A00C5AD3B /* Foundation.framework */; };
 		756299BE1914DE1A00C5AD3B /* OpenPGPKeyring.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 756299BD1914DE1A00C5AD3B /* OpenPGPKeyring.h */; };
 		756299C01914DE1A00C5AD3B /* OpenPGPKeyring.m in Sources */ = {isa = PBXBuildFile; fileRef = 756299BF1914DE1A00C5AD3B /* OpenPGPKeyring.m */; };
@@ -59,6 +60,8 @@
 		7502CEFE1916DCE9001B32D7 /* PGPSignatureSubpacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSignatureSubpacket.m; sourceTree = "<group>"; };
 		7502CF001916EFD5001B32D7 /* NSData+NSValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+NSValue.h"; sourceTree = "<group>"; };
 		7502CF011916EFD5001B32D7 /* NSData+NSValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+NSValue.m"; sourceTree = "<group>"; };
+		7507B72619170FE3003A2DC7 /* PGPUserIDPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPUserIDPacket.h; sourceTree = "<group>"; };
+		7507B72719170FE3003A2DC7 /* PGPUserIDPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPUserIDPacket.m; sourceTree = "<group>"; };
 		756299B51914DE1A00C5AD3B /* libOpenPGPKeyring.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libOpenPGPKeyring.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		756299B81914DE1A00C5AD3B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		756299BC1914DE1A00C5AD3B /* OpenPGPKeyring-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OpenPGPKeyring-Prefix.pch"; sourceTree = "<group>"; };
@@ -111,6 +114,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7507B72519170E6D003A2DC7 /* PGPSignature */ = {
+			isa = PBXGroup;
+			children = (
+				75E7B6B919167EFF00C96BAB /* PGPSignature.h */,
+				75E7B6BA19167EFF00C96BAB /* PGPSignature.m */,
+				7502CEFD1916DCE9001B32D7 /* PGPSignatureSubpacket.h */,
+				7502CEFE1916DCE9001B32D7 /* PGPSignatureSubpacket.m */,
+			);
+			name = PGPSignature;
+			sourceTree = "<group>";
+		};
 		756299AC1914DE1A00C5AD3B = {
 			isa = PBXGroup;
 			children = (
@@ -213,10 +227,9 @@
 				756299E61915AF0700C5AD3B /* PGPPublicKey.m */,
 				75E7B6B61916493600C96BAB /* PGPPublicSubKey.h */,
 				75E7B6B71916493600C96BAB /* PGPPublicSubKey.m */,
-				75E7B6B919167EFF00C96BAB /* PGPSignature.h */,
-				75E7B6BA19167EFF00C96BAB /* PGPSignature.m */,
-				7502CEFD1916DCE9001B32D7 /* PGPSignatureSubpacket.h */,
-				7502CEFE1916DCE9001B32D7 /* PGPSignatureSubpacket.m */,
+				7507B72519170E6D003A2DC7 /* PGPSignature */,
+				7507B72619170FE3003A2DC7 /* PGPUserIDPacket.h */,
+				7507B72719170FE3003A2DC7 /* PGPUserIDPacket.m */,
 			);
 			name = "Packet Tags";
 			sourceTree = "<group>";
@@ -341,6 +354,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7507B72819170FE3003A2DC7 /* PGPUserIDPacket.m in Sources */,
 				75E7B6BB19167EFF00C96BAB /* PGPSignature.m in Sources */,
 				756299E71915AF0700C5AD3B /* PGPPublicKey.m in Sources */,
 				75E7B6B81916493600C96BAB /* PGPPublicSubKey.m in Sources */,

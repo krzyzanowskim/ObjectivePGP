@@ -10,6 +10,7 @@
 #import "PGPPublicKey.h"
 #import "PGPPublicSubKey.h"
 #import "PGPSignature.h"
+#import "PGPUserIDPacket.h"
 
 @implementation OpenPGPKeyring
 
@@ -183,8 +184,17 @@
             PGPSignature *signature = [[PGPSignature alloc] initWithBody:packetBody];
         }
             break;
+        case PGPUserIDPacketTag:
+        {
+            PGPUserIDPacket *userIDPacket = [[PGPUserIDPacket alloc] initWithBody:packetBody];
+#ifdef DEBUG
+            NSLog(@"%@",userIDPacket.userID);
+#endif
+        }
+            break;
 
         default:
+            NSLog(@"Packet tag %d is not yet supported", packetTag);
             break;
     }
 }
