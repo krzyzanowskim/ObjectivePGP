@@ -64,7 +64,102 @@
             self.value = @(primaryUserIDValue);
         }
             break;
+        case PGPSignatureSubpacketKeyFlags: // NSArray of PGPSignatureFlags
+        {
+            //  5.2.3.21.  Key Flags
+            //  (N octets of flags) ???
+            //  This implementation supports max 8 octets (64bit)
+            UInt64 flagByte = 0;
+            [packetBody getBytes:&flagByte length:MIN(8,packetBody.length)];
+            NSMutableArray *flagsArray = [NSMutableArray array];
+
+            if (flagByte & PGPSignatureFlagAllowCertifyOtherKeys) {
+                [flagsArray addObject:@(PGPSignatureFlagAllowCertifyOtherKeys)];
+            } else if (flagByte & PGPSignatureFlagAllowSignData) {
+                [flagsArray addObject:@(PGPSignatureFlagAllowSignData)];
+            } else if (flagByte & PGPSignatureFlagAllowEncryptCommunications) {
+                [flagsArray addObject:@(PGPSignatureFlagAllowEncryptCommunications)];
+            } else if (flagByte & PGPSignatureFlagAllowEncryptStorage) {
+                [flagsArray addObject:@(PGPSignatureFlagAllowEncryptStorage)];
+            } else if (flagByte & PGPSignatureFlagSecretComponentMayBeSplit) {
+                [flagsArray addObject:@(PGPSignatureFlagSecretComponentMayBeSplit)];
+            } else if (flagByte & PGPSignatureFlagAllowAuthentication) {
+                [flagsArray addObject:@(PGPSignatureFlagAllowAuthentication)];
+            } else if (flagByte & PGPSignatureFlagPrivateKeyMayBeInThePossesionOfManyPersons) {
+                [flagsArray addObject:@(PGPSignatureFlagPrivateKeyMayBeInThePossesionOfManyPersons)];
+            }
+
+            self.value = [flagsArray copy];
+        }
+            break;
+        case PGPSignatureSubpacketPreferredSymetricAlgorithm: // NSArray of PGPSymmetricAlhorithm
+        {
+            // 5.2.3.7.  Preferred Symmetric Algorithms
+            NSMutableArray *algorithmsArray = [NSMutableArray array];
+
+            for (NSUInteger i = 0; i < packetBody.length; i++) {
+                PGPSymmetricAlgorithm algorithm = 0;
+                [packetBody getBytes:&algorithm range:(NSRange){i,1}];
+                [algorithmsArray addObject:@(algorithm)];
+            }
+
+            self.value = [algorithmsArray copy];
+        }
+            break;
+        case PGPSignatureSubpacketPreferredHashAlgorithm: // NSArray of PGPSymmetricAlhorithm
+        {
+            // 5.2.3.8.  Preferred Hash Algorithms
+            NSMutableArray *algorithmsArray = [NSMutableArray array];
+
+            for (NSUInteger i = 0; i < packetBody.length; i++) {
+                PGPHashAlgorithm algorithm = 0;
+                [packetBody getBytes:&algorithm range:(NSRange){i,1}];
+                [algorithmsArray addObject:@(algorithm)];
+            }
+
+            self.value = [algorithmsArray copy];
+        }
+            break;
+        case PGPSignatureSubpacketPreferredCompressionAlgorithm: // NSArray of PGPCompressionAlgorithm
+        {
+            // 5.2.3.9.  Preferred Compression Algorithms
+            // If this subpacket is not included, ZIP is preferred.
+            NSMutableArray *algorithmsArray = [NSMutableArray array];
+
+            for (UInt8 i = 0; i < packetBody.length; i++) {
+                PGPCompressionAlgorithm algorithm = 0;
+                [packetBody getBytes:&algorithm range:(NSRange){i,1}];
+                [algorithmsArray addObject:@(algorithm)];
+            }
+
+            self.value = [algorithmsArray copy];        }
+            break;
+        case PGPSignatureSubpacketKeyServerPreference:
+        {
+            // 5.2.3.17.  Key Server Preferences
+            UInt64 flagByte = 0;
+            [packetBody getBytes:&flagByte length:MIN(8,packetBody.length)];
+            NSMutableArray *flagsArray = [NSMutableArray array];
+            if (flagByte & PGPKeyServerPreferenceNoModify) {
+                [flagsArray addObject:@(PGPKeyServerPreferenceNoModify)];
+            }
+            self.value = [flagsArray copy];
+        }
+            break;
+        case PGPSignatureSubpacketFeatures:
+        {
+            // 5.2.3.24.  Features
+            NSMutableArray *featuresArray = [NSMutableArray array];
+            for (NSUInteger i = 0; i < packetBody.length; i++) {
+                PGPFeature feature = 0;
+                [packetBody getBytes:&feature range:(NSRange){i,1}];
+                [featuresArray addObject:@(feature)];
+            }
+            self.value = [featuresArray copy];
+        }
+            break;
         default:
+            NSLog(@"Unsuported subpacket type %d", self.type);
             break;
     }
 }
@@ -81,7 +176,6 @@
     UInt8 fourthOctet = lengthOctets[3];
     UInt8 fifthOctet  = lengthOctets[4];
 
-    //TODO: check bigendian with longer packets
     if (firstOctet < 192) {
         // subpacketLen = 1st_octet;
         *subpacketLen   = firstOctet;

@@ -105,6 +105,9 @@
         headerLength = 1 + 5;
     }
     *length = bodyLength;
+
+    NSAssert(bodyLength > 0, @"The packet is of indeterminate length");
+
     return headerLength;
 }
 

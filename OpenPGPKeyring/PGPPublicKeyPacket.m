@@ -51,9 +51,9 @@
     if (_version == 0x03) {
         //  A two-octet number denoting the time in days that this key is
         //  valid.  If this number is zero, then it does not expire.
-        UInt16 validityPeriod;
+        UInt16 validityPeriod = 0;
         [packetBody getBytes:&validityPeriod range:(NSRange){position,2}];
-        _V3validityPeriod = validityPeriod;
+        _V3validityPeriod = CFSwapInt16BigToHost(validityPeriod);
         position = position + 2;
     }
 

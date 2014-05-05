@@ -40,6 +40,7 @@ typedef NS_ENUM(UInt8, PGPPacketTag) {
     PGPModificationDetectionCodePacket                       = 19,
 };
 
+// 9.1.  Public-Key Algorithms
 typedef NS_ENUM(UInt8, PGPPublicKeyAlgorithm) {
     PGPPublicKeyAlgorithmRSA                = 1,
     PGPPublicKeyAlgorithmRSAEncryptOnly     = 2,
@@ -63,6 +64,20 @@ typedef NS_ENUM(UInt8, PGPPublicKeyAlgorithm) {
     PGPPublicKeyAlgorithmPrivate11          = 110
 };
 
+// 9.2.  Symmetric-Key Algorithms
+typedef NS_ENUM(UInt8, PGPSymmetricAlgorithm) {
+    PGPSymmetricPlaintext  = 0,
+    PGPSymmetricIDEA       = 1,
+    PGPSymmetricTripleDES  = 2,
+    PGPSymmetricCAST5      = 3,
+    PGPSymmetricBlowfish   = 4,
+    PGPSymmetricAES128     = 7,
+    PGPSymmetricAES192     = 8,
+    PGPSymmetricAES256     = 9,
+    PGPSymmetricTwofish256 = 10
+};
+
+// 9.4.  Hash Algorithms
 typedef NS_ENUM(UInt8, PGPHashAlgorithm) {
     PGPHashMD5       = 1, //MD5  - deprecated
     PGPHashSHA1      = 2, //SHA1 - required
@@ -71,6 +86,14 @@ typedef NS_ENUM(UInt8, PGPHashAlgorithm) {
     PGPHashSHA384    = 9, //SHA384
     PGPHashSHA512    = 10,//SHA512
     PGPHashSHA224    = 11 //SHA224
+};
+
+// 9.3.  Compression Algorithms
+typedef NS_ENUM(UInt8, PGPCompressionAlgorithm) {
+    PGPCompressionUncompressed = 0,
+    PGPCompressionZIP          = 1,
+    PGPCompressionZLIB         = 2,
+    PGPCompressionBZIP2        = 3
 };
 
 typedef NS_ENUM(UInt8, PGPSignatureType) {
@@ -115,6 +138,27 @@ typedef NS_ENUM(UInt8, PGPSignatureSubpacketType) {
     PGPSignatureSubpacketFeatures                      = 30,
     PGPSignatureSubpacketSignatureTarget               = 31,
     PGPSignatureSubpacketEmbeddedSignature             = 32
+};
+
+// 5.2.3.21.  Key Flags
+typedef NS_ENUM(UInt64, PGPSignatureFlags) {
+    PGPSignatureFlagAllowCertifyOtherKeys                      = 0x01,// indicates that this key may be used to certify other keys
+    PGPSignatureFlagAllowSignData                              = 0x02,// indicates that this key may be used to sign data.
+    PGPSignatureFlagAllowEncryptCommunications                 = 0x04,// indicates that this key may be used to encrypt communication.
+    PGPSignatureFlagAllowEncryptStorage                        = 0x08,// indicates that this key may be used to encrypt storage.
+    PGPSignatureFlagSecretComponentMayBeSplit                  = 0x10,// indicates that the secret components of this key may have been split using a secret-sharing mechanism.
+    PGPSignatureFlagAllowAuthentication                        = 0x20,// indicates that this key may be used for authentication.
+    PGPSignatureFlagPrivateKeyMayBeInThePossesionOfManyPersons = 0x80 // indicates that the secret components of this key may be in the possession of more than one person.
+};
+
+// 5.2.3.17.  Key Server Preferences
+typedef NS_ENUM(UInt64, PGPKeyServerPreferenceFlags) {
+    PGPKeyServerPreferenceNoModify = 0x80 // No-modify
+};
+
+// 5.2.3.24.  Features
+typedef NS_ENUM(UInt8, PGPFeature) {
+    PGPFeatureModificationDetection = 0x01 // Modification Detection (packets 18 and 19)
 };
 
 #endif
