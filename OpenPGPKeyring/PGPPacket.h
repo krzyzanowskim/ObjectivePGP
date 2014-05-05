@@ -18,5 +18,6 @@
 @interface PGPPacket : NSObject
 
 - (NSUInteger) parsePacketHeader:(NSData *)headerData bodyLength:(NSUInteger *)length packetTag:(PGPPacketTag *)tag;
+- (void) parsePacketTag:(PGPPacketTag)packetTag packetBody:(NSData *)packetBody;
 
 @end

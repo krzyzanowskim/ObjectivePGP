@@ -7,10 +7,6 @@
 //
 
 #import "OpenPGPKeyring.h"
-#import "PGPPublicKeyPacket.h"
-#import "PGPPublicSubKeyPacket.h"
-#import "PGPSignaturePacket.h"
-#import "PGPUserIDPacket.h"
 #import "PGPPacket.h"
 
 @implementation OpenPGPKeyring
@@ -50,7 +46,7 @@
         NSUInteger headerLength = [packet parsePacketHeader:packetHeaderData bodyLength:&bodyLength packetTag:&packetTag];
 
         NSData *packetBodyData = [keyringData subdataWithRange:(NSRange) {offset + headerLength,bodyLength}];
-        [self parsePacketTag:packetTag packetBody:packetBodyData];
+        [packet parsePacketTag:packetTag packetBody:packetBodyData];
 
         offset = offset + headerLength + bodyLength;
     }

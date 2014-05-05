@@ -7,6 +7,10 @@
 //
 
 #import "PGPPacket.h"
+#import "PGPPublicKeyPacket.h"
+#import "PGPPublicSubKeyPacket.h"
+#import "PGPSignaturePacket.h"
+#import "PGPUserIDPacket.h"
 
 @implementation PGPPacket
 
