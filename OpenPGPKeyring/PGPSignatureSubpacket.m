@@ -89,11 +89,13 @@
     } else if (firstOctet >= 192 && firstOctet < 255) {
         // subpacketLen = ((1st_octet - 192) << 8) + (2nd_octet) + 192
         *subpacketLen   = ((firstOctet - 192) << 8) + (secondOctet) + 192;
+        *subpacketLen   = CFSwapInt16BigToHost(*subpacketLen);
         *headerLength = 2;
     } else if (firstOctet == 255) {
         // subpacketLen = (2nd_octet << 24) | (3rd_octet << 16) |
         //                (4th_octet << 8)  | 5th_octet
         *subpacketLen   = (secondOctet << 24) | (thirdOctet << 16) | (fourthOctet << 8)  | fifthOctet;
+        *subpacketLen   = CFSwapInt32BigToHost(*subpacketLen);
         *headerLength = 5;
     }
     position = position + *headerLength;

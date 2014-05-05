@@ -56,9 +56,12 @@
  */
 - (NSUInteger) parseNewFormatHeaderPacket:(NSData *)headerData bodyLength:(NSUInteger *)length packetTag:(PGPPacketTag *)tag
 {
-    UInt8 *headerBytes = (UInt8 *)[headerData subdataWithRange:NSMakeRange(0, 1)].bytes;
+    NSParameterAssert(headerData);
+
+    UInt8 headerByte = 0;
+    [headerData getBytes:&headerByte length:1];
     // Bits 5-0 -- packet tag
-    UInt8 packetTag = (headerBytes[0] << 2);
+    UInt8 packetTag = (headerByte << 2);
     packetTag = (packetTag >> 2);
     *tag = packetTag;
 
@@ -84,11 +87,12 @@
         // 4.2.2.2.  Two-Octet Lengths
         // bodyLen = ((1st_octet - 192) << 8) + (2nd_octet) + 192
         bodyLength   = ((firstOctet - 192) << 8) + (secondOctet) + 192;
+        bodyLength   = CFSwapInt16BigToHost(bodyLength);
         headerLength = 1 + 2;
     } else if (firstOctet >= 223 && firstOctet < 255) {
         // 4.2.2.4.  Partial Body Length
         // partialBodyLen = 1 << (1st_octet & 0x1F);
-        UInt32 partianBodyLength = CFSwapInt32BigToHost(firstOctet << (firstOctet & 0x1F));
+        UInt32 partianBodyLength = firstOctet << (firstOctet & 0x1F);
         bodyLength               = partianBodyLength;
         headerLength             = 1 + 1;
         isPartialBodyLength      = YES;
@@ -97,6 +101,7 @@
         // bodyLen = (2nd_octet << 24) | (3rd_octet << 16) |
         //           (4th_octet << 8)  | 5th_octet
         bodyLength   = (secondOctet << 24) | (thirdOctet << 16) | (fourthOctet << 8)  | fifthOctet;
+        bodyLength   = CFSwapInt32BigToHost(bodyLength);
         headerLength = 1 + 5;
     }
     *length = bodyLength;
@@ -104,11 +109,63 @@
 }
 
 // 4.2.  Packet Headers
-- (NSUInteger) parseOldFormatHeaderPacket:(NSData *)packetData bodyLength:(NSUInteger *)length packetTag:(PGPPacketTag *)tag
+- (NSUInteger) parseOldFormatHeaderPacket:(NSData *)headerData bodyLength:(NSUInteger *)length packetTag:(PGPPacketTag *)tag
 {
+    NSParameterAssert(headerData);
+
     //TODO: read old format
-    @throw [NSException exceptionWithName:@"PGPUnknownFormat" reason:@"Old format is not supported" userInfo:nil];
-    return 0;
+    UInt8 headerByte = 0;
+    [headerData getBytes:&headerByte length:1];
+    //  Bits 5-2 -- packet tag
+    UInt8 packetTag = (headerByte << 2);
+    packetTag = (packetTag >> 4);
+    *tag = packetTag;
+    //  Bits 1-0 -- length-type
+    UInt8 bodyLengthType = (headerByte << 6);
+    bodyLengthType = bodyLengthType >> 6;
+
+    NSUInteger headerLength = 1;
+    UInt32 bodyLength       = 0;
+    switch (bodyLengthType) {
+        case 0:
+        {
+            NSRange range = (NSRange) {1,1};
+            [headerData getBytes:&bodyLength range:range];
+            headerLength = 1 + range.length;
+        }
+            break;
+        case 1:
+        {
+            NSRange range = (NSRange) {1,2};
+            [headerData getBytes:&bodyLength range:range];
+            bodyLength = CFSwapInt16BigToHost(bodyLength);
+            headerLength = 1 + range.length;
+        }
+            break;
+        case 2:
+        {
+            NSRange range = (NSRange) {1,4};
+            [headerData getBytes:&bodyLength range:range];
+            bodyLength = CFSwapInt32BigToHost(bodyLength);
+            headerLength = 1 + range.length;
+        }
+            break;
+        case 3:
+        {
+            //TODO: The packet is of indeterminate length.
+            headerLength = 1;
+        }
+            break;
+
+        default:
+            break;
+    }
+
+    NSAssert(bodyLength > 0, @"The packet is of indeterminate length");
+    *length = bodyLength;
+
+    // @throw [NSException exceptionWithName:@"PGPUnknownFormat" reason:@"Old format is not supported" userInfo:nil];
+    return headerLength;
 }
 
 

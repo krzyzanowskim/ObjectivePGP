@@ -25,7 +25,7 @@
 @interface OpenPGPKeyringTests : XCTestCase
 @property (strong) OpenPGPKeyring *keyring;
 @property (strong) NSString *secringPath;
-@property (strong) NSString *pubringPath;
+@property (strong) NSString *pubringOldFormatPath;
 @property (strong) NSString *pubringNewFormatPath;
 @end
 
@@ -37,7 +37,7 @@
 
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     self.secringPath = [bundle pathForResource:@"test_secring" ofType:@"gpg"];
-    self.pubringPath = [bundle pathForResource:@"test_pubring" ofType:@"gpg"];
+    self.pubringOldFormatPath = [bundle pathForResource:@"test_pubring_old_format" ofType:@"gpg"];
     self.pubringNewFormatPath = [bundle pathForResource:@"test_pubring_new_format" ofType:@"gpg"];
 
     self.keyring = [[OpenPGPKeyring alloc] init];
@@ -49,7 +49,7 @@
     self.keyring = nil;
 }
 
-- (void) testOpenKeyring
+- (void) testNewOpenKeyring
 {
 //    BOOL openedSecureKeyring = [self.keyring open:self.secringPath];
 //    BOOL openedPubKeyring    = [self.keyring open:self.pubringPath];
@@ -57,6 +57,12 @@
 //    XCTAssert(openedSecureKeyring, @"Unable to open secure keyring");
 //    XCTAssert(openedPubKeyring, @"Unable to open public keyring");
     XCTAssert(openedPubKeyringNewFormat, @"Unable to open public keyring");
+}
+
+- (void) testOldOpenKeyring
+{
+    BOOL openedPubKeyringOldFormat    = [self.keyring open:self.pubringOldFormatPath];
+    XCTAssert(openedPubKeyringOldFormat, @"Unable to open public keyring");
 }
 
 //- (void)testExample
