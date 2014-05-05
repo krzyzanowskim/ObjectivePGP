@@ -19,6 +19,9 @@
     if (self = [self init]) {
         self->_type = type;
         [self parseSubpacketBody:packetBody];
+#ifdef DEBUG
+        NSLog(@"subpacket type %@", @(self.type));
+#endif
     }
     return self;
 }
@@ -31,19 +34,25 @@
 - (void) parseSubpacketBody:(NSData *)packetBody
 {
     switch (self.type) {
-        case PGPSignatureSubpacketCreationTime: // NSNumber
+        case PGPSignatureSubpacketSignatureCreationTime: // NSDate
+        case PGPSignatureSubpacketSignatureExpirationTime:
+        case PGPSignatureSubpacketKeyExpirationTime:
         {
             //  5.2.3.4.  Signature Creation Time
+            //  5.2.3.10. Signature Expiration Time
+            //  5.2.3.6.  Key Expiration Time
+            //TODO: Signature Creation Time MUST be present in the hashed area.
+
             UInt32 signatureCreationTimestamp = 0;
             [packetBody getBytes:&signatureCreationTimestamp length:4];
             signatureCreationTimestamp = CFSwapInt32BigToHost(signatureCreationTimestamp);
-            self.value = @(signatureCreationTimestamp);
+            self.value = [NSDate dateWithTimeIntervalSince1970:signatureCreationTimestamp];
+
         }
             break;
         case PGPSignatureSubpacketIssuer: // NSData
         {
             //  5.2.3.5.  Issuer
-            //TODO: check big endian
             self.value = [packetBody subdataWithRange:(NSRange){0,8}];
         }
             break;
@@ -58,7 +67,6 @@
         default:
             break;
     }
-    //TODO: parse subpacket
 }
 
 + (PGPSignatureSubpacketType) parseSubpacketHeader:(NSData *)headerData headerLength:(UInt32 *)headerLength subpacketLength:(UInt32 *)subpacketLen
@@ -73,6 +81,7 @@
     UInt8 fourthOctet = lengthOctets[3];
     UInt8 fifthOctet  = lengthOctets[4];
 
+    //TODO: check bigendian with longer packets
     if (firstOctet < 192) {
         // subpacketLen = 1st_octet;
         *subpacketLen   = firstOctet;

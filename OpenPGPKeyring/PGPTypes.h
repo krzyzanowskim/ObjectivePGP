@@ -92,8 +92,8 @@ typedef NS_ENUM(UInt8, PGPSignatureType) {
 };
 
 typedef NS_ENUM(UInt8, PGPSignatureSubpacketType) {
-    PGPSignatureSubpacketCreationTime                  = 2,
-    PGPSignatureSubpacketExpirationTime                = 3,
+    PGPSignatureSubpacketSignatureCreationTime         = 2,
+    PGPSignatureSubpacketSignatureExpirationTime       = 3,
     PGPSignatureSubpacketExportableCertification       = 4,
     PGPSignatureSubpacketTrustSignature                = 5,
     PGPSignatureSubpacketRegularExpression             = 6,
@@ -115,7 +115,6 @@ typedef NS_ENUM(UInt8, PGPSignatureSubpacketType) {
     PGPSignatureSubpacketFeatures                      = 30,
     PGPSignatureSubpacketSignatureTarget               = 31,
     PGPSignatureSubpacketEmbeddedSignature             = 32
-
 };
 
 #endif
