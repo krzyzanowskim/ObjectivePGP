@@ -19,7 +19,7 @@
 
 @property (assign, readonly) PGPPacketTag tag;
 @property (assign, readonly) NSUInteger   headerLength;
-@property (assign, readonly) NSUInteger   bodyLength;
+@property (assign, readonly) UInt32   bodyLength;
 
 - (BOOL) parsePacketHeader:(NSData *)headerData;
 - (void) parsePacketBody:(NSData *)packetBody;

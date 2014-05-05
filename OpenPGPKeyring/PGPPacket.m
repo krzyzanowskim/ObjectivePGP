@@ -54,7 +54,7 @@
  *
  *  @return Header length
  */
-- (NSUInteger) parseNewFormatHeaderPacket:(NSData *)headerData bodyLength:(NSUInteger *)length packetTag:(PGPPacketTag *)tag
+- (NSUInteger) parseNewFormatHeaderPacket:(NSData *)headerData bodyLength:(UInt32 *)length packetTag:(PGPPacketTag *)tag
 {
     NSParameterAssert(headerData);
 
@@ -109,7 +109,7 @@
 }
 
 // 4.2.  Packet Headers
-- (NSUInteger) parseOldFormatHeaderPacket:(NSData *)headerData bodyLength:(NSUInteger *)length packetTag:(PGPPacketTag *)tag
+- (NSUInteger) parseOldFormatHeaderPacket:(NSData *)headerData bodyLength:(UInt32 *)length packetTag:(PGPPacketTag *)tag
 {
     NSParameterAssert(headerData);
 
@@ -164,7 +164,6 @@
     NSAssert(bodyLength > 0, @"The packet is of indeterminate length");
     *length = bodyLength;
 
-    // @throw [NSException exceptionWithName:@"PGPUnknownFormat" reason:@"Old format is not supported" userInfo:nil];
     return headerLength;
 }
 

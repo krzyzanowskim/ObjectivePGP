@@ -38,7 +38,7 @@
 
     //TODO: whole keyring is parsed at once, for big files it may be a memory issue, change to stream later
     while (offset < keyringData.length) {
-        NSData *packetHeaderData = [keyringData subdataWithRange:(NSRange) {offset + 0,6}]; // up to 6 octets for complete header
+        NSData *packetHeaderData = [keyringData subdataWithRange:(NSRange) {offset + 0, MIN(6,keyringData.length - offset)}]; // up to 6 octets for complete header
 
         PGPPacket *packet = [[PGPPacket alloc] init];
         if ([packet parsePacketHeader:packetHeaderData]) {
