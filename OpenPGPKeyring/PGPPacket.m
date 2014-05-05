@@ -11,6 +11,7 @@
 #import "PGPPublicSubKeyPacket.h"
 #import "PGPSignaturePacket.h"
 #import "PGPUserIDPacket.h"
+#import "PGPTrustPacket.h"
 
 @implementation PGPPacket
 
@@ -187,7 +188,7 @@
         {
             PGPPublicKeyPacket *publicKey = [[PGPPublicKeyPacket alloc] initWithBody:packetBody];
 #ifdef DEBUG
-            NSLog(@"Public key timestamp %@", [NSDate dateWithTimeIntervalSince1970:publicKey.timestamp]);
+            NSLog(@"PGPPublicKeyPacket timestamp %@", [NSDate dateWithTimeIntervalSince1970:publicKey.timestamp]);
 #endif
         }
             break;
@@ -195,7 +196,7 @@
         {
             PGPPublicSubKeyPacket *publicSubKey = [[PGPPublicSubKeyPacket alloc] initWithBody:packetBody];
 #ifdef DEBUG
-            NSLog(@"Public subkey timestamp %@", [NSDate dateWithTimeIntervalSince1970:publicSubKey.timestamp]);
+            NSLog(@"PGPPublicSubKeyPacket timestamp %@", [NSDate dateWithTimeIntervalSince1970:publicSubKey.timestamp]);
 #endif
         }
             break;
@@ -203,7 +204,7 @@
         {
             PGPSignaturePacket *signature = [[PGPSignaturePacket alloc] initWithBody:packetBody];
 #ifdef DEBUG
-            NSLog(@"signature type %d", signature.signatureType);
+            NSLog(@"PGPSignaturePacket type %d", signature.signatureType);
 #endif
         }
             break;
@@ -211,7 +212,15 @@
         {
             PGPUserIDPacket *userIDPacket = [[PGPUserIDPacket alloc] initWithBody:packetBody];
 #ifdef DEBUG
-            NSLog(@"%@",userIDPacket.userID);
+            NSLog(@"PGPUserIDPacket %@",userIDPacket.userID);
+#endif
+        }
+            break;
+        case PGPTrustPacketTag:
+        {
+            PGPTrustPacket *trustPacket = [[PGPTrustPacket alloc] initWithBody:packetBody];
+#ifdef DEBUG
+            NSLog(@"PGPTrustPacket %@",trustPacket.data);
 #endif
         }
             break;
