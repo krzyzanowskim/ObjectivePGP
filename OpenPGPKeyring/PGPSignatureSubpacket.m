@@ -53,6 +53,7 @@
         case PGPSignatureSubpacketIssuer: // NSData
         {
             //  5.2.3.5.  Issuer
+            //TODO: wtf actually? see 12.2.  Key IDs and Fingerprints
             self.value = [packetBody subdataWithRange:(NSRange){0,8}];
         }
             break;
