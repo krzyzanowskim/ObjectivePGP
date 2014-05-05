@@ -10,9 +10,13 @@
 #import "PGPTypes.h"
 
 @protocol PGPPacket <NSObject>
-
 @required
 @property (assign, readonly, nonatomic) PGPPacketTag tag;
 - (void) parsePacketBody:(NSData *)packetBody;
+@end
+
+@interface PGPPacket : NSObject
+
+- (NSUInteger) parsePacketHeader:(NSData *)headerData bodyLength:(NSUInteger *)length packetTag:(PGPPacketTag *)tag;
 
 @end

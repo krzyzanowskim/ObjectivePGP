@@ -24,6 +24,7 @@
 		756299E21914F30D00C5AD3B /* test_secring.gpg in Resources */ = {isa = PBXBuildFile; fileRef = 756299E01914F30D00C5AD3B /* test_secring.gpg */; };
 		756299E41915944B00C5AD3B /* test_pubring_new_format.gpg in Resources */ = {isa = PBXBuildFile; fileRef = 756299E31915944B00C5AD3B /* test_pubring_new_format.gpg */; };
 		756299E71915AF0700C5AD3B /* PGPPublicKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 756299E61915AF0700C5AD3B /* PGPPublicKeyPacket.m */; };
+		75734BD119181E5500A54D6E /* PGPPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75734BD019181E5500A54D6E /* PGPPacket.m */; };
 		759DBA141915B5BD00305549 /* NSData+Bytes.m in Sources */ = {isa = PBXBuildFile; fileRef = 759DBA131915B5BD00305549 /* NSData+Bytes.m */; };
 		759DBA181915CBDF00305549 /* PGPMPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 759DBA171915CBDF00305549 /* PGPMPI.m */; };
 		75E7B6B81916493600C96BAB /* PGPPublicSubKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75E7B6B71916493600C96BAB /* PGPPublicSubKeyPacket.m */; };
@@ -78,6 +79,7 @@
 		756299E31915944B00C5AD3B /* test_pubring_new_format.gpg */ = {isa = PBXFileReference; lastKnownFileType = file; path = test_pubring_new_format.gpg; sourceTree = "<group>"; };
 		756299E51915AF0700C5AD3B /* PGPPublicKeyPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPublicKeyPacket.h; sourceTree = "<group>"; };
 		756299E61915AF0700C5AD3B /* PGPPublicKeyPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPublicKeyPacket.m; sourceTree = "<group>"; };
+		75734BD019181E5500A54D6E /* PGPPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPacket.m; sourceTree = "<group>"; };
 		759DBA121915B5BD00305549 /* NSData+Bytes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Bytes.h"; sourceTree = "<group>"; };
 		759DBA131915B5BD00305549 /* NSData+Bytes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Bytes.m"; sourceTree = "<group>"; };
 		759DBA151915BC0400305549 /* PGPTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPTypes.h; sourceTree = "<group>"; };
@@ -223,6 +225,7 @@
 			isa = PBXGroup;
 			children = (
 				75E7B6BC19167F1700C96BAB /* PGPPacket.h */,
+				75734BD019181E5500A54D6E /* PGPPacket.m */,
 				756299E51915AF0700C5AD3B /* PGPPublicKeyPacket.h */,
 				756299E61915AF0700C5AD3B /* PGPPublicKeyPacket.m */,
 				75E7B6B61916493600C96BAB /* PGPPublicSubKeyPacket.h */,
@@ -361,6 +364,7 @@
 				756299C01914DE1A00C5AD3B /* OpenPGPKeyring.m in Sources */,
 				759DBA181915CBDF00305549 /* PGPMPI.m in Sources */,
 				759DBA141915B5BD00305549 /* NSData+Bytes.m in Sources */,
+				75734BD119181E5500A54D6E /* PGPPacket.m in Sources */,
 				7502CEFF1916DCE9001B32D7 /* PGPSignatureSubpacket.m in Sources */,
 				7502CF021916EFD5001B32D7 /* NSData+NSValue.m in Sources */,
 			);
