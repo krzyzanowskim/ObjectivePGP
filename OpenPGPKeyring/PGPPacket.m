@@ -21,12 +21,10 @@
  *  Parse header
  *
  *  @param headerData header data
- *  @param length     return packet body length
- *  @param tag        return packet tag
  *
- *  @return Header length
+ *  @return YES on success
  */
-- (NSUInteger) parsePacketHeader:(NSData *)headerData bodyLength:(NSUInteger *)length packetTag:(PGPPacketTag *)tag
+- (BOOL) parsePacketHeader:(NSData *)headerData
 {
     UInt8 *headerBytes = (UInt8 *)[headerData subdataWithRange:NSMakeRange(0, 1)].bytes;
     UInt8 headerByte = headerBytes[0];
@@ -34,20 +32,19 @@
     BOOL isPGPHeader = !!(headerByte & PGPHeaderPacketTagAllwaysSet);
     BOOL isNewFormat = !!(headerByte & PGPHeaderPacketTagNewFormat);
 
-    *length = 0;
+    self->_headerLength = 0;
 
     if (!isPGPHeader) {
-        return 0;
+        return NO;
     }
 
-    NSUInteger headerLength = 0;
     if (isNewFormat) {
-        headerLength = [self parseNewFormatHeaderPacket:headerData bodyLength:length packetTag:tag];
+        self->_headerLength = [self parseNewFormatHeaderPacket:headerData bodyLength:&_bodyLength packetTag:&_tag];
     } else {
-        headerLength = [self parseOldFormatHeaderPacket:headerData bodyLength:length packetTag:tag];
+        self->_headerLength = [self parseOldFormatHeaderPacket:headerData bodyLength:&_bodyLength packetTag:&_tag];
     }
 
-    return headerLength;
+    return YES;
 }
 
 /**
@@ -120,14 +117,13 @@
 /**
  *  Determine packet type
  *
- *  @param packetTag  Packet tag
  *  @param packetBody Packet Body
  */
-- (void) parsePacketTag:(PGPPacketTag)packetTag packetBody:(NSData *)packetBody
+- (void) parsePacketBody:(NSData *)packetBody
 {
-    NSLog(@"Reading packet tag %d", packetTag);
+    NSLog(@"Reading packet tag %d", self.tag);
 
-    switch (packetTag) {
+    switch (self.tag) {
         case PGPPublicKeyPacketTag:
         {
             PGPPublicKeyPacket *publicKey = [[PGPPublicKeyPacket alloc] initWithBody:packetBody];
@@ -162,7 +158,7 @@
             break;
 
         default:
-            NSLog(@"Packet tag %d is not yet supported", packetTag);
+            NSLog(@"Packet tag %d is not yet supported", self.tag);
             break;
     }
 }
