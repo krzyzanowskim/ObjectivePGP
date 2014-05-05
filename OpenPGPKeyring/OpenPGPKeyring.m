@@ -170,18 +170,25 @@
         case PGPPublicKeyPacketTag:
         {
             PGPPublicKey *publicKey = [[PGPPublicKey alloc] initWithBody:packetBody];
+#ifdef DEBUG
             NSLog(@"Public key timestamp %@", [NSDate dateWithTimeIntervalSince1970:publicKey.timestamp]);
+#endif
         }
             break;
         case PGPPublicSubkeyPacketTag:
         {
             PGPPublicSubKey *publicSubKey = [[PGPPublicSubKey alloc] initWithBody:packetBody];
+#ifdef DEBUG
             NSLog(@"Public subkey timestamp %@", [NSDate dateWithTimeIntervalSince1970:publicSubKey.timestamp]);
+#endif
         }
             break;
         case PGPSignaturePacketTag:
         {
             PGPSignature *signature = [[PGPSignature alloc] initWithBody:packetBody];
+#ifdef DEBUG
+            NSLog(@"signature type %d", signature.signatureType);
+#endif
         }
             break;
         case PGPUserIDPacketTag:
