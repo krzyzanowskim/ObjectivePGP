@@ -7,6 +7,7 @@
 //
 
 #import "PGPSignatureSubpacket.h"
+#import "PGPKeyID.h"
 
 @interface PGPSignatureSubpacket ()
 @property (strong, readwrite) id value;
@@ -47,14 +48,23 @@
             [packetBody getBytes:&signatureCreationTimestamp length:4];
             signatureCreationTimestamp = CFSwapInt32BigToHost(signatureCreationTimestamp);
             self.value = [NSDate dateWithTimeIntervalSince1970:signatureCreationTimestamp];
-
         }
             break;
-        case PGPSignatureSubpacketIssuer: // NSData
+        case PGPSignatureSubpacketIssuer: // PGPKeyID
         {
             //  5.2.3.5.  Issuer
-            //TODO: wtf actually? see 12.2.  Key IDs and Fingerprints
-            self.value = [packetBody subdataWithRange:(NSRange){0,8}];
+
+            PGPKeyID *keyID = [[PGPKeyID alloc] initWithData:packetBody];
+            self.value = keyID; //[packetBody subdataWithRange:(NSRange){0,8}];
+
+            /*
+            NSMutableString *sbuf = [NSMutableString stringWithCapacity:packetBody.length * 2];
+            const unsigned char *buf = packetBody.bytes;
+            for (NSUInteger i = 0; i < packetBody.length; ++i) {
+                [sbuf appendFormat:@"%02X", (NSUInteger)buf[i]];
+            }
+            NSLog(@"%@",sbuf);
+             */
         }
             break;
         case PGPSignatureSubpacketPrimaryUserID: // NSNumber BOOL
@@ -133,9 +143,10 @@
                 [algorithmsArray addObject:@(algorithm)];
             }
 
-            self.value = [algorithmsArray copy];        }
+            self.value = [algorithmsArray copy];
+        }
             break;
-        case PGPSignatureSubpacketKeyServerPreference:
+        case PGPSignatureSubpacketKeyServerPreference: // NSArray of PGPKeyServerPreferenceFlags
         {
             // 5.2.3.17.  Key Server Preferences
             UInt64 flagByte = 0;
@@ -147,7 +158,7 @@
             self.value = [flagsArray copy];
         }
             break;
-        case PGPSignatureSubpacketFeatures:
+        case PGPSignatureSubpacketFeatures: // NSArray of PGPFeature
         {
             // 5.2.3.24.  Features
             NSMutableArray *featuresArray = [NSMutableArray array];
