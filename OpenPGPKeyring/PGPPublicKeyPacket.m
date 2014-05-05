@@ -6,15 +6,15 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import "PGPPublicKey.h"
+#import "PGPPublicKeyPacket.h"
 #import "PGPTypes.h"
 #import "PGPMPI.h"
 
-@interface PGPPublicKey ()
+@interface PGPPublicKeyPacket ()
 @property (assign) UInt16 V3validityPeriod;
 @end
 
-@implementation PGPPublicKey
+@implementation PGPPublicKeyPacket
 
 - (instancetype) initWithBody:(NSData *)packetData
 {

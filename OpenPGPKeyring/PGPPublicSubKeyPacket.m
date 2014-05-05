@@ -6,9 +6,9 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import "PGPPublicSubKey.h"
+#import "PGPPublicSubKeyPacket.h"
 
-@implementation PGPPublicSubKey
+@implementation PGPPublicSubKeyPacket
 
 - (PGPPacketTag)tag
 {

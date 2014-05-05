@@ -11,7 +11,7 @@
 #import "PGPTypes.h"
 #import "PGPPacket.h"
 
-@interface PGPPublicKey : NSObject <PGPPacket>
+@interface PGPPublicKeyPacket : NSObject <PGPPacket>
 
 @property (assign, readonly, nonatomic) PGPPacketTag tag; // 6
 @property (assign, readonly) UInt8 version;

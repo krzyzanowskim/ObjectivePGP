@@ -7,9 +7,9 @@
 //
 
 #import "OpenPGPKeyring.h"
-#import "PGPPublicKey.h"
-#import "PGPPublicSubKey.h"
-#import "PGPSignature.h"
+#import "PGPPublicKeyPacket.h"
+#import "PGPPublicSubKeyPacket.h"
+#import "PGPSignaturePacket.h"
 #import "PGPUserIDPacket.h"
 
 @implementation OpenPGPKeyring
@@ -169,7 +169,7 @@
     switch (packetTag) {
         case PGPPublicKeyPacketTag:
         {
-            PGPPublicKey *publicKey = [[PGPPublicKey alloc] initWithBody:packetBody];
+            PGPPublicKeyPacket *publicKey = [[PGPPublicKeyPacket alloc] initWithBody:packetBody];
 #ifdef DEBUG
             NSLog(@"Public key timestamp %@", [NSDate dateWithTimeIntervalSince1970:publicKey.timestamp]);
 #endif
@@ -177,7 +177,7 @@
             break;
         case PGPPublicSubkeyPacketTag:
         {
-            PGPPublicSubKey *publicSubKey = [[PGPPublicSubKey alloc] initWithBody:packetBody];
+            PGPPublicSubKeyPacket *publicSubKey = [[PGPPublicSubKeyPacket alloc] initWithBody:packetBody];
 #ifdef DEBUG
             NSLog(@"Public subkey timestamp %@", [NSDate dateWithTimeIntervalSince1970:publicSubKey.timestamp]);
 #endif
@@ -185,7 +185,7 @@
             break;
         case PGPSignaturePacketTag:
         {
-            PGPSignature *signature = [[PGPSignature alloc] initWithBody:packetBody];
+            PGPSignaturePacket *signature = [[PGPSignaturePacket alloc] initWithBody:packetBody];
 #ifdef DEBUG
             NSLog(@"signature type %d", signature.signatureType);
 #endif

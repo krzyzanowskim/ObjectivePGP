@@ -6,16 +6,16 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import "PGPSignature.h"
+#import "PGPSignaturePacket.h"
 #import "PGPMPI.h"
 #import "PGPSignatureSubpacket.h"
 
-@interface PGPSignature ()
+@interface PGPSignaturePacket ()
 @property (strong, readwrite, nonatomic) NSMutableArray *hashedSubpackets;
 @property (strong, readwrite, nonatomic) NSMutableArray *unhashedSubpackets;
 @end
 
-@implementation PGPSignature
+@implementation PGPSignaturePacket
 
 - (instancetype) initWithBody:(NSData *)packetData
 {

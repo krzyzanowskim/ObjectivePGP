@@ -10,7 +10,7 @@
 #import <Foundation/Foundation.h>
 #import "PGPPacket.h"
 
-@interface PGPSignature : NSObject <PGPPacket>
+@interface PGPSignaturePacket : NSObject <PGPPacket>
 
 @property (assign, readonly) UInt8 version;
 @property (assign, readonly) PGPSignatureType signatureType;

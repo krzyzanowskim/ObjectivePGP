@@ -8,9 +8,9 @@
 //  Tag 14
 
 #import <Foundation/Foundation.h>
-#import "PGPPublicKey.h"
+#import "PGPPublicKeyPacket.h"
 #import "PGPPacket.h"
 
-@interface PGPPublicSubKey : PGPPublicKey <PGPPacket>
+@interface PGPPublicSubKeyPacket : PGPPublicKeyPacket <PGPPacket>
 
 @end
