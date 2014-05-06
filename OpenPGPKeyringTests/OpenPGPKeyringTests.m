@@ -61,12 +61,12 @@
 //    XCTAssert(openedPubKeyringOldFormat, @"Unable to read file");
 //}
 
-//- (void) testSecretKeyring
-//{
-//    BOOL openedSecring    = [self.keyring open:self.secringPath];
-//    XCTAssert(openedSecring, @"Unable to read file");
-//}
-//
+- (void) testSecretKeyring
+{
+    BOOL openedSecring    = [self.keyring open:self.secringPath];
+    XCTAssert(openedSecring, @"Unable to read file");
+}
+
 //- (void)testExample
 //{
 //    XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);

@@ -17,7 +17,7 @@
 - (NSUInteger) headerLength;
 - (UInt32) bodyLength;
 
-- (instancetype) initWithHeader:(NSData *)headerData;
+- (instancetype) initWithHeader:(NSData *)headerData body:(NSData *)bodyData;
 - (void) parsePacketBody:(NSData *)packetBody;
 @end
 

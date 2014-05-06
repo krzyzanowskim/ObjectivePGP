@@ -10,13 +10,15 @@
 
 @implementation PGPPacket
 
-- (instancetype)initWithHeader:(NSData *)headerData
+- (instancetype)initWithHeader:(NSData *)headerData body:(NSData *)bodyData
 {
     if (self = [self init]) {
         self.headerLength = headerData.length;
+        [self parsePacketBody:bodyData];
     }
     return self;
 }
+
 
 - (void) parsePacketBody:(NSData *)packetBody
 {

@@ -40,35 +40,35 @@
         switch (packetTag) {
             case PGPPublicKeyPacketTag:
             {
-                packet = [[PGPPublicKeyPacket alloc] initWithHeader:packetHeaderData];
+                packet = [[PGPPublicKeyPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
             }
                 break;
             case PGPPublicSubkeyPacketTag:
             {
-                packet = [[PGPPublicSubKeyPacket alloc] initWithHeader:packetHeaderData];
+                packet = [[PGPPublicSubKeyPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
             }
                 break;
             case PGPSignaturePacketTag:
             {
-                packet = [[PGPSignaturePacket alloc] initWithHeader:packetHeaderData];
+                packet = [[PGPSignaturePacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
             }
                 break;
             case PGPUserIDPacketTag:
             {
-                packet = [[PGPUserIDPacket alloc] initWithHeader:packetHeaderData];
+                packet = [[PGPUserIDPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
             }
                 break;
             case PGPTrustPacketTag:
             {
-                packet = [[PGPTrustPacket alloc] initWithHeader:packetHeaderData];
+                packet = [[PGPTrustPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
             }
                 break;
                 
             default:
-                NSLog(@"Packet tag %d is not yet supported", packetTag);
+                NSLog(@"!!! Packet tag %d is not supported", packetTag);
+                packet = [[PGPPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
                 break;
         }
-        [packet parsePacketBody:packetBodyData];
         return packet;
     }
     return nil;
