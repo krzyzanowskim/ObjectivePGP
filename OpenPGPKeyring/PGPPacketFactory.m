@@ -15,15 +15,22 @@
 
 @implementation PGPPacketFactory
 
-+ (id <PGPPacket> ) packetWithData:(NSData *)packetData
+/**
+ *  Parse packet data and return packet object instance
+ *
+ *  @param packetsData Data with all packets. Packet sequence data. Keyring.
+ *  @param offset      offset of current packet
+ *
+ *  @return Packet instance object
+ */
++ (id <PGPPacket> ) packetWithData:(NSData *)packetsData offset:(NSUInteger)offset
 {
-    NSUInteger offset = 0;
-    NSData *packetHeaderData = [packetData subdataWithRange:(NSRange) {offset + 0, MIN(6,packetData.length - offset)}]; // up to 6 octets for complete header
+    NSData *packetHeaderData = [packetsData subdataWithRange:(NSRange) {offset + 0, MIN(6,packetsData.length - offset)}]; // up to 6 octets for complete header
 
     PGPPacketFactory *packetFactory = [[PGPPacketFactory alloc] init];
     PGPPacket *packetGeneric = [[PGPPacket alloc] initWithHeaderData:packetHeaderData];
     if (packetGeneric) {
-        NSData *packetBodyData = [packetData subdataWithRange:(NSRange) {offset + packetGeneric.headerLength,packetGeneric.bodyLength}];
+        NSData *packetBodyData = [packetsData subdataWithRange:(NSRange) {offset + packetGeneric.headerLength,packetGeneric.bodyLength}];
 
         PGPPacket *packetInstance = [packetFactory getPacketInstance:packetBodyData forTag:packetGeneric.tag];
 

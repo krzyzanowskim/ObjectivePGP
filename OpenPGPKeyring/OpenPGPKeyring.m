@@ -38,7 +38,7 @@
 
     //TODO: whole keyring is parsed at once, for big files it may be a memory issue, change to stream later
     while (offset < keyringData.length) {
-        id <PGPPacket> packet = [PGPPacketFactory packetWithData:keyringData];
+        id <PGPPacket> packet = [PGPPacketFactory packetWithData:keyringData offset:offset];
         offset = offset + packet.headerLength + packet.bodyLength;
     }
     return ret;
