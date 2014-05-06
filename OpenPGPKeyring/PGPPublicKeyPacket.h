@@ -9,11 +9,10 @@
 
 #import <Foundation/Foundation.h>
 #import "PGPTypes.h"
-#import "PGPPacket.h"
+#import "PGPPacketFactory.h"
 
-@interface PGPPublicKeyPacket : NSObject <PGPPacket>
+@interface PGPPublicKeyPacket : PGPPacket <PGPPacket>
 
-@property (assign, readonly, nonatomic) PGPPacketTag tag; // 6
 @property (assign, readonly) UInt8 version;
 @property (assign, readonly) UInt32 timestamp;
 @property (assign, readonly) PGPPublicKeyAlgorithm algorithm;

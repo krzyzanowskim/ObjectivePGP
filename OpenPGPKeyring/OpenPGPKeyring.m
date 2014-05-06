@@ -7,7 +7,7 @@
 //
 
 #import "OpenPGPKeyring.h"
-#import "PGPPacket.h"
+#import "PGPPacketFactory.h"
 
 @implementation OpenPGPKeyring
 
@@ -38,13 +38,7 @@
 
     //TODO: whole keyring is parsed at once, for big files it may be a memory issue, change to stream later
     while (offset < keyringData.length) {
-        NSData *packetHeaderData = [keyringData subdataWithRange:(NSRange) {offset + 0, MIN(6,keyringData.length - offset)}]; // up to 6 octets for complete header
-
-        PGPPacket *packet = [[PGPPacket alloc] init];
-        if ([packet parsePacketHeader:packetHeaderData]) {
-            NSData *packetBodyData = [keyringData subdataWithRange:(NSRange) {offset + packet.headerLength,packet.bodyLength}];
-            [packet parsePacketBody:packetBodyData];
-        }
+        id <PGPPacket> packet = [PGPPacketFactory packetWithData:keyringData];
         offset = offset + packet.headerLength + packet.bodyLength;
     }
     return ret;

@@ -2,7 +2,7 @@
 //  PGPPacket.h
 //  OpenPGPKeyring
 //
-//  Created by Marcin Krzyzanowski on 04/05/14.
+//  Created by Marcin Krzyzanowski on 06/05/14.
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
@@ -10,18 +10,24 @@
 #import "PGPTypes.h"
 
 @protocol PGPPacket <NSObject>
+
 @required
-@property (assign, readonly, nonatomic) PGPPacketTag tag;
+
+- (PGPPacketTag) tag;
+- (NSUInteger) headerLength;
+- (UInt32) bodyLength;
+
 - (void) parsePacketBody:(NSData *)packetBody;
 @end
 
-@interface PGPPacket : NSObject
 
-@property (assign, readonly) PGPPacketTag tag;
-@property (assign, readonly) NSUInteger   headerLength;
-@property (assign, readonly) UInt32   bodyLength;
+@interface PGPPacket : NSObject <PGPPacket>
 
+@property (assign) PGPPacketTag tag;
+@property (assign) NSUInteger   headerLength;
+@property (assign) UInt32       bodyLength;
+
+- (instancetype) initWithHeaderData:(NSData *)headerData;
 - (BOOL) parsePacketHeader:(NSData *)headerData;
-- (void) parsePacketBody:(NSData *)packetBody;
 
 @end

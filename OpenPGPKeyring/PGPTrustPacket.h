@@ -8,11 +8,10 @@
 //  Tag 12
 
 #import <Foundation/Foundation.h>
-#import "PGPPacket.h"
+#import "PGPPacketFactory.h"
 
-@interface PGPTrustPacket : NSObject <PGPPacket>
+@interface PGPTrustPacket : PGPPacket <PGPPacket>
 
-@property (assign, readonly, nonatomic) PGPPacketTag tag;
 @property (strong, readonly) NSData *data;
 
 - (instancetype) initWithBody:(NSData *)packetData;

@@ -8,9 +8,9 @@
 //  Tag 2
 
 #import <Foundation/Foundation.h>
-#import "PGPPacket.h"
+#import "PGPPacketFactory.h"
 
-@interface PGPSignaturePacket : NSObject <PGPPacket>
+@interface PGPSignaturePacket : PGPPacket <PGPPacket>
 
 @property (assign, readonly) UInt8 version;
 @property (assign, readonly) PGPSignatureType signatureType;

@@ -8,11 +8,10 @@
 //  Tag 13
 
 #import <Foundation/Foundation.h>
-#import "PGPPacket.h"
+#import "PGPPacketFactory.h"
 
-@interface PGPUserIDPacket : NSObject <PGPPacket>
+@interface PGPUserIDPacket : PGPPacket <PGPPacket>
 
-@property (assign, readonly, nonatomic) PGPPacketTag tag;
 @property (retain, readonly) NSString *userID;
 
 - (instancetype) initWithBody:(NSData *)packetData;
