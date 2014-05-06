@@ -25,88 +25,53 @@
  */
 + (id <PGPPacket> ) packetWithData:(NSData *)packetsData offset:(NSUInteger)offset
 {
-    NSData *packetHeaderData = [packetsData subdataWithRange:(NSRange) {offset + 0, MIN(6,packetsData.length - offset)}]; // up to 6 octets for complete header
+    NSData *guessPacketHeaderData = [packetsData subdataWithRange:(NSRange) {offset + 0, MIN(6,packetsData.length - offset)}]; // up to 6 octets for complete header
 
-    PGPPacketFactory *packetFactory = [[PGPPacketFactory alloc] init];
-    PGPPacket *packetGeneric = [[PGPPacket alloc] initWithHeaderData:packetHeaderData];
-    if (packetGeneric) {
-        NSData *packetBodyData = [packetsData subdataWithRange:(NSRange) {offset + packetGeneric.headerLength,packetGeneric.bodyLength}];
+    // parse header and get actual header data
+    UInt32 bodyLength       = 0;
+    PGPPacketTag packetTag  = 0;
+    NSData *packetHeaderData = [PGPPacket parsePacketHeader:guessPacketHeaderData bodyLength:&bodyLength packetTag:&packetTag];
 
-        PGPPacket *packetInstance = [packetFactory getPacketInstance:packetBodyData forTag:packetGeneric.tag];
-
-        packetInstance.tag          = packetGeneric.tag;
-        packetInstance.headerLength = packetGeneric.headerLength;
-        packetInstance.bodyLength   = packetGeneric.bodyLength;
-        return packetInstance;
+    if (packetHeaderData.length > 0) {
+        NSData *packetBodyData = [packetsData subdataWithRange:(NSRange) {offset + packetHeaderData.length, bodyLength}];
+        // Analyze body
+        NSLog(@"Reading packet tag %d", packetTag);
+        id <PGPPacket> packet = nil;
+        switch (packetTag) {
+            case PGPPublicKeyPacketTag:
+            {
+                packet = [[PGPPublicKeyPacket alloc] initWithHeader:packetHeaderData];
+            }
+                break;
+            case PGPPublicSubkeyPacketTag:
+            {
+                packet = [[PGPPublicSubKeyPacket alloc] initWithHeader:packetHeaderData];
+            }
+                break;
+            case PGPSignaturePacketTag:
+            {
+                packet = [[PGPSignaturePacket alloc] initWithHeader:packetHeaderData];
+            }
+                break;
+            case PGPUserIDPacketTag:
+            {
+                packet = [[PGPUserIDPacket alloc] initWithHeader:packetHeaderData];
+            }
+                break;
+            case PGPTrustPacketTag:
+            {
+                packet = [[PGPTrustPacket alloc] initWithHeader:packetHeaderData];
+            }
+                break;
+                
+            default:
+                NSLog(@"Packet tag %d is not yet supported", packetTag);
+                break;
+        }
+        [packet parsePacketBody:packetBodyData];
+        return packet;
     }
     return nil;
-}
-
-
-/**
- *  Initialize packet instance with given body
- *
- *  @param packetBody Packet body
- *  @param tag Packet tag
- */
-- (id <PGPPacket>) getPacketInstance:(NSData *)packetBody forTag:(PGPPacketTag)tag
-{
-    PGPPacket *packetInstance = nil;
-    NSLog(@"Reading packet tag %d", tag);
-
-    switch (tag) {
-        case PGPPublicKeyPacketTag:
-        {
-            PGPPublicKeyPacket *publicKey = [[PGPPublicKeyPacket alloc] initWithBody:packetBody];
-            packetInstance = publicKey;
-#ifdef DEBUG
-            NSLog(@"PGPPublicKeyPacket timestamp %@", [NSDate dateWithTimeIntervalSince1970:publicKey.timestamp]);
-#endif
-        }
-            break;
-        case PGPPublicSubkeyPacketTag:
-        {
-            PGPPublicSubKeyPacket *publicSubKey = [[PGPPublicSubKeyPacket alloc] initWithBody:packetBody];
-            packetInstance = publicSubKey;
-#ifdef DEBUG
-            NSLog(@"PGPPublicSubKeyPacket timestamp %@", [NSDate dateWithTimeIntervalSince1970:publicSubKey.timestamp]);
-#endif
-        }
-            break;
-        case PGPSignaturePacketTag:
-        {
-            PGPSignaturePacket *signature = [[PGPSignaturePacket alloc] initWithBody:packetBody];
-            packetInstance = signature;
-#ifdef DEBUG
-            NSLog(@"PGPSignaturePacket type %d", signature.signatureType);
-#endif
-        }
-            break;
-        case PGPUserIDPacketTag:
-        {
-            PGPUserIDPacket *userIDPacket = [[PGPUserIDPacket alloc] initWithBody:packetBody];
-            packetInstance = userIDPacket;
-#ifdef DEBUG
-            NSLog(@"PGPUserIDPacket %@",userIDPacket.userID);
-#endif
-        }
-            break;
-        case PGPTrustPacketTag:
-        {
-            PGPTrustPacket *trustPacket = [[PGPTrustPacket alloc] initWithBody:packetBody];
-            packetInstance = trustPacket;
-#ifdef DEBUG
-            NSLog(@"PGPTrustPacket %@",trustPacket.data);
-#endif
-        }
-            break;
-
-        default:
-            NSLog(@"Packet tag %d is not yet supported", tag);
-            break;
-    }
-
-    return packetInstance;
 }
 
 @end

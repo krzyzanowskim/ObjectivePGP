@@ -10,18 +10,17 @@
 
 @implementation PGPPacket
 
-- (void) parsePacketBody:(NSData *)packetBody
-{
-    @throw [NSException exceptionWithName:@"Overwrite method" reason:@"" userInfo:nil];
-}
-
-- (instancetype) initWithHeaderData:(NSData *)headerData
+- (instancetype)initWithHeader:(NSData *)headerData
 {
     if (self = [self init]) {
-        if (![self parsePacketHeader:headerData])
-            return nil;
+        self.headerLength = headerData.length;
     }
     return self;
+}
+
+- (void) parsePacketBody:(NSData *)packetBody
+{
+    self.bodyLength = packetBody.length;
 }
 
 #pragma mark - Packet header
@@ -32,9 +31,9 @@
  *
  *  @param headerData header data
  *
- *  @return YES on success
+ *  @return Actual header data
  */
-- (BOOL) parsePacketHeader:(NSData *)headerData
++ (NSData *) parsePacketHeader:(NSData *)headerData bodyLength:(UInt32 *)bodyLength packetTag:(PGPPacketTag *)tag
 {
     UInt8 *headerBytes = (UInt8 *)[headerData subdataWithRange:NSMakeRange(0, 1)].bytes;
     UInt8 headerByte = headerBytes[0];
@@ -42,19 +41,19 @@
     BOOL isPGPHeader = !!(headerByte & PGPHeaderPacketTagAllwaysSet);
     BOOL isNewFormat = !!(headerByte & PGPHeaderPacketTagNewFormat);
 
-    self->_headerLength = 0;
 
     if (!isPGPHeader) {
         return NO;
     }
 
+    NSUInteger headerLength = 0;
     if (isNewFormat) {
-        self->_headerLength = [self parseNewFormatHeaderPacket:headerData bodyLength:&_bodyLength packetTag:&_tag];
+        headerLength = [self parseNewFormatHeaderPacket:headerData bodyLength:bodyLength packetTag:tag];
     } else {
-        self->_headerLength = [self parseOldFormatHeaderPacket:headerData bodyLength:&_bodyLength packetTag:&_tag];
+        headerLength = [self parseOldFormatHeaderPacket:headerData bodyLength:bodyLength packetTag:tag];
     }
 
-    return YES;
+    return [headerData subdataWithRange:(NSRange){0,headerLength}];
 }
 
 /**
@@ -64,7 +63,7 @@
  *
  *  @return Header length
  */
-- (NSUInteger) parseNewFormatHeaderPacket:(NSData *)headerData bodyLength:(UInt32 *)length packetTag:(PGPPacketTag *)tag
++ (NSUInteger) parseNewFormatHeaderPacket:(NSData *)headerData bodyLength:(UInt32 *)length packetTag:(PGPPacketTag *)tag
 {
     NSParameterAssert(headerData);
 
@@ -122,7 +121,7 @@
 }
 
 // 4.2.  Packet Headers
-- (NSUInteger) parseOldFormatHeaderPacket:(NSData *)headerData bodyLength:(UInt32 *)length packetTag:(PGPPacketTag *)tag
++ (NSUInteger) parseOldFormatHeaderPacket:(NSData *)headerData bodyLength:(UInt32 *)length packetTag:(PGPPacketTag *)tag
 {
     NSParameterAssert(headerData);
 

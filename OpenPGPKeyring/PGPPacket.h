@@ -17,6 +17,7 @@
 - (NSUInteger) headerLength;
 - (UInt32) bodyLength;
 
+- (instancetype) initWithHeader:(NSData *)headerData;
 - (void) parsePacketBody:(NSData *)packetBody;
 @end
 
@@ -27,7 +28,6 @@
 @property (assign) NSUInteger   headerLength;
 @property (assign) UInt32       bodyLength;
 
-- (instancetype) initWithHeaderData:(NSData *)headerData;
-- (BOOL) parsePacketHeader:(NSData *)headerData;
++ (NSData *) parsePacketHeader:(NSData *)headerData bodyLength:(UInt32 *)bodyLength packetTag:(PGPPacketTag *)tag;
 
 @end

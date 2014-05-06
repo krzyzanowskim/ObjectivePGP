@@ -54,6 +54,7 @@
  */
 - (void)parsePacketBody:(NSData *)packetBody
 {
+    [super parsePacketBody:packetBody];
     //  TODO: Implementations SHOULD accept V3 signatures
 
     // V4

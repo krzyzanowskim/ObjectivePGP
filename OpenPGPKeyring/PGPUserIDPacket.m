@@ -26,6 +26,8 @@
 
 - (void) parsePacketBody:(NSData *)packetBody
 {
+    [super parsePacketBody:packetBody];
+
     _userID = [[NSString alloc] initWithData:packetBody encoding:NSUTF8StringEncoding];
 }
 

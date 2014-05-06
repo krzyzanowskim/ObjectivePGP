@@ -36,6 +36,7 @@
  */
 - (void) parsePacketBody:(NSData *)packetBody
 {
+    [super parsePacketBody:packetBody];
     //TODO: V3 keys are deprecated; an implementation MUST NOT generate a V3 key, but MAY accept it.
 
     NSUInteger position = 0;

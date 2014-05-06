@@ -29,6 +29,8 @@
 
 - (void) parsePacketBody:(NSData *)packetBody
 {
+    [super parsePacketBody:packetBody];
+
     // 5.10.  Trust Packet (Tag 12)
     // The format of Trust packets is defined by a given implementation.
     self.data = packetBody;

@@ -51,20 +51,22 @@
 
 - (void) testNewOpenKeyring
 {
-//    BOOL openedSecureKeyring = [self.keyring open:self.secringPath];
-//    BOOL openedPubKeyring    = [self.keyring open:self.pubringPath];
     BOOL openedPubKeyringNewFormat    = [self.keyring open:self.pubringNewFormatPath];
-//    XCTAssert(openedSecureKeyring, @"Unable to open secure keyring");
-//    XCTAssert(openedPubKeyring, @"Unable to open public keyring");
-    XCTAssert(openedPubKeyringNewFormat, @"Unable to open public keyring");
+    XCTAssert(openedPubKeyringNewFormat, @"Unable to read file");
 }
 
-- (void) testOldOpenKeyring
-{
-    BOOL openedPubKeyringOldFormat    = [self.keyring open:self.pubringOldFormatPath];
-    XCTAssert(openedPubKeyringOldFormat, @"Unable to open public keyring");
-}
+//- (void) testOldOpenKeyring
+//{
+//    BOOL openedPubKeyringOldFormat    = [self.keyring open:self.pubringOldFormatPath];
+//    XCTAssert(openedPubKeyringOldFormat, @"Unable to read file");
+//}
 
+//- (void) testSecretKeyring
+//{
+//    BOOL openedSecring    = [self.keyring open:self.secringPath];
+//    XCTAssert(openedSecring, @"Unable to read file");
+//}
+//
 //- (void)testExample
 //{
 //    XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
