@@ -19,7 +19,7 @@
 - (UInt32) bodyLength;
 
 - (instancetype) initWithHeader:(NSData *)headerData body:(NSData *)bodyData;
-- (void) parsePacketBody:(NSData *)packetBody;
+- (NSUInteger) parsePacketBody:(NSData *)packetBody;
 @end
 
 

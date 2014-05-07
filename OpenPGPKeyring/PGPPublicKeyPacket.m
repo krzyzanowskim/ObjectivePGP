@@ -26,12 +26,13 @@
  *
  *  @param packetBody Packet body
  */
-- (void) parsePacketBody:(NSData *)packetBody
+- (NSUInteger) parsePacketBody:(NSData *)packetBody
 {
+    NSUInteger position = [super parsePacketBody:packetBody];
+
     [super parsePacketBody:packetBody];
     //TODO: V3 keys are deprecated; an implementation MUST NOT generate a V3 key, but MAY accept it.
 
-    NSUInteger position = 0;
     // A one-octet version number (2,3,4).
     [packetBody getBytes:&_version range:(NSRange){position,1}];
     position = position + 1;
@@ -110,6 +111,7 @@
             @throw [NSException exceptionWithName:@"Unknown Algorithm" reason:@"Given algorithm is not supported" userInfo:nil];
             break;
     }
+    return position;
 }
 
 @end

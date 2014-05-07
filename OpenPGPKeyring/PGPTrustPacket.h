@@ -14,6 +14,6 @@
 
 @property (strong, readonly) NSData *data;
 
-- (void) parsePacketBody:(NSData *)packetBody;
+- (NSUInteger) parsePacketBody:(NSData *)packetBody;
 
 @end

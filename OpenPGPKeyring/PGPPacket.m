@@ -20,9 +20,10 @@
 }
 
 
-- (void) parsePacketBody:(NSData *)packetBody
+- (NSUInteger) parsePacketBody:(NSData *)packetBody
 {
     self.bodyLength = packetBody.length;
+    return 0;
 }
 
 #pragma mark - Packet header

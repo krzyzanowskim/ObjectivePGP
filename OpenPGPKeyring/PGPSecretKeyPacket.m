@@ -18,4 +18,12 @@
     return PGPSecretKeyPacketTag;
 }
 
+- (NSUInteger)parsePacketBody:(NSData *)packetBody
+{
+    NSUInteger position = [super parsePacketBody:packetBody];
+    //  5.5.3.  Secret-Key Packet Formats
+
+    return position;
+}
+
 @end

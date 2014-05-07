@@ -17,6 +17,6 @@
 @property (assign, readonly) UInt32 timestamp;
 @property (assign, readonly) PGPPublicKeyAlgorithm algorithm;
 
-- (void) parsePacketBody:(NSData *)packetBody;
+- (NSUInteger) parsePacketBody:(NSData *)packetBody;
 
 @end

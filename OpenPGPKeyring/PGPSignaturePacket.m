@@ -44,7 +44,7 @@
  *
  *  @param packetBody Packet body
  */
-- (void)parsePacketBody:(NSData *)packetBody
+- (NSUInteger)parsePacketBody:(NSData *)packetBody
 {
     [super parsePacketBody:packetBody];
     //  TODO: Implementations SHOULD accept V3 signatures
@@ -162,6 +162,7 @@
         default:
             break;
     }
+    return position;
 }
 
 

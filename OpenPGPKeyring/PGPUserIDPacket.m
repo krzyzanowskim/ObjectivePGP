@@ -15,11 +15,14 @@
     return PGPUserIDPacketTag;
 }
 
-- (void) parsePacketBody:(NSData *)packetBody
+- (NSUInteger) parsePacketBody:(NSData *)packetBody
 {
-    [super parsePacketBody:packetBody];
+    NSUInteger position = [super parsePacketBody:packetBody];
 
     _userID = [[NSString alloc] initWithData:packetBody encoding:NSUTF8StringEncoding];
+    position = position + packetBody.length;
+
+    return position;
 }
 
 @end

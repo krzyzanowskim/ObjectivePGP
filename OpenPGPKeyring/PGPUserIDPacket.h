@@ -14,6 +14,6 @@
 
 @property (retain, readonly) NSString *userID;
 
-- (void) parsePacketBody:(NSData *)packetBody;
+- (NSUInteger) parsePacketBody:(NSData *)packetBody;
 
 @end
