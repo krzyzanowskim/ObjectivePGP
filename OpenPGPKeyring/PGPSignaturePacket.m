@@ -17,14 +17,6 @@
 
 @implementation PGPSignaturePacket
 
-- (instancetype) initWithBody:(NSData *)packetData
-{
-    if (self = [self init]) {
-        [self parsePacketBody:packetData];
-    }
-    return self;
-}
-
 - (NSMutableArray *)hashedSubpackets
 {
     if (!_hashedSubpackets) {

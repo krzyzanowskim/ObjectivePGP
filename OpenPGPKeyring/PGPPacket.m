@@ -45,7 +45,7 @@
 
 
     if (!isPGPHeader) {
-        return NO;
+        return nil;
     }
 
     NSUInteger headerLength = 0;

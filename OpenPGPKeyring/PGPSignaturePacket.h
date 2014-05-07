@@ -19,6 +19,4 @@
 @property (strong, readonly, nonatomic) NSMutableArray *hashedSubpackets;
 @property (strong, readonly, nonatomic) NSMutableArray *unhashedSubpackets;
 
-- (instancetype) initWithBody:(NSData *)packetData;
-
 @end

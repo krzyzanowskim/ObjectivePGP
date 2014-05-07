@@ -13,7 +13,8 @@
 
 @required
 
-- (PGPPacketTag) tag;
+@property (assign, readonly) PGPPacketTag tag;
+
 - (NSUInteger) headerLength;
 - (UInt32) bodyLength;
 
@@ -24,7 +25,7 @@
 
 @interface PGPPacket : NSObject <PGPPacket>
 
-@property (assign) PGPPacketTag tag;
+@property (assign, readonly)    PGPPacketTag tag;
 @property (assign) NSUInteger   headerLength;
 @property (assign) UInt32       bodyLength;
 

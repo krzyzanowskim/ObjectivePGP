@@ -14,7 +14,6 @@
 
 @property (strong, readonly) NSData *data;
 
-- (instancetype) initWithBody:(NSData *)packetData;
 - (void) parsePacketBody:(NSData *)packetBody;
 
 @end

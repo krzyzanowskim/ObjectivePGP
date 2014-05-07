@@ -12,6 +12,8 @@
 #import "PGPSignaturePacket.h"
 #import "PGPUserIDPacket.h"
 #import "PGPTrustPacket.h"
+#import "PGPSecretKeyPacket.h"
+#import "PGPSecretSubKeyPacket.h"
 
 @implementation PGPPacketFactory
 
@@ -39,31 +41,26 @@
         id <PGPPacket> packet = nil;
         switch (packetTag) {
             case PGPPublicKeyPacketTag:
-            {
                 packet = [[PGPPublicKeyPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
-            }
                 break;
             case PGPPublicSubkeyPacketTag:
-            {
                 packet = [[PGPPublicSubKeyPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
-            }
                 break;
             case PGPSignaturePacketTag:
-            {
                 packet = [[PGPSignaturePacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
-            }
                 break;
             case PGPUserIDPacketTag:
-            {
                 packet = [[PGPUserIDPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
-            }
                 break;
             case PGPTrustPacketTag:
-            {
                 packet = [[PGPTrustPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
-            }
                 break;
-                
+            case PGPSecretKeyPacketTag:
+                packet = [[PGPSecretKeyPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+                break;
+            case PGPSecretSubkeyPacketTag:
+                packet = [[PGPSecretSubKeyPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+                break;
             default:
                 NSLog(@"!!! Packet tag %d is not supported", packetTag);
                 packet = [[PGPPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];

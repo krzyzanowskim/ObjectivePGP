@@ -16,14 +16,6 @@
 
 @implementation PGPPublicKeyPacket
 
-- (instancetype) initWithBody:(NSData *)packetData
-{
-    if (self = [self init]) {
-        [self parsePacketBody:packetData];
-    }
-    return self;
-}
-
 - (PGPPacketTag)tag
 {
     return PGPPublicKeyPacketTag;

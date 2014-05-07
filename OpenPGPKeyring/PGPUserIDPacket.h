@@ -14,7 +14,6 @@
 
 @property (retain, readonly) NSString *userID;
 
-- (instancetype) initWithBody:(NSData *)packetData;
 - (void) parsePacketBody:(NSData *)packetBody;
 
 @end
