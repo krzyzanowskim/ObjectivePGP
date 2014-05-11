@@ -35,9 +35,9 @@
 - (void) parseSubpacketBody:(NSData *)packetBody
 {
     switch (self.type) {
-        case PGPSignatureSubpacketSignatureCreationTime: // NSDate
-        case PGPSignatureSubpacketSignatureExpirationTime:
-        case PGPSignatureSubpacketKeyExpirationTime:
+        case PGPSignatureSubpacketTypeSignatureCreationTime: // NSDate
+        case PGPSignatureSubpacketTypeSignatureExpirationTime:
+        case PGPSignatureSubpacketTypeKeyExpirationTime:
         {
             //  5.2.3.4.  Signature Creation Time
             //  5.2.3.10. Signature Expiration Time
@@ -50,7 +50,7 @@
             self.value = [NSDate dateWithTimeIntervalSince1970:signatureCreationTimestamp];
         }
             break;
-        case PGPSignatureSubpacketIssuer: // PGPKeyID
+        case PGPSignatureSubpacketTypeIssuer: // PGPKeyID
         {
             //  5.2.3.5.  Issuer
 
@@ -67,7 +67,7 @@
              */
         }
             break;
-        case PGPSignatureSubpacketPrimaryUserID: // NSNumber BOOL
+        case PGPSignatureSubpacketTypePrimaryUserID: // NSNumber BOOL
         {
             // 5.2.3.19.  Primary User ID
             UInt8 primaryUserIDValue = 0;
@@ -75,7 +75,7 @@
             self.value = @(primaryUserIDValue);
         }
             break;
-        case PGPSignatureSubpacketKeyFlags: // NSArray of PGPSignatureFlags
+        case PGPSignatureSubpacketTypeKeyFlags: // NSArray of PGPSignatureFlags
         {
             //  5.2.3.21.  Key Flags
             //  (N octets of flags) ???
@@ -103,7 +103,7 @@
             self.value = [flagsArray copy];
         }
             break;
-        case PGPSignatureSubpacketPreferredSymetricAlgorithm: // NSArray of PGPSymmetricAlhorithm
+        case PGPSignatureSubpacketTypePreferredSymetricAlgorithm: // NSArray of PGPSymmetricAlhorithm
         {
             // 5.2.3.7.  Preferred Symmetric Algorithms
             NSMutableArray *algorithmsArray = [NSMutableArray array];
@@ -117,7 +117,7 @@
             self.value = [algorithmsArray copy];
         }
             break;
-        case PGPSignatureSubpacketPreferredHashAlgorithm: // NSArray of PGPSymmetricAlhorithm
+        case PGPSignatureSubpacketTypePreferredHashAlgorithm: // NSArray of PGPSymmetricAlhorithm
         {
             // 5.2.3.8.  Preferred Hash Algorithms
             NSMutableArray *algorithmsArray = [NSMutableArray array];
@@ -131,7 +131,7 @@
             self.value = [algorithmsArray copy];
         }
             break;
-        case PGPSignatureSubpacketPreferredCompressionAlgorithm: // NSArray of PGPCompressionAlgorithm
+        case PGPSignatureSubpacketTypePreferredCompressionAlgorithm: // NSArray of PGPCompressionAlgorithm
         {
             // 5.2.3.9.  Preferred Compression Algorithms
             // If this subpacket is not included, ZIP is preferred.
@@ -146,7 +146,7 @@
             self.value = [algorithmsArray copy];
         }
             break;
-        case PGPSignatureSubpacketKeyServerPreference: // NSArray of PGPKeyServerPreferenceFlags
+        case PGPSignatureSubpacketTypeKeyServerPreference: // NSArray of PGPKeyServerPreferenceFlags
         {
             // 5.2.3.17.  Key Server Preferences
             UInt64 flagByte = 0;
@@ -158,7 +158,7 @@
             self.value = [flagsArray copy];
         }
             break;
-        case PGPSignatureSubpacketFeatures: // NSArray of PGPFeature
+        case PGPSignatureSubpacketTypeFeatures: // NSArray of PGPFeature
         {
             // 5.2.3.24.  Features
             NSMutableArray *featuresArray = [NSMutableArray array];

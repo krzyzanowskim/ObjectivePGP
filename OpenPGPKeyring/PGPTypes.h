@@ -21,23 +21,23 @@ typedef NS_ENUM(NSUInteger, PGPHeaderPacketTag) {
 };
 
 typedef NS_ENUM(UInt8, PGPPacketTag) {
-    PGPPublicKeyEncryptedSessionKeyPacketTag                 = 1,
+    PGPPublicKeyEncryptedSessionKeyPacketTag                 = 1,  //TODO
     PGPSignaturePacketTag                                    = 2,
-    PGPSymetricKeyEncryptedSessionKeyPacketTag               = 3,
-    PGPOnePassSignaturePacketTag                             = 4,
+    PGPSymetricKeyEncryptedSessionKeyPacketTag               = 3,  //TODO
+    PGPOnePassSignaturePacketTag                             = 4,  //TODO
     PGPSecretKeyPacketTag                                    = 5,
     PGPPublicKeyPacketTag                                    = 6,
     PGPSecretSubkeyPacketTag                                 = 7,
-    PGPCompressedDataPacketTag                               = 8,
-    PGPSymmetricallyEncryptedDataPacketTag                   = 9,
-    PGPMarkerPacketTag                                       = 10,
+    PGPCompressedDataPacketTag                               = 8,  //TODO
+    PGPSymmetricallyEncryptedDataPacketTag                   = 9,  //TODO
+    PGPMarkerPacketTag                                       = 10, //TODO
     PGPLiteralDataPacketTag                                  = 11,
     PGPTrustPacketTag                                        = 12,
     PGPUserIDPacketTag                                       = 13,
     PGPPublicSubkeyPacketTag                                 = 14,
-    PGPUserAttributePacketTag                                = 17,
-    PGPSymmetricallyEncryptedIntegrityProtectedDataPacketTag = 18,
-    PGPModificationDetectionCodePacket                       = 19,
+    PGPUserAttributePacketTag                                = 17, //TODO
+    PGPSymmetricallyEncryptedIntegrityProtectedDataPacketTag = 18, //TODO
+    PGPModificationDetectionCodePacket                       = 19, //TODO
 };
 
 // 9.1.  Public-Key Algorithms
@@ -115,29 +115,29 @@ typedef NS_ENUM(UInt8, PGPSignatureType) {
 };
 
 typedef NS_ENUM(UInt8, PGPSignatureSubpacketType) {
-    PGPSignatureSubpacketSignatureCreationTime         = 2,
-    PGPSignatureSubpacketSignatureExpirationTime       = 3,
-    PGPSignatureSubpacketExportableCertification       = 4,
-    PGPSignatureSubpacketTrustSignature                = 5,
-    PGPSignatureSubpacketRegularExpression             = 6,
-    PGPSignatureSubpacketRevocable                     = 7,
-    PGPSignatureSubpacketKeyExpirationTime             = 9,
-    PGPSignatureSubpacketPreferredSymetricAlgorithm    = 11,
-    PGPSignatureSubpacketRevocationKey                 = 12,
-    PGPSignatureSubpacketIssuer                        = 16,
-    PGPSignatureSubpacketNotationData                  = 20,
-    PGPSignatureSubpacketPreferredHashAlgorithm        = 21,
-    PGPSignatureSubpacketPreferredCompressionAlgorithm = 22,
-    PGPSignatureSubpacketKeyServerPreference           = 23,
-    PGPSignatureSubpacketPreferredKeyServer            = 24,
-    PGPSignatureSubpacketPrimaryUserID                 = 25,
-    PGPSignatureSubpacketPolicyURI                     = 26,
-    PGPSignatureSubpacketKeyFlags                      = 27,
-    PGPSignatureSubpacketSignerUserID                  = 28,
-    PGPSignatureSubpacketReasonForRevocation           = 29,
-    PGPSignatureSubpacketFeatures                      = 30,
-    PGPSignatureSubpacketSignatureTarget               = 31,
-    PGPSignatureSubpacketEmbeddedSignature             = 32
+    PGPSignatureSubpacketTypeSignatureCreationTime         = 2,
+    PGPSignatureSubpacketTypeSignatureExpirationTime       = 3,
+    PGPSignatureSubpacketTypeExportableCertification       = 4,
+    PGPSignatureSubpacketTypeTrustSignature                = 5,
+    PGPSignatureSubpacketTypeRegularExpression             = 6,
+    PGPSignatureSubpacketTypeRevocable                     = 7,
+    PGPSignatureSubpacketTypeKeyExpirationTime             = 9,
+    PGPSignatureSubpacketTypePreferredSymetricAlgorithm    = 11,
+    PGPSignatureSubpacketTypeRevocationKey                 = 12,
+    PGPSignatureSubpacketTypeIssuer                        = 16,
+    PGPSignatureSubpacketTypeNotationData                  = 20,
+    PGPSignatureSubpacketTypePreferredHashAlgorithm        = 21,
+    PGPSignatureSubpacketTypePreferredCompressionAlgorithm = 22,
+    PGPSignatureSubpacketTypeKeyServerPreference           = 23,
+    PGPSignatureSubpacketTypePreferredKeyServer            = 24,
+    PGPSignatureSubpacketTypePrimaryUserID                 = 25,
+    PGPSignatureSubpacketTypePolicyURI                     = 26,
+    PGPSignatureSubpacketTypeKeyFlags                      = 27,
+    PGPSignatureSubpacketTypeSignerUserID                  = 28,
+    PGPSignatureSubpacketTypeReasonForRevocation           = 29,
+    PGPSignatureSubpacketTypeFeatures                      = 30,
+    PGPSignatureSubpacketTypeSignatureTarget               = 31,
+    PGPSignatureSubpacketTypeEmbeddedSignature             = 32
 };
 
 // 5.2.3.21.  Key Flags
