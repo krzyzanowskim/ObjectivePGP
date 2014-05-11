@@ -11,6 +11,8 @@
 
 @interface PGPSignatureSubpacket : NSObject
 
+@property (assign) NSRange bodyRange;
+
 @property (assign, readonly) PGPSignatureSubpacketType type;
 @property (strong, readonly) id value;
 

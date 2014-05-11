@@ -55,11 +55,11 @@
 //    XCTAssert(openedPubKeyringNewFormat, @"Unable to read file");
 //}
 
-//- (void) testOldOpenKeyring
-//{
-//    BOOL openedPubKeyringOldFormat    = [self.keyring open:self.pubringOldFormatPath];
-//    XCTAssert(openedPubKeyringOldFormat, @"Unable to read file");
-//}
+- (void) testOldOpenKeyring
+{
+    BOOL openedPubKeyringOldFormat    = [self.keyring open:self.pubringOldFormatPath];
+    XCTAssert(openedPubKeyringOldFormat, @"Unable to read file");
+}
 
 - (void) testSecretKeyring
 {
