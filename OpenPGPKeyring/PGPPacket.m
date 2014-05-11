@@ -38,8 +38,8 @@
  */
 + (NSData *) parsePacketHeader:(NSData *)headerData bodyLength:(UInt32 *)bodyLength packetTag:(PGPPacketTag *)tag
 {
-    UInt8 *headerBytes = (UInt8 *)[headerData subdataWithRange:NSMakeRange(0, 1)].bytes;
-    UInt8 headerByte = headerBytes[0];
+    UInt8 headerByte = 0;
+    [headerData getBytes:&headerByte range:(NSRange){0,1}];
 
     BOOL isPGPHeader = !!(headerByte & PGPHeaderPacketTagAllwaysSet);
     BOOL isNewFormat = !!(headerByte & PGPHeaderPacketTagNewFormat);
@@ -150,9 +150,11 @@
             break;
         case 1:
         {
+            UInt16 bLen = 0;
             NSRange range = (NSRange) {1,2};
-            [headerData getBytes:&bodyLength range:range];
-            bodyLength = CFSwapInt16BigToHost(bodyLength);
+            [headerData getBytes:&bLen range:range];
+            // value of a two-octet scalar is ((n[0] << 8) + n[1]).
+            bodyLength = CFSwapInt16BigToHost(bLen);
             headerLength = 1 + range.length;
         }
             break;

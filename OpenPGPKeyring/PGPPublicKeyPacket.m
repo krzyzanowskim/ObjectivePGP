@@ -30,7 +30,6 @@
 {
     NSUInteger position = [super parsePacketBody:packetBody];
 
-    [super parsePacketBody:packetBody];
     //TODO: V3 keys are deprecated; an implementation MUST NOT generate a V3 key, but MAY accept it.
 
     // A one-octet version number (2,3,4).
@@ -92,7 +91,7 @@
         }
             break;
         case PGPPublicKeyAlgorithmElgamal:
-        case PGPPublicKeyAlgorithmElgamalEncryptOnly:
+        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
         {
             // - MPI of Elgamal prime p;
             PGPMPI *mpiP = [[PGPMPI alloc] initWithData:packetBody atPosition:position];

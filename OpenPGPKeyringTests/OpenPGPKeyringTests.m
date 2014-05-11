@@ -36,7 +36,7 @@
     [super setUp];
 
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-    self.secringPath = [bundle pathForResource:@"test_secring" ofType:@"gpg"];
+    self.secringPath = [bundle pathForResource:@"test_secring_old_format_plaintext" ofType:@"gpg"];
     self.pubringOldFormatPath = [bundle pathForResource:@"test_pubring_old_format" ofType:@"gpg"];
     self.pubringNewFormatPath = [bundle pathForResource:@"test_pubring_new_format" ofType:@"gpg"];
 
@@ -49,11 +49,11 @@
     self.keyring = nil;
 }
 
-- (void) testNewOpenKeyring
-{
-    BOOL openedPubKeyringNewFormat    = [self.keyring open:self.pubringNewFormatPath];
-    XCTAssert(openedPubKeyringNewFormat, @"Unable to read file");
-}
+//- (void) testNewOpenKeyring
+//{
+//    BOOL openedPubKeyringNewFormat    = [self.keyring open:self.pubringNewFormatPath];
+//    XCTAssert(openedPubKeyringNewFormat, @"Unable to read file");
+//}
 
 //- (void) testOldOpenKeyring
 //{

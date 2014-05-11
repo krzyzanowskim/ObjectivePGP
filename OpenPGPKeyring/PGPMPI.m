@@ -22,15 +22,15 @@
 - (instancetype) initWithData:(NSData *)data atPosition:(NSUInteger)position
 {
     if (self = [self init]) {
-        UInt16 mpiLength = 0;
-        [data getBytes:&mpiLength range:(NSRange){position,2}];
-        mpiLength = (CFSwapInt16BigToHost(mpiLength) + 7) / 8;
+        UInt16 mpiBitsLength = 0;
+        [data getBytes:&mpiBitsLength range:(NSRange){position,2}];
+        NSUInteger mpiBytesLength = (CFSwapInt16BigToHost(mpiBitsLength) + 7) / 8;
 
-        NSData *intdata = [data subdataWithRange:(NSRange){position + 2, mpiLength}];
+        NSData *intdata = [data subdataWithRange:(NSRange){position + 2, mpiBytesLength}];
         _bn = BN_bin2bn(intdata.bytes, (int)intdata.length, NULL);
 
         // Additinal rule: The size of an MPI is ((MPI.length + 7) / 8) + 2 octets.
-        _length = mpiLength + 2;
+        _length = intdata.length + 2;
     }
     return self;
 }

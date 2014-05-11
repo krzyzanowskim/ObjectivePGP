@@ -45,11 +45,11 @@ typedef NS_ENUM(UInt8, PGPPublicKeyAlgorithm) {
     PGPPublicKeyAlgorithmRSA                = 1,
     PGPPublicKeyAlgorithmRSAEncryptOnly     = 2,
     PGPPublicKeyAlgorithmRSASignOnly        = 3,
-    PGPPublicKeyAlgorithmElgamalEncryptOnly = 16,
+    PGPPublicKeyAlgorithmElgamal            = 16, // Elgamal (Encrypt-Only)
     PGPPublicKeyAlgorithmDSA                = 17,
     PGPPublicKeyAlgorithmElliptic           = 18,
     PGPPublicKeyAlgorithmECDSA              = 19,
-    PGPPublicKeyAlgorithmElgamal            = 20,
+    PGPPublicKeyAlgorithmElgamalEncryptorSign = 20, // Deprecated ?
     PGPPublicKeyAlgorithmDiffieHellman      = 21,
     PGPPublicKeyAlgorithmPrivate1           = 100,
     PGPPublicKeyAlgorithmPrivate2           = 101,
@@ -67,14 +67,14 @@ typedef NS_ENUM(UInt8, PGPPublicKeyAlgorithm) {
 // 9.2.  Symmetric-Key Algorithms
 typedef NS_ENUM(UInt8, PGPSymmetricAlgorithm) {
     PGPSymmetricPlaintext  = 0,
-    PGPSymmetricIDEA       = 1,
-    PGPSymmetricTripleDES  = 2,
-    PGPSymmetricCAST5      = 3,
-    PGPSymmetricBlowfish   = 4,
-    PGPSymmetricAES128     = 7,
-    PGPSymmetricAES192     = 8,
-    PGPSymmetricAES256     = 9,
-    PGPSymmetricTwofish256 = 10
+    PGPSymmetricIDEA       = 1, // 8 bytes (64-bit) block size, key length: 2 bytes (16 bit)
+    PGPSymmetricTripleDES  = 2, // 8 bytes (64-bit) block size
+    PGPSymmetricCAST5      = 3, // aka CAST-128 is a symmetric block cipher with a block-size of 8 bytes (64bit) and a variable key-size of up to 16 bytes (128 bits).
+    PGPSymmetricBlowfish   = 4, // 8 bytes (64 bit) block size, key length: 16 bits (4-56 bits)
+    PGPSymmetricAES128     = 7, // 16 bytes (128 bit), key length 128 bit
+    PGPSymmetricAES192     = 8, // 16 bytes (128 bit), key length 192 bit
+    PGPSymmetricAES256     = 9, // 16 bytes (128 bit), key length 256 bit
+    PGPSymmetricTwofish256 = 10 // 16 bytes (128 bit)
 };
 
 // 9.4.  Hash Algorithms
@@ -159,6 +159,19 @@ typedef NS_ENUM(UInt64, PGPKeyServerPreferenceFlags) {
 // 5.2.3.24.  Features
 typedef NS_ENUM(UInt8, PGPFeature) {
     PGPFeatureModificationDetection = 0x01 // Modification Detection (packets 18 and 19)
+};
+
+// 3.7.1.  String-to-Key (S2K) Specifier Types
+typedef NS_ENUM(UInt8, PGPS2KSpecifier) {
+    PGPS2KSpecifierSimple            = 0,
+    PGPS2KSpecifierSalted            = 1,
+    PGPS2KSpecifierIteratedAndSalted = 3
+};
+
+typedef NS_ENUM(UInt8, PGPS2KUsage) {
+    PGPS2KUsageNone               = 0,
+    PGPS2KUsageEncryptedAndHashed = 254,
+    PGPS2KUsageEncrypted          = 255
 };
 
 #endif
