@@ -19,6 +19,4 @@
 - (instancetype) initWithBody:(NSData *)packetBody type:(PGPSignatureSubpacketType)type;
 - (void) parseSubpacketBody:(NSData *)packetBody;
 
-+ (PGPSignatureSubpacketType) parseSubpacketHeader:(NSData *)headerData headerLength:(UInt32 *)headerLength subpacketLength:(UInt32 *)subpacketLen;
-
 @end
