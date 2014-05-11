@@ -35,6 +35,11 @@
     return self;
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"%@, mpi: %@ bytes, total: %@ bytes", [super description], @(BN_num_bytes(_bn)), @(_length)];
+}
+
 - (void)dealloc
 {
     if (_bn != NULL) {

@@ -76,6 +76,7 @@
     position = position + 2;
 
     // Hashed subpacket data set (zero or more subpackets)
+    // TODO: refactor later, this approach sucks
     NSData *hashedSubpacketsData = nil;
     if (hashedOctetCount > 0) {
         hashedSubpacketsData = [packetBody subdataWithRange:(NSRange){position,hashedOctetCount}];

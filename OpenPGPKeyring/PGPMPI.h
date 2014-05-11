@@ -10,6 +10,7 @@
 
 @interface PGPMPI : NSObject
 
+@property (strong) NSString *identifier;
 /**
  *  Total bytes, header + body
  */
