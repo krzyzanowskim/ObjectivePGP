@@ -24,9 +24,8 @@
 
 @interface OpenPGPKeyringTests : XCTestCase
 @property (strong) OpenPGPKeyring *keyring;
-@property (strong) NSString *secringPath;
-@property (strong) NSString *pubringOldFormatPath;
-@property (strong) NSString *pubringNewFormatPath;
+@property (strong) NSString *secringPathPlaintext, *secringPathEncrypted;
+@property (strong) NSString *pubringPlaintext, *pubringEncrypted;
 @end
 
 @implementation OpenPGPKeyringTests
@@ -36,9 +35,10 @@
     [super setUp];
 
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-    self.secringPath = [bundle pathForResource:@"test_secring_old_format_plaintext" ofType:@"gpg"];
-    self.pubringOldFormatPath = [bundle pathForResource:@"test_pubring_old_format" ofType:@"gpg"];
-    self.pubringNewFormatPath = [bundle pathForResource:@"test_pubring_new_format" ofType:@"gpg"];
+    self.secringPathPlaintext = [bundle pathForResource:@"secring-test-plaintext" ofType:@"gpg"];
+    self.secringPathEncrypted = [bundle pathForResource:@"secring-test-encrypted" ofType:@"gpg"];
+    self.pubringPlaintext = [bundle pathForResource:@"pubring-test-plaintext" ofType:@"gpg"];
+    self.pubringEncrypted = [bundle pathForResource:@"pubring-test-encrypted" ofType:@"gpg"];
 
     self.keyring = [[OpenPGPKeyring alloc] init];
 }
@@ -63,7 +63,7 @@
 
 - (void) testSecretKeyring
 {
-    BOOL openedSecring    = [self.keyring open:self.secringPath];
+    BOOL openedSecring    = [self.keyring open:self.secringPathEncrypted];
     XCTAssert(openedSecring, @"Unable to read file");
 }
 

@@ -7,6 +7,7 @@
 //
 
 #import "PGPString2Key.h"
+#import <CommonCrypto/CommonCrypto.h>
 
 static const unsigned int PGP_SALT_SIZE = 8;
 
@@ -47,13 +48,86 @@ static const unsigned int PGP_SALT_SIZE = 8;
 
     // Octet  10:       count, a one-octet, coded value
     if (_specifier == PGPS2KSpecifierIteratedAndSalted) {
-        UInt8 c = 0;
+        UInt32 c = 0;
         [data getBytes:&c range:(NSRange) {position, 1}];
-        _count = ((UInt32)16 + ((UInt32)c & 15)) << (((UInt32)c >> 4) + 6); //FIXME: what is wrong with that ?
+        _count = ((UInt32)16 + (c & 15)) << ((c >> 4) + 6); //FIXME: what is wrong with that ?
+        //_count = CFSwapInt32BigToHost(_count);
         position = position + 1;
     }
 
     return position;
+}
+
+//TODO: only SHA1 is implemented, implement digest from self.algorithm
+- (NSData *) produceKeyWithPassphrase:(NSString *)passphrase keySize:(NSUInteger)keySize
+{
+    NSMutableData *result = [NSMutableData data];
+
+    switch (self.specifier) {
+        case PGPS2KSpecifierSimple:
+        {
+            //TODO:
+            @throw [NSException exceptionWithName:@"Not supported" reason:@"not supported" userInfo:nil];
+        }
+            break;
+        case PGPS2KSpecifierSalted:
+        {
+            //TODO:
+            @throw [NSException exceptionWithName:@"Not supported" reason:@"not supported" userInfo:nil];
+        }
+            break;
+        case PGPS2KSpecifierIteratedAndSalted:
+        {
+            NSData *passphraseData = [passphrase dataUsingEncoding:NSUTF8StringEncoding];
+            // salt + passphrase
+            NSUInteger hashSize = 20;
+
+            //FIXME: implement ciphers other thatn SHA1
+            NSPointerArray *ctxArray = [NSPointerArray pointerArrayWithOptions:NSPointerFunctionsOpaqueMemory];
+            for (NSUInteger n = 0; n * hashSize < keySize; ++n) {
+                CC_SHA1_CTX *ctx = calloc(1, sizeof(CC_SHA1_CTX));
+                [ctxArray addPointer:ctx];
+                CC_SHA1_Init(ctx);
+            }
+
+            // append
+            for (NSUInteger n = 0; n < ctxArray.count ; ++n) {
+                CC_SHA1_CTX *ctx = [ctxArray pointerAtIndex:n];
+                for (NSUInteger i = 0; i < self.count; i += self.salt.length + passphraseData.length) {
+                    NSUInteger j = self.salt.length + passphraseData.length;
+                    if (i + j > self.count && i != 0) {
+                        j = self.count - i;
+                    }
+                    // add salt
+                    CC_SHA1_Update(ctx, self.salt.bytes, j > self.salt.length ? self.salt.length : j);
+                    // add passphrase
+                    if (j > self.salt.length) {
+                        CC_SHA1_Update(ctx, passphraseData.bytes, j - self.salt.length);
+                    }
+                }
+            }
+
+            // finalize
+            while (ctxArray.count > 0) {
+                CC_SHA1_CTX *ctx = [ctxArray pointerAtIndex:0];
+
+                UInt8 *digest = calloc(hashSize, sizeof(UInt8));
+                CC_SHA1_Final(digest, ctx);
+
+                [result appendBytes:digest length:hashSize];
+
+                [ctxArray removePointerAtIndex:0];
+                free(ctx);
+                free(digest);
+            }
+
+
+        }
+            break;
+        default:
+            break;
+    }
+    return [result copy];
 }
 
 - (void)dealloc

@@ -37,13 +37,13 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"%@, mpi: %@ bytes, total: %@ bytes", [super description], @(BN_num_bytes(_bn)), @(_length)];
+    return [NSString stringWithFormat:@"%@, \"%@\", %@ bytes, total: %@ bytes", [super description], self.identifier, @(BN_num_bytes(_bn)), @(_length)];
 }
 
 - (void)dealloc
 {
     if (_bn != NULL) {
-        BN_free(_bn);
+        BN_clear_free(_bn);
     }
 }
 

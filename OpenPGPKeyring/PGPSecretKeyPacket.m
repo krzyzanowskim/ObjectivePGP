@@ -108,6 +108,13 @@
     NSLog(@"IV %#02X %#02X %#02X %#02X %#02X %#02X %#02X %#02X", IV[0], IV[1], IV[2], IV[3], IV[4], IV[5], IV[6], IV[7]);
 #endif
 
+    // calculate key - move to decrypt
+    NSUInteger keySize = [self keySizeOfSymmetricAlhorithm:self.symmetricAlgorithm];
+    NSAssert(keySize <= 32, @"invalid keySize");
+
+    [self.s2k produceKeyWithPassphrase:@"1234" keySize:keySize];
+
+    // read
     NSData *hashOrChecksum = nil;
     switch (self.s2kUsage) {
         case PGPS2KUsageEncryptedAndHashed:
@@ -224,15 +231,39 @@
 /**
  *  Decrypt parsed encrypted packet
  */
-- (void) decrypt
+- (void) decrypt:(NSString *)passphase
 {
     if (!self.isEncrypted) {
         return;
     }
 
     // Keysize
-    //NSUInteger keySize = [self keySizeOfSymmetricAlhorithm:self.symmetricAlgorithm];
-    //NSAssert(keySize <= 32, @"invalid keySize");
+    NSUInteger keySize = [self keySizeOfSymmetricAlhorithm:self.symmetricAlgorithm];
+    NSAssert(keySize <= 32, @"invalid keySize");
+
+
+    const void *encryptedBytes = self.encryptedMPIData.bytes;
+    // decrypt CAST5 with CFB
+    switch (self.symmetricAlgorithm) {
+        case PGPSymmetricCAST5:
+        {
+            // 	CAST_cfb64_encrypt(in, out, (long)count, crypt->encrypt_key, crypt->iv, &crypt->num, CAST_DECRYPT);
+            if (self.s2k.specifier == PGPS2KSpecifierIteratedAndSalted) {
+                
+                UInt8 *outBuffer = calloc(1024, sizeof(UInt8));
+//                CAST_cfb64_encrypt(encryptedBytes, outBuffer, sizeof(outBuffer), <#const CAST_KEY *schedule#>, <#unsigned char *ivec#>, <#int *num#>, CAST_DECRYPT);
+//                if (buffer) {
+//                    free(buffer);
+//                }
+            }
+
+        }
+            break;
+
+        default:
+            break;
+    }
+
 
     // Hash size
     //NSUInteger hashSize = [self hashSizeOfHashAlhorithm:self.s2k.algorithm];

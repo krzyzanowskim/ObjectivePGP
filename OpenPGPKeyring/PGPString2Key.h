@@ -20,4 +20,7 @@
 
 + (PGPString2Key *) string2KeyFromData:(NSData *)data atPosition:(NSUInteger)position;
 - (NSUInteger) parseS2K:(NSData *)data atPosition:(NSUInteger)position;
+
+- (NSData *) produceKeyWithPassphrase:(NSString *)passphrase keySize:(NSUInteger)keySize;
+
 @end
