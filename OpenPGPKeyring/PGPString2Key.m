@@ -59,30 +59,55 @@ static const unsigned int PGP_SALT_SIZE = 8;
 }
 
 //TODO: only SHA1 is implemented, implement digest from self.algorithm
+// http://stackoverflow.com/questions/3468268/objective-c-sha1
 - (NSData *) produceKeyWithPassphrase:(NSString *)passphrase keySize:(NSUInteger)keySize
 {
     NSMutableData *result = [NSMutableData data];
+    NSData *passphraseData = [passphrase dataUsingEncoding:NSUTF8StringEncoding];
+    NSUInteger hashSize = [self hashSizeOfHashAlhorithm:self.algorithm]; // SHA hash size
 
     switch (self.specifier) {
         case PGPS2KSpecifierSimple:
         {
-            //TODO:
-            @throw [NSException exceptionWithName:@"Not supported" reason:@"not supported" userInfo:nil];
+            // passphrase
+            CC_SHA1_CTX *ctx = calloc(1, sizeof(CC_SHA1_CTX));
+            if (ctx) {
+                CC_SHA1_Update(ctx, passphraseData.bytes, passphrase.length);
+                UInt8 *digest = calloc(hashSize, sizeof(UInt8));
+                if (digest) {
+                    CC_SHA1_Final(digest, ctx);
+                    [result appendBytes:digest length:hashSize];
+                    free(digest);
+                }
+                free(ctx);
+            }
         }
             break;
         case PGPS2KSpecifierSalted:
         {
-            //TODO:
-            @throw [NSException exceptionWithName:@"Not supported" reason:@"not supported" userInfo:nil];
+            // salt + passphrase
+            // This includes a "salt" value in the S2K specifier -- some arbitrary
+            // data -- that gets hashed along with the passphrase string, to help
+            // prevent dictionary attacks.
+
+            CC_SHA1_CTX *ctx = calloc(1, sizeof(CC_SHA1_CTX));
+            if (ctx) {
+                CC_SHA1_Update(ctx, self.salt.bytes, self.salt.length);
+                CC_SHA1_Update(ctx, passphraseData.bytes, passphrase.length);
+                UInt8 *digest = calloc(hashSize, sizeof(UInt8));
+                if (digest) {
+                    CC_SHA1_Final(digest, ctx);
+                    [result appendBytes:digest length:hashSize];
+                    free(digest);
+                }
+                free(ctx);
+            }
         }
             break;
         case PGPS2KSpecifierIteratedAndSalted:
         {
-            NSData *passphraseData = [passphrase dataUsingEncoding:NSUTF8StringEncoding];
-            // salt + passphrase
-            NSUInteger hashSize = 20;
+            // iterated (salt + passphrase)
 
-            //FIXME: implement ciphers other thatn SHA1
             NSPointerArray *ctxArray = [NSPointerArray pointerArrayWithOptions:NSPointerFunctionsOpaqueMemory];
             for (NSUInteger n = 0; n * hashSize < keySize; ++n) {
                 CC_SHA1_CTX *ctx = calloc(1, sizeof(CC_SHA1_CTX));
@@ -110,15 +135,14 @@ static const unsigned int PGP_SALT_SIZE = 8;
             // finalize
             while (ctxArray.count > 0) {
                 CC_SHA1_CTX *ctx = [ctxArray pointerAtIndex:0];
-
                 UInt8 *digest = calloc(hashSize, sizeof(UInt8));
-                CC_SHA1_Final(digest, ctx);
-
-                [result appendBytes:digest length:hashSize];
-
+                if (digest) {
+                    CC_SHA1_Final(digest, ctx);
+                    [result appendBytes:digest length:hashSize];
+                    free(digest);
+                }
                 [ctxArray removePointerAtIndex:0];
                 free(ctx);
-                free(digest);
             }
 
 
@@ -130,8 +154,29 @@ static const unsigned int PGP_SALT_SIZE = 8;
     return [result copy];
 }
 
-- (void)dealloc
+#pragma mark - Private
+
+- (NSUInteger) hashSizeOfHashAlhorithm:(PGPHashAlgorithm)hashAlgorithm
 {
+    switch (hashAlgorithm) {
+        case PGPHashMD5:
+            return 16;
+        case PGPHashSHA1:
+            return 20;
+        case PGPHashSHA224:
+            return 28;
+        case PGPHashSHA256:
+            return 32;
+        case PGPHashSHA384:
+            return 48;
+        case PGPHashSHA512:
+            return 64;
+        case PGPHashRIPEMD160:
+            return 20; // TODO: confirm RIPE/MD 160 value
+        default:
+            break;
+    }
+    return NSNotFound;
 }
 
 @end

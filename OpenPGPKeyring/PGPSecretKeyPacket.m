@@ -330,28 +330,5 @@
     return NSNotFound;
 }
 
-- (NSUInteger) hashSizeOfHashAlhorithm:(PGPHashAlgorithm)hashAlgorithm
-{
-    switch (hashAlgorithm) {
-        case PGPHashMD5:
-            return 16;
-        case PGPHashSHA1:
-            return 20;
-        case PGPHashSHA224:
-            return 28;
-        case PGPHashSHA256:
-            return 32;
-        case PGPHashSHA384:
-            return 48;
-        case PGPHashSHA512:
-            return 64;
-        case PGPHashRIPEMD160:
-            return 20; // TODO: confirm RIPE/MD 160 value
-        default:
-            break;
-    }
-    return NSNotFound;
-}
-
 
 @end
