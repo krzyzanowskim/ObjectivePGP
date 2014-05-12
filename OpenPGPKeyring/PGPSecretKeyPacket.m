@@ -58,6 +58,8 @@
     NSUInteger position = [super parsePacketBody:packetBody];
     //  5.5.3.  Secret-Key Packet Formats
 
+    NSAssert(self.version == 0x04,@"Only Secret Key version 4 is supported. Found version %@", @(self.version));
+
     // One octet indicating string-to-key usage conventions
     [packetBody getBytes:&_s2kUsage range:(NSRange){position, 1}];
     position = position + 1;
@@ -262,7 +264,7 @@
                 UInt8 *outBuffer = calloc(outButterLength, sizeof(UInt8));
                 int num = 0; //	how much of the 64bit block we have used
                 CAST_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, decrypt_key, (UInt8 *)self.ivData.bytes, &num, CAST_DECRYPT);
-                NSLog(@"decrypted %@", @(num));
+                NSLog(@"decrypted with %@ 64bit blocks used", @(num));
                 NSData *decryptedData = [NSData dataWithBytes:outBuffer length:outButterLength];
                 if (outBuffer) {
                     free(outBuffer);
@@ -271,7 +273,6 @@
                 // now read mpis
                 [self readPlaintext:decryptedData startingAtPosition:0];
             }
-
         }
             break;
 

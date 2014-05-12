@@ -117,27 +117,27 @@ typedef NS_ENUM(UInt8, PGPSignatureType) {
 typedef NS_ENUM(UInt8, PGPSignatureSubpacketType) {
     PGPSignatureSubpacketTypeSignatureCreationTime         = 2,
     PGPSignatureSubpacketTypeSignatureExpirationTime       = 3,
-    PGPSignatureSubpacketTypeExportableCertification       = 4,
-    PGPSignatureSubpacketTypeTrustSignature                = 5,
-    PGPSignatureSubpacketTypeRegularExpression             = 6,
-    PGPSignatureSubpacketTypeRevocable                     = 7,
+    PGPSignatureSubpacketTypeExportableCertification       = 4, //TODO
+    PGPSignatureSubpacketTypeTrustSignature                = 5, //TODO
+    PGPSignatureSubpacketTypeRegularExpression             = 6, //TODO
+    PGPSignatureSubpacketTypeRevocable                     = 7, //TODO
     PGPSignatureSubpacketTypeKeyExpirationTime             = 9,
     PGPSignatureSubpacketTypePreferredSymetricAlgorithm    = 11,
-    PGPSignatureSubpacketTypeRevocationKey                 = 12,
+    PGPSignatureSubpacketTypeRevocationKey                 = 12,//TODO
     PGPSignatureSubpacketTypeIssuer                        = 16,
-    PGPSignatureSubpacketTypeNotationData                  = 20,
+    PGPSignatureSubpacketTypeNotationData                  = 20,//TODO
     PGPSignatureSubpacketTypePreferredHashAlgorithm        = 21,
     PGPSignatureSubpacketTypePreferredCompressionAlgorithm = 22,
     PGPSignatureSubpacketTypeKeyServerPreference           = 23,
-    PGPSignatureSubpacketTypePreferredKeyServer            = 24,
+    PGPSignatureSubpacketTypePreferredKeyServer            = 24,//TODO
     PGPSignatureSubpacketTypePrimaryUserID                 = 25,
-    PGPSignatureSubpacketTypePolicyURI                     = 26,
+    PGPSignatureSubpacketTypePolicyURI                     = 26,//TODO
     PGPSignatureSubpacketTypeKeyFlags                      = 27,
-    PGPSignatureSubpacketTypeSignerUserID                  = 28,
-    PGPSignatureSubpacketTypeReasonForRevocation           = 29,
+    PGPSignatureSubpacketTypeSignerUserID                  = 28,//TODO
+    PGPSignatureSubpacketTypeReasonForRevocation           = 29,//TODO
     PGPSignatureSubpacketTypeFeatures                      = 30,
-    PGPSignatureSubpacketTypeSignatureTarget               = 31,
-    PGPSignatureSubpacketTypeEmbeddedSignature             = 32
+    PGPSignatureSubpacketTypeSignatureTarget               = 31,//TODO
+    PGPSignatureSubpacketTypeEmbeddedSignature             = 32 //TODO
 };
 
 // 5.2.3.21.  Key Flags
