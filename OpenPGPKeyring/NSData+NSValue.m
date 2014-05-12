@@ -16,7 +16,7 @@
     const char* encoding = [value objCType];
     NSGetSizeAndAlignment(encoding, &size, NULL);
 
-    void* ptr = malloc(size);
+    void* ptr = calloc(size, sizeof(void*));
     [value getValue:ptr];
     NSData* data = [NSData dataWithBytes:ptr length:size];
     free(ptr);
