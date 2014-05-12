@@ -10,4 +10,6 @@
 
 @interface PGPSecretKeyPacket : PGPPublicKeyPacket
 
+- (void) decrypt:(NSString *)passphrase;
+
 @end

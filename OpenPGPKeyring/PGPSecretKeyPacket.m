@@ -119,7 +119,6 @@
     position = position + self.encryptedMPIAndHashData.length;
 
 #ifdef DEBUG
-    //TODO: REMOVE, just for testing purpose
     [self decrypt:@"1234"];
 #endif
     return position;
@@ -267,8 +266,13 @@
                 NSLog(@"decrypted with %@ 64bit blocks used", @(num));
                 NSData *decryptedData = [NSData dataWithBytes:outBuffer length:outButterLength];
                 if (outBuffer) {
+                    memset(outBuffer, 0, sizeof(UInt8));
                     free(outBuffer);
                 }
+
+                if (encrypt_key) free(encrypt_key);
+                if (decrypt_key) free(decrypt_key);
+                if (ctx) free(ctx);
 
                 // now read mpis
                 [self readPlaintext:decryptedData startingAtPosition:0];
