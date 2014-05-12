@@ -18,4 +18,9 @@
     return PGPSecretSubkeyPacketTag;
 }
 
+- (NSUInteger)parsePacketBody:(NSData *)packetBody
+{
+    return [super parsePacketBody:packetBody];
+}
+
 @end

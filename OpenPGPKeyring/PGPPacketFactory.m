@@ -36,8 +36,8 @@
 
     if (packetHeaderData.length > 0) {
         NSData *packetBodyData = [packetsData subdataWithRange:(NSRange) {offset + packetHeaderData.length, bodyLength}];
-        // Analyze body
-        NSLog(@"Reading packet tag %d", packetTag);
+        // Analyze body0
+        NSLog(@"Reading packet tag %@, offset %@, length: %@", @(packetTag), @(offset), @(packetHeaderData.length + packetBodyData.length));
         id <PGPPacket> packet = nil;
         switch (packetTag) {
             case PGPPublicKeyPacketTag:

@@ -8,6 +8,9 @@
 
 #import "PGPString2Key.h"
 #import <CommonCrypto/CommonCrypto.h>
+#import <CommonCrypto/CommonDigest.h>
+
+#import "PGPCryptoUtils.h"
 
 static const unsigned int PGP_SALT_SIZE = 8;
 
@@ -64,7 +67,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
 {
     NSMutableData *result = [NSMutableData data];
     NSData *passphraseData = [passphrase dataUsingEncoding:NSUTF8StringEncoding];
-    NSUInteger hashSize = [self hashSizeOfHashAlhorithm:self.algorithm]; // SHA hash size
+    NSUInteger hashSize = [PGPCryptoUtils hashSizeOfHashAlhorithm:self.algorithm]; // SHA hash size
 
     switch (self.specifier) {
         case PGPS2KSpecifierSimple:
@@ -72,6 +75,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
             // passphrase
             CC_SHA1_CTX *ctx = calloc(1, sizeof(CC_SHA1_CTX));
             if (ctx) {
+                CC_SHA1_Init(ctx);
                 CC_SHA1_Update(ctx, passphraseData.bytes, passphrase.length);
                 UInt8 *digest = calloc(hashSize, sizeof(UInt8));
                 if (digest) {
@@ -92,6 +96,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
 
             CC_SHA1_CTX *ctx = calloc(1, sizeof(CC_SHA1_CTX));
             if (ctx) {
+                CC_SHA1_Init(ctx);
                 CC_SHA1_Update(ctx, self.salt.bytes, self.salt.length);
                 CC_SHA1_Update(ctx, passphraseData.bytes, passphrase.length);
                 UInt8 *digest = calloc(hashSize, sizeof(UInt8));
@@ -111,8 +116,10 @@ static const unsigned int PGP_SALT_SIZE = 8;
             NSPointerArray *ctxArray = [NSPointerArray pointerArrayWithOptions:NSPointerFunctionsOpaqueMemory];
             for (NSUInteger n = 0; n * hashSize < keySize; ++n) {
                 CC_SHA1_CTX *ctx = calloc(1, sizeof(CC_SHA1_CTX));
-                [ctxArray addPointer:ctx];
-                CC_SHA1_Init(ctx);
+                if (ctx) {
+                    CC_SHA1_Init(ctx);
+                    [ctxArray addPointer:ctx];
+                }
             }
 
             // append
@@ -154,29 +161,5 @@ static const unsigned int PGP_SALT_SIZE = 8;
     return [result copy];
 }
 
-#pragma mark - Private
-
-- (NSUInteger) hashSizeOfHashAlhorithm:(PGPHashAlgorithm)hashAlgorithm
-{
-    switch (hashAlgorithm) {
-        case PGPHashMD5:
-            return 16;
-        case PGPHashSHA1:
-            return 20;
-        case PGPHashSHA224:
-            return 28;
-        case PGPHashSHA256:
-            return 32;
-        case PGPHashSHA384:
-            return 48;
-        case PGPHashSHA512:
-            return 64;
-        case PGPHashRIPEMD160:
-            return 20; // TODO: confirm RIPE/MD 160 value
-        default:
-            break;
-    }
-    return NSNotFound;
-}
 
 @end

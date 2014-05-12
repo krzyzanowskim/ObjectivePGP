@@ -13,6 +13,12 @@
 #import "PGPString2Key.h"
 #import "PGPMPI.h"
 
+#import "PGPCryptoUtils.h"
+
+#import <CommonCrypto/CommonCrypto.h>
+#import <CommonCrypto/CommonDigest.h>
+#import <CommonCrypto/CommonCryptor.h>
+
 #include <openssl/cast.h>
 #include <openssl/idea.h>
 #include <openssl/aes.h>
@@ -27,7 +33,8 @@
 @property (strong) PGPString2Key *s2k;
 @property (assign) PGPSymmetricAlgorithm symmetricAlgorithm;
 @property (strong) NSData *ivData;
-@property (strong) NSData *encryptedMPIData;
+@property (strong) NSData *encryptedMPIAndHashData;
+@property (strong) NSData *hashOrChecksum;
 @property (strong) NSArray *mpi;
 
 @end
@@ -97,49 +104,22 @@
     position = position + self.s2k.length;
 
     // Initial Vector (IV) of the same length as the cipher's block size
-    NSUInteger blockSize = [self blockSizeOfSymmetricAlhorithm:self.symmetricAlgorithm];
+    NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:self.symmetricAlgorithm];
     NSAssert(blockSize <= 16, @"invalid blockSize");
 
     self.ivData = [packetBody subdataWithRange:(NSRange) {position, blockSize}];
     position = position + blockSize;
 
+
+    // encrypted MPIs
+    // checksum or hash is encrypted together with the algorithm-specific fields (if string-to-key usage octet is not zero).
+    self.encryptedMPIAndHashData = [packetBody subdataWithRange:(NSRange) {position, self.bodyLength - position}];
+    position = position + self.encryptedMPIAndHashData.length;
+
 #ifdef DEBUG
-    UInt8 *IV = (UInt8 *)self.ivData.bytes;
-    NSLog(@"IV %#02X %#02X %#02X %#02X %#02X %#02X %#02X %#02X", IV[0], IV[1], IV[2], IV[3], IV[4], IV[5], IV[6], IV[7]);
+    //TODO: REMOVE, just for testing purpose
+    [self decrypt:@"1234"];
 #endif
-
-    // calculate key - move to decrypt
-    NSUInteger keySize = [self keySizeOfSymmetricAlhorithm:self.symmetricAlgorithm];
-    NSAssert(keySize <= 32, @"invalid keySize");
-
-    [self.s2k produceKeyWithPassphrase:@"1234" keySize:keySize];
-
-    // read
-    NSData *hashOrChecksum = nil;
-    switch (self.s2kUsage) {
-        case PGPS2KUsageEncryptedAndHashed:
-        {
-            // encrypted MPIs
-            self.encryptedMPIData = [packetBody subdataWithRange:(NSRange) {position, self.bodyLength - position - 20}];
-            position = position + self.encryptedMPIData.length;
-
-            // a 20-octet SHA-1 hash of the plaintext of the algorithm-specific portion.
-            hashOrChecksum = [packetBody subdataWithRange:(NSRange){position,20}];
-            position = position + 20;
-        }
-            break;
-        default:
-        {
-            // encrypted MPIs
-            self.encryptedMPIData = [packetBody subdataWithRange:(NSRange) {position, self.bodyLength - position - 2}];
-            position = position + self.encryptedMPIData.length;
-
-            // a two-octet checksum of the plaintext of the algorithm-specific portion
-            hashOrChecksum = [packetBody subdataWithRange:(NSRange){position,2}];
-            position = position + 2;
-        }
-            break;
-    }
     return position;
 }
 
@@ -206,20 +186,21 @@
             break;
     }
 
-
-    NSData *hashOrChecksum = nil;
     switch (self.s2kUsage) {
         case PGPS2KUsageEncryptedAndHashed:
         {
             // a 20-octet SHA-1 hash of the plaintext of the algorithm-specific portion.
-            hashOrChecksum = [packetBody subdataWithRange:(NSRange){position,20}];
-            position = position + 20;
+            NSUInteger hashSize = [PGPCryptoUtils hashSizeOfHashAlhorithm:self.s2k.algorithm];
+            NSAssert(hashSize <= 64, @"invalid hashSize");
+
+            self.hashOrChecksum = [packetBody subdataWithRange:(NSRange){position, hashSize}];
+            position = position + self.hashOrChecksum.length;
         }
             break;
         default:
         {
             // a two-octet checksum of the plaintext of the algorithm-specific portion
-            hashOrChecksum = [packetBody subdataWithRange:(NSRange){position,2}];
+            self.hashOrChecksum = [packetBody subdataWithRange:(NSRange){position,2}];
             position = position + 2;
         }
             break;
@@ -231,30 +212,64 @@
 /**
  *  Decrypt parsed encrypted packet
  */
-- (void) decrypt:(NSString *)passphase
+- (void) decrypt:(NSString *)passphrase
 {
     if (!self.isEncrypted) {
         return;
     }
 
+    if (!self.ivData) {
+        return;
+    }
+
     // Keysize
-    NSUInteger keySize = [self keySizeOfSymmetricAlhorithm:self.symmetricAlgorithm];
+    NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:self.symmetricAlgorithm];
     NSAssert(keySize <= 32, @"invalid keySize");
 
+#ifdef DEBUG
+    UInt8 *IV = (UInt8 *)self.ivData.bytes;
+    NSLog(@"IV %#02X %#02X %#02X %#02X %#02X %#02X %#02X %#02X", IV[0], IV[1], IV[2], IV[3], IV[4], IV[5], IV[6], IV[7]);
+#endif
 
-    const void *encryptedBytes = self.encryptedMPIData.bytes;
+    //FIXME: not here, just for testing (?)
+    NSData *keyData = [self.s2k produceKeyWithPassphrase:passphrase keySize:keySize];
+
+    const void *encryptedBytes = self.encryptedMPIAndHashData.bytes;
     // decrypt CAST5 with CFB
     switch (self.symmetricAlgorithm) {
         case PGPSymmetricCAST5:
         {
-            // 	CAST_cfb64_encrypt(in, out, (long)count, crypt->encrypt_key, crypt->iv, &crypt->num, CAST_DECRYPT);
             if (self.s2k.specifier == PGPS2KSpecifierIteratedAndSalted) {
-                
-                UInt8 *outBuffer = calloc(1024, sizeof(UInt8));
-//                CAST_cfb64_encrypt(encryptedBytes, outBuffer, sizeof(outBuffer), <#const CAST_KEY *schedule#>, <#unsigned char *ivec#>, <#int *num#>, CAST_DECRYPT);
-//                if (buffer) {
-//                    free(buffer);
-//                }
+
+                // initialize
+                CAST_KEY *encrypt_key = calloc(1, sizeof(CAST_KEY));
+                CAST_set_key(encrypt_key, keySize, keyData.bytes);
+
+                CAST_KEY *decrypt_key = calloc(1, sizeof(CAST_KEY));
+                CAST_set_key(decrypt_key, keySize, keyData.bytes);
+
+                // TODO: see __ops_decrypt_init block_encrypt siv,civ,iv comments. siv is needed for weird v3 resync,
+                // wtf civ ???
+                // CAST_ecb_encrypt(in, out, encrypt_key, CAST_ENCRYPT);
+
+                CC_SHA1_CTX *ctx = calloc(1, sizeof(CC_SHA1_CTX));
+                if (ctx) {
+                    CC_SHA1_Init(ctx);
+                }
+
+                //TODO: maybe CommonCrypto with kCCModeCFB in place of OpenSSL
+                NSUInteger outButterLength = self.encryptedMPIAndHashData.length;
+                UInt8 *outBuffer = calloc(outButterLength, sizeof(UInt8));
+                int num = 0; //	how much of the 64bit block we have used
+                CAST_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, decrypt_key, (UInt8 *)self.ivData.bytes, &num, CAST_DECRYPT);
+                NSLog(@"decrypted %@", @(num));
+                NSData *decryptedData = [NSData dataWithBytes:outBuffer length:outButterLength];
+                if (outBuffer) {
+                    free(outBuffer);
+                }
+
+                // now read mpis
+                [self readPlaintext:decryptedData startingAtPosition:0];
             }
 
         }
@@ -265,11 +280,6 @@
     }
 
 
-    // Hash size
-    //NSUInteger hashSize = [self hashSizeOfHashAlhorithm:self.s2k.algorithm];
-    //NSAssert(hashSize <= 64, @"invalid hashSize");
-
-
     //TODO: decrypt
     // 3.7.2.1.  Secret-Key Encryption
     // 3.7.2.2.  Symmetric-Key Message Encryption
@@ -277,58 +287,8 @@
     // With V4 keys, a simpler method is used.  All secret MPI values are
     // encrypted in CFB mode, including the MPI bitcount prefix.
     // crypto.cfb.normalDecrypt(symmetric, key, ciphertext, iv);
-
 }
 
-#pragma mark - Private
-
-- (NSUInteger) blockSizeOfSymmetricAlhorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm
-{
-    switch (symmetricAlgorithm) {
-        case PGPSymmetricIDEA:
-            return IDEA_BLOCK;
-        case PGPSymmetricTripleDES:
-            return 8;
-        case PGPSymmetricCAST5:
-            return CAST_BLOCK;
-        case PGPSymmetricBlowfish:
-            return 16; // 64bit
-        case PGPSymmetricAES128:
-        case PGPSymmetricAES192:
-        case PGPSymmetricAES256:
-            return 16;
-        case PGPSymmetricTwofish256:
-            return 16; // 128bit
-        default:
-            break;
-    }
-    return NSNotFound;
-}
-
-- (NSUInteger) keySizeOfSymmetricAlhorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm
-{
-    switch (symmetricAlgorithm) {
-        case PGPSymmetricIDEA:
-            return IDEA_KEY_LENGTH;
-        case PGPSymmetricTripleDES:
-            return 8;
-        case PGPSymmetricCAST5:
-            return CAST_KEY_LENGTH;
-        case PGPSymmetricBlowfish:
-            return 16; // 16 bit
-        case PGPSymmetricAES128:
-            return 16; // 128 bit
-        case PGPSymmetricAES192:
-            return 23; // 192 bit
-        case PGPSymmetricAES256:
-            return 32; // 256 bit
-        case PGPSymmetricTwofish256:
-            return 16; // 128bit (??or 32)
-        default:
-            break;
-    }
-    return NSNotFound;
-}
 
 
 @end
