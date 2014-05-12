@@ -30,14 +30,14 @@ typedef NS_ENUM(UInt8, PGPPacketTag) {
     PGPSecretSubkeyPacketTag                                 = 7,
     PGPCompressedDataPacketTag                               = 8,  //TODO
     PGPSymmetricallyEncryptedDataPacketTag                   = 9,  //TODO
-    PGPMarkerPacketTag                                       = 10, //TODO
+    PGPMarkerPacketTag                                       = 10, //Ignored (Obsolete Literal Packet)
     PGPLiteralDataPacketTag                                  = 11,
     PGPTrustPacketTag                                        = 12,
     PGPUserIDPacketTag                                       = 13,
     PGPPublicSubkeyPacketTag                                 = 14,
     PGPUserAttributePacketTag                                = 17, //TODO
     PGPSymmetricallyEncryptedIntegrityProtectedDataPacketTag = 18, //TODO
-    PGPModificationDetectionCodePacket                       = 19, //TODO
+    PGPModificationDetectionCodePacketTag                    = 19,
 };
 
 // 9.1.  Public-Key Algorithms

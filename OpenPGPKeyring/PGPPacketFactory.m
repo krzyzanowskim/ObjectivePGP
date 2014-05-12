@@ -14,6 +14,7 @@
 #import "PGPTrustPacket.h"
 #import "PGPSecretKeyPacket.h"
 #import "PGPSecretSubKeyPacket.h"
+#import "PGPModificationDetectionCodePacket.h"
 
 @implementation PGPPacketFactory
 
@@ -60,6 +61,9 @@
                 break;
             case PGPSecretSubkeyPacketTag:
                 packet = [[PGPSecretSubKeyPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+                break;
+            case PGPModificationDetectionCodePacketTag:
+                packet = [[PGPModificationDetectionCodePacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
                 break;
             default:
                 NSLog(@"!!! Packet tag %d is not supported", packetTag);
