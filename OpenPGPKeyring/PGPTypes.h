@@ -42,26 +42,26 @@ typedef NS_ENUM(UInt8, PGPPacketTag) {
 
 // 9.1.  Public-Key Algorithms
 typedef NS_ENUM(UInt8, PGPPublicKeyAlgorithm) {
-    PGPPublicKeyAlgorithmRSA                = 1,
-    PGPPublicKeyAlgorithmRSAEncryptOnly     = 2,
-    PGPPublicKeyAlgorithmRSASignOnly        = 3,
-    PGPPublicKeyAlgorithmElgamal            = 16, // Elgamal (Encrypt-Only)
-    PGPPublicKeyAlgorithmDSA                = 17,
-    PGPPublicKeyAlgorithmElliptic           = 18,
-    PGPPublicKeyAlgorithmECDSA              = 19,
-    PGPPublicKeyAlgorithmElgamalEncryptorSign = 20, // Deprecated ?
-    PGPPublicKeyAlgorithmDiffieHellman      = 21,
-    PGPPublicKeyAlgorithmPrivate1           = 100,
-    PGPPublicKeyAlgorithmPrivate2           = 101,
-    PGPPublicKeyAlgorithmPrivate3           = 102,
-    PGPPublicKeyAlgorithmPrivate4           = 103,
-    PGPPublicKeyAlgorithmPrivate5           = 104,
-    PGPPublicKeyAlgorithmPrivate6           = 105,
-    PGPPublicKeyAlgorithmPrivate7           = 106,
-    PGPPublicKeyAlgorithmPrivate8           = 107,
-    PGPPublicKeyAlgorithmPrivate9           = 108,
-    PGPPublicKeyAlgorithmPrivate10          = 109,
-    PGPPublicKeyAlgorithmPrivate11          = 110
+    PGPPublicKeyAlgorithmRSA                  = 1,
+    PGPPublicKeyAlgorithmRSAEncryptOnly       = 2,
+    PGPPublicKeyAlgorithmRSASignOnly          = 3,
+    PGPPublicKeyAlgorithmElgamal              = 16,// Elgamal (Encrypt-Only)
+    PGPPublicKeyAlgorithmDSA                  = 17,
+    PGPPublicKeyAlgorithmElliptic             = 18,
+    PGPPublicKeyAlgorithmECDSA                = 19,
+    PGPPublicKeyAlgorithmElgamalEncryptorSign = 20,// Deprecated ?
+    PGPPublicKeyAlgorithmDiffieHellman        = 21,
+    PGPPublicKeyAlgorithmPrivate1             = 100,
+    PGPPublicKeyAlgorithmPrivate2             = 101,
+    PGPPublicKeyAlgorithmPrivate3             = 102,
+    PGPPublicKeyAlgorithmPrivate4             = 103,
+    PGPPublicKeyAlgorithmPrivate5             = 104,
+    PGPPublicKeyAlgorithmPrivate6             = 105,
+    PGPPublicKeyAlgorithmPrivate7             = 106,
+    PGPPublicKeyAlgorithmPrivate8             = 107,
+    PGPPublicKeyAlgorithmPrivate9             = 108,
+    PGPPublicKeyAlgorithmPrivate10            = 109,
+    PGPPublicKeyAlgorithmPrivate11            = 110
 };
 
 // 9.2.  Symmetric-Key Algorithms
@@ -117,7 +117,7 @@ typedef NS_ENUM(UInt8, PGPSignatureType) {
 typedef NS_ENUM(UInt8, PGPSignatureSubpacketType) {
     PGPSignatureSubpacketTypeSignatureCreationTime         = 2,
     PGPSignatureSubpacketTypeSignatureExpirationTime       = 3,
-    PGPSignatureSubpacketTypeExportableCertification       = 4, //TODO
+    PGPSignatureSubpacketTypeExportableCertification       = 4,
     PGPSignatureSubpacketTypeTrustSignature                = 5, //TODO
     PGPSignatureSubpacketTypeRegularExpression             = 6, //TODO
     PGPSignatureSubpacketTypeRevocable                     = 7, //TODO
@@ -129,11 +129,11 @@ typedef NS_ENUM(UInt8, PGPSignatureSubpacketType) {
     PGPSignatureSubpacketTypePreferredHashAlgorithm        = 21,
     PGPSignatureSubpacketTypePreferredCompressionAlgorithm = 22,
     PGPSignatureSubpacketTypeKeyServerPreference           = 23,
-    PGPSignatureSubpacketTypePreferredKeyServer            = 24,//TODO
+    PGPSignatureSubpacketTypePreferredKeyServer            = 24,
     PGPSignatureSubpacketTypePrimaryUserID                 = 25,
-    PGPSignatureSubpacketTypePolicyURI                     = 26,//TODO
+    PGPSignatureSubpacketTypePolicyURI                     = 26,
     PGPSignatureSubpacketTypeKeyFlags                      = 27,
-    PGPSignatureSubpacketTypeSignerUserID                  = 28,//TODO
+    PGPSignatureSubpacketTypeSignerUserID                  = 28,
     PGPSignatureSubpacketTypeReasonForRevocation           = 29,//TODO
     PGPSignatureSubpacketTypeFeatures                      = 30,
     PGPSignatureSubpacketTypeSignatureTarget               = 31,//TODO

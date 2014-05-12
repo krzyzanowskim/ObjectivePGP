@@ -67,12 +67,28 @@
              */
         }
             break;
-        case PGPSignatureSubpacketTypePrimaryUserID: // NSNumber BOOL
+        case PGPSignatureSubpacketTypeExportableCertification:  // NSNumber BOOL
+        {
+            // 5.2.3.11.  Exportable Certification
+            UInt8 exportableValue = 0;
+            [packetBody getBytes:&exportableValue length:1];
+            self.value = @(exportableValue);
+        }
+            break;
+        case PGPSignatureSubpacketTypePrimaryUserID:            // NSNumber BOOL
         {
             // 5.2.3.19.  Primary User ID
             UInt8 primaryUserIDValue = 0;
             [packetBody getBytes:&primaryUserIDValue length:1];
             self.value = @(primaryUserIDValue);
+        }
+            break;
+        case PGPSignatureSubpacketTypeSignerUserID:         // NSString
+            // side note: This subpacket is not appropriate to use to refer to a User Attribute packet.
+        case PGPSignatureSubpacketTypePreferredKeyServer:   // NSString
+        case PGPSignatureSubpacketTypePolicyURI:            // NSString
+        {
+            self.value = [[NSString alloc] initWithData:packetBody encoding:NSUTF8StringEncoding];
         }
             break;
         case PGPSignatureSubpacketTypeKeyFlags: // NSArray of PGPSignatureFlags
