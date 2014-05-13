@@ -44,18 +44,21 @@
  *
  *  @param packetBody Packet body
  */
-- (NSUInteger)parsePacketBody:(NSData *)packetBody
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
 {
-    [super parsePacketBody:packetBody];
-    //  TODO: Implementations SHOULD accept V3 signatures
+    NSUInteger position = [super parsePacketBody:packetBody error:error];
 
     // V4
-    NSUInteger position = 0;
     // One-octet version number (4).
     [packetBody getBytes:&_version range:(NSRange){position,1}];
     position = position + 1;
 
-    NSAssert(_version == 4, @"Only signature V4 is supported");
+    //  TODO: Implementations SHOULD accept V3 signatures
+    NSAssert(_version == 4, @"Only signature V4 is supported at the moment");
+    if (_version != 4) {
+    //    [NSException raise:@"PGPInvalidData" format:@"Signature packet in version %@ is unsupported", @(_version)];
+        return packetBody.length;
+    }
 
     // One-octet signature type.
     [packetBody getBytes:&_signatureType range:(NSRange){position,1}];

@@ -21,6 +21,7 @@ typedef NS_ENUM(NSUInteger, PGPHeaderPacketTag) {
 };
 
 typedef NS_ENUM(UInt8, PGPPacketTag) {
+    PGPInvalidPacketTag                                      = 0,
     PGPPublicKeyEncryptedSessionKeyPacketTag                 = 1,  //TODO
     PGPSignaturePacketTag                                    = 2,
     PGPSymetricKeyEncryptedSessionKeyPacketTag               = 3,  //TODO

@@ -11,6 +11,7 @@
 		7502CEFF1916DCE9001B32D7 /* PGPSignatureSubpacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 7502CEFE1916DCE9001B32D7 /* PGPSignatureSubpacket.m */; };
 		7502CF021916EFD5001B32D7 /* NSData+NSValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7502CF011916EFD5001B32D7 /* NSData+NSValue.m */; };
 		7507B72819170FE3003A2DC7 /* PGPUserIDPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 7507B72719170FE3003A2DC7 /* PGPUserIDPacket.m */; };
+		750EE3C41922C185009E818E /* PGPTransferableKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 750EE3C31922C185009E818E /* PGPTransferableKey.m */; };
 		7555BA7F19201BC8002C8629 /* pubring-test-encrypted.gpg in Resources */ = {isa = PBXBuildFile; fileRef = 7555BA7B19201BC8002C8629 /* pubring-test-encrypted.gpg */; };
 		7555BA8019201BC8002C8629 /* pubring-test-plaintext.gpg in Resources */ = {isa = PBXBuildFile; fileRef = 7555BA7C19201BC8002C8629 /* pubring-test-plaintext.gpg */; };
 		7555BA8119201BC8002C8629 /* secring-test-encrypted.gpg in Resources */ = {isa = PBXBuildFile; fileRef = 7555BA7D19201BC8002C8629 /* secring-test-encrypted.gpg */; };
@@ -72,6 +73,8 @@
 		7502CF011916EFD5001B32D7 /* NSData+NSValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+NSValue.m"; sourceTree = "<group>"; };
 		7507B72619170FE3003A2DC7 /* PGPUserIDPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPUserIDPacket.h; sourceTree = "<group>"; };
 		7507B72719170FE3003A2DC7 /* PGPUserIDPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPUserIDPacket.m; sourceTree = "<group>"; };
+		750EE3C21922C185009E818E /* PGPTransferableKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPTransferableKey.h; sourceTree = "<group>"; };
+		750EE3C31922C185009E818E /* PGPTransferableKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPTransferableKey.m; sourceTree = "<group>"; };
 		7555BA7B19201BC8002C8629 /* pubring-test-encrypted.gpg */ = {isa = PBXFileReference; lastKnownFileType = file; name = "pubring-test-encrypted.gpg"; path = "TestingFiles/pubring-test-encrypted.gpg"; sourceTree = "<group>"; };
 		7555BA7C19201BC8002C8629 /* pubring-test-plaintext.gpg */ = {isa = PBXFileReference; lastKnownFileType = file; name = "pubring-test-plaintext.gpg"; path = "TestingFiles/pubring-test-plaintext.gpg"; sourceTree = "<group>"; };
 		7555BA7D19201BC8002C8629 /* secring-test-encrypted.gpg */ = {isa = PBXFileReference; lastKnownFileType = file; name = "secring-test-encrypted.gpg"; path = "TestingFiles/secring-test-encrypted.gpg"; sourceTree = "<group>"; };
@@ -198,6 +201,8 @@
 				75734BDA191853DF00A54D6E /* PGPKeyID.m */,
 				75DA135C191AE1D6004C9C76 /* PGPString2Key.h */,
 				75DA135D191AE1D6004C9C76 /* PGPString2Key.m */,
+				750EE3C21922C185009E818E /* PGPTransferableKey.h */,
+				750EE3C31922C185009E818E /* PGPTransferableKey.m */,
 				756299BB1914DE1A00C5AD3B /* Supporting Files */,
 			);
 			path = OpenPGPKeyring;
@@ -326,7 +331,7 @@
 		756299AD1914DE1A00C5AD3B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				CLASSPREFIX = MKR;
+				CLASSPREFIX = PGP;
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Marcin Krzyżanowski";
 			};
@@ -406,6 +411,7 @@
 				756299E71915AF0700C5AD3B /* PGPPublicKeyPacket.m in Sources */,
 				75E7B6B81916493600C96BAB /* PGPPublicSubKeyPacket.m in Sources */,
 				75DA135B191A4EA6004C9C76 /* PGPSecretSubKeyPacket.m in Sources */,
+				750EE3C41922C185009E818E /* PGPTransferableKey.m in Sources */,
 				756299C01914DE1A00C5AD3B /* OpenPGPKeyring.m in Sources */,
 				759DBA181915CBDF00305549 /* PGPMPI.m in Sources */,
 				75734BDB191853DF00A54D6E /* PGPKeyID.m in Sources */,

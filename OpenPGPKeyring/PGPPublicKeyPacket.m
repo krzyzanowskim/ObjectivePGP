@@ -26,9 +26,9 @@
  *
  *  @param packetBody Packet body
  */
-- (NSUInteger) parsePacketBody:(NSData *)packetBody
+- (NSUInteger) parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
 {
-    NSUInteger position = [super parsePacketBody:packetBody];
+    NSUInteger position = [super parsePacketBody:packetBody error:error];
 
     //TODO: V3 keys are deprecated; an implementation MUST NOT generate a V3 key, but MAY accept it.
 

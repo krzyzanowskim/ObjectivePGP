@@ -15,9 +15,9 @@
     return PGPModificationDetectionCodePacketTag;
 }
 
-- (NSUInteger)parsePacketBody:(NSData *)packetBody
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
 {
-    NSUInteger position = [super parsePacketBody:packetBody];
+    NSUInteger position = [super parsePacketBody:packetBody error:error];
 
     // 5.14.  Modification Detection Code Packet (Tag 19)
     NSAssert(self.bodyLength == 20, @"A Modification Detection Code packet MUST have a length of 20 octets");

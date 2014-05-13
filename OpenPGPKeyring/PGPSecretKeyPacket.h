@@ -18,6 +18,6 @@
 @property (strong) NSData *ivData;
 @property (strong) NSArray *mpi;
 
-- (BOOL) decrypt:(NSString *)passphrase;
+- (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error;
 
 @end

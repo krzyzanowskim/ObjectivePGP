@@ -13,14 +13,18 @@
 - (instancetype)initWithHeader:(NSData *)headerData body:(NSData *)bodyData
 {
     if (self = [self init]) {
+        NSError *error = nil;
         self.headerLength = headerData.length;
-        [self parsePacketBody:bodyData];
+        [self parsePacketBody:bodyData error:&error];
+        if (error) {
+            return nil;
+        }
     }
     return self;
 }
 
 
-- (NSUInteger) parsePacketBody:(NSData *)packetBody
+- (NSUInteger) parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
 {
     self.bodyLength = packetBody.length;
     return 0;

@@ -46,12 +46,9 @@
     return PGPSecretKeyPacketTag;
 }
 
-- (NSUInteger)parsePacketBody:(NSData *)packetBody
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
 {
-    //TODO: take error handling outside
-    NSError *error = nil;
-
-    NSUInteger position = [super parsePacketBody:packetBody];
+    NSUInteger position = [super parsePacketBody:packetBody error:error];
     //  5.5.3.  Secret-Key Packet Formats
 
     NSAssert(self.version == 0x04,@"Only Secret Key version 4 is supported. Found version %@", @(self.version));
@@ -76,9 +73,9 @@
 
     NSData *encryptedData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
     if (self.isEncrypted) {
-        position = position + [self parseEncryptedPart:encryptedData error:&error];
+        position = position + [self parseEncryptedPart:encryptedData error:error];
     } else {
-        position = position + [self parseCleartextPart:encryptedData error:&error];
+        position = position + [self parseCleartextPart:encryptedData error:error];
     }
 
     return position;
@@ -239,8 +236,9 @@
 
 /**
  *  Decrypt parsed encrypted packet
+ *  TODO: V3 support
  */
-- (BOOL) decrypt:(NSString *)passphrase error:(NSError **)error
+- (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error
 {
     if (!self.isEncrypted) {
         return NO;
@@ -359,15 +357,6 @@
             return NO;
         }
     }
-
-    //TODO: decrypt
-    // 3.7.2.1.  Secret-Key Encryption
-    // 3.7.2.2.  Symmetric-Key Message Encryption
-    // CFB etc...
-    // With V4 keys, a simpler method is used.  All secret MPI values are
-    // encrypted in CFB mode, including the MPI bitcount prefix.
-    // crypto.cfb.normalDecrypt(symmetric, key, ciphertext, iv);
-
     return YES;
 }
 

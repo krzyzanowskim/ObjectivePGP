@@ -19,9 +19,9 @@
     return PGPTrustPacketTag;
 }
 
-- (NSUInteger) parsePacketBody:(NSData *)packetBody
+- (NSUInteger) parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
 {
-    NSUInteger position = [super parsePacketBody:packetBody];
+    NSUInteger position = [super parsePacketBody:packetBody error:error];
 
     // 5.10.  Trust Packet (Tag 12)
     // The format of Trust packets is defined by a given implementation.
