@@ -16,7 +16,6 @@
 @property (strong) PGPString2Key *s2k;
 @property (assign) PGPSymmetricAlgorithm symmetricAlgorithm;
 @property (strong) NSData *ivData;
-@property (strong) NSData *hashOrChecksum;
 @property (strong) NSArray *mpi;
 
 - (BOOL) decrypt:(NSString *)passphrase;

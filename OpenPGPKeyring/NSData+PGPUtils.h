@@ -8,6 +8,11 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NSData (Bytes)
+@interface NSData (PGPUtils)
+
+- (UInt16) checksum;
+//- (NSData*) MD5;
+- (NSData*) SHA1;
+//- (NSData*) SHA256;
 
 @end

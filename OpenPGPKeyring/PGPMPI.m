@@ -25,6 +25,9 @@
         UInt16 mpiBitsLength = 0;
         [data getBytes:&mpiBitsLength range:(NSRange){position,2}];
         NSUInteger mpiBytesLength = (CFSwapInt16BigToHost(mpiBitsLength) + 7) / 8;
+        
+//        if (mpiBitsLength / 8 > data.length)
+//            return nil;
 
         NSData *intdata = [data subdataWithRange:(NSRange){position + 2, mpiBytesLength}];
         _bn = BN_bin2bn(intdata.bytes, (int)intdata.length, NULL);

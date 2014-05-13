@@ -14,6 +14,7 @@
 #import "PGPMPI.h"
 
 #import "PGPCryptoUtils.h"
+#import "NSData+PGPUtils.h"
 
 #import <CommonCrypto/CommonCrypto.h>
 #import <CommonCrypto/CommonDigest.h>
@@ -22,6 +23,7 @@
 #include <openssl/cast.h>
 #include <openssl/idea.h>
 #include <openssl/aes.h>
+#include <openssl/sha.h>
 #include <openssl/des.h>
 #include <openssl/camellia.h>
 #include <openssl/blowfish.h>
@@ -46,6 +48,9 @@
 
 - (NSUInteger)parsePacketBody:(NSData *)packetBody
 {
+    //TODO: take error handling outside
+    NSError *error = nil;
+
     NSUInteger position = [super parsePacketBody:packetBody];
     //  5.5.3.  Secret-Key Packet Formats
 
@@ -69,10 +74,11 @@
 
     self.isEncrypted = (self.s2kUsage == PGPS2KUsageEncrypted || self.s2kUsage == PGPS2KUsageEncryptedAndHashed);
 
+    NSData *encryptedData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
     if (self.isEncrypted) {
-        position = [self readEncrypted:packetBody startingAtPosition:position];
+        position = position + [self parseEncryptedPart:encryptedData error:&error];
     } else {
-        position = [self readPlaintext:packetBody startingAtPosition:position];
+        position = position + [self parseCleartextPart:encryptedData error:&error];
     }
 
     return position;
@@ -84,69 +90,119 @@
  *  @param packetBody packet data
  *  @param position   position offset
  *
- *  @return new position offset
+ *  @return length
  */
-- (NSUInteger) readEncrypted:(NSData *)packetBody startingAtPosition:(NSUInteger)position
+- (NSUInteger) parseEncryptedPart:(NSData *)dataBody error:(NSError **)error
 {
+    NSUInteger position = 0;
+
     // If string-to-key usage octet was 255 or 254, a one-octet symmetric encryption algorithm
-    [packetBody getBytes:&_symmetricAlgorithm range:(NSRange){position, 1}];
+    [dataBody getBytes:&_symmetricAlgorithm range:(NSRange){position, 1}];
     position = position + 1;
 
     // S2K
-    self.s2k = [PGPString2Key string2KeyFromData:packetBody atPosition:position];
+    self.s2k = [PGPString2Key string2KeyFromData:dataBody atPosition:position];
     position = position + self.s2k.length;
 
     // Initial Vector (IV) of the same length as the cipher's block size
     NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:self.symmetricAlgorithm];
     NSAssert(blockSize <= 16, @"invalid blockSize");
 
-    self.ivData = [packetBody subdataWithRange:(NSRange) {position, blockSize}];
+    self.ivData = [dataBody subdataWithRange:(NSRange) {position, blockSize}];
     position = position + blockSize;
 
 
     // encrypted MPIs
     // checksum or hash is encrypted together with the algorithm-specific fields (if string-to-key usage octet is not zero).
-    self.encryptedMPIAndHashData = [packetBody subdataWithRange:(NSRange) {position, self.bodyLength - position}];
+    self.encryptedMPIAndHashData = [dataBody subdataWithRange:(NSRange) {position, dataBody.length - position}];
     position = position + self.encryptedMPIAndHashData.length;
 
 #ifdef DEBUG
-    [self decrypt:@"1234"];
+    //[self decrypt:@"1234"];
+    [self decrypt:@"1234" error:error];  // invalid password
 #endif
-    return position;
+    return dataBody.length;
 }
 
 /**
- *  Plaintext algorithm-specific fields for secret keys
+ *  Cleartext part
  *
  *  @param packetBody packet data
  *  @param position   position offset
  *
- *  @return new position offset
+ *  @return length
  */
-- (NSUInteger) readPlaintext:(NSData *)packetBody startingAtPosition:(NSUInteger)position
+- (NSUInteger) parseCleartextPart:(NSData *)dataBody error:(NSError **)error
 {
+    NSUInteger position = 0;
+
+    // check hash before read actual data
+    // hash is physically located at the end of dataBody
+    switch (self.s2kUsage) {
+        case PGPS2KUsageEncryptedAndHashed:
+        {
+            // a 20-octet SHA-1 hash of the plaintext of the algorithm-specific portion.
+            NSUInteger hashSize = [PGPCryptoUtils hashSizeOfHashAlhorithm:PGPHashSHA1];
+            NSAssert(hashSize <= 20, @"invalid hashSize");
+
+            NSData *clearTextData = [dataBody subdataWithRange:(NSRange) {0, dataBody.length - hashSize}];
+            NSData *hashData = [dataBody subdataWithRange:(NSRange){dataBody.length - hashSize, hashSize}];
+            NSData *calculatedHashData = [clearTextData SHA1];
+
+            if (![hashData isEqualToData:calculatedHashData]) {
+                if (error) {
+                    *error = [NSError errorWithDomain:@"objectivepgp.hakore.com" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Decrypted hash mismatch, check password."}];
+                    return dataBody.length;
+                }
+            }
+
+        }
+            break;
+        default:
+        {
+            // a two-octet checksum of the plaintext of the algorithm-specific portion
+            NSUInteger checksumLength = 2;
+            NSData *clearTextData = [dataBody subdataWithRange:(NSRange) {0, dataBody.length - checksumLength}];
+            NSData *checksumData = [dataBody subdataWithRange:(NSRange){dataBody.length - checksumLength, checksumLength}];
+            NSUInteger calculatedChecksum = [clearTextData checksum];
+
+            UInt16 checksum = 0;
+            [checksumData getBytes:&checksum length:checksumLength];
+            checksum = CFSwapInt16BigToHost(checksum);
+
+            if (checksum != calculatedChecksum) {
+                if (error) {
+                    *error = [NSError errorWithDomain:@"objectivepgp.hakore.com" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Decrypted hash mismatch, check password."}];
+                    return dataBody.length;
+                }
+            }
+        }
+            break;
+    }
+
+    // now read the actual data
     switch (self.algorithm) {
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly:
         {
             // multiprecision integer (MPI) of RSA secret exponent d.
-            PGPMPI *mpiD = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            PGPMPI *mpiD = [[PGPMPI alloc] initWithData:dataBody atPosition:position];
             mpiD.identifier = @"D";
             position = position + mpiD.length;
 
             // MPI of RSA secret prime value p.
-            PGPMPI *mpiP = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            PGPMPI *mpiP = [[PGPMPI alloc] initWithData:dataBody atPosition:position];
             mpiP.identifier = @"P";
             position = position + mpiP.length;
 
             // MPI of RSA secret prime value q (p < q).
-            PGPMPI *mpiQ = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            PGPMPI *mpiQ = [[PGPMPI alloc] initWithData:dataBody atPosition:position];
             mpiQ.identifier = @"Q";
             position = position + mpiQ.length;
 
             // MPI of u, the multiplicative inverse of p, mod q.
-            PGPMPI *mpiU = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            PGPMPI *mpiU = [[PGPMPI alloc] initWithData:dataBody atPosition:position];
             mpiU.identifier = @"U";
             position = position + mpiU.length;
 
@@ -156,7 +212,7 @@
         case PGPPublicKeyAlgorithmDSA:
         {
             // MPI of DSA secret exponent x.
-            PGPMPI *mpiX = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            PGPMPI *mpiX = [[PGPMPI alloc] initWithData:dataBody atPosition:position];
             mpiX.identifier = @"X";
             position = position + mpiX.length;
 
@@ -167,7 +223,7 @@
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:
         {
             // MPI of Elgamal secret exponent x.
-            PGPMPI *mpiX = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            PGPMPI *mpiX = [[PGPMPI alloc] initWithData:dataBody atPosition:position];
             mpiX.identifier = @"X";
             position = position + mpiX.length;
 
@@ -178,33 +234,13 @@
             break;
     }
 
-    switch (self.s2kUsage) {
-        case PGPS2KUsageEncryptedAndHashed:
-        {
-            // a 20-octet SHA-1 hash of the plaintext of the algorithm-specific portion.
-            NSUInteger hashSize = [PGPCryptoUtils hashSizeOfHashAlhorithm:self.s2k.algorithm];
-            NSAssert(hashSize <= 64, @"invalid hashSize");
-
-            self.hashOrChecksum = [packetBody subdataWithRange:(NSRange){position, hashSize}];
-            position = position + self.hashOrChecksum.length;
-        }
-            break;
-        default:
-        {
-            // a two-octet checksum of the plaintext of the algorithm-specific portion
-            self.hashOrChecksum = [packetBody subdataWithRange:(NSRange){position,2}];
-            position = position + 2;
-        }
-            break;
-    }
-
-    return position;
+    return dataBody.length;
 }
 
 /**
  *  Decrypt parsed encrypted packet
  */
-- (BOOL) decrypt:(NSString *)passphrase
+- (BOOL) decrypt:(NSString *)passphrase error:(NSError **)error
 {
     if (!self.isEncrypted) {
         return NO;
@@ -311,9 +347,17 @@
             break;
     }
 
+    if (outBuffer) {
+        memset(outBuffer, 0, sizeof(UInt8));
+        free(outBuffer);
+    }
+
     // now read mpis
     if (decryptedData) {
-        [self readPlaintext:decryptedData startingAtPosition:0];
+        [self parseCleartextPart:decryptedData error:error];
+        if (error) {
+            return NO;
+        }
     }
 
     //TODO: decrypt
@@ -323,11 +367,6 @@
     // With V4 keys, a simpler method is used.  All secret MPI values are
     // encrypted in CFB mode, including the MPI bitcount prefix.
     // crypto.cfb.normalDecrypt(symmetric, key, ciphertext, iv);
-
-    if (outBuffer) {
-        memset(outBuffer, 0, sizeof(UInt8));
-        free(outBuffer);
-    }
 
     return YES;
 }

@@ -63,7 +63,7 @@
 
 - (void) testSecretKeyring
 {
-    BOOL openedSecring    = [self.keyring open:self.secringPathEncrypted];
+    BOOL openedSecring    = [self.keyring open:self.secringPathPlaintext];
     XCTAssert(openedSecring, @"Unable to read file");
 }
 
