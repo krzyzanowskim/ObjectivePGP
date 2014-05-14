@@ -16,10 +16,11 @@
 
 @property (assign, readonly) UInt8 version;
 @property (assign, readonly) UInt32 timestamp;
+@property (assign, readonly) UInt16 V3validityPeriod; // obsolete
 @property (assign, readonly) PGPPublicKeyAlgorithm algorithm;
-@property (strong) NSArray *mpi;
+@property (strong, readonly) NSArray *publicMPI;
 
-@property (strong, readonly) PGPKeyID *keyID;
-@property (strong, readonly) NSData *fingerprint;
+- (PGPKeyID *)keyID;
+- (NSData *) fingerprint;
 
 @end

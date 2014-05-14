@@ -29,22 +29,23 @@
 #include <openssl/blowfish.h>
 
 @interface PGPSecretKeyPacket ()
-@property (strong) NSData *encryptedMPIAndHashData;
+@property (strong, readwrite) NSData *encryptedPartData;
+@property (strong, readwrite) NSData *ivData;
+@property (strong, readwrite) NSArray *secretMPI;
 @end
 
 @implementation PGPSecretKeyPacket
-
-- (id)init
-{
-    if (self = [super init]) {
-    }
-    return self;
-}
 
 - (PGPPacketTag)tag
 {
     return PGPSecretKeyPacketTag;
 }
+
+- (NSData *)fingerprint
+{
+    return [super fingerprint];
+}
+
 
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
 {
@@ -110,9 +111,9 @@
 
 
     // encrypted MPIs
-    // checksum or hash is encrypted together with the algorithm-specific fields (if string-to-key usage octet is not zero).
-    self.encryptedMPIAndHashData = [data subdataWithRange:(NSRange) {position, data.length - position}];
-    position = position + self.encryptedMPIAndHashData.length;
+    // checksum or hash is encrypted together with the algorithm-specific fields (mpis) (if string-to-key usage octet is not zero).
+    self.encryptedPartData = [data subdataWithRange:(NSRange) {position, data.length - position}];
+    position = position + self.encryptedPartData.length;
 
 #ifdef DEBUG
     //[self decrypt:@"1234"];
@@ -203,7 +204,7 @@
             mpiU.identifier = @"U";
             position = position + mpiU.length;
 
-            self.mpi = [NSArray arrayWithObjects:mpiD, mpiP, mpiQ, mpiU, nil];
+            self.secretMPI = [NSArray arrayWithObjects:mpiD, mpiP, mpiQ, mpiU, nil];
         }
             break;
         case PGPPublicKeyAlgorithmDSA:
@@ -213,7 +214,7 @@
             mpiX.identifier = @"X";
             position = position + mpiX.length;
 
-            self.mpi = [NSArray arrayWithObjects:mpiX, nil];
+            self.secretMPI = [NSArray arrayWithObjects:mpiX, nil];
         }
             break;
         case PGPPublicKeyAlgorithmElgamal:
@@ -224,7 +225,7 @@
             mpiX.identifier = @"X";
             position = position + mpiX.length;
 
-            self.mpi = [NSArray arrayWithObjects:mpiX, nil];
+            self.secretMPI = [NSArray arrayWithObjects:mpiX, nil];
         }
             break;
         default:
@@ -260,9 +261,9 @@
     //FIXME: not here, just for testing (?)
     NSData *keyData = [self.s2k produceKeyWithPassphrase:passphrase keySize:keySize];
 
-    const void *encryptedBytes = self.encryptedMPIAndHashData.bytes;
+    const void *encryptedBytes = self.encryptedPartData.bytes;
 
-    NSUInteger outButterLength = self.encryptedMPIAndHashData.length;
+    NSUInteger outButterLength = self.encryptedPartData.length;
     UInt8 *outBuffer = calloc(outButterLength, sizeof(UInt8));
 
     NSData *decryptedData = nil;

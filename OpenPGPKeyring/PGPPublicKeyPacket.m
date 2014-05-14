@@ -16,7 +16,8 @@
 #import <CommonCrypto/CommonCryptor.h>
 
 @interface PGPPublicKeyPacket ()
-@property (assign) UInt16 V3validityPeriod;
+@property (strong, readwrite) NSArray *publicMPI;
+@property (assign, readwrite) UInt16 V3validityPeriod;
 @end
 
 @implementation PGPPublicKeyPacket
@@ -26,24 +27,36 @@
     return PGPPublicKeyPacketTag;
 }
 
+/**
+ *  12.2.  Key IDs and Fingerprints
+ *
+ *  @return keyID
+ */
 - (PGPKeyID *)keyID
 {
     NSData *fingerprintData = self.fingerprint;
+    
     PGPKeyID *kid = [[PGPKeyID alloc] initWithLongKey:[fingerprintData subdataWithRange:(NSRange){fingerprintData.length - 8,8}]];
     return kid;
 }
 
+/**
+ *  12.2.  Key IDs and Fingerprints
+ *  Calculate fingerprint
+ *
+ *  @return Fingerprint data
+ */
 - (NSData *) fingerprint
 {
     NSMutableData *toHashData = [NSMutableData data];
 
-    //FIXME: wrong length for seckey, should take just public key length not whole key
-    NSUInteger length = self.bodyData.length;
+    NSData *publicKeyData = [self buildPublicKeyData];
+
+    NSUInteger length = publicKeyData.length;
     UInt8 upper = length >> 8;
     UInt8 lower = length & 0xff;
     UInt8 headWithLength[3] = {0x99, upper, lower};
     [toHashData appendBytes:&headWithLength length:3];
-    NSData *publicKeyData = [self buildPublicKeyData];
     [toHashData appendData:publicKeyData];
     
     NSData *sha1Hash = [toHashData SHA1];
@@ -51,6 +64,11 @@
     return sha1Hash;
 }
 
+/**
+ *  Build public key data for fingerprint
+ *
+ *  @return public key data starting with version octet
+ */
 - (NSData *) buildPublicKeyData
 {
     NSMutableData *data = [NSMutableData dataWithCapacity:128];
@@ -65,7 +83,8 @@
 
     [data appendBytes:&_algorithm length:1];
 
-    for (PGPMPI *mpi in self.mpi) {
+    // publicMPI is allways available, no need to decrypt
+    for (PGPMPI *mpi in self.publicMPI) {
         [data appendData:[mpi buildData]];
     }
     return [data copy];
@@ -121,7 +140,7 @@
             mpiE.identifier = @"E";
             position = position + mpiE.length;
 
-            self.mpi = [NSArray arrayWithObjects:mpiN, mpiE, nil];
+            self.publicMPI = [NSArray arrayWithObjects:mpiN, mpiE, nil];
         }
             break;
         case PGPPublicKeyAlgorithmDSA:
@@ -147,7 +166,7 @@
             mpiY.identifier = @"Y";
             position = position + mpiY.length;
 
-            self.mpi = [NSArray arrayWithObjects:mpiP, mpiQ, mpiG, mpiY, nil];
+            self.publicMPI = [NSArray arrayWithObjects:mpiP, mpiQ, mpiG, mpiY, nil];
         }
             break;
         case PGPPublicKeyAlgorithmElgamal:
@@ -168,7 +187,7 @@
             mpiY.identifier = @"Y";
             position = position + mpiY.length;
 
-            self.mpi = [NSArray arrayWithObjects:mpiP, mpiG, mpiY, nil];
+            self.publicMPI = [NSArray arrayWithObjects:mpiP, mpiG, mpiY, nil];
         }
             break;
         default:
