@@ -89,36 +89,36 @@
  *
  *  @return length
  */
-- (NSUInteger) parseEncryptedPart:(NSData *)dataBody error:(NSError **)error
+- (NSUInteger) parseEncryptedPart:(NSData *)data error:(NSError **)error
 {
     NSUInteger position = 0;
 
     // If string-to-key usage octet was 255 or 254, a one-octet symmetric encryption algorithm
-    [dataBody getBytes:&_symmetricAlgorithm range:(NSRange){position, 1}];
+    [data getBytes:&_symmetricAlgorithm range:(NSRange){position, 1}];
     position = position + 1;
 
     // S2K
-    self.s2k = [PGPString2Key string2KeyFromData:dataBody atPosition:position];
+    self.s2k = [PGPString2Key string2KeyFromData:data atPosition:position];
     position = position + self.s2k.length;
 
     // Initial Vector (IV) of the same length as the cipher's block size
     NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:self.symmetricAlgorithm];
     NSAssert(blockSize <= 16, @"invalid blockSize");
 
-    self.ivData = [dataBody subdataWithRange:(NSRange) {position, blockSize}];
+    self.ivData = [data subdataWithRange:(NSRange) {position, blockSize}];
     position = position + blockSize;
 
 
     // encrypted MPIs
     // checksum or hash is encrypted together with the algorithm-specific fields (if string-to-key usage octet is not zero).
-    self.encryptedMPIAndHashData = [dataBody subdataWithRange:(NSRange) {position, dataBody.length - position}];
+    self.encryptedMPIAndHashData = [data subdataWithRange:(NSRange) {position, data.length - position}];
     position = position + self.encryptedMPIAndHashData.length;
 
 #ifdef DEBUG
     //[self decrypt:@"1234"];
     [self decrypt:@"1234" error:error];  // invalid password
 #endif
-    return dataBody.length;
+    return data.length;
 }
 
 /**
@@ -129,7 +129,7 @@
  *
  *  @return length
  */
-- (NSUInteger) parseCleartextPart:(NSData *)dataBody error:(NSError **)error
+- (NSUInteger) parseCleartextPart:(NSData *)data error:(NSError **)error
 {
     NSUInteger position = 0;
 
@@ -142,14 +142,14 @@
             NSUInteger hashSize = [PGPCryptoUtils hashSizeOfHashAlhorithm:PGPHashSHA1];
             NSAssert(hashSize <= 20, @"invalid hashSize");
 
-            NSData *clearTextData = [dataBody subdataWithRange:(NSRange) {0, dataBody.length - hashSize}];
-            NSData *hashData = [dataBody subdataWithRange:(NSRange){dataBody.length - hashSize, hashSize}];
+            NSData *clearTextData = [data subdataWithRange:(NSRange) {0, data.length - hashSize}];
+            NSData *hashData = [data subdataWithRange:(NSRange){data.length - hashSize, hashSize}];
             NSData *calculatedHashData = [clearTextData SHA1];
 
             if (![hashData isEqualToData:calculatedHashData]) {
                 if (error) {
                     *error = [NSError errorWithDomain:@"objectivepgp.hakore.com" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Decrypted hash mismatch, check password."}];
-                    return dataBody.length;
+                    return data.length;
                 }
             }
 
@@ -159,8 +159,8 @@
         {
             // a two-octet checksum of the plaintext of the algorithm-specific portion
             NSUInteger checksumLength = 2;
-            NSData *clearTextData = [dataBody subdataWithRange:(NSRange) {0, dataBody.length - checksumLength}];
-            NSData *checksumData = [dataBody subdataWithRange:(NSRange){dataBody.length - checksumLength, checksumLength}];
+            NSData *clearTextData = [data subdataWithRange:(NSRange) {0, data.length - checksumLength}];
+            NSData *checksumData = [data subdataWithRange:(NSRange){data.length - checksumLength, checksumLength}];
             NSUInteger calculatedChecksum = [clearTextData checksum];
 
             UInt16 checksum = 0;
@@ -170,7 +170,7 @@
             if (checksum != calculatedChecksum) {
                 if (error) {
                     *error = [NSError errorWithDomain:@"objectivepgp.hakore.com" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Decrypted hash mismatch, check password."}];
-                    return dataBody.length;
+                    return data.length;
                 }
             }
         }
@@ -184,22 +184,22 @@
         case PGPPublicKeyAlgorithmRSASignOnly:
         {
             // multiprecision integer (MPI) of RSA secret exponent d.
-            PGPMPI *mpiD = [[PGPMPI alloc] initWithData:dataBody atPosition:position];
+            PGPMPI *mpiD = [[PGPMPI alloc] initWithData:data atPosition:position];
             mpiD.identifier = @"D";
             position = position + mpiD.length;
 
             // MPI of RSA secret prime value p.
-            PGPMPI *mpiP = [[PGPMPI alloc] initWithData:dataBody atPosition:position];
+            PGPMPI *mpiP = [[PGPMPI alloc] initWithData:data atPosition:position];
             mpiP.identifier = @"P";
             position = position + mpiP.length;
 
             // MPI of RSA secret prime value q (p < q).
-            PGPMPI *mpiQ = [[PGPMPI alloc] initWithData:dataBody atPosition:position];
+            PGPMPI *mpiQ = [[PGPMPI alloc] initWithData:data atPosition:position];
             mpiQ.identifier = @"Q";
             position = position + mpiQ.length;
 
             // MPI of u, the multiplicative inverse of p, mod q.
-            PGPMPI *mpiU = [[PGPMPI alloc] initWithData:dataBody atPosition:position];
+            PGPMPI *mpiU = [[PGPMPI alloc] initWithData:data atPosition:position];
             mpiU.identifier = @"U";
             position = position + mpiU.length;
 
@@ -209,7 +209,7 @@
         case PGPPublicKeyAlgorithmDSA:
         {
             // MPI of DSA secret exponent x.
-            PGPMPI *mpiX = [[PGPMPI alloc] initWithData:dataBody atPosition:position];
+            PGPMPI *mpiX = [[PGPMPI alloc] initWithData:data atPosition:position];
             mpiX.identifier = @"X";
             position = position + mpiX.length;
 
@@ -220,7 +220,7 @@
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:
         {
             // MPI of Elgamal secret exponent x.
-            PGPMPI *mpiX = [[PGPMPI alloc] initWithData:dataBody atPosition:position];
+            PGPMPI *mpiX = [[PGPMPI alloc] initWithData:data atPosition:position];
             mpiX.identifier = @"X";
             position = position + mpiX.length;
 
@@ -231,7 +231,7 @@
             break;
     }
 
-    return dataBody.length;
+    return data.length;
 }
 
 /**

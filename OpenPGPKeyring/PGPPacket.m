@@ -8,14 +8,20 @@
 
 #import "PGPPacket.h"
 
+@interface PGPPacket ()
+@property (copy, readwrite) NSData *headerData;
+@property (copy, readwrite) NSData *bodyData;
+@end
+
 @implementation PGPPacket
 
 - (instancetype)initWithHeader:(NSData *)headerData body:(NSData *)bodyData
 {
     if (self = [self init]) {
         NSError *error = nil;
-        self.headerLength = headerData.length;
-        [self parsePacketBody:bodyData error:&error];
+        self.headerData = headerData;
+        self.bodyData = bodyData;
+        [self parsePacketBody:self.bodyData error:&error];
         if (error) {
             return nil;
         }
@@ -26,7 +32,7 @@
 
 - (NSUInteger) parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
 {
-    self.bodyLength = packetBody.length;
+    NSAssert(packetBody.length == self.bodyData.length, @"length mismach");
     return 0;
 }
 

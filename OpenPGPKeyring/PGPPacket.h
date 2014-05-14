@@ -15,8 +15,8 @@
 
 @property (assign, readonly) PGPPacketTag tag;
 
-- (NSUInteger) headerLength;
-- (UInt32) bodyLength;
+- (NSData *) headerData;
+- (NSData *) bodyData;
 
 - (instancetype) initWithHeader:(NSData *)headerData body:(NSData *)bodyData;
 - (NSUInteger) parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error;
@@ -25,9 +25,10 @@
 
 @interface PGPPacket : NSObject <PGPPacket>
 
+@property (copy, readonly) NSData *headerData;
+@property (copy, readonly) NSData *bodyData;
+
 @property (assign, readonly)    PGPPacketTag tag;
-@property (assign) NSUInteger   headerLength;
-@property (assign) UInt32       bodyLength;
 
 + (NSData *) parsePacketHeader:(NSData *)headerData bodyLength:(UInt32 *)bodyLength packetTag:(PGPPacketTag *)tag;
 

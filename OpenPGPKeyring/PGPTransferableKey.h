@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "PGPTypes.h"
+#import "PGPPacket.h"
 
 typedef NS_ENUM(NSUInteger, PGPTransferableType) {
     PGPTransferableUnknown = 0,
@@ -17,7 +18,13 @@ typedef NS_ENUM(NSUInteger, PGPTransferableType) {
 
 @interface PGPTransferableKey : NSObject
 
-@property (assign) PGPTransferableType type;
-@property (strong, nonatomic) NSArray *revocationSignatures;
+//@property (assign) PGPTransferableType type;
+@property (strong, nonatomic) id <PGPPacket> primaryKey;
+@property (strong, nonatomic) NSArray *revocationSignatures;       // array of signature packets
+@property (strong, nonatomic) NSArray *directSignatures;
+@property (strong, nonatomic) NSArray *users;
+@property (strong, nonatomic) NSArray *subKeys;
+
+- (void) loadPackets:(NSArray *)packets;
 
 @end

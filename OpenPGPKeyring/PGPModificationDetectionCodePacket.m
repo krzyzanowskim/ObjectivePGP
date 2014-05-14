@@ -20,7 +20,7 @@
     NSUInteger position = [super parsePacketBody:packetBody error:error];
 
     // 5.14.  Modification Detection Code Packet (Tag 19)
-    NSAssert(self.bodyLength == 20, @"A Modification Detection Code packet MUST have a length of 20 octets");
+    NSAssert(self.bodyData.length == 20, @"A Modification Detection Code packet MUST have a length of 20 octets");
 
     self.hashData = [packetBody subdataWithRange:(NSRange){0,20}];
     position = position + self.hashData.length;

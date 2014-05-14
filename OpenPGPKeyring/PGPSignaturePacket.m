@@ -61,7 +61,7 @@
     }
 
     // One-octet signature type.
-    [packetBody getBytes:&_signatureType range:(NSRange){position,1}];
+    [packetBody getBytes:&_type range:(NSRange){position,1}];
     position = position + 1;
 
     // One-octet public-key algorithm.

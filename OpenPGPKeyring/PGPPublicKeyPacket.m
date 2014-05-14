@@ -9,6 +9,11 @@
 #import "PGPPublicKeyPacket.h"
 #import "PGPTypes.h"
 #import "PGPMPI.h"
+#import "NSData+PGPUtils.h"
+
+#import <CommonCrypto/CommonCrypto.h>
+#import <CommonCrypto/CommonDigest.h>
+#import <CommonCrypto/CommonCryptor.h>
 
 @interface PGPPublicKeyPacket ()
 @property (assign) UInt16 V3validityPeriod;
@@ -19,6 +24,51 @@
 - (PGPPacketTag)tag
 {
     return PGPPublicKeyPacketTag;
+}
+
+- (PGPKeyID *)keyID
+{
+    NSData *fingerprintData = self.fingerprint;
+    PGPKeyID *kid = [[PGPKeyID alloc] initWithLongKey:[fingerprintData subdataWithRange:(NSRange){fingerprintData.length - 8,8}]];
+    return kid;
+}
+
+- (NSData *) fingerprint
+{
+    NSMutableData *toHashData = [NSMutableData data];
+
+    //FIXME: wrong length for seckey, should take just public key length not whole key
+    NSUInteger length = self.bodyData.length;
+    UInt8 upper = length >> 8;
+    UInt8 lower = length & 0xff;
+    UInt8 headWithLength[3] = {0x99, upper, lower};
+    [toHashData appendBytes:&headWithLength length:3];
+    NSData *publicKeyData = [self buildPublicKeyData];
+    [toHashData appendData:publicKeyData];
+    
+    NSData *sha1Hash = [toHashData SHA1];
+
+    return sha1Hash;
+}
+
+- (NSData *) buildPublicKeyData
+{
+    NSMutableData *data = [NSMutableData dataWithCapacity:128];
+    [data appendBytes:&_version length:1];
+
+    UInt32 timestamp = CFSwapInt32HostToBig(_timestamp);
+    [data appendBytes:&timestamp length:4];
+
+    if (_version == 0x03) {
+        //TODO: v3 support here
+    }
+
+    [data appendBytes:&_algorithm length:1];
+
+    for (PGPMPI *mpi in self.mpi) {
+        [data appendData:[mpi buildData]];
+    }
+    return [data copy];
 }
 
 /**
@@ -63,11 +113,15 @@
             // Algorithm-Specific Fields for RSA public keys:
             // MPI of RSA public modulus n;
             PGPMPI *mpiN = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            mpiN.identifier = @"N";
             position = position + mpiN.length;
 
             // MPI of RSA public encryption exponent e.
             PGPMPI *mpiE = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            mpiE.identifier = @"E";
             position = position + mpiE.length;
+
+            self.mpi = [NSArray arrayWithObjects:mpiN, mpiE, nil];
         }
             break;
         case PGPPublicKeyAlgorithmDSA:
@@ -75,19 +129,25 @@
         {
             // - MPI of DSA prime p;
             PGPMPI *mpiP = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            mpiP.identifier = @"P";
             position = position + mpiP.length;
 
             // - MPI of DSA group order q (q is a prime divisor of p-1);
             PGPMPI *mpiQ = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            mpiQ.identifier = @"Q";
             position = position + mpiQ.length;
 
             // - MPI of DSA group generator g;
             PGPMPI *mpiG = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            mpiG.identifier = @"G";
             position = position + mpiG.length;
 
             // - MPI of DSA public-key value y (= g**x mod p where x is secret).
             PGPMPI *mpiY = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            mpiY.identifier = @"Y";
             position = position + mpiY.length;
+
+            self.mpi = [NSArray arrayWithObjects:mpiP, mpiQ, mpiG, mpiY, nil];
         }
             break;
         case PGPPublicKeyAlgorithmElgamal:
@@ -95,21 +155,27 @@
         {
             // - MPI of Elgamal prime p;
             PGPMPI *mpiP = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            mpiP.identifier = @"P";
             position = position + mpiP.length;
 
             // - MPI of Elgamal group generator g;
             PGPMPI *mpiG = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            mpiG.identifier = @"G";
             position = position + mpiG.length;
 
             // - MPI of Elgamal public key value y (= g**x mod p where x is secret).
             PGPMPI *mpiY = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            mpiY.identifier = @"Y";
             position = position + mpiY.length;
+
+            self.mpi = [NSArray arrayWithObjects:mpiP, mpiG, mpiY, nil];
         }
             break;
         default:
             @throw [NSException exceptionWithName:@"Unknown Algorithm" reason:@"Given algorithm is not supported" userInfo:nil];
             break;
     }
+
     return position;
 }
 

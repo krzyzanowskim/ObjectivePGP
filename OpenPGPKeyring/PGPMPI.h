@@ -17,5 +17,6 @@
 @property (assign) NSUInteger length;
 
 - (instancetype) initWithData:(NSData *)data atPosition:(NSUInteger)position;
+- (NSData *) buildData;
 
 @end

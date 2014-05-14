@@ -40,6 +40,9 @@
 
 - (NSData *) SHA1
 {
+    if (!self)
+        return self;
+    
     CC_SHA1_CTX *ctx = calloc(1, sizeof(CC_SHA1_CTX));
     if (!ctx) {
         return nil;

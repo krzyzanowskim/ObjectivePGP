@@ -10,11 +10,16 @@
 #import <Foundation/Foundation.h>
 #import "PGPTypes.h"
 #import "PGPPacketFactory.h"
+#import "PGPKeyID.h"
 
 @interface PGPPublicKeyPacket : PGPPacket <PGPPacket>
 
 @property (assign, readonly) UInt8 version;
 @property (assign, readonly) UInt32 timestamp;
 @property (assign, readonly) PGPPublicKeyAlgorithm algorithm;
+@property (strong) NSArray *mpi;
+
+@property (strong, readonly) PGPKeyID *keyID;
+@property (strong, readonly) NSData *fingerprint;
 
 @end

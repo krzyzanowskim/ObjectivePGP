@@ -108,8 +108,8 @@ typedef NS_ENUM(UInt8, PGPSignatureType) {
     PGPSignatureSubkeyBinding                           = 0x18,
     PGPSignaturePrimaryKeyBinding                       = 0x19,
     PGPSignatureDirectlyOnKey                           = 0x1F,
-    PGPSignatureKeyRevocation                           = 0x20,
-    PGPSignatureSubkeyRevocation                        = 0x28,
+    PGPSignatureKeyRevocation                           = 0x20, // Key revocation signature
+    PGPSignatureSubkeyRevocation                        = 0x28, // Subkey revocation signature
     PGPSignatureClarificationRecocation                 = 0x30,
     PGPSignatureTimestamp                               = 0x40,
     PGPSignature3PartyConfirmation                      = 0x50
