@@ -11,6 +11,7 @@
 #import "PGPTypes.h"
 #import "PGPPacketFactory.h"
 #import "PGPKeyID.h"
+#import "PGPFingerprint.h"
 
 @interface PGPPublicKeyPacket : PGPPacket <PGPPacket>
 
@@ -20,7 +21,7 @@
 @property (assign, readonly) PGPPublicKeyAlgorithm algorithm;
 @property (strong, readonly) NSArray *publicMPI;
 
-- (PGPKeyID *)keyID;
-- (NSData *) fingerprint;
+@property (strong, nonatomic, readonly) PGPFingerprint *fingerprint;
+@property (strong, nonatomic, readonly) PGPKeyID *keyID;
 
 @end

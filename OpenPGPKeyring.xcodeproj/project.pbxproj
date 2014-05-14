@@ -16,6 +16,7 @@
 		7555BA8019201BC8002C8629 /* pubring-test-plaintext.gpg in Resources */ = {isa = PBXBuildFile; fileRef = 7555BA7C19201BC8002C8629 /* pubring-test-plaintext.gpg */; };
 		7555BA8119201BC8002C8629 /* secring-test-encrypted.gpg in Resources */ = {isa = PBXBuildFile; fileRef = 7555BA7D19201BC8002C8629 /* secring-test-encrypted.gpg */; };
 		7555BA8219201BC8002C8629 /* secring-test-plaintext.gpg in Resources */ = {isa = PBXBuildFile; fileRef = 7555BA7E19201BC8002C8629 /* secring-test-plaintext.gpg */; };
+		7562858E19239F1B00127E24 /* PGPFingerprint.m in Sources */ = {isa = PBXBuildFile; fileRef = 7562858D19239F1B00127E24 /* PGPFingerprint.m */; };
 		756299B91914DE1A00C5AD3B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B81914DE1A00C5AD3B /* Foundation.framework */; };
 		756299BE1914DE1A00C5AD3B /* OpenPGPKeyring.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 756299BD1914DE1A00C5AD3B /* OpenPGPKeyring.h */; };
 		756299C01914DE1A00C5AD3B /* OpenPGPKeyring.m in Sources */ = {isa = PBXBuildFile; fileRef = 756299BF1914DE1A00C5AD3B /* OpenPGPKeyring.m */; };
@@ -79,6 +80,8 @@
 		7555BA7C19201BC8002C8629 /* pubring-test-plaintext.gpg */ = {isa = PBXFileReference; lastKnownFileType = file; name = "pubring-test-plaintext.gpg"; path = "TestingFiles/pubring-test-plaintext.gpg"; sourceTree = "<group>"; };
 		7555BA7D19201BC8002C8629 /* secring-test-encrypted.gpg */ = {isa = PBXFileReference; lastKnownFileType = file; name = "secring-test-encrypted.gpg"; path = "TestingFiles/secring-test-encrypted.gpg"; sourceTree = "<group>"; };
 		7555BA7E19201BC8002C8629 /* secring-test-plaintext.gpg */ = {isa = PBXFileReference; lastKnownFileType = file; name = "secring-test-plaintext.gpg"; path = "TestingFiles/secring-test-plaintext.gpg"; sourceTree = "<group>"; };
+		7562858C19239F1B00127E24 /* PGPFingerprint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPFingerprint.h; sourceTree = "<group>"; };
+		7562858D19239F1B00127E24 /* PGPFingerprint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPFingerprint.m; sourceTree = "<group>"; };
 		756299B51914DE1A00C5AD3B /* libOpenPGPKeyring.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libOpenPGPKeyring.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		756299B81914DE1A00C5AD3B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		756299BC1914DE1A00C5AD3B /* OpenPGPKeyring-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "OpenPGPKeyring-Prefix.pch"; sourceTree = "<group>"; };
@@ -199,6 +202,8 @@
 				759DBA171915CBDF00305549 /* PGPMPI.m */,
 				75734BD9191853DF00A54D6E /* PGPKeyID.h */,
 				75734BDA191853DF00A54D6E /* PGPKeyID.m */,
+				7562858C19239F1B00127E24 /* PGPFingerprint.h */,
+				7562858D19239F1B00127E24 /* PGPFingerprint.m */,
 				75DA135C191AE1D6004C9C76 /* PGPString2Key.h */,
 				75DA135D191AE1D6004C9C76 /* PGPString2Key.m */,
 				750EE3C21922C185009E818E /* PGPTransferableKey.h */,
@@ -424,6 +429,7 @@
 				7502CEFF1916DCE9001B32D7 /* PGPSignatureSubpacket.m in Sources */,
 				75C4F0E31920FF5F005401A4 /* PGPCryptoUtils.m in Sources */,
 				75C4F0E6192163A3005401A4 /* PGPModificationDetectionCodePacket.m in Sources */,
+				7562858E19239F1B00127E24 /* PGPFingerprint.m in Sources */,
 				7502CF021916EFD5001B32D7 /* NSData+NSValue.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

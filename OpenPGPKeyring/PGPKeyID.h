@@ -7,14 +7,16 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "PGPFingerprint.h"
 
 @interface PGPKeyID : NSObject
 
-@property (readonly) NSData *longKey;
+@property (readonly, nonatomic) NSData *longKey;
 @property (readonly, nonatomic) NSString *longKeyString;
 @property (readonly, nonatomic) NSData *shortKey;
 @property (readonly, nonatomic) NSString *shortKeyString;
 
+- (instancetype) initWithFingerprint:(PGPFingerprint *)fingerprint;
 - (instancetype) initWithLongKey:(NSData *)longKeyData;
 
 @end

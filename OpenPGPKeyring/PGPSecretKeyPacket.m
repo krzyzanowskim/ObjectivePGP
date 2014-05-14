@@ -41,7 +41,7 @@
     return PGPSecretKeyPacketTag;
 }
 
-- (NSData *)fingerprint
+- (PGPFingerprint *)fingerprint
 {
     return [super fingerprint];
 }

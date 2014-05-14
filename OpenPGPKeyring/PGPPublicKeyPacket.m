@@ -17,6 +17,8 @@
 
 @interface PGPPublicKeyPacket ()
 @property (strong, readwrite) NSArray *publicMPI;
+@property (strong, nonatomic, readwrite) PGPFingerprint *fingerprint;
+@property (strong, nonatomic, readwrite) PGPKeyID *keyID;
 @property (assign, readwrite) UInt16 V3validityPeriod;
 @end
 
@@ -34,10 +36,11 @@
  */
 - (PGPKeyID *)keyID
 {
-    NSData *fingerprintData = self.fingerprint;
-    
-    PGPKeyID *kid = [[PGPKeyID alloc] initWithLongKey:[fingerprintData subdataWithRange:(NSRange){fingerprintData.length - 8,8}]];
-    return kid;
+    if (!_keyID) {
+        _keyID = [[PGPKeyID alloc] initWithFingerprint:self.fingerprint];
+    }
+
+    return _keyID;
 }
 
 /**
@@ -46,22 +49,24 @@
  *
  *  @return Fingerprint data
  */
-- (NSData *) fingerprint
+- (PGPFingerprint *)fingerprint
 {
-    NSMutableData *toHashData = [NSMutableData data];
+    if (!_fingerprint) {
+        NSMutableData *toHashData = [NSMutableData data];
 
-    NSData *publicKeyData = [self buildPublicKeyData];
+        NSData *publicKeyData = [self buildPublicKeyData];
 
-    NSUInteger length = publicKeyData.length;
-    UInt8 upper = length >> 8;
-    UInt8 lower = length & 0xff;
-    UInt8 headWithLength[3] = {0x99, upper, lower};
-    [toHashData appendBytes:&headWithLength length:3];
-    [toHashData appendData:publicKeyData];
-    
-    NSData *sha1Hash = [toHashData SHA1];
-
-    return sha1Hash;
+        NSUInteger length = publicKeyData.length;
+        UInt8 upper = length >> 8;
+        UInt8 lower = length & 0xff;
+        UInt8 headWithLength[3] = {0x99, upper, lower};
+        [toHashData appendBytes:&headWithLength length:3];
+        [toHashData appendData:publicKeyData];
+        
+        NSData *sha1Hash = [toHashData SHA1];
+        _fingerprint = [[PGPFingerprint alloc] initWithData:sha1Hash];
+    }
+    return _fingerprint;
 }
 
 /**

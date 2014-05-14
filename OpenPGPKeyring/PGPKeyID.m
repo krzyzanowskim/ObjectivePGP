@@ -13,6 +13,23 @@
 
 @implementation PGPKeyID
 
+- (instancetype) initWithFingerprint:(PGPFingerprint *)fingerprint
+{
+    if (!fingerprint)
+        return nil;
+
+    if (self = [self initWithLongKey:[fingerprint.data subdataWithRange:(NSRange){fingerprint.length - 8,8}]]) {
+        
+    }
+
+    return self;
+}
+
+- (NSString *)description
+{
+    return [self shortKeyString];
+}
+
 - (instancetype) initWithLongKey:(NSData *)longKeyData
 {
     if (longKeyData.length != 8) {
