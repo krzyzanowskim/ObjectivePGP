@@ -10,14 +10,39 @@
 	<string>46</string>
 	<key>objects</key>
 	<dict>
-		<key>00268E21C9D4462CBC1313A3</key>
+		<key>0002CD26D6BF44F4A83D528C</key>
 		<dict>
 			<key>fileRef</key>
-			<string>B245034511B4472180C8547C</string>
+			<string>3F89BFF5FBF94AFB9499C932</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>042F60A5438648C49BF2320D</key>
+		<key>0125198C96024256B501F721</key>
+		<dict>
+			<key>buildConfigurationList</key>
+			<string>854E14E81A6B47718DBAC659</string>
+			<key>buildPhases</key>
+			<array>
+				<string>C6D9B97240A94BFDA9B26B49</string>
+				<string>3C770329C28B482CBFC814BE</string>
+				<string>4D54E2A20EC04B858B1EB0EF</string>
+			</array>
+			<key>buildRules</key>
+			<array/>
+			<key>dependencies</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXNativeTarget</string>
+			<key>name</key>
+			<string>Pods-OpenSSL-Universal</string>
+			<key>productName</key>
+			<string>Pods-OpenSSL-Universal</string>
+			<key>productReference</key>
+			<string>99ED220E864B4C8382DD2E96</string>
+			<key>productType</key>
+			<string>com.apple.product-type.library.static</string>
+		</dict>
+		<key>03E87EE4413A4CAB9836EF15</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -26,93 +51,40 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>cmac.h</string>
+			<string>lhash.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/cmac.h</string>
+			<string>include-ios/openssl/lhash.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>0592771F34AB44C896015D0A</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>cms.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/cms.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>0604322941B84E62AC6842FC</key>
+		<key>059B3EA3D4DA4D92A1BDAF7F</key>
 		<dict>
 			<key>fileRef</key>
-			<string>1CDC2B2D0531460EBCE64677</string>
+			<string>A53DAD8B0869463BAB22C28D</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>070D068569E240C58389BA69</key>
+		<key>060D470C713946D6A4CAB1CC</key>
 		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
+			<key>fileRef</key>
+			<string>AA3378F74A7148668E0F6BB1</string>
 			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>rc4.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/rc4.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
+			<string>PBXBuildFile</string>
 		</dict>
-		<key>07DBA3F7A7CE48E1A81A6612</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>asn1t.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/asn1t.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>08781597E0364FE7969780DE</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>engine.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/engine.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>0A6C8EA396B74B1CBF6E4AAE</key>
+		<key>07670B5BC3594E73AAA5AE09</key>
 		<dict>
 			<key>buildActionMask</key>
 			<string>2147483647</string>
 			<key>files</key>
 			<array>
-				<string>387D412CD8374B15B0F92183</string>
+				<string>56F9F4FDC13F4E05B6DE8178</string>
 			</array>
 			<key>isa</key>
 			<string>PBXSourcesBuildPhase</string>
 			<key>runOnlyForDeploymentPostprocessing</key>
 			<string>0</string>
 		</dict>
-		<key>0C2A0A155991429A96414ED0</key>
+		<key>07E071B54E1E429AA6FD977F</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -121,525 +93,20 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>md5.h</string>
+			<string>blowfish.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/md5.h</string>
+			<string>include-ios/openssl/blowfish.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>0E2E90FA8A934FC286A2825A</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>pem.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/pem.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>0ED780AD914E4EE0917E5BED</key>
+		<key>08C0AC990708425AAAF1BADB</key>
 		<dict>
 			<key>fileRef</key>
-			<string>9072A4E9DEF94E089830BADA</string>
+			<string>E3CC0DD6470A4D7591DB6352</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>0F692388643040548306D2A4</key>
-		<dict>
-			<key>fileRef</key>
-			<string>042F60A5438648C49BF2320D</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>107CF9F082A3492097C85F9D</key>
-		<dict>
-			<key>fileRef</key>
-			<string>20386E1C3BB24B53887FBE18</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>16CD18F37C42471584BC804B</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXTargetDependency</string>
-			<key>target</key>
-			<string>A0727FFDB2DC4093B45E38A2</string>
-			<key>targetProxy</key>
-			<string>A92763F07EA640A38098BA7C</string>
-		</dict>
-		<key>19893F0E98924305995D1E7B</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>A7309D02F9EA400C8A1782A2</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>iOS</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>1A5EE9DE93124315AA196D95</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>seed.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/seed.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>1AA23D5896E14E888AFBBDE9</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>asn1_mac.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/asn1_mac.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>1CDC2B2D0531460EBCE64677</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>ec.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/ec.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>1EF6FFF921BA487BBB78BCC7</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>ocsp.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/ocsp.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>20386E1C3BB24B53887FBE18</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>pkcs12.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/pkcs12.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>22482B48F2D44F5EA4C97F4C</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.xcconfig</string>
-			<key>path</key>
-			<string>Pods-OpenSSL-Universal.xcconfig</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>227A60347A124105B146CE37</key>
-		<dict>
-			<key>fileRef</key>
-			<string>CDB48AE5332A445BB5D69050</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>22DA7681B18E4DD5B389D10F</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>dsa.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/dsa.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>23C1FB7E4E62496F990F0672</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>path</key>
-			<string>Pods-environment.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>261822D1A2B247E79202F3D6</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>md4.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/md4.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>27625D71C71F43D6961AB2C0</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>19893F0E98924305995D1E7B</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Frameworks</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>28926C36C4FD4B8FAB2B2DB9</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>objects.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/objects.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>2A3F2F9144F64E36AD71C5FB</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text</string>
-			<key>path</key>
-			<string>Pods-acknowledgements.markdown</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>2FA7BED15A37462C93292B80</key>
-		<dict>
-			<key>fileRef</key>
-			<string>A7309D02F9EA400C8A1782A2</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>30A034E06498453BA6D1A086</key>
-		<dict>
-			<key>fileRef</key>
-			<string>7ABCF7C118F640C1BC1A566B</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>30A42BA1FF3C4C569FF87418</key>
-		<dict>
-			<key>fileRef</key>
-			<string>565774ED2414442CAFC874AF</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>312CDD44F57B44BD9F44A8D4</key>
-		<dict>
-			<key>fileRef</key>
-			<string>3B2A61568DF64D9BBD17F0F2</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>32914E9EEE454538BB81A347</key>
-		<dict>
-			<key>explicitFileType</key>
-			<string>archive.ar</string>
-			<key>includeInIndex</key>
-			<string>0</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>path</key>
-			<string>libPods.a</string>
-			<key>sourceTree</key>
-			<string>BUILT_PRODUCTS_DIR</string>
-		</dict>
-		<key>32EB50C376A446A2A5C2669C</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>ssl3.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/ssl3.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>35EC6DA2D76B4652B475DFC7</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array>
-				<string>E303D27E9114404B8C2C4BEE</string>
-				<string>7D5D660CB9704C0EBF97DA5E</string>
-			</array>
-			<key>isa</key>
-			<string>PBXFrameworksBuildPhase</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-		</dict>
-		<key>37EE6767DE4548BE95C0FD3A</key>
-		<dict>
-			<key>fileRef</key>
-			<string>47DE7E1DB5E3444B80289B73</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>387D412CD8374B15B0F92183</key>
-		<dict>
-			<key>fileRef</key>
-			<string>C37C08ABBAB74D66A24C198E</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>3A048CF60891449EBC6FBA3F</key>
-		<dict>
-			<key>fileRef</key>
-			<string>850F789206F64AEE9CA42469</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>3A671FE8008945C588F16626</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text</string>
-			<key>name</key>
-			<string>Podfile</string>
-			<key>path</key>
-			<string>../Podfile</string>
-			<key>sourceTree</key>
-			<string>SOURCE_ROOT</string>
-			<key>xcLanguageSpecificationIdentifier</key>
-			<string>xcode.lang.ruby</string>
-		</dict>
-		<key>3B2A61568DF64D9BBD17F0F2</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>opensslv.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/opensslv.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>3B641B65AACA4C898853098A</key>
-		<dict>
-			<key>buildConfigurations</key>
-			<array>
-				<string>D53B5644549C42A9AA303DCC</string>
-				<string>6B91ABC0060C47EBB82F0117</string>
-			</array>
-			<key>defaultConfigurationIsVisible</key>
-			<string>0</string>
-			<key>defaultConfigurationName</key>
-			<string>Release</string>
-			<key>isa</key>
-			<string>XCConfigurationList</string>
-		</dict>
-		<key>3CFB17EC27914256A7569F11</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>4F76A872D968404A8D65250F</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Pods</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>3FBCFAA212FF440293CCF8F7</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>ssl23.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/ssl23.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>400B75D727274994907EFDA4</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>conf.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/conf.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>4019071A426A496382925D45</key>
-		<dict>
-			<key>fileRef</key>
-			<string>0E2E90FA8A934FC286A2825A</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>40D4A912157E49B4B5445FC5</key>
-		<dict>
-			<key>fileRef</key>
-			<string>FEC591E8084C4A28832A5D69</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>4168E759FEF541D7B948FBC1</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>safestack.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/safestack.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>4197A0D805894A76BDE1B048</key>
-		<dict>
-			<key>fileRef</key>
-			<string>42CC73A6C3BE475FADBFB728</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>42CC73A6C3BE475FADBFB728</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>pem2.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/pem2.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>436F91F26ACA43A283AC1572</key>
-		<dict>
-			<key>fileRef</key>
-			<string>D1874868013349B6B54DD72D</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>44CB516A37A74F998C64318F</key>
-		<dict>
-			<key>fileRef</key>
-			<string>0592771F34AB44C896015D0A</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>463AA8E932FD49DAAF61F116</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>aes.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/aes.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>47DE7E1DB5E3444B80289B73</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>err.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/err.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>496AEB917636421396844BCC</key>
+		<key>0A8A83BDAEE64805BE603A42</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -654,20 +121,457 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>4AF31F77E5764BCB9D634044</key>
+		<key>0B091E12930042BBADC0B1DF</key>
+		<dict>
+			<key>fileRef</key>
+			<string>6815EEACAD364EEE9B56060B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>0D673A8378BF43A8806386F5</key>
+		<dict>
+			<key>fileRef</key>
+			<string>6EAFAA4D34B6449EB14836B8</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>0DFF6C9493634FDB9814DC2F</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
 			<key>lastKnownFileType</key>
-			<string>text.plist.xml</string>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>ebcdic.h</string>
 			<key>path</key>
-			<string>Pods-acknowledgements.plist</string>
+			<string>include-ios/openssl/ebcdic.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>4F141BD90ED24BDD99D1A2D1</key>
+		<key>0E972D9306F148FA9E7B0105</key>
+		<dict>
+			<key>fileRef</key>
+			<string>806C397844D64BDDBC7AC35E</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>0F75E51450B549FABD7D030A</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>mdc2.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/mdc2.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>0FF066795FC147F0B61E2844</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>Pods-dummy.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>14EE6856664E48338792F8E0</key>
+		<dict>
+			<key>fileRef</key>
+			<string>F728C62C1810486396623851</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>168A1C87D0D24978AB36EC2C</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>B0EEF4C57F5B4EDDBCF6D750</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Pods</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>19EA1D703DCD45968CC97519</key>
+		<dict>
+			<key>buildConfigurations</key>
+			<array>
+				<string>D17A14CB80F94A3F92565C00</string>
+				<string>83784597198D49F29115D58C</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+		</dict>
+		<key>1AC15F1563894EE3BFF2D4A3</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>dtls1.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/dtls1.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>1B1936FC39F84B8996F52144</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>cms.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/cms.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>1C00A7DC3C944C80825C8087</key>
+		<dict>
+			<key>fileRef</key>
+			<string>4881F323C4C4458C9470C7D9</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>1C6E1AC3243345C78FFD5D7E</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>B63D24EA2ECB40A6AD959169</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>ALWAYS_SEARCH_USER_PATHS</key>
+				<string>NO</string>
+				<key>COPY_PHASE_STRIP</key>
+				<string>NO</string>
+				<key>DSTROOT</key>
+				<string>/tmp/xcodeproj.dst</string>
+				<key>GCC_C_LANGUAGE_STANDARD</key>
+				<string>gnu99</string>
+				<key>GCC_DYNAMIC_NO_PIC</key>
+				<string>NO</string>
+				<key>GCC_OPTIMIZATION_LEVEL</key>
+				<string>0</string>
+				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
+				<string>YES</string>
+				<key>GCC_PREFIX_HEADER</key>
+				<string>Pods-OpenSSL-Universal-prefix.pch</string>
+				<key>GCC_PREPROCESSOR_DEFINITIONS</key>
+				<array>
+					<string>DEBUG=1</string>
+					<string>$(inherited)</string>
+				</array>
+				<key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
+				<string>NO</string>
+				<key>GCC_VERSION</key>
+				<string>com.apple.compilers.llvm.clang.1_0</string>
+				<key>INSTALL_PATH</key>
+				<string>$(BUILT_PRODUCTS_DIR)</string>
+				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+				<string>7.1</string>
+				<key>OTHER_LDFLAGS</key>
+				<string></string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+				<key>PUBLIC_HEADERS_FOLDER_PATH</key>
+				<string>$(TARGET_NAME)</string>
+				<key>SDKROOT</key>
+				<string>iphoneos</string>
+				<key>SKIP_INSTALL</key>
+				<string>YES</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+		<key>1ED79547F6104B83888BB1EA</key>
+		<dict>
+			<key>fileRef</key>
+			<string>BDBE17C030904A04BE3F1CBF</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>1F4A1D83C3D746A7A9F3262C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>B166D4ADF9C44593B9473A77</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>215DF343F60245C5B637244E</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9F796350A60646CCAA036EDE</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>216D15BC47FA4ABBBD93CEB9</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>err.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/err.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>21BEB76F8B904C56AE2A5D26</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text</string>
+			<key>path</key>
+			<string>Pods-acknowledgements.markdown</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>2462A5F250CB457998CAF365</key>
+		<dict>
+			<key>fileRef</key>
+			<string>34ACCE94EC0C4797AFBC65CB</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>246EA0687CFD43EE9A44EFC6</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>dsa.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/dsa.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>256B52B67EE040F282BF00E3</key>
+		<dict>
+			<key>fileRef</key>
+			<string>A000EACA56F1476F833CBD4A</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>25AD4522D9604193892B183B</key>
+		<dict>
+			<key>buildConfigurationList</key>
+			<string>19EA1D703DCD45968CC97519</string>
+			<key>buildPhases</key>
+			<array>
+				<string>07670B5BC3594E73AAA5AE09</string>
+				<string>349849CC5D7947368D1426C9</string>
+			</array>
+			<key>buildRules</key>
+			<array/>
+			<key>dependencies</key>
+			<array>
+				<string>50A56B06D0684B7E8104D2C0</string>
+			</array>
+			<key>isa</key>
+			<string>PBXNativeTarget</string>
+			<key>name</key>
+			<string>Pods</string>
+			<key>productName</key>
+			<string>Pods</string>
+			<key>productReference</key>
+			<string>BF4B346067B74407A17EFB61</string>
+			<key>productType</key>
+			<string>com.apple.product-type.library.static</string>
+		</dict>
+		<key>27A467B49C5E4661A04D0295</key>
+		<dict>
+			<key>fileRef</key>
+			<string>246EA0687CFD43EE9A44EFC6</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>2AFDBAABC20041D2BD0576AC</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>archive.ar</string>
+			<key>name</key>
+			<string>libcrypto.a</string>
+			<key>path</key>
+			<string>lib-ios/libcrypto.a</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>2C01AE2D924C4D93802F1983</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>dso.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/dso.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>2DA7E45B33B348B2B92C948E</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>opensslv.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/opensslv.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>30BFF594C31E4AA9A0A91B07</key>
+		<dict>
+			<key>fileRef</key>
+			<string>07E071B54E1E429AA6FD977F</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>341F5522CB1D418FBB34F03D</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>pqueue.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/pqueue.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>349849CC5D7947368D1426C9</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>7482C955524B4503B1E024A1</string>
+				<string>62F45B04B4F748BC907B82A1</string>
+			</array>
+			<key>isa</key>
+			<string>PBXFrameworksBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>34ACCE94EC0C4797AFBC65CB</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>seed.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/seed.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>37F2919314C442CA9B229C97</key>
+		<dict>
+			<key>fileRef</key>
+			<string>DA642C37153F469089DC4E1F</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>39A365A2EF724D91BBD499D5</key>
+		<dict>
+			<key>fileRef</key>
+			<string>7DAC2F4AA027454DAAFE880A</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>3BD9EE5AB4104FED82CDD6B3</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>ui_compat.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/ui_compat.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>3BECC7F73F3B4E8FB5113830</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>opensslconf.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/opensslconf.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>3C770329C28B482CBFC814BE</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>C601ABCDC1FE4D1389FA2685</string>
+			</array>
+			<key>isa</key>
+			<string>PBXFrameworksBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>3D099CF63E4B441497102276</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -682,98 +586,20 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>4F76A872D968404A8D65250F</key>
+		<key>3E39A5C096B04EB8AAE77DB4</key>
 		<dict>
 			<key>children</key>
 			<array>
-				<string>463AA8E932FD49DAAF61F116</string>
-				<string>B245034511B4472180C8547C</string>
-				<string>1AA23D5896E14E888AFBBDE9</string>
-				<string>07DBA3F7A7CE48E1A81A6612</string>
-				<string>FC7546D494DE434694A64C75</string>
-				<string>CCCC28E86E3C405CB857CE20</string>
-				<string>9B2D94EEC8A8438782B4490A</string>
-				<string>80DAD36012F64855AE902EAB</string>
-				<string>B2DEC9E0C28A488995E29D3B</string>
-				<string>719AC23A7C624C99A8E83A93</string>
-				<string>042F60A5438648C49BF2320D</string>
-				<string>0592771F34AB44C896015D0A</string>
-				<string>A36D2C4070E64A20A5B4BB5E</string>
-				<string>400B75D727274994907EFDA4</string>
-				<string>50AD09F8EC9B48E0B4656D9F</string>
-				<string>6BF5CE7485FD4B90A73C8471</string>
-				<string>C155A74A718A41BA8C4E3237</string>
-				<string>7ABCF7C118F640C1BC1A566B</string>
-				<string>850F789206F64AEE9CA42469</string>
-				<string>22DA7681B18E4DD5B389D10F</string>
-				<string>C550D9D8D6194C7AB45449C5</string>
-				<string>D1874868013349B6B54DD72D</string>
-				<string>9072A4E9DEF94E089830BADA</string>
-				<string>A2FE40404C9A4694852B1115</string>
-				<string>1CDC2B2D0531460EBCE64677</string>
-				<string>6667D8FE86DC4ABB9BEFA725</string>
-				<string>78FE27C2663B43D08731D48F</string>
-				<string>08781597E0364FE7969780DE</string>
-				<string>47DE7E1DB5E3444B80289B73</string>
-				<string>E56F4C3E70A240FBBF19EAB2</string>
-				<string>9CC08FEC1B414D7196A79FDC</string>
-				<string>7022085D1FE34CF79669A92E</string>
-				<string>545025AB0DD243A0A84DEC80</string>
-				<string>52790E0E5DA04823A9FFCA7B</string>
-				<string>9A4C195F08C54130A75C238F</string>
-				<string>261822D1A2B247E79202F3D6</string>
-				<string>0C2A0A155991429A96414ED0</string>
-				<string>9EAF16330E444A6384746A8F</string>
-				<string>76940203225D421887D5125C</string>
-				<string>FE8062BAEA06463C9A6A0878</string>
-				<string>28926C36C4FD4B8FAB2B2DB9</string>
-				<string>1EF6FFF921BA487BBB78BCC7</string>
-				<string>CDB48AE5332A445BB5D69050</string>
-				<string>3B2A61568DF64D9BBD17F0F2</string>
-				<string>5CF88100AD5643009A96A224</string>
-				<string>0E2E90FA8A934FC286A2825A</string>
-				<string>42CC73A6C3BE475FADBFB728</string>
-				<string>20386E1C3BB24B53887FBE18</string>
-				<string>E7D672B79939489FAFF06977</string>
-				<string>821F0D7B1BBC4D2089DE15EF</string>
-				<string>7E8BAAB758AA4BF9AF0B4783</string>
-				<string>E95D1F1279C7483B9FA561E9</string>
-				<string>070D068569E240C58389BA69</string>
-				<string>D4F657B3AD3343248058A53D</string>
-				<string>FEC591E8084C4A28832A5D69</string>
-				<string>4168E759FEF541D7B948FBC1</string>
-				<string>1A5EE9DE93124315AA196D95</string>
-				<string>72FB638BFA4E4B6AA12DC956</string>
-				<string>C8203ADBFD27455E9C7F2A83</string>
-				<string>565774ED2414442CAFC874AF</string>
-				<string>A12CE763D4D04B298649F5F4</string>
-				<string>CA2DD6DDBC214DAC918EFE0B</string>
-				<string>3FBCFAA212FF440293CCF8F7</string>
-				<string>32EB50C376A446A2A5C2669C</string>
-				<string>B494038B4D4043A9B2E825B8</string>
-				<string>496AEB917636421396844BCC</string>
-				<string>E0594EF007714859ABAA7A52</string>
-				<string>90C2F80FFD0C4B188749D199</string>
-				<string>4F141BD90ED24BDD99D1A2D1</string>
-				<string>EA3C7AC106764CB4B40D12C1</string>
-				<string>E2398CC4ADA64B128F690170</string>
-				<string>C95024A151B140DAA1A34BEB</string>
-				<string>D98E8EFC5B704AF79FF77BA9</string>
-				<string>7179CCD49B0341F1934732DC</string>
-				<string>A057C6417F0242C689B213FB</string>
-				<string>52D1E91CF7A841C4AFAE714C</string>
-				<string>B29C7E3F13794128956E2DC8</string>
+				<string>99F4C29E744743D4B79E8D44</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
 			<key>name</key>
-			<string>OpenSSL-Universal</string>
-			<key>path</key>
-			<string>OpenSSL-Universal</string>
+			<string>Targets Support Files</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>50AD09F8EC9B48E0B4656D9F</key>
+		<key>3F89BFF5FBF94AFB9499C932</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -782,13 +608,13 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>conf_api.h</string>
+			<string>modes.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/conf_api.h</string>
+			<string>include-ios/openssl/modes.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>52790E0E5DA04823A9FFCA7B</key>
+		<key>416DA5D3BF7946AB828FF97F</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -797,49 +623,20 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>kssl.h</string>
+			<string>x509v3.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/kssl.h</string>
+			<string>include-ios/openssl/x509v3.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>52B7962844D94823BF8859F5</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>3A671FE8008945C588F16626</string>
-				<string>27625D71C71F43D6961AB2C0</string>
-				<string>3CFB17EC27914256A7569F11</string>
-				<string>E252CFA4D11947ABA561613A</string>
-				<string>E21107D1453142749499F26F</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>52D1E91CF7A841C4AFAE714C</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>C3F3F81291684C91BF6BE974</string>
-				<string>D25F392D196D483EB61613B5</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Frameworks</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>5421A72ACF554866925DDB25</key>
+		<key>43FCE6FD3C4F492CB9DA5A12</key>
 		<dict>
 			<key>fileRef</key>
-			<string>EA3C7AC106764CB4B40D12C1</string>
+			<string>8182D12610CE43CFA4826AB3</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>545025AB0DD243A0A84DEC80</key>
+		<key>44378E99EE4F440AB2458C4C</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -848,327 +645,44 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>krb5_asn.h</string>
+			<string>engine.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/krb5_asn.h</string>
+			<string>include-ios/openssl/engine.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>556C8AA2241D41FDA0BCE3E7</key>
-		<dict>
-			<key>explicitFileType</key>
-			<string>archive.ar</string>
-			<key>includeInIndex</key>
-			<string>0</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>path</key>
-			<string>libPods-OpenSSL-Universal.a</string>
-			<key>sourceTree</key>
-			<string>BUILT_PRODUCTS_DIR</string>
-		</dict>
-		<key>565774ED2414442CAFC874AF</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>srtp.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/srtp.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>58EDF3D964044CF5A4626B1A</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.objc</string>
-			<key>path</key>
-			<string>Pods-dummy.m</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>5C24D42F536E4371B0C821AA</key>
+		<key>44A6FED0E30B458683CD35BE</key>
 		<dict>
 			<key>fileRef</key>
-			<string>FC7546D494DE434694A64C75</string>
+			<string>56DF21D7F660448E880B4B32</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>5C2A867A61F341D7B2D06DDF</key>
+		<key>4542AEB54B2A4AA6B3FBE624</key>
 		<dict>
 			<key>fileRef</key>
-			<string>545025AB0DD243A0A84DEC80</string>
+			<string>D9C309CDFB0A4F07B7DB65F2</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>5C80648314BF4C27A60CE97D</key>
+		<key>466A165CDBE34662B56AC241</key>
 		<dict>
 			<key>fileRef</key>
-			<string>070D068569E240C58389BA69</string>
+			<string>C8AF4234AD6B4DDA876333F8</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>5CF88100AD5643009A96A224</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>ossl_typ.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/ossl_typ.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>5E3684B5643B4FA1BBEE8FCF</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array>
-				<string>E23393DF6CC0488F896929E6</string>
-			</array>
-			<key>isa</key>
-			<string>PBXSourcesBuildPhase</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-		</dict>
-		<key>5E728C12F808461681992298</key>
+		<key>4680DA8EA8664FEBBFBE84C5</key>
 		<dict>
 			<key>fileRef</key>
-			<string>7179CCD49B0341F1934732DC</string>
+			<string>7A2A98AFA8744CFF850E817A</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>5F3E17C96C474096B712403D</key>
-		<dict>
-			<key>fileRef</key>
-			<string>1EF6FFF921BA487BBB78BCC7</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>5F9480297CE145B09DB5332B</key>
-		<dict>
-			<key>fileRef</key>
-			<string>9B2D94EEC8A8438782B4490A</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>618D2B1F03CE4BBF9FBEBC45</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array>
-				<string>CA643C49D2C849DAA3626E01</string>
-				<string>00268E21C9D4462CBC1313A3</string>
-				<string>EA0AF50E18594AEE81B0AFBD</string>
-				<string>6DCC53152D694B9D860A2292</string>
-				<string>5C24D42F536E4371B0C821AA</string>
-				<string>D6BF13EC94C84728AF0431A1</string>
-				<string>5F9480297CE145B09DB5332B</string>
-				<string>9D282D4691BF4D87B8A99816</string>
-				<string>661430E8A1844CA9BE663F4E</string>
-				<string>C0421E6F62694012998AF9BB</string>
-				<string>0F692388643040548306D2A4</string>
-				<string>44CB516A37A74F998C64318F</string>
-				<string>9B2D2D38DE7D4C5CB783EEFA</string>
-				<string>6FF486863EBF4EE4B848B533</string>
-				<string>A41D56CCA8B3432F8BB288F2</string>
-				<string>919791CF17474E8AA8DB979A</string>
-				<string>D48E607982864F2587F6E9DE</string>
-				<string>30A034E06498453BA6D1A086</string>
-				<string>3A048CF60891449EBC6FBA3F</string>
-				<string>65A7B4F13A8A4145AC93ED05</string>
-				<string>C91399AB0D4A45DC99C56F1C</string>
-				<string>436F91F26ACA43A283AC1572</string>
-				<string>0ED780AD914E4EE0917E5BED</string>
-				<string>BE0625767C1440E9848E5640</string>
-				<string>0604322941B84E62AC6842FC</string>
-				<string>D9E912C6EC41426C8D30C516</string>
-				<string>C1EDC7B523EF4B7EB9C0FAA4</string>
-				<string>775EDB8E22644A929EC157C7</string>
-				<string>37EE6767DE4548BE95C0FD3A</string>
-				<string>E2989D036A774049874B45FF</string>
-				<string>6605F3AA347D4A0395B848F6</string>
-				<string>A144C5EE98334A2DA0526192</string>
-				<string>5C2A867A61F341D7B2D06DDF</string>
-				<string>73F94433F11C4842863F7E0C</string>
-				<string>FD336F28432848B794CE63AE</string>
-				<string>F379F5B5859E4D48AE762348</string>
-				<string>CA5B3CFBE9664A2FAA129B65</string>
-				<string>9A18494CAC874C26B4504125</string>
-				<string>831B91E96B3E4AF4B9EEE03E</string>
-				<string>C94DA0C18A874D65A1F70C9E</string>
-				<string>A717F02DC3A14B14AAA55BAA</string>
-				<string>5F3E17C96C474096B712403D</string>
-				<string>227A60347A124105B146CE37</string>
-				<string>312CDD44F57B44BD9F44A8D4</string>
-				<string>B70F2DD2FD19456BB5928B61</string>
-				<string>4019071A426A496382925D45</string>
-				<string>4197A0D805894A76BDE1B048</string>
-				<string>107CF9F082A3492097C85F9D</string>
-				<string>D5BAF5DCE57349DFA7A73DC9</string>
-				<string>E5E8915A6C834BC687996DA7</string>
-				<string>6D7F8086904D4052A570FA9B</string>
-				<string>F4B7585E6E5F417BA6115CBC</string>
-				<string>5C80648314BF4C27A60CE97D</string>
-				<string>A5AE581007CA4DD3B42BA3A0</string>
-				<string>40D4A912157E49B4B5445FC5</string>
-				<string>6326E16B95D84888A8B94B23</string>
-				<string>A07EB0C0F03846B58CF4E06A</string>
-				<string>689FE8EAEA0A4F5DA391455E</string>
-				<string>FD66C05FEA1D48C0B95AEAE6</string>
-				<string>30A42BA1FF3C4C569FF87418</string>
-				<string>D6BA0114CA714DBC94C96125</string>
-				<string>ADF1FD46AC304614B49D1053</string>
-				<string>CD27338AE51F45688A8D8945</string>
-				<string>F3A35AC89CD2490FA7C1272F</string>
-				<string>9092FE1C4301466BA3AB97BC</string>
-				<string>D2B23C867B53418289E0CBD4</string>
-				<string>A2B4B379546C4ECEA9247918</string>
-				<string>8D27A8455E02406ABC915C56</string>
-				<string>7F8CC4ED6F264B02A01B9AE0</string>
-				<string>5421A72ACF554866925DDB25</string>
-				<string>ACA4F4F6C0D54905A9265C61</string>
-				<string>8E9611ED5E1449AC8F0236D5</string>
-				<string>EBE535B4646943798FAFF6EE</string>
-				<string>5E728C12F808461681992298</string>
-				<string>74B94D8C18064FF58C0DD6A8</string>
-			</array>
-			<key>isa</key>
-			<string>PBXHeadersBuildPhase</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-		</dict>
-		<key>6326E16B95D84888A8B94B23</key>
-		<dict>
-			<key>fileRef</key>
-			<string>4168E759FEF541D7B948FBC1</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>6423046F9DFC4449A97D25E0</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>path</key>
-			<string>Pods-OpenSSL-Universal-prefix.pch</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>65A7B4F13A8A4145AC93ED05</key>
-		<dict>
-			<key>fileRef</key>
-			<string>22DA7681B18E4DD5B389D10F</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>6605F3AA347D4A0395B848F6</key>
-		<dict>
-			<key>fileRef</key>
-			<string>9CC08FEC1B414D7196A79FDC</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>661430E8A1844CA9BE663F4E</key>
-		<dict>
-			<key>fileRef</key>
-			<string>B2DEC9E0C28A488995E29D3B</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>6667D8FE86DC4ABB9BEFA725</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>ecdh.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/ecdh.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>67F69C08EFEC4701855A6100</key>
+		<key>47CE062A00804A7F9AFDA2A7</key>
 		<dict>
 			<key>baseConfigurationReference</key>
-			<string>8680FE9DB539483B85A208A2</string>
-			<key>buildSettings</key>
-			<dict>
-				<key>ALWAYS_SEARCH_USER_PATHS</key>
-				<string>NO</string>
-				<key>COPY_PHASE_STRIP</key>
-				<string>YES</string>
-				<key>DSTROOT</key>
-				<string>/tmp/xcodeproj.dst</string>
-				<key>GCC_C_LANGUAGE_STANDARD</key>
-				<string>gnu99</string>
-				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
-				<string>YES</string>
-				<key>GCC_VERSION</key>
-				<string>com.apple.compilers.llvm.clang.1_0</string>
-				<key>INSTALL_PATH</key>
-				<string>$(BUILT_PRODUCTS_DIR)</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>7.1</string>
-				<key>OTHER_CFLAGS</key>
-				<array>
-					<string>-DNS_BLOCK_ASSERTIONS=1</string>
-					<string>$(inherited)</string>
-				</array>
-				<key>OTHER_CPLUSPLUSFLAGS</key>
-				<array>
-					<string>-DNS_BLOCK_ASSERTIONS=1</string>
-					<string>$(inherited)</string>
-				</array>
-				<key>OTHER_LDFLAGS</key>
-				<string></string>
-				<key>PRODUCT_NAME</key>
-				<string>$(TARGET_NAME)</string>
-				<key>PUBLIC_HEADERS_FOLDER_PATH</key>
-				<string>$(TARGET_NAME)</string>
-				<key>SDKROOT</key>
-				<string>iphoneos</string>
-				<key>SKIP_INSTALL</key>
-				<string>YES</string>
-				<key>VALIDATE_PRODUCT</key>
-				<string>YES</string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Release</string>
-		</dict>
-		<key>689FE8EAEA0A4F5DA391455E</key>
-		<dict>
-			<key>fileRef</key>
-			<string>72FB638BFA4E4B6AA12DC956</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>6B91ABC0060C47EBB82F0117</key>
-		<dict>
-			<key>baseConfigurationReference</key>
-			<string>7B691A6CB79E42E3991C8C2F</string>
+			<string>B63D24EA2ECB40A6AD959169</string>
 			<key>buildSettings</key>
 			<dict>
 				<key>ALWAYS_SEARCH_USER_PATHS</key>
@@ -1217,7 +731,7 @@
 			<key>name</key>
 			<string>Release</string>
 		</dict>
-		<key>6BF5CE7485FD4B90A73C8471</key>
+		<key>4881F323C4C4458C9470C7D9</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -1226,13 +740,261 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>crypto.h</string>
+			<string>objects.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/crypto.h</string>
+			<string>include-ios/openssl/objects.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>6D5C876944AE405F9893A832</key>
+		<key>4B993B6F2687418295FA4A63</key>
+		<dict>
+			<key>fileRef</key>
+			<string>216D15BC47FA4ABBBD93CEB9</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>4BC9705F8B9A4549B79A1201</key>
+		<dict>
+			<key>fileRef</key>
+			<string>C22DFD301BE048EFA712926B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>4D54E2A20EC04B858B1EB0EF</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>AC089C240CE14D39BA2D4A65</string>
+				<string>14EE6856664E48338792F8E0</string>
+				<string>43FCE6FD3C4F492CB9DA5A12</string>
+				<string>4680DA8EA8664FEBBFBE84C5</string>
+				<string>0B091E12930042BBADC0B1DF</string>
+				<string>30BFF594C31E4AA9A0A91B07</string>
+				<string>466A165CDBE34662B56AC241</string>
+				<string>059B3EA3D4DA4D92A1BDAF7F</string>
+				<string>256B52B67EE040F282BF00E3</string>
+				<string>5190AC92ADB74E3EA6187995</string>
+				<string>EA1A010FD52B4F1EB2E1A8F4</string>
+				<string>D403B911C0F843E08BF8AB64</string>
+				<string>37F2919314C442CA9B229C97</string>
+				<string>4542AEB54B2A4AA6B3FBE624</string>
+				<string>1F4A1D83C3D746A7A9F3262C</string>
+				<string>54A0E71D27324926B5414904</string>
+				<string>D6505C6D484A46EB963D1D50</string>
+				<string>6DFF2974269F4F60BE94FEFB</string>
+				<string>F1E9EB19362F4E8E93F699B9</string>
+				<string>27A467B49C5E4661A04D0295</string>
+				<string>A337DD436DBC4BEF9B9476D3</string>
+				<string>98D2A17BE0D64FCA9F6266B0</string>
+				<string>0E972D9306F148FA9E7B0105</string>
+				<string>7FC24F2F0A3945AB8291DC58</string>
+				<string>A86FABA3F0DB4229A24997B6</string>
+				<string>8D55D087577745B886D6955F</string>
+				<string>99E09B9A882544DAB235D81C</string>
+				<string>BDDD78A63B5B439EAB571F07</string>
+				<string>4B993B6F2687418295FA4A63</string>
+				<string>BF30A2527EA64B5EB4485FDB</string>
+				<string>871C813EA92D4933A4C9B6B1</string>
+				<string>565CC627EB914BBF84AA3219</string>
+				<string>CE21F1867996482CBBB78D0A</string>
+				<string>D5E281261CB34DBCA4A57353</string>
+				<string>E51C4182F7584462BBD87CB5</string>
+				<string>EB3ED27FB3664C6E837AD3E3</string>
+				<string>39A365A2EF724D91BBD499D5</string>
+				<string>B489D5C04CA245079502952A</string>
+				<string>0002CD26D6BF44F4A83D528C</string>
+				<string>4E9DC209381E4538B963D67A</string>
+				<string>1C00A7DC3C944C80825C8087</string>
+				<string>6B87920B84854681B4E4E2FA</string>
+				<string>A5A7AA4085B24246B5A79CDD</string>
+				<string>53C9CC5B6F9F4D31822E3C02</string>
+				<string>772F6933CDB7419F82E9884C</string>
+				<string>44A6FED0E30B458683CD35BE</string>
+				<string>603AFCDEC7BC4BED8FC775ED</string>
+				<string>060D470C713946D6A4CAB1CC</string>
+				<string>6A4B0627AF154397A021F1EC</string>
+				<string>ABB2B2D63773449D87E49089</string>
+				<string>EF556A7605774DADB7093F12</string>
+				<string>4BC9705F8B9A4549B79A1201</string>
+				<string>BC20104510A740149366F00C</string>
+				<string>BEB6831A9FD14D53AF22CC6D</string>
+				<string>F42C5FFC1BBB4950946354D5</string>
+				<string>A311E4DBDA8D448DA42DCCBC</string>
+				<string>2462A5F250CB457998CAF365</string>
+				<string>8D5BB1EF779B43B08770AFAE</string>
+				<string>89CB506D0F2F44F5A315DAA1</string>
+				<string>C6F65E09A89E433887367C6E</string>
+				<string>8A4D11064C0F4DC4B387989B</string>
+				<string>79DD61B8A8004E2485BA899E</string>
+				<string>1ED79547F6104B83888BB1EA</string>
+				<string>CDD17F8651E64DEA8FC325B8</string>
+				<string>08C0AC990708425AAAF1BADB</string>
+				<string>FE57DB82B6BF491FAC2A445F</string>
+				<string>A0D420BE32FE4A738841F8AC</string>
+				<string>59859F91756B46889334B5BB</string>
+				<string>62B4A8FDFB9041EF9E1E4431</string>
+				<string>53783DF9C33743AAA9EA9A98</string>
+				<string>D3114436CD9F4A8F8E481848</string>
+				<string>DD028A891F444AFDA1856459</string>
+				<string>B9AC5D8D2A53460D97FAAEBC</string>
+				<string>0D673A8378BF43A8806386F5</string>
+				<string>4E75725FC97B461196305E98</string>
+			</array>
+			<key>isa</key>
+			<string>PBXHeadersBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>4DA43E94A2BB4DB0B11EF385</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text</string>
+			<key>name</key>
+			<string>Podfile</string>
+			<key>path</key>
+			<string>../Podfile</string>
+			<key>sourceTree</key>
+			<string>SOURCE_ROOT</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.ruby</string>
+		</dict>
+		<key>4DBFE47F9A924A2F9A8AC816</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>rc4.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/rc4.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>4E75725FC97B461196305E98</key>
+		<dict>
+			<key>fileRef</key>
+			<string>416DA5D3BF7946AB828FF97F</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>4E9DC209381E4538B963D67A</key>
+		<dict>
+			<key>fileRef</key>
+			<string>76C5F95CE0194949871AFB60</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>50A56B06D0684B7E8104D2C0</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXTargetDependency</string>
+			<key>target</key>
+			<string>0125198C96024256B501F721</string>
+			<key>targetProxy</key>
+			<string>585884F49335492BBBB27032</string>
+		</dict>
+		<key>5190AC92ADB74E3EA6187995</key>
+		<dict>
+			<key>fileRef</key>
+			<string>6453A9DAFBC1467FBA0FB1D1</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>53783DF9C33743AAA9EA9A98</key>
+		<dict>
+			<key>fileRef</key>
+			<string>8BB0E84F73A547C39611486C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>53C9CC5B6F9F4D31822E3C02</key>
+		<dict>
+			<key>fileRef</key>
+			<string>2DA7E45B33B348B2B92C948E</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>5422CA2EACA645DB90AE2BB1</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>ripemd.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/ripemd.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>54A0E71D27324926B5414904</key>
+		<dict>
+			<key>fileRef</key>
+			<string>7AAA8D0B35AD49418EEBAFD9</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>565CC627EB914BBF84AA3219</key>
+		<dict>
+			<key>fileRef</key>
+			<string>ACBF86757CBB4474AA71AC7B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>56DF21D7F660448E880B4B32</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>pem.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/pem.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>56F9F4FDC13F4E05B6DE8178</key>
+		<dict>
+			<key>fileRef</key>
+			<string>0FF066795FC147F0B61E2844</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>585884F49335492BBBB27032</key>
+		<dict>
+			<key>containerPortal</key>
+			<string>5D8715DED4624AB98C08B06E</string>
+			<key>isa</key>
+			<string>PBXContainerItemProxy</string>
+			<key>proxyType</key>
+			<string>1</string>
+			<key>remoteGlobalIDString</key>
+			<string>0125198C96024256B501F721</string>
+			<key>remoteInfo</key>
+			<string>Pods-OpenSSL-Universal</string>
+		</dict>
+		<key>59859F91756B46889334B5BB</key>
+		<dict>
+			<key>fileRef</key>
+			<string>851B4B21B72B498E92E67A74</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>5D8715DED4624AB98C08B06E</key>
 		<dict>
 			<key>attributes</key>
 			<dict>
@@ -1240,7 +1002,7 @@
 				<string>0510</string>
 			</dict>
 			<key>buildConfigurationList</key>
-			<string>9BAA52477491420886A7F33E</string>
+			<string>692958234AFA494A89167D6A</string>
 			<key>compatibilityVersion</key>
 			<string>Xcode 3.2</string>
 			<key>developmentRegion</key>
@@ -1254,9 +1016,9 @@
 				<string>en</string>
 			</array>
 			<key>mainGroup</key>
-			<string>52B7962844D94823BF8859F5</string>
+			<string>D058A869804C418D9E8777F9</string>
 			<key>productRefGroup</key>
-			<string>E252CFA4D11947ABA561613A</string>
+			<string>6A8C13032731484ABE3F274C</string>
 			<key>projectDirPath</key>
 			<string></string>
 			<key>projectReferences</key>
@@ -1265,62 +1027,32 @@
 			<string></string>
 			<key>targets</key>
 			<array>
-				<string>C14E7E83DD6F490A94449143</string>
-				<string>A0727FFDB2DC4093B45E38A2</string>
+				<string>25AD4522D9604193892B183B</string>
+				<string>0125198C96024256B501F721</string>
 			</array>
 		</dict>
-		<key>6D7F8086904D4052A570FA9B</key>
+		<key>603AFCDEC7BC4BED8FC775ED</key>
 		<dict>
 			<key>fileRef</key>
-			<string>7E8BAAB758AA4BF9AF0B4783</string>
+			<string>E8CA98B01DC44723807D9005</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>6DCC53152D694B9D860A2292</key>
+		<key>62B4A8FDFB9041EF9E1E4431</key>
 		<dict>
 			<key>fileRef</key>
-			<string>07DBA3F7A7CE48E1A81A6612</string>
+			<string>3D099CF63E4B441497102276</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>6FF486863EBF4EE4B848B533</key>
+		<key>62F45B04B4F748BC907B82A1</key>
 		<dict>
 			<key>fileRef</key>
-			<string>400B75D727274994907EFDA4</string>
+			<string>99ED220E864B4C8382DD2E96</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>7022085D1FE34CF79669A92E</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>idea.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/idea.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>7179CCD49B0341F1934732DC</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>x509_vfy.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/x509_vfy.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>719AC23A7C624C99A8E83A93</key>
+		<key>6453A9DAFBC1467FBA0FB1D1</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -1335,7 +1067,7 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>72FB638BFA4E4B6AA12DC956</key>
+		<key>6815EEACAD364EEE9B56060B</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -1344,98 +1076,77 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>sha.h</string>
+			<string>bio.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/sha.h</string>
+			<string>include-ios/openssl/bio.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>73F94433F11C4842863F7E0C</key>
+		<key>692958234AFA494A89167D6A</key>
+		<dict>
+			<key>buildConfigurations</key>
+			<array>
+				<string>B3686F70790845459EA80C6A</string>
+				<string>FDEAF60DCEC34A218E30B5EF</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+		</dict>
+		<key>6A0DFFF894A74343A4234B33</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>ocsp.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/ocsp.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>6A4B0627AF154397A021F1EC</key>
 		<dict>
 			<key>fileRef</key>
-			<string>52790E0E5DA04823A9FFCA7B</string>
+			<string>A690EC777F674644B20F7DA2</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>74B94D8C18064FF58C0DD6A8</key>
+		<key>6A8C13032731484ABE3F274C</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>BF4B346067B74407A17EFB61</string>
+				<string>99ED220E864B4C8382DD2E96</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Products</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>6B87920B84854681B4E4E2FA</key>
 		<dict>
 			<key>fileRef</key>
-			<string>A057C6417F0242C689B213FB</string>
+			<string>6A0DFFF894A74343A4234B33</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>76940203225D421887D5125C</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>modes.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/modes.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>775EDB8E22644A929EC157C7</key>
+		<key>6DFF2974269F4F60BE94FEFB</key>
 		<dict>
 			<key>fileRef</key>
-			<string>08781597E0364FE7969780DE</string>
+			<string>E1C05EBB5CFA4C5CBCAF23A2</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>77E38C76D4784548843AC560</key>
-		<dict>
-			<key>baseConfigurationReference</key>
-			<string>8680FE9DB539483B85A208A2</string>
-			<key>buildSettings</key>
-			<dict>
-				<key>ALWAYS_SEARCH_USER_PATHS</key>
-				<string>NO</string>
-				<key>COPY_PHASE_STRIP</key>
-				<string>NO</string>
-				<key>DSTROOT</key>
-				<string>/tmp/xcodeproj.dst</string>
-				<key>GCC_C_LANGUAGE_STANDARD</key>
-				<string>gnu99</string>
-				<key>GCC_DYNAMIC_NO_PIC</key>
-				<string>NO</string>
-				<key>GCC_OPTIMIZATION_LEVEL</key>
-				<string>0</string>
-				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
-				<string>YES</string>
-				<key>GCC_PREPROCESSOR_DEFINITIONS</key>
-				<array>
-					<string>DEBUG=1</string>
-					<string>$(inherited)</string>
-				</array>
-				<key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
-				<string>NO</string>
-				<key>GCC_VERSION</key>
-				<string>com.apple.compilers.llvm.clang.1_0</string>
-				<key>INSTALL_PATH</key>
-				<string>$(BUILT_PRODUCTS_DIR)</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>7.1</string>
-				<key>OTHER_LDFLAGS</key>
-				<string></string>
-				<key>PRODUCT_NAME</key>
-				<string>$(TARGET_NAME)</string>
-				<key>PUBLIC_HEADERS_FOLDER_PATH</key>
-				<string>$(TARGET_NAME)</string>
-				<key>SDKROOT</key>
-				<string>iphoneos</string>
-				<key>SKIP_INSTALL</key>
-				<string>YES</string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Debug</string>
-		</dict>
-		<key>78FE27C2663B43D08731D48F</key>
+		<key>6EAFAA4D34B6449EB14836B8</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -1444,13 +1155,13 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>ecdsa.h</string>
+			<string>x509_vfy.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/ecdsa.h</string>
+			<string>include-ios/openssl/x509_vfy.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>7ABCF7C118F640C1BC1A566B</key>
+		<key>6FAB647A53704B489FA9D8C6</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -1459,33 +1170,20 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>des_old.h</string>
+			<string>x509.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/des_old.h</string>
+			<string>include-ios/openssl/x509.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>7B691A6CB79E42E3991C8C2F</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>text.xcconfig</string>
-			<key>path</key>
-			<string>Pods-OpenSSL-Universal-Private.xcconfig</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>7D5D660CB9704C0EBF97DA5E</key>
+		<key>7482C955524B4503B1E024A1</key>
 		<dict>
 			<key>fileRef</key>
-			<string>556C8AA2241D41FDA0BCE3E7</string>
+			<string>A1E40131EADE48929EA1234B</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>7E8BAAB758AA4BF9AF0B4783</key>
+		<key>76C5F95CE0194949871AFB60</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -1494,72 +1192,33 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>rand.h</string>
+			<string>obj_mac.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/rand.h</string>
+			<string>include-ios/openssl/obj_mac.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>7F8CC4ED6F264B02A01B9AE0</key>
+		<key>772F6933CDB7419F82E9884C</key>
 		<dict>
 			<key>fileRef</key>
-			<string>4F141BD90ED24BDD99D1A2D1</string>
+			<string>FC99308B44684A478E0A2A13</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>80DAD36012F64855AE902EAB</key>
+		<key>780127D0F42F4307B238FCA7</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
 			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>buffer.h</string>
+			<string>text.plist.xml</string>
 			<key>path</key>
-			<string>include-ios/openssl/buffer.h</string>
+			<string>Pods-acknowledgements.plist</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>821F0D7B1BBC4D2089DE15EF</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>pqueue.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/pqueue.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>831B91E96B3E4AF4B9EEE03E</key>
-		<dict>
-			<key>fileRef</key>
-			<string>76940203225D421887D5125C</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>850F789206F64AEE9CA42469</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>dh.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/dh.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>8680FE9DB539483B85A208A2</key>
+		<key>78A8D103FEDD4774A4A32F03</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -1572,21 +1231,96 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>8D27A8455E02406ABC915C56</key>
+		<key>79BE2DB23655400691D4290D</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>ssl2.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/ssl2.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>79DD61B8A8004E2485BA899E</key>
 		<dict>
 			<key>fileRef</key>
-			<string>90C2F80FFD0C4B188749D199</string>
+			<string>79BE2DB23655400691D4290D</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>8E9611ED5E1449AC8F0236D5</key>
+		<key>7A2A98AFA8744CFF850E817A</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>asn1t.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/asn1t.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>7AAA8D0B35AD49418EEBAFD9</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>crypto.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/crypto.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>7DAC2F4AA027454DAAFE880A</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>md5.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/md5.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>7FC24F2F0A3945AB8291DC58</key>
 		<dict>
 			<key>fileRef</key>
-			<string>C95024A151B140DAA1A34BEB</string>
+			<string>0DFF6C9493634FDB9814DC2F</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>9072A4E9DEF94E089830BADA</key>
+		<key>803F0A4CF31B4FB8B31484A0</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>rsa.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/rsa.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>806C397844D64BDDBC7AC35E</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -1601,14 +1335,87 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>9092FE1C4301466BA3AB97BC</key>
+		<key>8182D12610CE43CFA4826AB3</key>
 		<dict>
-			<key>fileRef</key>
-			<string>B494038B4D4043A9B2E825B8</string>
+			<key>includeInIndex</key>
+			<string>1</string>
 			<key>isa</key>
-			<string>PBXBuildFile</string>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>asn1_mac.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/asn1_mac.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
 		</dict>
-		<key>90C2F80FFD0C4B188749D199</key>
+		<key>83784597198D49F29115D58C</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>78A8D103FEDD4774A4A32F03</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>ALWAYS_SEARCH_USER_PATHS</key>
+				<string>NO</string>
+				<key>COPY_PHASE_STRIP</key>
+				<string>YES</string>
+				<key>DSTROOT</key>
+				<string>/tmp/xcodeproj.dst</string>
+				<key>GCC_C_LANGUAGE_STANDARD</key>
+				<string>gnu99</string>
+				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
+				<string>YES</string>
+				<key>GCC_VERSION</key>
+				<string>com.apple.compilers.llvm.clang.1_0</string>
+				<key>INSTALL_PATH</key>
+				<string>$(BUILT_PRODUCTS_DIR)</string>
+				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+				<string>7.1</string>
+				<key>OTHER_CFLAGS</key>
+				<array>
+					<string>-DNS_BLOCK_ASSERTIONS=1</string>
+					<string>$(inherited)</string>
+				</array>
+				<key>OTHER_CPLUSPLUSFLAGS</key>
+				<array>
+					<string>-DNS_BLOCK_ASSERTIONS=1</string>
+					<string>$(inherited)</string>
+				</array>
+				<key>OTHER_LDFLAGS</key>
+				<string></string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+				<key>PUBLIC_HEADERS_FOLDER_PATH</key>
+				<string>$(TARGET_NAME)</string>
+				<key>SDKROOT</key>
+				<string>iphoneos</string>
+				<key>SKIP_INSTALL</key>
+				<string>YES</string>
+				<key>VALIDATE_PRODUCT</key>
+				<string>YES</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+		<key>84948B197E7941B49C8D323F</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>des.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/des.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>851B4B21B72B498E92E67A74</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -1623,63 +1430,12 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>919791CF17474E8AA8DB979A</key>
-		<dict>
-			<key>fileRef</key>
-			<string>6BF5CE7485FD4B90A73C8471</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>9A18494CAC874C26B4504125</key>
-		<dict>
-			<key>fileRef</key>
-			<string>9EAF16330E444A6384746A8F</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>9A4C195F08C54130A75C238F</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>lhash.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/lhash.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>9B2D2D38DE7D4C5CB783EEFA</key>
-		<dict>
-			<key>fileRef</key>
-			<string>A36D2C4070E64A20A5B4BB5E</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>9B2D94EEC8A8438782B4490A</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>bn.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/bn.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>9BAA52477491420886A7F33E</key>
+		<key>854E14E81A6B47718DBAC659</key>
 		<dict>
 			<key>buildConfigurations</key>
 			<array>
-				<string>B9C668F1AB644A1DBD9E19C3</string>
-				<string>9E410BD52FC64D30BAB54751</string>
+				<string>1C6E1AC3243345C78FFD5D7E</string>
+				<string>47CE062A00804A7F9AFDA2A7</string>
 			</array>
 			<key>defaultConfigurationIsVisible</key>
 			<string>0</string>
@@ -1688,7 +1444,21 @@
 			<key>isa</key>
 			<string>XCConfigurationList</string>
 		</dict>
-		<key>9CC08FEC1B414D7196A79FDC</key>
+		<key>871C813EA92D4933A4C9B6B1</key>
+		<dict>
+			<key>fileRef</key>
+			<string>DD1D8B206C3F420195339ADC</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>89CB506D0F2F44F5A315DAA1</key>
+		<dict>
+			<key>fileRef</key>
+			<string>A1F57B0C36B0485F90E9FC75</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>8A0E700DE99044E0A4616194</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -1697,78 +1467,20 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>hmac.h</string>
+			<string>ecdh.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/hmac.h</string>
+			<string>include-ios/openssl/ecdh.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>9D282D4691BF4D87B8A99816</key>
+		<key>8A4D11064C0F4DC4B387989B</key>
 		<dict>
 			<key>fileRef</key>
-			<string>80DAD36012F64855AE902EAB</string>
+			<string>FD1C15D8A7D94FD9978AD1E5</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>9E410BD52FC64D30BAB54751</key>
-		<dict>
-			<key>buildSettings</key>
-			<dict>
-				<key>ALWAYS_SEARCH_USER_PATHS</key>
-				<string>NO</string>
-				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
-				<string>gnu++0x</string>
-				<key>CLANG_CXX_LIBRARY</key>
-				<string>libc++</string>
-				<key>CLANG_ENABLE_MODULES</key>
-				<string>YES</string>
-				<key>CLANG_ENABLE_OBJC_ARC</key>
-				<string>NO</string>
-				<key>CLANG_WARN_BOOL_CONVERSION</key>
-				<string>YES</string>
-				<key>CLANG_WARN_CONSTANT_CONVERSION</key>
-				<string>YES</string>
-				<key>CLANG_WARN_DIRECT_OBJC_ISA_USAGE</key>
-				<string>YES</string>
-				<key>CLANG_WARN_EMPTY_BODY</key>
-				<string>YES</string>
-				<key>CLANG_WARN_ENUM_CONVERSION</key>
-				<string>YES</string>
-				<key>CLANG_WARN_INT_CONVERSION</key>
-				<string>YES</string>
-				<key>CLANG_WARN_OBJC_ROOT_CLASS</key>
-				<string>YES</string>
-				<key>COPY_PHASE_STRIP</key>
-				<string>NO</string>
-				<key>ENABLE_NS_ASSERTIONS</key>
-				<string>NO</string>
-				<key>GCC_C_LANGUAGE_STANDARD</key>
-				<string>gnu99</string>
-				<key>GCC_WARN_64_TO_32_BIT_CONVERSION</key>
-				<string>YES</string>
-				<key>GCC_WARN_ABOUT_RETURN_TYPE</key>
-				<string>YES</string>
-				<key>GCC_WARN_UNDECLARED_SELECTOR</key>
-				<string>YES</string>
-				<key>GCC_WARN_UNINITIALIZED_AUTOS</key>
-				<string>YES</string>
-				<key>GCC_WARN_UNUSED_FUNCTION</key>
-				<string>YES</string>
-				<key>GCC_WARN_UNUSED_VARIABLE</key>
-				<string>YES</string>
-				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
-				<string>7.1</string>
-				<key>STRIP_INSTALLED_PRODUCT</key>
-				<string>NO</string>
-				<key>VALIDATE_PRODUCT</key>
-				<string>YES</string>
-			</dict>
-			<key>isa</key>
-			<string>XCBuildConfiguration</string>
-			<key>name</key>
-			<string>Release</string>
-		</dict>
-		<key>9EAF16330E444A6384746A8F</key>
+		<key>8BB0E84F73A547C39611486C</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -1777,13 +1489,27 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>mdc2.h</string>
+			<string>ui.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/mdc2.h</string>
+			<string>include-ios/openssl/ui.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>A057C6417F0242C689B213FB</key>
+		<key>8D55D087577745B886D6955F</key>
+		<dict>
+			<key>fileRef</key>
+			<string>8A0E700DE99044E0A4616194</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>8D5BB1EF779B43B08770AFAE</key>
+		<dict>
+			<key>fileRef</key>
+			<string>8F60DB2BD7F84282BB486F10</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>8F60DB2BD7F84282BB486F10</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -1792,45 +1518,13 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>x509v3.h</string>
+			<string>sha.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/x509v3.h</string>
+			<string>include-ios/openssl/sha.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>A0727FFDB2DC4093B45E38A2</key>
-		<dict>
-			<key>buildConfigurationList</key>
-			<string>3B641B65AACA4C898853098A</string>
-			<key>buildPhases</key>
-			<array>
-				<string>0A6C8EA396B74B1CBF6E4AAE</string>
-				<string>D8B5B16EE56040348ABCF33C</string>
-				<string>618D2B1F03CE4BBF9FBEBC45</string>
-			</array>
-			<key>buildRules</key>
-			<array/>
-			<key>dependencies</key>
-			<array/>
-			<key>isa</key>
-			<string>PBXNativeTarget</string>
-			<key>name</key>
-			<string>Pods-OpenSSL-Universal</string>
-			<key>productName</key>
-			<string>Pods-OpenSSL-Universal</string>
-			<key>productReference</key>
-			<string>556C8AA2241D41FDA0BCE3E7</string>
-			<key>productType</key>
-			<string>com.apple.product-type.library.static</string>
-		</dict>
-		<key>A07EB0C0F03846B58CF4E06A</key>
-		<dict>
-			<key>fileRef</key>
-			<string>1A5EE9DE93124315AA196D95</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>A12CE763D4D04B298649F5F4</key>
+		<key>8FCC9E7DC696482EBEBB8CB9</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -1839,27 +1533,13 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>ssl.h</string>
+			<string>srtp.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/ssl.h</string>
+			<string>include-ios/openssl/srtp.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>A144C5EE98334A2DA0526192</key>
-		<dict>
-			<key>fileRef</key>
-			<string>7022085D1FE34CF79669A92E</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>A2B4B379546C4ECEA9247918</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E0594EF007714859ABAA7A52</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>A2FE40404C9A4694852B1115</key>
+		<key>93D0AC74A8CA420DB97AB2DB</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -1868,134 +1548,86 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>ebcdic.h</string>
+			<string>evp.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/ebcdic.h</string>
+			<string>include-ios/openssl/evp.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>A36D2C4070E64A20A5B4BB5E</key>
+		<key>98D2A17BE0D64FCA9F6266B0</key>
 		<dict>
+			<key>fileRef</key>
+			<string>1AC15F1563894EE3BFF2D4A3</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>99E09B9A882544DAB235D81C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>D3530D8554DF4272845E6543</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>99ED220E864B4C8382DD2E96</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>archive.ar</string>
 			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>comp.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/comp.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>A41D56CCA8B3432F8BB288F2</key>
-		<dict>
-			<key>fileRef</key>
-			<string>50AD09F8EC9B48E0B4656D9F</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>A5AE581007CA4DD3B42BA3A0</key>
-		<dict>
-			<key>fileRef</key>
-			<string>D4F657B3AD3343248058A53D</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>A717F02DC3A14B14AAA55BAA</key>
-		<dict>
-			<key>fileRef</key>
-			<string>28926C36C4FD4B8FAB2B2DB9</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>A7309D02F9EA400C8A1782A2</key>
-		<dict>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>wrapper.framework</string>
-			<key>name</key>
-			<string>Foundation.framework</string>
-			<key>path</key>
-			<string>Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk/System/Library/Frameworks/Foundation.framework</string>
-			<key>sourceTree</key>
-			<string>DEVELOPER_DIR</string>
-		</dict>
-		<key>A92763F07EA640A38098BA7C</key>
-		<dict>
-			<key>containerPortal</key>
-			<string>6D5C876944AE405F9893A832</string>
-			<key>isa</key>
-			<string>PBXContainerItemProxy</string>
-			<key>proxyType</key>
-			<string>1</string>
-			<key>remoteGlobalIDString</key>
-			<string>A0727FFDB2DC4093B45E38A2</string>
-			<key>remoteInfo</key>
-			<string>Pods-OpenSSL-Universal</string>
-		</dict>
-		<key>AAB52D0D174D4E1CBB38F04A</key>
-		<dict>
-			<key>buildConfigurations</key>
-			<array>
-				<string>77E38C76D4784548843AC560</string>
-				<string>67F69C08EFEC4701855A6100</string>
-			</array>
-			<key>defaultConfigurationIsVisible</key>
 			<string>0</string>
-			<key>defaultConfigurationName</key>
-			<string>Release</string>
-			<key>isa</key>
-			<string>XCConfigurationList</string>
-		</dict>
-		<key>ACA4F4F6C0D54905A9265C61</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E2398CC4ADA64B128F690170</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>ADF1FD46AC304614B49D1053</key>
-		<dict>
-			<key>fileRef</key>
-			<string>CA2DD6DDBC214DAC918EFE0B</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>B245034511B4472180C8547C</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>asn1.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/asn1.h</string>
+			<string>libPods-OpenSSL-Universal.a</string>
 			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
+			<string>BUILT_PRODUCTS_DIR</string>
 		</dict>
-		<key>B29C7E3F13794128956E2DC8</key>
+		<key>99F4C29E744743D4B79E8D44</key>
 		<dict>
 			<key>children</key>
 			<array>
-				<string>22482B48F2D44F5EA4C97F4C</string>
-				<string>7B691A6CB79E42E3991C8C2F</string>
-				<string>C37C08ABBAB74D66A24C198E</string>
-				<string>6423046F9DFC4449A97D25E0</string>
+				<string>78A8D103FEDD4774A4A32F03</string>
+				<string>21BEB76F8B904C56AE2A5D26</string>
+				<string>780127D0F42F4307B238FCA7</string>
+				<string>0FF066795FC147F0B61E2844</string>
+				<string>ED3D75BCC0AE4377AEF53EFD</string>
+				<string>F784F761DA47445A8BF14F75</string>
 			</array>
 			<key>isa</key>
 			<string>PBXGroup</string>
 			<key>name</key>
-			<string>Support Files</string>
+			<string>Pods</string>
 			<key>sourceTree</key>
-			<string>SOURCE_ROOT</string>
+			<string>&lt;group&gt;</string>
 		</dict>
-		<key>B2DEC9E0C28A488995E29D3B</key>
+		<key>9F76B43F6FD746069FFE3535</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>whrlpool.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/whrlpool.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>9F796350A60646CCAA036EDE</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>Pods-OpenSSL-Universal-dummy.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>A000EACA56F1476F833CBD4A</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -2010,7 +1642,27 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>B494038B4D4043A9B2E825B8</key>
+		<key>A0D420BE32FE4A738841F8AC</key>
+		<dict>
+			<key>fileRef</key>
+			<string>FBEF256ECDEE4FBB9204C144</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>A1E40131EADE48929EA1234B</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>Foundation.framework</string>
+			<key>path</key>
+			<string>Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk/System/Library/Frameworks/Foundation.framework</string>
+			<key>sourceTree</key>
+			<string>DEVELOPER_DIR</string>
+		</dict>
+		<key>A1E702B33B5743B5BA30E5C4</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -2019,33 +1671,266 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>stack.h</string>
+			<string>rand.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/stack.h</string>
+			<string>include-ios/openssl/rand.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>B70F2DD2FD19456BB5928B61</key>
-		<dict>
-			<key>fileRef</key>
-			<string>5CF88100AD5643009A96A224</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>B8E492B8756040BBA4064AC7</key>
+		<key>A1F57B0C36B0485F90E9FC75</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
 			<key>lastKnownFileType</key>
-			<string>text.script.sh</string>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>srp.h</string>
 			<key>path</key>
-			<string>Pods-resources.sh</string>
+			<string>include-ios/openssl/srp.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>B9C668F1AB644A1DBD9E19C3</key>
+		<key>A311E4DBDA8D448DA42DCCBC</key>
+		<dict>
+			<key>fileRef</key>
+			<string>D3041BF8418F443787D5B6F0</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>A337DD436DBC4BEF9B9476D3</key>
+		<dict>
+			<key>fileRef</key>
+			<string>2C01AE2D924C4D93802F1983</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>A53DAD8B0869463BAB22C28D</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>buffer.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/buffer.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>A5A38C321C0D453B8E75F65C</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>kssl.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/kssl.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>A5A7AA4085B24246B5A79CDD</key>
+		<dict>
+			<key>fileRef</key>
+			<string>3BECC7F73F3B4E8FB5113830</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>A690EC777F674644B20F7DA2</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>pkcs7.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/pkcs7.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>A7E7AC396B594661ADF550DE</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>ec.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/ec.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>A86FABA3F0DB4229A24997B6</key>
+		<dict>
+			<key>fileRef</key>
+			<string>A7E7AC396B594661ADF550DE</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>AA3378F74A7148668E0F6BB1</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>pkcs12.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/pkcs12.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>ABB2B2D63773449D87E49089</key>
+		<dict>
+			<key>fileRef</key>
+			<string>341F5522CB1D418FBB34F03D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>AC089C240CE14D39BA2D4A65</key>
+		<dict>
+			<key>fileRef</key>
+			<string>E297C5A54D3E42A8951A5977</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>ACBF86757CBB4474AA71AC7B</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>idea.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/idea.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>B0EEF4C57F5B4EDDBCF6D750</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>E297C5A54D3E42A8951A5977</string>
+				<string>F728C62C1810486396623851</string>
+				<string>8182D12610CE43CFA4826AB3</string>
+				<string>7A2A98AFA8744CFF850E817A</string>
+				<string>6815EEACAD364EEE9B56060B</string>
+				<string>07E071B54E1E429AA6FD977F</string>
+				<string>C8AF4234AD6B4DDA876333F8</string>
+				<string>A53DAD8B0869463BAB22C28D</string>
+				<string>A000EACA56F1476F833CBD4A</string>
+				<string>6453A9DAFBC1467FBA0FB1D1</string>
+				<string>FDA68C38EB774778B892623C</string>
+				<string>1B1936FC39F84B8996F52144</string>
+				<string>DA642C37153F469089DC4E1F</string>
+				<string>D9C309CDFB0A4F07B7DB65F2</string>
+				<string>B166D4ADF9C44593B9473A77</string>
+				<string>7AAA8D0B35AD49418EEBAFD9</string>
+				<string>84948B197E7941B49C8D323F</string>
+				<string>E1C05EBB5CFA4C5CBCAF23A2</string>
+				<string>DC28C8A3363541AEA2F34EB3</string>
+				<string>246EA0687CFD43EE9A44EFC6</string>
+				<string>2C01AE2D924C4D93802F1983</string>
+				<string>1AC15F1563894EE3BFF2D4A3</string>
+				<string>806C397844D64BDDBC7AC35E</string>
+				<string>0DFF6C9493634FDB9814DC2F</string>
+				<string>A7E7AC396B594661ADF550DE</string>
+				<string>8A0E700DE99044E0A4616194</string>
+				<string>D3530D8554DF4272845E6543</string>
+				<string>44378E99EE4F440AB2458C4C</string>
+				<string>216D15BC47FA4ABBBD93CEB9</string>
+				<string>93D0AC74A8CA420DB97AB2DB</string>
+				<string>DD1D8B206C3F420195339ADC</string>
+				<string>ACBF86757CBB4474AA71AC7B</string>
+				<string>EDE3A3FD31ED47DAB4C0341E</string>
+				<string>A5A38C321C0D453B8E75F65C</string>
+				<string>03E87EE4413A4CAB9836EF15</string>
+				<string>BCB5CFA0FC0D405DBC353774</string>
+				<string>7DAC2F4AA027454DAAFE880A</string>
+				<string>0F75E51450B549FABD7D030A</string>
+				<string>3F89BFF5FBF94AFB9499C932</string>
+				<string>76C5F95CE0194949871AFB60</string>
+				<string>4881F323C4C4458C9470C7D9</string>
+				<string>6A0DFFF894A74343A4234B33</string>
+				<string>3BECC7F73F3B4E8FB5113830</string>
+				<string>2DA7E45B33B348B2B92C948E</string>
+				<string>FC99308B44684A478E0A2A13</string>
+				<string>56DF21D7F660448E880B4B32</string>
+				<string>E8CA98B01DC44723807D9005</string>
+				<string>AA3378F74A7148668E0F6BB1</string>
+				<string>A690EC777F674644B20F7DA2</string>
+				<string>341F5522CB1D418FBB34F03D</string>
+				<string>A1E702B33B5743B5BA30E5C4</string>
+				<string>C22DFD301BE048EFA712926B</string>
+				<string>4DBFE47F9A924A2F9A8AC816</string>
+				<string>5422CA2EACA645DB90AE2BB1</string>
+				<string>803F0A4CF31B4FB8B31484A0</string>
+				<string>D3041BF8418F443787D5B6F0</string>
+				<string>34ACCE94EC0C4797AFBC65CB</string>
+				<string>8F60DB2BD7F84282BB486F10</string>
+				<string>A1F57B0C36B0485F90E9FC75</string>
+				<string>8FCC9E7DC696482EBEBB8CB9</string>
+				<string>FD1C15D8A7D94FD9978AD1E5</string>
+				<string>79BE2DB23655400691D4290D</string>
+				<string>BDBE17C030904A04BE3F1CBF</string>
+				<string>C245EDE289424427B83D499C</string>
+				<string>E3CC0DD6470A4D7591DB6352</string>
+				<string>0A8A83BDAEE64805BE603A42</string>
+				<string>FBEF256ECDEE4FBB9204C144</string>
+				<string>851B4B21B72B498E92E67A74</string>
+				<string>3D099CF63E4B441497102276</string>
+				<string>8BB0E84F73A547C39611486C</string>
+				<string>3BD9EE5AB4104FED82CDD6B3</string>
+				<string>9F76B43F6FD746069FFE3535</string>
+				<string>6FAB647A53704B489FA9D8C6</string>
+				<string>6EAFAA4D34B6449EB14836B8</string>
+				<string>416DA5D3BF7946AB828FF97F</string>
+				<string>E2D7B6B0673649CBA18AD8A3</string>
+				<string>F5451CC725764B81AEDFE33F</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>OpenSSL-Universal</string>
+			<key>path</key>
+			<string>OpenSSL-Universal</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>B166D4ADF9C44593B9473A77</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>conf_api.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/conf_api.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>B3686F70790845459EA80C6A</key>
 		<dict>
 			<key>buildSettings</key>
 			<dict>
@@ -2112,47 +1997,41 @@
 			<key>name</key>
 			<string>Debug</string>
 		</dict>
-		<key>BE0625767C1440E9848E5640</key>
+		<key>B489D5C04CA245079502952A</key>
 		<dict>
 			<key>fileRef</key>
-			<string>A2FE40404C9A4694852B1115</string>
+			<string>0F75E51450B549FABD7D030A</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>C0421E6F62694012998AF9BB</key>
+		<key>B63D24EA2ECB40A6AD959169</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>path</key>
+			<string>Pods-OpenSSL-Universal-Private.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>B9AC5D8D2A53460D97FAAEBC</key>
 		<dict>
 			<key>fileRef</key>
-			<string>719AC23A7C624C99A8E83A93</string>
+			<string>6FAB647A53704B489FA9D8C6</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>C14E7E83DD6F490A94449143</key>
+		<key>BC20104510A740149366F00C</key>
 		<dict>
-			<key>buildConfigurationList</key>
-			<string>AAB52D0D174D4E1CBB38F04A</string>
-			<key>buildPhases</key>
-			<array>
-				<string>5E3684B5643B4FA1BBEE8FCF</string>
-				<string>35EC6DA2D76B4652B475DFC7</string>
-			</array>
-			<key>buildRules</key>
-			<array/>
-			<key>dependencies</key>
-			<array>
-				<string>16CD18F37C42471584BC804B</string>
-			</array>
+			<key>fileRef</key>
+			<string>4DBFE47F9A924A2F9A8AC816</string>
 			<key>isa</key>
-			<string>PBXNativeTarget</string>
-			<key>name</key>
-			<string>Pods</string>
-			<key>productName</key>
-			<string>Pods</string>
-			<key>productReference</key>
-			<string>32914E9EEE454538BB81A347</string>
-			<key>productType</key>
-			<string>com.apple.product-type.library.static</string>
+			<string>PBXBuildFile</string>
 		</dict>
-		<key>C155A74A718A41BA8C4E3237</key>
+		<key>BCB5CFA0FC0D405DBC353774</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -2161,48 +2040,88 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>des.h</string>
+			<string>md4.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/des.h</string>
+			<string>include-ios/openssl/md4.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>C1EDC7B523EF4B7EB9C0FAA4</key>
+		<key>BDBE17C030904A04BE3F1CBF</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>ssl23.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/ssl23.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>BDDD78A63B5B439EAB571F07</key>
 		<dict>
 			<key>fileRef</key>
-			<string>78FE27C2663B43D08731D48F</string>
+			<string>44378E99EE4F440AB2458C4C</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>C37C08ABBAB74D66A24C198E</key>
+		<key>BDEBB302109A4788A815B872</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
 			<key>lastKnownFileType</key>
-			<string>sourcecode.c.objc</string>
+			<string>text.xcconfig</string>
 			<key>path</key>
-			<string>Pods-OpenSSL-Universal-dummy.m</string>
+			<string>Pods-OpenSSL-Universal.xcconfig</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>C3F3F81291684C91BF6BE974</key>
+		<key>BEB6831A9FD14D53AF22CC6D</key>
 		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
+			<key>fileRef</key>
+			<string>5422CA2EACA645DB90AE2BB1</string>
 			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>BF30A2527EA64B5EB4485FDB</key>
+		<dict>
+			<key>fileRef</key>
+			<string>93D0AC74A8CA420DB97AB2DB</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>BF4B346067B74407A17EFB61</key>
+		<dict>
+			<key>explicitFileType</key>
 			<string>archive.ar</string>
-			<key>name</key>
-			<string>libcrypto.a</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
 			<key>path</key>
-			<string>lib-ios/libcrypto.a</string>
+			<string>libPods.a</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>C1F66E5A8D7F4F60A54DAC30</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>A1E40131EADE48929EA1234B</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>iOS</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>C550D9D8D6194C7AB45449C5</key>
+		<key>C22DFD301BE048EFA712926B</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -2211,13 +2130,13 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>dso.h</string>
+			<string>rc2.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/dso.h</string>
+			<string>include-ios/openssl/rc2.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>C8203ADBFD27455E9C7F2A83</key>
+		<key>C245EDE289424427B83D499C</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -2226,27 +2145,40 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>srp.h</string>
+			<string>ssl3.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/srp.h</string>
+			<string>include-ios/openssl/ssl3.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>C91399AB0D4A45DC99C56F1C</key>
+		<key>C601ABCDC1FE4D1389FA2685</key>
 		<dict>
 			<key>fileRef</key>
-			<string>C550D9D8D6194C7AB45449C5</string>
+			<string>A1E40131EADE48929EA1234B</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>C94DA0C18A874D65A1F70C9E</key>
+		<key>C6D9B97240A94BFDA9B26B49</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>215DF343F60245C5B637244E</string>
+			</array>
+			<key>isa</key>
+			<string>PBXSourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>C6F65E09A89E433887367C6E</key>
 		<dict>
 			<key>fileRef</key>
-			<string>FE8062BAEA06463C9A6A0878</string>
+			<string>8FCC9E7DC696482EBEBB8CB9</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>C95024A151B140DAA1A34BEB</key>
+		<key>C8AF4234AD6B4DDA876333F8</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -2255,141 +2187,45 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>whrlpool.h</string>
+			<string>bn.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/whrlpool.h</string>
+			<string>include-ios/openssl/bn.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>CA2DD6DDBC214DAC918EFE0B</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>ssl2.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/ssl2.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>CA5B3CFBE9664A2FAA129B65</key>
+		<key>CDD17F8651E64DEA8FC325B8</key>
 		<dict>
 			<key>fileRef</key>
-			<string>0C2A0A155991429A96414ED0</string>
+			<string>C245EDE289424427B83D499C</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>CA643C49D2C849DAA3626E01</key>
+		<key>CE21F1867996482CBBB78D0A</key>
 		<dict>
 			<key>fileRef</key>
-			<string>463AA8E932FD49DAAF61F116</string>
+			<string>EDE3A3FD31ED47DAB4C0341E</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>CCCC28E86E3C405CB857CE20</key>
+		<key>D058A869804C418D9E8777F9</key>
 		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
+			<key>children</key>
+			<array>
+				<string>4DA43E94A2BB4DB0B11EF385</string>
+				<string>E7FB054D10F44C749BEC3D12</string>
+				<string>168A1C87D0D24978AB36EC2C</string>
+				<string>6A8C13032731484ABE3F274C</string>
+				<string>3E39A5C096B04EB8AAE77DB4</string>
+			</array>
 			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>blowfish.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/blowfish.h</string>
+			<string>PBXGroup</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>CD27338AE51F45688A8D8945</key>
-		<dict>
-			<key>fileRef</key>
-			<string>3FBCFAA212FF440293CCF8F7</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>CDB48AE5332A445BB5D69050</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>opensslconf.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/opensslconf.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>D1874868013349B6B54DD72D</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>dtls1.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/dtls1.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>D25F392D196D483EB61613B5</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>archive.ar</string>
-			<key>name</key>
-			<string>libssl.a</string>
-			<key>path</key>
-			<string>lib-ios/libssl.a</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>D2B23C867B53418289E0CBD4</key>
-		<dict>
-			<key>fileRef</key>
-			<string>496AEB917636421396844BCC</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>D48E607982864F2587F6E9DE</key>
-		<dict>
-			<key>fileRef</key>
-			<string>C155A74A718A41BA8C4E3237</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>D4F657B3AD3343248058A53D</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>ripemd.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/ripemd.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>D53B5644549C42A9AA303DCC</key>
+		<key>D17A14CB80F94A3F92565C00</key>
 		<dict>
 			<key>baseConfigurationReference</key>
-			<string>7B691A6CB79E42E3991C8C2F</string>
+			<string>78A8D103FEDD4774A4A32F03</string>
 			<key>buildSettings</key>
 			<dict>
 				<key>ALWAYS_SEARCH_USER_PATHS</key>
@@ -2406,8 +2242,6 @@
 				<string>0</string>
 				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
 				<string>YES</string>
-				<key>GCC_PREFIX_HEADER</key>
-				<string>Pods-OpenSSL-Universal-prefix.pch</string>
 				<key>GCC_PREPROCESSOR_DEFINITIONS</key>
 				<array>
 					<string>DEBUG=1</string>
@@ -2437,41 +2271,7 @@
 			<key>name</key>
 			<string>Debug</string>
 		</dict>
-		<key>D5BAF5DCE57349DFA7A73DC9</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E7D672B79939489FAFF06977</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>D6BA0114CA714DBC94C96125</key>
-		<dict>
-			<key>fileRef</key>
-			<string>A12CE763D4D04B298649F5F4</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>D6BF13EC94C84728AF0431A1</key>
-		<dict>
-			<key>fileRef</key>
-			<string>CCCC28E86E3C405CB857CE20</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>D8B5B16EE56040348ABCF33C</key>
-		<dict>
-			<key>buildActionMask</key>
-			<string>2147483647</string>
-			<key>files</key>
-			<array>
-				<string>2FA7BED15A37462C93292B80</string>
-			</array>
-			<key>isa</key>
-			<string>PBXFrameworksBuildPhase</string>
-			<key>runOnlyForDeploymentPostprocessing</key>
-			<string>0</string>
-		</dict>
-		<key>D98E8EFC5B704AF79FF77BA9</key>
+		<key>D3041BF8418F443787D5B6F0</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -2480,20 +2280,337 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>x509.h</string>
+			<string>safestack.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/x509.h</string>
+			<string>include-ios/openssl/safestack.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>D9E912C6EC41426C8D30C516</key>
+		<key>D3114436CD9F4A8F8E481848</key>
 		<dict>
 			<key>fileRef</key>
-			<string>6667D8FE86DC4ABB9BEFA725</string>
+			<string>3BD9EE5AB4104FED82CDD6B3</string>
 			<key>isa</key>
 			<string>PBXBuildFile</string>
 		</dict>
-		<key>E0594EF007714859ABAA7A52</key>
+		<key>D3530D8554DF4272845E6543</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>ecdsa.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/ecdsa.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>D403B911C0F843E08BF8AB64</key>
+		<dict>
+			<key>fileRef</key>
+			<string>1B1936FC39F84B8996F52144</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>D5E281261CB34DBCA4A57353</key>
+		<dict>
+			<key>fileRef</key>
+			<string>A5A38C321C0D453B8E75F65C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>D6505C6D484A46EB963D1D50</key>
+		<dict>
+			<key>fileRef</key>
+			<string>84948B197E7941B49C8D323F</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>D9C309CDFB0A4F07B7DB65F2</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>conf.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/conf.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>DA642C37153F469089DC4E1F</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>comp.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/comp.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>DC28C8A3363541AEA2F34EB3</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>dh.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/dh.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>DD028A891F444AFDA1856459</key>
+		<dict>
+			<key>fileRef</key>
+			<string>9F76B43F6FD746069FFE3535</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>DD1D8B206C3F420195339ADC</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>hmac.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/hmac.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>E1C05EBB5CFA4C5CBCAF23A2</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>des_old.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/des_old.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>E297C5A54D3E42A8951A5977</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>aes.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/aes.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>E2D7B6B0673649CBA18AD8A3</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>2AFDBAABC20041D2BD0576AC</string>
+				<string>FF6535039F8749AB9E45BCE8</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Frameworks</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>E3CC0DD6470A4D7591DB6352</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>stack.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/stack.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>E51C4182F7584462BBD87CB5</key>
+		<dict>
+			<key>fileRef</key>
+			<string>03E87EE4413A4CAB9836EF15</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>E7FB054D10F44C749BEC3D12</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>C1F66E5A8D7F4F60A54DAC30</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Frameworks</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>E8CA98B01DC44723807D9005</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>pem2.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/pem2.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>EA1A010FD52B4F1EB2E1A8F4</key>
+		<dict>
+			<key>fileRef</key>
+			<string>FDA68C38EB774778B892623C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>EB3ED27FB3664C6E837AD3E3</key>
+		<dict>
+			<key>fileRef</key>
+			<string>BCB5CFA0FC0D405DBC353774</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>ED3D75BCC0AE4377AEF53EFD</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>Pods-environment.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>EDE3A3FD31ED47DAB4C0341E</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>krb5_asn.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/krb5_asn.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>EF556A7605774DADB7093F12</key>
+		<dict>
+			<key>fileRef</key>
+			<string>A1E702B33B5743B5BA30E5C4</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>F1E9EB19362F4E8E93F699B9</key>
+		<dict>
+			<key>fileRef</key>
+			<string>DC28C8A3363541AEA2F34EB3</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>F42C5FFC1BBB4950946354D5</key>
+		<dict>
+			<key>fileRef</key>
+			<string>803F0A4CF31B4FB8B31484A0</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>F5451CC725764B81AEDFE33F</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>BDEBB302109A4788A815B872</string>
+				<string>B63D24EA2ECB40A6AD959169</string>
+				<string>9F796350A60646CCAA036EDE</string>
+				<string>F5F9EC2C3FD347A098282194</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Support Files</string>
+			<key>sourceTree</key>
+			<string>SOURCE_ROOT</string>
+		</dict>
+		<key>F5F9EC2C3FD347A098282194</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>Pods-OpenSSL-Universal-prefix.pch</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>F728C62C1810486396623851</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>name</key>
+			<string>asn1.h</string>
+			<key>path</key>
+			<string>include-ios/openssl/asn1.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>F784F761DA47445A8BF14F75</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.script.sh</string>
+			<key>path</key>
+			<string>Pods-resources.sh</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>FBEF256ECDEE4FBB9204C144</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -2508,27 +2625,7 @@
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>E21107D1453142749499F26F</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>E4A7CC592CE341049F34FAED</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Targets Support Files</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>E23393DF6CC0488F896929E6</key>
-		<dict>
-			<key>fileRef</key>
-			<string>58EDF3D964044CF5A4626B1A</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>E2398CC4ADA64B128F690170</key>
+		<key>FC99308B44684A478E0A2A13</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -2537,59 +2634,13 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>ui_compat.h</string>
+			<string>ossl_typ.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/ui_compat.h</string>
+			<string>include-ios/openssl/ossl_typ.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>E252CFA4D11947ABA561613A</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>32914E9EEE454538BB81A347</string>
-				<string>556C8AA2241D41FDA0BCE3E7</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Products</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>E2989D036A774049874B45FF</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E56F4C3E70A240FBBF19EAB2</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>E303D27E9114404B8C2C4BEE</key>
-		<dict>
-			<key>fileRef</key>
-			<string>A7309D02F9EA400C8A1782A2</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>E4A7CC592CE341049F34FAED</key>
-		<dict>
-			<key>children</key>
-			<array>
-				<string>8680FE9DB539483B85A208A2</string>
-				<string>2A3F2F9144F64E36AD71C5FB</string>
-				<string>4AF31F77E5764BCB9D634044</string>
-				<string>58EDF3D964044CF5A4626B1A</string>
-				<string>23C1FB7E4E62496F990F0672</string>
-				<string>B8E492B8756040BBA4064AC7</string>
-			</array>
-			<key>isa</key>
-			<string>PBXGroup</string>
-			<key>name</key>
-			<string>Pods</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>E56F4C3E70A240FBBF19EAB2</key>
+		<key>FD1C15D8A7D94FD9978AD1E5</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -2598,20 +2649,13 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>evp.h</string>
+			<string>ssl.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/evp.h</string>
+			<string>include-ios/openssl/ssl.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>E5E8915A6C834BC687996DA7</key>
-		<dict>
-			<key>fileRef</key>
-			<string>821F0D7B1BBC4D2089DE15EF</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>E7D672B79939489FAFF06977</key>
+		<key>FDA68C38EB774778B892623C</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
@@ -2620,138 +2664,94 @@
 			<key>lastKnownFileType</key>
 			<string>sourcecode.c.h</string>
 			<key>name</key>
-			<string>pkcs7.h</string>
+			<string>cmac.h</string>
 			<key>path</key>
-			<string>include-ios/openssl/pkcs7.h</string>
+			<string>include-ios/openssl/cmac.h</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
-		<key>E95D1F1279C7483B9FA561E9</key>
+		<key>FDEAF60DCEC34A218E30B5EF</key>
+		<dict>
+			<key>buildSettings</key>
+			<dict>
+				<key>ALWAYS_SEARCH_USER_PATHS</key>
+				<string>NO</string>
+				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
+				<string>gnu++0x</string>
+				<key>CLANG_CXX_LIBRARY</key>
+				<string>libc++</string>
+				<key>CLANG_ENABLE_MODULES</key>
+				<string>YES</string>
+				<key>CLANG_ENABLE_OBJC_ARC</key>
+				<string>NO</string>
+				<key>CLANG_WARN_BOOL_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_CONSTANT_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_DIRECT_OBJC_ISA_USAGE</key>
+				<string>YES</string>
+				<key>CLANG_WARN_EMPTY_BODY</key>
+				<string>YES</string>
+				<key>CLANG_WARN_ENUM_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_INT_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_OBJC_ROOT_CLASS</key>
+				<string>YES</string>
+				<key>COPY_PHASE_STRIP</key>
+				<string>NO</string>
+				<key>ENABLE_NS_ASSERTIONS</key>
+				<string>NO</string>
+				<key>GCC_C_LANGUAGE_STANDARD</key>
+				<string>gnu99</string>
+				<key>GCC_WARN_64_TO_32_BIT_CONVERSION</key>
+				<string>YES</string>
+				<key>GCC_WARN_ABOUT_RETURN_TYPE</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNDECLARED_SELECTOR</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNINITIALIZED_AUTOS</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNUSED_FUNCTION</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNUSED_VARIABLE</key>
+				<string>YES</string>
+				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+				<string>7.1</string>
+				<key>STRIP_INSTALLED_PRODUCT</key>
+				<string>NO</string>
+				<key>VALIDATE_PRODUCT</key>
+				<string>YES</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+		<key>FE57DB82B6BF491FAC2A445F</key>
+		<dict>
+			<key>fileRef</key>
+			<string>0A8A83BDAEE64805BE603A42</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>FF6535039F8749AB9E45BCE8</key>
 		<dict>
 			<key>includeInIndex</key>
 			<string>1</string>
 			<key>isa</key>
 			<string>PBXFileReference</string>
 			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
+			<string>archive.ar</string>
 			<key>name</key>
-			<string>rc2.h</string>
+			<string>libssl.a</string>
 			<key>path</key>
-			<string>include-ios/openssl/rc2.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>EA0AF50E18594AEE81B0AFBD</key>
-		<dict>
-			<key>fileRef</key>
-			<string>1AA23D5896E14E888AFBBDE9</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>EA3C7AC106764CB4B40D12C1</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>ui.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/ui.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>EBE535B4646943798FAFF6EE</key>
-		<dict>
-			<key>fileRef</key>
-			<string>D98E8EFC5B704AF79FF77BA9</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>F379F5B5859E4D48AE762348</key>
-		<dict>
-			<key>fileRef</key>
-			<string>261822D1A2B247E79202F3D6</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>F3A35AC89CD2490FA7C1272F</key>
-		<dict>
-			<key>fileRef</key>
-			<string>32EB50C376A446A2A5C2669C</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>F4B7585E6E5F417BA6115CBC</key>
-		<dict>
-			<key>fileRef</key>
-			<string>E95D1F1279C7483B9FA561E9</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>FC7546D494DE434694A64C75</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>bio.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/bio.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>FD336F28432848B794CE63AE</key>
-		<dict>
-			<key>fileRef</key>
-			<string>9A4C195F08C54130A75C238F</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>FD66C05FEA1D48C0B95AEAE6</key>
-		<dict>
-			<key>fileRef</key>
-			<string>C8203ADBFD27455E9C7F2A83</string>
-			<key>isa</key>
-			<string>PBXBuildFile</string>
-		</dict>
-		<key>FE8062BAEA06463C9A6A0878</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>obj_mac.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/obj_mac.h</string>
-			<key>sourceTree</key>
-			<string>&lt;group&gt;</string>
-		</dict>
-		<key>FEC591E8084C4A28832A5D69</key>
-		<dict>
-			<key>includeInIndex</key>
-			<string>1</string>
-			<key>isa</key>
-			<string>PBXFileReference</string>
-			<key>lastKnownFileType</key>
-			<string>sourcecode.c.h</string>
-			<key>name</key>
-			<string>rsa.h</string>
-			<key>path</key>
-			<string>include-ios/openssl/rsa.h</string>
+			<string>lib-ios/libssl.a</string>
 			<key>sourceTree</key>
 			<string>&lt;group&gt;</string>
 		</dict>
 	</dict>
 	<key>rootObject</key>
-	<string>6D5C876944AE405F9893A832</string>
+	<string>5D8715DED4624AB98C08B06E</string>
 </dict>
 </plist>

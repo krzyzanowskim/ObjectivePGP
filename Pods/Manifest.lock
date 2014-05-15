@@ -5,6 +5,6 @@ DEPENDENCIES:
   - OpenSSL-Universal
 
 SPEC CHECKSUMS:
-  OpenSSL-Universal: 5d86548fb37553c3e8b1bb577500f7fee0a71775
+  OpenSSL-Universal: e4dbac915775488a9d2d343aa534f13baad97d3a
 
 COCOAPODS: 0.32.1

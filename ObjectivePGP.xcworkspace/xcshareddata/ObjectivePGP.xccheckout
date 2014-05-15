@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>7C6202BA-8F5B-4692-8777-54005EC64D5C</string>
+	<key>IDESourceControlProjectName</key>
+	<string>ObjectivePGP</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>A0CC68B1-0887-4353-BEBF-C44E3F37E9BF</key>
+		<string>ssh://bitbucket.org/krzyzanowskim/objectivepgp.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>ObjectivePGP.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>A0CC68B1-0887-4353-BEBF-C44E3F37E9BF</key>
+		<string>..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>ssh://bitbucket.org/krzyzanowskim/objectivepgp.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>A0CC68B1-0887-4353-BEBF-C44E3F37E9BF</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>A0CC68B1-0887-4353-BEBF-C44E3F37E9BF</string>
+			<key>IDESourceControlWCCName</key>
+			<string>OpenPGPKeyring</string>
+		</dict>
+	</array>
+</dict>
+</plist>
