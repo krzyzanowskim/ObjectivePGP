@@ -8,9 +8,22 @@
 
 #import <Foundation/Foundation.h>
 #import "PGPTypes.h"
+#import "PGPKey.h"
 
 @interface ObjectivePGP : NSObject
 
-- (BOOL) open:(NSString *)path;
+/**
+ *  Array of PGPKey
+ */
+@property (strong, nonatomic) NSArray *keys;
+
+/**
+ *  Load keyring file (pubring or secring. Keys are appended to *keys*.
+ *
+ *  @param path Path to keyring file
+ *
+ *  @return YES on success;
+ */
+- (BOOL) loadKeyring:(NSString *)path;
 
 @end

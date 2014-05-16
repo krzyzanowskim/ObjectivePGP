@@ -74,7 +74,7 @@
         self.s2k.algorithm = PGPHashMD5;
     }
 
-    self.isEncrypted = (self.s2kUsage == PGPS2KUsageEncrypted || self.s2kUsage == PGPS2KUsageEncryptedAndHashed);
+    self.encrypted = (self.s2kUsage == PGPS2KUsageEncrypted || self.s2kUsage == PGPS2KUsageEncryptedAndHashed);
 
     NSData *encryptedData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
     if (self.isEncrypted) {

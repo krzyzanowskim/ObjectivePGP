@@ -28,7 +28,7 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"%@ primary key: %@, users: %@",[super description], self.primaryKey, self.users];
+    return [NSString stringWithFormat:@"%@ primary key: %@",[super description], self.primaryKeyPacket];
 }
 
 - (NSMutableArray *)users
@@ -47,11 +47,20 @@
     return _subKeys;
 }
 
+- (BOOL)isEncrypted
+{
+    if (self.type == PGPKeySecret) {
+        PGPSecretKeyPacket *secretPacket = self.primaryKeyPacket;
+        return secretPacket.isEncrypted;
+    }
+    return NO;
+}
+
 - (PGPKeyType)type
 {
     PGPKeyType t = PGPKeyUnknown;
 
-    switch (self.primaryKey.tag) {
+    switch (self.primaryKeyPacket.tag) {
         case PGPPublicKeyPacketTag:
             t = PGPKeyPublic;
             break;
@@ -75,11 +84,11 @@
         switch (packet.tag) {
             case PGPPublicKeyPacketTag:
                 primaryKeyID = [(PGPPublicKeyPacket *)packet keyID];
-                self.primaryKey = packet;
+                self.primaryKeyPacket = packet;
                 break;
             case PGPSecretKeyPacketTag:
                 primaryKeyID = [(PGPSecretKeyPacket *)packet keyID];
-                self.primaryKey = packet;
+                self.primaryKeyPacket = packet;
                 break;
             case PGPUserIDPacketTag:
             case PGPUserAttributePacketTag:

@@ -14,7 +14,15 @@
 
 @implementation ObjectivePGP
 
-- (BOOL) open:(NSString *)path
+- (NSArray *)keys
+{
+    if (!_keys) {
+        _keys = [NSArray array];
+    }
+    return _keys;
+}
+
+- (BOOL) loadKeyring:(NSString *)path
 {
     NSString *fullPath = [path stringByExpandingTildeInPath];
 
@@ -27,33 +35,41 @@
         return NO;
     }
 
-    [self parseKeyring:ringData];
+    NSArray *parsedKeys = [self parseKeyring:ringData];
+    if (parsedKeys.count == 0) {
+        return NO;
+    }
+
+    self.keys = [self.keys arrayByAddingObjectsFromArray:parsedKeys];
+
     return YES;
 }
 
 #pragma mark - Parse keyring
 
-- (BOOL) parseKeyring:(NSData *)keyringData
+- (NSArray *) parseKeyring:(NSData *)keyringData
 {
-    BOOL ret = NO;
-
+    NSMutableArray *keys = [NSMutableArray array];
+    NSMutableArray *accumulatedPackets = [NSMutableArray array];
     NSUInteger offset = 0;
 
-    NSMutableArray *packets = [NSMutableArray array];
     //TODO: whole keyring is parsed at once, for big files it may be a memory issue, change to stream later
     while (offset < keyringData.length) {
         id <PGPPacket> packet = [PGPPacketFactory packetWithData:keyringData offset:offset];
         if (packet) {
-            [packets addObject:packet];
+            [accumulatedPackets addObject:packet];
         }
+
+        if (packet.tag == PGPPublicKeyPacketTag || packet.tag == PGPSecretKeyPacketTag) {
+            PGPKey *key = [[PGPKey alloc] initWithPackets:accumulatedPackets];
+            [keys addObject:key];
+            [accumulatedPackets removeAllObjects];
+        }
+
         offset = offset + packet.headerData.length + packet.bodyData.length;
     }
 
-    // single key sequence
-    //TODO: multiple sequences
-    PGPKey *key = [[PGPKey alloc] initWithPackets:packets];
-
-    return ret;
+    return [keys copy];
 }
 
 @end

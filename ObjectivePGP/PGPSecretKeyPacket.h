@@ -11,7 +11,7 @@
 
 @interface PGPSecretKeyPacket : PGPPublicKeyPacket
 
-@property (assign) BOOL isEncrypted;
+@property (assign, getter = isEncrypted) BOOL encrypted;
 @property (assign) PGPS2KUsage s2kUsage;
 @property (strong) PGPS2K *s2k;
 @property (assign) PGPSymmetricAlgorithm symmetricAlgorithm;
