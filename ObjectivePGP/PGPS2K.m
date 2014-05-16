@@ -62,8 +62,15 @@ static const unsigned int PGP_SALT_SIZE = 8;
     return position;
 }
 
-//TODO: only SHA1 is implemented, implement digest from self.algorithm
-// http://stackoverflow.com/questions/3468268/objective-c-sha1
+
+/**
+ *  Calculate key for given password
+ *
+ *  @param passphrase Password
+ *  @param keySize    Packet key size
+ *
+ *  @return NSData with key
+ */
 - (NSData *) produceKeyWithPassphrase:(NSString *)passphrase keySize:(NSUInteger)keySize
 {
     NSMutableData *result = [NSMutableData data];

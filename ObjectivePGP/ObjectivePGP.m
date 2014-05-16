@@ -22,11 +22,18 @@
     return _keys;
 }
 
+/**
+ *  Load keyring file (secring or pubring)
+ *
+ *  @param path Path to file
+ *
+ *  @return YES on success
+ */
 - (BOOL) loadKeyring:(NSString *)path
 {
     NSString *fullPath = [path stringByExpandingTildeInPath];
 
-    if (![[NSFileManager defaultManager] fileExistsAtPath:fullPath]) {
+    if (![[NSFileManager defaultManager] fileExistsAtPath:fullPath isDirectory:NO]) {
         return NO;
     }
 
@@ -47,14 +54,19 @@
 
 #pragma mark - Parse keyring
 
-
+/**
+ *  Parse keyring data
+ *
+ *  @param keyringData Keyring data
+ *
+ *  @return Array of PGPKey
+ */
 - (NSArray *) parseKeyring:(NSData *)keyringData
 {
     NSMutableArray *keys = [NSMutableArray array];
     NSMutableArray *accumulatedPackets = [NSMutableArray array];
     NSUInteger offset = 0;
 
-    //TODO: whole keyring is parsed at once, for big files it may be a memory issue, change to stream later
     while (offset < keyringData.length) {
         
         id <PGPPacket> packet = [PGPPacketFactory packetWithData:keyringData offset:offset];
