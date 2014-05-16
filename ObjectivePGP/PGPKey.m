@@ -99,7 +99,7 @@
             case PGPSecretSubkeyPacketTag:
                 user = nil;
                 subKey = [[PGPSubKey alloc] initWithPacket:packet];
-                [self.subKeys addObject:packet];
+                [self.subKeys addObject:subKey];
                 break;
             case PGPSignaturePacketTag:
             {

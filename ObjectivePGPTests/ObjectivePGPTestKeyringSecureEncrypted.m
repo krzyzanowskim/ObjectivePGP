@@ -38,6 +38,15 @@
     XCTAssert(self.oPGP.keys.count == 1, @"Should load 1 key");
 }
 
+- (void) testUsers
+{
+    [self.oPGP loadKeyring:self.keyringPath];
+
+    for (PGPKey *key in self.oPGP.keys) {
+        XCTAssert(key.users.count == 1, @"Invalid users count");
+    }
+}
+
 - (void) testPrimaryKey
 {
     [self.oPGP loadKeyring:self.keyringPath];

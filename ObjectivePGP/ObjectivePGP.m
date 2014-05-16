@@ -47,6 +47,12 @@
 
 #pragma mark - Parse keyring
 
+- (void) addPacketsAsKey:(NSArray *)packets
+{
+
+}
+
+
 - (NSArray *) parseKeyring:(NSData *)keyringData
 {
     NSMutableArray *keys = [NSMutableArray array];
@@ -55,19 +61,26 @@
 
     //TODO: whole keyring is parsed at once, for big files it may be a memory issue, change to stream later
     while (offset < keyringData.length) {
+        
         id <PGPPacket> packet = [PGPPacketFactory packetWithData:keyringData offset:offset];
         if (packet) {
+            if ((accumulatedPackets.count > 1) && ((packet.tag == PGPPublicKeyPacketTag) || (packet.tag == PGPSecretKeyPacketTag))) {
+                PGPKey *key = [[PGPKey alloc] initWithPackets:accumulatedPackets];
+                [keys addObject:key];
+                [accumulatedPackets removeAllObjects];
+            }
             [accumulatedPackets addObject:packet];
-        }
-
-        if (packet.tag == PGPPublicKeyPacketTag || packet.tag == PGPSecretKeyPacketTag) {
-            PGPKey *key = [[PGPKey alloc] initWithPackets:accumulatedPackets];
-            [keys addObject:key];
-            [accumulatedPackets removeAllObjects];
         }
 
         offset = offset + packet.headerData.length + packet.bodyData.length;
     }
+
+    if (accumulatedPackets.count > 1) {
+        PGPKey *key = [[PGPKey alloc] initWithPackets:accumulatedPackets];
+        [keys addObject:key];
+        [accumulatedPackets removeAllObjects];
+    }
+
 
     return [keys copy];
 }
