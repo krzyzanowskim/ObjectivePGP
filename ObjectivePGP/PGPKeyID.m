@@ -25,11 +25,6 @@
     return self;
 }
 
-- (NSString *)description
-{
-    return [self shortKeyString];
-}
-
 - (instancetype) initWithLongKey:(NSData *)longKeyData
 {
     if (longKeyData.length != 8) {
@@ -40,6 +35,33 @@
         _longKey = longKeyData;
     }
     return self;
+}
+
+- (NSString *)description
+{
+    return [self longKeyString];
+}
+
+- (BOOL)isEqual:(id)object
+{
+    if (self == object) {
+        return YES;
+    }
+
+    if ([self class] != [object class]) {
+        return NO;
+    }
+
+    PGPKeyID *other = object;
+    return [self.longKey isEqualToData:other.longKey];
+}
+
+- (NSUInteger)hash
+{
+    const NSUInteger prime = 31;
+    NSUInteger result = 1;
+    result = prime * result + [_longKey hash];
+    return result;
 }
 
 - (NSData *)shortKey

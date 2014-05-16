@@ -15,6 +15,11 @@
     return PGPUserIDPacketTag;
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"%@ %@",[super description], self.userID];
+}
+
 - (NSUInteger) parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
 {
     NSUInteger position = [super parsePacketBody:packetBody error:error];

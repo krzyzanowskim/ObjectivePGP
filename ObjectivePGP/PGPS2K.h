@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "PGPTypes.h"
 
-@interface PGPString2Key : NSObject
+@interface PGPS2K : NSObject
 
 @property (assign) PGPS2KSpecifier specifier;
 @property (assign) PGPHashAlgorithm algorithm;
@@ -18,7 +18,7 @@
 
 @property (assign) NSUInteger length;
 
-+ (PGPString2Key *) string2KeyFromData:(NSData *)data atPosition:(NSUInteger)position;
++ (PGPS2K *) string2KeyFromData:(NSData *)data atPosition:(NSUInteger)position;
 - (NSUInteger) parseS2K:(NSData *)data atPosition:(NSUInteger)position;
 
 - (NSData *) produceKeyWithPassphrase:(NSString *)passphrase keySize:(NSUInteger)keySize;

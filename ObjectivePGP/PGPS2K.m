@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import "PGPString2Key.h"
+#import "PGPS2K.h"
 #import <CommonCrypto/CommonCrypto.h>
 #import <CommonCrypto/CommonDigest.h>
 
@@ -14,11 +14,11 @@
 
 static const unsigned int PGP_SALT_SIZE = 8;
 
-@implementation PGPString2Key
+@implementation PGPS2K
 
-+ (PGPString2Key *) string2KeyFromData:(NSData *)data atPosition:(NSUInteger)position
++ (PGPS2K *) string2KeyFromData:(NSData *)data atPosition:(NSUInteger)position
 {
-    PGPString2Key *s2k = [[PGPString2Key alloc] init];
+    PGPS2K *s2k = [[PGPS2K alloc] init];
     NSUInteger positionAfter = [s2k parseS2K:data atPosition:position];
     s2k.length = (positionAfter - position);
     return s2k;

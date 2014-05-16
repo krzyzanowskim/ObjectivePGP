@@ -7,13 +7,13 @@
 //
 
 #import "PGPPublicKeyPacket.h"
-#import "PGPString2Key.h"
+#import "PGPS2K.h"
 
 @interface PGPSecretKeyPacket : PGPPublicKeyPacket
 
 @property (assign) BOOL isEncrypted;
 @property (assign) PGPS2KUsage s2kUsage;
-@property (strong) PGPString2Key *s2k;
+@property (strong) PGPS2K *s2k;
 @property (assign) PGPSymmetricAlgorithm symmetricAlgorithm;
 @property (strong, readonly) NSData *ivData;
 @property (strong, readonly) NSArray *secretMPI;

@@ -29,6 +29,11 @@
     return PGPPublicKeyPacketTag;
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"%@ %@", [super description], self.keyID];
+}
+
 /**
  *  12.2.  Key IDs and Fingerprints
  *

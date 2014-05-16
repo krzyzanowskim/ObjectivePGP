@@ -39,6 +39,25 @@
     return PGPSignaturePacketTag;
 }
 
+
+- (PGPKeyID *)issuerKeyID
+{
+    NSArray *subpackets = [self subpackets];
+
+    for (PGPSignatureSubpacket *subpacket in subpackets) {
+        if (subpacket.type == PGPSignatureSubpacketTypeIssuer) {
+            return subpacket.value;
+        }
+    }
+    return nil;
+}
+
+
+- (NSArray *)subpackets
+{
+    return [self.hashedSubpackets arrayByAddingObjectsFromArray:self.unhashedSubpackets];
+}
+
 /**
  *  5.2.  Signature Packet (Tag 2)
  *
@@ -47,6 +66,7 @@
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
 {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
+    NSUInteger startPosition = position;
 
     // V4
     // One-octet version number (4).
@@ -93,6 +113,11 @@
         }
     }
 
+    // The concatenation of the data being signed and the signature data
+    // from the version number through the hashed subpacket data (inclusive) is hashed.
+    // The resulting hash value is what is signed.
+    self.signedData = [packetBody subdataWithRange:(NSRange){startPosition, position}];
+
     // Two-octet scalar octet count for the following unhashed subpacket
     UInt16 unhashedOctetCount = 0;
     [packetBody getBytes:&unhashedOctetCount range:(NSRange){position, 2}];
@@ -121,6 +146,7 @@
     position = position + 2;
 
     // 5.2.2. One or more multiprecision integers comprising the signature. This portion is algorithm specific
+    // Signature
     switch (_publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
@@ -129,7 +155,10 @@
             // multiprecision integer (MPI) of RSA signature value m**d mod n.
             // MPI of RSA public modulus n;
             PGPMPI *mpiN = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            mpiN.identifier = @"N";
             position = position + mpiN.length;
+
+            self.signatureMPIs = [NSArray arrayWithObject:mpiN];
         }
             break;
         case PGPPublicKeyAlgorithmDSA:
@@ -137,11 +166,15 @@
         {
             // MPI of DSA value r.
             PGPMPI *mpiR = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            mpiR.identifier = @"R";
             position = position + mpiR.length;
 
             // MPI of DSA value s.
             PGPMPI *mpiS = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            mpiS.identifier = @"S";
             position = position + mpiS.length;
+
+            self.signatureMPIs = [NSArray arrayWithObjects:mpiR, mpiS, nil];
         }
             break;
         default:

@@ -10,7 +10,7 @@
 //  includes the secret-key material after all the public-key fields.
 
 #import "PGPSecretKeyPacket.h"
-#import "PGPString2Key.h"
+#import "PGPS2K.h"
 #import "PGPMPI.h"
 
 #import "PGPCryptoUtils.h"
@@ -41,11 +41,15 @@
     return PGPSecretKeyPacketTag;
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"%@ isEncrypted: %@", [super description], @(self.isEncrypted)];
+}
+
 - (PGPFingerprint *)fingerprint
 {
     return [super fingerprint];
 }
-
 
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
 {
@@ -65,7 +69,7 @@
         self.symmetricAlgorithm = (PGPSymmetricAlgorithm)self.s2kUsage; // this is tricky, but this is right. V3 algorithm is in place of s2kUsage of V4
         self.s2kUsage = PGPS2KUsageEncrypted;
         
-        self.s2k = [[PGPString2Key alloc] init]; // not really parsed s2k
+        self.s2k = [[PGPS2K alloc] init]; // not really parsed s2k
         self.s2k.specifier = PGPS2KSpecifierSimple;
         self.s2k.algorithm = PGPHashMD5;
     }
@@ -99,7 +103,7 @@
     position = position + 1;
 
     // S2K
-    self.s2k = [PGPString2Key string2KeyFromData:data atPosition:position];
+    self.s2k = [PGPS2K string2KeyFromData:data atPosition:position];
     position = position + self.s2k.length;
 
     // Initial Vector (IV) of the same length as the cipher's block size
