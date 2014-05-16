@@ -9,7 +9,7 @@
 #import "PGPSubKey.h"
 
 @interface PGPSubKey ()
-@property (strong, readwrite) id <PGPPacket> packet;
+@property (strong, readwrite) id <PGPPacket> keyPacket;
 @end
 
 @implementation PGPSubKey
@@ -17,14 +17,14 @@
 - (instancetype) initWithPacket:(id <PGPPacket>)packet
 {
     if (self = [self init]) {
-        self.packet = packet;
+        self.keyPacket = packet;
     }
     return self;
 }
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"%@ %@",[super description], [self.packet description]];
+    return [NSString stringWithFormat:@"%@ %@",[super description], [self.keyPacket description]];
 }
 
 @end

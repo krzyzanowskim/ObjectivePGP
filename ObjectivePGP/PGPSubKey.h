@@ -12,7 +12,7 @@
 
 @interface PGPSubKey : NSObject
 
-@property (strong, readonly) id <PGPPacket> packet;
+@property (strong, readonly) id <PGPPacket> keyPacket;
 @property (strong) PGPSignaturePacket *bindingSignature;
 @property (strong) PGPSignaturePacket *revocationSignature;
 

@@ -154,4 +154,30 @@
     }
 }
 
+- (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error
+{
+    BOOL ret = NO;
+    for (id <PGPPacket> packet in [self allKeyPackets]) {
+        if (packet.tag == PGPSecretKeyPacketTag) {
+            PGPSecretKeyPacket *secretKeyPacket = packet;
+            ret = [secretKeyPacket decrypt:passphrase error:error];
+        } else if (packet.tag == PGPSecretSubkeyPacketTag) {
+            PGPSecretSubKeyPacket *secretSubKeyPacket = packet;
+            ret = [secretSubKeyPacket decrypt:passphrase error:error];
+        }
+    }
+    return ret;
+}
+
+#pragma mark - Private
+
+- (NSArray *)allKeyPackets
+{
+    NSMutableArray *arr = [NSMutableArray arrayWithObject:self.primaryKeyPacket];
+    for (PGPSubKey *subKey in self.subKeys) {
+        [arr addObject:subKey.keyPacket];
+    }
+    return [arr copy];
+}
+
 @end

@@ -18,6 +18,14 @@
 @property (strong, readonly) NSData *ivData;
 @property (strong, readonly) NSArray *secretMPI;
 
+/**
+ *  Decrypt packet
+ *
+ *  @param passphrase Password
+ *  @param error      error
+ *
+ *  @return YES on success
+ */
 - (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error;
 
 

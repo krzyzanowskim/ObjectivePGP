@@ -41,6 +41,11 @@
     XCTAssert([key.primaryKeyPacket class] == [PGPSecretKeyPacket class],@"Key Should be PGPSecretKeyPacket");
     XCTAssertTrue(key.isEncrypted, @"Should not be encrypted");
     XCTAssertEqualObjects([secretKey.keyID longKeyString], @"9528AAA17A9BC007", @"Invalid key identifier");
+
+    NSError *decryptError = nil;
+    status = [key decrypt:@"1234" error:&decryptError];
+    XCTAssertTrue(status, @"Can't decrypt");
+    XCTAssertNil(decryptError, @"%@", decryptError);
 }
 
 @end

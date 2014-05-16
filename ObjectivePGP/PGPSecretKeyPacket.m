@@ -121,7 +121,7 @@
 
 #ifdef DEBUG
     //[self decrypt:@"1234"];
-    [self decrypt:@"1234" error:error];  // invalid password
+    //[self decrypt:@"1234" error:error];  // invalid password
 #endif
     return data.length;
 }
@@ -358,7 +358,7 @@
     // now read mpis
     if (decryptedData) {
         [self parseCleartextPart:decryptedData error:error];
-        if (error) {
+        if (*error) {
             return NO;
         }
     }

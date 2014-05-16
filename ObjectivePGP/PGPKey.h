@@ -30,4 +30,14 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
 
 - (instancetype) initWithPackets:(NSArray *)packets;
 
+/**
+ *  Decrypts all secret key and subkey packets
+ *
+ *  @param passphrase Password
+ *  @param error      error
+ *
+ *  @return YES on success
+ */
+- (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error;
+
 @end
