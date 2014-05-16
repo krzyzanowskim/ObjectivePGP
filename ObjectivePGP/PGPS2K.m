@@ -11,6 +11,7 @@
 #import <CommonCrypto/CommonDigest.h>
 
 #import "PGPCryptoUtils.h"
+#import "NSData+PGPUtils.h"
 
 static const unsigned int PGP_SALT_SIZE = 8;
 
@@ -73,18 +74,8 @@ static const unsigned int PGP_SALT_SIZE = 8;
         case PGPS2KSpecifierSimple:
         {
             // passphrase
-            CC_SHA1_CTX *ctx = calloc(1, sizeof(CC_SHA1_CTX));
-            if (ctx) {
-                CC_SHA1_Init(ctx);
-                CC_SHA1_Update(ctx, passphraseData.bytes, passphrase.length);
-                UInt8 *digest = calloc(hashSize, sizeof(UInt8));
-                if (digest) {
-                    CC_SHA1_Final(digest, ctx);
-                    [result appendBytes:digest length:hashSize];
-                    free(digest);
-                }
-                free(ctx);
-            }
+            NSMutableData *toHashData = [NSMutableData dataWithData:passphraseData];
+            [result appendData:[toHashData SHA1]];
         }
             break;
         case PGPS2KSpecifierSalted:
@@ -94,25 +85,39 @@ static const unsigned int PGP_SALT_SIZE = 8;
             // data -- that gets hashed along with the passphrase string, to help
             // prevent dictionary attacks.
 
-            CC_SHA1_CTX *ctx = calloc(1, sizeof(CC_SHA1_CTX));
-            if (ctx) {
-                CC_SHA1_Init(ctx);
-                CC_SHA1_Update(ctx, self.salt.bytes, self.salt.length);
-                CC_SHA1_Update(ctx, passphraseData.bytes, passphrase.length);
-                UInt8 *digest = calloc(hashSize, sizeof(UInt8));
-                if (digest) {
-                    CC_SHA1_Final(digest, ctx);
-                    [result appendBytes:digest length:hashSize];
-                    free(digest);
-                }
-                free(ctx);
-            }
+            NSMutableData *toHashData = [NSMutableData dataWithData:self.salt];
+            [toHashData appendData:passphraseData];
+            [result appendData:[toHashData SHA1]];
         }
             break;
         case PGPS2KSpecifierIteratedAndSalted:
         {
             // iterated (salt + passphrase)
+#define EXPERIMENTAL 0
+#if EXPERIMENTAL
+            // memory overhead is significant in favor to not use NSData here
+            @autoreleasepool {
+                NSMutableData *toHashData = [NSMutableData data];
+                for (NSUInteger n = 0; n * hashSize < keySize; ++n)
+                {
+                    for (NSUInteger i = 0; i < self.count; i += self.salt.length + passphraseData.length)
+                    {
+                        NSUInteger j = self.salt.length + passphraseData.length;
+                        if (i + j > self.count && i != 0) {
+                            j = self.count - i;
+                        }
 
+                        // add salt
+                        [toHashData appendData:[self.salt subdataWithRange:(NSRange){0,j > self.salt.length ? self.salt.length : j}]];
+                        // add passphrase
+                        if (j > self.salt.length) {
+                            [toHashData appendData:[passphraseData subdataWithRange:(NSRange){0,j - self.salt.length}]];
+                        }
+                    }
+                }
+                [result appendData:[toHashData SHA1]];
+            }
+#else
             NSPointerArray *ctxArray = [NSPointerArray pointerArrayWithOptions:NSPointerFunctionsOpaqueMemory];
             for (NSUInteger n = 0; n * hashSize < keySize; ++n) {
                 CC_SHA1_CTX *ctx = calloc(1, sizeof(CC_SHA1_CTX));
@@ -151,8 +156,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
                 [ctxArray removePointerAtIndex:0];
                 free(ctx);
             }
-
-
+#endif
         }
             break;
         default:

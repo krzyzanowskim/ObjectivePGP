@@ -59,7 +59,7 @@
     if (!_fingerprint) {
         NSMutableData *toHashData = [NSMutableData data];
 
-        NSData *publicKeyData = [self buildPublicKeyData];
+        NSData *publicKeyData = [self buildPublicKeyDataAndForceV4:NO];
 
         NSUInteger length = publicKeyData.length;
         UInt8 upper = length >> 8;
@@ -79,16 +79,19 @@
  *
  *  @return public key data starting with version octet
  */
-- (NSData *) buildPublicKeyData
+- (NSData *) buildPublicKeyDataAndForceV4:(BOOL)forceV4
 {
     NSMutableData *data = [NSMutableData dataWithCapacity:128];
     [data appendBytes:&_version length:1];
 
-    UInt32 timestamp = CFSwapInt32HostToBig(_timestamp);
-    [data appendBytes:&timestamp length:4];
+    UInt32 timestampBE = CFSwapInt32HostToBig(_timestamp);
+    [data appendBytes:&timestampBE length:4];
 
-    if (_version == 0x03) {
-        //TODO: v3 support here
+    if (!forceV4 && _version == 0x03) {
+        // implementation MUST NOT generate a V3 key, but MAY accept it.
+        // however it have to be generated here to calculate the very same fingerprint
+        UInt16 V3ValidityPeriodBE = CFSwapInt16HostToBig(_V3validityPeriod);
+        [data appendBytes:&V3ValidityPeriodBE length:2];
     }
 
     [data appendBytes:&_algorithm length:1];
@@ -115,6 +118,8 @@
     [packetBody getBytes:&_version range:(NSRange){position,1}];
     position = position + 1;
 
+    NSAssert(self.version >= 3, @"To old packet version");
+
     // A four-octet number denoting the time that the key was created.
     [packetBody getBytes:&_timestamp range:(NSRange){position,4}];
     _timestamp = CFSwapInt32BigToHost(_timestamp);
@@ -123,9 +128,8 @@
     if (_version == 0x03) {
         //  A two-octet number denoting the time in days that this key is
         //  valid.  If this number is zero, then it does not expire.
-        UInt16 validityPeriod = 0;
-        [packetBody getBytes:&validityPeriod range:(NSRange){position,2}];
-        _V3validityPeriod = CFSwapInt16BigToHost(validityPeriod);
+        [packetBody getBytes:&_V3validityPeriod range:(NSRange){position,2}];
+        _V3validityPeriod = CFSwapInt16BigToHost(_V3validityPeriod);
         position = position + 2;
     }
 

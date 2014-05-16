@@ -47,11 +47,6 @@
 
 #pragma mark - Parse keyring
 
-- (void) addPacketsAsKey:(NSArray *)packets
-{
-
-}
-
 
 - (NSArray *) parseKeyring:(NSData *)keyringData
 {
