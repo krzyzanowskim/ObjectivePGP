@@ -10,12 +10,13 @@
 
 @interface NSData (PGPUtils)
 
-- (UInt16) checksum;
-- (NSData*) MD5;
-- (NSData*) SHA1;
-- (NSData*) SHA224;
-- (NSData*) SHA256;
-- (NSData*) SHA384;
-- (NSData*) SHA512;
+- (UInt16) pgpChecksum;
+- (NSData*) pgpMD5;
+- (NSData*) pgpSHA1;
+- (NSData*) pgpSHA224;
+- (NSData*) pgpSHA256;
+- (NSData*) pgpSHA384;
+- (NSData*) pgpSHA512;
+- (NSData*) pgpRIPEMD160;
 
 @end

@@ -68,7 +68,7 @@
         [toHashData appendBytes:&headWithLength length:3];
         [toHashData appendData:publicKeyData];
         
-        NSData *sha1Hash = [toHashData SHA1];
+        NSData *sha1Hash = [toHashData pgpSHA1];
         _fingerprint = [[PGPFingerprint alloc] initWithData:sha1Hash];
     }
     return _fingerprint;

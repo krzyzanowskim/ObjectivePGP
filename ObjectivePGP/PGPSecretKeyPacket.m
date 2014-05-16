@@ -149,7 +149,7 @@
 
             NSData *clearTextData = [data subdataWithRange:(NSRange) {0, data.length - hashSize}];
             NSData *hashData = [data subdataWithRange:(NSRange){data.length - hashSize, hashSize}];
-            NSData *calculatedHashData = [clearTextData SHA1];
+            NSData *calculatedHashData = [clearTextData pgpSHA1];
 
             if (![hashData isEqualToData:calculatedHashData]) {
                 if (error) {
@@ -166,7 +166,7 @@
             NSUInteger checksumLength = 2;
             NSData *clearTextData = [data subdataWithRange:(NSRange) {0, data.length - checksumLength}];
             NSData *checksumData = [data subdataWithRange:(NSRange){data.length - checksumLength, checksumLength}];
-            NSUInteger calculatedChecksum = [clearTextData checksum];
+            NSUInteger calculatedChecksum = [clearTextData pgpChecksum];
 
             UInt16 checksum = 0;
             [checksumData getBytes:&checksum length:checksumLength];

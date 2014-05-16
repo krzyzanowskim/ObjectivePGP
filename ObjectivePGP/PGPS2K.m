@@ -67,6 +67,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
 - (NSData *) produceKeyWithPassphrase:(NSString *)passphrase keySize:(NSUInteger)keySize
 {
     NSMutableData *result = [NSMutableData data];
+    NSMutableData *toHashData = [NSMutableData data];
     NSData *passphraseData = [passphrase dataUsingEncoding:NSUTF8StringEncoding];
     NSUInteger hashSize = [PGPCryptoUtils hashSizeOfHashAlhorithm:self.algorithm]; // SHA hash size
 
@@ -74,8 +75,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
         case PGPS2KSpecifierSimple:
         {
             // passphrase
-            NSMutableData *toHashData = [NSMutableData dataWithData:passphraseData];
-            [result appendData:[toHashData SHA1]];
+            [toHashData appendData:passphraseData];
         }
             break;
         case PGPS2KSpecifierSalted:
@@ -85,19 +85,15 @@ static const unsigned int PGP_SALT_SIZE = 8;
             // data -- that gets hashed along with the passphrase string, to help
             // prevent dictionary attacks.
 
-            NSMutableData *toHashData = [NSMutableData dataWithData:self.salt];
+            [toHashData appendData:self.salt];
             [toHashData appendData:passphraseData];
-            [result appendData:[toHashData SHA1]];
         }
             break;
         case PGPS2KSpecifierIteratedAndSalted:
         {
             // iterated (salt + passphrase)
-#define EXPERIMENTAL 0
-#if EXPERIMENTAL
-            // memory overhead is significant in favor to not use NSData here
             @autoreleasepool {
-                NSMutableData *toHashData = [NSMutableData data];
+                // memory overhead with subdataWithRange is significant, this is why it's not used here
                 for (NSUInteger n = 0; n * hashSize < keySize; ++n)
                 {
                     for (NSUInteger i = 0; i < self.count; i += self.salt.length + passphraseData.length)
@@ -108,60 +104,55 @@ static const unsigned int PGP_SALT_SIZE = 8;
                         }
 
                         // add salt
-                        [toHashData appendData:[self.salt subdataWithRange:(NSRange){0,j > self.salt.length ? self.salt.length : j}]];
+                        NSUInteger saltlen = j > self.salt.length ? self.salt.length : j;
+                        UInt8 *saltbytes = calloc(saltlen, sizeof(UInt8));
+                        [self.salt getBytes:saltbytes range:(NSRange){0,saltlen}];
+                        [toHashData appendBytes:saltbytes length:saltlen];
+                        free(saltbytes);
                         // add passphrase
                         if (j > self.salt.length) {
-                            [toHashData appendData:[passphraseData subdataWithRange:(NSRange){0,j - self.salt.length}]];
+                            NSUInteger passlen = j - self.salt.length;
+                            UInt8 *passbytes = calloc(passlen, sizeof(UInt8));
+                            [passphraseData getBytes:passbytes range:(NSRange){0,passlen}];
+                            [toHashData appendBytes:passbytes length:passlen];
+                            free(passbytes);
                         }
                     }
                 }
-                [result appendData:[toHashData SHA1]];
+                NSLog(@"memory test");
             }
-#else
-            NSPointerArray *ctxArray = [NSPointerArray pointerArrayWithOptions:NSPointerFunctionsOpaqueMemory];
-            for (NSUInteger n = 0; n * hashSize < keySize; ++n) {
-                CC_SHA1_CTX *ctx = calloc(1, sizeof(CC_SHA1_CTX));
-                if (ctx) {
-                    CC_SHA1_Init(ctx);
-                    [ctxArray addPointer:ctx];
-                }
-            }
-
-            // append
-            for (NSUInteger n = 0; n < ctxArray.count ; ++n) {
-                CC_SHA1_CTX *ctx = [ctxArray pointerAtIndex:n];
-                for (NSUInteger i = 0; i < self.count; i += self.salt.length + passphraseData.length) {
-                    NSUInteger j = self.salt.length + passphraseData.length;
-                    if (i + j > self.count && i != 0) {
-                        j = self.count - i;
-                    }
-                    // add salt
-                    CC_SHA1_Update(ctx, self.salt.bytes, j > self.salt.length ? self.salt.length : j);
-                    // add passphrase
-                    if (j > self.salt.length) {
-                        CC_SHA1_Update(ctx, passphraseData.bytes, j - self.salt.length);
-                    }
-                }
-            }
-
-            // finalize
-            while (ctxArray.count > 0) {
-                CC_SHA1_CTX *ctx = [ctxArray pointerAtIndex:0];
-                UInt8 *digest = calloc(hashSize, sizeof(UInt8));
-                if (digest) {
-                    CC_SHA1_Final(digest, ctx);
-                    [result appendBytes:digest length:hashSize];
-                    free(digest);
-                }
-                [ctxArray removePointerAtIndex:0];
-                free(ctx);
-            }
-#endif
         }
             break;
         default:
             break;
     }
+
+    switch (self.algorithm) {
+        case PGPHashMD5:
+            [result appendData:[toHashData pgpMD5]];
+            break;
+        case PGPHashSHA1:
+            [result appendData:[toHashData pgpSHA1]];
+            break;
+        case PGPHashSHA224:
+            [result appendData:[toHashData pgpSHA224]];
+            break;
+        case PGPHashSHA256:
+            [result appendData:[toHashData pgpSHA256]];
+            break;
+        case PGPHashSHA384:
+            [result appendData:[toHashData pgpSHA384]];
+            break;
+        case PGPHashSHA512:
+            [result appendData:[toHashData pgpSHA512]];
+            break;
+        case PGPHashRIPEMD160:
+            [result appendData:[toHashData pgpRIPEMD160]];
+        default:
+            NSAssert(YES, @"Hash algorithm not supported");
+            break;
+    }
+
     return [result copy];
 }
 

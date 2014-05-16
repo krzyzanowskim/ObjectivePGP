@@ -8,17 +8,16 @@
 
 #import "NSData+PGPUtils.h"
 #import <CommonCrypto/CommonDigest.h>
+#include <openssl/ripemd.h>
 
 @implementation NSData (PGPUtils)
-
-
 
 /**
  *  Calculates a 16bit sum of a string by adding each character * codes modulus 65535
  *
  *  @return checksum
  */
-- (UInt16) checksum
+- (UInt16) pgpChecksum
 {
     UInt16 s = 0;
     UInt8 *bytes = (UInt8 *)self.bytes;
@@ -29,7 +28,7 @@
     return s;
 }
 
-- (NSData*) MD5
+- (NSData*) pgpMD5
 {
     if (!self)
         return self;
@@ -51,7 +50,7 @@
     return outData;
 }
 
-- (NSData *) SHA1
+- (NSData *) pgpSHA1
 {
     if (!self)
         return self;
@@ -76,7 +75,7 @@
     return outData;
 }
 
-- (NSData*) SHA224
+- (NSData*) pgpSHA224
 {
     if (!self)
         return self;
@@ -101,7 +100,7 @@
     return outData;
 }
 
-- (NSData*) SHA256
+- (NSData*) pgpSHA256
 {
     if (!self)
         return self;
@@ -126,7 +125,7 @@
     return outData;
 }
 
-- (NSData*) SHA384
+- (NSData*) pgpSHA384
 {
     if (!self)
         return self;
@@ -151,7 +150,7 @@
     return outData;
 }
 
-- (NSData*) SHA512
+- (NSData*) pgpSHA512
 {
     if (!self)
         return self;
@@ -170,6 +169,31 @@
     CC_SHA512_Final(out, ctx);
 
     NSData *outData = [NSData dataWithBytes:out length:CC_SHA512_DIGEST_LENGTH];
+
+    free(out);
+    free(ctx);
+    return outData;
+}
+
+- (NSData*) pgpRIPEMD160
+{
+    if (!self)
+        return self;
+
+    RIPEMD160_CTX *ctx = calloc(1, sizeof(RIPEMD160_CTX));
+    if (!ctx) {
+        return nil;
+    }
+
+    RIPEMD160_Init(ctx);
+    RIPEMD160_Update(ctx, self.bytes, self.length);
+    UInt8 *out = calloc(RIPEMD160_DIGEST_LENGTH, sizeof(UInt8));
+    if (!out) {
+        return nil;
+    }
+    RIPEMD160_Final(out, ctx);
+
+    NSData *outData = [NSData dataWithBytes:out length:RIPEMD160_DIGEST_LENGTH];
 
     free(out);
     free(ctx);
