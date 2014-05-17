@@ -10,6 +10,11 @@
 #import "PGPMPI.h"
 #import "PGPSignatureSubpacket.h"
 
+static NSString * const PGPSignatureHeaderSubpacketLengthKey = @"PGPSignatureHeaderSubpacketLengthKey";
+static NSString * const PGPSignatureHeaderLengthKey = @"PGPSignatureHeaderLengthKey";
+static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTypeKey";
+
+
 @interface PGPSignaturePacket ()
 @property (strong, readwrite, nonatomic) NSMutableArray *hashedSubpackets;
 @property (strong, readwrite, nonatomic) NSMutableArray *unhashedSubpackets;
@@ -57,6 +62,8 @@
     return [self.hashedSubpackets arrayByAddingObjectsFromArray:self.unhashedSubpackets];
 }
 
+#ifdef DEBUG
+//TODO: Implement export
 - (NSData *) export:(NSError *__autoreleasing *)error
 {
     NSMutableData *data = [NSMutableData data];
@@ -64,11 +71,11 @@
         [data appendData:self.headerData];
         [data appendData:self.bodyData];
     } else {
-        //TODO: build subpacket
         NSAssert(YES, @"signature export not implemented");
     }
     return [data copy];
 }
+#endif
 
 /**
  *  5.2.  Signature Packet (Tag 2)
@@ -86,9 +93,8 @@
     position = position + 1;
 
     //  TODO: Implementations SHOULD accept V3 signatures
-    NSAssert(_version == 4, @"Only signature V4 is supported at the moment");
+    NSAssert(_version == 4, @"Only signature V4 is supported at the moment. Implementations SHOULD accept V3 signatures, but it's not.");
     if (_version != 4) {
-    //    [NSException raise:@"PGPInvalidData" format:@"Signature packet in version %@ is unsupported", @(_version)];
         return packetBody.length;
     }
 
@@ -119,7 +125,7 @@
 
         NSUInteger positionSubpacket = 0;
         while (positionSubpacket < hashedSubpacketsData.length) {
-            PGPSignatureSubpacket *subpacket = [self subpacketBodyAtPosition:positionSubpacket subpacketsData:hashedSubpacketsData];
+            PGPSignatureSubpacket *subpacket = [self subpacketAtPosition:positionSubpacket subpacketsData:hashedSubpacketsData];
             [self.hashedSubpackets addObject:subpacket];
             positionSubpacket = subpacket.bodyRange.location + subpacket.bodyRange.length;
         }
@@ -145,7 +151,7 @@
         // Loop subpackets
         NSUInteger positionSubpacket = 0;
         while (positionSubpacket < unhashedSubpacketsData.length) {
-            PGPSignatureSubpacket *subpacket = [self subpacketBodyAtPosition:positionSubpacket subpacketsData:unhashedSubpacketsData];
+            PGPSignatureSubpacket *subpacket = [self subpacketAtPosition:positionSubpacket subpacketsData:unhashedSubpacketsData];
             [self.unhashedSubpackets addObject:subpacket];
             positionSubpacket = subpacket.bodyRange.location + subpacket.bodyRange.length;
         }
@@ -197,15 +203,19 @@
 
 #pragma mark - Private
 
-- (id) subpacketBodyAtPosition:(NSUInteger)subpacketsPosition subpacketsData:(NSData *)subpacketsData
+- (PGPSignatureSubpacket *) subpacketAtPosition:(NSUInteger)subpacketsPosition subpacketsData:(NSData *)subpacketsData
 {
     NSRange headerRange = (NSRange) {subpacketsPosition, MIN(6,subpacketsData.length - subpacketsPosition) }; // up to 5+1 octets
     NSData *guessHeaderData = [subpacketsData subdataWithRange:headerRange];
+
+    PGPSignatureSubpacketType subpacketType = 0;
     UInt32 headerLength    = 0;
     UInt32 subpacketLength = 0;
-    PGPSignatureSubpacketType subpacketType = [self parseSubpacketHeader:guessHeaderData
-                                                            headerLength:&headerLength
-                                                         subpacketLength:&subpacketLength];
+
+    NSDictionary *subpacketHeaderDictionary = [self parseSubpacketHeader:guessHeaderData];
+    [subpacketHeaderDictionary[PGPSignatureSubpacketTypeKey] getValue:&subpacketType];
+    [subpacketHeaderDictionary[PGPSignatureHeaderLengthKey] getValue:&headerLength];
+    [subpacketHeaderDictionary[PGPSignatureHeaderSubpacketLengthKey] getValue:&subpacketLength];
 
     NSRange bodyRange = (NSRange){subpacketsPosition + headerLength,subpacketLength};
     PGPSignatureSubpacket *subpacket = [[PGPSignatureSubpacket alloc] initWithBody:[subpacketsData subdataWithRange:bodyRange]
@@ -215,41 +225,37 @@
     return subpacket;
 }
 
-
-- (PGPSignatureSubpacketType) parseSubpacketHeader:(NSData *)headerData headerLength:(UInt32 *)headerLength subpacketLength:(UInt32 *)subpacketLen
+- (NSDictionary *) parseSubpacketHeader:(NSData *)headerData
 {
-    NSUInteger position     = 0;
+    NSMutableDictionary *configDict = [NSMutableDictionary dictionary];
+    NSUInteger position = 0;
 
     UInt8 *lengthOctets = (UInt8 *)[headerData subdataWithRange:NSMakeRange(position, MIN(5,headerData.length))].bytes;
+    UInt32 headerLength = 0;
+    UInt32 subpacketLength = 0;
 
-    UInt8 firstOctet  = lengthOctets[0];
-    UInt8 secondOctet = lengthOctets[1];
-    UInt8 thirdOctet  = lengthOctets[2];
-    UInt8 fourthOctet = lengthOctets[3];
-    UInt8 fifthOctet  = lengthOctets[4];
-
-    if (firstOctet < 192) {
+    if (lengthOctets[0] < 192) {
         // subpacketLen = 1st_octet;
-        *subpacketLen   = firstOctet;
-        *headerLength = 1 ;
-    } else if (firstOctet >= 192 && firstOctet < 255) {
+        subpacketLength = lengthOctets[0];
+        headerLength = 1 ;
+    } else if (lengthOctets[0] >= 192 && lengthOctets[0] < 255) {
         // subpacketLen = ((1st_octet - 192) << 8) + (2nd_octet) + 192
-        *subpacketLen   = ((firstOctet - 192) << 8) + (secondOctet) + 192;
-        *subpacketLen   = CFSwapInt16BigToHost(*subpacketLen);
-        *headerLength = 2;
-    } else if (firstOctet == 255) {
+        subpacketLength   = ((lengthOctets[0] - 192) << 8) + (lengthOctets[1]) + 192;
+        subpacketLength   = CFSwapInt16BigToHost(subpacketLength);
+        headerLength = 2;
+    } else if (lengthOctets[0] == 255) {
         // subpacketLen = (2nd_octet << 24) | (3rd_octet << 16) |
         //                (4th_octet << 8)  | 5th_octet
-        *subpacketLen   = (secondOctet << 24) | (thirdOctet << 16) | (fourthOctet << 8)  | fifthOctet;
-        *subpacketLen   = CFSwapInt32BigToHost(*subpacketLen);
-        *headerLength = 5;
+        subpacketLength   = (lengthOctets[1] << 24) | (lengthOctets[2] << 16) | (lengthOctets[3] << 8)  | lengthOctets[4];
+        subpacketLength   = CFSwapInt32BigToHost(subpacketLength);
+        headerLength = 5;
     }
-    position = position + *headerLength;
+    position = position + headerLength;
 
     //TODO: Bit 7 of the subpacket type is the "critical" bit.
     PGPSignatureSubpacketType subpacketType = 0;
     [headerData getBytes:&subpacketType range:(NSRange){position, 1}];
-    *headerLength = *headerLength + 1;
+    headerLength = headerLength + 1;
 
     // Note: "The length includes the type octet but not this length"
     // Example: 02 19 01
@@ -259,9 +265,13 @@
     // so... given body length is = 2 but body length is in fact = 1
     // this is because given body length include type octet which is from header namespace, not body really.
     // I'm drunk, or person who defined it this way was drunk.
-    *subpacketLen = *subpacketLen - 1;
+    subpacketLength = subpacketLength - 1;
 
-    return subpacketType;
+    configDict[PGPSignatureHeaderSubpacketLengthKey] = [[NSValue alloc] initWithBytes:&subpacketLength objCType:@encode(UInt32)];
+    configDict[PGPSignatureHeaderLengthKey] = [[NSValue alloc] initWithBytes:&headerLength objCType:@encode(UInt32)];
+    configDict[PGPSignatureSubpacketTypeKey] = [[NSValue alloc] initWithBytes:&subpacketType objCType:@encode(PGPSignatureSubpacketType)];
+
+    return [configDict copy];
 }
 
 @end
