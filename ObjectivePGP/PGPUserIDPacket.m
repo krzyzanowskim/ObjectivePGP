@@ -38,18 +38,10 @@
 - (NSData *) export:(NSError *__autoreleasing *)error
 {
     NSMutableData *data = [NSMutableData data];
-    if (self.bodyData) {
-        [data appendData:self.headerData];
-        [data appendData:self.bodyData];
-    } else {
-        NSData *bodyData = [self.userID dataUsingEncoding:NSUTF8StringEncoding];
-        NSData *headerData = [self buildHeaderData:bodyData];
-        [data appendData: headerData];
-        [data appendData: bodyData];
-
-        self.headerData = headerData;
-        self.bodyData = bodyData;
-    }
+    NSData *bodyData = [self.userID dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *headerData = [self buildHeaderData:bodyData];
+    [data appendData: headerData];
+    [data appendData: bodyData];
     return [data copy];
 }
 

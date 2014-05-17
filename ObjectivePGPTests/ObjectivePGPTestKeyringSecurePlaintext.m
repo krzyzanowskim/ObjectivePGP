@@ -51,31 +51,15 @@
     }
 }
 
-//- (void) testCRC24
-//{
-//    [self.oPGP loadKeyring:self.keyringPath];
-//
-//    /*
-//     The checksum is a 24-bit Cyclic Redundancy Check (CRC) converted to
-//     four characters of radix-64 encoding by the same MIME base64
-//     transformation, preceded by an equal sign (=).  The CRC is computed
-//     by using the generator 0x864CFB and an initialization of 0xB704CE.
-//     The accumulation is done on the data before it is converted to
-//     radix-64, rather than on the converted data.  A sample implementation
-//     of this algorithm is in the next section.
-//     */
-////    NSData *a = [@"sQBj" dataUsingEncoding:NSUTF8StringEncoding];
-//    NSData *a = [[NSData alloc] initWithBase64EncodedString:@"sQBj" options:0];
-//    NSString *sa = [a base64EncodedStringWithOptions:NSDataBase64Encoding76CharacterLineLength];
-//    NSLog(@"%@",sa);
-//
-//    for (PGPKey *key in self.oPGP.keys) {
-//        PGPPacket *packet = key.primaryKeyPacket;
-//        UInt32 crc24 = [packet crc24];
-//        NSData *crc24Data = [NSData dataWithBytes:&crc24 length:sizeof(UInt32)];
-//        NSString *base64 = [crc24Data base64EncodedStringWithOptions:NSDataBase64Encoding76CharacterLineLength];
-////        NSLog(@"%@",base64);
-//    }
-//}
+- (void) testExport
+{
+    [self.oPGP loadKeyring:self.keyringPath];
+
+    for (PGPKey *key in self.oPGP.keys) {
+        NSError *error = nil;
+        NSData *keyData = [key export:&error];
+        NSLog(@"keyData: %@",keyData);
+    }
+}
 
 @end

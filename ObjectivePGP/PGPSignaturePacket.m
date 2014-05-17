@@ -10,9 +10,9 @@
 #import "PGPMPI.h"
 #import "PGPSignatureSubpacket.h"
 
-static NSString * const PGPSignatureHeaderSubpacketLengthKey = @"PGPSignatureHeaderSubpacketLengthKey";
-static NSString * const PGPSignatureHeaderLengthKey = @"PGPSignatureHeaderLengthKey";
-static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTypeKey";
+static NSString * const PGPSignatureHeaderSubpacketLengthKey = @"PGPSignatureHeaderSubpacketLengthKey"; // UInt32
+static NSString * const PGPSignatureHeaderLengthKey = @"PGPSignatureHeaderLengthKey"; // UInt32
+static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTypeKey"; // PGPSignatureSubpacketType
 
 
 @interface PGPSignaturePacket ()

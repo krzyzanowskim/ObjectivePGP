@@ -58,39 +58,20 @@
 
 - (NSData *) export:(NSError *__autoreleasing *)error
 {
-#define TEST 1
-#if TEST
     NSMutableData *data = [NSMutableData data];
-    [super export:error]; // this will update self.header/body if necessary
-    NSMutableData *secretKeyData = [self.bodyData mutableCopy];
-    [secretKeyData appendData:[self buildSecretKeyDataAndForceV4:YES]];
+    NSData *publicKeyData = [super buildPublicKeyDataAndForceV4:YES];
 
-    NSData *headerData = [self buildHeaderData:secretKeyData];
+    NSMutableData *secretKeyPacketData = [NSMutableData data];
+    [secretKeyPacketData appendData:publicKeyData];
+    [secretKeyPacketData appendData:[self buildSecretKeyDataAndForceV4:YES]];
+
+    NSData *headerData = [self buildHeaderData:secretKeyPacketData];
     [data appendData: headerData];
-    [data appendData: secretKeyData];
+    [data appendData: secretKeyPacketData];
 
-    NSAssert([secretKeyData isEqualToData:self.bodyData], @"Header not match");
-
+    // header not allways match because export new format while input can be old format
+    NSAssert([secretKeyPacketData isEqualToData:self.bodyData], @"Secret key not match");
     return [data copy];
-#else
-    NSMutableData *data = [NSMutableData data];
-    if (self.bodyData) {
-        [data appendData:self.headerData];
-        [data appendData:self.bodyData];
-    } else {
-        [super export:error]; // this will update self.header/body if necessary
-        NSMutableData *secretKeyData = [self.bodyData mutableCopy];
-        [secretKeyData appendData:[self buildSecretKeyDataAndForceV4:YES]];
-
-        NSData *headerData = [self buildHeaderData:secretKeyData];
-        [data appendData: headerData];
-        [data appendData: secretKeyData];
-
-        self.headerData = headerData;
-        self.bodyData = secretKeyData;
-    }
-    return [data copy];
-#endif
 }
 
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
@@ -420,7 +401,7 @@
 
     NSError *exportError = nil;
 
-    NSMutableData *data = [NSMutableData dataWithCapacity:128];
+    NSMutableData *data = [NSMutableData data];
     [data appendBytes:&_s2kUsage length:1];
 
     switch (self.s2kUsage) {
@@ -436,13 +417,19 @@
             [data appendBytes:self.ivData.bytes length:self.ivData.length];
 
             // encrypted MPIs
-            //TODO: should include checksum on export ?
             [data appendData:self.encryptedPartData];
+
+            // Hash
+            [data appendData:[data pgpSHA1]];
             break;
         case PGPS2KUsageNone:
             for (PGPMPI *mpi in self.secretMPI) {
                 [data appendData:[mpi buildData]];
             }
+
+            // Checksum
+            UInt16 checksum = CFSwapInt16HostToBig([data pgpChecksum]);
+            [data appendBytes:&checksum length:2];
             break;
         default:
             break;
@@ -456,6 +443,7 @@
 //        self.s2k = [[PGPS2K alloc] init]; // not really parsed s2k
 //        self.s2k.specifier = PGPS2KSpecifierSimple;
 //        self.s2k.algorithm = PGPHashMD5;
+
 
 
     return [data copy];

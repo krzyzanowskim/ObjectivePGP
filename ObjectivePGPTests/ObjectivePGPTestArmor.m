@@ -50,17 +50,17 @@
 //    NSString *sa = [a base64EncodedStringWithOptions:NSDataBase64Encoding76CharacterLineLength];
 //    NSLog(@"%@",sa);
 
-    for (PGPKey *key in self.oPGP.keys) {
-        NSError *error = nil;
-        NSData *keyData = [key export:&error];
-        NSLog(@"keyData: %@",keyData);
+//    for (PGPKey *key in self.oPGP.keys) {
+//        NSError *error = nil;
+//        NSData *keyData = [key export:&error];
+//        NSLog(@"keyData: %@",keyData);
 
 //        PGPPublicKeyPacket *publicKeyPacket = key.primaryKeyPacket;
 //        UInt32 crc24 = [publicKeyPacket crc24];
 //        NSData *crc24Data = [NSData dataWithBytes:&crc24 length:sizeof(UInt32)];
 //        NSString *base64 = [crc24Data base64EncodedStringWithOptions:NSDataBase64Encoding76CharacterLineLength];
 //        NSLog(@"%@",base64);
-    }
+//    }
 }
 
 @end

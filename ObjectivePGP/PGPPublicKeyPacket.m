@@ -92,7 +92,9 @@
 
     // it wont match, because input data is OLD world, and we export in NEW world format
     // NSAssert([headerData isEqualToData:self.headerData], @"Header not match");
-    NSAssert([bodyData isEqualToData:self.bodyData], @"Body not match");
+    if ([self class] == [PGPPublicKeyPacket class]) {
+        NSAssert([bodyData isEqualToData:self.bodyData], @"Body not match");
+    }
 
     return [data copy];
 #else
@@ -106,8 +108,8 @@
         [data appendData: headerData];
         [data appendData: bodyData];
 
-        self.headerData = headerData;
-        self.bodyData = bodyData;
+        //self.headerData = headerData;
+        //self.bodyData = bodyData;
     }
     return [data copy];
 #endif
