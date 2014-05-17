@@ -47,6 +47,14 @@
     return _subKeys;
 }
 
+- (NSMutableArray *)directSignatures
+{
+    if (!_directSignatures) {
+        _directSignatures = [NSMutableArray array];
+    }
+    return _directSignatures;
+}
+
 - (BOOL)isEncrypted
 {
     if (self.type == PGPKeySecret) {
@@ -169,7 +177,52 @@
     return ret;
 }
 
+- (NSData *) export:(NSError *__autoreleasing *)error
+{
+    NSMutableData *result = [NSMutableData data];
+
+    for (id <PGPPacket> packet in [self allPackets]) {
+        NSError *error = nil;
+        [result appendData:[packet export:&error]];
+        NSAssert(!error,@"Error while export public key");
+
+        //TODO: append checksum
+    }
+    return [result copy];
+}
+
 #pragma mark - Private
+
+/**
+ *  Ordered list of packets. Trust Packet is not exported.
+ *
+ *  @return array
+ */
+- (NSArray *)allPackets
+{
+    //TODO: handle trust packet somehow. The Trust packet is used only within keyrings and is not normally exported.
+    NSMutableArray *arr = [NSMutableArray array];
+
+    [arr addObject:self.primaryKeyPacket];
+
+    if (self.revocationSignature) {
+        [arr addObject:self.revocationSignature];
+    }
+
+    for (id packet in self.directSignatures) {
+        [arr addObject:packet];
+    }
+
+    for (PGPUser *user in self.users) {
+        [arr addObjectsFromArray:[user allPackets]];
+    }
+
+    for (PGPSubKey *subKey in self.subKeys) {
+        [arr addObjectsFromArray:[subKey allPackets]];
+    }
+
+    return [arr copy];
+}
 
 - (NSArray *)allKeyPackets
 {

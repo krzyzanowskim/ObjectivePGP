@@ -52,14 +52,35 @@ static const unsigned int PGP_SALT_SIZE = 8;
 
     // Octet  10:       count, a one-octet, coded value
     if (_specifier == PGPS2KSpecifierIteratedAndSalted) {
-        UInt32 c = 0;
-        [data getBytes:&c range:(NSRange) {position, 1}];
-        _count = ((UInt32)16 + (c & 15)) << ((c >> 4) + 6); //FIXME: what is wrong with that ?
-        //_count = CFSwapInt32BigToHost(_count);
+        [data getBytes:&_uncodedCount range:(NSRange) {position, 1}];
         position = position + 1;
     }
 
     return position;
+}
+
+- (UInt32) codedCount
+{
+    UInt32 expbias = 6;
+    return ((UInt32)16 + (_uncodedCount & 15)) << ((_uncodedCount >> 4) + expbias);
+}
+
+- (NSData *) export:(NSError *__autoreleasing*)error
+{
+    NSMutableData *data = [NSMutableData data];
+    [data appendBytes:&_specifier length:1];
+    [data appendBytes:&_algorithm length:1];
+
+    if (_specifier != PGPS2KSpecifierSimple) {
+        [data appendData:self.salt];
+    }
+
+    if (_specifier == PGPS2KSpecifierIteratedAndSalted) {
+        NSAssert(self.uncodedCount == 0, @"Count value is 0");
+        [data appendBytes:&_uncodedCount length:1];
+    }
+
+    return [data copy];
 }
 
 
@@ -103,11 +124,11 @@ static const unsigned int PGP_SALT_SIZE = 8;
                 // memory overhead with subdataWithRange is significant, this is why it's not used here
                 for (NSUInteger n = 0; n * hashSize < keySize; ++n)
                 {
-                    for (NSUInteger i = 0; i < self.count; i += self.salt.length + passphraseData.length)
+                    for (NSUInteger i = 0; i < self.codedCount; i += self.salt.length + passphraseData.length)
                     {
                         NSUInteger j = self.salt.length + passphraseData.length;
-                        if (i + j > self.count && i != 0) {
-                            j = self.count - i;
+                        if (i + j > self.codedCount && i != 0) {
+                            j = self.codedCount - i;
                         }
 
                         // add salt

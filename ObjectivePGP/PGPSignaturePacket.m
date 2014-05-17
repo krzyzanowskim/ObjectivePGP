@@ -52,10 +52,22 @@
     return nil;
 }
 
-
 - (NSArray *)subpackets
 {
     return [self.hashedSubpackets arrayByAddingObjectsFromArray:self.unhashedSubpackets];
+}
+
+- (NSData *) export:(NSError *__autoreleasing *)error
+{
+    NSMutableData *data = [NSMutableData data];
+    if (self.bodyData) {
+        [data appendData:self.headerData];
+        [data appendData:self.bodyData];
+    } else {
+        //TODO: build subpacket
+        NSAssert(YES, @"signature export not implemented");
+    }
+    return [data copy];
 }
 
 /**
@@ -134,7 +146,7 @@
         NSUInteger positionSubpacket = 0;
         while (positionSubpacket < unhashedSubpacketsData.length) {
             PGPSignatureSubpacket *subpacket = [self subpacketBodyAtPosition:positionSubpacket subpacketsData:unhashedSubpacketsData];
-            [self.hashedSubpackets addObject:subpacket];
+            [self.unhashedSubpackets addObject:subpacket];
             positionSubpacket = subpacket.bodyRange.location + subpacket.bodyRange.length;
         }
     }

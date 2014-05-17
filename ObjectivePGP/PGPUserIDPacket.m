@@ -8,6 +8,11 @@
 
 #import "PGPUserIDPacket.h"
 
+@interface PGPPacket ()
+@property (copy, readwrite) NSData *headerData;
+@property (copy, readwrite) NSData *bodyData;
+@end
+
 @implementation PGPUserIDPacket
 
 - (PGPPacketTag)tag
@@ -29,5 +34,24 @@
 
     return position;
 }
+
+- (NSData *) export:(NSError *__autoreleasing *)error
+{
+    NSMutableData *data = [NSMutableData data];
+    if (self.bodyData) {
+        [data appendData:self.headerData];
+        [data appendData:self.bodyData];
+    } else {
+        NSData *bodyData = [self.userID dataUsingEncoding:NSUTF8StringEncoding];
+        NSData *headerData = [self buildHeaderData:bodyData];
+        [data appendData: headerData];
+        [data appendData: bodyData];
+
+        self.headerData = headerData;
+        self.bodyData = bodyData;
+    }
+    return [data copy];
+}
+
 
 @end

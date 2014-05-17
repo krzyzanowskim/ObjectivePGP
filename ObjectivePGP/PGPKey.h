@@ -40,4 +40,12 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
  */
 - (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error;
 
+
+/**
+ *  Export to transferable key packets sequence
+ *
+ *  @return Data
+ */
+- (NSData *) export:(NSError *__autoreleasing *)error;
+
 @end

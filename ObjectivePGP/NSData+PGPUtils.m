@@ -28,6 +28,26 @@
     return s;
 }
 
+#define CRC24_POLY 0x1864cfbL
+#define CRC24_INIT 0xB704CEL
+
+- (UInt32) pgpCRC24
+{
+    UInt32 crc = CRC24_INIT;
+    NSUInteger len = self.length;
+    UInt8 *octets = (UInt8 *)self.bytes;
+    int i;
+    while (len--) {
+        crc ^= (*octets++) << 16;
+        for (i = 0; i < 8; i++) {
+            crc <<= 1;
+            if (crc & 0x1000000)
+                crc ^= CRC24_POLY;
+        }
+    }
+    return crc & 0xFFFFFFL;
+}
+
 - (NSData*) pgpMD5
 {
     if (!self)
@@ -199,13 +219,5 @@
     free(ctx);
     return outData;
 }
-
-
-//- (NSNumber *) numberWithBytes:(NSRange)range
-//{
-//    for (t = 0, n = 0; n < len; ++n) {
-//		t = (t << 8) + c[n];
-//	}
-//}
 
 @end

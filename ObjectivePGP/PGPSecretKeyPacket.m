@@ -28,6 +28,11 @@
 #include <openssl/camellia.h>
 #include <openssl/blowfish.h>
 
+@interface PGPPacket ()
+@property (copy, readwrite) NSData *headerData;
+@property (copy, readwrite) NSData *bodyData;
+@end
+
 @interface PGPSecretKeyPacket ()
 @property (strong, readwrite) NSData *encryptedPartData;
 @property (strong, readwrite) NSData *ivData;
@@ -49,6 +54,43 @@
 - (PGPFingerprint *)fingerprint
 {
     return [super fingerprint];
+}
+
+- (NSData *) export:(NSError *__autoreleasing *)error
+{
+#define TEST 1
+#if TEST
+    NSMutableData *data = [NSMutableData data];
+    [super export:error]; // this will update self.header/body if necessary
+    NSMutableData *secretKeyData = [self.bodyData mutableCopy];
+    [secretKeyData appendData:[self buildSecretKeyDataAndForceV4:YES]];
+
+    NSData *headerData = [self buildHeaderData:secretKeyData];
+    [data appendData: headerData];
+    [data appendData: secretKeyData];
+
+    NSAssert([secretKeyData isEqualToData:self.bodyData], @"Header not match");
+
+    return [data copy];
+#else
+    NSMutableData *data = [NSMutableData data];
+    if (self.bodyData) {
+        [data appendData:self.headerData];
+        [data appendData:self.bodyData];
+    } else {
+        [super export:error]; // this will update self.header/body if necessary
+        NSMutableData *secretKeyData = [self.bodyData mutableCopy];
+        [secretKeyData appendData:[self buildSecretKeyDataAndForceV4:YES]];
+
+        NSData *headerData = [self buildHeaderData:secretKeyData];
+        [data appendData: headerData];
+        [data appendData: secretKeyData];
+
+        self.headerData = headerData;
+        self.bodyData = secretKeyData;
+    }
+    return [data copy];
+#endif
 }
 
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
@@ -365,6 +407,59 @@
     return YES;
 }
 
+#pragma mark - Private
+
+/**
+ *  Build public key data for fingerprint
+ *
+ *  @return public key data starting with version octet
+ */
+- (NSData *) buildSecretKeyDataAndForceV4:(BOOL)forceV4
+{
+    NSAssert(forceV4 == YES,@"Only V4 is supported");
+
+    NSError *exportError = nil;
+
+    NSMutableData *data = [NSMutableData dataWithCapacity:128];
+    [data appendBytes:&_s2kUsage length:1];
+
+    switch (self.s2kUsage) {
+        case PGPS2KUsageEncrypted:
+        case PGPS2KUsageEncryptedAndHashed:
+            // If string-to-key usage octet was 255 or 254, a one-octet symmetric encryption algorithm
+            [data appendBytes:&_symmetricAlgorithm length:1];
+
+            // S2K
+            [data appendData:[self.s2k export:&exportError]];
+
+            // Initial Vector (IV) of the same length as the cipher's block size
+            [data appendBytes:self.ivData.bytes length:self.ivData.length];
+
+            // encrypted MPIs
+            //TODO: should include checksum on export ?
+            [data appendData:self.encryptedPartData];
+            break;
+        case PGPS2KUsageNone:
+            for (PGPMPI *mpi in self.secretMPI) {
+                [data appendData:[mpi buildData]];
+            }
+            break;
+        default:
+            break;
+    }
+
+//    } else if (self.s2kUsage != PGPS2KUsageNone) {
+//        // this is version 3, looks just like a V4 simple hash
+//        self.symmetricAlgorithm = (PGPSymmetricAlgorithm)self.s2kUsage; // this is tricky, but this is right. V3 algorithm is in place of s2kUsage of V4
+//        self.s2kUsage = PGPS2KUsageEncrypted;
+//
+//        self.s2k = [[PGPS2K alloc] init]; // not really parsed s2k
+//        self.s2k.specifier = PGPS2KSpecifierSimple;
+//        self.s2k.algorithm = PGPHashMD5;
+
+
+    return [data copy];
+}
 
 
 @end

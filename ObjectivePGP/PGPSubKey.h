@@ -17,5 +17,6 @@
 @property (strong) PGPSignaturePacket *revocationSignature;
 
 - (instancetype) initWithPacket:(id <PGPPacket>)packet;
+- (NSArray *) allPackets;
 
 @end

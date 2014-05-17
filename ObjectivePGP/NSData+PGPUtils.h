@@ -11,6 +11,7 @@
 @interface NSData (PGPUtils)
 
 - (UInt16) pgpChecksum;
+- (UInt32) pgpCRC24;
 - (NSData*) pgpMD5;
 - (NSData*) pgpSHA1;
 - (NSData*) pgpSHA224;

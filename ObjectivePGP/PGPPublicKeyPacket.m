@@ -15,6 +15,11 @@
 #import <CommonCrypto/CommonDigest.h>
 #import <CommonCrypto/CommonCryptor.h>
 
+@interface PGPPacket ()
+@property (copy, readwrite) NSData *headerData;
+@property (copy, readwrite) NSData *bodyData;
+@end
+
 @interface PGPPublicKeyPacket ()
 @property (strong, readwrite) NSArray *publicMPI;
 @property (strong, nonatomic, readwrite) PGPFingerprint *fingerprint;
@@ -74,33 +79,38 @@
     return _fingerprint;
 }
 
-/**
- *  Build public key data for fingerprint
- *
- *  @return public key data starting with version octet
- */
-- (NSData *) buildPublicKeyDataAndForceV4:(BOOL)forceV4
+- (NSData *) export:(NSError *__autoreleasing *)error
 {
-    NSMutableData *data = [NSMutableData dataWithCapacity:128];
-    [data appendBytes:&_version length:1];
+#define TEST 1
+#if TEST
+    NSMutableData *data = [NSMutableData data];
 
-    UInt32 timestampBE = CFSwapInt32HostToBig(_timestamp);
-    [data appendBytes:&timestampBE length:4];
+    NSData *bodyData = [self buildPublicKeyDataAndForceV4:NO];
+    NSData *headerData = [self buildHeaderData:bodyData];
+    [data appendData: headerData];
+    [data appendData: bodyData];
 
-    if (!forceV4 && _version == 0x03) {
-        // implementation MUST NOT generate a V3 key, but MAY accept it.
-        // however it have to be generated here to calculate the very same fingerprint
-        UInt16 V3ValidityPeriodBE = CFSwapInt16HostToBig(_V3validityPeriod);
-        [data appendBytes:&V3ValidityPeriodBE length:2];
-    }
+    // it wont match, because input data is OLD world, and we export in NEW world format
+    // NSAssert([headerData isEqualToData:self.headerData], @"Header not match");
+    NSAssert([bodyData isEqualToData:self.bodyData], @"Body not match");
 
-    [data appendBytes:&_algorithm length:1];
+    return [data copy];
+#else
+    NSMutableData *data = [NSMutableData data];
+    if (self.bodyData) {
+        [data appendData:self.headerData];
+        [data appendData:self.bodyData];
+    } else {
+        NSData *bodyData = [self buildPublicKeyDataAndForceV4:YES];
+        NSData *headerData = [self buildHeaderData:bodyData];
+        [data appendData: headerData];
+        [data appendData: bodyData];
 
-    // publicMPI is allways available, no need to decrypt
-    for (PGPMPI *mpi in self.publicMPI) {
-        [data appendData:[mpi buildData]];
+        self.headerData = headerData;
+        self.bodyData = bodyData;
     }
     return [data copy];
+#endif
 }
 
 /**
@@ -210,6 +220,37 @@
     }
 
     return position;
+}
+
+#pragma mark - Private
+
+/**
+ *  Build public key data for fingerprint
+ *
+ *  @return public key data starting with version octet
+ */
+- (NSData *) buildPublicKeyDataAndForceV4:(BOOL)forceV4
+{
+    NSMutableData *data = [NSMutableData dataWithCapacity:128];
+    [data appendBytes:&_version length:1];
+
+    UInt32 timestampBE = CFSwapInt32HostToBig(_timestamp);
+    [data appendBytes:&timestampBE length:4];
+
+    if (!forceV4 && _version == 0x03) {
+        // implementation MUST NOT generate a V3 key, but MAY accept it.
+        // however it have to be generated here to calculate the very same fingerprint
+        UInt16 V3ValidityPeriodBE = CFSwapInt16HostToBig(_V3validityPeriod);
+        [data appendBytes:&V3ValidityPeriodBE length:2];
+    }
+
+    [data appendBytes:&_algorithm length:1];
+
+    // publicMPI is allways available, no need to decrypt
+    for (PGPMPI *mpi in self.publicMPI) {
+        [data appendData:[mpi buildData]];
+    }
+    return [data copy];
 }
 
 @end

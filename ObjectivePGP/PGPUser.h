@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "PGPPacket.h"
 
 @class PGPUserIDPacket;
 
@@ -18,5 +19,6 @@
 @property (strong, nonatomic) NSArray *revocationSignatures;
 
 - (instancetype) initWithPacket:(PGPUserIDPacket *)userPacket;
+- (NSArray *) allPackets;
 
 @end

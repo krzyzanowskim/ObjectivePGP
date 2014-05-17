@@ -7,6 +7,7 @@
 //
 
 #import "PGPPacket.h"
+#import "NSData+PGPUtils.h"
 
 @interface PGPPacket ()
 @property (copy, readwrite) NSData *headerData;
@@ -34,6 +35,12 @@
 {
     NSAssert(packetBody.length == self.bodyData.length, @"length mismach");
     return 0;
+}
+
+- (NSData *) export:(NSError *__autoreleasing *)error
+{
+    [NSException raise:@"MissingExportMethod" format:@"export: selector not overriden"];
+    return nil;
 }
 
 #pragma mark - Packet header
@@ -92,29 +99,24 @@
     UInt32 bodyLength        = 0;
     NSInteger headerLength   = 2;
 
-    UInt8 *lengthOctets = (UInt8 *)[headerData subdataWithRange:NSMakeRange(1, 5)].bytes;
-
+    UInt8 *lengthOctets = (UInt8 *)[headerData subdataWithRange:NSMakeRange(1, MIN(5, headerData.length))].bytes;
     UInt8 firstOctet  = lengthOctets[0];
-    UInt8 secondOctet = lengthOctets[1];
-    UInt8 thirdOctet  = lengthOctets[2];
-    UInt8 fourthOctet = lengthOctets[3];
-    UInt8 fifthOctet  = lengthOctets[4];
 
-    if (firstOctet < 192) {
+    if (lengthOctets[0] < 192) {
         // 4.2.2.1.  One-Octet Length
         // bodyLen = 1st_octet;
-        bodyLength   = firstOctet;
+        bodyLength   = lengthOctets[0];
         headerLength = 1 + 1;
-    } else if (firstOctet >= 192 && firstOctet <= 223) {
+    } else if (lengthOctets[0] >= 192 && lengthOctets[0] <= 223) {
         // 4.2.2.2.  Two-Octet Lengths
         // bodyLen = ((1st_octet - 192) << 8) + (2nd_octet) + 192
-        bodyLength   = ((firstOctet - 192) << 8) + (secondOctet) + 192;
+        bodyLength   = ((lengthOctets[0] - 192) << 8) + (lengthOctets[1]) + 192;
         bodyLength   = CFSwapInt16BigToHost(bodyLength);
         headerLength = 1 + 2;
-    } else if (firstOctet >= 223 && firstOctet < 255) {
+    } else if (lengthOctets[0] >= 223 && lengthOctets[0] < 255) {
         // 4.2.2.4.  Partial Body Length
         // partialBodyLen = 1 << (1st_octet & 0x1F);
-        UInt32 partianBodyLength = firstOctet << (firstOctet & 0x1F);
+        UInt32 partianBodyLength = lengthOctets[0] << (lengthOctets[0] & 0x1F);
         bodyLength               = partianBodyLength;
         headerLength             = 1 + 1;
         isPartialBodyLength      = YES;
@@ -122,7 +124,7 @@
         // 4.2.2.3.  Five-Octet Length
         // bodyLen = (2nd_octet << 24) | (3rd_octet << 16) |
         //           (4th_octet << 8)  | 5th_octet
-        bodyLength   = (secondOctet << 24) | (thirdOctet << 16) | (fourthOctet << 8)  | fifthOctet;
+        bodyLength   = (lengthOctets[1] << 24) | (lengthOctets[2] << 16) | (lengthOctets[3] << 8)  | lengthOctets[4];
         bodyLength   = CFSwapInt32BigToHost(bodyLength);
         headerLength = 1 + 5;
     }
@@ -193,5 +195,51 @@
     return headerLength;
 }
 
+- (NSData *) buildHeaderData:(NSData *)bodyData
+{
+    //TODO: check all formats, untested
+    //4.2.2.  New Format Packet Lengths
+    NSMutableData *data = [NSMutableData data];
+
+    // Bit 7 -- Always one
+    // Bit 6 -- New packet format if set
+    UInt8 packetTag = PGPHeaderPacketTagAllwaysSet | PGPHeaderPacketTagNewFormat;
+
+    // Bits 5-0 -- packet tag
+    packetTag |= self.tag;
+
+    // write ptag
+    [data appendBytes:&packetTag length:1];
+
+    // write length octets
+    UInt64 bodyLength = bodyData.length;
+    if (bodyLength < 192) {
+        // 1 octet
+        [data appendBytes:&bodyLength length:1];
+    } else if (bodyLength >= 192 && bodyLength <= 8383) {
+        // 2 octet
+        UInt8 buf[2] = {0,0};
+        UInt16 twoOctets = CFSwapInt16HostToBig(bodyLength);
+        buf[0] = (UInt8)((twoOctets - 192) >> 8) + 192;
+        buf[1] = (UInt8)(twoOctets - 192);
+        [data appendBytes:buf length:2];
+    } else {
+        // 5 octet
+        UInt8 buf[5] = {0,0,0,0,0};
+
+        UInt64 fiveOctets = CFSwapInt64HostToBig(bodyLength);
+        UInt8 marker = 255;
+        [data appendBytes:&marker length:1];
+
+        buf[0] = 0xff;
+		buf[1] = (UInt8)(fiveOctets >> 24);
+		buf[2] = (UInt8)(fiveOctets >> 16);
+		buf[3] = (UInt8)(fiveOctets >> 8);
+		buf[4] = (UInt8)(fiveOctets);
+        [data appendBytes:buf length:5];
+    }
+
+    return [data copy];
+}
 
 @end

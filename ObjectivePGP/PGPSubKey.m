@@ -27,4 +27,20 @@
     return [NSString stringWithFormat:@"%@ %@",[super description], [self.keyPacket description]];
 }
 
+- (NSArray *) allPackets
+{
+    NSMutableArray *arr = [NSMutableArray array];
+
+    [arr addObject:self.keyPacket];
+
+    if (self.revocationSignature) {
+        [arr addObject:self.revocationSignature];
+    }
+
+    if (self.bindingSignature) {
+        [arr addObject:self.bindingSignature];
+    }
+
+    return [arr copy];
+}
 @end
