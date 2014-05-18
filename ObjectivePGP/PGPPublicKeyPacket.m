@@ -79,7 +79,7 @@
     return _fingerprint;
 }
 
-- (NSData *) export:(NSError *__autoreleasing *)error
+- (NSData *) exportPacket:(NSError *__autoreleasing *)error
 {
     NSMutableData *data = [NSMutableData data];
 

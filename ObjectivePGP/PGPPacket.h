@@ -21,7 +21,7 @@
 + (NSData *) parsePacketHeader:(NSData *)headerData bodyLength:(UInt32 *)bodyLength packetTag:(PGPPacketTag *)tag;
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error;
 
-- (NSData *) export:(NSError *__autoreleasing *)error;
+- (NSData *) exportPacket:(NSError *__autoreleasing *)error;
 - (NSData *) buildHeaderData:(NSData *)bodyData;
 
 @end

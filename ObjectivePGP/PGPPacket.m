@@ -37,7 +37,7 @@
     return 0;
 }
 
-- (NSData *) export:(NSError *__autoreleasing *)error
+- (NSData *) exportPacket:(NSError *__autoreleasing *)error
 {
     [NSException raise:@"MissingExportMethod" format:@"export: selector not overriden"];
     return nil;

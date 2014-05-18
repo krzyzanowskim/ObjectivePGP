@@ -64,7 +64,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 
 #ifdef DEBUG
 //TODO: Implement export
-- (NSData *) export:(NSError *__autoreleasing *)error
+- (NSData *) exportPacket:(NSError *__autoreleasing *)error
 {
     NSMutableData *data = [NSMutableData data];
     if (self.bodyData) {
