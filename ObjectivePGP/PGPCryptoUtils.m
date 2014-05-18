@@ -18,6 +18,7 @@
 #include <openssl/des.h>
 #include <openssl/camellia.h>
 #include <openssl/blowfish.h>
+#include <openssl/ripemd.h>
 
 @implementation PGPCryptoUtils
 
@@ -50,7 +51,7 @@
         case PGPSymmetricIDEA:
             return IDEA_KEY_LENGTH;
         case PGPSymmetricTripleDES:
-            return 8;
+            return kCCKeySize3DES; //24 or 8 ?
         case PGPSymmetricCAST5:
             return kCCKeySizeMaxCAST;
         case PGPSymmetricBlowfish:
@@ -85,7 +86,7 @@
         case PGPHashSHA512:
             return CC_SHA512_DIGEST_LENGTH;
         case PGPHashRIPEMD160:
-            return 20; // TODO: confirm RIPE/MD 160 value
+            return RIPEMD160_DIGEST_LENGTH; // TODO: confirm RIPE/MD 160 value
         default:
             break;
     }

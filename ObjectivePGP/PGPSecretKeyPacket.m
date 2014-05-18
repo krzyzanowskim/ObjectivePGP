@@ -51,6 +51,11 @@
     return [NSString stringWithFormat:@"%@ isEncrypted: %@", [super description], @(self.isEncrypted)];
 }
 
+- (BOOL)isEncrypted
+{
+    return (self.s2kUsage == PGPS2KUsageEncrypted || self.s2kUsage == PGPS2KUsageEncryptedAndHashed);
+}
+
 - (PGPFingerprint *)fingerprint
 {
     return [super fingerprint];
@@ -96,8 +101,6 @@
         self.s2k.specifier = PGPS2KSpecifierSimple;
         self.s2k.algorithm = PGPHashMD5;
     }
-
-    self.encrypted = (self.s2kUsage == PGPS2KUsageEncrypted || self.s2kUsage == PGPS2KUsageEncryptedAndHashed);
 
     NSData *encryptedData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
     if (self.isEncrypted) {
@@ -368,7 +371,14 @@
             if (decrypt_key) free(decrypt_key);
         }
             break;
-
+        case PGPSymmetricBlowfish:
+        case PGPSymmetricTwofish256:
+            //TODO: implement blowfish and twofish
+            NSLog(@"symmetric algorithm not implemenetd");
+            break;
+        case PGPSymmetricPlaintext:
+            NSLog(@"Unencrypted data");
+            break;
         default:
             break;
     }

@@ -42,7 +42,7 @@
             //  5.2.3.4.  Signature Creation Time
             //  5.2.3.10. Signature Expiration Time
             //  5.2.3.6.  Key Expiration Time
-            //TODO: Signature Creation Time MUST be present in the hashed area.
+            //  Signature Creation Time MUST be present in the hashed area.
 
             UInt32 signatureCreationTimestamp = 0;
             [packetBody getBytes:&signatureCreationTimestamp length:4];
@@ -56,15 +56,6 @@
 
             PGPKeyID *keyID = [[PGPKeyID alloc] initWithLongKey:packetBody];
             self.value = keyID; //[packetBody subdataWithRange:(NSRange){0,8}];
-
-            /*
-            NSMutableString *sbuf = [NSMutableString stringWithCapacity:packetBody.length * 2];
-            const unsigned char *buf = packetBody.bytes;
-            for (NSUInteger i = 0; i < packetBody.length; ++i) {
-                [sbuf appendFormat:@"%02X", (NSUInteger)buf[i]];
-            }
-            NSLog(@"%@",sbuf);
-             */
         }
             break;
         case PGPSignatureSubpacketTypeExportableCertification:  // NSNumber BOOL
