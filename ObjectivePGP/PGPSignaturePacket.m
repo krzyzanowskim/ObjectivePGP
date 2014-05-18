@@ -9,6 +9,7 @@
 #import "PGPSignaturePacket.h"
 #import "PGPMPI.h"
 #import "PGPSignatureSubpacket.h"
+#import "NSData+PGPUtils.h"
 
 static NSString * const PGPSignatureHeaderSubpacketLengthKey = @"PGPSignatureHeaderSubpacketLengthKey"; // UInt32
 static NSString * const PGPSignatureHeaderLengthKey = @"PGPSignatureHeaderLengthKey"; // UInt32
@@ -62,20 +63,119 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     return [self.hashedSubpackets arrayByAddingObjectsFromArray:self.unhashedSubpackets];
 }
 
-#ifdef DEBUG
-//TODO: Implement export
 - (NSData *) exportPacket:(NSError *__autoreleasing *)error
 {
     NSMutableData *data = [NSMutableData data];
-    if (self.bodyData) {
-        [data appendData:self.headerData];
-        [data appendData:self.bodyData];
-    } else {
-        NSAssert(YES, @"signature export not implemented");
-    }
+
+    NSData *bodyData = [self buildSignatureData:error];
+    NSData *headerData = [self buildHeaderData:bodyData];
+    [data appendData: headerData];
+    [data appendData: bodyData];
+
     return [data copy];
 }
-#endif
+
+- (NSData *) buildSignatureData:(NSError *__autoreleasing *)error
+{
+    NSMutableData *data = [NSMutableData data];
+
+    // One-octet version number (4).
+    UInt8 exportVersion = 4;
+    [data appendBytes:&exportVersion length:1];
+
+    // One-octet signature type.
+    [data appendBytes:&_type length:sizeof(PGPSignatureType)];
+
+    // One-octet public-key algorithm.
+    [data appendBytes:&_publicKeyAlgorithm length:sizeof(PGPPublicKeyAlgorithm)];
+
+    // One-octet hash algorithm.
+    [data appendBytes:&_hashAlgoritm length:sizeof(PGPHashAlgorithm)];
+
+    if (self.hashedSubpackets.count > 0) {
+        NSMutableData *hashedSubpackets = [NSMutableData data];
+        // Hashed subpacket data set (zero or more subpackets)
+        for (PGPSignatureSubpacket *subpacket in self.hashedSubpackets) {
+            NSError *error = nil;
+            NSData *subpacketData = [subpacket exportSubpacket:&error];
+            if (subpacketData && !error) {
+                [hashedSubpackets appendData:subpacketData];
+            }
+        }
+
+        // Two-octet scalar octet count for following hashed subpacket data.
+        UInt16 hashedOctetCountBE = CFSwapInt16HostToBig(hashedSubpackets.length);
+        [data appendBytes:&hashedOctetCountBE length:2];
+        // Subpackets
+        [data appendData:hashedSubpackets];
+    } else {
+        UInt16 zeroZero = 0;
+        [data appendBytes:&zeroZero length:2];
+    }
+
+    // data to sign, signed part
+    NSData *dataToSign = [data copy];
+    NSLog(@"dataToSign %@",dataToSign);
+
+    if (self.unhashedSubpackets.count > 0) {
+        NSMutableData *unhashedSubpackets = [NSMutableData data];
+        // Hashed subpacket data set (zero or more subpackets)
+        for (PGPSignatureSubpacket *subpacket in self.unhashedSubpackets) {
+            NSError *error = nil;
+            NSData *subpacketData = [subpacket exportSubpacket:&error];
+            if (subpacketData && !error) {
+                [unhashedSubpackets appendData:subpacketData];
+            }
+        }
+        // Two-octet scalar octet count for following hashed subpacket data.
+        UInt16 unhashedOctetCountBE = CFSwapInt16HostToBig(unhashedSubpackets.length);
+        [data appendBytes:&unhashedOctetCountBE length:2];
+        // Subpackets
+        [data appendData:unhashedSubpackets];
+    } else {
+        UInt16 zeroZero = 0;
+        [data appendBytes:&zeroZero length:2];
+    }
+
+    // Two-octet field holding the left 16 bits of the signed hash value.
+    NSData *signedHashData = nil;
+    switch (self.hashAlgoritm) {
+        case PGPHashMD5:
+            signedHashData = [dataToSign pgpMD5];
+            break;
+        case PGPHashSHA1:
+            signedHashData = [dataToSign pgpSHA1];
+            break;
+        case PGPHashSHA224:
+            signedHashData = [dataToSign pgpSHA224];
+            break;
+        case PGPHashSHA256:
+            signedHashData = [dataToSign pgpSHA256];
+            break;
+        case PGPHashSHA384:
+            signedHashData = [dataToSign pgpSHA384];
+            break;
+        case PGPHashSHA512:
+            signedHashData = [dataToSign pgpSHA512];
+            break;
+        case PGPHashRIPEMD160:
+            signedHashData = [dataToSign pgpRIPEMD160];
+            break;
+
+        default:
+            break;
+    }
+    UInt16 leftBits = 0;
+    [signedHashData getBytes:&leftBits range:(NSRange){0,2}];
+    [data appendBytes:&leftBits length:2];
+    NSLog(@"export leftBits %d",leftBits);
+
+    for (PGPMPI *mpi in self.signatureMPIs) {
+        [data appendData:[mpi buildData]];
+    }
+
+    return [data copy];
+}
 
 /**
  *  5.2.  Signature Packet (Tag 2)
@@ -135,6 +235,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     // from the version number through the hashed subpacket data (inclusive) is hashed.
     // The resulting hash value is what is signed.
     self.signedData = [packetBody subdataWithRange:(NSRange){startPosition, position}];
+    NSLog(@"signedData %@",self.signedData);
 
     // Two-octet scalar octet count for the following unhashed subpacket
     UInt16 unhashedOctetCount = 0;
@@ -160,8 +261,10 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     // Two-octet field holding the left 16 bits of the signed hash value.
     UInt16 leftBits = 0;
     [packetBody getBytes:&leftBits range:(NSRange){position, 2}];
-    leftBits = CFSwapInt16BigToHost(leftBits);
+    NSLog(@"parse leftBits %d",leftBits);
+    //leftBits = CFSwapInt16BigToHost(leftBits);
     position = position + 2;
+
 
     // 5.2.2. One or more multiprecision integers comprising the signature. This portion is algorithm specific
     // Signature
@@ -217,6 +320,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     [subpacketHeaderDictionary[PGPSignatureHeaderLengthKey] getValue:&headerLength];
     [subpacketHeaderDictionary[PGPSignatureHeaderSubpacketLengthKey] getValue:&subpacketLength];
 
+    NSLog(@"parseSubpacket %@ header %@", @(subpacketType), [subpacketsData subdataWithRange:(NSRange){subpacketsPosition, headerLength}]);
     NSRange bodyRange = (NSRange){subpacketsPosition + headerLength,subpacketLength};
     PGPSignatureSubpacket *subpacket = [[PGPSignatureSubpacket alloc] initWithBody:[subpacketsData subdataWithRange:bodyRange]
                                                                               type:subpacketType];

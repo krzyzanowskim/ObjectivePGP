@@ -142,7 +142,7 @@ typedef NS_ENUM(UInt8, PGPSignatureSubpacketType) {
 };
 
 // 5.2.3.21.  Key Flags
-typedef NS_ENUM(UInt64, PGPSignatureFlags) {
+typedef NS_ENUM(UInt8, PGPSignatureFlags) {
     PGPSignatureFlagAllowCertifyOtherKeys                      = 0x01,// indicates that this key may be used to certify other keys
     PGPSignatureFlagAllowSignData                              = 0x02,// indicates that this key may be used to sign data.
     PGPSignatureFlagAllowEncryptCommunications                 = 0x04,// indicates that this key may be used to encrypt communication.
@@ -153,7 +153,7 @@ typedef NS_ENUM(UInt64, PGPSignatureFlags) {
 };
 
 // 5.2.3.17.  Key Server Preferences
-typedef NS_ENUM(UInt64, PGPKeyServerPreferenceFlags) {
+typedef NS_ENUM(UInt8, PGPKeyServerPreferenceFlags) {
     PGPKeyServerPreferenceNoModify = 0x80 // No-modify
 };
 

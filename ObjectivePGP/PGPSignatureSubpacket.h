@@ -18,5 +18,6 @@
 
 - (instancetype) initWithBody:(NSData *)packetBody type:(PGPSignatureSubpacketType)type;
 - (void) parseSubpacketBody:(NSData *)packetBody;
+- (NSData *) exportSubpacket:(NSError *__autoreleasing *)error;
 
 @end

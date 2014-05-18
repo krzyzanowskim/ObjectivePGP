@@ -208,7 +208,14 @@
 
     // write ptag
     [data appendBytes:&packetTag length:1];
+    [data appendData:[PGPPacket buildNewLengthDataForData:bodyData]];
 
+    return [data copy];
+}
+
++ (NSData *)buildNewLengthDataForData:(NSData *)bodyData
+{
+    NSMutableData *data = [NSMutableData data];
     // write length octets
     UInt64 bodyLength = bodyData.length;
     if (bodyLength < 192) {
@@ -236,8 +243,8 @@
 		buf[4] = (UInt8)(fiveOctets);
         [data appendBytes:buf length:5];
     }
-
     return [data copy];
+
 }
 
 @end

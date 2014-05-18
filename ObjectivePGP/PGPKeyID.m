@@ -42,6 +42,11 @@
     return [self longKeyString];
 }
 
+- (NSData *)exportKeyData
+{
+    return [_longKey copy];
+}
+
 - (BOOL)isEqual:(id)object
 {
     if (self == object) {

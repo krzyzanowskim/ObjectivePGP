@@ -8,6 +8,8 @@
 
 #import "PGPSignatureSubpacket.h"
 #import "PGPKeyID.h"
+#import "PGPPacket.h"
+#import "NSValue+PGPUtils.h"
 
 @interface PGPSignatureSubpacket ()
 @property (strong, readwrite) id value;
@@ -20,9 +22,6 @@
     if (self = [self init]) {
         self->_type = type;
         [self parseSubpacketBody:packetBody];
-#ifdef DEBUG
-        NSLog(@"subpacket type %@", @(self.type));
-#endif
     }
     return self;
 }
@@ -34,6 +33,7 @@
  */
 - (void) parseSubpacketBody:(NSData *)packetBody
 {
+    NSLog(@"parseSubpacket %@, body %@",@(self.type), packetBody);
     switch (self.type) {
         case PGPSignatureSubpacketTypeSignatureCreationTime: // NSDate
         case PGPSignatureSubpacketTypeSignatureExpirationTime:
@@ -82,7 +82,7 @@
             self.value = [[NSString alloc] initWithData:packetBody encoding:NSUTF8StringEncoding];
         }
             break;
-        case PGPSignatureSubpacketTypeKeyFlags: // NSArray of PGPSignatureFlags
+        case PGPSignatureSubpacketTypeKeyFlags: // NSArray of NSNumber
         {
             //  5.2.3.21.  Key Flags
             //  (N octets of flags) ???
@@ -93,24 +93,30 @@
 
             if (flagByte & PGPSignatureFlagAllowCertifyOtherKeys) {
                 [flagsArray addObject:@(PGPSignatureFlagAllowCertifyOtherKeys)];
-            } else if (flagByte & PGPSignatureFlagAllowSignData) {
+            }
+            if (flagByte & PGPSignatureFlagAllowSignData) {
                 [flagsArray addObject:@(PGPSignatureFlagAllowSignData)];
-            } else if (flagByte & PGPSignatureFlagAllowEncryptCommunications) {
+            }
+            if (flagByte & PGPSignatureFlagAllowEncryptCommunications) {
                 [flagsArray addObject:@(PGPSignatureFlagAllowEncryptCommunications)];
-            } else if (flagByte & PGPSignatureFlagAllowEncryptStorage) {
+            }
+            if (flagByte & PGPSignatureFlagAllowEncryptStorage) {
                 [flagsArray addObject:@(PGPSignatureFlagAllowEncryptStorage)];
-            } else if (flagByte & PGPSignatureFlagSecretComponentMayBeSplit) {
+            }
+            if (flagByte & PGPSignatureFlagSecretComponentMayBeSplit) {
                 [flagsArray addObject:@(PGPSignatureFlagSecretComponentMayBeSplit)];
-            } else if (flagByte & PGPSignatureFlagAllowAuthentication) {
+            }
+            if (flagByte & PGPSignatureFlagAllowAuthentication) {
                 [flagsArray addObject:@(PGPSignatureFlagAllowAuthentication)];
-            } else if (flagByte & PGPSignatureFlagPrivateKeyMayBeInThePossesionOfManyPersons) {
+            }
+            if (flagByte & PGPSignatureFlagPrivateKeyMayBeInThePossesionOfManyPersons) {
                 [flagsArray addObject:@(PGPSignatureFlagPrivateKeyMayBeInThePossesionOfManyPersons)];
             }
 
             self.value = [flagsArray copy];
         }
             break;
-        case PGPSignatureSubpacketTypePreferredSymetricAlgorithm: // NSArray of PGPSymmetricAlhorithm
+        case PGPSignatureSubpacketTypePreferredSymetricAlgorithm: // NSArray of NSValue @encode(PGPSymmetricAlgorithm)
         {
             // 5.2.3.7.  Preferred Symmetric Algorithms
             NSMutableArray *algorithmsArray = [NSMutableArray array];
@@ -118,13 +124,15 @@
             for (NSUInteger i = 0; i < packetBody.length; i++) {
                 PGPSymmetricAlgorithm algorithm = 0;
                 [packetBody getBytes:&algorithm range:(NSRange){i,1}];
-                [algorithmsArray addObject:@(algorithm)];
+
+                NSValue *val = [NSValue valueWithBytes:&algorithm objCType:@encode(PGPSymmetricAlgorithm)];
+                [algorithmsArray addObject:val];
             }
 
             self.value = [algorithmsArray copy];
         }
             break;
-        case PGPSignatureSubpacketTypePreferredHashAlgorithm: // NSArray of PGPSymmetricAlhorithm
+        case PGPSignatureSubpacketTypePreferredHashAlgorithm: // NSArray of NSValue @encode(PGPHashAlgorithm)
         {
             // 5.2.3.8.  Preferred Hash Algorithms
             NSMutableArray *algorithmsArray = [NSMutableArray array];
@@ -132,13 +140,15 @@
             for (NSUInteger i = 0; i < packetBody.length; i++) {
                 PGPHashAlgorithm algorithm = 0;
                 [packetBody getBytes:&algorithm range:(NSRange){i,1}];
-                [algorithmsArray addObject:@(algorithm)];
+
+                NSValue *val = [NSValue valueWithBytes:&algorithm objCType:@encode(PGPHashAlgorithm)];
+                [algorithmsArray addObject:val];
             }
 
             self.value = [algorithmsArray copy];
         }
             break;
-        case PGPSignatureSubpacketTypePreferredCompressionAlgorithm: // NSArray of PGPCompressionAlgorithm
+        case PGPSignatureSubpacketTypePreferredCompressionAlgorithm: // NSArray of NSValue @encode(PGPCompressionAlgorithm)
         {
             // 5.2.3.9.  Preferred Compression Algorithms
             // If this subpacket is not included, ZIP is preferred.
@@ -147,33 +157,38 @@
             for (UInt8 i = 0; i < packetBody.length; i++) {
                 PGPCompressionAlgorithm algorithm = 0;
                 [packetBody getBytes:&algorithm range:(NSRange){i,1}];
-                [algorithmsArray addObject:@(algorithm)];
+
+                NSValue *val = [NSValue valueWithBytes:&algorithm objCType:@encode(PGPCompressionAlgorithm)];
+                [algorithmsArray addObject:val];
             }
 
             self.value = [algorithmsArray copy];
         }
             break;
-        case PGPSignatureSubpacketTypeKeyServerPreference: // NSArray of PGPKeyServerPreferenceFlags
+        case PGPSignatureSubpacketTypeKeyServerPreference: // NSArray of NSNumber PGPKeyServerPreferenceFlags
         {
             // 5.2.3.17.  Key Server Preferences
-            UInt64 flagByte = 0;
-            [packetBody getBytes:&flagByte length:MIN(8,packetBody.length)];
+            PGPKeyServerPreferenceFlags flag = 0;
+            [packetBody getBytes:&flag length:MIN(8,packetBody.length)];
+
             NSMutableArray *flagsArray = [NSMutableArray array];
-            if (flagByte & PGPKeyServerPreferenceNoModify) {
+            if (flag & PGPKeyServerPreferenceNoModify) {
                 [flagsArray addObject:@(PGPKeyServerPreferenceNoModify)];
             }
             self.value = [flagsArray copy];
         }
             break;
-        case PGPSignatureSubpacketTypeFeatures: // NSArray of PGPFeature
+        case PGPSignatureSubpacketTypeFeatures: // NSArray of NSNumber PGPFeature
         {
             // 5.2.3.24.  Features
             NSMutableArray *featuresArray = [NSMutableArray array];
+
             for (NSUInteger i = 0; i < packetBody.length; i++) {
                 PGPFeature feature = 0;
                 [packetBody getBytes:&feature range:(NSRange){i,1}];
                 [featuresArray addObject:@(feature)];
             }
+
             self.value = [featuresArray copy];
         }
             break;
@@ -181,6 +196,143 @@
             NSLog(@"Unsuported subpacket type %d", self.type);
             break;
     }
+}
+
+- (NSData *) exportSubpacket:(NSError *__autoreleasing *)error
+{
+    NSMutableData *data = [NSMutableData data];
+
+    // subpacket type
+    [data appendBytes:&_type length:1];
+
+    switch (self.type) {
+        case PGPSignatureSubpacketTypeSignatureCreationTime: // NSDate
+        case PGPSignatureSubpacketTypeSignatureExpirationTime:
+        case PGPSignatureSubpacketTypeKeyExpirationTime:
+        {
+            NSDate *date = (NSDate *)self.value;
+            UInt32 signatureCreationTimestamp = CFSwapInt32HostToBig((UInt32)[date timeIntervalSince1970]);
+            [data appendBytes:&signatureCreationTimestamp length:4];
+
+        }
+            break;
+        case PGPSignatureSubpacketTypeIssuer: // PGPKeyID
+        {
+            PGPKeyID *keyID = self.value;
+            [data appendData:[keyID exportKeyData]];
+        }
+            break;
+        case PGPSignatureSubpacketTypeExportableCertification:  // NSNumber BOOL
+        case PGPSignatureSubpacketTypePrimaryUserID:            // NSNumber BOOL
+        {
+            NSNumber *boolNumber = self.value;
+            BOOL boolValue = [boolNumber boolValue];
+            [data appendBytes:&boolValue length:1];
+        }
+            break;
+        case PGPSignatureSubpacketTypeSignerUserID:         // NSString
+        case PGPSignatureSubpacketTypePreferredKeyServer:   // NSString
+        case PGPSignatureSubpacketTypePolicyURI:            // NSString
+        {
+            NSString *stringValue = self.value;
+            [data appendData:[stringValue dataUsingEncoding:NSUTF8StringEncoding]];
+        }
+            break;
+        case PGPSignatureSubpacketTypeKeyFlags: // NSArray of NSNumber PGPSignatureFlags
+        {
+            //TODO: actually it can be more than one byte (documented)
+            //      so I should calculate how many bytes do I need here
+            NSArray *flagsArray = self.value;
+            PGPSignatureFlags flagByte = 0;
+            for (NSNumber *flagByteNumber in flagsArray) {
+                flagByte = flagByte | ((UInt8)[flagByteNumber unsignedIntValue]);
+            }
+            [data appendBytes:&flagByte length:sizeof(PGPSignatureFlags)];
+        }
+            break;
+        case PGPSignatureSubpacketTypePreferredSymetricAlgorithm: // NSArray of NSValue @encode(PGPSymmetricAlgorithm)
+        {
+            NSArray *algorithmsArray = self.value;
+            for (NSValue *val in algorithmsArray) {
+                if (![val objCTypeIsEqualTo:@encode(PGPSymmetricAlgorithm)]) {
+                    continue;
+                }
+
+                PGPSymmetricAlgorithm symmetricAlgorithm = 0;
+                [val getValue:&symmetricAlgorithm];
+
+                [data appendBytes:&symmetricAlgorithm length:sizeof(PGPSymmetricAlgorithm)];
+            }
+        }
+            break;
+        case PGPSignatureSubpacketTypePreferredHashAlgorithm: // NSArray of of NSValue @encode(PGPHashAlgorithm)
+        {
+            NSArray *algorithmsArray = self.value;
+            for (NSValue *val in algorithmsArray) {
+                if (![val objCTypeIsEqualTo:@encode(PGPHashAlgorithm)]) {
+                    continue;
+                }
+
+                PGPHashAlgorithm hashAlgorithm = 0;
+                [val getValue:&hashAlgorithm];
+                [data appendBytes:&hashAlgorithm length:sizeof(PGPHashAlgorithm)];
+            }
+        }
+            break;
+        case PGPSignatureSubpacketTypePreferredCompressionAlgorithm: // NSArray of NSValue @encode(PGPCompressionAlgorithm)
+        {
+            NSArray *algorithmsArray = self.value;
+            for (NSValue *val in algorithmsArray) {
+                if (![val objCTypeIsEqualTo:@encode(PGPCompressionAlgorithm)]) {
+                    continue;
+                }
+
+                PGPCompressionAlgorithm hashAlgorithm = 0;
+                [val getValue:&hashAlgorithm];
+                [data appendBytes:&hashAlgorithm length:sizeof(PGPCompressionAlgorithm)];
+            }
+        }
+            break;
+        case PGPSignatureSubpacketTypeKeyServerPreference: // NSArray of NSNumber PGPKeyServerPreferenceFlags
+        {
+            //TODO: actually it can be more than one byte (documented)
+            //      so I should calculate how many bytes do I need here
+            PGPKeyServerPreferenceFlags allFlags = 0;
+            NSArray *flagsArray = (NSArray *)self.value;
+            for (NSNumber *flagNumber in flagsArray) {
+                PGPKeyServerPreferenceFlags flag = (PGPKeyServerPreferenceFlags)flagNumber.unsignedIntValue;
+                allFlags = allFlags | flag;
+            }
+            [data appendBytes:&allFlags length:sizeof(PGPKeyServerPreferenceFlags)];
+        }
+            break;
+        case PGPSignatureSubpacketTypeFeatures: // NSArray of NSNumber PGPFeature
+        {
+            //TODO: actually it can be more than one byte (documented)
+            //      so I should calculate how many bytes do I need here
+            NSArray *flagsArray = self.value;
+            PGPFeature flagByte = 0;
+            for (NSNumber *flagByteNumber in flagsArray) {
+                flagByte = flagByte | ((UInt8)[flagByteNumber unsignedIntValue]);
+            }
+            [data appendBytes:&flagByte length:sizeof(PGPSignatureFlags)];
+        }
+            break;
+        default:
+            break;
+    }
+
+    //subpacket = length + tag + body
+    NSMutableData *subpacketData = [NSMutableData data];
+    // the subpacket length (1, 2, or 5 octets),
+    NSData *subpacketLengthData = [PGPPacket buildNewLengthDataForData:data];
+    [subpacketData appendData:subpacketLengthData]; // data with tag
+    [subpacketData appendData:data];
+
+    NSLog(@"exportSubpacket %@, header  %@",@(self.type), [subpacketData subdataWithRange:(NSRange){0, subpacketLengthData.length + 1}]);
+    NSLog(@"exportSubpacket %@, body  %@",@(self.type), [data subdataWithRange:(NSRange){1,data.length - 1}]);
+
+    return [subpacketData copy];
 }
 
 @end

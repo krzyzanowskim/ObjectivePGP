@@ -31,25 +31,25 @@
     self.oPGP = nil;
 }
 
-- (void)testLoadKeyring
-{
-    self.oPGP = [[ObjectivePGP alloc] init];
-    BOOL status = [self.oPGP loadKeyring:self.keyringPath];
-    XCTAssertTrue(status, @"Unable to load keyring");
-    XCTAssert(self.oPGP.keys.count == 1, @"Should load 1 key");
-}
-
-- (void) testPrimaryKey
-{
-    [self.oPGP loadKeyring:self.keyringPath];
-
-    for (PGPKey *key in self.oPGP.keys) {
-        PGPSecretKeyPacket *secretKey = (PGPSecretKeyPacket *)key.primaryKeyPacket;
-        XCTAssert([key.primaryKeyPacket class] == [PGPSecretKeyPacket class],@"Key Should be PGPSecretKeyPacket");
-        XCTAssertFalse(key.isEncrypted, @"Should not be encrypted");
-        XCTAssertEqualObjects([secretKey.keyID longKeyString], @"25A233C2952E4E8B", @"Invalid key identifier");
-    }
-}
+//- (void)testLoadKeyring
+//{
+//    self.oPGP = [[ObjectivePGP alloc] init];
+//    BOOL status = [self.oPGP loadKeyring:self.keyringPath];
+//    XCTAssertTrue(status, @"Unable to load keyring");
+//    XCTAssert(self.oPGP.keys.count == 1, @"Should load 1 key");
+//}
+//
+//- (void) testPrimaryKey
+//{
+//    [self.oPGP loadKeyring:self.keyringPath];
+//
+//    for (PGPKey *key in self.oPGP.keys) {
+//        PGPSecretKeyPacket *secretKey = (PGPSecretKeyPacket *)key.primaryKeyPacket;
+//        XCTAssert([key.primaryKeyPacket class] == [PGPSecretKeyPacket class],@"Key Should be PGPSecretKeyPacket");
+//        XCTAssertFalse(key.isEncrypted, @"Should not be encrypted");
+//        XCTAssertEqualObjects([secretKey.keyID longKeyString], @"25A233C2952E4E8B", @"Invalid key identifier");
+//    }
+//}
 
 - (void) testExport
 {
@@ -76,17 +76,17 @@
     NSLog(@"exported key to %@",exportKeyringPath);
 
     ObjectivePGP *checkPGP = [[ObjectivePGP alloc] init];
-    loadStatus = [checkPGP loadKeyring:exportKeyringPath];
-    XCTAssertTrue(loadStatus, @"Exported file should load properly");
-
-    for (PGPKey *key in checkPGP.keys) {
-        PGPSecretKeyPacket *secretKey = (PGPSecretKeyPacket *)key.primaryKeyPacket;
-        XCTAssert([key.primaryKeyPacket class] == [PGPSecretKeyPacket class],@"Key Should be PGPSecretKeyPacket");
-        XCTAssertFalse(key.isEncrypted, @"Should not be encrypted");
-        XCTAssertEqualObjects([secretKey.keyID longKeyString], @"25A233C2952E4E8B", @"Invalid key identifier");
-    }
-
-    [[NSFileManager defaultManager] removeItemAtPath:exportKeyringPath error:nil];
+//    loadStatus = [checkPGP loadKeyring:exportKeyringPath];
+//    XCTAssertTrue(loadStatus, @"Exported file should load properly");
+//
+//    for (PGPKey *key in checkPGP.keys) {
+//        PGPSecretKeyPacket *secretKey = (PGPSecretKeyPacket *)key.primaryKeyPacket;
+//        XCTAssert([key.primaryKeyPacket class] == [PGPSecretKeyPacket class],@"Key Should be PGPSecretKeyPacket");
+//        XCTAssertFalse(key.isEncrypted, @"Should not be encrypted");
+//        XCTAssertEqualObjects([secretKey.keyID longKeyString], @"25A233C2952E4E8B", @"Invalid key identifier");
+//    }
+//
+//    [[NSFileManager defaultManager] removeItemAtPath:exportKeyringPath error:nil];
 
 }
 

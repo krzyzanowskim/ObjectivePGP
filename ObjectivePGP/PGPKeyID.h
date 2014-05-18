@@ -18,5 +18,6 @@
 
 - (instancetype) initWithFingerprint:(PGPFingerprint *)fingerprint;
 - (instancetype) initWithLongKey:(NSData *)longKeyData;
+- (NSData *)exportKeyData;
 
 @end
