@@ -241,13 +241,11 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     } else if (lengthOctets[0] >= 192 && lengthOctets[0] < 255) {
         // subpacketLen = ((1st_octet - 192) << 8) + (2nd_octet) + 192
         subpacketLength   = ((lengthOctets[0] - 192) << 8) + (lengthOctets[1]) + 192;
-        subpacketLength   = CFSwapInt16BigToHost(subpacketLength);
         headerLength = 2;
     } else if (lengthOctets[0] == 255) {
         // subpacketLen = (2nd_octet << 24) | (3rd_octet << 16) |
         //                (4th_octet << 8)  | 5th_octet
         subpacketLength   = (lengthOctets[1] << 24) | (lengthOctets[2] << 16) | (lengthOctets[3] << 8)  | lengthOctets[4];
-        subpacketLength   = CFSwapInt32BigToHost(subpacketLength);
         headerLength = 5;
     }
     position = position + headerLength;

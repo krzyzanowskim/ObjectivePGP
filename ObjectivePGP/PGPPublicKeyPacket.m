@@ -81,8 +81,6 @@
 
 - (NSData *) export:(NSError *__autoreleasing *)error
 {
-#define TEST 1
-#if TEST
     NSMutableData *data = [NSMutableData data];
 
     NSData *bodyData = [self buildPublicKeyDataAndForceV4:NO];
@@ -97,22 +95,6 @@
     }
 
     return [data copy];
-#else
-    NSMutableData *data = [NSMutableData data];
-    if (self.bodyData) {
-        [data appendData:self.headerData];
-        [data appendData:self.bodyData];
-    } else {
-        NSData *bodyData = [self buildPublicKeyDataAndForceV4:YES];
-        NSData *headerData = [self buildHeaderData:bodyData];
-        [data appendData: headerData];
-        [data appendData: bodyData];
-
-        //self.headerData = headerData;
-        //self.bodyData = bodyData;
-    }
-    return [data copy];
-#endif
 }
 
 /**

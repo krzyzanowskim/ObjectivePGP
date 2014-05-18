@@ -111,7 +111,6 @@
         // 4.2.2.2.  Two-Octet Lengths
         // bodyLen = ((1st_octet - 192) << 8) + (2nd_octet) + 192
         bodyLength   = ((lengthOctets[0] - 192) << 8) + (lengthOctets[1]) + 192;
-        bodyLength   = CFSwapInt16BigToHost(bodyLength);
         headerLength = 1 + 2;
     } else if (lengthOctets[0] >= 223 && lengthOctets[0] < 255) {
         // 4.2.2.4.  Partial Body Length
@@ -125,7 +124,6 @@
         // bodyLen = (2nd_octet << 24) | (3rd_octet << 16) |
         //           (4th_octet << 8)  | 5th_octet
         bodyLength   = (lengthOctets[1] << 24) | (lengthOctets[2] << 16) | (lengthOctets[3] << 8)  | lengthOctets[4];
-        bodyLength   = CFSwapInt32BigToHost(bodyLength);
         headerLength = 1 + 5;
     }
     *length = bodyLength;
@@ -219,7 +217,7 @@
     } else if (bodyLength >= 192 && bodyLength <= 8383) {
         // 2 octet
         UInt8 buf[2] = {0,0};
-        UInt16 twoOctets = CFSwapInt16HostToBig(bodyLength);
+        UInt16 twoOctets = bodyLength;
         buf[0] = (UInt8)((twoOctets - 192) >> 8) + 192;
         buf[1] = (UInt8)(twoOctets - 192);
         [data appendBytes:buf length:2];
@@ -227,7 +225,7 @@
         // 5 octet
         UInt8 buf[5] = {0,0,0,0,0};
 
-        UInt64 fiveOctets = CFSwapInt64HostToBig(bodyLength);
+        UInt64 fiveOctets = bodyLength;
         UInt8 marker = 255;
         [data appendBytes:&marker length:1];
 
