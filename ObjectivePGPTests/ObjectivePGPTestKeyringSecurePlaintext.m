@@ -53,9 +53,10 @@
 
 - (void) testExport
 {
-    [self.oPGP loadKeyring:self.keyringPath];
+    BOOL loadStatus = [self.oPGP loadKeyring:self.keyringPath];
+    XCTAssertTrue(loadStatus, @"Keyring file should load properly");
 
-    NSString *newDir = [@"UUNetPGP_Tests" stringByAppendingPathComponent:[[NSUUID UUID] UUIDString]];
+    NSString *newDir = [@"ObjectivePGPTests_" stringByAppendingPathComponent:[[NSUUID UUID] UUIDString]];
     NSString *tmpDirectoryPath = [NSTemporaryDirectory() stringByAppendingPathComponent:newDir];
     [[NSFileManager defaultManager] createDirectoryAtPath:tmpDirectoryPath withIntermediateDirectories:YES attributes:nil error:nil];
     if (![[NSFileManager defaultManager] fileExistsAtPath:tmpDirectoryPath]) {
@@ -75,7 +76,7 @@
     NSLog(@"exported key to %@",exportKeyringPath);
 
     ObjectivePGP *checkPGP = [[ObjectivePGP alloc] init];
-    BOOL loadStatus = [checkPGP loadKeyring:exportKeyringPath];
+    loadStatus = [checkPGP loadKeyring:exportKeyringPath];
     XCTAssertTrue(loadStatus, @"Exported file should load properly");
 
     [[NSFileManager defaultManager] removeItemAtPath:exportKeyringPath error:nil];
