@@ -52,7 +52,7 @@
     [self.oPGP loadKeyring:self.keyringPath];
 
     for (PGPKey *key in self.oPGP.keys) {
-        PGPSecretKeyPacket *secretKey = key.primaryKeyPacket;
+        PGPSecretKeyPacket *secretKey = (PGPSecretKeyPacket *)key.primaryKeyPacket;
         XCTAssert([key.primaryKeyPacket class] == [PGPSecretKeyPacket class],@"Key Should be PGPSecretKeyPacket");
         XCTAssertTrue(key.isEncrypted, @"Should be encrypted");
         XCTAssertEqualObjects([secretKey.keyID longKeyString], @"9528AAA17A9BC007", @"Invalid key identifier");

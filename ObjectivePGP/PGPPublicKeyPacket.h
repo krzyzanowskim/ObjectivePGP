@@ -13,7 +13,7 @@
 #import "PGPKeyID.h"
 #import "PGPFingerprint.h"
 
-@interface PGPPublicKeyPacket : PGPPacket <PGPPacket>
+@interface PGPPublicKeyPacket : PGPPacket
 
 @property (assign, readonly) UInt8 version;
 @property (assign, readonly) UInt32 timestamp;

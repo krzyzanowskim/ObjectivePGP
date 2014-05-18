@@ -10,7 +10,7 @@
 #import <Foundation/Foundation.h>
 #import "PGPPacketFactory.h"
 
-@interface PGPTrustPacket : PGPPacket <PGPPacket>
+@interface PGPTrustPacket : PGPPacket
 
 @property (strong, readonly) NSData *data;
 

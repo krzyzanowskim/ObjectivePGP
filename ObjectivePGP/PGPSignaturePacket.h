@@ -11,7 +11,7 @@
 #import "PGPPacketFactory.h"
 #import "PGPKeyID.h"
 
-@interface PGPSignaturePacket : PGPPacket <PGPPacket>
+@interface PGPSignaturePacket : PGPPacket
 
 @property (assign, readonly) UInt8 version;
 @property (assign, readonly) PGPSignatureType type;

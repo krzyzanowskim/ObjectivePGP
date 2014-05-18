@@ -10,7 +10,7 @@
 #import <Foundation/Foundation.h>
 #import "PGPPacketFactory.h"
 
-@interface PGPUserIDPacket : PGPPacket <PGPPacket>
+@interface PGPUserIDPacket : PGPPacket
 
 @property (retain, readonly) NSString *userID;
 

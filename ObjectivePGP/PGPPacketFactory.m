@@ -26,7 +26,7 @@
  *
  *  @return Packet instance object
  */
-+ (id <PGPPacket> ) packetWithData:(NSData *)packetsData offset:(NSUInteger)offset
++ (PGPPacket * ) packetWithData:(NSData *)packetsData offset:(NSUInteger)offset
 {
     NSData *guessPacketHeaderData = [packetsData subdataWithRange:(NSRange) {offset + 0, MIN(6,packetsData.length - offset)}]; // up to 6 octets for complete header
 
@@ -39,7 +39,7 @@
         NSData *packetBodyData = [packetsData subdataWithRange:(NSRange) {offset + packetHeaderData.length, bodyLength}];
         // Analyze body0
         NSLog(@"Reading packet tag %@, offset %@, length: %@", @(packetTag), @(offset), @(packetHeaderData.length + packetBodyData.length));
-        id <PGPPacket> packet = nil;
+        PGPPacket * packet = nil;
         switch (packetTag) {
             case PGPPublicKeyPacketTag:
                 packet = [[PGPPublicKeyPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];

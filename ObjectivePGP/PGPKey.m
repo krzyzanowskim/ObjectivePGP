@@ -58,7 +58,7 @@
 - (BOOL)isEncrypted
 {
     if (self.type == PGPKeySecret) {
-        PGPSecretKeyPacket *secretPacket = self.primaryKeyPacket;
+        PGPSecretKeyPacket *secretPacket = (PGPSecretKeyPacket *)self.primaryKeyPacket;
         return secretPacket.isEncrypted;
     }
     return NO;
@@ -88,7 +88,7 @@
     PGPSubKey *subKey      = nil;
     PGPUser *user          = nil;
 
-    for (id <PGPPacket> packet in packets) {
+    for (PGPPacket *packet in packets) {
         switch (packet.tag) {
             case PGPPublicKeyPacketTag:
                 primaryKeyID = [(PGPPublicKeyPacket *)packet keyID];
@@ -111,7 +111,7 @@
                 break;
             case PGPSignaturePacketTag:
             {
-                PGPSignaturePacket *signaturePacket = packet;
+                PGPSignaturePacket *signaturePacket = (PGPSignaturePacket *)packet;
                 switch (signaturePacket.type) {
                     case PGPSignatureGenericCertificationUserIDandPublicKey:
                     case PGPSignatureCasualCertificationUserIDandPublicKey:
@@ -140,16 +140,16 @@
                         if (!subKey) {
                             continue;
                         }
-                        subKey.bindingSignature = packet;
+                        subKey.bindingSignature = (PGPSignaturePacket *)packet;
                         break;
                     case PGPSignatureKeyRevocation:
-                        self.revocationSignature = packet;
+                        self.revocationSignature = (PGPSignaturePacket *)packet;
                         break;
                     case PGPSignatureSubkeyRevocation:
                         if (!subKey) {
                             continue;
                         }
-                        subKey.revocationSignature = packet;
+                        subKey.revocationSignature = (PGPSignaturePacket *)packet;
                         break;
                     default:
                         break;
@@ -165,12 +165,12 @@
 - (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error
 {
     BOOL ret = NO;
-    for (id <PGPPacket> packet in [self allKeyPackets]) {
+    for (PGPPacket * packet in [self allKeyPackets]) {
         if (packet.tag == PGPSecretKeyPacketTag) {
-            PGPSecretKeyPacket *secretKeyPacket = packet;
+            PGPSecretKeyPacket *secretKeyPacket = (PGPSecretKeyPacket *)packet;
             ret = [secretKeyPacket decrypt:passphrase error:error];
         } else if (packet.tag == PGPSecretSubkeyPacketTag) {
-            PGPSecretSubKeyPacket *secretSubKeyPacket = packet;
+            PGPSecretSubKeyPacket *secretSubKeyPacket = (PGPSecretSubKeyPacket *)packet;
             ret = [secretSubKeyPacket decrypt:passphrase error:error];
         }
     }
@@ -181,7 +181,7 @@
 {
     NSMutableData *result = [NSMutableData data];
 
-    for (id <PGPPacket> packet in [self allPackets]) {
+    for (PGPPacket * packet in [self allPackets]) {
         NSError *error = nil;
         [result appendData:[packet export:&error]];
         NSAssert(!error,@"Error while export public key");

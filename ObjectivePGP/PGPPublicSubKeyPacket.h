@@ -11,6 +11,6 @@
 #import "PGPPublicKeyPacket.h"
 #import "PGPPacketFactory.h"
 
-@interface PGPPublicSubKeyPacket : PGPPublicKeyPacket <PGPPacket>
+@interface PGPPublicSubKeyPacket : PGPPublicKeyPacket
 
 @end

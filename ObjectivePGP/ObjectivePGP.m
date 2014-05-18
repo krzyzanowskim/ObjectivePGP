@@ -69,7 +69,7 @@
 
     while (offset < keyringData.length) {
         
-        id <PGPPacket> packet = [PGPPacketFactory packetWithData:keyringData offset:offset];
+        PGPPacket *packet = [PGPPacketFactory packetWithData:keyringData offset:offset];
         if (packet) {
             if ((accumulatedPackets.count > 1) && ((packet.tag == PGPPublicKeyPacketTag) || (packet.tag == PGPSecretKeyPacketTag))) {
                 PGPKey *key = [[PGPKey alloc] initWithPackets:accumulatedPackets];

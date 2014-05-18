@@ -9,12 +9,12 @@
 #import "PGPSubKey.h"
 
 @interface PGPSubKey ()
-@property (strong, readwrite) id <PGPPacket> keyPacket;
+@property (strong, readwrite) PGPPacket * keyPacket;
 @end
 
 @implementation PGPSubKey
 
-- (instancetype) initWithPacket:(id <PGPPacket>)packet
+- (instancetype) initWithPacket:(PGPPacket *)packet
 {
     if (self = [self init]) {
         self.keyPacket = packet;

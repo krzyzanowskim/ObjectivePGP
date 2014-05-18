@@ -12,11 +12,11 @@
 
 @interface PGPSubKey : NSObject
 
-@property (strong, readonly) id <PGPPacket> keyPacket;
+@property (strong, readonly) PGPPacket * keyPacket;
 @property (strong) PGPSignaturePacket *bindingSignature;
 @property (strong) PGPSignaturePacket *revocationSignature;
 
-- (instancetype) initWithPacket:(id <PGPPacket>)packet;
+- (instancetype) initWithPacket:(PGPPacket *)packet;
 - (NSArray *) allPackets;
 
 @end
