@@ -23,7 +23,7 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
 @property (assign, readonly) PGPKeyType type;
 @property (strong, nonatomic) PGPPacket *primaryKeyPacket;
 @property (assign, readonly) BOOL isEncrypted;
-@property (strong, nonatomic) NSMutableArray *users;
+@property (strong, nonatomic) NSMutableArray *users; // PGPUser
 @property (strong, nonatomic) NSMutableArray *subKeys;
 @property (strong, nonatomic) NSMutableArray *directSignatures;
 @property (strong, nonatomic) PGPPacket *revocationSignature;
@@ -39,7 +39,6 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
  *  @return YES on success
  */
 - (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error;
-
 
 /**
  *  Export to transferable key packets sequence

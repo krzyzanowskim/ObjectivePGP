@@ -9,6 +9,10 @@
 #import "PGPSignaturePacket.h"
 #import "PGPMPI.h"
 #import "PGPSignatureSubpacket.h"
+#import "PGPUserIDPacket.h"
+#import "PGPKey.h"
+#import "PGPUser.h"
+#import "PGPSecretKeyPacket.h"
 #import "NSData+PGPUtils.h"
 
 static NSString * const PGPSignatureHeaderSubpacketLengthKey = @"PGPSignatureHeaderSubpacketLengthKey"; // UInt32
@@ -67,7 +71,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 {
     NSMutableData *data = [NSMutableData data];
 
-    NSData *bodyData = [self buildSignatureData:error];
+    NSData *bodyData = [self buildFullSignatureData:error];
     NSData *headerData = [self buildHeaderData:bodyData];
     [data appendData: headerData];
     [data appendData: bodyData];
@@ -75,7 +79,9 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     return [data copy];
 }
 
-- (NSData *) buildSignatureData:(NSError *__autoreleasing *)error
+#pragma mark - Build packet
+
+- (NSData *) buildSignedPart
 {
     NSMutableData *data = [NSMutableData data];
 
@@ -112,10 +118,16 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
         UInt16 zeroZero = 0;
         [data appendBytes:&zeroZero length:2];
     }
+    
+    return [data copy];
+}
 
-    // data to sign, signed part
-    NSData *dataToSign = [data copy];
-    NSLog(@"dataToSign %@",dataToSign);
+- (NSData *) buildFullSignatureData:(NSError *__autoreleasing *)error
+{
+    NSMutableData *data = [NSMutableData data];
+
+    NSData *signedPartData = [self buildSignedPart];
+    [data appendData:signedPartData];
 
     if (self.unhashedSubpackets.count > 0) {
         NSMutableData *unhashedSubpackets = [NSMutableData data];
@@ -137,38 +149,43 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
         [data appendBytes:&zeroZero length:2];
     }
 
-    // Two-octet field holding the left 16 bits of the signed hash value.
-    NSData *signedHashData = nil;
-    switch (self.hashAlgoritm) {
-        case PGPHashMD5:
-            signedHashData = [dataToSign pgpMD5];
-            break;
-        case PGPHashSHA1:
-            signedHashData = [dataToSign pgpSHA1];
-            break;
-        case PGPHashSHA224:
-            signedHashData = [dataToSign pgpSHA224];
-            break;
-        case PGPHashSHA256:
-            signedHashData = [dataToSign pgpSHA256];
-            break;
-        case PGPHashSHA384:
-            signedHashData = [dataToSign pgpSHA384];
-            break;
-        case PGPHashSHA512:
-            signedHashData = [dataToSign pgpSHA512];
-            break;
-        case PGPHashRIPEMD160:
-            signedHashData = [dataToSign pgpRIPEMD160];
-            break;
+    [data appendData:self.signedHashValueData];
 
-        default:
-            break;
-    }
-    UInt16 leftBits = 0;
-    [signedHashData getBytes:&leftBits range:(NSRange){0,2}];
-    [data appendBytes:&leftBits length:2];
-    NSLog(@"export leftBits %d",leftBits);
+
+// MOVE TO SIGN METHOD TO CALCULATE HASH
+//    // Two-octet field holding the left 16 bits of the signed hash value.
+//    NSData *signedHashData = nil;
+//    switch (self.hashAlgoritm) {
+//        case PGPHashMD5:
+//            signedHashData = [toSignData pgpMD5];
+//            break;
+//        case PGPHashSHA1:
+//            signedHashData = [toSignData pgpSHA1];
+//            break;
+//        case PGPHashSHA224:
+//            signedHashData = [toSignData pgpSHA224];
+//            break;
+//        case PGPHashSHA256:
+//            signedHashData = [toSignData pgpSHA256];
+//            break;
+//        case PGPHashSHA384:
+//            signedHashData = [toSignData pgpSHA384];
+//            break;
+//        case PGPHashSHA512:
+//            signedHashData = [toSignData pgpSHA512];
+//            break;
+//        case PGPHashRIPEMD160:
+//            signedHashData = [toSignData pgpRIPEMD160];
+//            break;
+//
+//        default:
+//            break;
+//    }
+//
+//    UInt16 leftBits = 0;
+//    [signedHashData getBytes:&leftBits range:(NSRange){0,2}];
+//    [data appendBytes:&leftBits length:2];
+//    NSLog(@"export leftBits %d",leftBits);
 
     for (PGPMPI *mpi in self.signatureMPIs) {
         [data appendData:[mpi buildData]];
@@ -176,6 +193,48 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 
     return [data copy];
 }
+
+//TODO: see https://github.com/singpolyma/openpgp-spec/blob/master/key-signatures
+// Produces data to produce signature on
+// Produces data to produce signature on
+//- (NSData *) sign:(PGPUser *)user key:(PGPKey *)key
+//{
+//
+//    NSMutableData *data = [NSMutableData data];
+//    switch (self.type) {
+//        case PGPSignaturePersonalCertificationUserIDandPublicKey:
+//        case PGPSignatureCasualCertificationUserIDandPublicKey:
+//        case PGPSignaturePositiveCertificationUserIDandPublicKey:
+//
+//        case PGPSignatureGenericCertificationUserIDandPublicKey:
+//        case PGPSignatureCertificationRevocation:
+//        {
+//            // For 0x11, 0x12, 0x13:
+//            // The raw fingerprint material for the public-key, followed by the octet 0xB4,
+//            // followed by a four-octet number encoding the length of the UserID data,
+//            // followed by the raw body of the UserID.
+//            // + trailer
+////            PGPPublicKeyPacket *primaryKeyPacket = key.primaryKeyPacket;
+////
+////            [data appendData:primaryKeyPacket.fingerprint.data];
+////            if (primaryKeyPacket.keyID) {
+////                UInt8 userIDConstant = 0xB4;
+////                [data appendBytes:&userIDConstant length:sizeof(userIDConstant)];
+////
+////                UInt32 userIDLength =
+////            }
+//
+//            //TODO user attributes alternative
+//            //UInt8 userAttributeConstant = 0xD1;
+//            //[data appendBytes:&userAttributeConstant length:sizeof(userAttributeConstant)];
+//        }
+//            break;
+//
+//        default:
+//            break;
+//    }
+//    return nil;
+//}
 
 /**
  *  5.2.  Signature Packet (Tag 2)
@@ -231,11 +290,8 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
         }
     }
 
-    // The concatenation of the data being signed and the signature data
-    // from the version number through the hashed subpacket data (inclusive) is hashed.
-    // The resulting hash value is what is signed.
-    self.signedData = [packetBody subdataWithRange:(NSRange){startPosition, position}];
-    NSLog(@"signedData %@",self.signedData);
+    self.signatureData = [packetBody subdataWithRange:(NSRange){startPosition, position}];
+    NSLog(@"signatureData %@",self.signatureData);
 
     // Two-octet scalar octet count for the following unhashed subpacket
     UInt16 unhashedOctetCount = 0;
@@ -259,10 +315,8 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     }
 
     // Two-octet field holding the left 16 bits of the signed hash value.
-    UInt16 leftBits = 0;
-    [packetBody getBytes:&leftBits range:(NSRange){position, 2}];
-    NSLog(@"parse leftBits %d",leftBits);
-    //leftBits = CFSwapInt16BigToHost(leftBits);
+    self.signedHashValueData = [packetBody subdataWithRange:(NSRange){position, 2}];
+    NSLog(@"parse leftBits %@",self.signedHashValueData);
     position = position + 2;
 
 

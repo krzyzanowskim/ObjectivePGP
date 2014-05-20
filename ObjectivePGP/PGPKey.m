@@ -98,8 +98,8 @@
                 primaryKeyID = [(PGPSecretKeyPacket *)packet keyID];
                 self.primaryKeyPacket = packet;
                 break;
+            //case PGPUserAttributePacketTag:
             case PGPUserIDPacketTag:
-            case PGPUserAttributePacketTag:
                 user = [[PGPUser alloc] initWithPacket:(PGPUserIDPacket *)packet];
                 [self.users addObject:user];
                 break;
