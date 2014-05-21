@@ -7,30 +7,32 @@
 //
 
 #import "PGPFingerprint.h"
+#import "NSData+PGPUtils.h"
 
 @implementation PGPFingerprint
 
-- (instancetype) initWithData:(NSData *)data
+- (instancetype) initWithData:(NSData *)keyData
 {
     if (self = [self init]) {
-        self.data = data;
+        self.keyData = keyData;
+        self.hashData = [keyData pgpSHA1];
     }
     return self;
 }
 
 - (NSString *)description
 {
-    NSMutableString *sbuf = [NSMutableString stringWithCapacity:self.data.length * 2];
-    const unsigned char *buf = self.data.bytes;
-    for (NSUInteger i = 0; i < self.data.length; ++i) {
+    NSMutableString *sbuf = [NSMutableString stringWithCapacity:self.hashData.length * 2];
+    const unsigned char *buf = self.hashData.bytes;
+    for (NSUInteger i = 0; i < self.hashData.length; ++i) {
         [sbuf appendFormat:@"%02X", (NSUInteger)buf[i]];
     }
     return [sbuf copy];
 }
 
-- (NSUInteger) length
+- (NSUInteger) hashLength
 {
-    return self.data.length;
+    return self.hashData.length;
 }
 
 @end

@@ -1,0 +1,79 @@
+Old: Secret Key Packet(tag 5)(920 bytes)
+	Ver 4 - new
+	Public key creation time - Sun May 11 22:56:49 CEST 2014
+	Pub alg - RSA Encrypt or Sign(pub 1)
+	RSA n(2048 bits) - ...
+	RSA e(17 bits) - ...
+	RSA d(2045 bits) - ...
+	RSA p(1024 bits) - ...
+	RSA q(1024 bits) - ...
+	RSA u(1023 bits) - ...
+	Checksum - 3d 0d 
+Old: User ID Packet(tag 13)(35 bytes)
+	User ID - Marcin (test) <marcink@up-next.com>
+Old: Signature Packet(tag 2)(313 bytes)
+	Ver 4 - new
+	Sig type - Positive certification of a User ID and Public Key packet(0x13).
+	Pub alg - RSA Encrypt or Sign(pub 1)
+	Hash alg - SHA1(hash 2)
+	Hashed Sub: signature creation time(sub 2)(4 bytes)
+		Time - Sun May 11 22:56:49 CEST 2014
+	Hashed Sub: key flags(sub 27)(1 bytes)
+		Flag - This key may be used to certify other keys
+		Flag - This key may be used to sign data
+	Hashed Sub: preferred symmetric algorithms(sub 11)(6 bytes)
+		Sym alg - AES with 256-bit key(sym 9)
+		Sym alg - AES with 192-bit key(sym 8)
+		Sym alg - AES with 128-bit key(sym 7)
+		Sym alg - CAST5(sym 3)
+		Sym alg - Triple-DES(sym 2)
+		Sym alg - IDEA(sym 1)
+	Hashed Sub: preferred hash algorithms(sub 21)(5 bytes)
+		Hash alg - SHA256(hash 8)
+		Hash alg - SHA1(hash 2)
+		Hash alg - SHA384(hash 9)
+		Hash alg - SHA512(hash 10)
+		Hash alg - SHA224(hash 11)
+	Hashed Sub: preferred compression algorithms(sub 22)(3 bytes)
+		Comp alg - ZLIB <RFC1950>(comp 2)
+		Comp alg - BZip2(comp 3)
+		Comp alg - ZIP <RFC1951>(comp 1)
+	Hashed Sub: features(sub 30)(1 bytes)
+		Flag - Modification detection (packets 18 and 19)
+	Hashed Sub: key server preferences(sub 23)(1 bytes)
+		Flag - No-modify
+	Sub: issuer key ID(sub 16)(8 bytes)
+		Key ID - 0x25A233C2952E4E8B
+	Hash left 2 bytes - 48 0a 
+	RSA m^d mod n(2048 bits) - ...
+		-> PKCS-1
+Old: Trust Packet(tag 12)(2 bytes)
+	Trust - 00 00 
+Old: Secret Subkey Packet(tag 7)(920 bytes)
+	Ver 4 - new
+	Public key creation time - Sun May 11 22:56:49 CEST 2014
+	Pub alg - RSA Encrypt or Sign(pub 1)
+	RSA n(2048 bits) - ...
+	RSA e(17 bits) - ...
+	RSA d(2043 bits) - ...
+	RSA p(1024 bits) - ...
+	RSA q(1024 bits) - ...
+	RSA u(1024 bits) - ...
+	Checksum - 4c 12 
+Old: Signature Packet(tag 2)(287 bytes)
+	Ver 4 - new
+	Sig type - Subkey Binding Signature(0x18).
+	Pub alg - RSA Encrypt or Sign(pub 1)
+	Hash alg - SHA1(hash 2)
+	Hashed Sub: signature creation time(sub 2)(4 bytes)
+		Time - Sun May 11 22:56:49 CEST 2014
+	Hashed Sub: key flags(sub 27)(1 bytes)
+		Flag - This key may be used to encrypt communications
+		Flag - This key may be used to encrypt storage
+	Sub: issuer key ID(sub 16)(8 bytes)
+		Key ID - 0x25A233C2952E4E8B
+	Hash left 2 bytes - 86 1e 
+	RSA m^d mod n(2048 bits) - ...
+		-> PKCS-1
+Old: Trust Packet(tag 12)(2 bytes)
+	Trust - 00 00 

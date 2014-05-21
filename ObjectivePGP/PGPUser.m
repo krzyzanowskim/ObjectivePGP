@@ -53,6 +53,14 @@
     return _revocationSignatures;
 }
 
+- (NSArray *)selfSignatures
+{
+    if (!_selfSignatures) {
+        _selfSignatures = [NSArray array];
+    }
+    return _selfSignatures;
+}
+
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"%@ %@",[super description], self.userID];

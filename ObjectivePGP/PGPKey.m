@@ -121,7 +121,7 @@
                             continue;
                         }
                         if ([signaturePacket.issuerKeyID isEqual:primaryKeyID]) {
-                            user.revocationSignatures = [user.revocationSignatures arrayByAddingObject:packet];
+                            user.selfSignatures = [user.selfSignatures arrayByAddingObject:packet];
                         } else {
                             user.otherSignatures = [user.otherSignatures arrayByAddingObject:packet];
                         }

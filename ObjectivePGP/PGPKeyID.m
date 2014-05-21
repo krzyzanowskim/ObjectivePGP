@@ -18,7 +18,7 @@
     if (!fingerprint)
         return nil;
 
-    if (self = [self initWithLongKey:[fingerprint.data subdataWithRange:(NSRange){fingerprint.length - 8,8}]]) {
+    if (self = [self initWithLongKey:[fingerprint.hashData subdataWithRange:(NSRange){fingerprint.hashLength - 8,8}]]) {
         
     }
 

@@ -9,10 +9,11 @@
 #import <Foundation/Foundation.h>
 
 @interface PGPFingerprint : NSObject
-@property (copy) NSData *data;
+@property (copy) NSData *hashData;
+@property (copy) NSData *keyData;
 
 - (instancetype) initWithData:(NSData *)data;
 - (NSString *) description;
-- (NSUInteger) length;
+- (NSUInteger) hashLength;
 
 @end

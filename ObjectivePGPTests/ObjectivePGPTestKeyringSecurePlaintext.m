@@ -9,6 +9,8 @@
 #import <XCTest/XCTest.h>
 #import "ObjectivePGP.h"
 #import "PGPSecretKeyPacket.h"
+#import "PGPUser.h"
+#import "PGPSignaturePacket.h"
 
 @interface ObjectivePGPTestKeyringSecurePlaintext : XCTestCase
 @property (strong) NSString *keyringPath;
@@ -66,6 +68,10 @@
     NSMutableData *keysData = [NSMutableData data];
     for (PGPKey *key in self.oPGP.keys) {
         NSError *error = nil;
+        for (PGPUser *user in key.users) {
+            PGPSignaturePacket *signature = user.selfSignatures[0];
+            [signature sign:key user:user];
+        }
         NSData *keyData = [key export:&error];
         XCTAssertNotNil(keyData, @"Can't export key");
         [keysData appendData:keyData];

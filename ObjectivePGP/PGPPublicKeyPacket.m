@@ -62,21 +62,26 @@
 - (PGPFingerprint *)fingerprint
 {
     if (!_fingerprint) {
-        NSMutableData *toHashData = [NSMutableData data];
-
-        NSData *publicKeyData = [self buildPublicKeyDataAndForceV4:NO];
-
-        NSUInteger length = publicKeyData.length;
-        UInt8 upper = length >> 8;
-        UInt8 lower = length & 0xff;
-        UInt8 headWithLength[3] = {0x99, upper, lower};
-        [toHashData appendBytes:&headWithLength length:3];
-        [toHashData appendData:publicKeyData];
-        
-        NSData *sha1Hash = [toHashData pgpSHA1];
-        _fingerprint = [[PGPFingerprint alloc] initWithData:sha1Hash];
+        _fingerprint = [[PGPFingerprint alloc] initWithData:[self buildOldStylePublicKeyData]];
     }
     return _fingerprint;
+}
+
+// Old-style packet header for a key packet with two-octet length.
+// Old but used by fingerprint and with signing
+- (NSData *) buildOldStylePublicKeyData
+{
+    NSMutableData *data = [NSMutableData data];
+
+    NSData *publicKeyData = [self buildPublicKeyDataAndForceV4:NO];
+
+    NSUInteger length = publicKeyData.length;
+    UInt8 upper = length >> 8;
+    UInt8 lower = length & 0xff;
+    UInt8 headWithLength[3] = {0x99, upper, lower};
+    [data appendBytes:&headWithLength length:3];
+    [data appendData:publicKeyData];
+    return [data copy];
 }
 
 - (NSData *) exportPacket:(NSError *__autoreleasing *)error

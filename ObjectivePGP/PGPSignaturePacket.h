@@ -11,7 +11,7 @@
 #import "PGPPacketFactory.h"
 #import "PGPKeyID.h"
 
-@class PGPKey;
+@class PGPKey, PGPUser;
 
 @interface PGPSignaturePacket : PGPPacket
 
@@ -52,6 +52,7 @@
  *  @return Array of subpackets
  */
 - (NSArray *) subpackets;
+- (NSData *) sign:(PGPKey *)secretKey user:(PGPUser *)user;
 
 
 @end

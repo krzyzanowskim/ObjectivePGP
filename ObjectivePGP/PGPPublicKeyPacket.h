@@ -27,5 +27,6 @@
 - (NSData *)exportPacket:(NSError *__autoreleasing*)error;
 
 - (NSData *) buildPublicKeyDataAndForceV4:(BOOL)forceV4;
+- (NSData *) buildOldStylePublicKeyData;
 
 @end

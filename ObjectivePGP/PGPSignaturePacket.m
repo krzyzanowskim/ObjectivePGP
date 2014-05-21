@@ -151,42 +151,6 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 
     [data appendData:self.signedHashValueData];
 
-
-// MOVE TO SIGN METHOD TO CALCULATE HASH
-//    // Two-octet field holding the left 16 bits of the signed hash value.
-//    NSData *signedHashData = nil;
-//    switch (self.hashAlgoritm) {
-//        case PGPHashMD5:
-//            signedHashData = [toSignData pgpMD5];
-//            break;
-//        case PGPHashSHA1:
-//            signedHashData = [toSignData pgpSHA1];
-//            break;
-//        case PGPHashSHA224:
-//            signedHashData = [toSignData pgpSHA224];
-//            break;
-//        case PGPHashSHA256:
-//            signedHashData = [toSignData pgpSHA256];
-//            break;
-//        case PGPHashSHA384:
-//            signedHashData = [toSignData pgpSHA384];
-//            break;
-//        case PGPHashSHA512:
-//            signedHashData = [toSignData pgpSHA512];
-//            break;
-//        case PGPHashRIPEMD160:
-//            signedHashData = [toSignData pgpRIPEMD160];
-//            break;
-//
-//        default:
-//            break;
-//    }
-//
-//    UInt16 leftBits = 0;
-//    [signedHashData getBytes:&leftBits range:(NSRange){0,2}];
-//    [data appendBytes:&leftBits length:2];
-//    NSLog(@"export leftBits %d",leftBits);
-
     for (PGPMPI *mpi in self.signatureMPIs) {
         [data appendData:[mpi buildData]];
     }
@@ -194,47 +158,136 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     return [data copy];
 }
 
-//TODO: see https://github.com/singpolyma/openpgp-spec/blob/master/key-signatures
-// Produces data to produce signature on
-// Produces data to produce signature on
-//- (NSData *) sign:(PGPUser *)user key:(PGPKey *)key
-//{
-//
-//    NSMutableData *data = [NSMutableData data];
-//    switch (self.type) {
-//        case PGPSignaturePersonalCertificationUserIDandPublicKey:
-//        case PGPSignatureCasualCertificationUserIDandPublicKey:
-//        case PGPSignaturePositiveCertificationUserIDandPublicKey:
-//
-//        case PGPSignatureGenericCertificationUserIDandPublicKey:
-//        case PGPSignatureCertificationRevocation:
-//        {
-//            // For 0x11, 0x12, 0x13:
-//            // The raw fingerprint material for the public-key, followed by the octet 0xB4,
-//            // followed by a four-octet number encoding the length of the UserID data,
-//            // followed by the raw body of the UserID.
-//            // + trailer
-////            PGPPublicKeyPacket *primaryKeyPacket = key.primaryKeyPacket;
-////
-////            [data appendData:primaryKeyPacket.fingerprint.data];
-////            if (primaryKeyPacket.keyID) {
-////                UInt8 userIDConstant = 0xB4;
-////                [data appendBytes:&userIDConstant length:sizeof(userIDConstant)];
-////
-////                UInt32 userIDLength =
-////            }
-//
-//            //TODO user attributes alternative
-//            //UInt8 userAttributeConstant = 0xD1;
-//            //[data appendBytes:&userAttributeConstant length:sizeof(userAttributeConstant)];
-//        }
-//            break;
-//
-//        default:
-//            break;
-//    }
-//    return nil;
-//}
+#pragma mark - Sign
+
+// @see https://github.com/singpolyma/openpgp-spec/blob/master/key-signatures
+- (NSData *) sign:(PGPKey *)secretKey user:(PGPUser *)user
+{
+    // signed part data
+    NSData *signedPartData = [self buildSignedPart];
+    // calculate trailer
+    NSData *trailerData = [self calculateTrailerFor:signedPartData];
+
+    // build toSignData
+    NSMutableData *toSignData = [NSMutableData data];
+    switch (self.type) {
+
+        case PGPSignatureGenericCertificationUserIDandPublicKey:
+        case PGPSignaturePersonalCertificationUserIDandPublicKey:
+        case PGPSignatureCasualCertificationUserIDandPublicKey:
+        case PGPSignaturePositiveCertificationUserIDandPublicKey:
+        case PGPSignatureCertificationRevocation:
+        {
+            // A certification signature
+
+            // For 0x11, 0x12, 0x13:
+            // The raw fingerprint material for the public-key, followed by the octet 0xB4,
+            // followed by a four-octet number encoding the length of the UserID data,
+            // followed by the raw body of the UserID.
+            // + trailer
+
+
+            PGPSecretKeyPacket *primaryKeyPacket = (PGPSecretKeyPacket *)secretKey.primaryKeyPacket;
+            if (self.version == 4) {
+                // When a signature is made over a key, the hash data starts with the
+                // octet 0x99, followed by a two-octet length of the key, and then body
+                // of the key packet. (Note that this is an old-style packet header for
+                // a key packet with two-octet length.)
+                NSData *keyData = [primaryKeyPacket buildOldStylePublicKeyData];
+                [toSignData appendData:keyData];
+            }
+
+            if (user.userID.length > 0) {
+                // constant tag (1)
+                UInt8 userIDConstant = 0xB4;
+                [toSignData appendBytes:&userIDConstant length:sizeof(userIDConstant)];
+
+                // length (4)
+                UInt32 userIDLength = (UInt32)user.userID.length;
+                userIDLength = CFSwapInt32HostToBig(userIDLength);
+                [toSignData appendBytes:&userIDLength length:sizeof(userIDLength)];
+
+                // data
+                [toSignData appendData:[user.userID dataUsingEncoding:NSUTF8StringEncoding]];
+            }
+            //TODO user attributes alternative
+            //UInt8 userAttributeConstant = 0xD1;
+            //[data appendBytes:&userAttributeConstant length:sizeof(userAttributeConstant)];
+
+        }
+            break;
+
+        default:
+            break;
+    }
+
+    //toHash = toSignData + signedPartData + trailerData;
+    NSMutableData *toHashData = [NSMutableData dataWithData:toSignData];
+    [toHashData appendData:signedPartData];
+    [toHashData appendData:trailerData];
+
+    NSData *hashData = nil;
+    switch (self.hashAlgoritm) {
+        case PGPHashMD5:
+            hashData = [toHashData pgpMD5];
+            break;
+        case PGPHashSHA1:
+            hashData = [toHashData pgpSHA1];
+            break;
+        case PGPHashSHA224:
+            hashData = [toHashData pgpSHA224];
+            break;
+        case PGPHashSHA256:
+            hashData = [toHashData pgpSHA256];
+            break;
+        case PGPHashSHA384:
+            hashData = [toHashData pgpSHA384];
+            break;
+        case PGPHashSHA512:
+            hashData = [toHashData pgpSHA512];
+            break;
+        case PGPHashRIPEMD160:
+            hashData = [toHashData pgpRIPEMD160];
+            break;
+
+        default:
+            break;
+    }
+
+    NSLog(@"%@",hashData);
+
+    // Two-octet field holding the left 16 bits of the signed hash value.
+    //signedHashValue
+    NSData *signedHashValue = [hashData subdataWithRange:(NSRange){0,2}];
+
+    //TODO: Create a signature on data using the specified algorithm
+    //sign: function(hash_algo, algo, keyIntegers, data)
+    //    this.signature = crypto.signature.sign(hashAlgorithm, publicKeyAlgorithm, key.mpi, toHash);
+    NSData *signatureData = nil;
+    return signatureData;
+
+}
+
+- (NSData *) calculateTrailerFor:(NSData *)signatureData
+{
+    if (self.version < 4)
+        return nil;
+
+    NSMutableData *trailerData = [NSMutableData data];
+    UInt8 version = 4;
+    [trailerData appendBytes:&version length:sizeof(version)];
+
+    UInt8 tag = 0xFF;
+    [trailerData appendBytes:&tag length:sizeof(tag)];
+
+    UInt32 signatureLength = signatureData.length;
+    signatureLength = CFSwapInt32HostToBig(signatureLength);
+    [trailerData appendBytes:&signatureLength length:sizeof(signatureLength)];
+
+    return [trailerData copy];
+}
+
+#pragma mark - Parse
 
 /**
  *  5.2.  Signature Packet (Tag 2)
