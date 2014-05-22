@@ -7,10 +7,12 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <openssl/bn.h>
 
 @interface PGPMPI : NSObject
 
 @property (strong) NSString *identifier;
+@property (assign, readonly) BIGNUM *bignumRef;
 /**
  *  Total bytes, header + body
  */
