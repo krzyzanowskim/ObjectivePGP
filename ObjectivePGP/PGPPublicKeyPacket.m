@@ -39,6 +39,8 @@
     return [NSString stringWithFormat:@"%@ %@", [super description], self.keyID];
 }
 
+#pragma mark - KeyID and Fingerprint
+
 /**
  *  12.2.  Key IDs and Fingerprints
  *
@@ -62,45 +64,12 @@
 - (PGPFingerprint *)fingerprint
 {
     if (!_fingerprint) {
-        _fingerprint = [[PGPFingerprint alloc] initWithData:[self buildOldStylePublicKeyData]];
+        _fingerprint = [[PGPFingerprint alloc] initWithData:[self exportPacketOldStyle]];
     }
     return _fingerprint;
 }
 
-// Old-style packet header for a key packet with two-octet length.
-// Old but used by fingerprint and with signing
-- (NSData *) buildOldStylePublicKeyData
-{
-    NSMutableData *data = [NSMutableData data];
-
-    NSData *publicKeyData = [self buildPublicKeyDataAndForceV4:NO];
-
-    NSUInteger length = publicKeyData.length;
-    UInt8 upper = length >> 8;
-    UInt8 lower = length & 0xff;
-    UInt8 headWithLength[3] = {0x99, upper, lower};
-    [data appendBytes:&headWithLength length:3];
-    [data appendData:publicKeyData];
-    return [data copy];
-}
-
-- (NSData *) exportPacket:(NSError *__autoreleasing *)error
-{
-    NSMutableData *data = [NSMutableData data];
-
-    NSData *bodyData = [self buildPublicKeyDataAndForceV4:NO];
-    NSData *headerData = [self buildHeaderData:bodyData];
-    [data appendData: headerData];
-    [data appendData: bodyData];
-
-    // it wont match, because input data is OLD world, and we export in NEW world format
-    // NSAssert([headerData isEqualToData:self.headerData], @"Header not match");
-    if ([self class] == [PGPPublicKeyPacket class]) {
-        NSAssert([bodyData isEqualToData:self.bodyData], @"Body not match");
-    }
-
-    return [data copy];
-}
+#pragma mark - Parse data
 
 /**
  *  5.5.2.  Public-Key Packet Formats
@@ -110,8 +79,6 @@
 - (NSUInteger) parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
 {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
-
-    //TODO: V3 keys are deprecated; an implementation MUST NOT generate a V3 key, but MAY accept it.
 
     // A one-octet version number (2,3,4).
     [packetBody getBytes:&_version range:(NSRange){position,1}];
@@ -124,6 +91,7 @@
     _timestamp = CFSwapInt32BigToHost(_timestamp);
     position = position + 4;
 
+    //V3 keys are deprecated; an implementation MUST NOT generate a V3 key, but MAY accept it.
     if (_version == 0x03) {
         //  A two-octet number denoting the time in days that this key is
         //  valid.  If this number is zero, then it does not expire.
@@ -207,18 +175,43 @@
             @throw [NSException exceptionWithName:@"Unknown Algorithm" reason:@"Given algorithm is not supported" userInfo:nil];
             break;
     }
-
+    
     return position;
 }
 
-#pragma mark - Private
+#pragma mark - Export data
 
 /**
- *  Build public key data for fingerprint
+ *  Packet data. Header with body data.
+ *
+ *  @param error error
+ *
+ *  @return data
+ */
+- (NSData *) exportPacket:(NSError *__autoreleasing *)error
+{
+    NSMutableData *data = [NSMutableData data];
+
+    NSData *bodyData = [self buildPublicKeyBodyData:NO];
+    NSData *headerData = [self buildHeaderData:bodyData];
+    [data appendData: headerData];
+    [data appendData: bodyData];
+
+    // it wont match, because input data is OLD world, and we export in NEW world format
+    // NSAssert([headerData isEqualToData:self.headerData], @"Header not match");
+    if ([self class] == [PGPPublicKeyPacket class]) {
+        NSAssert([bodyData isEqualToData:self.bodyData], @"Body not match");
+    }
+
+    return [data copy];
+}
+
+/**
+ *  Build new style public key data
  *
  *  @return public key data starting with version octet
  */
-- (NSData *) buildPublicKeyDataAndForceV4:(BOOL)forceV4
+- (NSData *) buildPublicKeyBodyData:(BOOL)forceV4
 {
     NSMutableData *data = [NSMutableData dataWithCapacity:128];
     [data appendBytes:&_version length:1];
@@ -239,6 +232,23 @@
     for (PGPMPI *mpi in self.publicMPI) {
         [data appendData:[mpi buildData]];
     }
+    return [data copy];
+}
+
+// Old-style packet header for a key packet with two-octet length.
+// Old but used by fingerprint and with signing
+- (NSData *) exportPacketOldStyle
+{
+    NSMutableData *data = [NSMutableData data];
+
+    NSData *publicKeyData = [self buildPublicKeyBodyData:NO];
+
+    NSUInteger length = publicKeyData.length;
+    UInt8 upper = length >> 8;
+    UInt8 lower = length & 0xff;
+    UInt8 headWithLength[3] = {0x99, upper, lower};
+    [data appendBytes:&headWithLength length:3];
+    [data appendData:publicKeyData];
     return [data copy];
 }
 

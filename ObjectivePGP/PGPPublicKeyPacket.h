@@ -26,7 +26,10 @@
 
 - (NSData *)exportPacket:(NSError *__autoreleasing*)error;
 
-- (NSData *) buildPublicKeyDataAndForceV4:(BOOL)forceV4;
-- (NSData *) buildOldStylePublicKeyData;
+- (NSData *) buildPublicKeyBodyData:(BOOL)forceV4;
+- (NSData *) exportPacketOldStyle;
+
+- (id)objectForKeyedSubscript:(id <NSCopying>)key;
+- (void)setObject:(id)obj forKeyedSubscript:(id <NSCopying>)key;
 
 @end
