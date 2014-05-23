@@ -13,7 +13,14 @@
 #import "PGPKey.h"
 #import "PGPUser.h"
 #import "PGPSecretKeyPacket.h"
+#import "PGPPKCSEmsa.h"
 #import "NSData+PGPUtils.h"
+
+#import <openssl/rsa.h>
+#import <openssl/dsa.h>
+#import <openssl/bn.h>
+#import <openssl/err.h>
+#import <openssl/ssl.h>
 
 static NSString * const PGPSignatureHeaderSubpacketLengthKey = @"PGPSignatureHeaderSubpacketLengthKey"; // UInt32
 static NSString * const PGPSignatureHeaderLengthKey = @"PGPSignatureHeaderLengthKey"; // UInt32
@@ -160,6 +167,8 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 
 #pragma mark - Sign
 
+// 5.2.4.  Computing Signatures
+// http://tools.ietf.org/html/rfc4880#section-5.2.4
 // @see https://github.com/singpolyma/openpgp-spec/blob/master/key-signatures
 - (NSData *) sign:(PGPKey *)secretKey user:(PGPUser *)user
 {
@@ -168,7 +177,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     // calculate trailer
     NSData *trailerData = [self calculateTrailerFor:signedPartData];
 
-    // build toSignData
+    // build toSignData, toSign
     NSMutableData *toSignData = [NSMutableData data];
     switch (self.type) {
 
@@ -178,7 +187,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
         case PGPSignaturePositiveCertificationUserIDandPublicKey:
         case PGPSignatureCertificationRevocation:
         {
-            // A certification signature
+            // A certification signature (type 0x10 through 0x13)
 
             // For 0x11, 0x12, 0x13:
             // The raw fingerprint material for the public-key, followed by the octet 0xB4,
@@ -186,14 +195,13 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
             // followed by the raw body of the UserID.
             // + trailer
 
-
             PGPSecretKeyPacket *primaryKeyPacket = (PGPSecretKeyPacket *)secretKey.primaryKeyPacket;
             if (self.version == 4) {
                 // When a signature is made over a key, the hash data starts with the
                 // octet 0x99, followed by a two-octet length of the key, and then body
                 // of the key packet. (Note that this is an old-style packet header for
                 // a key packet with two-octet length.)
-                NSData *keyData = [primaryKeyPacket buildOldStylePublicKeyData];
+                NSData *keyData = [primaryKeyPacket exportPacketOldStyle];
                 [toSignData appendData:keyData];
             }
 
@@ -254,18 +262,102 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
             break;
     }
 
-    NSLog(@"%@",hashData);
+    //NSLog(@"%@",hashData);
 
     // Two-octet field holding the left 16 bits of the signed hash value.
-    //signedHashValue
     NSData *signedHashValue = [hashData subdataWithRange:(NSRange){0,2}];
+    NSLog(@"signedHashValue %@",signedHashValue);
 
-    //TODO: Create a signature on data using the specified algorithm
-    //sign: function(hash_algo, algo, keyIntegers, data)
-    //    this.signature = crypto.signature.sign(hashAlgorithm, publicKeyAlgorithm, key.mpi, toHash);
-    NSData *signatureData = nil;
-    return signatureData;
+    //    == Computing Signatures ==
+    //
+    //    To the octets being signed are appended all the octets of the raw signature packet body from the first octet (the version) through
+    //    the end of the subpackets (inclusive).  To this is appended 0x04, 0xFF, and a four-octet number encoding the number of octets that
+    //    were appended in the previous step.
+    //
+    //    For RSA signatures, the hash value is encoded using PKCS#1 encoding type EMSA-PKCS1-v1_5 as described in Section 9.2 of RFC3447
+    //    at <http://tools.ietf.org/html/rfc3447#section-9.2>.
 
+    //    m = pkcs1.emsa.encode(hash_algo,
+    //                          toHashData, keyIntegers[0].byteLength());
+    //
+    //    return rsa.sign(m, d, n).toMPI();
+
+    // toHashData = [@"Plaintext\n" dataUsingEncoding:NSUTF8StringEncoding];
+
+    NSData *signature = [self calcSign:secretKey data:toHashData];
+    return signature;
+}
+
+- (NSData *) calcSign:(PGPKey *)secretKey data:(NSData *)toHashData
+{
+    // TODO: wielkie TODO: 5.2.2.
+    // rsa_sign z prefixa itp, jak opisane dla wersji 3 ??? to nie ma sensu
+    // a jednak tak
+    // see Create a V4 public key signature over some cleartext.
+    // __ops_start_sig
+    // Opisa jest w V3, ale odnosi się również do V4
+
+    if (secretKey.type == PGPKeyPublic) {
+        return nil;
+    }
+
+    NSAssert(secretKey.type == PGPKeySecret, @"Private key expected");
+    NSAssert(secretKey.primaryKeyPacket.tag == PGPSecretKeyPacketTag || secretKey.primaryKeyPacket.tag == PGPSecretSubkeyPacketTag, @"Private packet expected");
+
+    PGPSecretKeyPacket *secureKeyPacket = (PGPSecretKeyPacket *)secretKey.primaryKeyPacket;
+
+    RSA *rsa = RSA_new();
+    rsa->n = BN_dup([secureKeyPacket[@"publicMPI.N"] bignumRef]);
+	rsa->d = [(PGPMPI*)secureKeyPacket[@"secretMPI.D"] bignumRef];
+	rsa->p = [(PGPMPI*)secureKeyPacket[@"secretMPI.Q"] bignumRef];	/* p and q are round the other way in openssl */
+	rsa->q = [(PGPMPI*)secureKeyPacket[@"secretMPI.P"] bignumRef];
+    rsa->e = BN_dup([(PGPMPI*)secureKeyPacket[@"publicMPI.E"] bignumRef]);
+
+    int keysize = (BN_num_bits(rsa->n) + 7) / 8;
+
+    // With RSA signatures, the hash value is encoded using PKCS#1 1.5
+    // toHashData = [@"Plaintext\n" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *em = [PGPPKCSEmsa encode:self.hashAlgoritm m:toHashData emLen:keysize error:nil];
+
+    /* If this isn't set, it's very likely that the programmer hasn't */
+	/* decrypted the secret key. RSA_check_key segfaults in that case. */
+	/* Use __ops_decrypt_seckey() to do that. */
+	if (rsa->d == NULL) {
+		return nil;
+	}
+
+    ERR_load_crypto_strings();
+    SSL_load_error_strings();
+
+    if (RSA_check_key(rsa) != 1) {
+        unsigned long err_code = ERR_get_error();
+        char *errBuf = calloc(512, sizeof(UInt8));
+        ERR_error_string(err_code, errBuf);
+        printf("%s\n",errBuf);
+        free(errBuf);
+		return nil;
+	}
+
+
+    UInt8 *outbuf = calloc(RSA_size(rsa), sizeof(UInt8));
+    int n = RSA_private_encrypt(keysize, (UInt8 *)em.bytes, outbuf, rsa, RSA_NO_PADDING);
+    if (n < 0) {
+        unsigned long err_code = ERR_get_error();
+        char *errBuf = calloc(512, sizeof(UInt8));
+        ERR_error_string(err_code, errBuf);
+        printf("%s\n",errBuf);
+        free(errBuf);
+        return nil;
+    }
+    NSData *outData = [NSData dataWithBytes:outbuf length:n];
+
+	//rsa->n = rsa->d = rsa->p = rsa->q = NULL;
+    free(outbuf);
+	RSA_free(rsa);
+
+    ERR_free_strings();
+
+    return outData;
 }
 
 - (NSData *) calculateTrailerFor:(NSData *)signatureData
@@ -343,8 +435,8 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
         }
     }
 
-    self.signatureData = [packetBody subdataWithRange:(NSRange){startPosition, position}];
-    NSLog(@"signatureData %@",self.signatureData);
+    self.signedPartData = [packetBody subdataWithRange:(NSRange){startPosition, position}];
+    NSLog(@"signatureData %@",self.signedPartData);
 
     // Two-octet scalar octet count for the following unhashed subpacket
     UInt16 unhashedOctetCount = 0;
@@ -371,7 +463,6 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     self.signedHashValueData = [packetBody subdataWithRange:(NSRange){position, 2}];
     NSLog(@"parse leftBits %@",self.signedHashValueData);
     position = position + 2;
-
 
     // 5.2.2. One or more multiprecision integers comprising the signature. This portion is algorithm specific
     // Signature
@@ -408,6 +499,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
         default:
             break;
     }
+
     return position;
 }
 

@@ -30,7 +30,8 @@
 // signature version, the signature type, the public-key algorithm, the
 // hash algorithm, the hashed subpacket length, and the hashed
 // subpacket body.
-@property (strong) NSData *signatureData;
+@property (strong) NSData *signedPartData;
+//@property (strong) NSData *signature;
 
 // Two-octet field holding left 16 bits of signed hash value. (not signatureData, but full data
 // The concatenation of the data being signed and the

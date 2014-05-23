@@ -64,7 +64,7 @@
 - (NSData *) exportPacket:(NSError *__autoreleasing *)error
 {
     NSMutableData *data = [NSMutableData data];
-    NSData *publicKeyData = [super buildPublicKeyDataAndForceV4:YES];
+    NSData *publicKeyData = [super buildPublicKeyBodyData:YES];
 
     NSMutableData *secretKeyPacketData = [NSMutableData data];
     [secretKeyPacketData appendData:publicKeyData];
@@ -457,6 +457,42 @@
 
 
     return [data copy];
+}
+
+#pragma mark - Subscript
+
+- (id)objectForKeyedSubscript:(id <NSCopying>)key
+{
+    id k = key;
+    if ([[k class] isKindOfClass:[NSString class]]) {
+        return nil;
+    }
+
+    NSString *keyString = (NSString *)key;
+    NSArray *mpiArray = nil;
+    NSString *identifier = nil;
+
+    if ([keyString hasPrefix:@"publicMPI."]) {
+        mpiArray = self.publicMPI;
+        identifier = [keyString substringFromIndex:[@"publicMPI." length]];
+    } else if ([keyString hasPrefix:@"secretMPI."]) {
+        mpiArray = self.secretMPI;
+        identifier = [keyString substringFromIndex:[@"secretMPI." length]];
+    }
+
+    NSUInteger idx = [mpiArray indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
+        PGPMPI *mpi = obj;
+        if ([mpi.identifier isEqualToString:identifier]) {
+            return YES;
+        }
+        return NO;
+    }];
+
+    if (idx != NSNotFound) {
+        return mpiArray[idx];
+    }
+
+    return nil;
 }
 
 
