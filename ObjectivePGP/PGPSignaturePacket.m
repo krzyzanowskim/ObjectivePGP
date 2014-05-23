@@ -170,6 +170,9 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 // 5.2.4.  Computing Signatures
 // http://tools.ietf.org/html/rfc4880#section-5.2.4
 // @see https://github.com/singpolyma/openpgp-spec/blob/master/key-signatures
+
+//TODO subkey signature is different (key + bind)
+// Main key is signed against user id packet, this is why user parameter goes here
 - (NSData *) sign:(PGPKey *)secretKey user:(PGPUser *)user
 {
     // signed part data
@@ -201,19 +204,19 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
                 // octet 0x99, followed by a two-octet length of the key, and then body
                 // of the key packet. (Note that this is an old-style packet header for
                 // a key packet with two-octet length.)
-                NSData *keyData = [primaryKeyPacket exportPacketOldStyle];
+                NSData *keyData = [primaryKeyPacket exportPublicPacketOldStyle];
                 [toSignData appendData:keyData];
             }
 
             if (user.userID.length > 0) {
                 // constant tag (1)
                 UInt8 userIDConstant = 0xB4;
-                [toSignData appendBytes:&userIDConstant length:sizeof(userIDConstant)];
+                [toSignData appendBytes:&userIDConstant length:1];
 
                 // length (4)
                 UInt32 userIDLength = (UInt32)user.userID.length;
                 userIDLength = CFSwapInt32HostToBig(userIDLength);
-                [toSignData appendBytes:&userIDLength length:sizeof(userIDLength)];
+                [toSignData appendBytes:&userIDLength length:4];
 
                 // data
                 [toSignData appendData:[user.userID dataUsingEncoding:NSUTF8StringEncoding]];
@@ -282,7 +285,9 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     //
     //    return rsa.sign(m, d, n).toMPI();
 
+    // jakoś chcialbym to przetestowac, ale nie wiem jak
     // toHashData = [@"Plaintext\n" dataUsingEncoding:NSUTF8StringEncoding];
+    // plaintext zapisany jako __ops_write_litdata
 
     NSData *signature = [self calcSign:secretKey data:toHashData];
     return signature;
@@ -307,10 +312,10 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     PGPSecretKeyPacket *secureKeyPacket = (PGPSecretKeyPacket *)secretKey.primaryKeyPacket;
 
     RSA *rsa = RSA_new();
-    rsa->n = BN_dup([secureKeyPacket[@"publicMPI.N"] bignumRef]);
-	rsa->d = [(PGPMPI*)secureKeyPacket[@"secretMPI.D"] bignumRef];
-	rsa->p = [(PGPMPI*)secureKeyPacket[@"secretMPI.Q"] bignumRef];	/* p and q are round the other way in openssl */
-	rsa->q = [(PGPMPI*)secureKeyPacket[@"secretMPI.P"] bignumRef];
+    rsa->n = BN_dup([(PGPMPI*)secureKeyPacket[@"publicMPI.N"] bignumRef]);
+	rsa->d = BN_dup([(PGPMPI*)secureKeyPacket[@"secretMPI.D"] bignumRef]);
+	rsa->p = BN_dup([(PGPMPI*)secureKeyPacket[@"secretMPI.Q"] bignumRef]);	/* p and q are round the other way in openssl */
+	rsa->q = BN_dup([(PGPMPI*)secureKeyPacket[@"secretMPI.P"] bignumRef]);
     rsa->e = BN_dup([(PGPMPI*)secureKeyPacket[@"publicMPI.E"] bignumRef]);
 
     int keysize = (BN_num_bits(rsa->n) + 7) / 8;
@@ -360,21 +365,21 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     return outData;
 }
 
-- (NSData *) calculateTrailerFor:(NSData *)signatureData
+- (NSData *) calculateTrailerFor:(NSData *)signedPartData
 {
     if (self.version < 4)
         return nil;
 
     NSMutableData *trailerData = [NSMutableData data];
     UInt8 version = 4;
-    [trailerData appendBytes:&version length:sizeof(version)];
+    [trailerData appendBytes:&version length:1];
 
     UInt8 tag = 0xFF;
-    [trailerData appendBytes:&tag length:sizeof(tag)];
+    [trailerData appendBytes:&tag length:1];
 
-    UInt32 signatureLength = signatureData.length;
+    UInt32 signatureLength = signedPartData.length; // + 6; // ??? (note that this number does not include these final six octets)
     signatureLength = CFSwapInt32HostToBig(signatureLength);
-    [trailerData appendBytes:&signatureLength length:sizeof(signatureLength)];
+    [trailerData appendBytes:&signatureLength length:4];
 
     return [trailerData copy];
 }

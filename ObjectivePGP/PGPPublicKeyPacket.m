@@ -64,7 +64,7 @@
 - (PGPFingerprint *)fingerprint
 {
     if (!_fingerprint) {
-        _fingerprint = [[PGPFingerprint alloc] initWithData:[self exportPacketOldStyle]];
+        _fingerprint = [[PGPFingerprint alloc] initWithData:[self exportPublicPacketOldStyle]];
     }
     return _fingerprint;
 }
@@ -237,7 +237,7 @@
 
 // Old-style packet header for a key packet with two-octet length.
 // Old but used by fingerprint and with signing
-- (NSData *) exportPacketOldStyle
+- (NSData *) exportPublicPacketOldStyle
 {
     NSMutableData *data = [NSMutableData data];
 
