@@ -527,9 +527,9 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     NSLog(@"parseSubpacket %@ header %@", @(subpacketType), [subpacketsData subdataWithRange:(NSRange){subpacketsPosition, headerLength}]);
     NSRange bodyRange = (NSRange){subpacketsPosition + headerLength,subpacketLength};
     PGPSignatureSubpacket *subpacket = [[PGPSignatureSubpacket alloc] initWithBody:[subpacketsData subdataWithRange:bodyRange]
-                                                                              type:subpacketType];
+                                                                              type:subpacketType
+                                                                             range:bodyRange];
 
-    subpacket.bodyRange = bodyRange;
     return subpacket;
 }
 

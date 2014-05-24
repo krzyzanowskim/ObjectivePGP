@@ -9,11 +9,11 @@
 #import <Foundation/Foundation.h>
 #import "PGPPacket.h"
 
-@class PGPUserIDPacket;
+@class PGPUserIDPacket, PGPUserAttributePacket;
 
 @interface PGPUser : NSObject
 @property (strong, nonatomic) NSString *userID;
-@property (strong, nonatomic) NSArray *userAttribute; //TODO
+@property (strong, nonatomic) PGPUserAttributePacket *userAttribute;
 @property (strong, nonatomic) NSArray *selfSignatures;
 @property (strong, nonatomic) NSArray *otherSignatures;
 @property (strong, nonatomic) NSArray *revocationSignatures;

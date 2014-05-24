@@ -85,6 +85,8 @@
 
 - (NSData *) exportPacket:(NSError *__autoreleasing *)error
 {
+    NSAssert(self.literalRawData, @"Missing literal data");
+
     NSMutableData *data = [NSMutableData data];
     [data appendBytes:&_format length:1];
 

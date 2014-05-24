@@ -16,6 +16,7 @@
 #import "PGPSecretSubKeyPacket.h"
 #import "PGPLiteralPacket.h"
 #import "PGPModificationDetectionCodePacket.h"
+#import "PGPUserAttributePacket.h"
 
 @implementation PGPPacketFactory
 
@@ -50,6 +51,9 @@
                 break;
             case PGPSignaturePacketTag:
                 packet = [[PGPSignaturePacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+                break;
+            case PGPUserAttributePacketTag:
+                packet = [[PGPUserAttributePacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
                 break;
             case PGPUserIDPacketTag:
                 packet = [[PGPUserIDPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];

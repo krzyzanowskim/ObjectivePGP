@@ -21,10 +21,34 @@ static UInt8 prefix_sha1[] = {
 	0x1A, 0x05, 0x00, 0x04, 0x14
 };
 
+static UInt8 prefix_sha224[] = {
+    0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86,
+    0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x04, 0x05,
+    0x00, 0x04, 0x1C
+};
+
 static UInt8 prefix_sha256[] = {
 	0x30, 0x31, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86, 0x48, 0x01,
 	0x65, 0x03, 0x04, 0x02, 0x01, 0x05, 0x00, 0x04, 0x20
 };
+
+static UInt8 prefix_sha384[] = {
+    0x30, 0x41, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86,
+    0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x02, 0x05,
+    0x00, 0x04, 0x30
+};
+
+static UInt8 prefix_sha512[] = {
+    0x30, 0x51, 0x30, 0x0d, 0x06, 0x09, 0x60, 0x86,
+    0x48, 0x01, 0x65, 0x03, 0x04, 0x02, 0x03, 0x05,
+    0x00, 0x04, 0x40
+};
+
+static UInt8 prefix_ripemd160[] = {
+    0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2B, 0x24,
+    0x03, 0x02, 0x01, 0x05, 0x00, 0x04, 0x14
+};
+
 
 @implementation PGPPKCSEmsa
 
@@ -40,7 +64,6 @@ static UInt8 prefix_sha256[] = {
 + (NSData *) encode:(PGPHashAlgorithm)hashAlgorithm m:(NSData *)m emLen:(NSUInteger)emLen error:(NSError * __autoreleasing *)error
 {
     NSMutableData *tData = [NSMutableData data];
-    //TODO: add rest hashes
     switch (hashAlgorithm) {
         case PGPHashMD5:
         {
@@ -56,11 +79,39 @@ static UInt8 prefix_sha256[] = {
             [tData appendData:[m pgpMD5]];
         }
             break;
+        case PGPHashSHA224:
+        {
+            NSData *hashPrefixData = [NSData dataWithBytes:prefix_sha224 length:sizeof(prefix_sha224)];
+            [tData appendData:hashPrefixData];
+            [tData appendData:[m pgpSHA224]];
+        }
+            break;
         case PGPHashSHA256:
         {
             NSData *hashPrefixData = [NSData dataWithBytes:prefix_sha256 length:sizeof(prefix_sha256)];
             [tData appendData:hashPrefixData];
             [tData appendData:[m pgpMD5]];
+        }
+            break;
+        case PGPHashSHA384:
+        {
+            NSData *hashPrefixData = [NSData dataWithBytes:prefix_sha224 length:sizeof(prefix_sha384)];
+            [tData appendData:hashPrefixData];
+            [tData appendData:[m pgpSHA384]];
+        }
+            break;
+        case PGPHashSHA512:
+        {
+            NSData *hashPrefixData = [NSData dataWithBytes:prefix_sha224 length:sizeof(prefix_sha512)];
+            [tData appendData:hashPrefixData];
+            [tData appendData:[m pgpSHA512]];
+        }
+            break;
+        case PGPHashRIPEMD160:
+        {
+            NSData *hashPrefixData = [NSData dataWithBytes:prefix_sha224 length:sizeof(prefix_ripemd160)];
+            [tData appendData:hashPrefixData];
+            [tData appendData:[m pgpRIPEMD160]];
         }
             break;
         default:

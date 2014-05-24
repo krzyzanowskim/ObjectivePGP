@@ -14,6 +14,8 @@
 #import "PGPSignatureSubpacket.h"
 #import "PGPPublicSubKeyPacket.h"
 #import "PGPSecretSubKeyPacket.m"
+#import "PGPUserAttributePacket.h"
+#import "PGPUserAttributeSubpacket.h"
 #import "PGPSubKey.h"
 
 @implementation PGPKey
@@ -98,9 +100,16 @@
                 primaryKeyID = [(PGPSecretKeyPacket *)packet keyID];
                 self.primaryKeyPacket = packet;
                 break;
-            //case PGPUserAttributePacketTag:
+            case PGPUserAttributePacketTag:
+                if (!user) {
+                    continue;
+                }
+                user.userAttribute = (PGPUserAttributePacket *)packet;
+                break;
             case PGPUserIDPacketTag:
-                user = [[PGPUser alloc] initWithPacket:(PGPUserIDPacket *)packet];
+                if (!user) {
+                    user = [[PGPUser alloc] initWithPacket:(PGPUserIDPacket *)packet];
+                }
                 [self.users addObject:user];
                 break;
             case PGPPublicSubkeyPacketTag:
@@ -186,7 +195,7 @@
         [result appendData:[packet exportPacket:&error]];
         NSAssert(!error,@"Error while export public key");
 
-        //TODO: append checksum
+        //TODO: append checksum?
     }
     return [result copy];
 }

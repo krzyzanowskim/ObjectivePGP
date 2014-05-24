@@ -42,6 +42,8 @@
 		759DBA141915B5BD00305549 /* NSData+PGPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 759DBA131915B5BD00305549 /* NSData+PGPUtils.m */; };
 		759DBA181915CBDF00305549 /* PGPMPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 759DBA171915CBDF00305549 /* PGPMPI.m */; };
 		75AEC4651930B5E400974CBE /* PGPLiteralPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AEC4641930B5E400974CBE /* PGPLiteralPacket.m */; };
+		75AEC4681930FC0B00974CBE /* PGPUserAttributePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AEC4671930FC0B00974CBE /* PGPUserAttributePacket.m */; };
+		75AEC46B1930FD3000974CBE /* PGPUserAttributeSubpacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AEC46A1930FD3000974CBE /* PGPUserAttributeSubpacket.m */; };
 		75C4F0E31920FF5F005401A4 /* PGPCryptoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C4F0E21920FF5F005401A4 /* PGPCryptoUtils.m */; };
 		75C4F0E6192163A3005401A4 /* PGPModificationDetectionCodePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C4F0E5192163A3005401A4 /* PGPModificationDetectionCodePacket.m */; };
 		75DA1358191A4E65004C9C76 /* PGPSecretKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75DA1357191A4E65004C9C76 /* PGPSecretKeyPacket.m */; };
@@ -131,6 +133,10 @@
 		759DBA171915CBDF00305549 /* PGPMPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPMPI.m; sourceTree = "<group>"; };
 		75AEC4631930B5E400974CBE /* PGPLiteralPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPLiteralPacket.h; sourceTree = "<group>"; };
 		75AEC4641930B5E400974CBE /* PGPLiteralPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPLiteralPacket.m; sourceTree = "<group>"; };
+		75AEC4661930FC0B00974CBE /* PGPUserAttributePacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPUserAttributePacket.h; sourceTree = "<group>"; };
+		75AEC4671930FC0B00974CBE /* PGPUserAttributePacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPUserAttributePacket.m; sourceTree = "<group>"; };
+		75AEC4691930FD3000974CBE /* PGPUserAttributeSubpacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPUserAttributeSubpacket.h; sourceTree = "<group>"; };
+		75AEC46A1930FD3000974CBE /* PGPUserAttributeSubpacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPUserAttributeSubpacket.m; sourceTree = "<group>"; };
 		75C4F0E11920FF5F005401A4 /* PGPCryptoUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = PGPCryptoUtils.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		75C4F0E21920FF5F005401A4 /* PGPCryptoUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPCryptoUtils.m; sourceTree = "<group>"; };
 		75C4F0E4192163A3005401A4 /* PGPModificationDetectionCodePacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPModificationDetectionCodePacket.h; sourceTree = "<group>"; };
@@ -325,6 +331,10 @@
 				75C4F0E5192163A3005401A4 /* PGPModificationDetectionCodePacket.m */,
 				75AEC4631930B5E400974CBE /* PGPLiteralPacket.h */,
 				75AEC4641930B5E400974CBE /* PGPLiteralPacket.m */,
+				75AEC4661930FC0B00974CBE /* PGPUserAttributePacket.h */,
+				75AEC4671930FC0B00974CBE /* PGPUserAttributePacket.m */,
+				75AEC4691930FD3000974CBE /* PGPUserAttributeSubpacket.h */,
+				75AEC46A1930FD3000974CBE /* PGPUserAttributeSubpacket.m */,
 			);
 			name = Packets;
 			sourceTree = "<group>";
@@ -461,8 +471,10 @@
 				756299C01914DE1A00C5AD3B /* ObjectivePGP.m in Sources */,
 				759DBA181915CBDF00305549 /* PGPMPI.m in Sources */,
 				75734BDB191853DF00A54D6E /* PGPKeyID.m in Sources */,
+				75AEC4681930FC0B00974CBE /* PGPUserAttributePacket.m in Sources */,
 				7563356D19255C1A00414CCC /* PGPUser.m in Sources */,
 				759DBA141915B5BD00305549 /* NSData+PGPUtils.m in Sources */,
+				75AEC46B1930FD3000974CBE /* PGPUserAttributeSubpacket.m in Sources */,
 				755456C0192843E700E5526B /* PGPArmor.m in Sources */,
 				758F3A1A192935C7009307AD /* NSValue+PGPUtils.m in Sources */,
 				75DA135E191AE1D6004C9C76 /* PGPS2K.m in Sources */,

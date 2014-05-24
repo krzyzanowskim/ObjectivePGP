@@ -13,14 +13,16 @@
 
 @interface PGPSignatureSubpacket ()
 @property (strong, readwrite) id value;
+@property (assign, readwrite) NSRange bodyRange;
 @end
 
 @implementation PGPSignatureSubpacket
 
-- (instancetype) initWithBody:(NSData *)packetBody type:(PGPSignatureSubpacketType)type
+- (instancetype) initWithBody:(NSData *)packetBody type:(PGPSignatureSubpacketType)type range:(NSRange)range
 {
     if (self = [self init]) {
         self->_type = type;
+        self->_bodyRange = range;
         [self parseSubpacketBody:packetBody];
     }
     return self;

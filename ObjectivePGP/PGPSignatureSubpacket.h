@@ -11,12 +11,12 @@
 
 @interface PGPSignatureSubpacket : NSObject
 
-@property (assign) NSRange bodyRange;
+@property (assign, readonly) NSRange bodyRange; // subrange range within parent packet
 
 @property (assign, readonly) PGPSignatureSubpacketType type;
 @property (strong, readonly) id value;
 
-- (instancetype) initWithBody:(NSData *)packetBody type:(PGPSignatureSubpacketType)type;
+- (instancetype) initWithBody:(NSData *)packetBody type:(PGPSignatureSubpacketType)type range:(NSRange)range;
 - (void) parseSubpacketBody:(NSData *)packetBody;
 - (NSData *) exportSubpacket:(NSError *__autoreleasing *)error;
 

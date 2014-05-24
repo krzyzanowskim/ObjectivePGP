@@ -8,6 +8,7 @@
 
 #import "PGPUser.h"
 #import "PGPUserIDPacket.h"
+#import "PGPUserAttributePacket.h"
 
 @interface PGPUser ()
 @property (strong, nonatomic) PGPUserIDPacket *userIDPacket;
@@ -19,7 +20,6 @@
 {
     if (self = [self init]) {
         self.userIDPacket = userPacket;
-        //TODO: self.userAttribute = userPacket.userAttribute;
     }
     return self;
 }
@@ -27,6 +27,21 @@
 - (NSString *)userID
 {
     return self.userIDPacket.userID;
+}
+
+- (NSUInteger)hash
+{
+    NSUInteger prime = 31;
+    NSUInteger result = 1;
+
+    result = prime * result + [_userID hash];
+    result = prime * result + [_userAttribute hash];
+    result = prime * result + [_selfSignatures hash];
+    result = prime * result + [_otherSignatures hash];
+    result = prime * result + [_revocationSignatures hash];
+    result = prime * result + [_userIDPacket hash];
+
+    return result;
 }
 
 - (NSArray *)otherSignatures
