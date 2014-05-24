@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "PGPKey.h"
 #import "PGPPacket.h"
 #import "PGPSignaturePacket.h"
 
@@ -14,7 +15,7 @@
 
 @property (strong, readonly) PGPPacket * keyPacket;
 @property (strong) PGPSignaturePacket *bindingSignature;
-@property (strong) PGPSignaturePacket *revocationSignature;
+@property (strong, nonatomic) PGPSignaturePacket *revocationSignature;
 
 - (instancetype) initWithPacket:(PGPPacket *)packet;
 - (NSArray *) allPackets;

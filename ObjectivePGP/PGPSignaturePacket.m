@@ -167,6 +167,20 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 
 #pragma mark - Sign
 
+- (BOOL)canBeUsedToSign
+{
+    NSArray *subpackets = [self subpackets];
+    for (PGPSignatureSubpacket *subpacket in subpackets) {
+        if (subpacket.type == PGPSignatureSubpacketTypeKeyFlags) {
+            NSArray *flags = subpacket.value;
+            if ([flags containsObject:@(PGPSignatureFlagAllowSignData)]) {
+                return YES;
+            }
+        }
+    }
+    return NO;
+}
+
 // 5.2.4.  Computing Signatures
 // http://tools.ietf.org/html/rfc4880#section-5.2.4
 // @see https://github.com/singpolyma/openpgp-spec/blob/master/key-signatures

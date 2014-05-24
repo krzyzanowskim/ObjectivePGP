@@ -23,6 +23,7 @@
 @property (strong, readonly, nonatomic) NSMutableArray *unhashedSubpackets;
 @property (strong) NSArray *signatureMPIs;
 
+@property (assign, nonatomic, readonly) BOOL canBeUsedToSign;
 
 // A V4 signature hashes the packet body
 // starting from its first field, the version number, through the end
@@ -40,19 +41,11 @@
 @property (strong) NSData *signedHashValueData; // BE
 
 
-/**
- *  Issuer key id
- *
- *  @return PGPKeyID
- */
+// Issuer key id
 - (PGPKeyID *) issuerKeyID;
-
-/**
- *  All subpackets;
- *
- *  @return Array of subpackets
- */
+// All subpackets
 - (NSArray *) subpackets;
+// sign
 - (NSData *) sign:(PGPKey *)secretKey user:(PGPUser *)user;
 
 
