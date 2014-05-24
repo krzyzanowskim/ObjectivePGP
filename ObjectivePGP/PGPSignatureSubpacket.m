@@ -82,6 +82,13 @@
             self.value = [[NSString alloc] initWithData:packetBody encoding:NSUTF8StringEncoding];
         }
             break;
+        case PGPSignatureSubpacketTypeReasonForRevocation:  // NSNumber
+        {
+            UInt8 revocationCode = 0;
+            [packetBody getBytes:&revocationCode length:1];
+            self.value = @(revocationCode);
+        }
+            break;
         case PGPSignatureSubpacketTypeKeyFlags: // NSArray of NSNumber
         {
             //  5.2.3.21.  Key Flags
@@ -236,6 +243,14 @@
         {
             NSString *stringValue = self.value;
             [data appendData:[stringValue dataUsingEncoding:NSUTF8StringEncoding]];
+        }
+            break;
+        case PGPSignatureSubpacketTypeReasonForRevocation:
+        {
+            // 5.2.3.23.  Reason for Revocation
+            NSNumber *revocationCode = self.value;
+            UInt8 revocationCodeByte = [revocationCode unsignedIntValue];
+            [data appendBytes:&revocationCodeByte length:1];
         }
             break;
         case PGPSignatureSubpacketTypeKeyFlags: // NSArray of NSNumber PGPSignatureFlags
