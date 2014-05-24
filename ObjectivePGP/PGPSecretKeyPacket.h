@@ -28,5 +28,6 @@
  */
 - (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error;
 
+- (id)objectForKeyedSubscript:(id <NSCopying>)key;
 
 @end

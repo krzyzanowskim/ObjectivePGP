@@ -14,6 +14,7 @@
 #import "PGPTrustPacket.h"
 #import "PGPSecretKeyPacket.h"
 #import "PGPSecretSubKeyPacket.h"
+#import "PGPLiteralPacket.h"
 #import "PGPModificationDetectionCodePacket.h"
 
 @implementation PGPPacketFactory
@@ -55,6 +56,9 @@
                 break;
             case PGPTrustPacketTag:
                 packet = [[PGPTrustPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+                break;
+            case PGPLiteralDataPacketTag:
+                packet = [[PGPLiteralPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
                 break;
             case PGPSecretKeyPacketTag:
                 packet = [[PGPSecretKeyPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];

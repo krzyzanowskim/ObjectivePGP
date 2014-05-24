@@ -40,6 +40,7 @@ static UInt8 prefix_sha256[] = {
 + (NSData *) encode:(PGPHashAlgorithm)hashAlgorithm m:(NSData *)m emLen:(NSUInteger)emLen error:(NSError * __autoreleasing *)error
 {
     NSMutableData *tData = [NSMutableData data];
+    //TODO: add rest hashes
     switch (hashAlgorithm) {
         case PGPHashMD5:
         {

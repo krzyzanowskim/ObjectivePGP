@@ -30,4 +30,11 @@
     return position;
 }
 
+
+- (NSData *) exportPacket:(NSError *__autoreleasing *)error
+{
+    //TODO: export trust packet
+    return [self.data copy];
+}
+
 @end

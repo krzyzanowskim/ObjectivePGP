@@ -252,4 +252,11 @@
     return [data copy];
 }
 
+#pragma mark - Other
+
+- (id)objectForKeyedSubscript:(id <NSCopying>)key
+{
+    return [self objectForKeyedSubscript:key];
+}
+
 @end

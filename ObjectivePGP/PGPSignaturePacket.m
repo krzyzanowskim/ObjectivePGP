@@ -184,11 +184,11 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     NSMutableData *toSignData = [NSMutableData data];
     switch (self.type) {
 
-        case PGPSignatureGenericCertificationUserIDandPublicKey:
-        case PGPSignaturePersonalCertificationUserIDandPublicKey:
-        case PGPSignatureCasualCertificationUserIDandPublicKey:
-        case PGPSignaturePositiveCertificationUserIDandPublicKey:
-        case PGPSignatureCertificationRevocation:
+        case PGPSignatureGenericCertificationUserIDandPublicKey: // 0x10
+        case PGPSignaturePersonalCertificationUserIDandPublicKey:// 0x11
+        case PGPSignatureCasualCertificationUserIDandPublicKey:  // 0x12
+        case PGPSignaturePositiveCertificationUserIDandPublicKey:// 0x13
+        case PGPSignatureCertificationRevocation:                // 0x28
         {
             // A certification signature (type 0x10 through 0x13)
 
@@ -302,12 +302,12 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     // __ops_start_sig
     // Opisa jest w V3, ale odnosi się również do V4
 
+    NSAssert(secretKey.type == PGPKeySecret, @"Secret key expected");
+    NSAssert(secretKey.primaryKeyPacket.tag == PGPSecretKeyPacketTag || secretKey.primaryKeyPacket.tag == PGPSecretSubkeyPacketTag, @"Private packet expected");
+
     if (secretKey.type == PGPKeyPublic) {
         return nil;
     }
-
-    NSAssert(secretKey.type == PGPKeySecret, @"Private key expected");
-    NSAssert(secretKey.primaryKeyPacket.tag == PGPSecretKeyPacketTag || secretKey.primaryKeyPacket.tag == PGPSecretSubkeyPacketTag, @"Private packet expected");
 
     PGPSecretKeyPacket *secureKeyPacket = (PGPSecretKeyPacket *)secretKey.primaryKeyPacket;
 

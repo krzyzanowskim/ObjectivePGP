@@ -68,10 +68,10 @@
     NSMutableData *keysData = [NSMutableData data];
     for (PGPKey *key in self.oPGP.keys) {
         NSError *error = nil;
-        for (PGPUser *user in key.users) {
-            PGPSignaturePacket *signature = user.selfSignatures[0];
-            [signature sign:key user:user];
-        }
+//        for (PGPUser *user in key.users) {
+//            PGPSignaturePacket *signature = user.selfSignatures[0];
+//            [signature sign:key user:user];
+//        }
         NSData *keyData = [key export:&error];
         XCTAssertNotNil(keyData, @"Can't export key");
         [keysData appendData:keyData];
@@ -82,18 +82,17 @@
     NSLog(@"exported key to %@",exportKeyringPath);
 
     ObjectivePGP *checkPGP = [[ObjectivePGP alloc] init];
-//    loadStatus = [checkPGP loadKeyring:exportKeyringPath];
-//    XCTAssertTrue(loadStatus, @"Exported file should load properly");
-//
-//    for (PGPKey *key in checkPGP.keys) {
-//        PGPSecretKeyPacket *secretKey = (PGPSecretKeyPacket *)key.primaryKeyPacket;
-//        XCTAssert([key.primaryKeyPacket class] == [PGPSecretKeyPacket class],@"Key Should be PGPSecretKeyPacket");
-//        XCTAssertFalse(key.isEncrypted, @"Should not be encrypted");
-//        XCTAssertEqualObjects([secretKey.keyID longKeyString], @"25A233C2952E4E8B", @"Invalid key identifier");
-//    }
-//
-//    [[NSFileManager defaultManager] removeItemAtPath:exportKeyringPath error:nil];
+    loadStatus = [checkPGP loadKeyring:exportKeyringPath];
+    XCTAssertTrue(loadStatus, @"Exported file should load properly");
 
+    for (PGPKey *key in checkPGP.keys) {
+        PGPSecretKeyPacket *secretKey = (PGPSecretKeyPacket *)key.primaryKeyPacket;
+        XCTAssert([key.primaryKeyPacket class] == [PGPSecretKeyPacket class],@"Key Should be PGPSecretKeyPacket");
+        XCTAssertFalse(key.isEncrypted, @"Should not be encrypted");
+        XCTAssertEqualObjects([secretKey.keyID longKeyString], @"25A233C2952E4E8B", @"Invalid key identifier");
+    }
+
+    [[NSFileManager defaultManager] removeItemAtPath:exportKeyringPath error:nil];
 }
 
 @end
