@@ -56,7 +56,7 @@
 {
     NSFileManager *fm = [NSFileManager defaultManager];
 
-    if (!path) {
+    if (!path || self.keys.count == 0) {
         return NO;
     }
 

@@ -13,6 +13,7 @@
 
 @interface PGPMPI ()
 @property (assign, readwrite) BIGNUM *bignumRef;
+@property (assign, readwrite) NSUInteger length;
 @end
 
 @implementation PGPMPI
@@ -21,21 +22,21 @@
 {
     if (self = [self init]) {
         self.bignumRef = BN_bin2bn(dataToMPI.bytes, dataToMPI.length, NULL);
-        _length = dataToMPI.length + 2;
+        self.length = dataToMPI.length + 2;
     }
     return self;
 }
 
 
-- (instancetype) initWithMPIData:(NSData *)data atPosition:(NSUInteger)position
+- (instancetype) initWithMPIData:(NSData *)mpiData atPosition:(NSUInteger)position
 {
     if (self = [self init]) {
         UInt16 bitsBE = 0;
-        [data getBytes:&bitsBE range:(NSRange){position,2}];
+        [mpiData getBytes:&bitsBE range:(NSRange){position,2}];
         UInt16 bits = CFSwapInt16BigToHost(bitsBE);
         NSUInteger mpiBytesLength = (bits + 7) / 8;
 
-        NSData *intdata = [data subdataWithRange:(NSRange){position + 2, mpiBytesLength}];
+        NSData *intdata = [mpiData subdataWithRange:(NSRange){position + 2, mpiBytesLength}];
         self.bignumRef = BN_bin2bn(intdata.bytes, (int)intdata.length, NULL);
         // Additinal rule: The size of an MPI is ((MPI.length + 7) / 8) + 2 octets.
         _length = intdata.length + 2;
@@ -75,6 +76,7 @@
 {
     if (self.bignumRef != NULL) {
         BN_clear_free(self.bignumRef);
+        self.bignumRef = nil;
     }
 }
 
