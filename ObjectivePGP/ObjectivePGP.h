@@ -26,6 +26,25 @@
  */
 - (BOOL) loadKeyring:(NSString *)path;
 
+/**
+ *  Save keys to file. If file exsits, append data.
+ *
+ *  @param type Secret or public
+ *  @param path File path
+ *
+ *  @return YES on success
+ */
+- (BOOL) saveKeys:(PGPKeyType)type toFile:(NSString *)path;
+
+/**
+ *  Sign data with default hash algorithm
+ *
+ *  @param dataToSign Data to sign
+ *  @param secretKey  secret key to use
+ *
+ *  @return Signature
+ */
 - (NSData *) signData:(NSData *)dataToSign withSecretKey:(PGPKey *)secretKey;
+
 
 @end

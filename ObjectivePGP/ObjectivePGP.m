@@ -52,6 +52,34 @@
     return YES;
 }
 
+- (BOOL) saveKeys:(PGPKeyType)type toFile:(NSString *)path
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+
+    if (!path) {
+        return NO;
+    }
+
+    for (PGPKey *key in self.keys) {
+        if (key.type == type) {
+            NSError *error = nil;
+            NSData *keyData = [key export:&error];
+            if (error) {
+                return NO;
+            }
+            if (![fm fileExistsAtPath:path]) {
+                [fm createFileAtPath:path contents:keyData attributes:nil];
+            } else {
+                NSFileHandle *fileHandle = [NSFileHandle fileHandleForUpdatingAtPath:path];
+                [fileHandle seekToEndOfFile];
+                [fileHandle writeData:keyData];
+                [fileHandle closeFile];
+            }
+        }
+    }
+    return YES;
+}
+
 - (NSData *) signData:(NSData *)dataToSign withSecretKey:(PGPKey *)secretKey
 {
     NSData *signaturePacketData = nil;
