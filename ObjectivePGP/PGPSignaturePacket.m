@@ -256,54 +256,24 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     // Calculate hash value
     NSData *hashData = [toHashData pgpHashedWithAlgorithm:self.hashAlgoritm];
 
-    // Two-octet field holding the left 16 bits of the signed hash value.
-    NSData *signedHashValue = [hashData subdataWithRange:(NSRange){0,2}];
-    NSLog(@"signedHashValue %@",signedHashValue);
-
-    //    == Computing Signatures ==
+    // == Computing Signatures ==
     // Packet body
     NSData *calculatedSignatureMPI = [self computeSignature:secretKey data:toHashData];
 
     NSMutableData *signedPacketBody = [NSMutableData data];
     [signedPacketBody appendData:signedPartData];
 
-    //TODO: refactor, this is NSDAta of unhashed subpacket - used in few places
-    //-->
-    // add unhashed PGPSignatureSubpacketTypeIssuer subpacket
-    NSMutableArray *signatureUnhashedSubpackets = [NSMutableArray array];
-
-    // issue subpacket is required
+    // add unhashed PGPSignatureSubpacketTypeIssuer subpacket - REQUIRED
     PGPKeyID *keyid = [[PGPKeyID alloc] initWithFingerprint:primaryKeyPacket.fingerprint];
     PGPSignatureSubpacket *issuerSubpacket = [PGPSignatureSubpacket subpacketWithType:PGPSignatureSubpacketTypeIssuerKeyID andValue:keyid];
-    [signatureUnhashedSubpackets addObject:issuerSubpacket];
-
-    if (signatureUnhashedSubpackets.count > 0) {
-        NSMutableData *unhashedSubpackets = [NSMutableData data];
-        // Hashed subpacket data set (zero or more subpackets)
-        for (PGPSignatureSubpacket *subpacket in signatureUnhashedSubpackets) {
-            NSError *error = nil;
-            NSData *subpacketData = [subpacket exportSubpacket:&error];
-            if (subpacketData && !error) {
-                [unhashedSubpackets appendData:subpacketData];
-            }
-        }
-        // Two-octet scalar octet count for following hashed subpacket data.
-        UInt16 unhashedOctetCountBE = CFSwapInt16HostToBig(unhashedSubpackets.length);
-        [signedPacketBody appendBytes:&unhashedOctetCountBE length:2];
-        // Subpackets
-        [signedPacketBody appendData:unhashedSubpackets];
-    } else {
-        UInt16 zeroZero = 0;
-        [signedPacketBody appendBytes:&zeroZero length:2];
-    }
-    //<--
+    [signedPacketBody appendData:[self buildSubpacketsCollectionData:@[issuerSubpacket]]];
 
     // Checksum
+    // Two-octet field holding the left 16 bits of the signed hash value.
+    NSData *signedHashValue = [hashData subdataWithRange:(NSRange){0,2}];
     [signedPacketBody appendData:signedHashValue];
     // MPI
     [signedPacketBody appendData:calculatedSignatureMPI];
-
-
     // Build final packet with header
     NSData *signedPacketHeader = [self buildHeaderData:signedPacketBody];
     NSMutableData *signedPacket = [NSMutableData dataWithData:signedPacketHeader];
