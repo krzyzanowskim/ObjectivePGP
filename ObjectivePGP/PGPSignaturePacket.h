@@ -32,7 +32,6 @@
 // hash algorithm, the hashed subpacket length, and the hashed
 // subpacket body.
 @property (strong) NSData *signedPartData;
-//@property (strong) NSData *signature;
 
 // Two-octet field holding left 16 bits of signed hash value. (not signatureData, but full data
 // The concatenation of the data being signed and the
@@ -40,6 +39,8 @@
 // The resulting hash value is what is signed.
 @property (strong) NSData *signedHashValueData; // BE
 
+
++ (PGPSignaturePacket *) signPacket:(PGPSignatureType)type publicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm;
 
 // Issuer key id
 - (PGPKeyID *) issuerKeyID;
@@ -55,7 +56,7 @@
  *
  *  @return Signature packet data
  */
-- (NSData *) signData:(PGPKey *)secretKey data:(NSData *)inputData userID:(NSString *)userID;
+- (NSData *) signData:(NSData *)inputData  secretKey:(PGPKey *)secretKey userID:(NSString *)userID;
 
 
 @end

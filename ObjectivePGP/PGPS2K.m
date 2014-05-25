@@ -40,7 +40,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
     // 3.7.1.1.  Simple S2K
 
     // Octet  1:        hash algorithm
-    [data getBytes:&_algorithm range:(NSRange) {position,1}];
+    [data getBytes:&_hashAlgorithm range:(NSRange) {position,1}];
     position = position + 1;
 
     // Octets 2-9:      8-octet salt value
@@ -69,7 +69,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
 {
     NSMutableData *data = [NSMutableData data];
     [data appendBytes:&_specifier length:1];
-    [data appendBytes:&_algorithm length:1];
+    [data appendBytes:&_hashAlgorithm length:1];
 
     if (_specifier != PGPS2KSpecifierSimple) {
         [data appendData:self.salt];
@@ -97,7 +97,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
     NSMutableData *result = [NSMutableData data];
     NSMutableData *toHashData = [NSMutableData data];
     NSData *passphraseData = [passphrase dataUsingEncoding:NSUTF8StringEncoding];
-    NSUInteger hashSize = [PGPCryptoUtils hashSizeOfHashAlhorithm:self.algorithm]; // SHA hash size
+    NSUInteger hashSize = [PGPCryptoUtils hashSizeOfHashAlhorithm:self.hashAlgorithm]; // SHA hash size
 
     switch (self.specifier) {
         case PGPS2KSpecifierSimple:
@@ -155,7 +155,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
             break;
     }
 
-    NSData *hash = [toHashData pgpHashedWithAlgorithm:self.algorithm];
+    NSData *hash = [toHashData pgpHashedWithAlgorithm:self.hashAlgorithm];
     [result appendData:hash];
 
     return [result copy];

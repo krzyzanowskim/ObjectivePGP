@@ -43,6 +43,31 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     return self;
 }
 
++ (PGPSignaturePacket *) signPacket:(PGPSignatureType)type publicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm
+{
+    PGPSignaturePacket *signaturePacket = [[PGPSignaturePacket alloc] init];
+
+//    switch (key.type) {
+//        case PGPKeyPublic:
+//        {
+//            PGPPublicKeyPacket *packet = (PGPPublicKeyPacket *)key.signingKeyPacket;
+//            signaturePacket.publicKeyAlgorithm = packet.algorithm;
+//        }
+//            break;
+//        case PGPKeySecret:
+//        {
+//            PGPSecretKeyPacket *packet = (PGPSecretKeyPacket *)key.signingKeyPacket;
+//            signaturePacket.publicKeyAlgorithm = packet.algorithm;
+//        }
+//            break;
+//        default:
+//            break;
+//    }
+    signaturePacket.publicKeyAlgorithm = publicKeyAlgorithm;
+    signaturePacket.hashAlgoritm = hashAlgorithm;
+    return signaturePacket;
+}
+
 - (NSMutableArray *)hashedSubpackets
 {
     if (!_hashedSubpackets) {
@@ -159,7 +184,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 // 5.2.4.  Computing Signatures
 // http://tools.ietf.org/html/rfc4880#section-5.2.4
 // @see https://github.com/singpolyma/openpgp-spec/blob/master/key-signatures
-- (NSData *) signData:(PGPKey *)secretKey data:(NSData *)inputData userID:(NSString *)userID
+- (NSData *) signData:(NSData *)inputData  secretKey:(PGPKey *)secretKey userID:(NSString *)userID
 {
     NSAssert(secretKey.type == PGPKeySecret,@"Need secret key");
 

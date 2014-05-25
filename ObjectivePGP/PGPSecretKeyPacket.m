@@ -99,7 +99,7 @@
         
         self.s2k = [[PGPS2K alloc] init]; // not really parsed s2k
         self.s2k.specifier = PGPS2KSpecifierSimple;
-        self.s2k.algorithm = PGPHashMD5;
+        self.s2k.hashAlgorithm = PGPHashMD5;
     }
 
     NSData *encryptedData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];

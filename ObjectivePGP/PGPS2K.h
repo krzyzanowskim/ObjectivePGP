@@ -12,7 +12,7 @@
 @interface PGPS2K : NSObject
 
 @property (assign) PGPS2KSpecifier specifier;
-@property (assign) PGPHashAlgorithm algorithm;
+@property (assign) PGPHashAlgorithm hashAlgorithm;
 @property (retain) NSData *salt; // 8 bytes
 @property (assign) UInt32 uncodedCount;
 @property (assign, readonly) UInt32 codedCount;

@@ -111,12 +111,10 @@
         XCTAssertNotNil(keyData, @"Can't export key");
         [keysData appendData:keyData];
 
-        // Sign with key
-        PGPSignaturePacket *binarySign = [[PGPSignaturePacket alloc] init];
-        binarySign.type               = PGPSignatureBinaryDocument;
-        binarySign.publicKeyAlgorithm = PGPPublicKeyAlgorithmRSA;
-        binarySign.hashAlgoritm       = PGPHashSHA1;
-        NSData *signatureData = [binarySign signData:key data:[NSData dataWithContentsOfFile:self.keyringPath] userIDPacket:nil];
+//        // Sign with key
+        PGPSignaturePacket *binarySignaturePacket = [PGPSignaturePacket signPacket:PGPSignatureBinaryDocument publicKeyAlgorithm:PGPPublicKeyAlgorithmRSA hashAlgorithm:PGPHashSHA1];
+        // need secret key to sign
+        NSData *signatureData = [binarySignaturePacket signData:[NSData dataWithContentsOfFile:self.keyringPath] secretKey:key userID:nil];
         [signatureData writeToFile:[tmpDirectoryPath stringByAppendingPathComponent:@"signature.sig"] atomically:YES];
 
         [[NSFileManager defaultManager] copyItemAtPath:self.keyringPath toPath:[tmpDirectoryPath stringByAppendingPathComponent:@"signed_file.bin"] error:nil];
