@@ -62,7 +62,7 @@
     PGPSignaturePacket *signaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureBinaryDocument
                                                                 hashAlgorithm:preferedHashAlgorithm];
 
-    [signaturePacket createSignatureForData:dataToSign secretKey:secretKey];
+    [signaturePacket signData:dataToSign secretKey:secretKey];
     signaturePacketData = [signaturePacket exportPacket:nil];
     return signaturePacketData;
 }

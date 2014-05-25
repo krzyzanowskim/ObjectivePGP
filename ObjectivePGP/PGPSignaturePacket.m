@@ -169,12 +169,12 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 // 5.2.4.  Computing Signatures
 // http://tools.ietf.org/html/rfc4880#section-5.2.4
 // @see https://github.com/singpolyma/openpgp-spec/blob/master/key-signatures
-- (NSData *) createSignatureForData:(NSData *)inputData  secretKey:(PGPKey *)secretKey
+- (void) signData:(NSData *)inputData  secretKey:(PGPKey *)secretKey
 {
-    return [self createSignatureForData:inputData secretKey:secretKey userID:nil];
+    return [self signData:inputData secretKey:secretKey userID:nil];
 }
 
-- (NSData *) createSignatureForData:(NSData *)inputData  secretKey:(PGPKey *)secretKey userID:(NSString *)userID
+- (void) signData:(NSData *)inputData  secretKey:(PGPKey *)secretKey userID:(NSString *)userID
 {
     NSAssert(secretKey.type == PGPKeySecret,@"Need secret key");
     NSAssert([secretKey.primaryKeyPacket isKindOfClass:[PGPSecretKeyPacket class]], @"Signing key packet not found");
@@ -182,7 +182,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     PGPSecretKeyPacket *signingKeyPacket = (PGPSecretKeyPacket *)secretKey.signingKeyPacket;
     NSAssert(signingKeyPacket, @"No signing signature found");
     if (!signingKeyPacket) {
-        return nil;
+        return;
     }
 
     // setup public key algorithm from secret key packet
@@ -242,7 +242,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
             }
 
             if (!userIsValid) {
-                return nil;
+                return;
             }
 
             if (userID.length > 0) {
@@ -281,31 +281,16 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     // Packet signature MPIs
     self.signatureMPIs = [self computeSignature:secretKey data:toHashData];
 
-    NSMutableData *signedPacketBody = [NSMutableData data];
-    [signedPacketBody appendData:signedPartData];
-
     // add unhashed PGPSignatureSubpacketTypeIssuer subpacket - REQUIRED
     PGPKeyID *keyid = [[PGPKeyID alloc] initWithFingerprint:signingKeyPacket.fingerprint];
     PGPSignatureSubpacket *issuerSubpacket = [PGPSignatureSubpacket subpacketWithType:PGPSignatureSubpacketTypeIssuerKeyID andValue:keyid];
     self.unhashedSubpackets = @[issuerSubpacket];
 
-    [signedPacketBody appendData:[self buildSubpacketsCollectionData:self.unhashedSubpackets]];
-
     // Checksum
     // Two-octet field holding the left 16 bits of the signed hash value.
     NSData *signedHashValue = [hashData subdataWithRange:(NSRange){0,2}];
     self.signedHashValueData = signedHashValue;
-    [signedPacketBody appendData:signedHashValue];
-    // add MPI
-    for (PGPMPI *mpi in self.signatureMPIs) {
-        [signedPacketBody appendData:[mpi buildData]];
-    }
     // Build final packet with header
-    NSData *signedPacketHeader = [self buildHeaderData:signedPacketBody];
-    NSMutableData *signedPacket = [NSMutableData dataWithData:signedPacketHeader];
-    [signedPacket appendData:signedPacketBody];
-
-    return [signedPacket copy];
 }
 
 - (NSArray *) computeSignature:(PGPKey *)secretKey data:(NSData *)toHashData
