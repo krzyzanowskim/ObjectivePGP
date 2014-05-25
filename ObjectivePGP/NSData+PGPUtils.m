@@ -220,4 +220,38 @@
     return outData;
 }
 
+- (NSData *) pgpHashedWithAlgorithm:(PGPHashAlgorithm)hashAlgorithm
+{
+    NSData *hashData = nil;
+    switch (hashAlgorithm) {
+        case PGPHashMD5:
+            hashData = [self pgpMD5];
+            break;
+        case PGPHashSHA1:
+            hashData = [self pgpSHA1];
+            break;
+        case PGPHashSHA224:
+            hashData = [self pgpSHA224];
+            break;
+        case PGPHashSHA256:
+            hashData = [self pgpSHA256];
+            break;
+        case PGPHashSHA384:
+            hashData = [self pgpSHA384];
+            break;
+        case PGPHashSHA512:
+            hashData = [self pgpSHA512];
+            break;
+        case PGPHashRIPEMD160:
+            hashData = [self pgpRIPEMD160];
+            break;
+
+        default:
+            NSAssert(false, @"hash algorithm not supported");
+            break;
+    }
+    return hashData;
+}
+
+
 @end

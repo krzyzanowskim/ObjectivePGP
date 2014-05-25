@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "PGPTypes.h"
 
 @interface NSData (PGPUtils)
 
@@ -19,5 +20,7 @@
 - (NSData*) pgpSHA384;
 - (NSData*) pgpSHA512;
 - (NSData*) pgpRIPEMD160;
+
+- (NSData *) pgpHashedWithAlgorithm:(PGPHashAlgorithm)hashAlgorithm;
 
 @end

@@ -278,33 +278,8 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     [toHashData appendData:signedPartData];
     [toHashData appendData:trailerData];
 
-    NSData *hashData = nil;
-    switch (self.hashAlgoritm) {
-        case PGPHashMD5:
-            hashData = [toHashData pgpMD5];
-            break;
-        case PGPHashSHA1:
-            hashData = [toHashData pgpSHA1];
-            break;
-        case PGPHashSHA224:
-            hashData = [toHashData pgpSHA224];
-            break;
-        case PGPHashSHA256:
-            hashData = [toHashData pgpSHA256];
-            break;
-        case PGPHashSHA384:
-            hashData = [toHashData pgpSHA384];
-            break;
-        case PGPHashSHA512:
-            hashData = [toHashData pgpSHA512];
-            break;
-        case PGPHashRIPEMD160:
-            hashData = [toHashData pgpRIPEMD160];
-            break;
-
-        default:
-            break;
-    }
+    // Calculate hash value
+    NSData *hashData = [toHashData pgpHashedWithAlgorithm:self.hashAlgoritm];
 
     // Two-octet field holding the left 16 bits of the signed hash value.
     NSData *signedHashValue = [hashData subdataWithRange:(NSRange){0,2}];

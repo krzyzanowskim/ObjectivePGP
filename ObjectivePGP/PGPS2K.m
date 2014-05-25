@@ -155,31 +155,8 @@ static const unsigned int PGP_SALT_SIZE = 8;
             break;
     }
 
-    switch (self.algorithm) {
-        case PGPHashMD5:
-            [result appendData:[toHashData pgpMD5]];
-            break;
-        case PGPHashSHA1:
-            [result appendData:[toHashData pgpSHA1]];
-            break;
-        case PGPHashSHA224:
-            [result appendData:[toHashData pgpSHA224]];
-            break;
-        case PGPHashSHA256:
-            [result appendData:[toHashData pgpSHA256]];
-            break;
-        case PGPHashSHA384:
-            [result appendData:[toHashData pgpSHA384]];
-            break;
-        case PGPHashSHA512:
-            [result appendData:[toHashData pgpSHA512]];
-            break;
-        case PGPHashRIPEMD160:
-            [result appendData:[toHashData pgpRIPEMD160]];
-        default:
-            NSAssert(YES, @"Hash algorithm not supported");
-            break;
-    }
+    NSData *hash = [toHashData pgpHashedWithAlgorithm:self.algorithm];
+    [result appendData:hash];
 
     return [result copy];
 }
