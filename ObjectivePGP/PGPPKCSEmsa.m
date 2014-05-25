@@ -76,7 +76,7 @@ static UInt8 prefix_ripemd160[] = {
         {
             NSData *hashPrefixData = [NSData dataWithBytes:prefix_sha1 length:sizeof(prefix_sha1)];
             [tData appendData:hashPrefixData];
-            [tData appendData:[m pgpMD5]];
+            [tData appendData:[m pgpSHA1]];
         }
             break;
         case PGPHashSHA224:

@@ -416,8 +416,8 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 
 
     UInt8 *outbuf = calloc(RSA_size(rsa), sizeof(UInt8));
-    int n = RSA_private_encrypt(keysize, (UInt8 *)em.bytes, outbuf, rsa, RSA_NO_PADDING);
-    if (n < 0) {
+    int t = RSA_private_encrypt(keysize, (UInt8 *)em.bytes, outbuf, rsa, RSA_NO_PADDING);
+    if (t < 0) {
         unsigned long err_code = ERR_get_error();
         char *errBuf = calloc(512, sizeof(UInt8));
         ERR_error_string(err_code, errBuf);
@@ -425,7 +425,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
         free(errBuf);
         return nil;
     }
-    NSData *outData = [NSData dataWithBytes:outbuf length:n];
+    NSData *outData = [NSData dataWithBytes:outbuf length:t];
 
 	//rsa->n = rsa->d = rsa->p = rsa->q = NULL;
     free(outbuf);

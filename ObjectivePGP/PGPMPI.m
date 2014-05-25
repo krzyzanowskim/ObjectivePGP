@@ -37,7 +37,6 @@
 
         NSData *intdata = [data subdataWithRange:(NSRange){position + 2, mpiBytesLength}];
         self.bignumRef = BN_bin2bn(intdata.bytes, (int)intdata.length, NULL);
-
         // Additinal rule: The size of an MPI is ((MPI.length + 7) / 8) + 2 octets.
         _length = intdata.length + 2;
     }
@@ -51,15 +50,18 @@
     }
 
     NSMutableData *outData = [NSMutableData data];
+
+    // length
     UInt16 bits = BN_num_bits(self.bignumRef);
-
-    NSUInteger mpiBytesLength = (bits + 7) / 8;
-    UInt8 *buf = calloc(mpiBytesLength, sizeof(UInt8));
-    UInt16 bytes = BN_bn2bin(self.bignumRef, buf);
-
-    int bitsBE = CFSwapInt16HostToBig(bits);
+    UInt16 bitsBE = CFSwapInt16HostToBig(bits);
     [outData appendBytes:&bitsBE length:2];
+    
+    // mpi
+    UInt8 *buf = calloc(BN_num_bytes(self.bignumRef), sizeof(UInt8));
+    UInt16 bytes = (bits + 7) / 8;
+    BN_bn2bin(self.bignumRef, buf);
     [outData appendBytes:buf length:bytes];
+    free(buf);
 
     return [outData copy];
 }
