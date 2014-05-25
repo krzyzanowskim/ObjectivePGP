@@ -312,7 +312,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 
     //    == Computing Signatures ==
     // Packet body
-    NSData *calculatedSignatureMPI = [self calcSign:secretKey data:toHashData];
+    NSData *calculatedSignatureMPI = [self computeSignature:secretKey data:toHashData];
 
     NSMutableData *signedPacketBody = [NSMutableData data];
     [signedPacketBody appendData:signedPartData];
@@ -364,15 +364,9 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     return [signedPacket copy];
 }
 
-- (NSData *) calcSign:(PGPKey *)secretKey data:(NSData *)toHashData
+- (NSData *) computeSignature:(PGPKey *)secretKey data:(NSData *)toHashData
 {
-    // TODO: wielkie TODO: 5.2.2.
-    // rsa_sign z prefixa itp, jak opisane dla wersji 3 ??? to nie ma sensu
-    // a jednak tak
-    // see Create a V4 public key signature over some cleartext.
-    // __ops_start_sig
-    // Opisa jest w V3, ale odnosi się również do V4
-
+    NSAssert(self.version == 4, @"Need V4");
     NSAssert(secretKey.type == PGPKeySecret, @"Secret key expected");
     NSAssert(secretKey.primaryKeyPacket.tag == PGPSecretKeyPacketTag || secretKey.primaryKeyPacket.tag == PGPSecretSubkeyPacketTag, @"Private packet expected");
 
@@ -381,61 +375,93 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     }
 
     PGPSecretKeyPacket *secureKeyPacket = (PGPSecretKeyPacket *)secretKey.primaryKeyPacket;
+    NSData *calculatedData = nil;
 
-    RSA *rsa = RSA_new();
-    rsa->n = BN_dup([(PGPMPI*)secureKeyPacket[@"publicMPI.N"] bignumRef]);
-	rsa->d = BN_dup([(PGPMPI*)secureKeyPacket[@"secretMPI.D"] bignumRef]);
-	rsa->p = BN_dup([(PGPMPI*)secureKeyPacket[@"secretMPI.Q"] bignumRef]);	/* p and q are round the other way in openssl */
-	rsa->q = BN_dup([(PGPMPI*)secureKeyPacket[@"secretMPI.P"] bignumRef]);
-    rsa->e = BN_dup([(PGPMPI*)secureKeyPacket[@"publicMPI.E"] bignumRef]);
+    switch (self.publicKeyAlgorithm) {
+        case PGPPublicKeyAlgorithmRSA:
+        case PGPPublicKeyAlgorithmRSAEncryptOnly:
+        case PGPPublicKeyAlgorithmRSASignOnly:
+        {
+            RSA *rsa = RSA_new();
+            if (!rsa) {
+                return nil;
+            }
 
-    int keysize = (BN_num_bits(rsa->n) + 7) / 8;
+            rsa->n = BN_dup([(PGPMPI*)secureKeyPacket[@"publicMPI.N"] bignumRef]);
+            rsa->d = BN_dup([(PGPMPI*)secureKeyPacket[@"secretMPI.D"] bignumRef]);
+            rsa->p = BN_dup([(PGPMPI*)secureKeyPacket[@"secretMPI.Q"] bignumRef]);	/* p and q are round the other way in openssl */
+            rsa->q = BN_dup([(PGPMPI*)secureKeyPacket[@"secretMPI.P"] bignumRef]);
+            rsa->e = BN_dup([(PGPMPI*)secureKeyPacket[@"publicMPI.E"] bignumRef]);
 
-    // With RSA signatures, the hash value is encoded using PKCS#1 1.5
-    // toHashData = [@"Plaintext\n" dataUsingEncoding:NSUTF8StringEncoding];
-    NSData *em = [PGPPKCSEmsa encode:self.hashAlgoritm m:toHashData emLen:keysize error:nil];
+            int keysize = (BN_num_bits(rsa->n) + 7) / 8;
 
-    /* If this isn't set, it's very likely that the programmer hasn't */
-	/* decrypted the secret key. RSA_check_key segfaults in that case. */
-	/* Use __ops_decrypt_seckey() to do that. */
-	if (rsa->d == NULL) {
-		return nil;
-	}
+            // With RSA signatures, the hash value is encoded using PKCS#1 1.5
+            // toHashData = [@"Plaintext\n" dataUsingEncoding:NSUTF8StringEncoding];
+            NSData *em = [PGPPKCSEmsa encode:self.hashAlgoritm m:toHashData emLen:keysize error:nil];
 
-    ERR_load_crypto_strings();
-    SSL_load_error_strings();
+            /* If this isn't set, it's very likely that the programmer hasn't */
+            /* decrypted the secret key. RSA_check_key segfaults in that case. */
+            /* Use __ops_decrypt_seckey() to do that. */
+            if (rsa->d == NULL) {
+                return nil;
+            }
 
-    if (RSA_check_key(rsa) != 1) {
-        unsigned long err_code = ERR_get_error();
-        char *errBuf = calloc(512, sizeof(UInt8));
-        ERR_error_string(err_code, errBuf);
-        printf("%s\n",errBuf);
-        free(errBuf);
-		return nil;
-	}
+            if (RSA_check_key(rsa) != 1) {
+                ERR_load_crypto_strings();
+                SSL_load_error_strings();
+
+                unsigned long err_code = ERR_get_error();
+                char *errBuf = calloc(512, sizeof(UInt8));
+                ERR_error_string(err_code, errBuf);
+                NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
+                free(errBuf);
+
+                ERR_free_strings();
+                return nil;
+            }
 
 
-    UInt8 *outbuf = calloc(RSA_size(rsa), sizeof(UInt8));
-    int t = RSA_private_encrypt(keysize, (UInt8 *)em.bytes, outbuf, rsa, RSA_NO_PADDING);
-    if (t < 0) {
-        unsigned long err_code = ERR_get_error();
-        char *errBuf = calloc(512, sizeof(UInt8));
-        ERR_error_string(err_code, errBuf);
-        printf("%s\n",errBuf);
-        free(errBuf);
-        return nil;
+            UInt8 *outbuf = calloc(RSA_size(rsa), sizeof(UInt8));
+            int t = RSA_private_encrypt(keysize, (UInt8 *)em.bytes, outbuf, rsa, RSA_NO_PADDING);
+            if (t < 0) {
+                ERR_load_crypto_strings();
+                SSL_load_error_strings();
+
+                unsigned long err_code = ERR_get_error();
+                char *errBuf = calloc(512, sizeof(UInt8));
+                ERR_error_string(err_code, errBuf);
+                NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
+                free(errBuf);
+                
+                ERR_free_strings();
+                return nil;
+            }
+
+            calculatedData = [NSData dataWithBytes:outbuf length:t];
+            
+            rsa->n = rsa->d = rsa->p = rsa->q = NULL;
+            
+            if (outbuf) {
+                free(outbuf);
+            }
+            
+            if (rsa) {
+                RSA_free(rsa);
+            }
+        }
+            break;
+
+        default:
+            NSLog(@"algorithm not supported");
+            return nil;
+            break;
     }
-    NSData *outData = [NSData dataWithBytes:outbuf length:t];
 
-	//rsa->n = rsa->d = rsa->p = rsa->q = NULL;
-    free(outbuf);
-	RSA_free(rsa);
 
-    ERR_free_strings();
-
+    NSAssert(calculatedData, @"Missing calculated data");
 
     // build mpi
-    PGPMPI *mpi = [[PGPMPI alloc] initWithData:outData];
+    PGPMPI *mpi = [[PGPMPI alloc] initWithData:calculatedData];
     return [mpi buildData];
 }
 

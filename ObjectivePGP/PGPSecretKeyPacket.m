@@ -34,7 +34,7 @@
 @end
 
 @interface PGPSecretKeyPacket ()
-@property (strong, readwrite) NSData *encryptedPartData;
+@property (strong, readwrite) NSData *encryptedPartData; // -> secretMPI after decrypt
 @property (strong, readwrite) NSData *ivData;
 @property (strong, readwrite) NSArray *secretMPI;
 @end
@@ -106,7 +106,7 @@
     if (self.isEncrypted) {
         position = position + [self parseEncryptedPart:encryptedData error:error];
     } else {
-        position = position + [self parseCleartextPart:encryptedData error:error];
+        position = position + [self parseUnencryptedPart:encryptedData error:error];
     }
 
     return position;
@@ -153,14 +153,15 @@
 }
 
 /**
- *  Cleartext part
+ *  Cleartext part, parse cleartext or unencrypted data
+ *  Store decrypted values in secretMPI array
  *
  *  @param packetBody packet data
  *  @param position   position offset
  *
  *  @return length
  */
-- (NSUInteger) parseCleartextPart:(NSData *)data error:(NSError **)error
+- (NSUInteger) parseUnencryptedPart:(NSData *)data error:(NSError **)error
 {
     NSUInteger position = 0;
 
@@ -390,7 +391,7 @@
 
     // now read mpis
     if (decryptedData) {
-        [self parseCleartextPart:decryptedData error:error];
+        [self parseUnencryptedPart:decryptedData error:error];
         if (*error) {
             return NO;
         }
