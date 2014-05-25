@@ -18,7 +18,8 @@
  */
 @property (assign) NSUInteger length;
 
-- (instancetype) initWithData:(NSData *)data atPosition:(NSUInteger)position;
+- (instancetype) initWithMPIData:(NSData *)data atPosition:(NSUInteger)position;
+- (instancetype) initWithData:(NSData *)dataToMPI;
 - (NSData *) buildData;
 
 @end

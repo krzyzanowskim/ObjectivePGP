@@ -41,6 +41,13 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
 - (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error;
 
 /**
+ *  Signing key packet
+ *
+ *  @return PGPSignaturePacket that can be used to signing
+ */
+- (PGPSignaturePacket *) signingKeyPacket;
+
+/**
  *  Export to transferable key packets sequence
  *
  *  @return Data

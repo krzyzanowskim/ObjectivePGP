@@ -10,10 +10,6 @@
 #import "PGPUserIDPacket.h"
 #import "PGPUserAttributePacket.h"
 
-@interface PGPUser ()
-@property (strong, nonatomic) PGPUserIDPacket *userIDPacket;
-@end
-
 @implementation PGPUser
 
 - (instancetype) initWithPacket:(PGPUserIDPacket *)userPacket

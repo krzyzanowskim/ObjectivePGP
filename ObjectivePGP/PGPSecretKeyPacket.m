@@ -215,22 +215,22 @@
         case PGPPublicKeyAlgorithmRSASignOnly:
         {
             // multiprecision integer (MPI) of RSA secret exponent d.
-            PGPMPI *mpiD = [[PGPMPI alloc] initWithData:data atPosition:position];
+            PGPMPI *mpiD = [[PGPMPI alloc] initWithMPIData:data atPosition:position];
             mpiD.identifier = @"D";
             position = position + mpiD.length;
 
             // MPI of RSA secret prime value p.
-            PGPMPI *mpiP = [[PGPMPI alloc] initWithData:data atPosition:position];
+            PGPMPI *mpiP = [[PGPMPI alloc] initWithMPIData:data atPosition:position];
             mpiP.identifier = @"P";
             position = position + mpiP.length;
 
             // MPI of RSA secret prime value q (p < q).
-            PGPMPI *mpiQ = [[PGPMPI alloc] initWithData:data atPosition:position];
+            PGPMPI *mpiQ = [[PGPMPI alloc] initWithMPIData:data atPosition:position];
             mpiQ.identifier = @"Q";
             position = position + mpiQ.length;
 
             // MPI of u, the multiplicative inverse of p, mod q.
-            PGPMPI *mpiU = [[PGPMPI alloc] initWithData:data atPosition:position];
+            PGPMPI *mpiU = [[PGPMPI alloc] initWithMPIData:data atPosition:position];
             mpiU.identifier = @"U";
             position = position + mpiU.length;
 
@@ -240,7 +240,7 @@
         case PGPPublicKeyAlgorithmDSA:
         {
             // MPI of DSA secret exponent x.
-            PGPMPI *mpiX = [[PGPMPI alloc] initWithData:data atPosition:position];
+            PGPMPI *mpiX = [[PGPMPI alloc] initWithMPIData:data atPosition:position];
             mpiX.identifier = @"X";
             position = position + mpiX.length;
 
@@ -251,7 +251,7 @@
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:
         {
             // MPI of Elgamal secret exponent x.
-            PGPMPI *mpiX = [[PGPMPI alloc] initWithData:data atPosition:position];
+            PGPMPI *mpiX = [[PGPMPI alloc] initWithMPIData:data atPosition:position];
             mpiX.identifier = @"X";
             position = position + mpiX.length;
 

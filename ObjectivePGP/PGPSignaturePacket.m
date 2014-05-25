@@ -14,6 +14,7 @@
 #import "PGPUser.h"
 #import "PGPSecretKeyPacket.h"
 #import "PGPPKCSEmsa.h"
+#import "PGPLiteralPacket.h"
 #import "NSData+PGPUtils.h"
 
 #import <openssl/rsa.h>
@@ -33,6 +34,14 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 @end
 
 @implementation PGPSignaturePacket
+
+- (instancetype)init
+{
+    if (self = [super init]) {
+        _version = 4;
+    }
+    return self;
+}
 
 - (NSMutableArray *)hashedSubpackets
 {
@@ -88,7 +97,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 
 #pragma mark - Build packet
 
-- (NSData *) buildSignedPart
+- (NSData *) buildSignedPart:(NSArray *)hashedSubpackets
 {
     NSMutableData *data = [NSMutableData data];
 
@@ -105,22 +114,22 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     // One-octet hash algorithm.
     [data appendBytes:&_hashAlgoritm length:sizeof(PGPHashAlgorithm)];
 
-    if (self.hashedSubpackets.count > 0) {
-        NSMutableData *hashedSubpackets = [NSMutableData data];
+    if (hashedSubpackets.count > 0) {
+        NSMutableData *hsubpackets = [NSMutableData data];
         // Hashed subpacket data set (zero or more subpackets)
-        for (PGPSignatureSubpacket *subpacket in self.hashedSubpackets) {
+        for (PGPSignatureSubpacket *subpacket in hashedSubpackets) {
             NSError *error = nil;
             NSData *subpacketData = [subpacket exportSubpacket:&error];
             if (subpacketData && !error) {
-                [hashedSubpackets appendData:subpacketData];
+                [hsubpackets appendData:subpacketData];
             }
         }
 
         // Two-octet scalar octet count for following hashed subpacket data.
-        UInt16 hashedOctetCountBE = CFSwapInt16HostToBig(hashedSubpackets.length);
+        UInt16 hashedOctetCountBE = CFSwapInt16HostToBig(hsubpackets.length);
         [data appendBytes:&hashedOctetCountBE length:2];
         // Subpackets
-        [data appendData:hashedSubpackets];
+        [data appendData:hsubpackets];
     } else {
         UInt16 zeroZero = 0;
         [data appendBytes:&zeroZero length:2];
@@ -133,7 +142,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 {
     NSMutableData *data = [NSMutableData data];
 
-    NSData *signedPartData = [self buildSignedPart];
+    NSData *signedPartData = [self buildSignedPart:self.hashedSubpackets];
     [data appendData:signedPartData];
 
     if (self.unhashedSubpackets.count > 0) {
@@ -184,20 +193,42 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 // 5.2.4.  Computing Signatures
 // http://tools.ietf.org/html/rfc4880#section-5.2.4
 // @see https://github.com/singpolyma/openpgp-spec/blob/master/key-signatures
-
-//TODO subkey signature is different (key + bind)
-// Main key is signed against user id packet, this is why user parameter goes here
-- (NSData *) sign:(PGPKey *)secretKey user:(PGPUser *)user
+- (NSData *) signData:(PGPKey *)secretKey data:(NSData *)inputData userIDPacket:(PGPUserIDPacket *)userIDPacket
 {
+    NSAssert(secretKey.type == PGPKeySecret,@"Need secret key");
+
+    PGPSecretKeyPacket *primaryKeyPacket = (PGPSecretKeyPacket *)secretKey.primaryKeyPacket;
+
+    NSMutableArray *signatureHashedSubpackets = [NSMutableArray array];
+    // timestamp subpacket is required
+    PGPSignatureSubpacket *creationTimeSubpacket = [[PGPSignatureSubpacket alloc] init];
+    creationTimeSubpacket.type = PGPSignatureSubpacketTypeSignatureCreationTime;
+    creationTimeSubpacket.value = [NSDate date];
+    [signatureHashedSubpackets addObject:creationTimeSubpacket];
+
+
     // signed part data
-    NSData *signedPartData = [self buildSignedPart];
+    NSData *signedPartData = [self buildSignedPart:signatureHashedSubpackets];
     // calculate trailer
     NSData *trailerData = [self calculateTrailerFor:signedPartData];
 
     // build toSignData, toSign
     NSMutableData *toSignData = [NSMutableData data];
-    switch (self.type) {
-
+    switch (_type) {
+        case PGPSignatureBinaryDocument:
+        {
+            // For binary document signatures (type 0x00), the document data is
+            // hashed directly.
+            [toSignData appendData:inputData];
+        }
+            break;
+        case PGPSignatureCanonicalTextDocument:
+        {
+            // For text document signatures (type 0x01), the
+            // document is canonicalized by converting line endings to <CR><LF>,
+            // and the resulting data is hashed.
+        }
+            break;
         case PGPSignatureGenericCertificationUserIDandPublicKey: // 0x10
         case PGPSignaturePersonalCertificationUserIDandPublicKey:// 0x11
         case PGPSignatureCasualCertificationUserIDandPublicKey:  // 0x12
@@ -206,42 +237,38 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
         {
             // A certification signature (type 0x10 through 0x13)
 
-            // For 0x11, 0x12, 0x13:
-            // The raw fingerprint material for the public-key, followed by the octet 0xB4,
-            // followed by a four-octet number encoding the length of the UserID data,
-            // followed by the raw body of the UserID.
-            // + trailer
+            // When a signature is made over a key, the hash data starts with the
+            // octet 0x99, followed by a two-octet length of the key, and then body
+            // of the key packet. (Note that this is an old-style packet header for
+            // a key packet with two-octet length.)
 
             PGPSecretKeyPacket *primaryKeyPacket = (PGPSecretKeyPacket *)secretKey.primaryKeyPacket;
             if (self.version == 4) {
-                // When a signature is made over a key, the hash data starts with the
-                // octet 0x99, followed by a two-octet length of the key, and then body
-                // of the key packet. (Note that this is an old-style packet header for
-                // a key packet with two-octet length.)
                 NSData *keyData = [primaryKeyPacket exportPublicPacketOldStyle];
                 [toSignData appendData:keyData];
             }
 
-            if (user.userID.length > 0) {
+            NSAssert(userIDPacket.tag == PGPUserIDPacketTag, @"Invalid packet, expected user ID packet");
+            if (userIDPacket.userID.length > 0) {
                 // constant tag (1)
                 UInt8 userIDConstant = 0xB4;
                 [toSignData appendBytes:&userIDConstant length:1];
 
                 // length (4)
-                UInt32 userIDLength = (UInt32)user.userID.length;
+                UInt32 userIDLength = (UInt32)userIDPacket.userID.length;
                 userIDLength = CFSwapInt32HostToBig(userIDLength);
                 [toSignData appendBytes:&userIDLength length:4];
 
                 // data
-                [toSignData appendData:[user.userID dataUsingEncoding:NSUTF8StringEncoding]];
+                [toSignData appendData:[userIDPacket.userID dataUsingEncoding:NSUTF8StringEncoding]];
             }
             //TODO user attributes alternative
             //UInt8 userAttributeConstant = 0xD1;
             //[data appendBytes:&userAttributeConstant length:sizeof(userAttributeConstant)];
-
+            
         }
             break;
-
+            
         default:
             break;
     }
@@ -279,32 +306,62 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
             break;
     }
 
-    //NSLog(@"%@",hashData);
-
     // Two-octet field holding the left 16 bits of the signed hash value.
     NSData *signedHashValue = [hashData subdataWithRange:(NSRange){0,2}];
     NSLog(@"signedHashValue %@",signedHashValue);
 
     //    == Computing Signatures ==
-    //
-    //    To the octets being signed are appended all the octets of the raw signature packet body from the first octet (the version) through
-    //    the end of the subpackets (inclusive).  To this is appended 0x04, 0xFF, and a four-octet number encoding the number of octets that
-    //    were appended in the previous step.
-    //
-    //    For RSA signatures, the hash value is encoded using PKCS#1 encoding type EMSA-PKCS1-v1_5 as described in Section 9.2 of RFC3447
-    //    at <http://tools.ietf.org/html/rfc3447#section-9.2>.
+    // Packet body
+    NSData *calculatedSignatureMPI = [self calcSign:secretKey data:toHashData];
 
-    //    m = pkcs1.emsa.encode(hash_algo,
-    //                          toHashData, keyIntegers[0].byteLength());
-    //
-    //    return rsa.sign(m, d, n).toMPI();
+    NSMutableData *signedPacketBody = [NSMutableData data];
+    [signedPacketBody appendData:signedPartData];
 
-    // jakoś chcialbym to przetestowac, ale nie wiem jak
-    // toHashData = [@"Plaintext\n" dataUsingEncoding:NSUTF8StringEncoding];
-    // plaintext zapisany jako __ops_write_litdata
+    //TODO: refactor, this is NSDAta of unhashed subpacket - used in few places
+    //-->
+    // add unhashed PGPSignatureSubpacketTypeIssuer subpacket
+    NSMutableArray *signatureUnhashedSubpackets = [NSMutableArray array];
 
-    NSData *signature = [self calcSign:secretKey data:toHashData];
-    return signature;
+    // issue subpacket is required
+    PGPSignatureSubpacket *issuerSubpacket = [[PGPSignatureSubpacket alloc] init];
+    issuerSubpacket.type = PGPSignatureSubpacketTypeIssuer;
+    PGPKeyID *keyid = [[PGPKeyID alloc] initWithFingerprint:primaryKeyPacket.fingerprint];
+    issuerSubpacket.value = keyid;
+    [signatureUnhashedSubpackets addObject:issuerSubpacket];
+
+    if (signatureUnhashedSubpackets.count > 0) {
+        NSMutableData *unhashedSubpackets = [NSMutableData data];
+        // Hashed subpacket data set (zero or more subpackets)
+        for (PGPSignatureSubpacket *subpacket in signatureUnhashedSubpackets) {
+            NSError *error = nil;
+            NSData *subpacketData = [subpacket exportSubpacket:&error];
+            if (subpacketData && !error) {
+                [unhashedSubpackets appendData:subpacketData];
+            }
+        }
+        // Two-octet scalar octet count for following hashed subpacket data.
+        UInt16 unhashedOctetCountBE = CFSwapInt16HostToBig(unhashedSubpackets.length);
+        [signedPacketBody appendBytes:&unhashedOctetCountBE length:2];
+        // Subpackets
+        [signedPacketBody appendData:unhashedSubpackets];
+    } else {
+        UInt16 zeroZero = 0;
+        [signedPacketBody appendBytes:&zeroZero length:2];
+    }
+    //<--
+
+    // Checksum
+    [signedPacketBody appendData:signedHashValue];
+    // MPI
+    [signedPacketBody appendData:calculatedSignatureMPI];
+
+
+    // Build final packet with header
+    NSData *signedPacketHeader = [self buildHeaderData:signedPacketBody];
+    NSMutableData *signedPacket = [NSMutableData dataWithData:signedPacketHeader];
+    [signedPacket appendData:signedPacketBody];
+
+    return [signedPacket copy];
 }
 
 - (NSData *) calcSign:(PGPKey *)secretKey data:(NSData *)toHashData
@@ -376,7 +433,10 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 
     ERR_free_strings();
 
-    return outData;
+
+    // build mpi
+    PGPMPI *mpi = [[PGPMPI alloc] initWithData:outData];
+    return [mpi buildData];
 }
 
 - (NSData *) calculateTrailerFor:(NSData *)signedPartData
@@ -492,7 +552,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
         {
             // multiprecision integer (MPI) of RSA signature value m**d mod n.
             // MPI of RSA public modulus n;
-            PGPMPI *mpiN = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            PGPMPI *mpiN = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
             mpiN.identifier = @"N";
             position = position + mpiN.length;
 
@@ -503,12 +563,12 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
         case PGPPublicKeyAlgorithmECDSA:
         {
             // MPI of DSA value r.
-            PGPMPI *mpiR = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            PGPMPI *mpiR = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
             mpiR.identifier = @"R";
             position = position + mpiR.length;
 
             // MPI of DSA value s.
-            PGPMPI *mpiS = [[PGPMPI alloc] initWithData:packetBody atPosition:position];
+            PGPMPI *mpiS = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
             mpiS.identifier = @"S";
             position = position + mpiS.length;
 

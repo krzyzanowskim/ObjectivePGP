@@ -12,8 +12,6 @@
 #import "NSValue+PGPUtils.h"
 
 @interface PGPSignatureSubpacket ()
-@property (strong, readwrite) id value;
-@property (assign, readwrite) NSRange bodyRange;
 @end
 
 @implementation PGPSignatureSubpacket
@@ -222,7 +220,6 @@
             NSDate *date = (NSDate *)self.value;
             UInt32 signatureCreationTimestamp = CFSwapInt32HostToBig((UInt32)[date timeIntervalSince1970]);
             [data appendBytes:&signatureCreationTimestamp length:4];
-
         }
             break;
         case PGPSignatureSubpacketTypeIssuer: // PGPKeyID

@@ -13,8 +13,8 @@
 
 @property (assign, readonly) NSRange bodyRange; // subrange range within parent packet
 
-@property (assign, readonly) PGPSignatureSubpacketType type;
-@property (strong, readonly) id value;
+@property (assign) PGPSignatureSubpacketType type;
+@property (strong) id value;
 
 - (instancetype) initWithBody:(NSData *)packetBody type:(PGPSignatureSubpacketType)type range:(NSRange)range;
 - (void) parseSubpacketBody:(NSData *)packetBody;

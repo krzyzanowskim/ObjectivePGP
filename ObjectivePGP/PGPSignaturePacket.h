@@ -11,14 +11,14 @@
 #import "PGPPacketFactory.h"
 #import "PGPKeyID.h"
 
-@class PGPKey, PGPUser;
+@class PGPKey, PGPUser, PGPUserIDPacket;
 
 @interface PGPSignaturePacket : PGPPacket
 
-@property (assign, readonly) UInt8 version;
-@property (assign, readonly) PGPSignatureType type;
-@property (assign, readonly) PGPPublicKeyAlgorithm publicKeyAlgorithm;
-@property (assign, readonly) PGPHashAlgorithm hashAlgoritm;
+@property (assign) UInt8 version;
+@property (assign) PGPSignatureType type;
+@property (assign) PGPPublicKeyAlgorithm publicKeyAlgorithm;
+@property (assign) PGPHashAlgorithm hashAlgoritm;
 @property (strong, readonly, nonatomic) NSMutableArray *hashedSubpackets;
 @property (strong, readonly, nonatomic) NSMutableArray *unhashedSubpackets;
 @property (strong) NSArray *signatureMPIs;
@@ -46,7 +46,7 @@
 // All subpackets
 - (NSArray *) subpackets;
 // sign
-- (NSData *) sign:(PGPKey *)secretKey user:(PGPUser *)user;
+- (NSData *) signData:(PGPKey *)secretKey data:(NSData *)inputData userIDPacket:(PGPUserIDPacket *)userIDPacket;
 
 
 @end

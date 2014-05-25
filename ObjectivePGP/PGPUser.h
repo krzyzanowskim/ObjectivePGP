@@ -18,6 +18,8 @@
 @property (strong, nonatomic) NSArray *otherSignatures;
 @property (strong, nonatomic) NSArray *revocationSignatures;
 
+@property (strong, nonatomic) PGPUserIDPacket *userIDPacket;
+
 - (instancetype) initWithPacket:(PGPUserIDPacket *)userPacket;
 - (NSArray *) allPackets;
 

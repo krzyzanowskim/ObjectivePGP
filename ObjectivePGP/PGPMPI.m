@@ -12,18 +12,28 @@
 #import "PGPMPI.h"
 
 @interface PGPMPI ()
-@property (assign) UInt16 mpiBitsLengthBE; //check _bn->dmax
 @property (assign, readwrite) BIGNUM *bignumRef;
 @end
 
 @implementation PGPMPI
 
-- (instancetype) initWithData:(NSData *)data atPosition:(NSUInteger)position
+- (instancetype) initWithData:(NSData *)dataToMPI
 {
     if (self = [self init]) {
-        _mpiBitsLengthBE = 0;
-        [data getBytes:&_mpiBitsLengthBE range:(NSRange){position,2}];
-        NSUInteger mpiBytesLength = (CFSwapInt16BigToHost(_mpiBitsLengthBE) + 7) / 8;
+        self.bignumRef = BN_bin2bn(dataToMPI.bytes, dataToMPI.length, NULL);
+        _length = dataToMPI.length + 2;
+    }
+    return self;
+}
+
+
+- (instancetype) initWithMPIData:(NSData *)data atPosition:(NSUInteger)position
+{
+    if (self = [self init]) {
+        UInt16 bitsBE = 0;
+        [data getBytes:&bitsBE range:(NSRange){position,2}];
+        UInt16 bits = CFSwapInt16BigToHost(bitsBE);
+        NSUInteger mpiBytesLength = (bits + 7) / 8;
 
         NSData *intdata = [data subdataWithRange:(NSRange){position + 2, mpiBytesLength}];
         self.bignumRef = BN_bin2bn(intdata.bytes, (int)intdata.length, NULL);
@@ -41,14 +51,14 @@
     }
 
     NSMutableData *outData = [NSMutableData data];
+    UInt16 bits = BN_num_bits(self.bignumRef);
 
-    NSUInteger mpiBytesLength = (CFSwapInt16BigToHost(_mpiBitsLengthBE) + 7) / 8;
+    NSUInteger mpiBytesLength = (bits + 7) / 8;
     UInt8 *buf = calloc(mpiBytesLength, sizeof(UInt8));
     UInt16 bytes = BN_bn2bin(self.bignumRef, buf);
 
-    //FIXME: _mpiBitsLengthBE should be calculated from BN
-
-    [outData appendBytes:&_mpiBitsLengthBE length:2];
+    int bitsBE = CFSwapInt16HostToBig(bits);
+    [outData appendBytes:&bitsBE length:2];
     [outData appendBytes:buf length:bytes];
 
     return [outData copy];
