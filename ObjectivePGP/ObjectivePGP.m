@@ -57,12 +57,10 @@
     NSData *signaturePacketData = nil;
 
     // Some defaults
-    PGPPublicKeyAlgorithm preferedPublicKeyAlgorithm = PGPPublicKeyAlgorithmRSA;
     PGPHashAlgorithm preferedHashAlgorithm = PGPHashSHA1;
 
     PGPSignaturePacket *signaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureBinaryDocument
-                                                      publicKeyAlgorithm:preferedPublicKeyAlgorithm
-                                                           hashAlgorithm:preferedHashAlgorithm];
+                                                                hashAlgorithm:preferedHashAlgorithm];
 
     signaturePacketData = [signaturePacket createSignatureForData:dataToSign secretKey:secretKey];
     return signaturePacketData;

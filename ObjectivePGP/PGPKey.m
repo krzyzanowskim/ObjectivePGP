@@ -204,11 +204,30 @@
     return nil;
 }
 
-//- (PGPUser *)primaryUser
+//- (PGPSignaturePacket *) signingSignature
 //{
 //    for (PGPUser *user in self.users) {
-//        NSLog(@"");
+//        for (PGPSignaturePacket *selfSignature in user.selfSignatures) {
+//            if (selfSignature.canBeUsedToSign) {
+//                return selfSignature;
+//            }
+//        }
 //    }
+//
+//    for (PGPSignaturePacket *signaturePacket in self.directSignatures) {
+//        if (signaturePacket.canBeUsedToSign) {
+//            return signaturePacket;
+//        }
+//    }
+//
+//    for (PGPSubKey *subKey in self.subKeys) {
+//        PGPSignaturePacket *signaturePacket = subKey.bindingSignature;
+//        if (signaturePacket.canBeUsedToSign) {
+//            return signaturePacket;
+//        }
+//    }
+//
+//    return nil;
 //}
 
 - (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error

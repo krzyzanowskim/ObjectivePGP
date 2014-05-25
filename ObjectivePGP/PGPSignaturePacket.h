@@ -19,8 +19,8 @@
 @property (assign) PGPSignatureType type;
 @property (assign) PGPPublicKeyAlgorithm publicKeyAlgorithm;
 @property (assign) PGPHashAlgorithm hashAlgoritm;
-@property (strong, readonly, nonatomic) NSMutableArray *hashedSubpackets;
-@property (strong, readonly, nonatomic) NSMutableArray *unhashedSubpackets;
+@property (strong, readonly, nonatomic) NSArray *hashedSubpackets;
+@property (strong, readonly, nonatomic) NSArray *unhashedSubpackets;
 @property (strong) NSArray *signatureMPIs;
 
 @property (assign, nonatomic, readonly) BOOL canBeUsedToSign;
@@ -48,7 +48,7 @@
  *
  *  @return Packet instance ready to call signData:secretKey
  */
-+ (PGPSignaturePacket *) signaturePacket:(PGPSignatureType)type publicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm;
++ (PGPSignaturePacket *) signaturePacket:(PGPSignatureType)type hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm;
 
 // Issuer key id
 - (PGPKeyID *) issuerKeyID;
@@ -56,7 +56,7 @@
 - (NSArray *) subpackets;
 
 /**
- *  Build signature (signature packet with subpackets).
+ *  Build signature data (signature packet with subpackets).
  *
  *  @param secretKey Secret key used to create signature
  *  @param inputData Data to sign

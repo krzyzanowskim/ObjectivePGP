@@ -29,8 +29,8 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 
 
 @interface PGPSignaturePacket ()
-@property (strong, readwrite, nonatomic) NSMutableArray *hashedSubpackets;
-@property (strong, readwrite, nonatomic) NSMutableArray *unhashedSubpackets;
+@property (strong, readwrite, nonatomic) NSArray *hashedSubpackets;
+@property (strong, readwrite, nonatomic) NSArray *unhashedSubpackets;
 @end
 
 @implementation PGPSignaturePacket
@@ -43,27 +43,26 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     return self;
 }
 
-+ (PGPSignaturePacket *) signaturePacket:(PGPSignatureType)type publicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm
++ (PGPSignaturePacket *) signaturePacket:(PGPSignatureType)type hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm
 {
     PGPSignaturePacket *signaturePacket = [[PGPSignaturePacket alloc] init];
 
-    signaturePacket.publicKeyAlgorithm = publicKeyAlgorithm;
     signaturePacket.hashAlgoritm = hashAlgorithm;
     return signaturePacket;
 }
 
-- (NSMutableArray *)hashedSubpackets
+- (NSArray *)hashedSubpackets
 {
     if (!_hashedSubpackets) {
-        _hashedSubpackets = [NSMutableArray array];
+        _hashedSubpackets = [NSArray array];
     }
     return _hashedSubpackets;
 }
 
-- (NSMutableArray *)unhashedSubpackets
+- (NSArray *)unhashedSubpackets
 {
     if (!_unhashedSubpackets) {
-        _unhashedSubpackets = [NSMutableArray array];
+        _unhashedSubpackets = [NSArray array];
     }
     return _unhashedSubpackets;
 
@@ -154,11 +153,13 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 - (BOOL)canBeUsedToSign
 {
     NSArray *subpackets = [self subpackets];
-    for (PGPSignatureSubpacket *subpacket in subpackets) {
-        if (subpacket.type == PGPSignatureSubpacketTypeKeyFlags) {
-            NSArray *flags = subpacket.value;
-            if ([flags containsObject:@(PGPSignatureFlagAllowSignData)]) {
-                return YES;
+    if (self.publicKeyAlgorithm == PGPPublicKeyAlgorithmRSA || self.publicKeyAlgorithm == PGPPublicKeyAlgorithmRSASignOnly) {
+        for (PGPSignatureSubpacket *subpacket in subpackets) {
+            if (subpacket.type == PGPSignatureSubpacketTypeKeyFlags) {
+                NSArray *flags = subpacket.value;
+                if ([flags containsObject:@(PGPSignatureFlagAllowSignData)]) {
+                    return YES;
+                }
             }
         }
     }
@@ -178,16 +179,20 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     NSAssert(secretKey.type == PGPKeySecret,@"Need secret key");
     NSAssert([secretKey.primaryKeyPacket isKindOfClass:[PGPSecretKeyPacket class]], @"Signing key packet not found");
 
-    //TODO: where is signing key
     PGPSecretKeyPacket *signingKeyPacket = (PGPSecretKeyPacket *)secretKey.signingKeyPacket;
+    NSAssert(signingKeyPacket, @"No signing signature found");
+    if (!signingKeyPacket) {
+        return nil;
+    }
 
-    NSMutableArray *signatureHashedSubpackets = [NSMutableArray array];
-    // timestamp subpacket is required
-    PGPSignatureSubpacket *creationTimeSubpacket = [PGPSignatureSubpacket subpacketWithType:PGPSignatureSubpacketTypeSignatureCreationTime andValue:[NSDate date]];
-    [signatureHashedSubpackets addObject:creationTimeSubpacket];
+    // setup public key algorithm from secret key packet
+    self.publicKeyAlgorithm = signingKeyPacket.publicKeyAlgorithm;
 
     // signed part data
-    NSData *signedPartData = [self buildSignedPart:signatureHashedSubpackets];
+    // timestamp subpacket is required
+    PGPSignatureSubpacket *creationTimeSubpacket = [PGPSignatureSubpacket subpacketWithType:PGPSignatureSubpacketTypeSignatureCreationTime andValue:[NSDate date]];
+    self.hashedSubpackets = @[creationTimeSubpacket];
+    NSData *signedPartData = [self buildSignedPart:self.hashedSubpackets];
     // calculate trailer
     NSData *trailerData = [self calculateTrailerFor:signedPartData];
 
@@ -273,8 +278,8 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     NSData *hashData = [toHashData pgpHashedWithAlgorithm:self.hashAlgoritm];
 
     // == Computing Signatures ==
-    // Packet body
-    NSData *calculatedSignatureMPI = [self computeSignature:secretKey data:toHashData];
+    // Packet signature MPIs
+    self.signatureMPIs = [self computeSignature:secretKey data:toHashData];
 
     NSMutableData *signedPacketBody = [NSMutableData data];
     [signedPacketBody appendData:signedPartData];
@@ -282,14 +287,18 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     // add unhashed PGPSignatureSubpacketTypeIssuer subpacket - REQUIRED
     PGPKeyID *keyid = [[PGPKeyID alloc] initWithFingerprint:signingKeyPacket.fingerprint];
     PGPSignatureSubpacket *issuerSubpacket = [PGPSignatureSubpacket subpacketWithType:PGPSignatureSubpacketTypeIssuerKeyID andValue:keyid];
-    [signedPacketBody appendData:[self buildSubpacketsCollectionData:@[issuerSubpacket]]];
+    self.unhashedSubpackets = @[issuerSubpacket];
+
+    [signedPacketBody appendData:[self buildSubpacketsCollectionData:self.unhashedSubpackets]];
 
     // Checksum
     // Two-octet field holding the left 16 bits of the signed hash value.
     NSData *signedHashValue = [hashData subdataWithRange:(NSRange){0,2}];
     [signedPacketBody appendData:signedHashValue];
-    // MPI
-    [signedPacketBody appendData:calculatedSignatureMPI];
+    // add MPI
+    for (PGPMPI *mpi in self.signatureMPIs) {
+        [signedPacketBody appendData:[mpi buildData]];
+    }
     // Build final packet with header
     NSData *signedPacketHeader = [self buildHeaderData:signedPacketBody];
     NSMutableData *signedPacket = [NSMutableData dataWithData:signedPacketHeader];
@@ -298,7 +307,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     return [signedPacket copy];
 }
 
-- (NSData *) computeSignature:(PGPKey *)secretKey data:(NSData *)toHashData
+- (NSArray *) computeSignature:(PGPKey *)secretKey data:(NSData *)toHashData
 {
     NSAssert(self.version == 4, @"Need V4");
     NSAssert(secretKey.type == PGPKeySecret, @"Secret key expected");
@@ -309,7 +318,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     }
 
     PGPSecretKeyPacket *secureKeyPacket = (PGPSecretKeyPacket *)secretKey.primaryKeyPacket;
-    NSData *calculatedData = nil;
+    NSMutableArray *resultMPIs = [NSMutableArray array];
 
     switch (self.publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSA:
@@ -371,8 +380,9 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
                 return nil;
             }
 
-            calculatedData = [NSData dataWithBytes:outbuf length:t];
-            
+            NSData *calculatedData = [NSData dataWithBytes:outbuf length:t];
+            NSAssert(calculatedData, @"Missing calculated data");
+
             rsa->n = rsa->d = rsa->p = rsa->q = NULL;
             
             if (outbuf) {
@@ -382,6 +392,10 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
             if (rsa) {
                 RSA_free(rsa);
             }
+
+            // build RSA result mpi
+            PGPMPI *mpi = [[PGPMPI alloc] initWithData:calculatedData];
+            [resultMPIs addObject:mpi];
         }
             break;
 
@@ -391,12 +405,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
             break;
     }
 
-
-    NSAssert(calculatedData, @"Missing calculated data");
-
-    // build mpi
-    PGPMPI *mpi = [[PGPMPI alloc] initWithData:calculatedData];
-    return [mpi buildData];
+    return resultMPIs;
 }
 
 - (NSData *) calculateTrailerFor:(NSData *)signedPartData
@@ -460,18 +469,21 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     position = position + 2;
 
     // Hashed subpacket data set (zero or more subpackets)
-    // TODO: refactor later, this approach sucks
     NSData *hashedSubpacketsData = nil;
     if (hashedOctetCount > 0) {
         hashedSubpacketsData = [packetBody subdataWithRange:(NSRange){position,hashedOctetCount}];
         position = position + hashedOctetCount;
 
+        NSMutableArray *hashedSubpackets = [NSMutableArray arrayWithCapacity:hashedOctetCount];
+
         NSUInteger positionSubpacket = 0;
         while (positionSubpacket < hashedSubpacketsData.length) {
             PGPSignatureSubpacket *subpacket = [self subpacketAtPosition:positionSubpacket subpacketsData:hashedSubpacketsData];
-            [self.hashedSubpackets addObject:subpacket];
+            [hashedSubpackets addObject:subpacket];
             positionSubpacket = subpacket.bodyRange.location + subpacket.bodyRange.length;
         }
+
+        self.hashedSubpackets = [hashedSubpackets copy];
     }
 
     self.signedPartData = [packetBody subdataWithRange:(NSRange){startPosition, position}];
@@ -489,13 +501,17 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
         unhashedSubpacketsData = [packetBody subdataWithRange:(NSRange){position,unhashedOctetCount}];
         position = position + unhashedOctetCount;
 
+        NSMutableArray *unhashedSubpackets = [NSMutableArray arrayWithCapacity:unhashedOctetCount];
+
         // Loop subpackets
         NSUInteger positionSubpacket = 0;
         while (positionSubpacket < unhashedSubpacketsData.length) {
             PGPSignatureSubpacket *subpacket = [self subpacketAtPosition:positionSubpacket subpacketsData:unhashedSubpacketsData];
-            [self.unhashedSubpackets addObject:subpacket];
+            [unhashedSubpackets addObject:subpacket];
             positionSubpacket = subpacket.bodyRange.location + subpacket.bodyRange.length;
         }
+
+        self.unhashedSubpackets = [unhashedSubpackets copy];
     }
 
     // Two-octet field holding the left 16 bits of the signed hash value.
