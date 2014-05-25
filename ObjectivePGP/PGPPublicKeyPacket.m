@@ -101,11 +101,11 @@
     }
 
     // A one-octet number denoting the public-key algorithm of this key.
-    [packetBody getBytes:&_algorithm range:(NSRange){position,1}];
+    [packetBody getBytes:&_publicKeyAlgorithm range:(NSRange){position,1}];
     position = position + 1;
 
     // A series of multiprecision integers comprising the key material.
-    switch (self.algorithm) {
+    switch (self.publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly:
@@ -226,7 +226,7 @@
         [data appendBytes:&V3ValidityPeriodBE length:2];
     }
 
-    [data appendBytes:&_algorithm length:1];
+    [data appendBytes:&_publicKeyAlgorithm length:1];
 
     // publicMPI is allways available, no need to decrypt
     for (PGPMPI *mpi in self.publicMPI) {

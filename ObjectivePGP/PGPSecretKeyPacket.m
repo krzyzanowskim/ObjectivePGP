@@ -210,7 +210,7 @@
     }
 
     // now read the actual data
-    switch (self.algorithm) {
+    switch (self.publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly:
