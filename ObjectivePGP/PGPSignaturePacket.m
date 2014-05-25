@@ -97,7 +97,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 {
     NSMutableData *data = [NSMutableData data];
 
-    NSData *bodyData = [self buildFullSignatureData:error];
+    NSData *bodyData = [self buildFullSignatureBodyData:error];
     NSData *headerData = [self buildHeaderData:bodyData];
     [data appendData: headerData];
     [data appendData: bodyData];
@@ -128,7 +128,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     return [data copy];
 }
 
-- (NSData *) buildFullSignatureData:(NSError *__autoreleasing *)error
+- (NSData *) buildFullSignatureBodyData:(NSError *__autoreleasing *)error
 {
     NSMutableData *data = [NSMutableData data];
 
@@ -294,6 +294,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     // Checksum
     // Two-octet field holding the left 16 bits of the signed hash value.
     NSData *signedHashValue = [hashData subdataWithRange:(NSRange){0,2}];
+    self.signedHashValueData = signedHashValue;
     [signedPacketBody appendData:signedHashValue];
     // add MPI
     for (PGPMPI *mpi in self.signatureMPIs) {
