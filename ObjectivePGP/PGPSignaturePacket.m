@@ -43,7 +43,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     return self;
 }
 
-+ (PGPSignaturePacket *) signPacket:(PGPSignatureType)type publicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm
++ (PGPSignaturePacket *) signaturePacket:(PGPSignatureType)type publicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm
 {
     PGPSignaturePacket *signaturePacket = [[PGPSignaturePacket alloc] init];
 
@@ -184,11 +184,18 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 // 5.2.4.  Computing Signatures
 // http://tools.ietf.org/html/rfc4880#section-5.2.4
 // @see https://github.com/singpolyma/openpgp-spec/blob/master/key-signatures
-- (NSData *) signData:(NSData *)inputData  secretKey:(PGPKey *)secretKey userID:(NSString *)userID
+- (NSData *) createSignatureForData:(NSData *)inputData  secretKey:(PGPKey *)secretKey
+{
+    return [self createSignatureForData:inputData secretKey:secretKey userID:nil];
+}
+
+- (NSData *) createSignatureForData:(NSData *)inputData  secretKey:(PGPKey *)secretKey userID:(NSString *)userID
 {
     NSAssert(secretKey.type == PGPKeySecret,@"Need secret key");
 
+    //TODO: where is signing key
     PGPSecretKeyPacket *primaryKeyPacket = (PGPSecretKeyPacket *)secretKey.primaryKeyPacket;
+    NSAssert(primaryKeyPacket, @"Signing key packet not found");
 
     NSMutableArray *signatureHashedSubpackets = [NSMutableArray array];
     // timestamp subpacket is required

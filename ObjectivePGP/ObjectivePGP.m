@@ -52,6 +52,22 @@
     return YES;
 }
 
+- (NSData *) signData:(NSData *)dataToSign withSecretKey:(PGPKey *)secretKey
+{
+    NSData *signaturePacketData = nil;
+
+    // Some defaults
+    PGPPublicKeyAlgorithm preferedPublicKeyAlgorithm = PGPPublicKeyAlgorithmRSA;
+    PGPHashAlgorithm preferedHashAlgorithm = PGPHashSHA1;
+
+    PGPSignaturePacket *signaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureBinaryDocument
+                                                      publicKeyAlgorithm:preferedPublicKeyAlgorithm
+                                                           hashAlgorithm:preferedHashAlgorithm];
+
+    signaturePacketData = [signaturePacket createSignatureForData:dataToSign secretKey:secretKey];
+    return signaturePacketData;
+}
+
 #pragma mark - Parse keyring
 
 /**

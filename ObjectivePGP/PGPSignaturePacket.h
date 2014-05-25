@@ -39,8 +39,16 @@
 // The resulting hash value is what is signed.
 @property (strong) NSData *signedHashValueData; // BE
 
-
-+ (PGPSignaturePacket *) signPacket:(PGPSignatureType)type publicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm;
+/**
+ *  Create signature packet for signing. This is convienience constructor.
+ *
+ *  @param type               example: PGPSignatureBinaryDocument
+ *  @param publicKeyAlgorithm public key algorith to be used for signature
+ *  @param hashAlgorithm      hash algorithm to be used for signature
+ *
+ *  @return Packet instance ready to call signData:secretKey
+ */
++ (PGPSignaturePacket *) signaturePacket:(PGPSignatureType)type publicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm;
 
 // Issuer key id
 - (PGPKeyID *) issuerKeyID;
@@ -48,7 +56,7 @@
 - (NSArray *) subpackets;
 
 /**
- *  Build signature (signature packet with subpackets)
+ *  Build signature (signature packet with subpackets).
  *
  *  @param secretKey Secret key used to create signature
  *  @param inputData Data to sign
@@ -56,7 +64,8 @@
  *
  *  @return Signature packet data
  */
-- (NSData *) signData:(NSData *)inputData  secretKey:(PGPKey *)secretKey userID:(NSString *)userID;
+- (NSData *) createSignatureForData:(NSData *)inputData  secretKey:(PGPKey *)secretKey userID:(NSString *)userID;
+- (NSData *) createSignatureForData:(NSData *)inputData  secretKey:(PGPKey *)secretKey;
 
 
 @end

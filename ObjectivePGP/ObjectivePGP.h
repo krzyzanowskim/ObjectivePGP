@@ -26,4 +26,6 @@
  */
 - (BOOL) loadKeyring:(NSString *)path;
 
+- (NSData *) signData:(NSData *)dataToSign withSecretKey:(PGPKey *)secretKey;
+
 @end
