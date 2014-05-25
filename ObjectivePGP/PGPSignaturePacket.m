@@ -47,22 +47,6 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 {
     PGPSignaturePacket *signaturePacket = [[PGPSignaturePacket alloc] init];
 
-//    switch (key.type) {
-//        case PGPKeyPublic:
-//        {
-//            PGPPublicKeyPacket *packet = (PGPPublicKeyPacket *)key.signingKeyPacket;
-//            signaturePacket.publicKeyAlgorithm = packet.algorithm;
-//        }
-//            break;
-//        case PGPKeySecret:
-//        {
-//            PGPSecretKeyPacket *packet = (PGPSecretKeyPacket *)key.signingKeyPacket;
-//            signaturePacket.publicKeyAlgorithm = packet.algorithm;
-//        }
-//            break;
-//        default:
-//            break;
-//    }
     signaturePacket.publicKeyAlgorithm = publicKeyAlgorithm;
     signaturePacket.hashAlgoritm = hashAlgorithm;
     return signaturePacket;
@@ -108,6 +92,8 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     return [self.hashedSubpackets arrayByAddingObjectsFromArray:self.unhashedSubpackets];
 }
 
+#pragma mark - Build packet
+
 - (NSData *) exportPacket:(NSError *__autoreleasing *)error
 {
     NSMutableData *data = [NSMutableData data];
@@ -119,8 +105,6 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 
     return [data copy];
 }
-
-#pragma mark - Build packet
 
 - (NSData *) buildSignedPart:(NSArray *)hashedSubpackets
 {
@@ -192,10 +176,10 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 - (NSData *) createSignatureForData:(NSData *)inputData  secretKey:(PGPKey *)secretKey userID:(NSString *)userID
 {
     NSAssert(secretKey.type == PGPKeySecret,@"Need secret key");
+    NSAssert([secretKey.primaryKeyPacket isKindOfClass:[PGPSecretKeyPacket class]], @"Signing key packet not found");
 
     //TODO: where is signing key
-    PGPSecretKeyPacket *primaryKeyPacket = (PGPSecretKeyPacket *)secretKey.primaryKeyPacket;
-    NSAssert(primaryKeyPacket, @"Signing key packet not found");
+    PGPSecretKeyPacket *signingKeyPacket = (PGPSecretKeyPacket *)secretKey.signingKeyPacket;
 
     NSMutableArray *signatureHashedSubpackets = [NSMutableArray array];
     // timestamp subpacket is required
@@ -296,7 +280,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     [signedPacketBody appendData:signedPartData];
 
     // add unhashed PGPSignatureSubpacketTypeIssuer subpacket - REQUIRED
-    PGPKeyID *keyid = [[PGPKeyID alloc] initWithFingerprint:primaryKeyPacket.fingerprint];
+    PGPKeyID *keyid = [[PGPKeyID alloc] initWithFingerprint:signingKeyPacket.fingerprint];
     PGPSignatureSubpacket *issuerSubpacket = [PGPSignatureSubpacket subpacketWithType:PGPSignatureSubpacketTypeIssuerKeyID andValue:keyid];
     [signedPacketBody appendData:[self buildSubpacketsCollectionData:@[issuerSubpacket]]];
 

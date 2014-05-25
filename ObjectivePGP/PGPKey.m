@@ -171,8 +171,8 @@
     }
 }
 
-// signature packet that is available for signing
-- (PGPSignaturePacket *) signingKeyPacket
+// signature packet that is available for signing data
+- (PGPPacket *) signingKeyPacket
 {
     NSAssert(self.type == PGPKeySecret, @"Need secret key to sign");
     if (self.type == PGPKeyPublic) {
@@ -180,21 +180,36 @@
         return nil;
     }
 
+    for (PGPUser *user in self.users) {
+        for (PGPSignaturePacket *selfSignature in user.selfSignatures) {
+            if (selfSignature.canBeUsedToSign) {
+                return self.primaryKeyPacket;
+            }
+        }
+    }
+
     for (PGPSignaturePacket *signaturePacket in self.directSignatures) {
         if (signaturePacket.canBeUsedToSign) {
-            return signaturePacket;
+            return self.primaryKeyPacket;
         }
     }
 
     for (PGPSubKey *subKey in self.subKeys) {
         PGPSignaturePacket *signaturePacket = subKey.bindingSignature;
         if (signaturePacket.canBeUsedToSign) {
-            return signaturePacket;
+            return subKey.keyPacket;
         }
     }
 
     return nil;
 }
+
+//- (PGPUser *)primaryUser
+//{
+//    for (PGPUser *user in self.users) {
+//        NSLog(@"");
+//    }
+//}
 
 - (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error
 {

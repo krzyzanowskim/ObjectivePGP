@@ -112,15 +112,14 @@
         [keysData appendData:keyData];
 
         // Sign with key
-//        PGPSignaturePacket *binarySignaturePacket = [PGPSignaturePacket signPacket:PGPSignatureBinaryDocument publicKeyAlgorithm:PGPPublicKeyAlgorithmRSA hashAlgorithm:PGPHashSHA1];
-//        // need secret key to sign
-//        NSData *signatureData = [binarySignaturePacket createSignatureForData:[NSData dataWithContentsOfFile:self.keyringPath] secretKey:key userID:nil];
-        NSData *signatureData = [self.oPGP signData:[NSData dataWithContentsOfFile:self.keyringPath] withSecretKey:key];
-        [signatureData writeToFile:[tmpDirectoryPath stringByAppendingPathComponent:@"signature.sig"] atomically:YES];
+        if (key.type == PGPKeySecret) {
+            NSData *signatureData = [self.oPGP signData:[NSData dataWithContentsOfFile:self.keyringPath] withSecretKey:key];
+            [signatureData writeToFile:[tmpDirectoryPath stringByAppendingPathComponent:@"signature.sig"] atomically:YES];
 
-        [[NSFileManager defaultManager] copyItemAtPath:self.keyringPath toPath:[tmpDirectoryPath stringByAppendingPathComponent:@"signed_file.bin"] error:nil];
-        [[NSFileManager defaultManager] copyItemAtPath:self.keyringPath toPath:[tmpDirectoryPath stringByAppendingPathComponent:[self.keyringPath lastPathComponent]] error:nil];
-        [[NSFileManager defaultManager] copyItemAtPath:self.pubKeyringPath toPath:[tmpDirectoryPath stringByAppendingPathComponent:[self.pubKeyringPath lastPathComponent]] error:nil];
+            [[NSFileManager defaultManager] copyItemAtPath:self.keyringPath toPath:[tmpDirectoryPath stringByAppendingPathComponent:@"signed_file.bin"] error:nil];
+            [[NSFileManager defaultManager] copyItemAtPath:self.keyringPath toPath:[tmpDirectoryPath stringByAppendingPathComponent:[self.keyringPath lastPathComponent]] error:nil];
+            [[NSFileManager defaultManager] copyItemAtPath:self.pubKeyringPath toPath:[tmpDirectoryPath stringByAppendingPathComponent:[self.pubKeyringPath lastPathComponent]] error:nil];
+        }
 
     }
 
