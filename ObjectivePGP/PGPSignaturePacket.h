@@ -45,8 +45,17 @@
 - (PGPKeyID *) issuerKeyID;
 // All subpackets
 - (NSArray *) subpackets;
-// sign
-- (NSData *) signData:(PGPKey *)secretKey data:(NSData *)inputData userIDPacket:(PGPUserIDPacket *)userIDPacket;
+
+/**
+ *  Build signature (signature packet with subpackets)
+ *
+ *  @param secretKey Secret key used to create signature
+ *  @param inputData Data to sign
+ *  @param userID    Optional. User ID
+ *
+ *  @return Signature packet data
+ */
+- (NSData *) signData:(PGPKey *)secretKey data:(NSData *)inputData userID:(NSString *)userID;
 
 
 @end

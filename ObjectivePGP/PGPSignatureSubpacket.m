@@ -12,6 +12,8 @@
 #import "NSValue+PGPUtils.h"
 
 @interface PGPSignatureSubpacket ()
+@property (assign, readwrite) PGPSignatureSubpacketType type;
+@property (strong, readwrite) id value;
 @end
 
 @implementation PGPSignatureSubpacket
@@ -25,6 +27,15 @@
     }
     return self;
 }
+
++ (PGPSignatureSubpacket *) subpacketWithType:(PGPSignatureSubpacketType)type andValue:(id)value
+{
+    PGPSignatureSubpacket *subpacket = [[PGPSignatureSubpacket alloc] init];
+    subpacket.type = type;
+    subpacket.value = value;
+    return subpacket;
+}
+
 
 /**
  *  5.2.3.1.  Signature Subpacket Specification
@@ -50,7 +61,7 @@
             self.value = [NSDate dateWithTimeIntervalSince1970:signatureCreationTimestamp];
         }
             break;
-        case PGPSignatureSubpacketTypeIssuer: // PGPKeyID
+        case PGPSignatureSubpacketTypeIssuerKeyID: // PGPKeyID
         {
             //  5.2.3.5.  Issuer
 
@@ -222,7 +233,7 @@
             [data appendBytes:&signatureCreationTimestamp length:4];
         }
             break;
-        case PGPSignatureSubpacketTypeIssuer: // PGPKeyID
+        case PGPSignatureSubpacketTypeIssuerKeyID: // PGPKeyID
         {
             PGPKeyID *keyID = self.value;
             [data appendData:[keyID exportKeyData]];

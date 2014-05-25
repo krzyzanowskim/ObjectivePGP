@@ -72,6 +72,14 @@
     return _selfSignatures;
 }
 
+- (PGPUserIDPacket *)userIDPacket
+{
+    if (!_userIDPacket) {
+        // build userIDPacket
+    }
+    return _userIDPacket;
+}
+
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"%@ %@",[super description], self.userID];

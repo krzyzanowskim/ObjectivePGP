@@ -71,7 +71,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     NSArray *subpackets = [self subpackets];
 
     for (PGPSignatureSubpacket *subpacket in subpackets) {
-        if (subpacket.type == PGPSignatureSubpacketTypeIssuer) {
+        if (subpacket.type == PGPSignatureSubpacketTypeIssuerKeyID) {
             return subpacket.value;
         }
     }
@@ -114,27 +114,9 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     // One-octet hash algorithm.
     [data appendBytes:&_hashAlgoritm length:sizeof(PGPHashAlgorithm)];
 
-    if (hashedSubpackets.count > 0) {
-        NSMutableData *hsubpackets = [NSMutableData data];
-        // Hashed subpacket data set (zero or more subpackets)
-        for (PGPSignatureSubpacket *subpacket in hashedSubpackets) {
-            NSError *error = nil;
-            NSData *subpacketData = [subpacket exportSubpacket:&error];
-            if (subpacketData && !error) {
-                [hsubpackets appendData:subpacketData];
-            }
-        }
+    // hashed Subpackets
+    [data appendData:[self buildSubpacketsCollectionData:hashedSubpackets]];
 
-        // Two-octet scalar octet count for following hashed subpacket data.
-        UInt16 hashedOctetCountBE = CFSwapInt16HostToBig(hsubpackets.length);
-        [data appendBytes:&hashedOctetCountBE length:2];
-        // Subpackets
-        [data appendData:hsubpackets];
-    } else {
-        UInt16 zeroZero = 0;
-        [data appendBytes:&zeroZero length:2];
-    }
-    
     return [data copy];
 }
 
@@ -145,26 +127,10 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     NSData *signedPartData = [self buildSignedPart:self.hashedSubpackets];
     [data appendData:signedPartData];
 
-    if (self.unhashedSubpackets.count > 0) {
-        NSMutableData *unhashedSubpackets = [NSMutableData data];
-        // Hashed subpacket data set (zero or more subpackets)
-        for (PGPSignatureSubpacket *subpacket in self.unhashedSubpackets) {
-            NSError *error = nil;
-            NSData *subpacketData = [subpacket exportSubpacket:&error];
-            if (subpacketData && !error) {
-                [unhashedSubpackets appendData:subpacketData];
-            }
-        }
-        // Two-octet scalar octet count for following hashed subpacket data.
-        UInt16 unhashedOctetCountBE = CFSwapInt16HostToBig(unhashedSubpackets.length);
-        [data appendBytes:&unhashedOctetCountBE length:2];
-        // Subpackets
-        [data appendData:unhashedSubpackets];
-    } else {
-        UInt16 zeroZero = 0;
-        [data appendBytes:&zeroZero length:2];
-    }
+    // unhashed Subpackets
+    [data appendData:[self buildSubpacketsCollectionData:self.unhashedSubpackets]];
 
+    // signed hash value
     [data appendData:self.signedHashValueData];
 
     for (PGPMPI *mpi in self.signatureMPIs) {
@@ -193,7 +159,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 // 5.2.4.  Computing Signatures
 // http://tools.ietf.org/html/rfc4880#section-5.2.4
 // @see https://github.com/singpolyma/openpgp-spec/blob/master/key-signatures
-- (NSData *) signData:(PGPKey *)secretKey data:(NSData *)inputData userIDPacket:(PGPUserIDPacket *)userIDPacket
+- (NSData *) signData:(PGPKey *)secretKey data:(NSData *)inputData userID:(NSString *)userID
 {
     NSAssert(secretKey.type == PGPKeySecret,@"Need secret key");
 
@@ -201,11 +167,8 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 
     NSMutableArray *signatureHashedSubpackets = [NSMutableArray array];
     // timestamp subpacket is required
-    PGPSignatureSubpacket *creationTimeSubpacket = [[PGPSignatureSubpacket alloc] init];
-    creationTimeSubpacket.type = PGPSignatureSubpacketTypeSignatureCreationTime;
-    creationTimeSubpacket.value = [NSDate date];
+    PGPSignatureSubpacket *creationTimeSubpacket = [PGPSignatureSubpacket subpacketWithType:PGPSignatureSubpacketTypeSignatureCreationTime andValue:[NSDate date]];
     [signatureHashedSubpackets addObject:creationTimeSubpacket];
-
 
     // signed part data
     NSData *signedPartData = [self buildSignedPart:signatureHashedSubpackets];
@@ -248,19 +211,31 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
                 [toSignData appendData:keyData];
             }
 
-            NSAssert(userIDPacket.tag == PGPUserIDPacketTag, @"Invalid packet, expected user ID packet");
-            if (userIDPacket.userID.length > 0) {
+            NSAssert(secretKey.users > 0, @"Key need at least one user");
+
+            BOOL userIsValid = NO;
+            for (PGPUser *user in secretKey.users) {
+                if ([user.userID isEqualToString:userID]) {
+                    userIsValid = YES;
+                }
+            }
+
+            if (!userIsValid) {
+                return nil;
+            }
+
+            if (userID.length > 0) {
                 // constant tag (1)
                 UInt8 userIDConstant = 0xB4;
                 [toSignData appendBytes:&userIDConstant length:1];
 
                 // length (4)
-                UInt32 userIDLength = (UInt32)userIDPacket.userID.length;
+                UInt32 userIDLength = (UInt32)userID.length;
                 userIDLength = CFSwapInt32HostToBig(userIDLength);
                 [toSignData appendBytes:&userIDLength length:4];
 
                 // data
-                [toSignData appendData:[userIDPacket.userID dataUsingEncoding:NSUTF8StringEncoding]];
+                [toSignData appendData:[userID dataUsingEncoding:NSUTF8StringEncoding]];
             }
             //TODO user attributes alternative
             //UInt8 userAttributeConstant = 0xD1;
@@ -298,10 +273,8 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     NSMutableArray *signatureUnhashedSubpackets = [NSMutableArray array];
 
     // issue subpacket is required
-    PGPSignatureSubpacket *issuerSubpacket = [[PGPSignatureSubpacket alloc] init];
-    issuerSubpacket.type = PGPSignatureSubpacketTypeIssuer;
     PGPKeyID *keyid = [[PGPKeyID alloc] initWithFingerprint:primaryKeyPacket.fingerprint];
-    issuerSubpacket.value = keyid;
+    PGPSignatureSubpacket *issuerSubpacket = [PGPSignatureSubpacket subpacketWithType:PGPSignatureSubpacketTypeIssuerKeyID andValue:keyid];
     [signatureUnhashedSubpackets addObject:issuerSubpacket];
 
     if (signatureUnhashedSubpackets.count > 0) {
@@ -653,6 +626,32 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     configDict[PGPSignatureSubpacketTypeKey] = [[NSValue alloc] initWithBytes:&subpacketType objCType:@encode(PGPSignatureSubpacketType)];
 
     return [configDict copy];
+}
+
+- (NSData *) buildSubpacketsCollectionData:(NSArray *)subpacketsCollection
+{
+    NSMutableData *data = [NSMutableData data];
+    if (subpacketsCollection.count > 0) {
+        NSMutableData *subpackets = [NSMutableData data];
+        // Hashed subpacket data set (zero or more subpackets)
+        for (PGPSignatureSubpacket *subpacket in subpacketsCollection) {
+            NSError *error = nil;
+            NSData *subpacketData = [subpacket exportSubpacket:&error];
+            if (subpacketData && !error) {
+                [subpackets appendData:subpacketData];
+            }
+        }
+        // Two-octet scalar octet count for following hashed subpacket data.
+        UInt16 countBE = CFSwapInt16HostToBig(subpackets.length);
+        [data appendBytes:&countBE length:2];
+        // subackets data
+        [data appendData:subpackets];
+    } else {
+        // 0x00 0x00
+        UInt16 zeroZero = 0;
+        [data appendBytes:&zeroZero length:2];
+    }
+    return [data copy];
 }
 
 @end
