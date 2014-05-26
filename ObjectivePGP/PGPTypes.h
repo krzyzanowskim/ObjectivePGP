@@ -127,7 +127,7 @@ typedef NS_ENUM(UInt8, PGPSignatureSubpacketType) {
     PGPSignatureSubpacketTypeKeyExpirationTime             = 9,
     PGPSignatureSubpacketTypePreferredSymetricAlgorithm    = 11,
     PGPSignatureSubpacketTypeRevocationKey                 = 12,//TODO
-    PGPSignatureSubpacketTypeIssuerKeyID                        = 16,
+    PGPSignatureSubpacketTypeIssuerKeyID                   = 16,
     PGPSignatureSubpacketTypeNotationData                  = 20,//TODO
     PGPSignatureSubpacketTypePreferredHashAlgorithm        = 21,
     PGPSignatureSubpacketTypePreferredCompressionAlgorithm = 22,

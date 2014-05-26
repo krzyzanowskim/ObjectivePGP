@@ -10,6 +10,7 @@
 #import "PGPPacketFactory.h"
 #import "PGPKey.h"
 #import "PGPSignaturePacket.h"
+#import "PGPPacketFactory.h"
 #import "PGPUserIDPacket.h"
 
 @implementation ObjectivePGP
@@ -93,6 +94,19 @@
     [signaturePacket signData:dataToSign secretKey:secretKey];
     signaturePacketData = [signaturePacket exportPacket:nil];
     return signaturePacketData;
+}
+
+- (BOOL) verifyData:(NSData *)signedData signature:(NSData *)signatureData publicKey:(PGPKey *)publicKey
+{
+    id packet = [PGPPacketFactory packetWithData:signatureData offset:0];
+    if (![packet isKindOfClass:[PGPSignaturePacket class]]) {
+        return NO;
+    }
+
+    PGPSignaturePacket *signaturePacket = packet;
+    BOOL verified = [signaturePacket verifyData:signedData withKey:publicKey userID:nil];
+
+    return verified;
 }
 
 #pragma mark - Parse keyring

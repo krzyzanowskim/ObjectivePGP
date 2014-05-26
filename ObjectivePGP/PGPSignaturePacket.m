@@ -31,6 +31,15 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 @interface PGPSignaturePacket ()
 @property (strong, readwrite, nonatomic) NSArray *hashedSubpackets;
 @property (strong, readwrite, nonatomic) NSArray *unhashedSubpackets;
+
+// A V4 signature hashes the packet body
+// starting from its first field, the version number, through the end
+// of the hashed subpacket data.  Thus, the fields hashed are the
+// signature version, the signature type, the public-key algorithm, the
+// hash algorithm, the hashed subpacket length, and the hashed
+// subpacket body.
+@property (strong) NSData *rawReadedSignedPartData;
+
 @end
 
 @implementation PGPSignaturePacket
@@ -146,6 +155,163 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     }
 
     return [data copy];
+}
+
+#pragma mark - Verify
+
+- (BOOL) verifyData:(NSData *)inputData  withKey:(PGPKey *)publicKey
+{
+    return [self verifyData:inputData withKey:publicKey userID:nil];
+}
+
+// Opposite to sign, with readed data (not produced)
+- (BOOL) verifyData:(NSData *)inputData  withKey:(PGPKey *)publicKey userID:(NSString *)userID
+{
+    // build toSignData, toSign
+    NSMutableData *toSignData = [NSMutableData data];
+    switch (_type) {
+        case PGPSignatureBinaryDocument:
+        {
+            // For binary document signatures (type 0x00), the document data is
+            // hashed directly.
+            [toSignData appendData:inputData];
+        }
+            break;
+        case PGPSignatureCanonicalTextDocument:
+        {
+            // For text document signatures (type 0x01), the
+            // document is canonicalized by converting line endings to <CR><LF>,
+            // and the resulting data is hashed.
+        }
+            break;
+        case PGPSignatureGenericCertificationUserIDandPublicKey: // 0x10
+        case PGPSignaturePersonalCertificationUserIDandPublicKey:// 0x11
+        case PGPSignatureCasualCertificationUserIDandPublicKey:  // 0x12
+        case PGPSignaturePositiveCertificationUserIDandPublicKey:// 0x13
+        case PGPSignatureCertificationRevocation:                // 0x28
+        {
+            // A certification signature (type 0x10 through 0x13)
+
+            // When a signature is made over a key, the hash data starts with the
+            // octet 0x99, followed by a two-octet length of the key, and then body
+            // of the key packet. (Note that this is an old-style packet header for
+            // a key packet with two-octet length.)
+
+            PGPPublicKeyPacket *primaryKeyPacket = (PGPPublicKeyPacket *)publicKey.primaryKeyPacket;
+            if (self.version == 4) {
+                NSData *keyData = [primaryKeyPacket exportPublicPacketOldStyle];
+                [toSignData appendData:keyData];
+            }
+
+            NSAssert(publicKey.users > 0, @"Key need at least one user");
+
+            BOOL userIsValid = NO;
+            for (PGPUser *user in publicKey.users) {
+                if ([user.userID isEqualToString:userID]) {
+                    userIsValid = YES;
+                }
+            }
+
+            if (!userIsValid) {
+                return NO;
+            }
+
+            if (userID.length > 0) {
+                // constant tag (1)
+                UInt8 userIDConstant = 0xB4;
+                [toSignData appendBytes:&userIDConstant length:1];
+
+                // length (4)
+                UInt32 userIDLength = (UInt32)userID.length;
+                userIDLength = CFSwapInt32HostToBig(userIDLength);
+                [toSignData appendBytes:&userIDLength length:4];
+
+                // data
+                [toSignData appendData:[userID dataUsingEncoding:NSUTF8StringEncoding]];
+            }
+            //TODO user attributes alternative
+            //UInt8 userAttributeConstant = 0xD1;
+            //[data appendBytes:&userAttributeConstant length:sizeof(userAttributeConstant)];
+            
+        }
+            break;
+            
+        default:
+            break;
+    }
+
+    // signedPartData
+    NSData *signedPartData = [self buildSignedPart:self.hashedSubpackets];
+    // calculate trailer
+    NSData *trailerData = [self calculateTrailerFor:signedPartData];
+
+    //toHash = toSignData + signedPartData + trailerData;
+    NSMutableData *toHashData = [NSMutableData dataWithData:toSignData];
+    [toHashData appendData:self.rawReadedSignedPartData];
+    [toHashData appendData:trailerData];
+
+
+    // Calculate hash value
+    NSData *hashData = [toHashData pgpHashedWithAlgorithm:self.hashAlgoritm];
+    NSLog(@"verify hash %@",hashData);
+
+    // check signed hash value, should match
+    if (![self.signedHashValueData isEqualToData:[hashData subdataWithRange:(NSRange){0,2}]]) {
+        return NO;
+    }
+
+    switch (self.publicKeyAlgorithm) {
+        case PGPPublicKeyAlgorithmRSA:
+        case PGPPublicKeyAlgorithmRSASignOnly:
+        case PGPPublicKeyAlgorithmRSAEncryptOnly:
+        {
+            if (self.signatureMPIs.count != 1) {
+                return NO;
+            }
+
+            PGPPublicKeyPacket *publicKeyPacket = (PGPPublicKeyPacket *)publicKey.signingKeyPacket; // or signatyrePacket ?
+            RSA *rsa = RSA_new();
+            if (!rsa) {
+                return NO;
+            }
+
+            rsa->n = BN_dup([(PGPMPI*)publicKeyPacket[@"publicMPI.N"] bignumRef]);
+            rsa->e = BN_dup([(PGPMPI*)publicKeyPacket[@"publicMPI.E"] bignumRef]);
+
+            int keysize = BN_num_bytes(rsa->n);
+
+            BIGNUM *signature_mpi_BN = BN_dup([(PGPMPI*)self.signatureMPIs[0] bignumRef]);
+            NSInteger signature_mpi_BN_length = (BN_num_bits(signature_mpi_BN) + 7) / 8;
+            UInt8 *signature_bn_bin = calloc(signature_mpi_BN_length, sizeof(UInt8));
+            BN_bn2bin(signature_mpi_BN, signature_bn_bin);
+
+            uint8_t *decrypted_em = calloc(keysize + 11, sizeof(UInt8));
+            int em_len = RSA_public_decrypt(signature_mpi_BN_length, signature_bn_bin, decrypted_em, rsa, RSA_NO_PADDING);
+
+            if (em_len != keysize) {
+                return NO;
+            }
+
+            NSData *decryptedEmData = [NSData dataWithBytes:decrypted_em length:em_len];
+
+            BN_free(signature_mpi_BN);
+            RSA_free(rsa);
+            rsa->n = rsa->e = NULL;
+            free(decrypted_em);
+            free(signature_bn_bin);
+
+            // calculate EM and compare with decrypted Em
+            NSData *em = [PGPPKCSEmsa encode:self.hashAlgoritm m:toHashData emLen:keysize error:nil];
+            if (![em isEqualToData:decryptedEmData]) {
+                return NO;
+            }
+
+        }
+            break;
+        default:
+            break;
+    }
+    return YES;
 }
 
 #pragma mark - Sign
@@ -369,15 +535,10 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
             NSData *calculatedData = [NSData dataWithBytes:outbuf length:t];
             NSAssert(calculatedData, @"Missing calculated data");
 
+
+            free(outbuf);
+            RSA_free(rsa);
             rsa->n = rsa->d = rsa->p = rsa->q = NULL;
-            
-            if (outbuf) {
-                free(outbuf);
-            }
-            
-            if (rsa) {
-                RSA_free(rsa);
-            }
 
             // build RSA result mpi
             PGPMPI *mpi = [[PGPMPI alloc] initWithData:calculatedData];
@@ -400,7 +561,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
         return nil;
 
     NSMutableData *trailerData = [NSMutableData data];
-    UInt8 version = 4;
+    UInt8 version = 0x04;
     [trailerData appendBytes:&version length:1];
 
     UInt8 tag = 0xFF;
@@ -472,8 +633,8 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
         self.hashedSubpackets = [hashedSubpackets copy];
     }
 
-    self.signedPartData = [packetBody subdataWithRange:(NSRange){startPosition, position}];
-    NSLog(@"signatureData %@",self.signedPartData);
+    self.rawReadedSignedPartData = [packetBody subdataWithRange:(NSRange){startPosition, position}];
+    NSLog(@"signatureData %@",self.rawReadedSignedPartData);
 
     // Two-octet scalar octet count for the following unhashed subpacket
     UInt16 unhashedOctetCount = 0;
