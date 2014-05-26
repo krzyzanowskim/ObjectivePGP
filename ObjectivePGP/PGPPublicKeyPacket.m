@@ -39,6 +39,20 @@
     return [NSString stringWithFormat:@"%@ %@", [super description], self.keyID];
 }
 
+- (NSUInteger) keySize
+{
+    __block NSUInteger ks = 0;
+    [self.publicMPI enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        PGPMPI *mpi = obj;
+        if ([mpi.identifier isEqualToString:@"N"]) {
+            ks = (BN_num_bits(mpi.bignumRef) + 7) / 8;
+            // BN_num_bytes(rsa->n)
+            *stop = YES;
+        }
+    }];
+    return ks;
+}
+
 #pragma mark - KeyID and Fingerprint
 
 /**
@@ -114,12 +128,12 @@
             // MPI of RSA public modulus n;
             PGPMPI *mpiN = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
             mpiN.identifier = @"N";
-            position = position + mpiN.length;
+            position = position + mpiN.packetLength;
 
             // MPI of RSA public encryption exponent e.
             PGPMPI *mpiE = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
             mpiE.identifier = @"E";
-            position = position + mpiE.length;
+            position = position + mpiE.packetLength;
 
             self.publicMPI = [NSArray arrayWithObjects:mpiN, mpiE, nil];
         }
@@ -130,22 +144,22 @@
             // - MPI of DSA prime p;
             PGPMPI *mpiP = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
             mpiP.identifier = @"P";
-            position = position + mpiP.length;
+            position = position + mpiP.packetLength;
 
             // - MPI of DSA group order q (q is a prime divisor of p-1);
             PGPMPI *mpiQ = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
             mpiQ.identifier = @"Q";
-            position = position + mpiQ.length;
+            position = position + mpiQ.packetLength;
 
             // - MPI of DSA group generator g;
             PGPMPI *mpiG = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
             mpiG.identifier = @"G";
-            position = position + mpiG.length;
+            position = position + mpiG.packetLength;
 
             // - MPI of DSA public-key value y (= g**x mod p where x is secret).
             PGPMPI *mpiY = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
             mpiY.identifier = @"Y";
-            position = position + mpiY.length;
+            position = position + mpiY.packetLength;
 
             self.publicMPI = [NSArray arrayWithObjects:mpiP, mpiQ, mpiG, mpiY, nil];
         }
@@ -156,17 +170,17 @@
             // - MPI of Elgamal prime p;
             PGPMPI *mpiP = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
             mpiP.identifier = @"P";
-            position = position + mpiP.length;
+            position = position + mpiP.packetLength;
 
             // - MPI of Elgamal group generator g;
             PGPMPI *mpiG = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
             mpiG.identifier = @"G";
-            position = position + mpiG.length;
+            position = position + mpiG.packetLength;
 
             // - MPI of Elgamal public key value y (= g**x mod p where x is secret).
             PGPMPI *mpiY = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
             mpiY.identifier = @"Y";
-            position = position + mpiY.length;
+            position = position + mpiY.packetLength;
 
             self.publicMPI = [NSArray arrayWithObjects:mpiP, mpiG, mpiY, nil];
         }
@@ -230,7 +244,7 @@
 
     // publicMPI is allways available, no need to decrypt
     for (PGPMPI *mpi in self.publicMPI) {
-        [data appendData:[mpi buildData]];
+        [data appendData:[mpi exportMPI]];
     }
     return [data copy];
 }

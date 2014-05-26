@@ -15,6 +15,7 @@
 #import "PGPSecretKeyPacket.h"
 #import "PGPPKCSEmsa.h"
 #import "PGPLiteralPacket.h"
+#import "PGPPublicKeyRSA.h"
 #import "NSData+PGPUtils.h"
 
 #import <openssl/rsa.h>
@@ -151,7 +152,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     [data appendData:self.signedHashValueData];
 
     for (PGPMPI *mpi in self.signatureMPIs) {
-        [data appendData:[mpi buildData]];
+        [data appendData:[mpi exportMPI]];
     }
 
     return [data copy];
@@ -253,7 +254,6 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 
     // Calculate hash value
     NSData *hashData = [toHashData pgpHashedWithAlgorithm:self.hashAlgoritm];
-    NSLog(@"verify hash %@",hashData);
 
     // check signed hash value, should match
     if (![self.signedHashValueData isEqualToData:[hashData subdataWithRange:(NSRange){0,2}]]) {
@@ -265,47 +265,23 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
         case PGPPublicKeyAlgorithmRSASignOnly:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         {
-            if (self.signatureMPIs.count != 1) {
+            PGPPublicKeyPacket *publicKeyPacket = (PGPPublicKeyPacket *)publicKey.signingKeyPacket; // signing key
+
+            // convert mpi data to binary signature_bn_bin
+            PGPMPI *signatureMPI = self.signatureMPIs[0];
+
+            // encoded m value
+            NSData *encryptedEmData = [signatureMPI bodyData];
+
+            // decrypted encoded m value
+            NSData *decryptedEmData = [PGPPublicKeyRSA publicDecrypt:encryptedEmData withPublicKeyPacket:publicKeyPacket];
+
+            // calculate EM and compare with decrypted EM. PKCS-emsa Encoded M.
+            NSError *error = nil; //TODO: handle
+            NSData *emData = [PGPPKCSEmsa encode:self.hashAlgoritm message:toHashData encodedMessageLength:publicKeyPacket.keySize error:&error];
+            if (![emData isEqualToData:decryptedEmData]) {
                 return NO;
             }
-
-            PGPPublicKeyPacket *publicKeyPacket = (PGPPublicKeyPacket *)publicKey.signingKeyPacket; // or signatyrePacket ?
-            RSA *rsa = RSA_new();
-            if (!rsa) {
-                return NO;
-            }
-
-            rsa->n = BN_dup([(PGPMPI*)publicKeyPacket[@"publicMPI.N"] bignumRef]);
-            rsa->e = BN_dup([(PGPMPI*)publicKeyPacket[@"publicMPI.E"] bignumRef]);
-
-            int keysize = BN_num_bytes(rsa->n);
-
-            BIGNUM *signature_mpi_BN = BN_dup([(PGPMPI*)self.signatureMPIs[0] bignumRef]);
-            NSInteger signature_mpi_BN_length = (BN_num_bits(signature_mpi_BN) + 7) / 8;
-            UInt8 *signature_bn_bin = calloc(signature_mpi_BN_length, sizeof(UInt8));
-            BN_bn2bin(signature_mpi_BN, signature_bn_bin);
-
-            uint8_t *decrypted_em = calloc(keysize + 11, sizeof(UInt8));
-            int em_len = RSA_public_decrypt(signature_mpi_BN_length, signature_bn_bin, decrypted_em, rsa, RSA_NO_PADDING);
-
-            if (em_len != keysize) {
-                return NO;
-            }
-
-            NSData *decryptedEmData = [NSData dataWithBytes:decrypted_em length:em_len];
-
-            BN_free(signature_mpi_BN);
-            RSA_free(rsa);
-            rsa->n = rsa->e = NULL;
-            free(decrypted_em);
-            free(signature_bn_bin);
-
-            // calculate EM and compare with decrypted Em
-            NSData *em = [PGPPKCSEmsa encode:self.hashAlgoritm m:toHashData emLen:keysize error:nil];
-            if (![em isEqualToData:decryptedEmData]) {
-                return NO;
-            }
-
         }
             break;
         default:
@@ -444,8 +420,29 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     NSData *hashData = [toHashData pgpHashedWithAlgorithm:self.hashAlgoritm];
 
     // == Computing Signatures ==
-    // Packet signature MPIs
-    self.signatureMPIs = [self computeSignature:secretKey data:toHashData];
+    // Encrypt hash data Packet signature MPIs
+    // Encrypted m value (PKCS emsa encrypted)
+    NSData *em = [PGPPKCSEmsa encode:self.hashAlgoritm message:toHashData encodedMessageLength:signingKeyPacket.keySize error:nil];
+    NSData *encryptedEmData = nil;
+
+    switch (self.publicKeyAlgorithm) {
+        case PGPPublicKeyAlgorithmRSA:
+        case PGPPublicKeyAlgorithmRSAEncryptOnly:
+        case PGPPublicKeyAlgorithmRSASignOnly:
+        {
+            encryptedEmData = [PGPPublicKeyRSA privateEncrypt:em withSecretKeyPacket:signingKeyPacket];
+        }
+            break;
+
+        default:
+            NSLog(@"algorithm not supported");
+            break;
+    }
+
+    NSAssert(encryptedEmData, @"Encryption failed");
+
+    // store signature data as MPI
+    self.signatureMPIs = @[[[PGPMPI alloc] initWithData:encryptedEmData]];
 
     // add unhashed PGPSignatureSubpacketTypeIssuer subpacket - REQUIRED
     PGPKeyID *keyid = [[PGPKeyID alloc] initWithFingerprint:signingKeyPacket.fingerprint];
@@ -456,103 +453,6 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     // Two-octet field holding the left 16 bits of the signed hash value.
     NSData *signedHashValue = [hashData subdataWithRange:(NSRange){0,2}];
     self.signedHashValueData = signedHashValue;
-    // Build final packet with header
-}
-
-- (NSArray *) computeSignature:(PGPKey *)secretKey data:(NSData *)toHashData
-{
-    NSAssert(self.version == 4, @"Need V4");
-    NSAssert(secretKey.type == PGPKeySecret, @"Secret key expected");
-    NSAssert(secretKey.primaryKeyPacket.tag == PGPSecretKeyPacketTag || secretKey.primaryKeyPacket.tag == PGPSecretSubkeyPacketTag, @"Private packet expected");
-
-    if (secretKey.type == PGPKeyPublic) {
-        return nil;
-    }
-
-    PGPSecretKeyPacket *secureKeyPacket = (PGPSecretKeyPacket *)secretKey.primaryKeyPacket;
-    NSMutableArray *resultMPIs = [NSMutableArray array];
-
-    switch (self.publicKeyAlgorithm) {
-        case PGPPublicKeyAlgorithmRSA:
-        case PGPPublicKeyAlgorithmRSAEncryptOnly:
-        case PGPPublicKeyAlgorithmRSASignOnly:
-        {
-            RSA *rsa = RSA_new();
-            if (!rsa) {
-                return nil;
-            }
-
-            rsa->n = BN_dup([(PGPMPI*)secureKeyPacket[@"publicMPI.N"] bignumRef]);
-            rsa->d = BN_dup([(PGPMPI*)secureKeyPacket[@"secretMPI.D"] bignumRef]);
-            rsa->p = BN_dup([(PGPMPI*)secureKeyPacket[@"secretMPI.Q"] bignumRef]);	/* p and q are round the other way in openssl */
-            rsa->q = BN_dup([(PGPMPI*)secureKeyPacket[@"secretMPI.P"] bignumRef]);
-            rsa->e = BN_dup([(PGPMPI*)secureKeyPacket[@"publicMPI.E"] bignumRef]);
-
-            int keysize = (BN_num_bits(rsa->n) + 7) / 8;
-
-            // With RSA signatures, the hash value is encoded using PKCS#1 1.5
-            // toHashData = [@"Plaintext\n" dataUsingEncoding:NSUTF8StringEncoding];
-            NSData *em = [PGPPKCSEmsa encode:self.hashAlgoritm m:toHashData emLen:keysize error:nil];
-
-            /* If this isn't set, it's very likely that the programmer hasn't */
-            /* decrypted the secret key. RSA_check_key segfaults in that case. */
-            /* Use __ops_decrypt_seckey() to do that. */
-            if (rsa->d == NULL) {
-                return nil;
-            }
-
-            if (RSA_check_key(rsa) != 1) {
-                ERR_load_crypto_strings();
-                SSL_load_error_strings();
-
-                unsigned long err_code = ERR_get_error();
-                char *errBuf = calloc(512, sizeof(UInt8));
-                ERR_error_string(err_code, errBuf);
-                NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
-                free(errBuf);
-
-                ERR_free_strings();
-                return nil;
-            }
-
-
-            UInt8 *outbuf = calloc(RSA_size(rsa), sizeof(UInt8));
-            int t = RSA_private_encrypt(keysize, (UInt8 *)em.bytes, outbuf, rsa, RSA_NO_PADDING);
-            if (t < 0) {
-                ERR_load_crypto_strings();
-                SSL_load_error_strings();
-
-                unsigned long err_code = ERR_get_error();
-                char *errBuf = calloc(512, sizeof(UInt8));
-                ERR_error_string(err_code, errBuf);
-                NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
-                free(errBuf);
-                
-                ERR_free_strings();
-                return nil;
-            }
-
-            NSData *calculatedData = [NSData dataWithBytes:outbuf length:t];
-            NSAssert(calculatedData, @"Missing calculated data");
-
-
-            free(outbuf);
-            RSA_free(rsa);
-            rsa->n = rsa->d = rsa->p = rsa->q = NULL;
-
-            // build RSA result mpi
-            PGPMPI *mpi = [[PGPMPI alloc] initWithData:calculatedData];
-            [resultMPIs addObject:mpi];
-        }
-            break;
-
-        default:
-            NSLog(@"algorithm not supported");
-            return nil;
-            break;
-    }
-
-    return resultMPIs;
 }
 
 - (NSData *) calculateTrailerFor:(NSData *)signedPartData
@@ -677,7 +577,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
             // MPI of RSA public modulus n;
             PGPMPI *mpiN = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
             mpiN.identifier = @"N";
-            position = position + mpiN.length;
+            position = position + mpiN.packetLength;
 
             self.signatureMPIs = [NSArray arrayWithObject:mpiN];
         }
@@ -688,12 +588,12 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
             // MPI of DSA value r.
             PGPMPI *mpiR = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
             mpiR.identifier = @"R";
-            position = position + mpiR.length;
+            position = position + mpiR.packetLength;
 
             // MPI of DSA value s.
             PGPMPI *mpiS = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
             mpiS.identifier = @"S";
-            position = position + mpiS.length;
+            position = position + mpiS.packetLength;
 
             self.signatureMPIs = [NSArray arrayWithObjects:mpiR, mpiS, nil];
         }

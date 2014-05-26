@@ -13,7 +13,7 @@
 
 @interface PGPMPI ()
 @property (assign, readwrite) BIGNUM *bignumRef;
-@property (assign, readwrite) NSUInteger length;
+@property (assign, readwrite) NSUInteger packetLength;
 @end
 
 @implementation PGPMPI
@@ -22,11 +22,10 @@
 {
     if (self = [self init]) {
         self.bignumRef = BN_bin2bn(dataToMPI.bytes, dataToMPI.length, NULL);
-        self.length = dataToMPI.length + 2;
+        self.packetLength = dataToMPI.length + 2;
     }
     return self;
 }
-
 
 - (instancetype) initWithMPIData:(NSData *)mpiData atPosition:(NSUInteger)position
 {
@@ -39,12 +38,28 @@
         NSData *intdata = [mpiData subdataWithRange:(NSRange){position + 2, mpiBytesLength}];
         self.bignumRef = BN_bin2bn(intdata.bytes, (int)intdata.length, NULL);
         // Additinal rule: The size of an MPI is ((MPI.length + 7) / 8) + 2 octets.
-        _length = intdata.length + 2;
+        _packetLength = intdata.length + 2;
     }
     return self;
 }
 
-- (NSData *) buildData
+- (NSData *)bodyData
+{
+    NSAssert(self.bignumRef, @"Missing bignumRef");
+    
+    if (!self.bignumRef)
+        return nil;
+
+    BIGNUM *mpi_BN = BN_dup(self.bignumRef);
+    NSInteger mpi_BN_length = (BN_num_bits(mpi_BN) + 7) / 8;
+    UInt8 *bn_bin = calloc(mpi_BN_length, sizeof(UInt8));
+    NSUInteger len = BN_bn2bin(mpi_BN, bn_bin);
+    BN_free(mpi_BN);
+
+    return [NSData dataWithBytes:bn_bin length:len];
+}
+
+- (NSData *) exportMPI
 {
     if (!self.bignumRef) {
         return nil;
@@ -69,7 +84,7 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"%@, \"%@\", %@ bytes, total: %@ bytes", [super description], self.identifier, @(BN_num_bytes(self.bignumRef)), @(_length)];
+    return [NSString stringWithFormat:@"%@, \"%@\", %@ bytes, total: %@ bytes", [super description], self.identifier, @(BN_num_bytes(self.bignumRef)), @(_packetLength)];
 }
 
 - (void)dealloc

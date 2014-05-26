@@ -63,9 +63,9 @@ static UInt8 prefix_ripemd160[] = {
  *
  *  @return encoded message
  */
-+ (NSData *) encode:(PGPHashAlgorithm)hashAlgorithm m:(NSData *)m emLen:(NSUInteger)emLen error:(NSError * __autoreleasing *)error
++ (NSData *) encode:(PGPHashAlgorithm)hashAlgorithm message:(NSData *)m encodedMessageLength:(NSUInteger)emLength error:(NSError * __autoreleasing *)error
 {
-    NSMutableData *tData = [NSMutableData data];
+    NSMutableData *tData = [NSMutableData data]; // prefix + hash
     switch (hashAlgorithm) {
         case PGPHashMD5:
         {
@@ -121,7 +121,7 @@ static UInt8 prefix_ripemd160[] = {
             break;
     }
     
-    if (emLen < tData.length + 11) {
+    if (emLength < tData.length + 11) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"intended encoded message length too short"}];
             NSLog(@"%@", *error);
@@ -134,7 +134,7 @@ static UInt8 prefix_ripemd160[] = {
     // least 8 octets.
     NSMutableData *psData = [NSMutableData data];
     UInt8 ff = 0xff;
-    for (NSUInteger i = 0; i < emLen - tData.length - 3; i++) {
+    for (NSUInteger i = 0; i < emLength - tData.length - 3; i++) {
         [psData appendBytes:&ff length:1];
     }
 

@@ -218,22 +218,22 @@
             // multiprecision integer (MPI) of RSA secret exponent d.
             PGPMPI *mpiD = [[PGPMPI alloc] initWithMPIData:data atPosition:position];
             mpiD.identifier = @"D";
-            position = position + mpiD.length;
+            position = position + mpiD.packetLength;
 
             // MPI of RSA secret prime value p.
             PGPMPI *mpiP = [[PGPMPI alloc] initWithMPIData:data atPosition:position];
             mpiP.identifier = @"P";
-            position = position + mpiP.length;
+            position = position + mpiP.packetLength;
 
             // MPI of RSA secret prime value q (p < q).
             PGPMPI *mpiQ = [[PGPMPI alloc] initWithMPIData:data atPosition:position];
             mpiQ.identifier = @"Q";
-            position = position + mpiQ.length;
+            position = position + mpiQ.packetLength;
 
             // MPI of u, the multiplicative inverse of p, mod q.
             PGPMPI *mpiU = [[PGPMPI alloc] initWithMPIData:data atPosition:position];
             mpiU.identifier = @"U";
-            position = position + mpiU.length;
+            position = position + mpiU.packetLength;
 
             self.secretMPI = [NSArray arrayWithObjects:mpiD, mpiP, mpiQ, mpiU, nil];
         }
@@ -243,7 +243,7 @@
             // MPI of DSA secret exponent x.
             PGPMPI *mpiX = [[PGPMPI alloc] initWithMPIData:data atPosition:position];
             mpiX.identifier = @"X";
-            position = position + mpiX.length;
+            position = position + mpiX.packetLength;
 
             self.secretMPI = [NSArray arrayWithObjects:mpiX, nil];
         }
@@ -254,7 +254,7 @@
             // MPI of Elgamal secret exponent x.
             PGPMPI *mpiX = [[PGPMPI alloc] initWithMPIData:data atPosition:position];
             mpiX.identifier = @"X";
-            position = position + mpiX.length;
+            position = position + mpiX.packetLength;
 
             self.secretMPI = [NSArray arrayWithObjects:mpiX, nil];
         }
@@ -435,7 +435,7 @@
             break;
         case PGPS2KUsageNone:
             for (PGPMPI *mpi in self.secretMPI) {
-                [data appendData:[mpi buildData]];
+                [data appendData:[mpi exportMPI]];
             }
 
             // Checksum

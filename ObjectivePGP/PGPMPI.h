@@ -16,10 +16,11 @@
 /**
  *  Total bytes, header + body
  */
-@property (assign, readonly) NSUInteger length;
+@property (assign, readonly) NSUInteger packetLength;
 
 - (instancetype) initWithMPIData:(NSData *)mpiData atPosition:(NSUInteger)position;
 - (instancetype) initWithData:(NSData *)dataToMPI;
-- (NSData *) buildData;
+- (NSData *) exportMPI;
+- (NSData *) bodyData;
 
 @end

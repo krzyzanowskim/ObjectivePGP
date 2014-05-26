@@ -21,6 +21,8 @@
 @property (assign, readonly) PGPPublicKeyAlgorithm publicKeyAlgorithm;
 @property (strong, readonly) NSArray *publicMPI;
 
+@property (assign, readonly) NSUInteger keySize;
+
 @property (strong, nonatomic, readonly) PGPFingerprint *fingerprint;
 @property (strong, nonatomic, readonly) PGPKeyID *keyID;
 
