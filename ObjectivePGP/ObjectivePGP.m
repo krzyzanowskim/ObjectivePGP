@@ -53,7 +53,7 @@
     return YES;
 }
 
-- (BOOL) saveKeys:(PGPKeyType)type toFile:(NSString *)path
+- (BOOL) appendKeys:(PGPKeyType)type toFile:(NSString *)path
 {
     NSFileManager *fm = [NSFileManager defaultManager];
 
@@ -81,7 +81,7 @@
     return YES;
 }
 
-- (NSData *) signData:(NSData *)dataToSign withSecretKey:(PGPKey *)secretKey
+- (NSData *) signData:(NSData *)dataToSign usignSecretKey:(PGPKey *)secretKey
 {
     NSData *signaturePacketData = nil;
 
@@ -96,7 +96,7 @@
     return signaturePacketData;
 }
 
-- (BOOL) verifyData:(NSData *)signedData signature:(NSData *)signatureData publicKey:(PGPKey *)publicKey
+- (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingPublicKey:(PGPKey *)publicKey
 {
     id packet = [PGPPacketFactory packetWithData:signatureData offset:0];
     if (![packet isKindOfClass:[PGPSignaturePacket class]]) {

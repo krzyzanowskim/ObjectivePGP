@@ -15,16 +15,16 @@
 {
     if (self = [self init]) {
         self.keyData = keyData;
-        self.hashData = [keyData pgpSHA1];
+        self.hashedData = [keyData pgpSHA1];
     }
     return self;
 }
 
 - (NSString *)description
 {
-    NSMutableString *sbuf = [NSMutableString stringWithCapacity:self.hashData.length * 2];
-    const unsigned char *buf = self.hashData.bytes;
-    for (NSUInteger i = 0; i < self.hashData.length; ++i) {
+    NSMutableString *sbuf = [NSMutableString stringWithCapacity:self.hashedData.length * 2];
+    const unsigned char *buf = self.hashedData.bytes;
+    for (NSUInteger i = 0; i < self.hashedData.length; ++i) {
         [sbuf appendFormat:@"%02X", (NSUInteger)buf[i]];
     }
     return [sbuf copy];
@@ -32,7 +32,7 @@
 
 - (NSUInteger) hashLength
 {
-    return self.hashData.length;
+    return self.hashedData.length;
 }
 
 @end

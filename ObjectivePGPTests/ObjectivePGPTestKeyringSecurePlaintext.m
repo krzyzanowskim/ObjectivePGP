@@ -113,7 +113,8 @@
 
         // Sign with key
         if (key.type == PGPKeySecret) {
-            NSData *signatureData = [self.oPGP signData:[NSData dataWithContentsOfFile:self.keyringPath] withSecretKey:key];
+            NSData *signatureData = [self.oPGP signData:[NSData dataWithContentsOfFile:self.keyringPath] usignSecretKey:key];
+            XCTAssertNotNil(signatureData, @"Signature can't be nil");
             [signatureData writeToFile:[tmpDirectoryPath stringByAppendingPathComponent:@"signature.sig"] atomically:YES];
 
             [[NSFileManager defaultManager] copyItemAtPath:self.keyringPath toPath:[tmpDirectoryPath stringByAppendingPathComponent:@"signed_file.bin"] error:nil];
@@ -122,8 +123,8 @@
 
             // verify
             BOOL verified = [self.oPGP verifyData:[[NSData alloc] initWithContentsOfFile:[tmpDirectoryPath stringByAppendingPathComponent:@"signed_file.bin"]]
-                        signature:[[NSData alloc] initWithContentsOfFile:[tmpDirectoryPath stringByAppendingPathComponent:@"signature.sig"]]
-                        publicKey:key];
+                        withSignature:[[NSData alloc] initWithContentsOfFile:[tmpDirectoryPath stringByAppendingPathComponent:@"signature.sig"]]
+                        usingPublicKey:key];
 
             XCTAssertTrue(verified, @"signature not verified");
         }

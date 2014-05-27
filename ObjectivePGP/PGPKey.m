@@ -108,7 +108,7 @@
                 break;
             case PGPUserIDPacketTag:
                 if (!user) {
-                    user = [[PGPUser alloc] initWithPacket:(PGPUserIDPacket *)packet];
+                    user = [[PGPUser alloc] initWithUserIDPacket:(PGPUserIDPacket *)packet];
                 }
                 [self.users addObject:user];
                 break;

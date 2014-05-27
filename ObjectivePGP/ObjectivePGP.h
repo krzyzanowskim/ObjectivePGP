@@ -34,7 +34,7 @@
  *
  *  @return YES on success
  */
-- (BOOL) saveKeys:(PGPKeyType)type toFile:(NSString *)path;
+- (BOOL) appendKeys:(PGPKeyType)type toFile:(NSString *)path;
 
 /**
  *  Sign data with default hash algorithm
@@ -44,8 +44,17 @@
  *
  *  @return Signature
  */
-- (NSData *) signData:(NSData *)dataToSign withSecretKey:(PGPKey *)secretKey;
+- (NSData *) signData:(NSData *)dataToSign usignSecretKey:(PGPKey *)secretKey;
 
-- (BOOL) verifyData:(NSData *)signedData signature:(NSData *)signatureData publicKey:(PGPKey *)publicKey;
+/**
+ *  Verify data with detached signature
+ *
+ *  @param signedData    signed data
+ *  @param signatureData signature data
+ *  @param publicKey     public key to use§
+ *
+ *  @return YES on success
+ */
+- (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingPublicKey:(PGPKey *)publicKey;
 
 @end

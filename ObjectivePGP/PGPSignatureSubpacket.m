@@ -61,6 +61,12 @@
             self.value = [NSDate dateWithTimeIntervalSince1970:signatureCreationTimestamp];
         }
             break;
+        case PGPSignatureSubpacketTypeTrustSignature:
+        {
+            // (1 octet "level" (depth), 1 octet of trust amount)
+            // TODO trust subpacket
+        }
+            break;
         case PGPSignatureSubpacketTypeIssuerKeyID: // PGPKeyID
         {
             //  5.2.3.5.  Issuer
@@ -350,7 +356,7 @@
     //subpacket = length + tag + body
     NSMutableData *subpacketData = [NSMutableData data];
     // the subpacket length (1, 2, or 5 octets),
-    NSData *subpacketLengthData = [PGPPacket buildNewLengthDataForData:data];
+    NSData *subpacketLengthData = [PGPPacket buildNewFormatLengthDataForData:data];
     [subpacketData appendData:subpacketLengthData]; // data with tag
     [subpacketData appendData:data];
 

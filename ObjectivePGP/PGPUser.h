@@ -20,7 +20,7 @@
 
 @property (strong, nonatomic) PGPUserIDPacket *userIDPacket;
 
-- (instancetype) initWithPacket:(PGPUserIDPacket *)userPacket;
+- (instancetype) initWithUserIDPacket:(PGPUserIDPacket *)userPacket;
 - (NSArray *) allPackets;
 
 @end

@@ -32,9 +32,7 @@
     rsa->q = BN_dup([[secretKeyPacket secretMPI:@"P"] bignumRef]);
     rsa->e = BN_dup([[secretKeyPacket publicMPI:@"E"] bignumRef]);
 
-    int keysize = (BN_num_bits(rsa->n) + 7) / 8;
-
-    if (toEncrypt.length > keysize) {
+    if (toEncrypt.length > secretKeyPacket.keySize) {
         return nil;
     }
 
@@ -65,7 +63,7 @@
 
 
     UInt8 *outbuf = calloc(RSA_size(rsa), sizeof(UInt8));
-    int t = RSA_private_encrypt(keysize, (UInt8 *)toEncrypt.bytes, outbuf, rsa, RSA_NO_PADDING);
+    int t = RSA_private_encrypt(secretKeyPacket.keySize, (UInt8 *)toEncrypt.bytes, outbuf, rsa, RSA_NO_PADDING);
     if (t < 0) {
 //        ERR_load_crypto_strings();
 //        SSL_load_error_strings();
@@ -87,10 +85,6 @@
     free(outbuf);
     RSA_free(rsa);
     rsa->n = rsa->d = rsa->p = rsa->q = NULL;
-
-    // build RSA result mpi
-    //PGPMPI *mpi = [[PGPMPI alloc] initWithData:calculatedData];
-    //[resultMPIs addObject:mpi];
 
     return encryptedData;
 }
@@ -118,13 +112,13 @@
     }
 
     // decrypted PKCS emsa
-    NSData *decrypted = [NSData dataWithBytes:decrypted_em length:em_len];
+    NSData *decryptedEm = [NSData dataWithBytes:decrypted_em length:em_len];
 
     RSA_free(rsa);
     rsa->n = rsa->e = NULL;
     free(decrypted_em);
 
-    return decrypted;
+    return decryptedEm;
 }
 
 @end

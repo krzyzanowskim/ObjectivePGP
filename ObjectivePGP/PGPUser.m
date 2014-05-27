@@ -12,7 +12,7 @@
 
 @implementation PGPUser
 
-- (instancetype) initWithPacket:(PGPUserIDPacket *)userPacket
+- (instancetype) initWithUserIDPacket:(PGPUserIDPacket *)userPacket
 {
     if (self = [self init]) {
         self.userIDPacket = userPacket;
