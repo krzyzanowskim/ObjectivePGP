@@ -25,11 +25,12 @@
         return nil;
     }
 
-    rsa->n = BN_dup([(PGPMPI*)secretKeyPacket[@"publicMPI.N"] bignumRef]);
-    rsa->d = BN_dup([(PGPMPI*)secretKeyPacket[@"secretMPI.D"] bignumRef]);
-    rsa->p = BN_dup([(PGPMPI*)secretKeyPacket[@"secretMPI.Q"] bignumRef]);	/* p and q are round the other way in openssl */
-    rsa->q = BN_dup([(PGPMPI*)secretKeyPacket[@"secretMPI.P"] bignumRef]);
-    rsa->e = BN_dup([(PGPMPI*)secretKeyPacket[@"publicMPI.E"] bignumRef]);
+    ;
+    rsa->n = BN_dup([[secretKeyPacket publicMPI:@"N"] bignumRef]);
+    rsa->d = BN_dup([[secretKeyPacket secretMPI:@"D"] bignumRef]);
+    rsa->p = BN_dup([[secretKeyPacket secretMPI:@"Q"] bignumRef]);	/* p and q are round the other way in openssl */
+    rsa->q = BN_dup([[secretKeyPacket secretMPI:@"P"] bignumRef]);
+    rsa->e = BN_dup([[secretKeyPacket publicMPI:@"E"] bignumRef]);
 
     int keysize = (BN_num_bits(rsa->n) + 7) / 8;
 
@@ -96,8 +97,8 @@
 
 + (NSData *) publicDecrypt:(NSData *)toDecrypt withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket
 {
-    NSAssert(publicKeyPacket.publicMPI.count == 2, @"Need 2 key MPI");
-    if (publicKeyPacket.publicMPI.count != 2) {
+    NSAssert(publicKeyPacket.publicMPIArray.count == 2, @"Need 2 key MPI");
+    if (publicKeyPacket.publicMPIArray.count != 2) {
         return nil;
     }
 
@@ -106,14 +107,8 @@
         return nil;
     }
 
-    for (PGPMPI *mpi in publicKeyPacket.publicMPI) {
-        if ([mpi.identifier isEqualToString:@"N"]) {
-            rsa->n = BN_dup(mpi.bignumRef);
-        }
-        if ([mpi.identifier isEqualToString:@"E"]) {
-            rsa->e = BN_dup(mpi.bignumRef);
-        }
-    }
+    rsa->n = BN_dup([[publicKeyPacket publicMPI:@"N"] bignumRef]);
+    rsa->e = BN_dup([[publicKeyPacket publicMPI:@"E"] bignumRef]);
 
     if (!rsa->n || !rsa->e) {
         return nil;

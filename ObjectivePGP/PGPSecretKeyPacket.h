@@ -16,7 +16,7 @@
 @property (strong) PGPS2K *s2k;
 @property (assign) PGPSymmetricAlgorithm symmetricAlgorithm;
 @property (strong, readonly) NSData *ivData;
-@property (strong, readonly) NSArray *secretMPI;
+@property (strong, readonly) NSArray *secretMPIArray;
 
 /**
  *  Decrypt packet
@@ -28,6 +28,6 @@
  */
 - (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error;
 
-- (id)objectForKeyedSubscript:(id <NSCopying>)key;
+- (PGPMPI *) secretMPI:(NSString *)identifier;
 
 @end

@@ -251,7 +251,7 @@
 
     for (PGPPacket * packet in [self allPackets]) {
         NSError *error = nil;
-        [result appendData:[packet exportPacket:&error]];
+        [result appendData:[packet exportPacket:&error]]; //TODO: decode secret key first
         NSAssert(!error,@"Error while export public key");
 
         //TODO: append checksum?

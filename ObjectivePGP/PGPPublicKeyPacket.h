@@ -13,13 +13,15 @@
 #import "PGPKeyID.h"
 #import "PGPFingerprint.h"
 
+@class PGPMPI;
+
 @interface PGPPublicKeyPacket : PGPPacket
 
 @property (assign, readonly) UInt8 version;
 @property (assign, readonly) UInt32 timestamp;
 @property (assign, readonly) UInt16 V3validityPeriod; // obsolete
 @property (assign, readonly) PGPPublicKeyAlgorithm publicKeyAlgorithm;
-@property (strong, readonly) NSArray *publicMPI;
+@property (strong, readonly) NSArray *publicMPIArray;
 
 @property (assign, readonly) NSUInteger keySize;
 
@@ -30,6 +32,8 @@
 
 - (NSData *) buildPublicKeyBodyData:(BOOL)forceV4;
 - (NSData *) exportPublicPacketOldStyle;
+
+- (PGPMPI *) publicMPI:(NSString *)identifier;
 
 - (id)objectForKeyedSubscript:(id <NSCopying>)key;
 

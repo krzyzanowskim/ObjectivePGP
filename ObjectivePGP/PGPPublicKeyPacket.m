@@ -21,7 +21,7 @@
 @end
 
 @interface PGPPublicKeyPacket ()
-@property (strong, readwrite) NSArray *publicMPI;
+@property (strong, readwrite) NSArray *publicMPIArray;
 @property (strong, nonatomic, readwrite) PGPFingerprint *fingerprint;
 @property (strong, nonatomic, readwrite) PGPKeyID *keyID;
 @property (assign, readwrite) UInt16 V3validityPeriod;
@@ -42,7 +42,7 @@
 - (NSUInteger) keySize
 {
     __block NSUInteger ks = 0;
-    [self.publicMPI enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+    [self.publicMPIArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         PGPMPI *mpi = obj;
         if ([mpi.identifier isEqualToString:@"N"]) {
             ks = (BN_num_bits(mpi.bignumRef) + 7) / 8;
@@ -51,6 +51,20 @@
         }
     }];
     return ks;
+}
+
+- (PGPMPI *) publicMPI:(NSString *)identifier
+{
+    __block PGPMPI *returnMPI = nil;
+    [self.publicMPIArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        PGPMPI *mpi = obj;
+        if ([mpi.identifier isEqualToString:identifier]) {
+            returnMPI = mpi;
+            *stop = YES;
+        }
+    }];
+
+    return returnMPI;
 }
 
 #pragma mark - KeyID and Fingerprint
@@ -135,7 +149,7 @@
             mpiE.identifier = @"E";
             position = position + mpiE.packetLength;
 
-            self.publicMPI = [NSArray arrayWithObjects:mpiN, mpiE, nil];
+            self.publicMPIArray = [NSArray arrayWithObjects:mpiN, mpiE, nil];
         }
             break;
         case PGPPublicKeyAlgorithmDSA:
@@ -161,7 +175,7 @@
             mpiY.identifier = @"Y";
             position = position + mpiY.packetLength;
 
-            self.publicMPI = [NSArray arrayWithObjects:mpiP, mpiQ, mpiG, mpiY, nil];
+            self.publicMPIArray = [NSArray arrayWithObjects:mpiP, mpiQ, mpiG, mpiY, nil];
         }
             break;
         case PGPPublicKeyAlgorithmElgamal:
@@ -182,7 +196,7 @@
             mpiY.identifier = @"Y";
             position = position + mpiY.packetLength;
 
-            self.publicMPI = [NSArray arrayWithObjects:mpiP, mpiG, mpiY, nil];
+            self.publicMPIArray = [NSArray arrayWithObjects:mpiP, mpiG, mpiY, nil];
         }
             break;
         default:
@@ -243,7 +257,7 @@
     [data appendBytes:&_publicKeyAlgorithm length:1];
 
     // publicMPI is allways available, no need to decrypt
-    for (PGPMPI *mpi in self.publicMPI) {
+    for (PGPMPI *mpi in self.publicMPIArray) {
         [data appendData:[mpi exportMPI]];
     }
     return [data copy];

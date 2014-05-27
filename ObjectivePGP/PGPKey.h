@@ -20,9 +20,9 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
 
 @interface PGPKey : NSObject
 
-@property (assign, readonly) PGPKeyType type;
-@property (strong, nonatomic) PGPPacket *primaryKeyPacket;
-@property (assign, readonly) BOOL isEncrypted;
+@property (assign, readonly ) PGPKeyType type;
+@property (strong, nonatomic) PGPPacket  *primaryKeyPacket;
+@property (assign, readonly ) BOOL       isEncrypted;
 @property (strong, nonatomic) NSMutableArray *users; // PGPUser
 @property (strong, nonatomic) NSMutableArray *subKeys;
 @property (strong, nonatomic) NSMutableArray *directSignatures;

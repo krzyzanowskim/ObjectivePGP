@@ -34,9 +34,9 @@
 @end
 
 @interface PGPSecretKeyPacket ()
-@property (strong, readwrite) NSData *encryptedPartData; // -> secretMPI after decrypt
+@property (strong, readwrite) NSData *encryptedMPIsPartData; // after decrypt -> secretMPIArray
 @property (strong, readwrite) NSData *ivData;
-@property (strong, readwrite) NSArray *secretMPI;
+@property (strong, readwrite) NSArray *secretMPIArray; // decrypted MPI
 @end
 
 @implementation PGPSecretKeyPacket
@@ -54,6 +54,20 @@
 - (BOOL)isEncrypted
 {
     return (self.s2kUsage == PGPS2KUsageEncrypted || self.s2kUsage == PGPS2KUsageEncryptedAndHashed);
+}
+
+- (PGPMPI *) secretMPI:(NSString *)identifier
+{
+    __block PGPMPI *returnMPI = nil;
+    [self.secretMPIArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        PGPMPI *mpi = obj;
+        if ([mpi.identifier isEqualToString:identifier]) {
+            returnMPI = mpi;
+            *stop = YES;
+        }
+    }];
+
+    return returnMPI;
 }
 
 - (PGPFingerprint *)fingerprint
@@ -142,8 +156,8 @@
 
     // encrypted MPIs
     // checksum or hash is encrypted together with the algorithm-specific fields (mpis) (if string-to-key usage octet is not zero).
-    self.encryptedPartData = [data subdataWithRange:(NSRange) {position, data.length - position}];
-    position = position + self.encryptedPartData.length;
+    self.encryptedMPIsPartData = [data subdataWithRange:(NSRange) {position, data.length - position}];
+    position = position + self.encryptedMPIsPartData.length;
 
 #ifdef DEBUG
     //[self decrypt:@"1234"];
@@ -235,7 +249,7 @@
             mpiU.identifier = @"U";
             position = position + mpiU.packetLength;
 
-            self.secretMPI = [NSArray arrayWithObjects:mpiD, mpiP, mpiQ, mpiU, nil];
+            self.secretMPIArray = [NSArray arrayWithObjects:mpiD, mpiP, mpiQ, mpiU, nil];
         }
             break;
         case PGPPublicKeyAlgorithmDSA:
@@ -245,7 +259,7 @@
             mpiX.identifier = @"X";
             position = position + mpiX.packetLength;
 
-            self.secretMPI = [NSArray arrayWithObjects:mpiX, nil];
+            self.secretMPIArray = [NSArray arrayWithObjects:mpiX, nil];
         }
             break;
         case PGPPublicKeyAlgorithmElgamal:
@@ -256,7 +270,7 @@
             mpiX.identifier = @"X";
             position = position + mpiX.packetLength;
 
-            self.secretMPI = [NSArray arrayWithObjects:mpiX, nil];
+            self.secretMPIArray = [NSArray arrayWithObjects:mpiX, nil];
         }
             break;
         default:
@@ -268,7 +282,10 @@
 
 /**
  *  Decrypt parsed encrypted packet
+ *  Decrypt packet and store decrypted data on instance
  *  TODO: V3 support
+ *  TODO: encrypt
+ *  NOTE: Decrypted packet data should be released/forget after use
  */
 - (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error
 {
@@ -292,9 +309,9 @@
     //FIXME: not here, just for testing (?)
     NSData *keyData = [self.s2k produceKeyWithPassphrase:passphrase keySize:keySize];
 
-    const void *encryptedBytes = self.encryptedPartData.bytes;
+    const void *encryptedBytes = self.encryptedMPIsPartData.bytes;
 
-    NSUInteger outButterLength = self.encryptedPartData.length;
+    NSUInteger outButterLength = self.encryptedMPIsPartData.length;
     UInt8 *outBuffer = calloc(outButterLength, sizeof(UInt8));
 
     NSData *decryptedData = nil;
@@ -428,13 +445,13 @@
             [data appendBytes:self.ivData.bytes length:self.ivData.length];
 
             // encrypted MPIs
-            [data appendData:self.encryptedPartData];
+            [data appendData:self.encryptedMPIsPartData];
 
             // Hash
             [data appendData:[data pgpSHA1]];
             break;
         case PGPS2KUsageNone:
-            for (PGPMPI *mpi in self.secretMPI) {
+            for (PGPMPI *mpi in self.secretMPIArray) {
                 [data appendData:[mpi exportMPI]];
             }
 
@@ -458,42 +475,6 @@
 
 
     return [data copy];
-}
-
-#pragma mark - Subscript
-
-- (id)objectForKeyedSubscript:(id <NSCopying>)key
-{
-    id k = key;
-    if ([[k class] isKindOfClass:[NSString class]]) {
-        return nil;
-    }
-
-    NSString *keyString = (NSString *)key;
-    NSArray *mpiArray = nil;
-    NSString *identifier = nil;
-
-    if ([keyString hasPrefix:@"publicMPI."]) {
-        mpiArray = self.publicMPI;
-        identifier = [keyString substringFromIndex:[@"publicMPI." length]];
-    } else if ([keyString hasPrefix:@"secretMPI."]) {
-        mpiArray = self.secretMPI;
-        identifier = [keyString substringFromIndex:[@"secretMPI." length]];
-    }
-
-    NSUInteger idx = [mpiArray indexOfObjectPassingTest:^BOOL(id obj, NSUInteger idx, BOOL *stop) {
-        PGPMPI *mpi = obj;
-        if ([mpi.identifier isEqualToString:identifier]) {
-            return YES;
-        }
-        return NO;
-    }];
-
-    if (idx != NSNotFound) {
-        return mpiArray[idx];
-    }
-
-    return nil;
 }
 
 
