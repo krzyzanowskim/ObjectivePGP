@@ -34,6 +34,7 @@
 - (NSData *) exportPacket:(NSError *__autoreleasing *)error
 {
     //TODO: export trust packet
+    //  (1 octet "level" (depth), 1 octet of trust amount)
     return [self.data copy];
 }
 

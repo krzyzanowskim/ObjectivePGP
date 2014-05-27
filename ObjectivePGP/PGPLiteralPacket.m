@@ -69,11 +69,11 @@
         case PGPLiteralPacketText:
         case PGPLiteralPacketTextUTF8:
         {
-            self.literalRawData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
-            // Text data is stored with <CR><LF>
-            //TODO:  These should be converted to native line endings by the receiving software.
             NSString *literalString = [[NSString alloc] initWithData:self.literalRawData encoding:NSUTF8StringEncoding];
-            NSLog(@"literal string %@",literalString);
+            // Text data is stored with <CR><LF>
+            // These should be converted to native line endings by the receiving software.
+            NSString *literalStringWithHostNewLine = [[literalString componentsSeparatedByString:@"\r\n"] componentsJoinedByString:@"\n"];
+            self.literalRawData = [literalStringWithHostNewLine dataUsingEncoding:NSUTF8StringEncoding];
         }
             break;
         default:
@@ -104,8 +104,12 @@
             break;
         case PGPLiteralPacketText:
         case PGPLiteralPacketTextUTF8:
-            //TODO: convert to <CR><LF>
-            [data appendData:self.literalRawData];
+        {
+            // Convert to <CR><LF>
+            NSString *literalStringWithHostNewLine = [[NSString alloc] initWithData:self.literalRawData encoding:NSUTF8StringEncoding];
+            NSString *literalStringWithCRLF = [[literalStringWithHostNewLine componentsSeparatedByString:@"\n"] componentsJoinedByString:@"\r\n"];
+            [data appendData:[literalStringWithCRLF dataUsingEncoding:NSUTF8StringEncoding]];
+        }
             break;
         default:
             break;

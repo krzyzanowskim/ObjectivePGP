@@ -249,7 +249,7 @@
 {
     NSMutableData *result = [NSMutableData data];
 
-    for (PGPPacket * packet in [self allPackets]) {
+    for (PGPPacket * packet in [self allPacketsArray]) {
         NSError *error = nil;
         [result appendData:[packet exportPacket:&error]]; //TODO: decode secret key first
         NSAssert(!error,@"Error while export public key");
@@ -266,7 +266,7 @@
  *
  *  @return array
  */
-- (NSArray *)allPackets
+- (NSArray *)allPacketsArray
 {
     //TODO: handle trust packet somehow. The Trust packet is used only within keyrings and is not normally exported.
     NSMutableArray *arr = [NSMutableArray array];

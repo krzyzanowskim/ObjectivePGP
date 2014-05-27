@@ -86,7 +86,7 @@
         case PGPHashSHA512:
             return CC_SHA512_DIGEST_LENGTH;
         case PGPHashRIPEMD160:
-            return RIPEMD160_DIGEST_LENGTH; // TODO: confirm RIPE/MD 160 value
+            return RIPEMD160_DIGEST_LENGTH; // confirm RIPE/MD 160 value
         default:
             break;
     }

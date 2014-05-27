@@ -208,12 +208,12 @@
 
     // write ptag
     [data appendBytes:&packetTag length:1];
-    [data appendData:[PGPPacket buildNewLengthDataForData:bodyData]];
+    [data appendData:[PGPPacket buildNewFormatLengthDataForData:bodyData]];
 
     return [data copy];
 }
 
-+ (NSData *)buildNewLengthDataForData:(NSData *)bodyData
++ (NSData *)buildNewFormatLengthDataForData:(NSData *)bodyData
 {
     NSMutableData *data = [NSMutableData data];
     // write length octets
