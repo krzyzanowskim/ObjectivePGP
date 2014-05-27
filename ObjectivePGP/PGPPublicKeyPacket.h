@@ -21,20 +21,17 @@
 @property (assign, readonly) UInt32 timestamp;
 @property (assign, readonly) UInt16 V3validityPeriod; // obsolete
 @property (assign, readonly) PGPPublicKeyAlgorithm publicKeyAlgorithm;
-@property (strong, readonly) NSArray *publicMPIArray;
 
 @property (assign, readonly) NSUInteger keySize;
 
 @property (strong, nonatomic, readonly) PGPFingerprint *fingerprint;
 @property (strong, nonatomic, readonly) PGPKeyID *keyID;
 
-- (NSData *)exportPacket:(NSError *__autoreleasing*)error;
-
-- (NSData *) buildPublicKeyBodyData:(BOOL)forceV4;
+- (NSData *) exportPacket:(NSError *__autoreleasing*)error;
 - (NSData *) exportPublicPacketOldStyle;
 
-- (PGPMPI *) publicMPI:(NSString *)identifier;
+- (NSData *) buildPublicKeyBodyData:(BOOL)forceV4;
 
-- (id)objectForKeyedSubscript:(id <NSCopying>)key;
+- (PGPMPI *) publicMPI:(NSString *)identifier;
 
 @end

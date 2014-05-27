@@ -97,11 +97,6 @@
 
 + (NSData *) publicDecrypt:(NSData *)toDecrypt withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket
 {
-    NSAssert(publicKeyPacket.publicMPIArray.count == 2, @"Need 2 key MPI");
-    if (publicKeyPacket.publicMPIArray.count != 2) {
-        return nil;
-    }
-
     RSA *rsa = RSA_new();
     if (!rsa) {
         return nil;
@@ -110,6 +105,7 @@
     rsa->n = BN_dup([[publicKeyPacket publicMPI:@"N"] bignumRef]);
     rsa->e = BN_dup([[publicKeyPacket publicMPI:@"E"] bignumRef]);
 
+    NSAssert(rsa->n && rsa->e, @"Missing N or E");
     if (!rsa->n || !rsa->e) {
         return nil;
     }

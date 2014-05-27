@@ -16,7 +16,6 @@
 @property (strong) PGPS2K *s2k;
 @property (assign) PGPSymmetricAlgorithm symmetricAlgorithm;
 @property (strong, readonly) NSData *ivData;
-@property (strong, readonly) NSArray *secretMPIArray;
 
 /**
  *  Decrypt packet
