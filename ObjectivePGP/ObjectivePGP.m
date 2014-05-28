@@ -169,6 +169,25 @@
     return verified;
 }
 
+- (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData
+{
+    // search for key in keys
+    id packet = [PGPPacketFactory packetWithData:signatureData offset:0];
+    if (![packet isKindOfClass:[PGPSignaturePacket class]]) {
+        return NO;
+    }
+
+    PGPSignaturePacket *signaturePacket = packet;
+    PGPKeyID *issuerKeyID = [signaturePacket issuerKeyID];
+
+    PGPKey *issuerKey = [self findKeyForKeyID:issuerKeyID];
+    if (!issuerKey) {
+        return NO;
+    }
+
+    return [self verifyData:signedData withSignature:signatureData usingKey:issuerKey];
+}
+
 #pragma mark - Parse keyring
 
 /**
@@ -272,5 +291,26 @@
 
     return [keys copy];
 }
+
+- (PGPKey *) findKeyForKeyID:(PGPKeyID *)keyID
+{
+    PGPKey *foundKey = nil;
+    for (PGPKey *key in self.keys) {
+        for (PGPPublicKeyPacket *keyPacket in key.allKeyPackets) {
+            if (![keyPacket isKindOfClass:[PGPPublicKeyPacket class]]) {
+                continue;
+            }
+
+            if ([keyPacket.keyID isEqualToKeyID:keyID]) {
+                foundKey = key;
+                goto found_key_label;
+            }
+        }
+    }
+
+found_key_label:
+    return foundKey;
+}
+
 
 @end

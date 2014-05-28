@@ -31,5 +31,6 @@
 - (NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID;
 
 - (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPKey *)publicKey;
+- (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData;
 
 @end
