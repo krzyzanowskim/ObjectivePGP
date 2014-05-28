@@ -613,60 +613,13 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 {
     NSRange headerRange = (NSRange) {subpacketsPosition, MIN(6,subpacketsData.length - subpacketsPosition) }; // up to 5+1 octets
     NSData *guessHeaderData = [subpacketsData subdataWithRange:headerRange]; // this is "may be" header to be parsed
-    PGPSignatureSubpacketHeader *subpacketHeader = [self getSubpacketHeaderFromData:guessHeaderData];
+    PGPSignatureSubpacketHeader *subpacketHeader = [PGPSignatureSubpacket subpacketHeaderFromData:guessHeaderData];
 
     NSRange subPacketBodyRange = (NSRange){subpacketsPosition + subpacketHeader.headerLength,subpacketHeader.bodyLength};
     NSData *subPacketBody = [subpacketsData subdataWithRange:subPacketBodyRange];
     PGPSignatureSubpacket *subpacket = [[PGPSignatureSubpacket alloc] initWithHeader:subpacketHeader body:subPacketBody bodyRange:subPacketBodyRange];
 
     return subpacket;
-}
-
-- (PGPSignatureSubpacketHeader *) getSubpacketHeaderFromData:(NSData *)headerData
-{
-    NSUInteger position = 0;
-
-    UInt8 *lengthOctets = (UInt8 *)[headerData subdataWithRange:NSMakeRange(position, MIN(5,headerData.length))].bytes;
-    UInt32 headerLength = 0;
-    UInt32 subpacketLength = 0;
-
-    if (lengthOctets[0] < 192) {
-        // subpacketLen = 1st_octet;
-        subpacketLength = lengthOctets[0];
-        headerLength = 1 ;
-    } else if (lengthOctets[0] >= 192 && lengthOctets[0] < 255) {
-        // subpacketLen = ((1st_octet - 192) << 8) + (2nd_octet) + 192
-        subpacketLength   = ((lengthOctets[0] - 192) << 8) + (lengthOctets[1]) + 192;
-        headerLength = 2;
-    } else if (lengthOctets[0] == 255) {
-        // subpacketLen = (2nd_octet << 24) | (3rd_octet << 16) |
-        //                (4th_octet << 8)  | 5th_octet
-        subpacketLength   = (lengthOctets[1] << 24) | (lengthOctets[2] << 16) | (lengthOctets[3] << 8)  | lengthOctets[4];
-        headerLength = 5;
-    }
-    position = position + headerLength;
-
-    //TODO: Bit 7 of the subpacket type is the "critical" bit.
-    PGPSignatureSubpacketType subpacketType = 0;
-    [headerData getBytes:&subpacketType range:(NSRange){position, 1}];
-    headerLength = headerLength + 1;
-
-    // Note: "The length includes the type octet but not this length"
-    // Example: 02 19 01
-    // length 0x02 = 2
-    // type 0x19   = 25
-    // body: 0x01  = 1
-    // so... given body length is = 2 but body length is in fact = 1
-    // this is because given body length include type octet which is from header namespace, not body really.
-    // I'm drunk, or person who defined it this way was drunk.
-    subpacketLength = subpacketLength - 1;
-
-    PGPSignatureSubpacketHeader *subpacketHeader = [[PGPSignatureSubpacketHeader alloc] init];
-    subpacketHeader.type = subpacketType;
-    subpacketHeader.headerLength = headerLength;
-    subpacketHeader.bodyLength = subpacketLength;
-
-    return subpacketHeader;
 }
 
 - (NSData *) buildSubpacketsCollectionData:(NSArray *)subpacketsCollection

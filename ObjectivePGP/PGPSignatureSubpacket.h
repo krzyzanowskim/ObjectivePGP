@@ -24,7 +24,7 @@
 @property (strong, readonly) id value;
 
 - (instancetype) initWithHeader:(PGPSignatureSubpacketHeader *)header body:(NSData *)subPacketBodyData bodyRange:(NSRange)bodyRange;
-
++ (PGPSignatureSubpacketHeader *) subpacketHeaderFromData:(NSData *)headerData;
 + (PGPSignatureSubpacket *) subpacketWithType:(PGPSignatureSubpacketType)type andValue:(id)value;
 
 - (void) parseSubpacketBody:(NSData *)packetBody;
