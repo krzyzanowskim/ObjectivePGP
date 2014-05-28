@@ -123,7 +123,7 @@
 - (void) testDetachedSignature
 {
     BOOL status = [self.oPGP loadKeysFromKeyring:self.secKeyringPath];
-    XCTAssertTrue(status, @"");
+    XCTAssertTrue(status);
 
     // copy keyring to verify
     [[NSFileManager defaultManager] copyItemAtPath:self.secKeyringPath toPath:[self.workingDirectory stringByAppendingPathComponent:[self.secKeyringPath lastPathComponent]] error:nil];
@@ -152,6 +152,19 @@
     status = [self.oPGP verifyData:[NSData dataWithContentsOfFile:fileToSignPath] withSignature:signatureData usingKey:keyToValidateSign];
     XCTAssertTrue(status);
 
+    status = [self.oPGP verifyData:[NSData dataWithContentsOfFile:fileToSignPath] withSignature:signatureData];
+    XCTAssertTrue(status);
+}
+
+- (void) testKeyVerification
+{
+    BOOL status = [self.oPGP loadKeysFromKeyring:self.pubKeyringPath];
+    XCTAssertTrue(status);
+
+    PGPKey *key = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B"];
+    XCTAssertNotNil(key);
+
+    XCTAssertTrue([key verifyPrimaryKey]);
 }
 
 //- (void) testSignature

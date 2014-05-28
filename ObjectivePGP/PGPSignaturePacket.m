@@ -24,11 +24,6 @@
 #import <openssl/err.h>
 #import <openssl/ssl.h>
 
-static NSString * const PGPSignatureHeaderSubpacketLengthKey = @"PGPSignatureHeaderSubpacketLengthKey"; // UInt32
-static NSString * const PGPSignatureHeaderLengthKey = @"PGPSignatureHeaderLengthKey"; // UInt32
-static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTypeKey"; // PGPSignatureSubpacketType
-
-
 @interface PGPSignaturePacket ()
 @property (strong, readwrite, nonatomic) NSArray *hashedSubpackets;
 @property (strong, readwrite, nonatomic) NSArray *unhashedSubpackets;
@@ -86,19 +81,24 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 
 - (PGPKeyID *)issuerKeyID
 {
-    NSArray *subpackets = [self subpackets];
-
-    for (PGPSignatureSubpacket *subpacket in subpackets) {
-        if (subpacket.type == PGPSignatureSubpacketTypeIssuerKeyID) {
-            return subpacket.value;
-        }
-    }
-    return nil;
+    PGPSignatureSubpacket *subpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeIssuerKeyID] firstObject];
+    return subpacket.value;
 }
 
 - (NSArray *)subpackets
 {
     return [self.hashedSubpackets arrayByAddingObjectsFromArray:self.unhashedSubpackets];
+}
+
+- (NSArray *)subpacketsOfType:(PGPSignatureSubpacketType)type
+{
+    NSMutableArray *arr = [NSMutableArray array];
+    for (PGPSignatureSubpacket *subPacket in self.subpackets) {
+        if (subPacket.type == type) {
+            [arr addObject:subPacket];
+        }
+    }
+    return [arr copy];
 }
 
 #pragma mark - Build packet

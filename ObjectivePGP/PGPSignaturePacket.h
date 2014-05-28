@@ -46,6 +46,7 @@
 - (PGPKeyID *) issuerKeyID;
 // All subpackets
 - (NSArray *) subpackets;
+- (NSArray *) subpacketsOfType:(PGPSignatureSubpacketType)type;
 
 /**
  *  Build signature data (signature packet with subpackets).
