@@ -44,7 +44,7 @@
  */
 - (void) parseSubpacketBody:(NSData *)packetBody
 {
-    NSLog(@"parseSubpacket %@, body %@",@(self.type), packetBody);
+    // NSLog(@"parseSubpacket %@, body %@",@(self.type), packetBody);
     switch (self.type) {
         case PGPSignatureSubpacketTypeSignatureCreationTime: // NSDate
         case PGPSignatureSubpacketTypeSignatureExpirationTime:
@@ -360,8 +360,8 @@
     [subpacketData appendData:subpacketLengthData]; // data with tag
     [subpacketData appendData:data];
 
-    NSLog(@"exportSubpacket %@, header  %@",@(self.type), [subpacketData subdataWithRange:(NSRange){0, subpacketLengthData.length + 1}]);
-    NSLog(@"exportSubpacket %@, body  %@",@(self.type), [data subdataWithRange:(NSRange){1,data.length - 1}]);
+    // NSLog(@"exportSubpacket %@, header  %@",@(self.type), [subpacketData subdataWithRange:(NSRange){0, subpacketLengthData.length + 1}]);
+    // NSLog(@"exportSubpacket %@, body  %@",@(self.type), [data subdataWithRange:(NSRange){1,data.length - 1}]);
 
     return [subpacketData copy];
 }

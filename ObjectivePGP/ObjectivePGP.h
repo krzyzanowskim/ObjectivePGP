@@ -17,44 +17,18 @@
  */
 @property (strong, nonatomic) NSArray *keys;
 
-/**
- *  Load keyring file (pubring or secring. Keys are appended to *keys*.
- *
- *  @param path Path to keyring file
- *
- *  @return YES on success;
- */
-- (BOOL) loadKeyring:(NSString *)path;
+- (BOOL) loadKeysFromKeyring:(NSString *)path;
+- (BOOL) loadKey:(NSString *)shortKeyStringIdentifier fromKeyring:(NSString *)path;
 
-/**
- *  Save keys to file. If file exsits, append data.
- *
- *  @param type Secret or public
- *  @param path File path
- *
- *  @return YES on success
- */
-- (BOOL) appendKeys:(PGPKeyType)type toFile:(NSString *)path;
+- (BOOL) saveKeys:(NSArray *)keys toKeyring:(NSString *)path error:(NSError **)error;
 
-/**
- *  Sign data with default hash algorithm
- *
- *  @param dataToSign Data to sign
- *  @param secretKey  secret key to use
- *
- *  @return Signature
- */
-- (NSData *) signData:(NSData *)dataToSign usignSecretKey:(PGPKey *)secretKey;
+- (NSArray *) getKeysForUserID:(NSString *)userID;
+- (PGPKey *) getKeyForIdentifier:(NSString *)keyIdentifier;
+- (NSArray *) getKeysOfType:(PGPKeyType)keyType;
 
-/**
- *  Verify data with detached signature
- *
- *  @param signedData    signed data
- *  @param signatureData signature data
- *  @param publicKey     public key to use§
- *
- *  @return YES on success
- */
+- (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey;
+- (NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID;
+
 - (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingPublicKey:(PGPKey *)publicKey;
 
 @end

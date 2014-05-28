@@ -33,14 +33,14 @@
 
 - (void)testLoadKeyring
 {
-    BOOL status = [self.oPGP loadKeyring:self.keyringPath];
+    BOOL status = [self.oPGP loadKeysFromKeyring:self.keyringPath];
     XCTAssertTrue(status, @"Unable to load keyring");
     XCTAssert(self.oPGP.keys.count == 1, @"Should load 1 key");
 }
 
 - (void) testUsers
 {
-    [self.oPGP loadKeyring:self.keyringPath];
+    [self.oPGP loadKeysFromKeyring:self.keyringPath];
 
     for (PGPKey *key in self.oPGP.keys) {
         XCTAssert(key.users.count == 1, @"Invalid users count");
@@ -49,7 +49,7 @@
 
 - (void) testPrimaryKey
 {
-    [self.oPGP loadKeyring:self.keyringPath];
+    [self.oPGP loadKeysFromKeyring:self.keyringPath];
 
     for (PGPKey *key in self.oPGP.keys) {
         PGPSecretKeyPacket *secretKey = (PGPSecretKeyPacket *)key.primaryKeyPacket;
@@ -61,7 +61,7 @@
 
 - (void)testDecryption
 {
-    [self.oPGP loadKeyring:self.keyringPath];
+    [self.oPGP loadKeysFromKeyring:self.keyringPath];
 
     for (PGPKey *key in self.oPGP.keys) {
         NSError *decryptError = nil;

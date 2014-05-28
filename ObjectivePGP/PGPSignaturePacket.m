@@ -435,7 +435,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
             break;
 
         default:
-            NSLog(@"algorithm not supported");
+            [NSException raise:@"PGPNotSupported" format:@"Algorith not supported"];
             break;
     }
 
@@ -533,8 +533,8 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
         self.hashedSubpackets = [hashedSubpackets copy];
     }
 
+    // Raw, signed data
     self.rawReadedSignedPartData = [packetBody subdataWithRange:(NSRange){startPosition, position}];
-    NSLog(@"signatureData %@",self.rawReadedSignedPartData);
 
     // Two-octet scalar octet count for the following unhashed subpacket
     UInt16 unhashedOctetCount = 0;
@@ -563,7 +563,6 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 
     // Two-octet field holding the left 16 bits of the signed hash value.
     self.signedHashValueData = [packetBody subdataWithRange:(NSRange){position, 2}];
-    NSLog(@"parse leftBits %@",self.signedHashValueData);
     position = position + 2;
 
     // 5.2.2. One or more multiprecision integers comprising the signature. This portion is algorithm specific
@@ -621,11 +620,11 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     [subpacketHeaderDictionary[PGPSignatureHeaderLengthKey] getValue:&headerLength];
     [subpacketHeaderDictionary[PGPSignatureHeaderSubpacketLengthKey] getValue:&subpacketLength];
 
-    NSLog(@"parseSubpacket %@ header %@", @(subpacketType), [subpacketsData subdataWithRange:(NSRange){subpacketsPosition, headerLength}]);
-    NSRange bodyRange = (NSRange){subpacketsPosition + headerLength,subpacketLength};
-    PGPSignatureSubpacket *subpacket = [[PGPSignatureSubpacket alloc] initWithBody:[subpacketsData subdataWithRange:bodyRange]
+    NSRange subPacketBodyRange = (NSRange){subpacketsPosition + headerLength,subpacketLength};
+    NSData *subPacketBody = [subpacketsData subdataWithRange:subPacketBodyRange];
+    PGPSignatureSubpacket *subpacket = [[PGPSignatureSubpacket alloc] initWithBody:subPacketBody
                                                                               type:subpacketType
-                                                                             range:bodyRange];
+                                                                             range:subPacketBodyRange];
 
     return subpacket;
 }

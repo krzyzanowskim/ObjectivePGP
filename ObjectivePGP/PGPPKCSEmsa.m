@@ -124,7 +124,6 @@ static UInt8 prefix_ripemd160[] = {
     if (emLength < tData.length + 11) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"intended encoded message length too short"}];
-            NSLog(@"%@", *error);
         }
         return nil;
     }

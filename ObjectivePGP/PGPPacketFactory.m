@@ -40,7 +40,7 @@
     if (packetHeaderData.length > 0) {
         NSData *packetBodyData = [packetsData subdataWithRange:(NSRange) {offset + packetHeaderData.length, bodyLength}];
         // Analyze body0
-        NSLog(@"Reading packet tag %@, offset %@, length: %@", @(packetTag), @(offset), @(packetHeaderData.length + packetBodyData.length));
+
         PGPPacket * packet = nil;
         switch (packetTag) {
             case PGPPublicKeyPacketTag:
@@ -74,7 +74,10 @@
                 packet = [[PGPModificationDetectionCodePacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
                 break;
             default:
-                NSLog(@"!!! Packet tag %d is not supported", packetTag);
+                #ifdef DEBUG
+                NSLog(@"Warning %s Packet tag %d is not supported", __PRETTY_FUNCTION__, packetTag);
+                #endif
+                
                 packet = [[PGPPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
                 break;
         }

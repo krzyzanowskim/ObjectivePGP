@@ -43,10 +43,6 @@
     self.filename = [[NSString alloc] initWithData:[packetBody subdataWithRange:(NSRange){position, filenameLength}] encoding:NSUTF8StringEncoding];
     position = position + filenameLength;
 
-#ifdef DEBUG
-    NSLog(@"Filename %@",self.filename);
-#endif
-
     // If the special name "_CONSOLE" is used, the message is considered to be "for your eyes only".
 
     // data date
@@ -55,10 +51,6 @@
     creationTimestamp = CFSwapInt32BigToHost(creationTimestamp);
     self.timestamp = [NSDate dateWithTimeIntervalSince1970:creationTimestamp];
     position = position + 4;
-
-#ifdef DEBUG
-    NSLog(@"%@",self.timestamp);
-#endif
 
     switch (self.format) {
         case PGPLiteralPacketBinary:

@@ -24,6 +24,6 @@
 - (NSData *) exportPacket:(NSError *__autoreleasing *)error;
 
 - (NSData *) buildHeaderData:(NSData *)bodyData;
-+ (NSData *)buildNewFormatLengthDataForData:(NSData *)bodyData;
++ (NSData *) buildNewFormatLengthDataForData:(NSData *)bodyData;
 
 @end

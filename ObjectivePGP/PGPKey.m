@@ -5,6 +5,9 @@
 //  Created by Marcin Krzyzanowski on 13/05/14.
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
+//  TODO:
+//  1. Key validation
+//  2. 
 
 #import "PGPKey.h"
 #import "PGPPublicKeyPacket.h"

@@ -34,7 +34,7 @@
 
 - (void) testCRC24
 {
-    [self.oPGP loadKeyring:self.keyringPath];
+    [self.oPGP loadKeysFromKeyring:self.keyringPath];
 
     /*
      The checksum is a 24-bit Cyclic Redundancy Check (CRC) converted to

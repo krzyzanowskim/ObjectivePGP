@@ -12,6 +12,8 @@
 #import "PGPSignaturePacket.h"
 #import "PGPPacketFactory.h"
 #import "PGPUserIDPacket.h"
+#import "PGPPublicKeyPacket.h"
+#import "PGPUser.h"
 
 @implementation ObjectivePGP
 
@@ -23,6 +25,136 @@
     return _keys;
 }
 
+#pragma mark - Search
+
+// full user identifier
+- (NSArray *) getKeysForUserID:(NSString *)userID
+{
+    NSMutableArray *foundKeysArray = [NSMutableArray array];
+    [self.keys enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        PGPKey *key = obj;
+        for (PGPUser *user in key.users) {
+            if ([user.userID isEqualToString:userID]) {
+                [foundKeysArray addObject:key];
+            }
+        }
+    }];
+    return foundKeysArray.count > 0 ? [foundKeysArray copy] : nil;
+}
+
+// 16 or 8 chars identifier
+- (PGPKey *) getKeyForIdentifier:(NSString *)keyIdentifier
+{
+    if (keyIdentifier.length < 8 && keyIdentifier.length > 16)
+        return nil;
+
+    __block PGPKey *foundKey = nil;
+    [self.keys enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        PGPKey *key = obj;
+        PGPPublicKeyPacket *primaryPacket = (PGPPublicKeyPacket *)key.primaryKeyPacket;
+        if (keyIdentifier.length == 16 && [primaryPacket.keyID.longKeyString isEqualToString:keyIdentifier]) {
+            foundKey = key;
+        } else if (keyIdentifier.length == 8 && [primaryPacket.keyID.shortKeyString isEqualToString:keyIdentifier]) {
+            foundKey = key;
+        }
+
+        if (foundKey) {
+            *stop = YES;
+        }
+    }];
+    return foundKey;
+}
+
+- (NSArray *) getKeysOfType:(PGPKeyType)keyType
+{
+    NSMutableArray *keysArray = [NSMutableArray array];
+    for (PGPKey *key in self.keys) {
+        if (key.type == keyType)
+            [keysArray addObject:key];
+    }
+    return [keysArray copy];
+}
+
+#pragma mark - Save
+
+- (BOOL) saveKeys:(NSArray *)keys toKeyring:(NSString *)path error:(NSError **)error
+{
+    BOOL result = YES;
+    for (PGPKey *key in keys) {
+        result = result && [self appendKey:key toKeyring:path error:error];
+    }
+    return result;
+}
+
+
+- (BOOL) appendKey:(PGPKey *)key toKeyring:(NSString *)path error:(NSError **)error
+{
+    NSFileManager *fm = [NSFileManager defaultManager];
+
+    if (!path) {
+        return NO;
+    }
+
+    NSData *keyData = [key export:error];
+    if (*error) {
+        return NO;
+    }
+    if (![fm fileExistsAtPath:path]) {
+        [fm createFileAtPath:path contents:keyData attributes:@{NSFileProtectionKey: NSFileProtectionComplete,
+                                                                NSFilePosixPermissions: @(0600)}];
+    } else {
+        NSFileHandle *fileHandle = [NSFileHandle fileHandleForUpdatingAtPath:path];
+        [fileHandle seekToEndOfFile];
+        [fileHandle writeData:keyData];
+        [fileHandle closeFile];
+    }
+    return YES;
+}
+
+#pragma mark - Operations
+
+- (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey
+{
+    NSData *signaturePacketData = nil;
+
+    // Some defaults
+    PGPHashAlgorithm preferedHashAlgorithm = PGPHashSHA1;
+
+    PGPSignaturePacket *signaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureBinaryDocument
+                                                                hashAlgorithm:preferedHashAlgorithm];
+
+    [signaturePacket signData:dataToSign secretKey:secretKey];
+    signaturePacketData = [signaturePacket exportPacket:nil];
+    return signaturePacketData;
+}
+
+- (NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID
+{
+    PGPKey *key = [[self getKeysForUserID:userID] lastObject];
+    NSAssert(key, @"Key is missing");
+
+    if (!key) {
+        return nil;
+    }
+
+    return [self signData:dataToSign usingSecretKey:key];
+}
+
+- (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingPublicKey:(PGPKey *)publicKey
+{
+    id packet = [PGPPacketFactory packetWithData:signatureData offset:0];
+    if (![packet isKindOfClass:[PGPSignaturePacket class]]) {
+        return NO;
+    }
+
+    PGPSignaturePacket *signaturePacket = packet;
+    BOOL verified = [signaturePacket verifyData:signedData withKey:publicKey userID:nil];
+
+    return verified;
+}
+
+#pragma mark - Parse keyring
+
 /**
  *  Load keyring file (secring or pubring)
  *
@@ -30,7 +162,7 @@
  *
  *  @return YES on success
  */
-- (BOOL) loadKeyring:(NSString *)path
+- (BOOL) loadKeysFromKeyring:(NSString *)path
 {
     NSString *fullPath = [path stringByExpandingTildeInPath];
 
@@ -53,63 +185,39 @@
     return YES;
 }
 
-- (BOOL) appendKeys:(PGPKeyType)type toFile:(NSString *)path
+- (BOOL) loadKey:(NSString *)shortKeyStringIdentifier fromKeyring:(NSString *)path
 {
-    NSFileManager *fm = [NSFileManager defaultManager];
+    NSString *fullPath = [path stringByExpandingTildeInPath];
 
-    if (!path || self.keys.count == 0) {
+    NSData *ringData = [NSData dataWithContentsOfFile:fullPath];
+    if (!ringData) {
         return NO;
     }
 
-    for (PGPKey *key in self.keys) {
-        if (key.type == type) {
-            NSError *error = nil;
-            NSData *keyData = [key export:&error];
-            if (error) {
-                return NO;
-            }
-            if (![fm fileExistsAtPath:path]) {
-                [fm createFileAtPath:path contents:keyData attributes:nil];
-            } else {
-                NSFileHandle *fileHandle = [NSFileHandle fileHandleForUpdatingAtPath:path];
-                [fileHandle seekToEndOfFile];
-                [fileHandle writeData:keyData];
-                [fileHandle closeFile];
+    NSArray *parsedKeys = [self parseKeyring:ringData];
+    if (parsedKeys.count == 0) {
+        return NO;
+    }
+
+    __block BOOL foundKey = NO;
+    [parsedKeys enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        PGPKey *key = obj;
+
+        if ([key.primaryKeyPacket isKindOfClass:[PGPPublicKeyPacket class]]) {
+            PGPPublicKeyPacket *keyPacket = (PGPPublicKeyPacket *)key.primaryKeyPacket;
+            if ([keyPacket.keyID.shortKeyString isEqualToString:shortKeyStringIdentifier])
+            {
+                self.keys = [self.keys arrayByAddingObject:key];
+                foundKey = YES;
+                *stop = YES;
             }
         }
-    }
-    return YES;
+    }];
+    
+    return foundKey;
 }
 
-- (NSData *) signData:(NSData *)dataToSign usignSecretKey:(PGPKey *)secretKey
-{
-    NSData *signaturePacketData = nil;
-
-    // Some defaults
-    PGPHashAlgorithm preferedHashAlgorithm = PGPHashSHA1;
-
-    PGPSignaturePacket *signaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureBinaryDocument
-                                                                hashAlgorithm:preferedHashAlgorithm];
-
-    [signaturePacket signData:dataToSign secretKey:secretKey];
-    signaturePacketData = [signaturePacket exportPacket:nil];
-    return signaturePacketData;
-}
-
-- (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingPublicKey:(PGPKey *)publicKey
-{
-    id packet = [PGPPacketFactory packetWithData:signatureData offset:0];
-    if (![packet isKindOfClass:[PGPSignaturePacket class]]) {
-        return NO;
-    }
-
-    PGPSignaturePacket *signaturePacket = packet;
-    BOOL verified = [signaturePacket verifyData:signedData withKey:publicKey userID:nil];
-
-    return verified;
-}
-
-#pragma mark - Parse keyring
+#pragma mark - Private
 
 /**
  *  Parse keyring data

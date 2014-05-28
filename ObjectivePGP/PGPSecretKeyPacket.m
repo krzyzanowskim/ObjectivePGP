@@ -301,11 +301,6 @@
     NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:self.symmetricAlgorithm];
     NSAssert(keySize <= 32, @"invalid keySize");
 
-#ifdef DEBUG
-    UInt8 *IV = (UInt8 *)self.ivData.bytes;
-    NSLog(@"IV %#02X %#02X %#02X %#02X %#02X %#02X %#02X %#02X", IV[0], IV[1], IV[2], IV[3], IV[4], IV[5], IV[6], IV[7]);
-#endif
-
     //FIXME: not here, just for testing (?)
     NSData *keyData = [self.s2k produceKeyWithPassphrase:passphrase keySize:keySize];
 
@@ -392,10 +387,10 @@
         case PGPSymmetricBlowfish:
         case PGPSymmetricTwofish256:
             //TODO: implement blowfish and twofish
-            NSLog(@"symmetric algorithm not implemenetd");
+            [NSException raise:@"PGPNotSupported" format:@"Twofish not supported"];
             break;
         case PGPSymmetricPlaintext:
-            NSLog(@"Unencrypted data");
+            [NSException raise:@"PGPInconsistency" format:@"Can't decrypt plaintext"];
             break;
         default:
             break;

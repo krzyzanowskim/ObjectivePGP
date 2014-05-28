@@ -147,7 +147,6 @@ static const unsigned int PGP_SALT_SIZE = 8;
                         }
                     }
                 }
-                NSLog(@"memory test");
             }
         }
             break;
