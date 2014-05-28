@@ -109,10 +109,10 @@ typedef NS_ENUM(UInt8, PGPSignatureType) {
     PGPSignaturePositiveCertificationUserIDandPublicKey = 0x13,
     PGPSignatureSubkeyBinding                           = 0x18,
     PGPSignaturePrimaryKeyBinding                       = 0x19,
-    PGPSignatureDirectlyOnKey                           = 0x1F, // Key
-    PGPSignatureKeyRevocation                           = 0x20, // Key revocation signature
-    PGPSignatureSubkeyRevocation                        = 0x28, // Subkey revocation signature
-    PGPSignatureCertificationRevocation                 = 0x30,
+    PGPSignatureDirectlyOnKey                           = 0x1F, // 0x1F: Signature directly on a key (key)
+    PGPSignatureKeyRevocation                           = 0x20, // 0x20: Key revocation signature (key_revocation)
+    PGPSignatureSubkeyRevocation                        = 0x28, // 0x28: Subkey revocation signature (subkey_revocation)
+    PGPSignatureCertificationRevocation                 = 0x30, // 0x30: Certification revocation signature (cert_revocation)
     PGPSignatureTimestamp                               = 0x40,
     PGPSignature3PartyConfirmation                      = 0x50
 };
