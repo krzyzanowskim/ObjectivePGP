@@ -207,32 +207,6 @@
     return nil;
 }
 
-//- (PGPSignaturePacket *) signingSignature
-//{
-//    for (PGPUser *user in self.users) {
-//        for (PGPSignaturePacket *selfSignature in user.selfSignatures) {
-//            if (selfSignature.canBeUsedToSign) {
-//                return selfSignature;
-//            }
-//        }
-//    }
-//
-//    for (PGPSignaturePacket *signaturePacket in self.directSignatures) {
-//        if (signaturePacket.canBeUsedToSign) {
-//            return signaturePacket;
-//        }
-//    }
-//
-//    for (PGPSubKey *subKey in self.subKeys) {
-//        PGPSignaturePacket *signaturePacket = subKey.bindingSignature;
-//        if (signaturePacket.canBeUsedToSign) {
-//            return signaturePacket;
-//        }
-//    }
-//
-//    return nil;
-//}
-
 - (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error
 {
     BOOL ret = NO;
@@ -261,6 +235,20 @@
     }
     return [result copy];
 }
+
+#pragma mark - Verification
+
+- (BOOL) verifyPrimaryKey
+{
+    //TODO: expireation
+    //TODO: verification
+    BOOL result = YES;
+    // check revocation signature
+//    if (self.revocationSignature && //TODO: !this.revocationSignature.isExpired()
+//        self.revocationSignature is
+    return result;
+}
+
 
 #pragma mark - Private
 

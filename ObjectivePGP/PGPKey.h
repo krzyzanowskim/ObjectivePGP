@@ -26,7 +26,7 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
 @property (strong, nonatomic) NSMutableArray *users; // PGPUser
 @property (strong, nonatomic) NSMutableArray *subKeys;
 @property (strong, nonatomic) NSMutableArray *directSignatures;
-@property (strong, nonatomic) PGPPacket *revocationSignature;
+@property (strong, nonatomic) PGPPacket      *revocationSignature;
 
 - (instancetype) initWithPackets:(NSArray *)packets;
 
@@ -46,6 +46,10 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
  *  @return PGPSecureKeyPacket that can be used to signing
  */
 - (PGPPacket *) signingKeyPacket;
+
+
+- (NSArray *) allKeyPackets;
+- (BOOL) verifyPrimaryKey;
 
 
 /**
