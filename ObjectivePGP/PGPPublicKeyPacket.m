@@ -115,8 +115,10 @@
     NSAssert(self.version >= 3, @"To old packet version");
 
     // A four-octet number denoting the time that the key was created.
-    [packetBody getBytes:&_timestamp range:(NSRange){position,4}];
-    _timestamp = CFSwapInt32BigToHost(_timestamp);
+    UInt32 timestamp = 0;
+    [packetBody getBytes:&timestamp range:(NSRange){position,4}];
+    timestamp = CFSwapInt32BigToHost(timestamp);
+    _createDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
     position = position + 4;
 
     //V3 keys are deprecated; an implementation MUST NOT generate a V3 key, but MAY accept it.
@@ -244,7 +246,8 @@
     NSMutableData *data = [NSMutableData dataWithCapacity:128];
     [data appendBytes:&_version length:1];
 
-    UInt32 timestampBE = CFSwapInt32HostToBig(_timestamp);
+    UInt32 timestamp = [self.createDate timeIntervalSince1970];
+    UInt32 timestampBE = CFSwapInt32HostToBig(timestamp);
     [data appendBytes:&timestampBE length:4];
 
     if (!forceV4 && _version == 0x03) {

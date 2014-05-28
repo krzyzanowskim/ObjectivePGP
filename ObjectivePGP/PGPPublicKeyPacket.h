@@ -18,7 +18,7 @@
 @interface PGPPublicKeyPacket : PGPPacket
 
 @property (assign, readonly) UInt8 version;
-@property (assign, readonly) UInt32 timestamp;
+@property (assign, readonly) NSDate *createDate;
 @property (assign, readonly) UInt16 V3validityPeriod; // obsolete
 @property (assign, readonly) PGPPublicKeyAlgorithm publicKeyAlgorithm;
 
