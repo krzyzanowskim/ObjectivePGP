@@ -77,6 +77,11 @@
 
 #pragma mark - Save
 
+- (BOOL) saveKeysOfType:(PGPKeyType)type toKeyring:(NSString *)path error:(NSError **)error
+{
+    return [self saveKeys:[self getKeysOfType:type] toKeyring:path error:error];
+}
+
 - (BOOL) saveKeys:(NSArray *)keys toKeyring:(NSString *)path error:(NSError **)error
 {
     BOOL result = YES;

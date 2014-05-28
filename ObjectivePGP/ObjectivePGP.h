@@ -20,10 +20,11 @@
 - (BOOL) loadKeysFromKeyring:(NSString *)path;
 - (BOOL) loadKey:(NSString *)shortKeyStringIdentifier fromKeyring:(NSString *)path;
 
+- (BOOL) saveKeysOfType:(PGPKeyType)type toKeyring:(NSString *)path error:(NSError **)error;
 - (BOOL) saveKeys:(NSArray *)keys toKeyring:(NSString *)path error:(NSError **)error;
 
 - (NSArray *) getKeysForUserID:(NSString *)userID;
-- (PGPKey *) getKeyForIdentifier:(NSString *)keyIdentifier;
+- (PGPKey *)  getKeyForIdentifier:(NSString *)keyIdentifier;
 - (NSArray *) getKeysOfType:(PGPKeyType)keyType;
 
 - (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey;
