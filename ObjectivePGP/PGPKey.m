@@ -244,8 +244,13 @@
     //TODO: verification
     BOOL result = YES;
     // check revocation signature
-//    if (self.revocationSignature && //TODO: !this.revocationSignature.isExpired()
-//        self.revocationSignature is
+    //if (self.revocationSignature && !self.revocationSignature.isExpired)
+    // check revocation signature
+    //if (this.revocationSignature && !this.revocationSignature.isExpired() &&
+    //    (this.revocationSignature.verified ||
+    //     this.revocationSignature.verify(this.primaryKey, {key: this.primaryKey}))) {
+    //        return enums.keyStatus.revoked;
+    //    }
     return result;
 }
 

@@ -101,6 +101,32 @@
     return [arr copy];
 }
 
+- (NSDate *)expirationDate
+{
+    NSDate *creationDate = [[self subpacketsOfType:PGPSignatureSubpacketTypeSignatureCreationTime] firstObject];
+    NSNumber *validityPeriod = [[self subpacketsOfType:PGPSignatureSubpacketTypeSignatureExpirationTime] firstObject];
+    if (!validityPeriod || validityPeriod.unsignedIntegerValue == 0) {
+        return nil;
+    }
+
+    NSDate *expirationDate = [creationDate dateByAddingTimeInterval:validityPeriod.unsignedIntegerValue];
+    return expirationDate;
+}
+
+- (BOOL) isExpired
+{
+    // is no expiration date then signature never expires
+    NSDate *expirationDate = [self expirationDate];
+    if (!expirationDate) {
+        return NO;
+    }
+
+    if ([expirationDate compare:[NSDate date]] == NSOrderedDescending) {
+        return YES;
+    }
+    return NO;
+}
+
 #pragma mark - Build packet
 
 - (NSData *) exportPacket:(NSError *__autoreleasing *)error

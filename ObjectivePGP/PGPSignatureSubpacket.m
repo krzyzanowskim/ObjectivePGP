@@ -48,18 +48,27 @@
     // NSLog(@"parseSubpacket %@, body %@",@(self.type), packetBody);
     switch (self.type) {
         case PGPSignatureSubpacketTypeSignatureCreationTime: // NSDate
-        case PGPSignatureSubpacketTypeSignatureExpirationTime:
-        case PGPSignatureSubpacketTypeKeyExpirationTime:
         {
             //  5.2.3.4.  Signature Creation Time
-            //  5.2.3.10. Signature Expiration Time
-            //  5.2.3.6.  Key Expiration Time
             //  Signature Creation Time MUST be present in the hashed area.
 
             UInt32 signatureCreationTimestamp = 0;
             [packetBody getBytes:&signatureCreationTimestamp length:4];
             signatureCreationTimestamp = CFSwapInt32BigToHost(signatureCreationTimestamp);
             self.value = [NSDate dateWithTimeIntervalSince1970:signatureCreationTimestamp];
+        }
+            break;
+        case PGPSignatureSubpacketTypeSignatureExpirationTime: // NSNumber
+        case PGPSignatureSubpacketTypeKeyExpirationTime:
+        {
+            //  5.2.3.10. Signature Expiration Time
+            //  5.2.3.6.  Key Expiration Time
+            //   The validity period of the signature
+            UInt32 validityPeriodTime = 0;
+            [packetBody getBytes:&validityPeriodTime length:4];
+            validityPeriodTime = CFSwapInt32BigToHost(validityPeriodTime);
+            self.value = @(validityPeriodTime);
+
         }
             break;
         case PGPSignatureSubpacketTypeTrustSignature:
@@ -233,12 +242,18 @@
 
     switch (self.type) {
         case PGPSignatureSubpacketTypeSignatureCreationTime: // NSDate
-        case PGPSignatureSubpacketTypeSignatureExpirationTime:
-        case PGPSignatureSubpacketTypeKeyExpirationTime:
         {
             NSDate *date = (NSDate *)self.value;
             UInt32 signatureCreationTimestamp = CFSwapInt32HostToBig((UInt32)[date timeIntervalSince1970]);
             [data appendBytes:&signatureCreationTimestamp length:4];
+        }
+            break;
+        case PGPSignatureSubpacketTypeSignatureExpirationTime: // NSNumber
+        case PGPSignatureSubpacketTypeKeyExpirationTime:
+        {
+            NSNumber *validityPeriod = (NSNumber *)self.value;
+            UInt32 validityPeriodInt = CFSwapInt32HostToBig((UInt32)validityPeriod.unsignedIntegerValue);
+            [data appendBytes:&validityPeriodInt length:4];
         }
             break;
         case PGPSignatureSubpacketTypeIssuerKeyID: // PGPKeyID
