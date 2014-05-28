@@ -133,7 +133,7 @@
                             continue;
                         }
                         if ([signaturePacket.issuerKeyID isEqual:primaryKeyID]) {
-                            user.selfSignatures = [user.selfSignatures arrayByAddingObject:packet];
+                            user.selfCertifications = [user.selfCertifications arrayByAddingObject:packet];
                         } else {
                             user.otherSignatures = [user.otherSignatures arrayByAddingObject:packet];
                         }
@@ -175,6 +175,7 @@
 }
 
 // signature packet that is available for signing data
+//TODO: add validations for signatures
 - (PGPPacket *) signingKeyPacket
 {
     NSAssert(self.type == PGPKeySecret, @"Need secret key to sign");
@@ -183,16 +184,10 @@
         return nil;
     }
 
-    for (PGPUser *user in self.users) {
-        for (PGPSignaturePacket *selfSignature in user.selfSignatures) {
-            if (selfSignature.canBeUsedToSign) {
-                return self.primaryKeyPacket;
-            }
-        }
-    }
-
-    for (PGPSignaturePacket *signaturePacket in self.directSignatures) {
-        if (signaturePacket.canBeUsedToSign) {
+    PGPSignaturePacket *primaryUserSelfCertificate = [self primaryUserSelfCertificate];
+    if (primaryUserSelfCertificate)
+    {
+        if (primaryUserSelfCertificate.canBeUsedToSign) {
             return self.primaryKeyPacket;
         }
     }
@@ -238,22 +233,40 @@
 
 #pragma mark - Verification
 
-- (BOOL) verifyPrimaryKey
+// Returns primary user
+- (PGPUser *) primaryUser
 {
-    //TODO: expireation
-    //TODO: verification
-    BOOL result = YES;
-    // check revocation signature
-    //if (self.revocationSignature && !self.revocationSignature.isExpired)
-    // check revocation signature
-    //if (this.revocationSignature && !this.revocationSignature.isExpired() &&
-    //    (this.revocationSignature.verified ||
-    //     this.revocationSignature.verify(this.primaryKey, {key: this.primaryKey}))) {
-    //        return enums.keyStatus.revoked;
-    //    }
-    return result;
+    PGPUser *foundUser = nil;
+
+    for (PGPUser *user in self.users) {
+        if (!user.userID || user.userID.length == 0) {
+            continue;
+        }
+
+        PGPSignaturePacket *selfCertificate = [user validSelfCertificate];
+        if (!selfCertificate) {
+            continue;
+        }
+
+        if (selfCertificate.isPrimaryUserID) {
+            foundUser = user;
+        } else if (!foundUser) {
+            foundUser = user;
+        }
+    }
+    return foundUser;
 }
 
+// most significant (latest(???) valid) self signature for the primary user
+- (PGPSignaturePacket *) primaryUserSelfCertificate
+{
+    PGPUser *user = [self primaryUser];
+    if (!user) {
+        return nil;
+    }
+
+    return [user validSelfCertificate];
+}
 
 #pragma mark - Private
 

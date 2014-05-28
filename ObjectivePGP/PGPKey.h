@@ -49,7 +49,6 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
 
 
 - (NSArray *) allKeyPackets;
-- (BOOL) verifyPrimaryKey;
 
 
 /**

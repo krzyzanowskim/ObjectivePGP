@@ -9,12 +9,12 @@
 #import <Foundation/Foundation.h>
 #import "PGPPacket.h"
 
-@class PGPUserIDPacket, PGPUserAttributePacket;
+@class PGPUserIDPacket, PGPUserAttributePacket, PGPSignaturePacket;
 
 @interface PGPUser : NSObject
 @property (strong, nonatomic) NSString *userID;
 @property (strong, nonatomic) PGPUserAttributePacket *userAttribute;
-@property (strong, nonatomic) NSArray *selfSignatures;
+@property (strong, nonatomic) NSArray *selfCertifications;
 @property (strong, nonatomic) NSArray *otherSignatures;
 @property (strong, nonatomic) NSArray *revocationSignatures;
 
@@ -22,5 +22,7 @@
 
 - (instancetype) initWithUserIDPacket:(PGPUserIDPacket *)userPacket;
 - (NSArray *) allPackets;
+- (PGPSignaturePacket *) validSelfCertificate;
+
 
 @end

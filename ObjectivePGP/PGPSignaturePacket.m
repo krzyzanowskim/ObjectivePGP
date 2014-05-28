@@ -127,6 +127,18 @@
     return NO;
 }
 
+- (NSDate *) creationDate
+{
+    NSDate *creationDate = [self subpacketsOfType:PGPSignatureSubpacketTypeSignatureCreationTime];
+    return creationDate;
+}
+
+- (BOOL) isPrimaryUserID
+{
+    NSNumber *primaryUserIDSubpacket =  [[self subpacketsOfType:PGPSignatureSubpacketTypePrimaryUserID] firstObject];
+    return primaryUserIDSubpacket.boolValue;
+}
+
 #pragma mark - Build packet
 
 - (NSData *) exportPacket:(NSError *__autoreleasing *)error
@@ -291,7 +303,7 @@
         case PGPPublicKeyAlgorithmRSASignOnly:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         {
-            PGPPublicKeyPacket *publicKeyPacket = (PGPPublicKeyPacket *)publicKey.signingKeyPacket; // signing key
+            PGPPublicKeyPacket *signingKeyPacket = (PGPPublicKeyPacket *)publicKey.signingKeyPacket; // signing key
 
             // convert mpi data to binary signature_bn_bin
             PGPMPI *signatureMPI = self.signatureMPIs[0];
@@ -300,11 +312,11 @@
             NSData *encryptedEmData = [signatureMPI bodyData];
 
             // decrypted encoded m value
-            NSData *decryptedEmData = [PGPPublicKeyRSA publicDecrypt:encryptedEmData withPublicKeyPacket:publicKeyPacket];
+            NSData *decryptedEmData = [PGPPublicKeyRSA publicDecrypt:encryptedEmData withPublicKeyPacket:signingKeyPacket];
 
             // calculate EM and compare with decrypted EM. PKCS-emsa Encoded M.
             NSError *error = nil; //TODO: handle
-            NSData *emData = [PGPPKCSEmsa encode:self.hashAlgoritm message:toHashData encodedMessageLength:publicKeyPacket.keySize error:&error];
+            NSData *emData = [PGPPKCSEmsa encode:self.hashAlgoritm message:toHashData encodedMessageLength:signingKeyPacket.keySize error:&error];
             if (![emData isEqualToData:decryptedEmData]) {
                 return NO;
             }
@@ -320,17 +332,16 @@
 
 - (BOOL)canBeUsedToSign
 {
-    NSArray *subpackets = [self subpackets];
-    if (self.publicKeyAlgorithm == PGPPublicKeyAlgorithmRSA || self.publicKeyAlgorithm == PGPPublicKeyAlgorithmRSASignOnly) {
-        for (PGPSignatureSubpacket *subpacket in subpackets) {
-            if (subpacket.type == PGPSignatureSubpacketTypeKeyFlags) {
-                NSArray *flags = subpacket.value;
-                if ([flags containsObject:@(PGPSignatureFlagAllowSignData)]) {
-                    return YES;
-                }
-            }
+    BOOL result = self.publicKeyAlgorithm == PGPPublicKeyAlgorithmDSA || self.publicKeyAlgorithm == PGPPublicKeyAlgorithmRSA || self.publicKeyAlgorithm == PGPPublicKeyAlgorithmRSASignOnly;
+
+    if (result) {
+        PGPSignatureSubpacket *subpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeKeyFlags] firstObject];
+        NSArray *flags = subpacket.value;
+        if ([flags containsObject:@(PGPSignatureFlagAllowSignData)]) {
+            return YES;
         }
     }
+
     return NO;
 }
 

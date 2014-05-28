@@ -7,6 +7,7 @@
 //
 
 #import "PGPUser.h"
+#import "PGPSignaturePacket.h"
 #import "PGPUserIDPacket.h"
 #import "PGPUserAttributePacket.h"
 
@@ -32,7 +33,7 @@
 
     result = prime * result + [_userID hash];
     result = prime * result + [_userAttribute hash];
-    result = prime * result + [_selfSignatures hash];
+    result = prime * result + [_selfCertifications hash];
     result = prime * result + [_otherSignatures hash];
     result = prime * result + [_revocationSignatures hash];
     result = prime * result + [_userIDPacket hash];
@@ -48,14 +49,6 @@
     return _otherSignatures;
 }
 
-- (NSArray *)directSignatures
-{
-    if (!_selfSignatures) {
-        _selfSignatures = [NSArray array];
-    }
-    return _selfSignatures;
-}
-
 - (NSArray *)revocationSignatures
 {
     if (!_revocationSignatures) {
@@ -64,12 +57,12 @@
     return _revocationSignatures;
 }
 
-- (NSArray *)selfSignatures
+- (NSArray *)selfCertifications
 {
-    if (!_selfSignatures) {
-        _selfSignatures = [NSArray array];
+    if (!_selfCertifications) {
+        _selfCertifications = [NSArray array];
     }
-    return _selfSignatures;
+    return _selfCertifications;
 }
 
 - (PGPUserIDPacket *)userIDPacket
@@ -95,7 +88,7 @@
         [arr addObject:packet];
     }
 
-    for (id packet in self.selfSignatures) {
+    for (id packet in self.selfCertifications) {
         [arr addObject:packet];
     }
 
@@ -104,6 +97,59 @@
     }
 
     return [arr copy];
+}
+
+//TODO:
+//User.prototype.getValidSelfCertificate = function(primaryKey) {
+//    if (!this.selfCertifications) {
+//        return null;
+//    }
+//    var validCert = [];
+//    for (var i = 0; i < this.selfCertifications.length; i++) {
+//        if (this.isRevoked(this.selfCertifications[i], primaryKey)) {
+//            continue;
+//        }
+//        if (!this.selfCertifications[i].isExpired() &&
+//            (this.selfCertifications[i].verified ||
+//             this.selfCertifications[i].verify(primaryKey, {userid: this.userId || this.userAttribute, key: primaryKey}))) {
+//                validCert.push(this.selfCertifications[i]);
+//            }
+//    }
+//    // most recent first
+//    validCert = validCert.sort(function(a, b) {
+//        a = a.created;
+//        b = b.created;
+//        return a>b ? -1 : a<b ? 1 : 0;
+//    });
+//    return validCert[0];
+//};
+
+// Returns the most significant (latest valid) self signature of the user
+- (PGPSignaturePacket *) validSelfCertificate
+{
+    if (self.selfCertifications.count == 0) {
+        return nil;
+    }
+
+    NSMutableArray *certs = [NSMutableArray array];
+    for (PGPSignaturePacket *signature in self.selfCertifications) {
+        if (signature.isExpired) {
+            continue;
+        }
+
+        //TODO: check for revocation
+        //TODO: check verify (this is craziest think I ever seen)
+        
+        [certs addObject:signature];
+    }
+
+    [certs sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+        PGPSignaturePacket *sig1 = obj1;
+        PGPSignaturePacket *sig2 = obj2;
+        return [sig1.creationDate compare:sig2.creationDate];
+    }];
+
+    return [certs firstObject];
 }
 
 @end

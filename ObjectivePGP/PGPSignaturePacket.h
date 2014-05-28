@@ -42,6 +42,9 @@
 - (NSArray *) subpacketsOfType:(PGPSignatureSubpacketType)type;
 - (NSDate *) expirationDate;
 - (BOOL) isExpired;
+- (NSDate *) creationDate;
+- (BOOL) isPrimaryUserID;
+
 
 /**
  *  Build signature data (signature packet with subpackets).
