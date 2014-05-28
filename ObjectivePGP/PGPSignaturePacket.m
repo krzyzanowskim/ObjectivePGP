@@ -525,7 +525,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 
         NSUInteger positionSubpacket = 0;
         while (positionSubpacket < hashedSubpacketsData.length) {
-            PGPSignatureSubpacket *subpacket = [self subpacketAtPosition:positionSubpacket subpacketsData:hashedSubpacketsData];
+            PGPSignatureSubpacket *subpacket = [self getSubpacketStartingAtPosition:positionSubpacket fromData:hashedSubpacketsData];
             [hashedSubpackets addObject:subpacket];
             positionSubpacket = subpacket.bodyRange.location + subpacket.bodyRange.length;
         }
@@ -553,7 +553,7 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
         // Loop subpackets
         NSUInteger positionSubpacket = 0;
         while (positionSubpacket < unhashedSubpacketsData.length) {
-            PGPSignatureSubpacket *subpacket = [self subpacketAtPosition:positionSubpacket subpacketsData:unhashedSubpacketsData];
+            PGPSignatureSubpacket *subpacket = [self getSubpacketStartingAtPosition:positionSubpacket fromData:unhashedSubpacketsData];
             [unhashedSubpackets addObject:subpacket];
             positionSubpacket = subpacket.bodyRange.location + subpacket.bodyRange.length;
         }
@@ -606,32 +606,24 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
 
 #pragma mark - Private
 
-- (PGPSignatureSubpacket *) subpacketAtPosition:(NSUInteger)subpacketsPosition subpacketsData:(NSData *)subpacketsData
+// I don't like this part, really ugly
+// This is because subpacket length is unknow and header need to be found first
+// then subpacket can be parsed
+- (PGPSignatureSubpacket *) getSubpacketStartingAtPosition:(NSUInteger)subpacketsPosition fromData:(NSData *)subpacketsData
 {
     NSRange headerRange = (NSRange) {subpacketsPosition, MIN(6,subpacketsData.length - subpacketsPosition) }; // up to 5+1 octets
-    NSData *guessHeaderData = [subpacketsData subdataWithRange:headerRange];
+    NSData *guessHeaderData = [subpacketsData subdataWithRange:headerRange]; // this is "may be" header to be parsed
+    PGPSignatureSubpacketHeader *subpacketHeader = [self getSubpacketHeaderFromData:guessHeaderData];
 
-    PGPSignatureSubpacketType subpacketType = 0;
-    UInt32 headerLength    = 0;
-    UInt32 subpacketLength = 0;
-
-    NSDictionary *subpacketHeaderDictionary = [self parseSubpacketHeader:guessHeaderData];
-    [subpacketHeaderDictionary[PGPSignatureSubpacketTypeKey] getValue:&subpacketType];
-    [subpacketHeaderDictionary[PGPSignatureHeaderLengthKey] getValue:&headerLength];
-    [subpacketHeaderDictionary[PGPSignatureHeaderSubpacketLengthKey] getValue:&subpacketLength];
-
-    NSRange subPacketBodyRange = (NSRange){subpacketsPosition + headerLength,subpacketLength};
+    NSRange subPacketBodyRange = (NSRange){subpacketsPosition + subpacketHeader.headerLength,subpacketHeader.bodyLength};
     NSData *subPacketBody = [subpacketsData subdataWithRange:subPacketBodyRange];
-    PGPSignatureSubpacket *subpacket = [[PGPSignatureSubpacket alloc] initWithBody:subPacketBody
-                                                                              type:subpacketType
-                                                                             range:subPacketBodyRange];
+    PGPSignatureSubpacket *subpacket = [[PGPSignatureSubpacket alloc] initWithHeader:subpacketHeader body:subPacketBody bodyRange:subPacketBodyRange];
 
     return subpacket;
 }
 
-- (NSDictionary *) parseSubpacketHeader:(NSData *)headerData
+- (PGPSignatureSubpacketHeader *) getSubpacketHeaderFromData:(NSData *)headerData
 {
-    NSMutableDictionary *configDict = [NSMutableDictionary dictionary];
     NSUInteger position = 0;
 
     UInt8 *lengthOctets = (UInt8 *)[headerData subdataWithRange:NSMakeRange(position, MIN(5,headerData.length))].bytes;
@@ -669,11 +661,12 @@ static NSString * const PGPSignatureSubpacketTypeKey = @"PGPSignatureSubpacketTy
     // I'm drunk, or person who defined it this way was drunk.
     subpacketLength = subpacketLength - 1;
 
-    configDict[PGPSignatureHeaderSubpacketLengthKey] = [[NSValue alloc] initWithBytes:&subpacketLength objCType:@encode(UInt32)];
-    configDict[PGPSignatureHeaderLengthKey] = [[NSValue alloc] initWithBytes:&headerLength objCType:@encode(UInt32)];
-    configDict[PGPSignatureSubpacketTypeKey] = [[NSValue alloc] initWithBytes:&subpacketType objCType:@encode(PGPSignatureSubpacketType)];
+    PGPSignatureSubpacketHeader *subpacketHeader = [[PGPSignatureSubpacketHeader alloc] init];
+    subpacketHeader.type = subpacketType;
+    subpacketHeader.headerLength = headerLength;
+    subpacketHeader.bodyLength = subpacketLength;
 
-    return [configDict copy];
+    return subpacketHeader;
 }
 
 - (NSData *) buildSubpacketsCollectionData:(NSArray *)subpacketsCollection

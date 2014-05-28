@@ -99,16 +99,23 @@
     if (*error) {
         return NO;
     }
+
+    BOOL result = NO;
     if (![fm fileExistsAtPath:path]) {
-        [fm createFileAtPath:path contents:keyData attributes:@{NSFileProtectionKey: NSFileProtectionComplete,
+        result = [fm createFileAtPath:path contents:keyData attributes:@{NSFileProtectionKey: NSFileProtectionComplete,
                                                                 NSFilePosixPermissions: @(0600)}];
     } else {
-        NSFileHandle *fileHandle = [NSFileHandle fileHandleForUpdatingAtPath:path];
-        [fileHandle seekToEndOfFile];
-        [fileHandle writeData:keyData];
-        [fileHandle closeFile];
+        @try {
+            NSFileHandle *fileHandle = [NSFileHandle fileHandleForUpdatingAtPath:path];
+            [fileHandle seekToEndOfFile];
+            [fileHandle writeData:keyData];
+            [fileHandle closeFile];
+        }
+        @catch (NSException *exception) {
+            result = NO;
+        }
     }
-    return YES;
+    return result;
 }
 
 #pragma mark - Operations
@@ -140,8 +147,12 @@
     return [self signData:dataToSign usingSecretKey:key];
 }
 
-- (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingPublicKey:(PGPKey *)publicKey
+- (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPKey *)publicKey
 {
+    if (!publicKey || !signatureData || !signatureData) {
+        return NO;
+    }
+
     id packet = [PGPPacketFactory packetWithData:signatureData offset:0];
     if (![packet isKindOfClass:[PGPSignaturePacket class]]) {
         return NO;

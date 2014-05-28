@@ -11,19 +11,31 @@
 #import "PGPPacket.h"
 #import "NSValue+PGPUtils.h"
 
+@implementation PGPSignatureSubpacketHeader
+@end
+
 @interface PGPSignatureSubpacket ()
-@property (assign, readwrite) PGPSignatureSubpacketType type;
 @property (strong, readwrite) id value;
 @end
 
 @implementation PGPSignatureSubpacket
 
-- (instancetype) initWithBody:(NSData *)packetBody type:(PGPSignatureSubpacketType)type range:(NSRange)range
+//- (instancetype) initWithBody:(NSData *)subPacketBody type:(PGPSignatureSubpacketType)type range:(NSRange)range
+//{
+//    if (self = [self init]) {
+//        self->_type = type;
+//        self->_bodyRange = range;
+//        [self parseSubpacketBody:subPacketBody];
+//    }
+//    return self;
+//}
+
+- (instancetype) initWithHeader:(PGPSignatureSubpacketHeader *)header body:(NSData *)subPacketBodyData bodyRange:(NSRange)bodyRange
 {
     if (self = [self init]) {
-        self->_type = type;
-        self->_bodyRange = range;
-        [self parseSubpacketBody:packetBody];
+        _type = header.type;
+        _bodyRange = bodyRange;
+        [self parseSubpacketBody:subPacketBodyData];
     }
     return self;
 }
@@ -35,7 +47,6 @@
     subpacket.value = value;
     return subpacket;
 }
-
 
 /**
  *  5.2.3.1.  Signature Subpacket Specification
@@ -227,7 +238,8 @@
     NSMutableData *data = [NSMutableData data];
 
     // subpacket type
-    [data appendBytes:&_type length:1];
+    PGPSignatureSubpacketType type = self.type;
+    [data appendBytes:&type length:1];
 
     switch (self.type) {
         case PGPSignatureSubpacketTypeSignatureCreationTime: // NSDate
