@@ -18,6 +18,9 @@
 
 - (instancetype) initWithFingerprint:(PGPFingerprint *)fingerprint;
 - (instancetype) initWithLongKey:(NSData *)longKeyData;
+
+- (BOOL) isEqualToKeyID:(PGPKeyID *)keyID;
+
 - (NSData *)exportKeyData;
 
 @end

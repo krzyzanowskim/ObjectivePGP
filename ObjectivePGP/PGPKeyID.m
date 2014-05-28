@@ -61,6 +61,11 @@
     return [self.longKey isEqualToData:other.longKey];
 }
 
+- (BOOL) isEqualToKeyID:(PGPKeyID *)keyID
+{
+    return [self isEqual:keyID];
+}
+
 - (NSUInteger)hash
 {
     const NSUInteger prime = 31;
