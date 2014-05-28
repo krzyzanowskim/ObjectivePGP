@@ -52,9 +52,9 @@
     [self.keys enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         PGPKey *key = obj;
         PGPPublicKeyPacket *primaryPacket = (PGPPublicKeyPacket *)key.primaryKeyPacket;
-        if (keyIdentifier.length == 16 && [primaryPacket.keyID.longKeyString isEqualToString:keyIdentifier]) {
+        if (keyIdentifier.length == 16 && [[primaryPacket.keyID.longKeyString uppercaseString] isEqualToString:[keyIdentifier uppercaseString]]) {
             foundKey = key;
-        } else if (keyIdentifier.length == 8 && [primaryPacket.keyID.shortKeyString isEqualToString:keyIdentifier]) {
+        } else if (keyIdentifier.length == 8 && [[primaryPacket.keyID.shortKeyString uppercaseString] isEqualToString:[keyIdentifier uppercaseString]]) {
             foundKey = key;
         }
 
@@ -216,7 +216,7 @@
 
         if ([key.primaryKeyPacket isKindOfClass:[PGPPublicKeyPacket class]]) {
             PGPPublicKeyPacket *keyPacket = (PGPPublicKeyPacket *)key.primaryKeyPacket;
-            if ([keyPacket.keyID.shortKeyString isEqualToString:shortKeyStringIdentifier])
+            if ([[keyPacket.keyID.shortKeyString uppercaseString] isEqualToString:[shortKeyStringIdentifier uppercaseString]])
             {
                 self.keys = [self.keys arrayByAddingObject:key];
                 foundKey = YES;
