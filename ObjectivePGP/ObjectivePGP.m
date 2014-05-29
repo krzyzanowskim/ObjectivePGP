@@ -237,6 +237,9 @@
 
 - (BOOL) verifyData:(NSData *)signedDataPackets
 {
+    // this is propably not the best solution when it comes to memory consumption
+    // because literal data is copied more than once (first at parse phase, then when is come to build signature packet data
+    // I belive this is unecessary but require more work. Schedule to v2.0
     @autoreleasepool {
         // search for signature packet
         NSMutableArray *accumulatedPackets = [NSMutableArray array];
