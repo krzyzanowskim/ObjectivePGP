@@ -59,6 +59,7 @@
     CC_MD5_Update(ctx, self.bytes, self.length);
     UInt8 *out = calloc(CC_MD5_DIGEST_LENGTH, sizeof(UInt8));
     if (!out) {
+        free(ctx);
         return nil;
     }
     CC_MD5_Final(out, ctx);

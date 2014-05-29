@@ -75,6 +75,7 @@
 //        free(errBuf);
 //
 //        ERR_free_strings();
+        free(outbuf);
         return nil;
     }
 
@@ -108,6 +109,8 @@
     int em_len = RSA_public_decrypt(toDecrypt.length, toDecrypt.bytes, decrypted_em, rsa, RSA_NO_PADDING);
 
     if (em_len != publicKeyPacket.keySize) {
+        free(decrypted_em);
+        RSA_free(rsa);
         return nil;
     }
 

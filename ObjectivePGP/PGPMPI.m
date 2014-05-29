@@ -56,7 +56,9 @@
     NSUInteger len = BN_bn2bin(mpi_BN, bn_bin);
     BN_free(mpi_BN);
 
-    return [NSData dataWithBytes:bn_bin length:len];
+    NSData *data = [NSData dataWithBytes:bn_bin length:len];
+    free(bn_bin);
+    return data;
 }
 
 - (NSData *) exportMPI

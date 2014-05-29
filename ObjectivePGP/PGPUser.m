@@ -84,7 +84,9 @@
 {
     NSMutableArray *arr = [NSMutableArray array];
 
-    [arr addObject:self.userIDPacket]; //TODO: || [arr addObject:self.userAttribute]
+    if (self.userIDPacket) {
+        [arr addObject:self.userIDPacket]; //TODO: || [arr addObject:self.userAttribute]
+    }
 
     for (id packet in self.revocationSignatures) {
         [arr addObject:packet];

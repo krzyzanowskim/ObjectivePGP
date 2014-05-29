@@ -276,9 +276,12 @@
         }
 
         // do not build signature, use data that was readed from signedDataPackets
+        // to build final data and avoid unecesarry copying data dataWithBytesNoCopy:length:freeWhenDone: is used
+        // signaturePacket and literalDataPacket is strong in this scope so will not be released
+        // before verification process end.
         NSMutableData *signaturePacketData = [NSMutableData data];
-        [signaturePacketData appendData:signaturePacket.headerData];
-        [signaturePacketData appendData:signaturePacket.bodyData];
+        [signaturePacketData appendData:[NSData dataWithBytesNoCopy:(void *)signaturePacket.headerData.bytes length:signaturePacket.headerData.length freeWhenDone:NO]];
+        [signaturePacketData appendData:[NSData dataWithBytesNoCopy:(void *)signaturePacket.bodyData.bytes length:signaturePacket.bodyData.length freeWhenDone:NO]];
 
         return [self verifyData:literalDataPacket.literalRawData withSignature:signaturePacketData];
     }
