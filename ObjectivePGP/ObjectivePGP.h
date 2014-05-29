@@ -28,7 +28,9 @@
 - (NSArray *) getKeysOfType:(PGPKeyType)keyType;
 
 - (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey;
+- (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey detached:(BOOL)detached;
 - (NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID;
+- (NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID detached:(BOOL)detached;
 
 - (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPKey *)publicKey;
 - (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData;

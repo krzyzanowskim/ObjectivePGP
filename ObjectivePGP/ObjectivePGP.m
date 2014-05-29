@@ -13,7 +13,9 @@
 #import "PGPPacketFactory.h"
 #import "PGPUserIDPacket.h"
 #import "PGPPublicKeyPacket.h"
+#import "PGPLiteralPacket.h"
 #import "PGPUser.h"
+#import "PGPOnePassSignaturePacket.h"
 
 @implementation ObjectivePGP
 
@@ -125,7 +127,29 @@
 
 #pragma mark - Operations
 
+- (NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID
+{
+    return [self signData:dataToSign withKeyForUserID:userID detached:YES];
+}
+
+- (NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID detached:(BOOL)detached
+{
+    PGPKey *key = [[self getKeysForUserID:userID] lastObject];
+    NSAssert(key, @"Key is missing");
+
+    if (!key) {
+        return nil;
+    }
+
+    return [self signData:dataToSign usingSecretKey:key];
+}
+
 - (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey
+{
+    return [self signData:dataToSign usingSecretKey:secretKey detached:YES];
+}
+
+- (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey detached:(BOOL)detached
 {
     NSData *signaturePacketData = nil;
 
@@ -136,20 +160,36 @@
                                                                 hashAlgorithm:preferedHashAlgorithm];
 
     [signaturePacket signData:dataToSign secretKey:secretKey];
-    signaturePacketData = [signaturePacket exportPacket:nil];
-    return signaturePacketData;
-}
+    NSError *exportError = nil;
+    signaturePacketData = [signaturePacket exportPacket:&exportError];
+    NSAssert(!exportError,@"Error on export packet");
 
-- (NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID
-{
-    PGPKey *key = [[self getKeysForUserID:userID] lastObject];
-    NSAssert(key, @"Key is missing");
+    // Signed Message :- Signature Packet, Literal Message
+    NSMutableData *signedMessage = [NSMutableData data];
+    if (!detached) {
+        // OnePass
+        PGPOnePassSignaturePacket *onePassPacket = [[PGPOnePassSignaturePacket alloc] init];
+        onePassPacket.signatureType = signaturePacket.type;
+        onePassPacket.publicKeyAlgorithm = signaturePacket.publicKeyAlgorithm;
+        onePassPacket.hashAlgorith = signaturePacket.hashAlgoritm;
 
-    if (!key) {
-        return nil;
+        onePassPacket.keyID = [signaturePacket issuerKeyID];
+
+        onePassPacket.isNested = NO;
+        NSError *onePassExportError = nil;
+        [signedMessage appendData:[onePassPacket exportPacket:&onePassExportError]];
+        NSAssert(!onePassExportError, @"Missing one password data");
+
+        // Literal
+        PGPLiteralPacket *literalPacket = [PGPLiteralPacket literalPacket:PGPLiteralPacketBinary withData:dataToSign];
+        literalPacket.filename = nil;
+        literalPacket.timestamp = [NSDate date];
+        NSError *literalExportError = nil;
+        [signedMessage appendData:[literalPacket exportPacket:&literalExportError]];
+        NSAssert(!literalExportError, @"Missing literal data");
     }
-
-    return [self signData:dataToSign usingSecretKey:key];
+    [signedMessage appendData:signaturePacketData];
+    return [signedMessage copy];
 }
 
 - (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPKey *)publicKey

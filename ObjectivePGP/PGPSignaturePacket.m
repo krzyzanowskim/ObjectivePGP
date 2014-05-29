@@ -78,6 +78,7 @@
     return PGPSignaturePacketTag;
 }
 
+#pragma mark - Helper properties
 
 - (PGPKeyID *)issuerKeyID
 {
@@ -140,6 +141,20 @@
 {
     PGPSignatureSubpacket *primaryUserIDSubpacket =  [[self subpacketsOfType:PGPSignatureSubpacketTypePrimaryUserID] firstObject];
     return [(NSNumber *)primaryUserIDSubpacket boolValue];
+}
+
+- (BOOL)canBeUsedToSign
+{
+    BOOL result = self.publicKeyAlgorithm == PGPPublicKeyAlgorithmDSA || self.publicKeyAlgorithm == PGPPublicKeyAlgorithmRSA || self.publicKeyAlgorithm == PGPPublicKeyAlgorithmRSASignOnly;
+
+    if (result) {
+        PGPSignatureSubpacket *subpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeKeyFlags] firstObject];
+        NSArray *flags = subpacket.value;
+        if ([flags containsObject:@(PGPSignatureFlagAllowSignData)]) {
+            return YES;
+        }
+    }
+    return NO;
 }
 
 #pragma mark - Build packet
@@ -270,21 +285,6 @@
 
 #pragma mark - Sign
 
-- (BOOL)canBeUsedToSign
-{
-    BOOL result = self.publicKeyAlgorithm == PGPPublicKeyAlgorithmDSA || self.publicKeyAlgorithm == PGPPublicKeyAlgorithmRSA || self.publicKeyAlgorithm == PGPPublicKeyAlgorithmRSASignOnly;
-
-    if (result) {
-        PGPSignatureSubpacket *subpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeKeyFlags] firstObject];
-        NSArray *flags = subpacket.value;
-        if ([flags containsObject:@(PGPSignatureFlagAllowSignData)]) {
-            return YES;
-        }
-    }
-
-    return NO;
-}
-
 // 5.2.4.  Computing Signatures
 // http://tools.ietf.org/html/rfc4880#section-5.2.4
 // @see https://github.com/singpolyma/openpgp-spec/blob/master/key-signatures
@@ -366,17 +366,9 @@
     NSMutableData *toSignData = [NSMutableData data];
     switch (type) {
         case PGPSignatureBinaryDocument:
-        {
-            // For binary document signatures (type 0x00), the document data is
-            // hashed directly.
-            [toSignData appendData:inputData];
-        }
-            break;
         case PGPSignatureCanonicalTextDocument:
         {
-            // For text document signatures (type 0x01), the
-            // document is canonicalized by converting line endings to <CR><LF>,
-            // and the resulting data is hashed.
+            [toSignData appendData:inputData];
         }
             break;
         case PGPSignatureGenericCertificationUserIDandPublicKey: // 0x10

@@ -15,6 +15,30 @@
 
 @implementation PGPLiteralPacket
 
+- (id)init
+{
+    if (self = [super init]) {
+        self.format = PGPLiteralPacketBinary;
+    }
+    return self;
+}
+
+- (instancetype) initWithData:(NSData *)rawData
+{
+    if (self = [self init]) {
+        self.literalRawData = rawData;
+    }
+    return self;
+}
+
++ (PGPLiteralPacket *) literalPacket:(PGPLiteralPacketFormat)format withData:(NSData *)rawData
+{
+    PGPLiteralPacket *literalPacket = [[PGPLiteralPacket alloc] init];
+    literalPacket.format = format;
+    literalPacket.literalRawData = rawData;
+    return literalPacket;
+}
+
 - (PGPPacketTag)tag
 {
     return PGPLiteralDataPacketTag;
@@ -79,20 +103,25 @@
 {
     NSAssert(self.literalRawData, @"Missing literal data");
 
-    NSMutableData *data = [NSMutableData data];
-    [data appendBytes:&_format length:1];
+    NSMutableData *bodyData = [NSMutableData data];
+    [bodyData appendBytes:&_format length:1];
 
-    UInt8 filenameLength = [self.filename lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
-    [data appendBytes:&filenameLength length:1];
-    [data appendBytes:[self.filename cStringUsingEncoding:NSUTF8StringEncoding] length:filenameLength];
+    if (self.filename) {
+        UInt8 filenameLength = [self.filename lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+        [bodyData appendBytes:&filenameLength length:1];
+        [bodyData appendBytes:[self.filename cStringUsingEncoding:NSUTF8StringEncoding] length:filenameLength];
+    } else {
+        UInt8 zero[] = {0x00};
+        [bodyData appendBytes:&zero length:sizeof(zero)];
+    }
 
     UInt32 timestampBytes = [self.timestamp timeIntervalSince1970];
     timestampBytes = CFSwapInt32HostToBig(timestampBytes);
-    [data appendBytes:&timestampBytes length:4];
+    [bodyData appendBytes:&timestampBytes length:4];
 
     switch (self.format) {
         case PGPLiteralPacketBinary:
-            [data appendData:self.literalRawData];
+            [bodyData appendData:self.literalRawData];
             break;
         case PGPLiteralPacketText:
         case PGPLiteralPacketTextUTF8:
@@ -100,12 +129,17 @@
             // Convert to <CR><LF>
             NSString *literalStringWithHostNewLine = [[NSString alloc] initWithData:self.literalRawData encoding:NSUTF8StringEncoding];
             NSString *literalStringWithCRLF = [[literalStringWithHostNewLine componentsSeparatedByString:@"\n"] componentsJoinedByString:@"\r\n"];
-            [data appendData:[literalStringWithCRLF dataUsingEncoding:NSUTF8StringEncoding]];
+            [bodyData appendData:[literalStringWithCRLF dataUsingEncoding:NSUTF8StringEncoding]];
         }
             break;
         default:
             break;
     }
+
+    NSMutableData *data = [NSMutableData data];
+    NSData *headerData = [self buildHeaderData:bodyData];
+    [data appendData: headerData];
+    [data appendData: bodyData];
 
     return [data copy];
 }

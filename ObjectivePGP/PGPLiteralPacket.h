@@ -15,8 +15,12 @@ typedef NS_ENUM(UInt8, PGPLiteralPacketFormat) {
 };
 
 @interface PGPLiteralPacket : PGPPacket
+
 @property (assign) PGPLiteralPacketFormat format;
 @property (strong) NSDate *timestamp;
 @property (strong) NSString *filename;
+
+- (instancetype) initWithData:(NSData *)rawData;
++ (PGPLiteralPacket *) literalPacket:(PGPLiteralPacketFormat)format withData:(NSData *)rawData;
 
 @end
