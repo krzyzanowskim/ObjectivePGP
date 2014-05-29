@@ -17,6 +17,7 @@
 #import "PGPLiteralPacket.h"
 #import "PGPModificationDetectionCodePacket.h"
 #import "PGPUserAttributePacket.h"
+#import "PGPOnePassSignaturePacket.h"
 
 @implementation PGPPacketFactory
 
@@ -72,6 +73,9 @@
                 break;
             case PGPModificationDetectionCodePacketTag:
                 packet = [[PGPModificationDetectionCodePacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+                break;
+            case PGPOnePassSignaturePacketTag:
+                packet = [[PGPOnePassSignaturePacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
                 break;
             default:
                 #ifdef DEBUG

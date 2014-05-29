@@ -27,7 +27,26 @@
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
 {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
-    NSAssert(false, @"Not implemented");
+
+    [packetBody getBytes:&_version range:(NSRange){position, 1}];
+    position = position + 1;
+
+    [packetBody getBytes:&_signatureType range:(NSRange){position, 1}];
+    position = position + 1;
+
+    [packetBody getBytes:&_hashAlgorith range:(NSRange){position, 1}];
+    position = position + 1;
+
+    [packetBody getBytes:&_publicKeyAlgorithm range:(NSRange){position, 1}];
+    position = position + 1;
+
+    PGPKeyID *keyID = [[PGPKeyID alloc] initWithLongKey:[packetBody subdataWithRange:(NSRange){position, 8}]];
+    self.keyID = keyID;
+    position = position + 8;
+
+    [packetBody getBytes:&_notNested range:(NSRange){position, 1}];
+    position = position + 1;
+
     return position;
 }
 
@@ -43,8 +62,7 @@
     [bodyData appendBytes:&_publicKeyAlgorithm length:1];
     [bodyData appendData:[self.keyID exportKeyData]];
 
-    UInt8 flags = self.isNested ? 0x00 : 0x01;
-    [bodyData appendBytes:&flags length:1];
+    [bodyData appendBytes:&_notNested length:1];
 
     NSMutableData *data = [NSMutableData data];
     NSData *headerData = [self buildHeaderData:bodyData];

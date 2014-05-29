@@ -191,6 +191,8 @@
 				75E7B6BA19167EFF00C96BAB /* PGPSignaturePacket.m */,
 				7502CEFD1916DCE9001B32D7 /* PGPSignatureSubpacket.h */,
 				7502CEFE1916DCE9001B32D7 /* PGPSignatureSubpacket.m */,
+				751E07341937D53900CA7946 /* PGPOnePassSignaturePacket.h */,
+				751E07351937D53900CA7946 /* PGPOnePassSignaturePacket.m */,
 			);
 			name = PGPSignature;
 			sourceTree = "<group>";
@@ -343,8 +345,6 @@
 				75AEC4671930FC0B00974CBE /* PGPUserAttributePacket.m */,
 				75AEC4691930FD3000974CBE /* PGPUserAttributeSubpacket.h */,
 				75AEC46A1930FD3000974CBE /* PGPUserAttributeSubpacket.m */,
-				751E07341937D53900CA7946 /* PGPOnePassSignaturePacket.h */,
-				751E07351937D53900CA7946 /* PGPOnePassSignaturePacket.m */,
 			);
 			name = Packets;
 			sourceTree = "<group>";

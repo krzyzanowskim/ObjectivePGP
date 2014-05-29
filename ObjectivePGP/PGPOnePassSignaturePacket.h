@@ -16,5 +16,5 @@
 @property (assign) PGPHashAlgorithm hashAlgorith;
 @property (assign) PGPPublicKeyAlgorithm publicKeyAlgorithm;
 @property (assign) PGPKeyID *keyID; // 8
-@property (assign) BOOL isNested;
+@property (assign) BOOL notNested;
 @end

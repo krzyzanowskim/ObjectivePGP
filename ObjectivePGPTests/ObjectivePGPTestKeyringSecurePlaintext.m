@@ -148,7 +148,12 @@
 
     NSLog(@"Signature %@", signaturePath);
 
-    // signed data
+    // Verify
+    PGPKey *keyToValidateSign = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B"];
+    status = [self.oPGP verifyData:[NSData dataWithContentsOfFile:fileToSignPath] withSignature:signatureData usingKey:keyToValidateSign];
+    XCTAssertTrue(status);
+
+    // Signed data
     NSData *signedData = [self.oPGP signData:[NSData dataWithContentsOfFile:fileToSignPath] usingSecretKey:keyToSign detached:NO];
     XCTAssertNotNil(signedData);
 
@@ -159,12 +164,10 @@
     NSLog(@"Signed file %@", signedPath);
 
     // Verify
-    PGPKey *keyToValidateSign = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B"];
-    status = [self.oPGP verifyData:[NSData dataWithContentsOfFile:fileToSignPath] withSignature:signatureData usingKey:keyToValidateSign];
+    keyToValidateSign = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B"];
+    status = [self.oPGP verifyData:signedData];
     XCTAssertTrue(status);
 
-    status = [self.oPGP verifyData:[NSData dataWithContentsOfFile:fileToSignPath] withSignature:signatureData];
-    XCTAssertTrue(status);
 }
 
 - (void) testKeyVerification

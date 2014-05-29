@@ -16,6 +16,7 @@
 #import "PGPLiteralPacket.h"
 #import "PGPUser.h"
 #import "PGPOnePassSignaturePacket.h"
+#import "PGPLiteralPacket.h"
 
 @implementation ObjectivePGP
 
@@ -175,7 +176,7 @@
 
         onePassPacket.keyID = [signaturePacket issuerKeyID];
 
-        onePassPacket.isNested = NO;
+        onePassPacket.notNested = YES;
         NSError *onePassExportError = nil;
         [signedMessage appendData:[onePassPacket exportPacket:&onePassExportError]];
         NSAssert(!onePassExportError, @"Missing one password data");
@@ -192,28 +193,16 @@
     return [signedMessage copy];
 }
 
-- (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPKey *)publicKey
-{
-    if (!publicKey || !signatureData || !signatureData) {
-        return NO;
-    }
-
-    id packet = [PGPPacketFactory packetWithData:signatureData offset:0];
-    if (![packet isKindOfClass:[PGPSignaturePacket class]]) {
-        return NO;
-    }
-
-    PGPSignaturePacket *signaturePacket = packet;
-    BOOL verified = [signaturePacket verifyData:signedData withKey:publicKey userID:nil];
-
-    return verified;
-}
-
 - (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData
 {
+    if (!signedData || !signatureData) {
+        return NO;
+    }
+
     // search for key in keys
     id packet = [PGPPacketFactory packetWithData:signatureData offset:0];
     if (![packet isKindOfClass:[PGPSignaturePacket class]]) {
+        NSAssert(false, @"need signature");
         return NO;
     }
 
@@ -226,6 +215,58 @@
     }
 
     return [self verifyData:signedData withSignature:signatureData usingKey:issuerKey];
+}
+
+- (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPKey *)publicKey
+{
+    if (!publicKey || !signatureData || !signatureData) {
+        return NO;
+    }
+
+    id packet = [PGPPacketFactory packetWithData:signatureData offset:0];
+    if (![packet isKindOfClass:[PGPSignaturePacket class]]) {
+        NSAssert(false, @"need signature");
+        return NO;
+    }
+
+    PGPSignaturePacket *signaturePacket = packet;
+    BOOL verified = [signaturePacket verifyData:signedData withKey:publicKey userID:nil];
+
+    return verified;
+}
+
+- (BOOL) verifyData:(NSData *)signedData
+{
+    // search for signature packet
+    NSMutableArray *accumulatedPackets = [NSMutableArray array];
+    NSUInteger offset = 0;
+
+    //TODO: dont parse data here, get raw data and pass to verifyData:withsignature:
+    while (offset < signedData.length) {
+
+        PGPPacket *packet = [PGPPacketFactory packetWithData:signedData offset:offset];
+        if (packet) {
+            [accumulatedPackets addObject:packet];
+        }
+
+        offset = offset + packet.headerData.length + packet.bodyData.length;
+    }
+
+    NSLog(@"%@",accumulatedPackets);
+
+    PGPSignaturePacket *signaturePacket = nil;
+    PGPLiteralPacket *literalDataPacket = nil;
+
+    for (PGPPacket *packet in accumulatedPackets) {
+        if (packet.tag == PGPSignaturePacketTag) {
+            signaturePacket = (PGPSignaturePacket *)packet;
+        }
+        if (packet.tag == PGPLiteralDataPacketTag) {
+            literalDataPacket = (PGPLiteralPacket *)packet;
+        }
+    }
+
+    return [self verifyData:literalDataPacket.literalRawData withSignature:[signaturePacket exportPacket:nil]];
 }
 
 #pragma mark - Parse keyring

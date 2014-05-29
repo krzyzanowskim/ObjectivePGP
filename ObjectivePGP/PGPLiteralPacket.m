@@ -10,7 +10,6 @@
 #import "PGPTypes.h"
 
 @interface PGPLiteralPacket ()
-@property (strong) NSData *literalRawData;
 @end
 
 @implementation PGPLiteralPacket
