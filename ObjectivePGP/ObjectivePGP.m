@@ -235,38 +235,50 @@
     return verified;
 }
 
-- (BOOL) verifyData:(NSData *)signedData
+- (BOOL) verifyData:(NSData *)signedDataPackets
 {
-    // search for signature packet
-    NSMutableArray *accumulatedPackets = [NSMutableArray array];
-    NSUInteger offset = 0;
+    @autoreleasepool {
+        // search for signature packet
+        NSMutableArray *accumulatedPackets = [NSMutableArray array];
+        NSUInteger offset = 0;
 
-    //TODO: dont parse data here, get raw data and pass to verifyData:withsignature:
-    while (offset < signedData.length) {
+        //TODO: dont parse data here, get raw data and pass to verifyData:withsignature:
+        while (offset < signedDataPackets.length) {
 
-        PGPPacket *packet = [PGPPacketFactory packetWithData:signedData offset:offset];
-        if (packet) {
-            [accumulatedPackets addObject:packet];
+            PGPPacket *packet = [PGPPacketFactory packetWithData:signedDataPackets offset:offset];
+            if (packet) {
+                [accumulatedPackets addObject:packet];
+            }
+
+            offset = offset + packet.headerData.length + packet.bodyData.length;
         }
 
-        offset = offset + packet.headerData.length + packet.bodyData.length;
+        //NSLog(@"%@",accumulatedPackets);
+
+        PGPSignaturePacket *signaturePacket = nil;
+        PGPLiteralPacket *literalDataPacket = nil;
+
+        for (PGPPacket *packet in accumulatedPackets) {
+            if (packet.tag == PGPSignaturePacketTag) {
+                signaturePacket = (PGPSignaturePacket *)packet;
+            }
+            if (packet.tag == PGPLiteralDataPacketTag) {
+                literalDataPacket = (PGPLiteralPacket *)packet;
+            }
+        }
+
+        NSAssert(signaturePacket && literalDataPacket, @"Missing signature packet or literal data packet");
+        if (!signaturePacket || !literalDataPacket) {
+            return NO;
+        }
+
+        // do not build signature, use data that was readed from signedDataPackets
+        NSMutableData *signaturePacketData = [NSMutableData data];
+        [signaturePacketData appendData:signaturePacket.headerData];
+        [signaturePacketData appendData:signaturePacket.bodyData];
+
+        return [self verifyData:literalDataPacket.literalRawData withSignature:signaturePacketData];
     }
-
-    NSLog(@"%@",accumulatedPackets);
-
-    PGPSignaturePacket *signaturePacket = nil;
-    PGPLiteralPacket *literalDataPacket = nil;
-
-    for (PGPPacket *packet in accumulatedPackets) {
-        if (packet.tag == PGPSignaturePacketTag) {
-            signaturePacket = (PGPSignaturePacket *)packet;
-        }
-        if (packet.tag == PGPLiteralDataPacketTag) {
-            literalDataPacket = (PGPLiteralPacket *)packet;
-        }
-    }
-
-    return [self verifyData:literalDataPacket.literalRawData withSignature:[signaturePacket exportPacket:nil]];
 }
 
 #pragma mark - Parse keyring
