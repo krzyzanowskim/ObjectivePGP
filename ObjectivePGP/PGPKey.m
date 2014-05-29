@@ -184,7 +184,9 @@
         return nil;
     }
 
-    PGPSignaturePacket *primaryUserSelfCertificate = [self primaryUserSelfCertificate];
+    // check primary user self certificates
+    PGPSignaturePacket *primaryUserSelfCertificate = nil;
+    [self primaryUserAndSelfCertificate:&primaryUserSelfCertificate];
     if (primaryUserSelfCertificate)
     {
         if (primaryUserSelfCertificate.canBeUsedToSign) {
@@ -233,8 +235,8 @@
 
 #pragma mark - Verification
 
-// Returns primary user
-- (PGPUser *) primaryUser
+// Returns primary user with self certificate
+- (PGPUser *) primaryUserAndSelfCertificate:(PGPSignaturePacket **)selfCertificateOut
 {
     PGPUser *foundUser = nil;
 
@@ -243,7 +245,7 @@
             continue;
         }
 
-        PGPSignaturePacket *selfCertificate = [user validSelfCertificate];
+        PGPSignaturePacket *selfCertificate = [user validSelfCertificate:self];
         if (!selfCertificate) {
             continue;
         }
@@ -253,19 +255,9 @@
         } else if (!foundUser) {
             foundUser = user;
         }
+        *selfCertificateOut = selfCertificate;
     }
     return foundUser;
-}
-
-// most significant (latest(???) valid) self signature for the primary user
-- (PGPSignaturePacket *) primaryUserSelfCertificate
-{
-    PGPUser *user = [self primaryUser];
-    if (!user) {
-        return nil;
-    }
-
-    return [user validSelfCertificate];
 }
 
 #pragma mark - Private

@@ -103,8 +103,11 @@
 
 - (NSDate *)expirationDate
 {
-    NSDate *creationDate = [[self subpacketsOfType:PGPSignatureSubpacketTypeSignatureCreationTime] firstObject];
-    NSNumber *validityPeriod = [[self subpacketsOfType:PGPSignatureSubpacketTypeSignatureExpirationTime] firstObject];
+    PGPSignatureSubpacket *creationDateSubpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeSignatureCreationTime] firstObject];
+    PGPSignatureSubpacket *validityPeriodSubpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeSignatureExpirationTime] firstObject];
+
+    NSDate *creationDate = creationDateSubpacket.value;
+    NSNumber *validityPeriod = validityPeriodSubpacket.value;
     if (!validityPeriod || validityPeriod.unsignedIntegerValue == 0) {
         return nil;
     }
@@ -129,14 +132,14 @@
 
 - (NSDate *) creationDate
 {
-    NSDate *creationDate = [self subpacketsOfType:PGPSignatureSubpacketTypeSignatureCreationTime];
-    return creationDate;
+    PGPSignatureSubpacket *creationDateSubpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeSignatureCreationTime] lastObject];
+    return creationDateSubpacket.value;
 }
 
 - (BOOL) isPrimaryUserID
 {
-    NSNumber *primaryUserIDSubpacket =  [[self subpacketsOfType:PGPSignatureSubpacketTypePrimaryUserID] firstObject];
-    return primaryUserIDSubpacket.boolValue;
+    PGPSignatureSubpacket *primaryUserIDSubpacket =  [[self subpacketsOfType:PGPSignatureSubpacketTypePrimaryUserID] firstObject];
+    return [(NSNumber *)primaryUserIDSubpacket boolValue];
 }
 
 #pragma mark - Build packet
@@ -198,86 +201,25 @@
 
 #pragma mark - Verify
 
-- (BOOL) verifyData:(NSData *)inputData  withKey:(PGPKey *)publicKey
+- (BOOL) verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey
 {
-    return [self verifyData:inputData withKey:publicKey userID:nil];
+    return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)publicKey.signingKeyPacket userID:nil];
+}
+
+- (BOOL) verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey userID:(NSString *)userID
+{
+    return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)publicKey.signingKeyPacket userID:userID];
 }
 
 // Opposite to sign, with readed data (not produced)
-- (BOOL) verifyData:(NSData *)inputData  withKey:(PGPKey *)publicKey userID:(NSString *)userID
+- (BOOL) verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(NSString *)userID
 {
-    // build toSignData, toSign
-    NSMutableData *toSignData = [NSMutableData data];
-    switch (_type) {
-        case PGPSignatureBinaryDocument:
-        {
-            // For binary document signatures (type 0x00), the document data is
-            // hashed directly.
-            [toSignData appendData:inputData];
-        }
-            break;
-        case PGPSignatureCanonicalTextDocument:
-        {
-            // For text document signatures (type 0x01), the
-            // document is canonicalized by converting line endings to <CR><LF>,
-            // and the resulting data is hashed.
-        }
-            break;
-        case PGPSignatureGenericCertificationUserIDandPublicKey: // 0x10
-        case PGPSignaturePersonalCertificationUserIDandPublicKey:// 0x11
-        case PGPSignatureCasualCertificationUserIDandPublicKey:  // 0x12
-        case PGPSignaturePositiveCertificationUserIDandPublicKey:// 0x13
-        case PGPSignatureCertificationRevocation:                // 0x28
-        {
-            // A certification signature (type 0x10 through 0x13)
-
-            // When a signature is made over a key, the hash data starts with the
-            // octet 0x99, followed by a two-octet length of the key, and then body
-            // of the key packet. (Note that this is an old-style packet header for
-            // a key packet with two-octet length.)
-
-            PGPPublicKeyPacket *primaryKeyPacket = (PGPPublicKeyPacket *)publicKey.primaryKeyPacket;
-            if (self.version == 4) {
-                NSData *keyData = [primaryKeyPacket exportPublicPacketOldStyle];
-                [toSignData appendData:keyData];
-            }
-
-            NSAssert(publicKey.users > 0, @"Key need at least one user");
-
-            BOOL userIsValid = NO;
-            for (PGPUser *user in publicKey.users) {
-                if ([user.userID isEqualToString:userID]) {
-                    userIsValid = YES;
-                }
-            }
-
-            if (!userIsValid) {
-                return NO;
-            }
-
-            if (userID.length > 0) {
-                // constant tag (1)
-                UInt8 userIDConstant = 0xB4;
-                [toSignData appendBytes:&userIDConstant length:1];
-
-                // length (4)
-                UInt32 userIDLength = (UInt32)userID.length;
-                userIDLength = CFSwapInt32HostToBig(userIDLength);
-                [toSignData appendBytes:&userIDLength length:4];
-
-                // data
-                [toSignData appendData:[userID dataUsingEncoding:NSUTF8StringEncoding]];
-            }
-            //TODO user attributes alternative
-            //UInt8 userAttributeConstant = 0xD1;
-            //[data appendBytes:&userAttributeConstant length:sizeof(userAttributeConstant)];
-            
-        }
-            break;
-            
-        default:
-            break;
+    if (self.type == PGPSignatureBinaryDocument && inputData.length == 0) {
+        return NO;
     }
+
+    // build toSignData, toSign
+    NSData *toSignData = [self toSignDataForType:self.type inputData:inputData key:publicKey keyPacket:signingKeyPacket userID:userID];
 
     // signedPartData
     NSData *signedPartData = [self buildSignedPart:self.hashedSubpackets];
@@ -298,13 +240,11 @@
         return NO;
     }
 
-    switch (self.publicKeyAlgorithm) {
+    switch (signingKeyPacket.publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSASignOnly:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         {
-            PGPPublicKeyPacket *signingKeyPacket = (PGPPublicKeyPacket *)publicKey.signingKeyPacket; // signing key
-
             // convert mpi data to binary signature_bn_bin
             PGPMPI *signatureMPI = self.signatureMPIs[0];
 
@@ -353,7 +293,7 @@
     return [self signData:inputData secretKey:secretKey userID:nil];
 }
 
-- (void) signData:(NSData *)inputData  secretKey:(PGPKey *)secretKey userID:(NSString *)userID
+- (void) signData:(NSData *)inputData secretKey:(PGPKey *)secretKey userID:(NSString *)userID
 {
     NSAssert(secretKey.type == PGPKeySecret,@"Need secret key");
     NSAssert([secretKey.primaryKeyPacket isKindOfClass:[PGPSecretKeyPacket class]], @"Signing key packet not found");
@@ -376,78 +316,7 @@
     NSData *trailerData = [self calculateTrailerFor:signedPartData];
 
     // build toSignData, toSign
-    NSMutableData *toSignData = [NSMutableData data];
-    switch (_type) {
-        case PGPSignatureBinaryDocument:
-        {
-            // For binary document signatures (type 0x00), the document data is
-            // hashed directly.
-            [toSignData appendData:inputData];
-        }
-            break;
-        case PGPSignatureCanonicalTextDocument:
-        {
-            // For text document signatures (type 0x01), the
-            // document is canonicalized by converting line endings to <CR><LF>,
-            // and the resulting data is hashed.
-        }
-            break;
-        case PGPSignatureGenericCertificationUserIDandPublicKey: // 0x10
-        case PGPSignaturePersonalCertificationUserIDandPublicKey:// 0x11
-        case PGPSignatureCasualCertificationUserIDandPublicKey:  // 0x12
-        case PGPSignaturePositiveCertificationUserIDandPublicKey:// 0x13
-        case PGPSignatureCertificationRevocation:                // 0x28
-        {
-            // A certification signature (type 0x10 through 0x13)
-
-            // When a signature is made over a key, the hash data starts with the
-            // octet 0x99, followed by a two-octet length of the key, and then body
-            // of the key packet. (Note that this is an old-style packet header for
-            // a key packet with two-octet length.)
-
-            PGPSecretKeyPacket *primaryKeyPacket = (PGPSecretKeyPacket *)secretKey.primaryKeyPacket;
-            if (self.version == 4) {
-                NSData *keyData = [primaryKeyPacket exportPublicPacketOldStyle];
-                [toSignData appendData:keyData];
-            }
-
-            NSAssert(secretKey.users > 0, @"Key need at least one user");
-
-            BOOL userIsValid = NO;
-            for (PGPUser *user in secretKey.users) {
-                if ([user.userID isEqualToString:userID]) {
-                    userIsValid = YES;
-                }
-            }
-
-            if (!userIsValid) {
-                return;
-            }
-
-            if (userID.length > 0) {
-                // constant tag (1)
-                UInt8 userIDConstant = 0xB4;
-                [toSignData appendBytes:&userIDConstant length:1];
-
-                // length (4)
-                UInt32 userIDLength = (UInt32)userID.length;
-                userIDLength = CFSwapInt32HostToBig(userIDLength);
-                [toSignData appendBytes:&userIDLength length:4];
-
-                // data
-                [toSignData appendData:[userID dataUsingEncoding:NSUTF8StringEncoding]];
-            }
-            //TODO user attributes alternative
-            //UInt8 userAttributeConstant = 0xD1;
-            //[data appendBytes:&userAttributeConstant length:sizeof(userAttributeConstant)];
-            
-        }
-            break;
-            
-        default:
-            break;
-    }
-
+    NSData *toSignData = [self toSignDataForType:self.type inputData:inputData key:secretKey keyPacket:signingKeyPacket userID:userID];
     //toHash = toSignData + signedPartData + trailerData;
     NSMutableData *toHashData = [NSMutableData dataWithData:toSignData];
     [toHashData appendData:signedPartData];
@@ -490,6 +359,82 @@
     // Two-octet field holding the left 16 bits of the signed hash value.
     NSData *signedHashValue = [hashData subdataWithRange:(NSRange){0,2}];
     self.signedHashValueData = signedHashValue;
+}
+
+- (NSData *) toSignDataForType:(PGPSignatureType)type inputData:(NSData *)inputData key:(PGPKey *)key keyPacket:(PGPPublicKeyPacket *)keyPacket userID:(NSString *)userID
+{
+    NSMutableData *toSignData = [NSMutableData data];
+    switch (type) {
+        case PGPSignatureBinaryDocument:
+        {
+            // For binary document signatures (type 0x00), the document data is
+            // hashed directly.
+            [toSignData appendData:inputData];
+        }
+            break;
+        case PGPSignatureCanonicalTextDocument:
+        {
+            // For text document signatures (type 0x01), the
+            // document is canonicalized by converting line endings to <CR><LF>,
+            // and the resulting data is hashed.
+        }
+            break;
+        case PGPSignatureGenericCertificationUserIDandPublicKey: // 0x10
+        case PGPSignaturePersonalCertificationUserIDandPublicKey:// 0x11
+        case PGPSignatureCasualCertificationUserIDandPublicKey:  // 0x12
+        case PGPSignaturePositiveCertificationUserIDandPublicKey:// 0x13
+        case PGPSignatureCertificationRevocation:                // 0x28
+        {
+            // A certification signature (type 0x10 through 0x13)
+
+            // When a signature is made over a key, the hash data starts with the
+            // octet 0x99, followed by a two-octet length of the key, and then body
+            // of the key packet. (Note that this is an old-style packet header for
+            // a key packet with two-octet length.)
+
+            if (self.version == 4) {
+                NSData *keyData = [keyPacket exportPublicPacketOldStyle];
+                [toSignData appendData:keyData];
+            }
+
+            NSAssert(key.users > 0, @"Key need at least one user");
+
+            BOOL userIsValid = NO;
+            for (PGPUser *user in key.users) {
+                if ([user.userID isEqualToString:userID]) {
+                    userIsValid = YES;
+                }
+            }
+
+            if (!userIsValid) {
+                return nil;
+            }
+
+            if (userID.length > 0) {
+                // constant tag (1)
+                UInt8 userIDConstant = 0xB4;
+                [toSignData appendBytes:&userIDConstant length:1];
+
+                // length (4)
+                UInt32 userIDLength = (UInt32)userID.length;
+                userIDLength = CFSwapInt32HostToBig(userIDLength);
+                [toSignData appendBytes:&userIDLength length:4];
+
+                // data
+                [toSignData appendData:[userID dataUsingEncoding:NSUTF8StringEncoding]];
+            }
+            //TODO user attributes alternative
+            //UInt8 userAttributeConstant = 0xD1;
+            //[data appendBytes:&userAttributeConstant length:sizeof(userAttributeConstant)];
+            
+        }
+            break;
+            
+        default:
+            [toSignData appendData:inputData];
+            break;
+    }
+    return [toSignData copy];
 }
 
 - (NSData *) calculateTrailerFor:(NSData *)signedPartData

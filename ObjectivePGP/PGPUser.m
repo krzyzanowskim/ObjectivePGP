@@ -8,7 +8,9 @@
 
 #import "PGPUser.h"
 #import "PGPSignaturePacket.h"
+#import "PGPPublicKeyPacket.h"
 #import "PGPUserIDPacket.h"
+#import "PGPKey.h"
 #import "PGPUserAttributePacket.h"
 
 @implementation PGPUser
@@ -125,7 +127,7 @@
 //};
 
 // Returns the most significant (latest valid) self signature of the user
-- (PGPSignaturePacket *) validSelfCertificate
+- (PGPSignaturePacket *) validSelfCertificate:(PGPKey *)key
 {
     if (self.selfCertifications.count == 0) {
         return nil;
@@ -133,13 +135,17 @@
 
     NSMutableArray *certs = [NSMutableArray array];
     for (PGPSignaturePacket *signature in self.selfCertifications) {
+        //TODO: check for revocation
+
         if (signature.isExpired) {
             continue;
         }
 
-        //TODO: check for revocation
-        //TODO: check verify (this is craziest think I ever seen)
-        
+        //TODO: check verify (this is craziest think I ever seen today)
+        // endless loop looop because of key.signingKeyPacket
+        BOOL status = [signature verifyData:nil withKey:key signingKeyPacket:(PGPPublicKeyPacket *)key.primaryKeyPacket userID:self.userID];
+        NSAssert(status == YES,@"not verified");
+
         [certs addObject:signature];
     }
 

@@ -11,7 +11,7 @@
 #import "PGPPacketFactory.h"
 #import "PGPKeyID.h"
 
-@class PGPKey, PGPUser, PGPUserIDPacket;
+@class PGPKey, PGPUser, PGPUserIDPacket, PGPPublicKeyPacket;
 
 @interface PGPSignaturePacket : PGPPacket
 
@@ -61,6 +61,7 @@
 
 - (BOOL) verifyData:(NSData *)inputData  withKey:(PGPKey *)publicKey;
 - (BOOL) verifyData:(NSData *)inputData  withKey:(PGPKey *)publicKey userID:(NSString *)userID;
+- (BOOL) verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(NSString *)userID;
 
 
 @end
