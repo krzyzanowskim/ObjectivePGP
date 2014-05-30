@@ -15,7 +15,7 @@
 
 @class PGPMPI;
 
-@interface PGPPublicKeyPacket : PGPPacket
+@interface PGPPublicKeyPacket : PGPPacket <NSCopying>
 
 @property (assign, readonly) UInt8 version;
 @property (assign, readonly) NSDate *createDate;

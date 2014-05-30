@@ -15,6 +15,8 @@
 #import <CommonCrypto/CommonDigest.h>
 #import <CommonCrypto/CommonCryptor.h>
 
+#import <objc/runtime.h>
+
 @interface PGPPacket ()
 @property (copy, readwrite) NSData *headerData;
 @property (copy, readwrite) NSData *bodyData;
@@ -283,11 +285,19 @@
     return [data copy];
 }
 
-#pragma mark - Other
+#pragma mark - NSCopying
 
-- (id)objectForKeyedSubscript:(id <NSCopying>)key
+- (id)copyWithZone:(NSZone *)zone
 {
-    return [self objectForKeyedSubscript:key];
+    PGPPublicKeyPacket *copy = (PGPPublicKeyPacket *)[super copyWithZone:zone];
+    copy->_version = self.version;
+    copy->_createDate = self.createDate;
+    copy->_V3validityPeriod = self.V3validityPeriod;
+    copy->_publicKeyAlgorithm = self.publicKeyAlgorithm;
+    copy->_fingerprint = self.fingerprint;
+    copy->_keyID = self.keyID;
+    copy->_publicMPIArray = self.publicMPIArray;
+    return copy;
 }
 
 @end

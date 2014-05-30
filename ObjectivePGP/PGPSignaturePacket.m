@@ -304,11 +304,14 @@
         return;
     }
 
+    NS_HANDLER
+
     //TODO: check it this is right ? setup public key algorithm from secret key packet
     self.publicKeyAlgorithm = signingKeyPacket.publicKeyAlgorithm;
 
     if (signingKeyPacket.isEncrypted && passphrase.length > 0) {
-        //FIXME: I should not leave decrypted signature. I should decrypt copy and let it release after
+        //Copy secret key instance, then decrypt on copy, not on the original (do not leave unencrypted instance around)
+        signingKeyPacket = [signingKeyPacket copy];
         NSError *decryptError;
         BOOL decrypted = [signingKeyPacket decrypt:passphrase error:&decryptError];
         NSAssert(decrypted && !decryptError, @"decrypt error %@", decryptError);
@@ -627,5 +630,6 @@
     }
     return [data copy];
 }
+
 
 @end

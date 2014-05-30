@@ -13,7 +13,7 @@
 
 @class PGPKey, PGPUser, PGPUserIDPacket, PGPPublicKeyPacket;
 
-@interface PGPSignaturePacket : PGPPacket
+@interface PGPSignaturePacket : PGPPacket <NSCopying>
 
 @property (assign) UInt8 version;
 @property (assign) PGPSignatureType type;

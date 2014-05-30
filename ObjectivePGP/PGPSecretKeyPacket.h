@@ -9,7 +9,7 @@
 #import "PGPPublicKeyPacket.h"
 #import "PGPS2K.h"
 
-@interface PGPSecretKeyPacket : PGPPublicKeyPacket
+@interface PGPSecretKeyPacket : PGPPublicKeyPacket <NSCopying>
 
 @property (assign, readonly, nonatomic) BOOL isEncrypted;
 @property (assign) PGPS2KUsage s2kUsage;

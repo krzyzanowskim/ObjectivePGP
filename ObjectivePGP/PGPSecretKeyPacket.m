@@ -472,5 +472,18 @@
     return [data copy];
 }
 
+#pragma mark - NSCopying
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    PGPSecretKeyPacket *copy = [super copyWithZone:zone];
+    copy->_s2kUsage = self.s2kUsage;
+    copy->_s2k = self.s2k;
+    copy->_symmetricAlgorithm = self.symmetricAlgorithm;
+    copy->_ivData = self.ivData;
+    copy->_secretMPIArray = self.secretMPIArray;
+    copy->_encryptedMPIsPartData = self.encryptedMPIsPartData;
+    return copy;
+}
 
 @end

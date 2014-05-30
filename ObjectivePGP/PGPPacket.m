@@ -247,4 +247,14 @@
 
 }
 
+#pragma mark - NSCopying
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    PGPPacket *copy = [[[self class] allocWithZone:zone] init];
+    copy->_bodyData = self.bodyData;
+    copy->_headerData = self.headerData;
+    return copy;
+}
+
 @end

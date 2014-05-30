@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "PGPTypes.h"
 
-@interface PGPPacket : NSObject
+@interface PGPPacket : NSObject <NSCopying>
 
 @property (copy, readonly) NSData *headerData;
 @property (copy, readonly) NSData *bodyData;
