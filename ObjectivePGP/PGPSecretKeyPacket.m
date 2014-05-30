@@ -259,7 +259,7 @@
             mpiX.identifier = @"X";
             position = position + mpiX.packetLength;
 
-            self.secretMP2IArray = [NSArray arrayWithObjects:mpiX, nil];
+            self.secretMPIArray = [NSArray arrayWithObjects:mpiX, nil];
         }
             break;
         case PGPPublicKeyAlgorithmElgamal:
