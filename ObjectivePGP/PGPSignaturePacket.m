@@ -290,10 +290,10 @@
 // @see https://github.com/singpolyma/openpgp-spec/blob/master/key-signatures
 - (void) signData:(NSData *)inputData  secretKey:(PGPKey *)secretKey
 {
-    return [self signData:inputData secretKey:secretKey userID:nil];
+    return [self signData:inputData secretKey:secretKey userID:nil passphrase:nil];
 }
 
-- (void) signData:(NSData *)inputData secretKey:(PGPKey *)secretKey userID:(NSString *)userID
+- (void) signData:(NSData *)inputData secretKey:(PGPKey *)secretKey userID:(NSString *)userID passphrase:(NSString *)passphrase
 {
     NSAssert(secretKey.type == PGPKeySecret,@"Need secret key");
     NSAssert([secretKey.primaryKeyPacket isKindOfClass:[PGPSecretKeyPacket class]], @"Signing key packet not found");
@@ -304,8 +304,15 @@
         return;
     }
 
-    // setup public key algorithm from secret key packet
+    //TODO: check it this is right ? setup public key algorithm from secret key packet
     self.publicKeyAlgorithm = signingKeyPacket.publicKeyAlgorithm;
+
+    if (signingKeyPacket.isEncrypted && passphrase.length > 0) {
+        //FIXME: I should not leave decrypted signature. I should decrypt copy and let it release after
+        NSError *decryptError;
+        BOOL decrypted = [signingKeyPacket decrypt:passphrase error:&decryptError];
+        NSAssert(decrypted && !decryptError, @"decrypt error %@", decryptError);
+    }
 
     // signed part data
     // timestamp subpacket is required
@@ -346,7 +353,6 @@
     }
 
     NSAssert(encryptedEmData, @"Encryption failed");
-
     // store signature data as MPI
     self.signatureMPIs = @[[[PGPMPI alloc] initWithData:encryptedEmData]];
 

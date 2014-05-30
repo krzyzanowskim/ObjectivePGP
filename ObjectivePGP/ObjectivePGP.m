@@ -128,12 +128,12 @@
 
 #pragma mark - Operations
 
-- (NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID
+- (NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID passphrase:(NSString *)passphrase
 {
-    return [self signData:dataToSign withKeyForUserID:userID detached:YES];
+    return [self signData:dataToSign withKeyForUserID:userID passphrase:passphrase detached:YES];
 }
 
-- (NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID detached:(BOOL)detached
+- (NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID passphrase:(NSString *)passphrase detached:(BOOL)detached
 {
     PGPKey *key = [[self getKeysForUserID:userID] lastObject];
     NSAssert(key, @"Key is missing");
@@ -142,25 +142,25 @@
         return nil;
     }
 
-    return [self signData:dataToSign usingSecretKey:key];
+    return [self signData:dataToSign usingSecretKey:key passphrase:passphrase];
 }
 
-- (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey
+- (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase
 {
-    return [self signData:dataToSign usingSecretKey:secretKey detached:YES];
+    return [self signData:dataToSign usingSecretKey:secretKey passphrase:passphrase detached:YES];
 }
 
-- (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey detached:(BOOL)detached
+- (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase detached:(BOOL)detached
 {
     NSData *signaturePacketData = nil;
 
-    // Some defaults
+    //TODO: Some defaults
     PGPHashAlgorithm preferedHashAlgorithm = PGPHashSHA1;
 
     PGPSignaturePacket *signaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureBinaryDocument
                                                                 hashAlgorithm:preferedHashAlgorithm];
 
-    [signaturePacket signData:dataToSign secretKey:secretKey];
+    [signaturePacket signData:dataToSign secretKey:secretKey userID:nil passphrase:passphrase];
     NSError *exportError = nil;
     signaturePacketData = [signaturePacket exportPacket:&exportError];
     NSAssert(!exportError,@"Error on export packet");

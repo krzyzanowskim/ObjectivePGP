@@ -132,7 +132,7 @@
     XCTAssertEqualObjects([secretKey.keyID longKeyString], @"25A233C2952E4E8B", @"Invalid key identifier");
 }
 
-- (void) testDetachedSignature
+- (void) testSigning
 {
     BOOL status = [self.oPGP loadKeysFromKeyring:self.secKeyringPath];
     XCTAssertTrue(status);
@@ -151,7 +151,7 @@
     XCTAssertNotNil(keyToSign);
 
     // detached signature
-    NSData *signatureData = [self.oPGP signData:[NSData dataWithContentsOfFile:fileToSignPath] usingSecretKey:keyToSign detached:YES];
+    NSData *signatureData = [self.oPGP signData:[NSData dataWithContentsOfFile:fileToSignPath] usingSecretKey:keyToSign passphrase:nil detached:YES];
     XCTAssertNotNil(signatureData);
 
     NSString *signaturePath = [self.workingDirectory stringByAppendingPathComponent:@"signature.sig"];
@@ -166,7 +166,7 @@
     XCTAssertTrue(status);
 
     // Signed data
-    NSData *signedData = [self.oPGP signData:[NSData dataWithContentsOfFile:fileToSignPath] usingSecretKey:keyToSign detached:NO];
+    NSData *signedData = [self.oPGP signData:[NSData dataWithContentsOfFile:fileToSignPath] usingSecretKey:keyToSign passphrase:nil detached:NO];
     XCTAssertNotNil(signedData);
 
     NSString *signedPath = [self.workingDirectory stringByAppendingPathComponent:@"signed_file.bin.sig"];
@@ -180,77 +180,5 @@
     status = [self.oPGP verifyData:signedData];
     XCTAssertTrue(status);
 }
-
-- (void) testKeyVerification
-{
-    BOOL status = [self.oPGP loadKeysFromKeyring:self.pubKeyringPath];
-    XCTAssertTrue(status);
-
-    PGPKey *key = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B"];
-    XCTAssertNotNil(key);
-
-    //XCTAssertTrue([key verifyPrimaryKey]);
-}
-
-//- (void) testExport
-//{
-//    BOOL loadStatus = [self.oPGP loadKeysFromKeyring:self.keyringPath];
-//    XCTAssertTrue(loadStatus, @"Keyring file should load properly");
-//
-//    NSString *newDir = [@"ObjectivePGPTests_" stringByAppendingPathComponent:[[NSUUID UUID] UUIDString]];
-//    NSString *tmpDirectoryPath = [NSTemporaryDirectory() stringByAppendingPathComponent:newDir];
-//    [[NSFileManager defaultManager] createDirectoryAtPath:tmpDirectoryPath withIntermediateDirectories:YES attributes:nil error:nil];
-//    if (![[NSFileManager defaultManager] fileExistsAtPath:tmpDirectoryPath]) {
-//        XCTFail(@"couldn't create tmpDirectoryPath");
-//    }
-//
-//    NSMutableData *keysData = [NSMutableData data];
-//    for (PGPKey *key in self.oPGP.keys) {
-//        NSError *error = nil;
-//        XCTAssert(key.users.count == 1, @"Users");
-//
-//        NSData *keyData = [key export:&error];
-//        XCTAssertNotNil(keyData, @"Can't export key");
-//        [keysData appendData:keyData];
-//
-//        // Sign with key
-//        if (key.type == PGPKeySecret) {
-//            NSData *signatureData = [self.oPGP signData:[NSData dataWithContentsOfFile:self.keyringPath] usingSecretKey:key];
-//            XCTAssertNotNil(signatureData, @"Signature can't be nil");
-//            [signatureData writeToFile:[tmpDirectoryPath stringByAppendingPathComponent:@"signature.sig"] atomically:YES];
-//
-//            [[NSFileManager defaultManager] copyItemAtPath:self.keyringPath toPath:[tmpDirectoryPath stringByAppendingPathComponent:@"signed_file.bin"] error:nil];
-//            [[NSFileManager defaultManager] copyItemAtPath:self.keyringPath toPath:[tmpDirectoryPath stringByAppendingPathComponent:[self.keyringPath lastPathComponent]] error:nil];
-//            [[NSFileManager defaultManager] copyItemAtPath:self.pubKeyringPath toPath:[tmpDirectoryPath stringByAppendingPathComponent:[self.pubKeyringPath lastPathComponent]] error:nil];
-//
-//            // verify
-//            BOOL verified = [self.oPGP verifyData:[[NSData alloc] initWithContentsOfFile:[tmpDirectoryPath stringByAppendingPathComponent:@"signed_file.bin"]]
-//                        withSignature:[[NSData alloc] initWithContentsOfFile:[tmpDirectoryPath stringByAppendingPathComponent:@"signature.sig"]]
-//                        usingPublicKey:key];
-//
-//            XCTAssertTrue(verified, @"signature not verified");
-//        }
-//
-//    }
-//
-//    NSString *exportKeyringPath = [tmpDirectoryPath stringByAppendingPathComponent:@"export-secring-test-plaintext.gpg"];
-//    //[keysData writeToFile:exportKeyringPath atomically:YES];
-//    [self.oPGP saveKeys:self.oPGP.keys toKeyring:exportKeyringPath error:nil];
-//    NSLog(@"exported key to %@",exportKeyringPath);
-//
-//    // Check load
-//    ObjectivePGP *checkPGP = [[ObjectivePGP alloc] init];
-//    loadStatus = [checkPGP loadKeysFromKeyring:exportKeyringPath];
-//    XCTAssertTrue(loadStatus, @"Exported file should load properly");
-//
-//    for (PGPKey *key in checkPGP.keys) {
-//        PGPSecretKeyPacket *secretKey = (PGPSecretKeyPacket *)key.primaryKeyPacket;
-//        XCTAssert([key.primaryKeyPacket class] == [PGPSecretKeyPacket class],@"Key Should be PGPSecretKeyPacket");
-//        XCTAssertFalse(key.isEncrypted, @"Should not be encrypted");
-//        XCTAssertEqualObjects([secretKey.keyID longKeyString], @"25A233C2952E4E8B", @"Invalid key identifier");
-//    }
-//
-//    [[NSFileManager defaultManager] removeItemAtPath:tmpDirectoryPath error:nil];
-//}
 
 @end

@@ -55,6 +55,7 @@
  *
  *  @return Signature packet data
  */
+- (void) signData:(NSData *)inputData secretKey:(PGPKey *)secretKey userID:(NSString *)userID passphrase:(NSString *)passphrase;
 - (void) signData:(NSData *)inputData  secretKey:(PGPKey *)secretKey userID:(NSString *)userID;
 - (void) signData:(NSData *)inputData  secretKey:(PGPKey *)secretKey;
 
