@@ -304,17 +304,17 @@
         return;
     }
 
-    NS_HANDLER
-
     //TODO: check it this is right ? setup public key algorithm from secret key packet
     self.publicKeyAlgorithm = signingKeyPacket.publicKeyAlgorithm;
 
     if (signingKeyPacket.isEncrypted && passphrase.length > 0) {
-        //Copy secret key instance, then decrypt on copy, not on the original (do not leave unencrypted instance around)
-        signingKeyPacket = [signingKeyPacket copy];
+        PGPSecretKeyPacket *signingKeyPacketDecryptedCopy = [signingKeyPacket copy];
         NSError *decryptError;
-        BOOL decrypted = [signingKeyPacket decrypt:passphrase error:&decryptError];
+        BOOL decrypted = [signingKeyPacketDecryptedCopy decrypt:passphrase error:&decryptError];
         NSAssert(decrypted && !decryptError, @"decrypt error %@", decryptError);
+
+        //Copy secret key instance, then decrypt on copy, not on the original (do not leave unencrypted instance around)
+        signingKeyPacket = signingKeyPacketDecryptedCopy;
     }
 
     // signed part data

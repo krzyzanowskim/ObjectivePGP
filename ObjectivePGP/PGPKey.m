@@ -204,6 +204,7 @@
     return nil;
 }
 
+//FIXME: don't decrypt keys and let them remain in memory decrypted
 - (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error
 {
     BOOL ret = NO;
