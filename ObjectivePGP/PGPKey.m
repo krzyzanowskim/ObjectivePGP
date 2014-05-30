@@ -204,20 +204,27 @@
     return nil;
 }
 
-//FIXME: don't decrypt keys and let them remain in memory decrypted
+// Note: After decryption encrypted packets are replaced with new decrypted instances on key.
 - (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error
 {
-    BOOL ret = NO;
-    for (PGPPacket * packet in [self allKeyPackets]) {
-        if (packet.tag == PGPSecretKeyPacketTag) {
-            PGPSecretKeyPacket *secretKeyPacket = (PGPSecretKeyPacket *)packet;
-            ret = [secretKeyPacket decrypt:passphrase error:error];
-        } else if (packet.tag == PGPSecretSubkeyPacketTag) {
-            PGPSecretSubKeyPacket *secretSubKeyPacket = (PGPSecretSubKeyPacket *)packet;
-            ret = [secretSubKeyPacket decrypt:passphrase error:error];
+    if ([self.primaryKeyPacket isKindOfClass:[PGPSecretKeyPacket class]]) {
+        PGPSecretKeyPacket *secretPacket = (PGPSecretKeyPacket *)self.primaryKeyPacket;
+        self.primaryKeyPacket = [secretPacket decryptedKey:passphrase error:error];
+        if (*error) {
+            return NO;
         }
     }
-    return ret;
+
+    for (PGPSubKey *subKey in self.subKeys) {
+        if ([subKey.keyPacket isKindOfClass:[PGPSecretKeyPacket class]]) {
+            PGPSecretKeyPacket *secretPacket = (PGPSecretKeyPacket *)subKey.keyPacket;
+            self.primaryKeyPacket = [secretPacket decryptedKey:passphrase error:error];
+            if (*error) {
+                return NO;
+            }
+        }
+    }
+    return YES;
 }
 
 - (NSData *) export:(NSError *__autoreleasing *)error

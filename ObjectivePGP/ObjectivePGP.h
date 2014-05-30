@@ -29,8 +29,8 @@
 
 - (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase;
 - (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase detached:(BOOL)detached;
-- (NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID;
-- (NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID detached:(BOOL)detached;
+- (NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID passphrase:(NSString *)passphrase;
+- (NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID passphrase:(NSString *)passphrase detached:(BOOL)detached;
 
 - (BOOL) verifyData:(NSData *)signedData;
 - (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData;

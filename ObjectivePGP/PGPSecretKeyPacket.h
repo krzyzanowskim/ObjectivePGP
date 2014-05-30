@@ -23,9 +23,9 @@
  *  @param passphrase Password
  *  @param error      error
  *
- *  @return YES on success
+ *  @return Decrypted key on success
  */
-- (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error;
+- (PGPSecretKeyPacket *) decryptedKey:(NSString *)passphrase error:(NSError *__autoreleasing *)error;
 
 - (PGPMPI *) secretMPI:(NSString *)identifier;
 

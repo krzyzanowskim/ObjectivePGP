@@ -287,32 +287,34 @@
  *  TODO: encrypt
  *  NOTE: Decrypted packet data should be released/forget after use
  */
-- (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error
+- (PGPSecretKeyPacket *) decryptedKey:(NSString *)passphrase error:(NSError *__autoreleasing *)error
 {
     if (!self.isEncrypted) {
-        return NO;
+        return self;
     }
 
     if (!self.ivData) {
-        return NO;
+        return nil;
     }
 
+    PGPSecretKeyPacket *encryptedKey = [self copy];
+
     // Keysize
-    NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:self.symmetricAlgorithm];
+    NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:encryptedKey.symmetricAlgorithm];
     NSAssert(keySize <= 32, @"invalid keySize");
 
     //FIXME: not here, just for testing (?)
-    NSData *keyData = [self.s2k produceKeyWithPassphrase:passphrase keySize:keySize];
+    NSData *keyData = [encryptedKey.s2k produceKeyWithPassphrase:passphrase keySize:keySize];
 
-    const void *encryptedBytes = self.encryptedMPIsPartData.bytes;
+    const void *encryptedBytes = encryptedKey.encryptedMPIsPartData.bytes;
 
-    NSUInteger outButterLength = self.encryptedMPIsPartData.length;
+    NSUInteger outButterLength = encryptedKey.encryptedMPIsPartData.length;
     UInt8 *outBuffer = calloc(outButterLength, sizeof(UInt8));
 
     NSData *decryptedData = nil;
 
     // decrypt with CFB
-    switch (self.symmetricAlgorithm) {
+    switch (encryptedKey.symmetricAlgorithm) {
         case PGPSymmetricAES128:
         case PGPSymmetricAES192:
         case PGPSymmetricAES256:
@@ -324,7 +326,7 @@
             AES_set_decrypt_key(keyData.bytes, keySize * 8, decrypt_key);
 
             int num = 0;
-            AES_cfb128_encrypt(encryptedBytes, outBuffer, outButterLength, decrypt_key, (UInt8 *)self.ivData.bytes, &num, AES_DECRYPT);
+            AES_cfb128_encrypt(encryptedBytes, outBuffer, outButterLength, decrypt_key, (UInt8 *)encryptedKey.ivData.bytes, &num, AES_DECRYPT);
             decryptedData = [NSData dataWithBytes:outBuffer length:outButterLength];
 
             if (encrypt_key) free(encrypt_key);
@@ -340,7 +342,7 @@
             idea_set_decrypt_key(encrypt_key, decrypt_key);
 
             int num = 0;
-            idea_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, decrypt_key, (UInt8 *)self.ivData.bytes, &num, CAST_DECRYPT);
+            idea_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, decrypt_key, (UInt8 *)encryptedKey.ivData.bytes, &num, CAST_DECRYPT);
             decryptedData = [NSData dataWithBytes:outBuffer length:outButterLength];
 
             if (encrypt_key) free(encrypt_key);
@@ -352,11 +354,11 @@
             DES_key_schedule *keys = calloc(3, sizeof(DES_key_schedule));
 
             for (NSUInteger n = 0; n < 3; ++n) {
-                DES_set_key((DES_cblock *)(void *)(self.ivData.bytes + n * 8),&keys[n]);
+                DES_set_key((DES_cblock *)(void *)(encryptedKey.ivData.bytes + n * 8),&keys[n]);
             }
 
             int num = 0;
-            DES_ede3_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, &keys[0], &keys[1], &keys[2], (DES_cblock *)self.ivData.bytes, &num, DES_DECRYPT);
+            DES_ede3_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, &keys[0], &keys[1], &keys[2], (DES_cblock *)encryptedKey.ivData.bytes, &num, DES_DECRYPT);
             decryptedData = [NSData dataWithBytes:outBuffer length:outButterLength];
 
             if (keys) free(keys);
@@ -377,7 +379,7 @@
 
             //TODO: maybe CommonCrypto with kCCModeCFB in place of OpenSSL
             int num = 0; //	how much of the 64bit block we have used
-            CAST_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, decrypt_key, (UInt8 *)self.ivData.bytes, &num, CAST_DECRYPT);
+            CAST_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, decrypt_key, (UInt8 *)encryptedKey.ivData.bytes, &num, CAST_DECRYPT);
             decryptedData = [NSData dataWithBytes:outBuffer length:outButterLength];
 
             if (encrypt_key) free(encrypt_key);
@@ -403,12 +405,12 @@
 
     // now read mpis
     if (decryptedData) {
-        [self parseUnencryptedPart:decryptedData error:error];
+        [encryptedKey parseUnencryptedPart:decryptedData error:error];
         if (*error) {
             return NO;
         }
     }
-    return YES;
+    return encryptedKey;
 }
 
 #pragma mark - Private

@@ -290,10 +290,10 @@
 // @see https://github.com/singpolyma/openpgp-spec/blob/master/key-signatures
 - (void) signData:(NSData *)inputData  secretKey:(PGPKey *)secretKey
 {
-    return [self signData:inputData secretKey:secretKey userID:nil passphrase:nil];
+    return [self signData:inputData secretKey:secretKey passphrase:nil userID:nil];
 }
 
-- (void) signData:(NSData *)inputData secretKey:(PGPKey *)secretKey userID:(NSString *)userID passphrase:(NSString *)passphrase
+- (void) signData:(NSData *)inputData secretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase userID:(NSString *)userID
 {
     NSAssert(secretKey.type == PGPKeySecret,@"Need secret key");
     NSAssert([secretKey.primaryKeyPacket isKindOfClass:[PGPSecretKeyPacket class]], @"Signing key packet not found");
@@ -308,13 +308,10 @@
     self.publicKeyAlgorithm = signingKeyPacket.publicKeyAlgorithm;
 
     if (signingKeyPacket.isEncrypted && passphrase.length > 0) {
-        PGPSecretKeyPacket *signingKeyPacketDecryptedCopy = [signingKeyPacket copy];
         NSError *decryptError;
-        BOOL decrypted = [signingKeyPacketDecryptedCopy decrypt:passphrase error:&decryptError];
-        NSAssert(decrypted && !decryptError, @"decrypt error %@", decryptError);
-
         //Copy secret key instance, then decrypt on copy, not on the original (do not leave unencrypted instance around)
-        signingKeyPacket = signingKeyPacketDecryptedCopy;
+        signingKeyPacket = [signingKeyPacket decryptedKey:passphrase error:&decryptError];
+        NSAssert(signingKeyPacket && !decryptError, @"decrypt error %@", decryptError);
     }
 
     // signed part data

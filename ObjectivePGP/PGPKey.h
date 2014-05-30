@@ -32,11 +32,12 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
 
 /**
  *  Decrypts all secret key and subkey packets
+ *  Note: After decryption encrypted packets are replaced with new decrypted instances on key.
  *
  *  @param passphrase Password
  *  @param error      error
  *
- *  @return YES on success
+ *  @return YES on success.
  */
 - (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error;
 

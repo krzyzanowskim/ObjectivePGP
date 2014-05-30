@@ -160,7 +160,7 @@
     PGPSignaturePacket *signaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureBinaryDocument
                                                                 hashAlgorithm:preferedHashAlgorithm];
 
-    [signaturePacket signData:dataToSign secretKey:secretKey userID:nil passphrase:passphrase];
+    [signaturePacket signData:dataToSign secretKey:secretKey passphrase:passphrase userID:nil];
     NSError *exportError = nil;
     signaturePacketData = [signaturePacket exportPacket:&exportError];
     NSAssert(!exportError,@"Error on export packet");
