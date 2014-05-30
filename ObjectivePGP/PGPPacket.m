@@ -128,6 +128,7 @@
     }
     *length = bodyLength;
 
+    NSAssert(!isPartialBodyLength, @"Partial body length is not fully supported");
     NSAssert(bodyLength > 0, @"The packet is of indeterminate length");
 
     return headerLength;
@@ -179,6 +180,7 @@
         case 3:
         {
             //TODO: The packet is of indeterminate length.
+            NSAssert(false, @"The packet is of indeterminate length - unsuported");
             headerLength = 1;
         }
             break;

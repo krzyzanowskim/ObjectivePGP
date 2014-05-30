@@ -377,7 +377,6 @@
             // wtf civ ???
             // CAST_ecb_encrypt(in, out, encrypt_key, CAST_ENCRYPT);
 
-            //TODO: maybe CommonCrypto with kCCModeCFB in place of OpenSSL
             int num = 0; //	how much of the 64bit block we have used
             CAST_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, decrypt_key, (UInt8 *)encryptedKey.ivData.bytes, &num, CAST_DECRYPT);
             decryptedData = [NSData dataWithBytes:outBuffer length:outButterLength];

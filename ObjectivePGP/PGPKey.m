@@ -5,9 +5,6 @@
 //  Created by Marcin Krzyzanowski on 13/05/14.
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
-//  TODO:
-//  1. Key validation
-//  2. 
 
 #import "PGPKey.h"
 #import "PGPPublicKeyPacket.h"
@@ -175,7 +172,6 @@
 }
 
 // signature packet that is available for signing data
-//TODO: add validations for signatures
 - (PGPPacket *) signingKeyPacket
 {
     NSAssert(self.type == PGPKeySecret, @"Need secret key to sign");
@@ -235,8 +231,6 @@
         NSError *error = nil;
         [result appendData:[packet exportPacket:&error]]; //TODO: decode secret key first
         NSAssert(!error,@"Error while export public key");
-
-        //TODO: append checksum?
     }
     return [result copy];
 }

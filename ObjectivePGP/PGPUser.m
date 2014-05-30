@@ -143,8 +143,7 @@
             continue;
         }
 
-        //TODO: check verify (this is craziest think I ever seen today)
-        // endless loop looop because of key.signingKeyPacket
+        // (this is craziest think I ever seen today)
         BOOL status = [signature verifyData:nil withKey:key signingKeyPacket:(PGPPublicKeyPacket *)key.primaryKeyPacket userID:self.userID];
         NSAssert(status == YES,@"not verified");
 
