@@ -84,6 +84,17 @@
 
     NSLog(@"Created file %@", exportSecretKeyringPath);
 
+    // Check if can be load
+    ObjectivePGP *checkPGP = [[ObjectivePGP alloc] init];
+    BOOL loadStatus = [checkPGP loadKeysFromKeyring:exportSecretKeyringPath];
+    XCTAssertTrue(loadStatus, @"Exported file should load properly");
+    XCTAssert(self.oPGP.keys.count > 0, @"Keys not loaded");
+
+    PGPKey *key = checkPGP.keys[0];
+    PGPSecretKeyPacket *secretKey = (PGPSecretKeyPacket *)key.primaryKeyPacket;
+    XCTAssert([key.primaryKeyPacket class] == [PGPSecretKeyPacket class],@"Key Should be PGPSecretKeyPacket");
+    XCTAssertFalse(key.isEncrypted, @"Should not be encrypted");
+    XCTAssertEqualObjects([secretKey.keyID longKeyString], @"25A233C2952E4E8B", @"Invalid key identifier");
 }
 
 - (void) testSavePublicKeys
@@ -111,13 +122,14 @@
 
     BOOL status = [self.oPGP loadKeysFromKeyring:self.secKeyringPath];
     XCTAssertTrue(status, @"");
+    XCTAssert(self.oPGP.keys.count > 0, @"Keys not loaded");
 
-    for (PGPKey *key in self.oPGP.keys) {
-        PGPSecretKeyPacket *secretKey = (PGPSecretKeyPacket *)key.primaryKeyPacket;
-        XCTAssert([key.primaryKeyPacket class] == [PGPSecretKeyPacket class],@"Key Should be PGPSecretKeyPacket");
-        XCTAssertFalse(key.isEncrypted, @"Should not be encrypted");
-        XCTAssertEqualObjects([secretKey.keyID longKeyString], @"25A233C2952E4E8B", @"Invalid key identifier");
-    }
+    PGPKey *key = self.oPGP.keys[0];
+
+    PGPSecretKeyPacket *secretKey = (PGPSecretKeyPacket *)key.primaryKeyPacket;
+    XCTAssert([key.primaryKeyPacket class] == [PGPSecretKeyPacket class],@"Key Should be PGPSecretKeyPacket");
+    XCTAssertFalse(key.isEncrypted, @"Should not be encrypted");
+    XCTAssertEqualObjects([secretKey.keyID longKeyString], @"25A233C2952E4E8B", @"Invalid key identifier");
 }
 
 - (void) testDetachedSignature
@@ -167,7 +179,6 @@
     keyToValidateSign = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B"];
     status = [self.oPGP verifyData:signedData];
     XCTAssertTrue(status);
-
 }
 
 - (void) testKeyVerification
@@ -180,41 +191,6 @@
 
     //XCTAssertTrue([key verifyPrimaryKey]);
 }
-
-//- (void) testSignature
-//{
-//    BOOL loadStatus = [self.oPGP loadKeyring:self.keyringPath];
-//    XCTAssertTrue(loadStatus, @"Keyring file should load properly");
-//
-//    NSString *newDir = [@"ObjectivePGPTests" stringByAppendingPathComponent:[[NSUUID UUID] UUIDString]];
-//    NSString *tmpDirectoryPath = [NSTemporaryDirectory() stringByAppendingPathComponent:newDir];
-//    [[NSFileManager defaultManager] createDirectoryAtPath:tmpDirectoryPath withIntermediateDirectories:YES attributes:nil error:nil];
-//    if (![[NSFileManager defaultManager] fileExistsAtPath:tmpDirectoryPath]) {
-//        XCTFail(@"couldn't create tmpDirectoryPath");
-//    }
-//
-//    NSMutableData *keysData = [NSMutableData data];
-//    for (PGPKey *key in self.oPGP.keys) {
-//        NSError *error = nil;
-//        NSData *keyData = [key export:&error];
-//        XCTAssertNotNil(keyData, @"Can't export key");
-//        [keysData appendData:keyData];
-//
-//        // Sign with key
-//        PGPSignaturePacket *binarySign = [[PGPSignaturePacket alloc] init];
-//        binarySign.type               = PGPSignatureBinaryDocument;
-//        binarySign.publicKeyAlgorithm = PGPPublicKeyAlgorithmRSA;
-//        binarySign.hashAlgoritm       = PGPHashSHA1;
-//        NSData *signatureData = [binarySign signData:key data:[NSData dataWithContentsOfFile:self.keyringPath] userIDPacket:nil];
-//        [signatureData writeToFile:[tmpDirectoryPath stringByAppendingPathComponent:@"signature.sig"] atomically:YES];
-//        [[NSData dataWithContentsOfFile:self.keyringPath] writeToFile:[tmpDirectoryPath stringByAppendingPathComponent:@"signed_file.bin"] atomically:YES];
-//
-//        [[NSFileManager defaultManager] copyItemAtPath:self.keyringPath toPath:[tmpDirectoryPath stringByAppendingPathComponent:[self.keyringPath lastPathComponent]] error:nil];
-//        [[NSFileManager defaultManager] copyItemAtPath:self.pubKeyringPath toPath:[tmpDirectoryPath stringByAppendingPathComponent:[self.pubKeyringPath lastPathComponent]] error:nil];
-//    }
-//    NSLog(@"%@",tmpDirectoryPath);
-//    [[NSFileManager defaultManager] removeItemAtPath:tmpDirectoryPath error:nil];
-//}
 
 //- (void) testExport
 //{
