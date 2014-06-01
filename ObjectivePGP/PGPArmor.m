@@ -177,10 +177,24 @@
         return nil;
     }
 
-    //TODO: verify checksum
 
-    NSData *base64Data = [base64String dataUsingEncoding:NSUTF8StringEncoding];
-    NSData *binaryData = [[NSData alloc] initWithBase64EncodedData:base64Data options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    // binary data from base64 part
+    NSData *binaryData = [[NSData alloc] initWithBase64EncodedString:base64String options:NSDataBase64DecodingIgnoreUnknownCharacters];
+
+    // validate checksum
+    NSData *readChecksumData = [[NSData alloc] initWithBase64EncodedString:checksumString options:NSDataBase64DecodingIgnoreUnknownCharacters];
+
+    UInt32 calculatedCRC24 = [binaryData pgpCRC24];
+    calculatedCRC24 = CFSwapInt32HostToBig(calculatedCRC24);
+    calculatedCRC24 = calculatedCRC24 >> 8;
+    NSData *calculatedCRC24Data = [NSData dataWithBytes:&calculatedCRC24 length:3];
+    if (![calculatedCRC24Data isEqualToData:readChecksumData]) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Checksum mismatch"}];
+        }
+        return nil;
+    }
+
     return binaryData;
 }
 
