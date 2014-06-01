@@ -53,8 +53,7 @@
 {
     NSLog(@"%s doing work...", __PRETTY_FUNCTION__);
 
-    BOOL status = [self.oPGP loadKeysFromKeyring:self.secKeyringPath];
-    XCTAssertTrue(status, @"Unable to load keyring");
+    XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath], @"Unable to load keyring");
     XCTAssert(self.oPGP.keys.count == 1, @"Should load 1 key");
 
     NSArray *foundKeys = [self.oPGP getKeysForUserID:@"Marcin (test) <marcink@up-next.com>"];
@@ -71,14 +70,13 @@
 {
     NSLog(@"%s doing work...", __PRETTY_FUNCTION__);
 
-    BOOL status = [self.oPGP loadKeysFromKeyring:self.secKeyringPath];
-    XCTAssertTrue(status, @"");
+    XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
 
     NSString *exportSecretKeyringPath = [self.workingDirectory stringByAppendingPathComponent:@"export-secring-test-plaintext.gpg"];
 
     NSArray *secretKeys = [self.oPGP getKeysOfType:PGPKeySecret];
     NSError *ssaveError = nil;
-    BOOL sstatus = [self.oPGP saveKeys:secretKeys toKeyring:exportSecretKeyringPath error:&ssaveError];
+    BOOL sstatus = [self.oPGP exportKeys:secretKeys toFile:exportSecretKeyringPath error:&ssaveError];
     XCTAssertNil(ssaveError, @"");
     XCTAssertTrue(sstatus, @"");
 
@@ -86,8 +84,7 @@
 
     // Check if can be load
     ObjectivePGP *checkPGP = [[ObjectivePGP alloc] init];
-    BOOL loadStatus = [checkPGP loadKeysFromKeyring:exportSecretKeyringPath];
-    XCTAssertTrue(loadStatus, @"Exported file should load properly");
+    XCTAssertNotNil([checkPGP importKeysFromFile:exportSecretKeyringPath]);
     XCTAssert(self.oPGP.keys.count > 0, @"Keys not loaded");
 
     PGPKey *key = checkPGP.keys[0];
@@ -101,14 +98,13 @@
 {
     NSLog(@"%s doing work...", __PRETTY_FUNCTION__);
 
-    BOOL status = [self.oPGP loadKeysFromKeyring:self.pubKeyringPath];
-    XCTAssertTrue(status);
+    XCTAssertNotNil([self.oPGP importKeysFromFile:self.pubKeyringPath]);
 
     NSString *exportPublicKeyringPath = [self.workingDirectory stringByAppendingPathComponent:@"export-pubring-test-plaintext.gpg"];
 
     NSArray *publicKeys = [self.oPGP getKeysOfType:PGPKeyPublic];
     NSError *psaveError = nil;
-    BOOL pstatus = [self.oPGP saveKeys:publicKeys toKeyring:exportPublicKeyringPath error:&psaveError];
+    BOOL pstatus = [self.oPGP exportKeys:publicKeys toFile:exportPublicKeyringPath error:&psaveError];
     XCTAssertNil(psaveError);
     XCTAssertTrue(pstatus);
 
@@ -120,8 +116,7 @@
 {
     NSLog(@"%s doing work...", __PRETTY_FUNCTION__);
 
-    BOOL status = [self.oPGP loadKeysFromKeyring:self.secKeyringPath];
-    XCTAssertTrue(status, @"");
+    XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
     XCTAssert(self.oPGP.keys.count > 0, @"Keys not loaded");
 
     PGPKey *key = self.oPGP.keys[0];
@@ -134,8 +129,7 @@
 
 - (void) testSigning
 {
-    BOOL status = [self.oPGP loadKeysFromKeyring:self.secKeyringPath];
-    XCTAssertTrue(status);
+    XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
 
     // copy keyring to verify
     [[NSFileManager defaultManager] copyItemAtPath:self.secKeyringPath toPath:[self.workingDirectory stringByAppendingPathComponent:[self.secKeyringPath lastPathComponent]] error:nil];
@@ -144,7 +138,7 @@
 
     // file to sign
     NSString *fileToSignPath = [self.workingDirectory stringByAppendingPathComponent:@"signed_file.bin"];
-    status = [[NSFileManager defaultManager] copyItemAtPath:self.secKeyringPath toPath:fileToSignPath error:nil];
+    BOOL status = [[NSFileManager defaultManager] copyItemAtPath:self.secKeyringPath toPath:fileToSignPath error:nil];
     XCTAssertTrue(status);
 
     PGPKey *keyToSign = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B"];

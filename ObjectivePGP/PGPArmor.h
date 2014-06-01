@@ -22,4 +22,9 @@ typedef NS_ENUM(NSUInteger, PGPArmorType)
 
 + (NSData *) armoredData:(NSData *)dataToArmor as:(PGPArmorType)armorType part:(NSUInteger)part of:(NSUInteger)ofParts;
 + (NSData *) armoredData:(NSData *)dataToArmor as:(PGPArmorType)armorType;
+
++ (NSData *) readArmoredData:(NSString *)armoredString error:(NSError * __autoreleasing *)error;
+
++ (BOOL) isArmoredData:(NSData *)data;
+
 @end

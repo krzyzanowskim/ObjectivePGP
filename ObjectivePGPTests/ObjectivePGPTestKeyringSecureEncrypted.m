@@ -49,14 +49,13 @@
 
 - (void)testLoadKeyring
 {
-    BOOL status = [self.oPGP loadKeysFromKeyring:self.secKeyringPath];
-    XCTAssertTrue(status, @"Unable to load keyring");
+    XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
     XCTAssert(self.oPGP.keys.count == 1, @"Should load 1 key");
 }
 
 - (void) testUsers
 {
-    [self.oPGP loadKeysFromKeyring:self.secKeyringPath];
+    [self.oPGP importKeysFromFile:self.secKeyringPath];
 
     PGPKey *key = self.oPGP.keys[0];
     XCTAssert(key.users.count == 1, @"Invalid users count");
@@ -64,7 +63,7 @@
 
 - (void) testPrimaryKey
 {
-    [self.oPGP loadKeysFromKeyring:self.secKeyringPath];
+    [self.oPGP importKeysFromFile:self.secKeyringPath];
 
     PGPKey *key = self.oPGP.keys[0];
 
@@ -76,7 +75,7 @@
 
 - (void)testDecryption
 {
-    [self.oPGP loadKeysFromKeyring:self.secKeyringPath];
+    [self.oPGP importKeysFromFile:self.secKeyringPath];
 
     PGPKey *key = self.oPGP.keys[0];
 
@@ -90,7 +89,7 @@
 {
     BOOL status;
 
-    [self.oPGP loadKeysFromKeyring:self.secKeyringPath];
+    [self.oPGP importKeysFromFile:self.secKeyringPath];
 
     // file to sign
     NSString *fileToSignPath = [self.workingDirectory stringByAppendingPathComponent:@"signed_file.bin"];

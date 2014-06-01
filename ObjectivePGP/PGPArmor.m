@@ -13,6 +13,16 @@
 
 @implementation PGPArmor
 
++ (BOOL) isArmoredData:(NSData *)data
+{
+    // detect if armored, check for string -----BEGIN PGP
+    NSString *str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    if (str && [str hasPrefix:@"-----BEGIN PGP"]) {
+        return YES;
+    }
+    return NO;
+}
+
 + (NSData *) armoredData:(NSData *)dataToArmor as:(PGPArmorType)armorType
 {
     return [[self class] armoredData:dataToArmor as:armorType part:NSUIntegerMax of:NSUIntegerMax];
@@ -70,7 +80,7 @@
     [armoredMessage appendString:@"\r\n"];
 
     // - The ASCII-Armored data
-    NSString *radix64 = [dataToArmor base64EncodedStringWithOptions:NSDataBase64Encoding76CharacterLineLength | NSDataBase64EncodingEndLineWithCarriageReturn];
+    NSString *radix64 = [dataToArmor base64EncodedStringWithOptions:(NSDataBase64Encoding76CharacterLineLength | NSDataBase64EncodingEndLineWithCarriageReturn | NSDataBase64EncodingEndLineWithLineFeed)];
     [armoredMessage appendString:radix64];
     [armoredMessage appendString:@"\r\n"];
 
@@ -83,7 +93,7 @@
 
     NSData *checksumData = [NSData dataWithBytes:&c length:sizeof(c)];
     [armoredMessage appendString:@"="];
-    [armoredMessage appendString:[checksumData base64EncodedStringWithOptions:(NSDataBase64Encoding76CharacterLineLength | NSDataBase64EncodingEndLineWithCarriageReturn)]];
+    [armoredMessage appendString:[checksumData base64EncodedStringWithOptions:(NSDataBase64Encoding76CharacterLineLength | NSDataBase64EncodingEndLineWithCarriageReturn | NSDataBase64EncodingEndLineWithLineFeed)]];
     [armoredMessage appendString:@"\r\n"];
 
     // - The Armor Tail, which depends on the Armor Header Line
@@ -91,5 +101,87 @@
 
     return [armoredMessage dataUsingEncoding:NSASCIIStringEncoding];
 };
+
++ (NSData *) readArmoredData:(NSString *)armoredString error:(NSError * __autoreleasing *)error
+{
+    NSScanner *scanner = [[NSScanner alloc] initWithString:armoredString];
+    scanner.charactersToBeSkipped = nil;
+
+    // check header line
+    NSString *headerLine = nil;
+    [scanner scanUpToString:@"\r\n" intoString:&headerLine];
+    if (![headerLine isEqualToString:@"-----BEGIN PGP MESSAGE-----"] &&
+        ![headerLine isEqualToString:@"-----BEGIN PGP PUBLIC KEY BLOCK-----"] &&
+        ![headerLine isEqualToString:@"-----BEGIN PGP PRIVATE KEY BLOCK-----"] &&
+        ![headerLine isEqualToString:@"-----BEGIN PGP SIGNATURE-----"] &&
+        ![headerLine hasPrefix:@"-----BEGIN PGP MESSAGE, PART"])
+    {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Invalid header"}];
+        }
+        return nil;
+    }
+
+    [scanner scanString:@"\r\n" intoString:nil];
+
+    NSString *line = nil;
+    while ([scanner scanUpToString:@"\r\n" intoString:&line]) {
+        [scanner scanString:@"\r\n" intoString:nil];
+        NSLog(@"%@",line);
+    }
+
+    // blank line
+    [scanner scanString:@"\r\n" intoString:nil];
+
+    // read base64 data
+    BOOL base64Section = YES;
+    NSMutableString *base64String = [NSMutableString string];
+
+    while (base64Section) {
+        base64Section = [scanner scanUpToString:@"\r\n" intoString:&line];
+        [scanner scanString:@"\r\n" intoString:nil];
+
+        if (line.length < 76 || (line.length == 76 && [line hasSuffix:@"="])) {
+            base64Section = NO;
+        }
+        [base64String appendFormat:@"%@\r\n", line];
+    }
+
+    // read checksum
+    NSString *checksumString = nil;
+    [scanner scanUpToCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:&line];
+    [scanner scanString:@"\r\n" intoString:nil];
+    if ([line hasPrefix:@"="]) {
+        checksumString = [line substringFromIndex:1];
+    }
+
+    if (!checksumString) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Missing checksum"}];
+        }
+        return nil;
+    }
+
+    //read footer
+    BOOL footerMatchHeader = NO;
+    [scanner scanUpToCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:&line];
+    [scanner scanString:@"\r\n" intoString:nil];
+    if ([line hasSuffix:[headerLine substringFromIndex:12]]) {
+        footerMatchHeader = YES;
+    }
+
+    if (!footerMatchHeader) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Footer don't match to header"}];
+        }
+        return nil;
+    }
+
+    //TODO: verify checksum
+
+    NSData *base64Data = [base64String dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *binaryData = [[NSData alloc] initWithBase64EncodedData:base64Data options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    return binaryData;
+}
 
 @end

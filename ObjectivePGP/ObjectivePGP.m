@@ -17,6 +17,7 @@
 #import "PGPUser.h"
 #import "PGPOnePassSignaturePacket.h"
 #import "PGPLiteralPacket.h"
+#import "PGPArmor.h"
 
 @implementation ObjectivePGP
 
@@ -80,12 +81,12 @@
 
 #pragma mark - Save
 
-- (BOOL) saveKeysOfType:(PGPKeyType)type toKeyring:(NSString *)path error:(NSError **)error
+- (BOOL) exportKeysOfType:(PGPKeyType)type toFile:(NSString *)path error:(NSError **)error
 {
-    return [self saveKeys:[self getKeysOfType:type] toKeyring:path error:error];
+    return [self exportKeys:[self getKeysOfType:type] toFile:path error:error];
 }
 
-- (BOOL) saveKeys:(NSArray *)keys toKeyring:(NSString *)path error:(NSError **)error
+- (BOOL) exportKeys:(NSArray *)keys toFile:(NSString *)path error:(NSError **)error
 {
     BOOL result = YES;
     for (PGPKey *key in keys) {
@@ -124,6 +125,28 @@
         }
     }
     return result;
+}
+
+- (NSData *) exportKey:(PGPKey *)key armored:(BOOL)armored
+{
+    NSAssert(key, @"Missing parameter");
+    if (!key) {
+        return nil;
+    }
+
+    NSError *exportError = nil;
+    NSData *keyData = [key export:&exportError];
+    if (!keyData || exportError) {
+        NSLog(@"%@",exportError);
+        return nil;
+    }
+
+    if (armored) {
+        return [PGPArmor armoredData:keyData as:PGPArmorTypePublicKey];
+    } else {
+        return keyData;
+    }
+    return nil;
 }
 
 #pragma mark - Operations
@@ -296,45 +319,24 @@
  *
  *  @return YES on success
  */
-- (BOOL) loadKeysFromKeyring:(NSString *)path
+- (NSArray *) importKeysFromFile:(NSString *)path
 {
-    NSString *fullPath = [path stringByExpandingTildeInPath];
-
-    if (![[NSFileManager defaultManager] fileExistsAtPath:fullPath isDirectory:NO]) {
-        return NO;
-    }
-
-    NSData *ringData = [NSData dataWithContentsOfFile:fullPath];
-    if (!ringData) {
-        return NO;
-    }
-
-    NSArray *parsedKeys = [self parseKeyring:ringData];
-    if (parsedKeys.count == 0) {
-        return NO;
-    }
-
-    self.keys = [self.keys arrayByAddingObjectsFromArray:parsedKeys];
-
-    return YES;
+    NSArray *loadedKeys = [self loadKeysFromFile:path];
+    self.keys = [self.keys arrayByAddingObjectsFromArray:loadedKeys];
+    return loadedKeys;
 }
 
-- (BOOL) loadKey:(NSString *)shortKeyStringIdentifier fromKeyring:(NSString *)path
+- (BOOL) importKey:(NSString *)shortKeyStringIdentifier fromFile:(NSString *)path
 {
     NSString *fullPath = [path stringByExpandingTildeInPath];
 
-    NSData *ringData = [NSData dataWithContentsOfFile:fullPath];
-    if (!ringData) {
-        return NO;
-    }
-
-    NSArray *parsedKeys = [self parseKeyring:ringData];
-    if (parsedKeys.count == 0) {
+    NSArray *loadedKeys = [self loadKeysFromFile:fullPath];
+    if (loadedKeys.count == 0) {
         return NO;
     }
 
     __block BOOL foundKey = NO;
-    [parsedKeys enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+    [loadedKeys enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         PGPKey *key = obj;
 
         if ([key.primaryKeyPacket isKindOfClass:[PGPPublicKeyPacket class]]) {
@@ -351,6 +353,38 @@
     return foundKey;
 }
 
+- (NSArray *) loadKeysFromFile:(NSString *)path
+{
+    NSString *fullPath = [path stringByExpandingTildeInPath];
+
+    if (![[NSFileManager defaultManager] fileExistsAtPath:fullPath isDirectory:NO]) {
+        return nil;
+    }
+
+    NSData *fileData = [NSData dataWithContentsOfFile:fullPath];
+    if (!fileData) {
+        return nil;
+    }
+
+    NSData *binRingData = fileData;
+    // detect if armored, check for strin -----BEGIN PGP
+    if ([PGPArmor isArmoredData:fileData]) {
+        NSError *deadmorError = nil;
+        NSString *armoredString = [[NSString alloc] initWithData:fileData encoding:NSUTF8StringEncoding];
+        binRingData = [PGPArmor readArmoredData:armoredString error:&deadmorError];
+        if (deadmorError) {
+            return nil;
+        }
+    }
+
+    NSArray *parsedKeys = [self readPacketsBinaryData:binRingData];
+    if (parsedKeys.count == 0) {
+        return nil;
+    }
+
+    return parsedKeys;
+}
+
 #pragma mark - Private
 
 /**
@@ -360,7 +394,7 @@
  *
  *  @return Array of PGPKey
  */
-- (NSArray *) parseKeyring:(NSData *)keyringData
+- (NSArray *) readPacketsBinaryData:(NSData *)keyringData
 {
     NSMutableArray *keys = [NSMutableArray array];
     NSMutableArray *accumulatedPackets = [NSMutableArray array];

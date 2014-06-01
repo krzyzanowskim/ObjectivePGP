@@ -53,7 +53,7 @@
 
 - (void) testArmorPublicKey
 {
-    [self.oPGP loadKeysFromKeyring:self.pubKeyringPath];
+    [self.oPGP importKeysFromFile:self.pubKeyringPath];
 
     PGPKey *key = self.oPGP.keys[0];
 
@@ -67,6 +67,18 @@
 
     BOOL status = [armoredData writeToFile:[self.workingDirectory stringByAppendingPathComponent:@"pubkey.asc"] atomically:YES];
     XCTAssertTrue(status);
+
+    NSError *loadError = nil;
+    NSString *armoredString = [NSString stringWithContentsOfFile:[self.workingDirectory stringByAppendingPathComponent:@"pubkey.asc"] encoding:NSASCIIStringEncoding error:&loadError];
+    XCTAssertNil(loadError);
+    XCTAssertNotNil(armoredString);
+
+    NSError *readArmoredError = nil;
+    NSData *decodedData = [PGPArmor readArmoredData:armoredString error:&readArmoredError];
+    XCTAssertNil(readArmoredError);
+    XCTAssertNotNil(decodedData);
+
+    XCTAssertEqualObjects(decodedData, keyData);
 }
 
 @end
