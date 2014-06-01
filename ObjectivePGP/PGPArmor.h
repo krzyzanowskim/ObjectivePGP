@@ -8,6 +8,18 @@
 
 #import <Foundation/Foundation.h>
 
+typedef NS_ENUM(NSUInteger, PGPArmorType)
+{
+    PGPArmorTypeMessage                  = 1,
+    PGPArmorTypePublicKey                = 2,
+    PGPArmorTypeSecretKey                = 3,
+    PGPArmorTypeMultipartMessagePartXOfY = 4,
+    PGPArmorTypeMultipartMessagePartX    = 5,
+    PGPArmorTypeSignature                = 6
+};
+
 @interface PGPArmor : NSObject
 
++ (NSData *) armoredData:(NSData *)dataToArmor as:(PGPArmorType)armorType part:(NSUInteger)part of:(NSUInteger)ofParts;
++ (NSData *) armoredData:(NSData *)dataToArmor as:(PGPArmorType)armorType;
 @end
