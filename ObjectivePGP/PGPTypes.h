@@ -91,14 +91,6 @@ typedef NS_ENUM(UInt8, PGPHashAlgorithm) {
     PGPHashSHA224    = 11 //SHA224
 };
 
-// 9.3.  Compression Algorithms
-typedef NS_ENUM(UInt8, PGPCompressionAlgorithm) {
-    PGPCompressionUncompressed = 0,
-    PGPCompressionZIP          = 1,
-    PGPCompressionZLIB         = 2,
-    PGPCompressionBZIP2        = 3
-};
-
 typedef NS_ENUM(UInt8, PGPSignatureType) {
     PGPSignatureBinaryDocument                          = 0x00,
     PGPSignatureCanonicalTextDocument                   = 0x01,

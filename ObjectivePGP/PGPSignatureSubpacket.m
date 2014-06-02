@@ -9,6 +9,7 @@
 #import "PGPSignatureSubpacket.h"
 #import "PGPKeyID.h"
 #import "PGPPacket.h"
+#import "PGPCompressedPacket.h"
 #import "NSValue+PGPUtils.h"
 
 @implementation PGPSignatureSubpacketHeader
