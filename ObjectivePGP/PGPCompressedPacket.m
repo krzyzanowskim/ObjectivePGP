@@ -8,6 +8,7 @@
 
 #import "PGPCompressedPacket.h"
 #import "NSData+Stream.h"
+#import "NSData+IDZGunzip.h"
 #import <zlib.h>
 
 @implementation PGPCompressedPacket
@@ -29,9 +30,10 @@
     NSData *compressedData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
 
     //TODO: for ZIP use AgileBits/objective-zip
+    NSError *decompressError = nil;
     switch (self.compressionType) {
         case PGPCompressionZLIB:
-            self.decompressedData = [self decompressZlib:compressedData];
+            self.decompressedData = [self decompressZlib:compressedData error:&decompressError];
             break;
 
         default:
@@ -43,10 +45,10 @@
 }
 
 //ret = (int)inflateInit2(&z.zstream, -15);
-
-- (NSData *) decompressZlib:(NSData *)compressedData
+- (NSData *) decompressZlib:(NSData *)compressedData error:(NSError * __autoreleasing *)error
 {
-    //ret = (int)inflateInit(&z.zstream);
+    //return [compressedData gunzip:error];
+    // 1950 is not gzip
     return nil;
 }
 
