@@ -8,8 +8,7 @@
 
 #import "PGPCompressedPacket.h"
 #import "NSData+Stream.h"
-#import "NSData+IDZGunzip.h"
-#import <zlib.h>
+#import "NSData+zlib.h"
 
 @implementation PGPCompressedPacket
 
@@ -47,9 +46,8 @@
 //ret = (int)inflateInit2(&z.zstream, -15);
 - (NSData *) decompressZlib:(NSData *)compressedData error:(NSError * __autoreleasing *)error
 {
-    //return [compressedData gunzip:error];
-    // 1950 is not gzip
-    return nil;
+    // 1950 zlib, not gzip
+    return [compressedData zlibDecompressed:error];
 }
 
 @end
