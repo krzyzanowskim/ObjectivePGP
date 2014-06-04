@@ -12,6 +12,8 @@
 		7502CF021916EFD5001B32D7 /* NSData+NSValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7502CF011916EFD5001B32D7 /* NSData+NSValue.m */; };
 		75040AB21926BB35000CEA93 /* ObjectivePGPTestArmor.m in Sources */ = {isa = PBXBuildFile; fileRef = 75040AB11926BB35000CEA93 /* ObjectivePGPTestArmor.m */; };
 		7507B72819170FE3003A2DC7 /* PGPUserIDPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 7507B72719170FE3003A2DC7 /* PGPUserIDPacket.m */; };
+		750BD0D8193F5AAD005B9840 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 750BD0D7193F5AAD005B9840 /* libz.dylib */; };
+		750BD0D9193F5AC3005B9840 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 750BD0D7193F5AAD005B9840 /* libz.dylib */; };
 		750EE3C41922C185009E818E /* PGPKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 750EE3C31922C185009E818E /* PGPKey.m */; };
 		751E07361937D53900CA7946 /* PGPOnePassSignaturePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 751E07351937D53900CA7946 /* PGPOnePassSignaturePacket.m */; };
 		755456C0192843E700E5526B /* PGPArmor.m in Sources */ = {isa = PBXBuildFile; fileRef = 755456BF192843E700E5526B /* PGPArmor.m */; };
@@ -91,6 +93,7 @@
 		75040AB11926BB35000CEA93 /* ObjectivePGPTestArmor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectivePGPTestArmor.m; sourceTree = "<group>"; };
 		7507B72619170FE3003A2DC7 /* PGPUserIDPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPUserIDPacket.h; sourceTree = "<group>"; };
 		7507B72719170FE3003A2DC7 /* PGPUserIDPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPUserIDPacket.m; sourceTree = "<group>"; };
+		750BD0D7193F5AAD005B9840 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		750EE3C21922C185009E818E /* PGPKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPKey.h; sourceTree = "<group>"; };
 		750EE3C31922C185009E818E /* PGPKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPKey.m; sourceTree = "<group>"; };
 		751E07341937D53900CA7946 /* PGPOnePassSignaturePacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPOnePassSignaturePacket.h; sourceTree = "<group>"; };
@@ -176,6 +179,7 @@
 			files = (
 				756299B91914DE1A00C5AD3B /* Foundation.framework in Frameworks */,
 				530608F022BB406DA76684F0 /* libPods.a in Frameworks */,
+				750BD0D8193F5AAD005B9840 /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -187,6 +191,7 @@
 				756299CA1914DE1A00C5AD3B /* UIKit.framework in Frameworks */,
 				756299C81914DE1A00C5AD3B /* Foundation.framework in Frameworks */,
 				756299CD1914DE1A00C5AD3B /* libObjectivePGP.a in Frameworks */,
+				750BD0D9193F5AC3005B9840 /* libz.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -229,6 +234,7 @@
 		756299B71914DE1A00C5AD3B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				750BD0D7193F5AAD005B9840 /* libz.dylib */,
 				756299B81914DE1A00C5AD3B /* Foundation.framework */,
 				756299C61914DE1A00C5AD3B /* XCTest.framework */,
 				756299C91914DE1A00C5AD3B /* UIKit.framework */,
