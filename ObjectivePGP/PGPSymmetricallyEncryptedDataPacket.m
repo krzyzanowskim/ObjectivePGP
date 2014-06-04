@@ -22,7 +22,6 @@
     // - Encrypted data, the output of the selected symmetric-key cipher
     // operating in OpenPGP's variant of Cipher Feedback (CFB) mode.
     position = position + packetBody.length;
-
     return position;
 }
 
@@ -34,6 +33,19 @@
     [data appendData: headerData];
     [data appendData: bodyData];
     return [data copy];
+}
+
+#pragma mark - Private
+
+- (void) decrypt
+{
+    // decrypt packets
+    // and parse decrypted packets readPacketsBinaryData (private in ObjectivePGP)
+}
+
+- (void) encrypt
+{
+    //TODO: encrypt decrypted packets
 }
 
 @end

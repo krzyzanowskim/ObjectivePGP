@@ -59,6 +59,7 @@
 		75E7B6B81916493600C96BAB /* PGPPublicSubKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75E7B6B71916493600C96BAB /* PGPPublicSubKeyPacket.m */; };
 		75E7B6BB19167EFF00C96BAB /* PGPSignaturePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75E7B6BA19167EFF00C96BAB /* PGPSignaturePacket.m */; };
 		75FE9808193FB46200613549 /* PGPSymmetricallyEncryptedDataPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75FE9807193FB46200613549 /* PGPSymmetricallyEncryptedDataPacket.m */; };
+		75FE980B193FBA4100613549 /* PGPSymmetricKeyEncryptedSessionKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75FE980A193FBA4100613549 /* PGPSymmetricKeyEncryptedSessionKeyPacket.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -173,6 +174,8 @@
 		75E7B6BC19167F1700C96BAB /* PGPPacketFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPacketFactory.h; sourceTree = "<group>"; };
 		75FE9806193FB46200613549 /* PGPSymmetricallyEncryptedDataPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSymmetricallyEncryptedDataPacket.h; sourceTree = "<group>"; };
 		75FE9807193FB46200613549 /* PGPSymmetricallyEncryptedDataPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSymmetricallyEncryptedDataPacket.m; sourceTree = "<group>"; };
+		75FE9809193FBA4100613549 /* PGPSymmetricKeyEncryptedSessionKeyPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSymmetricKeyEncryptedSessionKeyPacket.h; sourceTree = "<group>"; };
+		75FE980A193FBA4100613549 /* PGPSymmetricKeyEncryptedSessionKeyPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSymmetricKeyEncryptedSessionKeyPacket.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -371,6 +374,8 @@
 				75B39529193C6FA100297C8D /* PGPCompressedPacket.m */,
 				75FE9806193FB46200613549 /* PGPSymmetricallyEncryptedDataPacket.h */,
 				75FE9807193FB46200613549 /* PGPSymmetricallyEncryptedDataPacket.m */,
+				75FE9809193FBA4100613549 /* PGPSymmetricKeyEncryptedSessionKeyPacket.h */,
+				75FE980A193FBA4100613549 /* PGPSymmetricKeyEncryptedSessionKeyPacket.m */,
 			);
 			name = Packets;
 			sourceTree = "<group>";
@@ -523,6 +528,7 @@
 				75734BD119181E5500A54D6E /* PGPPacketFactory.m in Sources */,
 				757DDE7C1919371600A30F84 /* PGPPacket.m in Sources */,
 				7502CEFF1916DCE9001B32D7 /* PGPSignatureSubpacket.m in Sources */,
+				75FE980B193FBA4100613549 /* PGPSymmetricKeyEncryptedSessionKeyPacket.m in Sources */,
 				75B3952A193C6FA100297C8D /* PGPCompressedPacket.m in Sources */,
 				75C4F0E31920FF5F005401A4 /* PGPCryptoUtils.m in Sources */,
 				75C4F0E6192163A3005401A4 /* PGPModificationDetectionCodePacket.m in Sources */,
