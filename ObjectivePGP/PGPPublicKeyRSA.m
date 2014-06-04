@@ -13,6 +13,9 @@
 #import "PGPMPI.h"
 #import "PGPPKCSEmsa.h"
 
+#import <openssl/err.h>
+#import <openssl/ssl.h>
+
 #import <openssl/rsa.h>
 #import <openssl/bn.h>
 
@@ -36,28 +39,24 @@
         return nil;
     }
 
-    // With RSA signatures, the hash value is encoded using PKCS#1 1.5
-    // toHashData = [@"Plaintext\n" dataUsingEncoding:NSUTF8StringEncoding];
-    // NSData *em = [PGPPKCSEmsa encode:self.hashAlgoritm m:toHashData emLen:keysize error:nil];
 
     /* If this isn't set, it's very likely that the programmer hasn't */
     /* decrypted the secret key. RSA_check_key segfaults in that case. */
-    /* Use __ops_decrypt_seckey() to do that. */
     if (rsa->d == NULL) {
         return nil;
     }
 
     if (RSA_check_key(rsa) != 1) {
-//        ERR_load_crypto_strings();
-//        SSL_load_error_strings();
-//
-//        unsigned long err_code = ERR_get_error();
-//        char *errBuf = calloc(512, sizeof(UInt8));
-//        ERR_error_string(err_code, errBuf);
-//        NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
-//        free(errBuf);
-//
-//        ERR_free_strings();
+        ERR_load_crypto_strings();
+        SSL_load_error_strings();
+
+        unsigned long err_code = ERR_get_error();
+        char *errBuf = calloc(512, sizeof(UInt8));
+        ERR_error_string(err_code, errBuf);
+        NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
+        free(errBuf);
+
+        ERR_free_strings();
         return nil;
     }
 
@@ -65,16 +64,16 @@
     UInt8 *outbuf = calloc(RSA_size(rsa), sizeof(UInt8));
     int t = RSA_private_encrypt(secretKeyPacket.keySize, (UInt8 *)toEncrypt.bytes, outbuf, rsa, RSA_NO_PADDING);
     if (t < 0) {
-//        ERR_load_crypto_strings();
-//        SSL_load_error_strings();
-//
-//        unsigned long err_code = ERR_get_error();
-//        char *errBuf = calloc(512, sizeof(UInt8));
-//        ERR_error_string(err_code, errBuf);
-//        NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
-//        free(errBuf);
-//
-//        ERR_free_strings();
+        ERR_load_crypto_strings();
+        SSL_load_error_strings();
+
+        unsigned long err_code = ERR_get_error();
+        char *errBuf = calloc(512, sizeof(UInt8));
+        ERR_error_string(err_code, errBuf);
+        NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
+        free(errBuf);
+
+        ERR_free_strings();
         free(outbuf);
         return nil;
     }

@@ -5,6 +5,7 @@
 //  Created by Marcin Krzyzanowski on 02/06/14.
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
+//  TODO: add support for ZIP and BZIP2
 
 #import "PGPCompressedPacket.h"
 #import "NSData+Stream.h"
@@ -29,10 +30,9 @@
     NSData *compressedData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
 
     //TODO: for ZIP use AgileBits/objective-zip
-    NSError *decompressError = nil;
     switch (self.compressionType) {
         case PGPCompressionZLIB:
-            self.decompressedData = [self decompressZlib:compressedData error:&decompressError];
+            self.decompressedData = [compressedData zlibDecompressed:error];
             break;
 
         default:
@@ -43,11 +43,28 @@
     return position;
 }
 
-//ret = (int)inflateInit2(&z.zstream, -15);
-- (NSData *) decompressZlib:(NSData *)compressedData error:(NSError * __autoreleasing *)error
+- (NSData *)exportPacket:(NSError *__autoreleasing *)error
 {
-    // 1950 zlib, not gzip
-    return [compressedData zlibDecompressed:error];
+    NSMutableData *packetBody = [NSMutableData data];
+    
+    // - One octet that gives the algorithm used to compress the packet.
+    [packetBody appendBytes:&_compressionType length:sizeof(_compressionType)];
+    
+    // - Compressed data, which makes up the remainder of the packet.
+    switch (self.compressionType) {
+        case PGPCompressionZLIB:
+            [packetBody appendData:[self.decompressedData zlibCompressed:error]];
+            break;
+            
+        default:
+            @throw [NSException exceptionWithName:@"Unknown Compression" reason:@"Given compression algoritm is not supported" userInfo:nil];
+            break;
+    }
+    [packetBody appendData:[self.decompressedData zlibCompressed:error]];
+    
+    return [packetBody copy];
 }
 
 @end
+
+//ret = (int)inflateInit2(&z.zstream, -15)
