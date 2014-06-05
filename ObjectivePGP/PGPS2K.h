@@ -13,7 +13,7 @@
 
 @property (assign) PGPS2KSpecifier specifier;
 @property (assign) PGPHashAlgorithm hashAlgorithm;
-@property (retain) NSData *salt; // 8 bytes
+@property (retain, nonatomic) NSData *salt; // 8 bytes
 @property (assign) UInt32 uncodedCount;
 @property (assign, readonly) UInt32 codedCount;
 
@@ -22,7 +22,7 @@
 + (PGPS2K *) string2KeyFromData:(NSData *)data atPosition:(NSUInteger)position;
 - (NSUInteger) parseS2K:(NSData *)data atPosition:(NSUInteger)position;
 
-- (NSData *) produceKeyWithPassphrase:(NSString *)passphrase keySize:(NSUInteger)keySize;
+- (NSData *) produceSessionKeyWithPassphrase:(NSString *)passphrase keySize:(NSUInteger)keySize;
 - (NSData *) export:(NSError *__autoreleasing*)error;
 
 @end

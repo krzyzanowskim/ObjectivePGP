@@ -5,6 +5,8 @@
 //  Created by Marcin Krzyzanowski on 07/05/14.
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
+//  A string to key (S2K) specifier encodes a mechanism for producing a key to be used with a symmetric block cipher from a string of octets.
+//
 
 #import "PGPS2K.h"
 #import <CommonCrypto/CommonCrypto.h>
@@ -25,6 +27,18 @@ static const unsigned int PGP_SALT_SIZE = 8;
     return s2k;
 }
 
+- (NSData *)salt
+{
+    if (!_salt) {
+        NSMutableData *s = [NSMutableData data];
+        for (int i = 0; i < 8; i++) {
+            Byte b = arc4random_uniform(127);
+            [s appendBytes:&b length:sizeof(b)];
+        }
+        _salt = [s copy];
+    }
+    return _salt;
+}
 
 - (NSUInteger) parseS2K:(NSData *)data atPosition:(NSUInteger)position
 {
@@ -86,13 +100,16 @@ static const unsigned int PGP_SALT_SIZE = 8;
 
 /**
  *  Calculate key for given password
+ *  An S2K specifier can be stored in the secret keyring to specify how
+ *  to convert the passphrase to a key that unlocks the secret data.
+ *  Simple S2K hashes the passphrase to produce the session key.
  *
  *  @param passphrase Password
  *  @param keySize    Packet key size
  *
  *  @return NSData with key
  */
-- (NSData *) produceKeyWithPassphrase:(NSString *)passphrase keySize:(NSUInteger)keySize
+- (NSData *) produceSessionKeyWithPassphrase:(NSString *)passphrase keySize:(NSUInteger)keySize
 {
     NSMutableData *result = [NSMutableData data];
     NSMutableData *toHashData = [NSMutableData data];

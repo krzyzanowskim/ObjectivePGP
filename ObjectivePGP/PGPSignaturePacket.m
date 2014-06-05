@@ -310,7 +310,7 @@
     if (signingKeyPacket.isEncrypted && passphrase.length > 0) {
         NSError *decryptError;
         //Copy secret key instance, then decrypt on copy, not on the original (do not leave unencrypted instance around)
-        signingKeyPacket = [signingKeyPacket decryptedKey:passphrase error:&decryptError];
+        signingKeyPacket = [signingKeyPacket decryptedKeyPacket:passphrase error:&decryptError];
         NSAssert(signingKeyPacket && !decryptError, @"decrypt error %@", decryptError);
     }
 

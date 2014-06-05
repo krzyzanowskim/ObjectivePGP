@@ -15,6 +15,7 @@
 
 #import "PGPCryptoUtils.h"
 #import "NSData+PGPUtils.h"
+#import "PGPCryptoCFB.h"
 
 #import <CommonCrypto/CommonCrypto.h>
 #import <CommonCrypto/CommonDigest.h>
@@ -287,7 +288,7 @@
  *  TODO: encrypt
  *  NOTE: Decrypted packet data should be released/forget after use
  */
-- (PGPSecretKeyPacket *) decryptedKey:(NSString *)passphrase error:(NSError *__autoreleasing *)error
+- (PGPSecretKeyPacket *) decryptedKeyPacket:(NSString *)passphrase error:(NSError *__autoreleasing *)error
 {
     if (!self.isEncrypted) {
         return self;
@@ -303,104 +304,16 @@
     NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:encryptedKey.symmetricAlgorithm];
     NSAssert(keySize <= 32, @"invalid keySize");
 
-    //FIXME: not here, just for testing (?)
-    NSData *keyData = [encryptedKey.s2k produceKeyWithPassphrase:passphrase keySize:keySize];
+    // Session key for password
+    // producing a key to be used with a symmetric block cipher from a string of octets
+    NSData *sessionKeyData = [encryptedKey.s2k produceSessionKeyWithPassphrase:passphrase keySize:keySize];
 
-    const void *encryptedBytes = encryptedKey.encryptedMPIsPartData.bytes;
+    // Decrypted MPIs
+    NSData *decryptedData = [PGPCryptoCFB decryptData:encryptedKey.encryptedMPIsPartData
+                                       sessionKeyData:sessionKeyData
+                                   symmetricAlgorithm:self.symmetricAlgorithm
+                                                   iv:encryptedKey.ivData];
 
-    NSUInteger outButterLength = encryptedKey.encryptedMPIsPartData.length;
-    UInt8 *outBuffer = calloc(outButterLength, sizeof(UInt8));
-
-    NSData *decryptedData = nil;
-
-    // decrypt with CFB
-    switch (encryptedKey.symmetricAlgorithm) {
-        case PGPSymmetricAES128:
-        case PGPSymmetricAES192:
-        case PGPSymmetricAES256:
-        {
-            AES_KEY *encrypt_key = calloc(1, sizeof(AES_KEY));
-            AES_set_encrypt_key(keyData.bytes, keySize * 8, encrypt_key);
-
-            AES_KEY *decrypt_key = calloc(1, sizeof(AES_KEY));
-            AES_set_decrypt_key(keyData.bytes, keySize * 8, decrypt_key);
-
-            int num = 0;
-            AES_cfb128_encrypt(encryptedBytes, outBuffer, outButterLength, decrypt_key, (UInt8 *)encryptedKey.ivData.bytes, &num, AES_DECRYPT);
-            decryptedData = [NSData dataWithBytes:outBuffer length:outButterLength];
-
-            if (encrypt_key) free(encrypt_key);
-            if (decrypt_key) free(decrypt_key);
-        }
-            break;
-        case PGPSymmetricIDEA:
-        {
-            IDEA_KEY_SCHEDULE *encrypt_key = calloc(1, sizeof(IDEA_KEY_SCHEDULE));
-            idea_set_encrypt_key(keyData.bytes, encrypt_key);
-
-            IDEA_KEY_SCHEDULE *decrypt_key = calloc(1, sizeof(IDEA_KEY_SCHEDULE));
-            idea_set_decrypt_key(encrypt_key, decrypt_key);
-
-            int num = 0;
-            idea_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, decrypt_key, (UInt8 *)encryptedKey.ivData.bytes, &num, CAST_DECRYPT);
-            decryptedData = [NSData dataWithBytes:outBuffer length:outButterLength];
-
-            if (encrypt_key) free(encrypt_key);
-            if (decrypt_key) free(decrypt_key);
-        }
-            break;
-        case PGPSymmetricTripleDES:
-        {
-            DES_key_schedule *keys = calloc(3, sizeof(DES_key_schedule));
-
-            for (NSUInteger n = 0; n < 3; ++n) {
-                DES_set_key((DES_cblock *)(void *)(encryptedKey.ivData.bytes + n * 8),&keys[n]);
-            }
-
-            int num = 0;
-            DES_ede3_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, &keys[0], &keys[1], &keys[2], (DES_cblock *)encryptedKey.ivData.bytes, &num, DES_DECRYPT);
-            decryptedData = [NSData dataWithBytes:outBuffer length:outButterLength];
-
-            if (keys) free(keys);
-        }
-            break;
-        case PGPSymmetricCAST5:
-        {
-            // initialize
-            CAST_KEY *encrypt_key = calloc(1, sizeof(CAST_KEY));
-            CAST_set_key(encrypt_key, keySize, keyData.bytes);
-
-            CAST_KEY *decrypt_key = calloc(1, sizeof(CAST_KEY));
-            CAST_set_key(decrypt_key, keySize, keyData.bytes);
-
-            // see __ops_decrypt_init block_encrypt siv,civ,iv comments. siv is needed for weird v3 resync,
-            // wtf civ ???
-            // CAST_ecb_encrypt(in, out, encrypt_key, CAST_ENCRYPT);
-
-            int num = 0; //	how much of the 64bit block we have used
-            CAST_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, decrypt_key, (UInt8 *)encryptedKey.ivData.bytes, &num, CAST_DECRYPT);
-            decryptedData = [NSData dataWithBytes:outBuffer length:outButterLength];
-
-            if (encrypt_key) free(encrypt_key);
-            if (decrypt_key) free(decrypt_key);
-        }
-            break;
-        case PGPSymmetricBlowfish:
-        case PGPSymmetricTwofish256:
-            //TODO: implement blowfish and twofish
-            [NSException raise:@"PGPNotSupported" format:@"Twofish not supported"];
-            break;
-        case PGPSymmetricPlaintext:
-            [NSException raise:@"PGPInconsistency" format:@"Can't decrypt plaintext"];
-            break;
-        default:
-            break;
-    }
-
-    if (outBuffer) {
-        memset(outBuffer, 0, sizeof(UInt8));
-        free(outBuffer);
-    }
 
     // now read mpis
     if (decryptedData) {

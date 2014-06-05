@@ -205,7 +205,7 @@
 {
     if ([self.primaryKeyPacket isKindOfClass:[PGPSecretKeyPacket class]]) {
         PGPSecretKeyPacket *secretPacket = (PGPSecretKeyPacket *)self.primaryKeyPacket;
-        self.primaryKeyPacket = [secretPacket decryptedKey:passphrase error:error];
+        self.primaryKeyPacket = [secretPacket decryptedKeyPacket:passphrase error:error];
         if (*error) {
             return NO;
         }
@@ -214,7 +214,7 @@
     for (PGPSubKey *subKey in self.subKeys) {
         if ([subKey.keyPacket isKindOfClass:[PGPSecretKeyPacket class]]) {
             PGPSecretKeyPacket *secretPacket = (PGPSecretKeyPacket *)subKey.keyPacket;
-            self.primaryKeyPacket = [secretPacket decryptedKey:passphrase error:error];
+            self.primaryKeyPacket = [secretPacket decryptedKeyPacket:passphrase error:error];
             if (*error) {
                 return NO;
             }
