@@ -474,7 +474,7 @@
     //  TODO: Implementations SHOULD accept V3 signatures
     NSAssert(_version == 4, @"Only signature V4 is supported at the moment. Implementations SHOULD accept V3 signatures, but it's not.");
     if (_version != 4) {
-        return packetBody.length;
+        return startPosition + packetBody.length;
     }
 
     // One-octet signature type.

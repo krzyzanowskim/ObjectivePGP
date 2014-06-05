@@ -19,6 +19,9 @@
 {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
 
+    // The content of an encrypted data packet is more OpenPGP packets
+    // once decrypted, so recursively handle them
+
     // - Encrypted data, the output of the selected symmetric-key cipher
     // operating in OpenPGP's variant of Cipher Feedback (CFB) mode.
     position = position + packetBody.length;
@@ -41,6 +44,8 @@
 {
     // decrypt packets
     // and parse decrypted packets readPacketsBinaryData (private in ObjectivePGP)
+    //	return __ops_decrypt_se_data(OPS_PTAG_CT_SE_DATA_BODY, region, stream);
+    
 }
 
 - (void) encrypt
