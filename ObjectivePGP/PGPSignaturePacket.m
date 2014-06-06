@@ -157,6 +157,20 @@
     return NO;
 }
 
+- (BOOL)canBeUsedToEncrypt
+{
+    BOOL result = self.publicKeyAlgorithm != PGPPublicKeyAlgorithmDSA && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmRSASignOnly;
+    
+    if (result) {
+        PGPSignatureSubpacket *subpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeKeyFlags] firstObject];
+        NSArray *flags = subpacket.value;
+        if ([flags containsObject:@(PGPSignatureFlagAllowEncryptStorage)] || [flags containsObject:@(PGPSignatureFlagAllowEncryptCommunications)]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
 #pragma mark - Build packet
 
 - (NSData *) exportPacket:(NSError *__autoreleasing *)error

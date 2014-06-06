@@ -18,6 +18,9 @@
 #import "PGPOnePassSignaturePacket.h"
 #import "PGPLiteralPacket.h"
 #import "PGPArmor.h"
+#import "PGPCryptoUtils.h"
+#import "PGPPublicKeyEncryptedSessionKeyPacket.h"
+#import "PGPMPI.h"
 
 @implementation ObjectivePGP
 
@@ -149,7 +152,56 @@
     return nil;
 }
 
-#pragma mark - Operations
+#pragma mark - Encrypt 
+
+- (NSData *) encryptData:(NSData *)dataToEncrypt usingPublicKey:(PGPKey *)publicKey error:(NSError * __autoreleasing *)error
+{
+    // Message.prototype.encrypt = function(keys) {
+    NSMutableData *encryptedMessage = [NSMutableData data];
+    
+    //PGPPublicKeyEncryptedSessionKeyPacket goes here
+    PGPSymmetricAlgorithm preferredSymmeticAlgorithm = [publicKey preferredSymmetricAlgorithm];
+
+    // Random bytes as a string to be used as a key
+    NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:preferredSymmeticAlgorithm];
+    NSMutableData *sessionKeyData = [NSMutableData data];
+    for (int i = 0; i < keySize; i++) {
+        Byte b = arc4random_uniform(126) + 1;
+        [sessionKeyData appendBytes:&b length:1];
+    }
+    
+    PGPPublicKeyPacket *encryptionKeyPacket = (PGPPublicKeyPacket *)[publicKey encryptionKeyPacket];
+    if (encryptionKeyPacket) {
+        // var pkESKeyPacket = new packet.PublicKeyEncryptedSessionKey();
+        PGPPublicKeyEncryptedSessionKeyPacket *eskKeyPacket = [[PGPPublicKeyEncryptedSessionKeyPacket alloc] init];
+        eskKeyPacket.keyID = encryptionKeyPacket.keyID;
+        eskKeyPacket.publicKeyAlgorithm = encryptionKeyPacket.publicKeyAlgorithm;
+        //pkESKeyPacket.encrypt(encryptionKeyPacket);
+        [eskKeyPacket encrypt:encryptionKeyPacket sessionKeyData:sessionKeyData sessionKeyAlgorithm:preferredSymmeticAlgorithm error:error];
+        NSAssert(!(*error), @"Missing literal data");
+        if (*error) {
+            return nil;
+        }
+        [encryptedMessage appendData:[eskKeyPacket exportPacket:nil]];
+    }
+    
+    //TODO: there is more.. integrity packet
+    
+    // literal packet
+    PGPLiteralPacket *literalPacket = [PGPLiteralPacket literalPacket:PGPLiteralPacketBinary withData:dataToEncrypt];
+    literalPacket.filename = nil;
+    literalPacket.timestamp = [NSDate date];
+    [encryptedMessage appendData:[literalPacket exportPacket:error]];
+    NSAssert(!(*error), @"Missing literal data");
+    if (*error) {
+        return nil;
+    }
+    
+
+    return [encryptedMessage copy];
+}
+
+#pragma mark - Sign & Verify
 
 - (NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID passphrase:(NSString *)passphrase
 {

@@ -10,6 +10,7 @@
 #import "PGPTypes.h"
 #import "PGPMPI.h"
 #import "NSData+PGPUtils.h"
+#import "PGPPublicKeyRSA.h"
 
 #import <CommonCrypto/CommonCrypto.h>
 #import <CommonCrypto/CommonDigest.h>
@@ -23,7 +24,6 @@
 @end
 
 @interface PGPPublicKeyPacket ()
-@property (strong, readwrite) NSArray *publicMPIArray;
 @property (strong, nonatomic, readwrite) PGPFingerprint *fingerprint;
 @property (strong, nonatomic, readwrite) PGPKeyID *keyID;
 @property (assign, readwrite) UInt16 V3validityPeriod;
@@ -283,6 +283,26 @@
     [data appendBytes:&headWithLength length:3];
     [data appendData:publicKeyData];
     return [data copy];
+}
+
+#pragma mark - Encrypt
+
+- (NSData *) encryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm
+{
+    switch (publicKeyAlgorithm) {
+        case PGPPublicKeyAlgorithmRSA:
+        case PGPPublicKeyAlgorithmRSAEncryptOnly:
+        case PGPPublicKeyAlgorithmRSASignOnly:
+        {
+            return [PGPPublicKeyRSA publicEncrypt:data withPublicKeyPacket:self];
+        }
+            break;
+        default:
+            //TODO: add algorithms
+            [NSException raise:@"PGPNotSupported" format:@"Algorith not supported"];
+            break;
+    }
+    return nil;
 }
 
 #pragma mark - NSCopying

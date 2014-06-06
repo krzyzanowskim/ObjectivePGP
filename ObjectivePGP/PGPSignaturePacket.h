@@ -25,6 +25,7 @@
 @property (strong) NSArray *signatureMPIs;
 
 @property (assign, nonatomic, readonly) BOOL canBeUsedToSign;
+@property (assign, nonatomic, readonly) BOOL canBeUsedToEncrypt;
 
 /**
  *  Create signature packet for signing. This is convienience constructor.

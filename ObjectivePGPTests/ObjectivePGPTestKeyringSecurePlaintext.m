@@ -39,6 +39,10 @@
         XCTFail(@"couldn't create tmpDirectoryPath");
     }
     self.workingDirectory = tmpDirectoryPath;
+    
+    // copy keyring to verify
+    [[NSFileManager defaultManager] copyItemAtPath:self.secKeyringPath toPath:[self.workingDirectory stringByAppendingPathComponent:[self.secKeyringPath lastPathComponent]] error:nil];
+    [[NSFileManager defaultManager] copyItemAtPath:self.pubKeyringPath toPath:[self.workingDirectory stringByAppendingPathComponent:[self.pubKeyringPath lastPathComponent]] error:nil];
 }
 
 - (void)tearDown
@@ -131,11 +135,6 @@
 {
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
 
-    // copy keyring to verify
-    [[NSFileManager defaultManager] copyItemAtPath:self.secKeyringPath toPath:[self.workingDirectory stringByAppendingPathComponent:[self.secKeyringPath lastPathComponent]] error:nil];
-    [[NSFileManager defaultManager] copyItemAtPath:self.pubKeyringPath toPath:[self.workingDirectory stringByAppendingPathComponent:[self.pubKeyringPath lastPathComponent]] error:nil];
-
-
     // file to sign
     NSString *fileToSignPath = [self.workingDirectory stringByAppendingPathComponent:@"signed_file.bin"];
     BOOL status = [[NSFileManager defaultManager] copyItemAtPath:self.secKeyringPath toPath:fileToSignPath error:nil];
@@ -173,6 +172,26 @@
     keyToValidateSign = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B"];
     status = [self.oPGP verifyData:signedData];
     XCTAssertTrue(status);
+}
+
+- (void) testEncryption
+{
+    XCTAssertNotNil([self.oPGP importKeysFromFile:self.pubKeyringPath]);
+
+    PGPKey *keyToEncrypt = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B"];
+    XCTAssertNotNil(keyToEncrypt);
+
+    // encrypt secring-test-plaintext.gpg
+    NSError *encryptError = nil;
+    NSData *encryptedData = [self.oPGP encryptData:[NSData dataWithContentsOfFile:self.secKeyringPath] usingPublicKey:keyToEncrypt error:&encryptError];
+    XCTAssertNil(encryptError);
+    XCTAssertNotNil(encryptedData);
+    
+    // file encrypted
+    NSString *fileEncrypted = [self.workingDirectory stringByAppendingPathComponent:@"secring-test-plaintext.encrypted"];
+    BOOL status = [encryptedData writeToFile:fileEncrypted atomically:YES];
+    XCTAssertTrue(status);
+
 }
 
 @end

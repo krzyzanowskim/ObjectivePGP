@@ -21,6 +21,43 @@
 
 @implementation PGPPublicKeyRSA
 
+// encrypts the bytes
++ (NSData *) publicEncrypt:(NSData *)toEncrypt withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket
+{
+    RSA *rsa = RSA_new();
+    if (!rsa) {
+        return nil;
+    }
+    
+    rsa->n = BN_dup([[publicKeyPacket publicMPI:@"N"] bignumRef]);
+    rsa->e = BN_dup([[publicKeyPacket publicMPI:@"E"] bignumRef]);
+    
+    NSAssert(rsa->n && rsa->e, @"Missing N or E");
+    if (!rsa->n || !rsa->e) {
+        return nil;
+    }
+    
+    uint8_t *encrypted_em = calloc(RSA_size(rsa) - 11, sizeof(UInt8));
+    int em_len = RSA_public_encrypt(toEncrypt.length, toEncrypt.bytes, encrypted_em, rsa, RSA_NO_PADDING);
+    
+    if (em_len != publicKeyPacket.keySize) {
+        free(encrypted_em);
+        RSA_free(rsa);
+        return nil;
+    }
+    
+    // decrypted PKCS emsa
+    NSData *encryptedEm = [NSData dataWithBytes:encrypted_em length:em_len];
+    
+    RSA_free(rsa);
+    rsa->n = rsa->e = NULL;
+    free(encrypted_em);
+    
+    return encryptedEm;
+}
+
+
+// sign
 + (NSData *) privateEncrypt:(NSData *)toEncrypt withSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket
 {
     RSA *rsa = RSA_new();
@@ -89,6 +126,7 @@
     return encryptedData;
 }
 
+// recovers the message digest
 + (NSData *) publicDecrypt:(NSData *)toDecrypt withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket
 {
     RSA *rsa = RSA_new();

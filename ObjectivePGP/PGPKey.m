@@ -17,6 +17,7 @@
 #import "PGPUserAttributePacket.h"
 #import "PGPUserAttributeSubpacket.h"
 #import "PGPSubKey.h"
+#import "NSValue+PGPUtils.h"
 
 @implementation PGPKey
 
@@ -200,6 +201,35 @@
     return nil;
 }
 
+// signature packet that is available for signing data
+- (PGPPacket *) encryptionKeyPacket
+{
+    NSAssert(self.type == PGPKeyPublic, @"Need public key to encrypt");
+    if (self.type == PGPKeySecret) {
+        NSLog(@"Need public key to encrypt");
+        return nil;
+    }
+    
+    for (PGPSubKey *subKey in self.subKeys) {
+        PGPSignaturePacket *signaturePacket = subKey.bindingSignature;
+        if (signaturePacket.canBeUsedToEncrypt) {
+            return subKey.keyPacket;
+        }
+    }
+
+    // check primary user self certificates
+    PGPSignaturePacket *primaryUserSelfCertificate = nil;
+    [self primaryUserAndSelfCertificate:&primaryUserSelfCertificate];
+    if (primaryUserSelfCertificate)
+    {
+        if (primaryUserSelfCertificate.canBeUsedToEncrypt) {
+            return self.primaryKeyPacket;
+        }
+    }
+    
+    return nil;
+}
+
 // Note: After decryption encrypted packets are replaced with new decrypted instances on key.
 - (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error
 {
@@ -260,6 +290,27 @@
         *selfCertificateOut = selfCertificate;
     }
     return foundUser;
+}
+
+#pragma mark - Preferences
+
+- (PGPSymmetricAlgorithm) preferredSymmetricAlgorithm
+{
+    PGPSymmetricAlgorithm pref = PGPSymmetricAES256; //TODO: configurable default
+    PGPSignaturePacket *selfCertificate = nil;
+    PGPUser *primaryUser = [self primaryUserAndSelfCertificate:&selfCertificate];
+    if (!primaryUser || !selfCertificate) {
+        return pref;
+    }
+    
+    PGPSignatureSubpacket *subpacket = [[selfCertificate subpacketsOfType:PGPSignatureSubpacketTypePreferredSymetricAlgorithm] firstObject];
+    NSArray *preferencesArray = subpacket.value;
+    NSValue *preferedValue = preferencesArray[0];
+    if ([preferedValue objCTypeIsEqualTo:@encode(PGPSymmetricAlgorithm)]) {
+        [preferedValue getValue:&pref];
+    }
+    
+    return pref;
 }
 
 #pragma mark - Private

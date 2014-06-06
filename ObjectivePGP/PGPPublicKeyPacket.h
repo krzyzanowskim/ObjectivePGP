@@ -21,6 +21,7 @@
 @property (assign, readonly) NSDate *createDate;
 @property (assign, readonly) UInt16 V3validityPeriod; // obsolete
 @property (assign, readonly) PGPPublicKeyAlgorithm publicKeyAlgorithm;
+@property (strong, readwrite) NSArray *publicMPIArray;
 
 @property (assign, readonly) NSUInteger keySize;
 
@@ -33,5 +34,6 @@
 - (NSData *) buildPublicKeyBodyData:(BOOL)forceV4;
 
 - (PGPMPI *) publicMPI:(NSString *)identifier;
+- (NSData *) encryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm;
 
 @end
