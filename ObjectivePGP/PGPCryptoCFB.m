@@ -25,12 +25,32 @@
 
 @implementation PGPCryptoCFB
 
-// key binary string representation of key to be used to decrypt the ciphertext.
 + (NSData *) decryptData:(NSData *)encryptedData
-          sessionKeyData:(NSData *)sessionKeyData // s2k
+          sessionKeyData:(NSData *)sessionKeyData // s2k produceSessionKeyWithPassphrase
       symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm
                       iv:(NSData *)ivData
 {
+    return [[self class] manipulateData:encryptedData sessionKeyData:sessionKeyData symmetricAlgorithm:symmetricAlgorithm iv:ivData decrypt:YES];
+}
+
++ (NSData *) encryptData:(NSData *)encryptedData
+          sessionKeyData:(NSData *)sessionKeyData // s2k produceSessionKeyWithPassphrase
+      symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm
+                      iv:(NSData *)ivData
+{
+    return [[self class] manipulateData:encryptedData sessionKeyData:sessionKeyData symmetricAlgorithm:symmetricAlgorithm iv:ivData decrypt:NO];
+}
+
+#pragma mark - Private
+
+// key binary string representation of key to be used to decrypt the ciphertext.
++ (NSData *) manipulateData:(NSData *)encryptedData
+          sessionKeyData:(NSData *)sessionKeyData // s2k produceSessionKeyWithPassphrase
+      symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm
+                      iv:(NSData *)ivData
+                 decrypt:(BOOL)decrypt
+{
+    NSAssert(ivData.length > 0, @"Missing IV");
     
     NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:symmetricAlgorithm];
     NSAssert(keySize <= 32, @"invalid keySize");
@@ -48,13 +68,13 @@
         case PGPSymmetricAES256:
         {
             AES_KEY *encrypt_key = calloc(1, sizeof(AES_KEY));
-            AES_set_encrypt_key(sessionKeyData.bytes, keySize * 8, encrypt_key);
+            AES_set_encrypt_key(sessionKeyData.bytes, (unsigned int)keySize * 8, encrypt_key);
             
             AES_KEY *decrypt_key = calloc(1, sizeof(AES_KEY));
-            AES_set_decrypt_key(sessionKeyData.bytes, keySize * 8, decrypt_key);
+            AES_set_decrypt_key(sessionKeyData.bytes, (unsigned int)keySize * 8, decrypt_key);
             
             int num = 0;
-            AES_cfb128_encrypt(encryptedBytes, outBuffer, outButterLength, decrypt_key, (UInt8 *)ivData.bytes, &num, AES_DECRYPT);
+            AES_cfb128_encrypt(encryptedBytes, outBuffer, outButterLength, decrypt_key, (UInt8 *)ivData.bytes, &num, decrypt ? AES_DECRYPT : AES_ENCRYPT);
             decryptedData = [NSData dataWithBytes:outBuffer length:outButterLength];
             
             if (encrypt_key) free(encrypt_key);
@@ -70,7 +90,7 @@
             idea_set_decrypt_key(encrypt_key, decrypt_key);
             
             int num = 0;
-            idea_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, decrypt_key, (UInt8 *)ivData.bytes, &num, CAST_DECRYPT);
+            idea_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, decrypt_key, (UInt8 *)ivData.bytes, &num, decrypt ? CAST_DECRYPT : CAST_ENCRYPT);
             decryptedData = [NSData dataWithBytes:outBuffer length:outButterLength];
             
             if (encrypt_key) free(encrypt_key);
@@ -86,7 +106,7 @@
             }
             
             int num = 0;
-            DES_ede3_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, &keys[0], &keys[1], &keys[2], (DES_cblock *)ivData.bytes, &num, DES_DECRYPT);
+            DES_ede3_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, &keys[0], &keys[1], &keys[2], (DES_cblock *)ivData.bytes, &num, decrypt ? DES_DECRYPT : DES_ENCRYPT);
             decryptedData = [NSData dataWithBytes:outBuffer length:outButterLength];
             
             if (keys) free(keys);
@@ -96,17 +116,17 @@
         {
             // initialize
             CAST_KEY *encrypt_key = calloc(1, sizeof(CAST_KEY));
-            CAST_set_key(encrypt_key, keySize, sessionKeyData.bytes);
+            CAST_set_key(encrypt_key, (unsigned int)keySize, sessionKeyData.bytes);
             
             CAST_KEY *decrypt_key = calloc(1, sizeof(CAST_KEY));
-            CAST_set_key(decrypt_key, keySize, sessionKeyData.bytes);
+            CAST_set_key(decrypt_key, (unsigned int)keySize, sessionKeyData.bytes);
             
             // see __ops_decrypt_init block_encrypt siv,civ,iv comments. siv is needed for weird v3 resync,
             // wtf civ ???
             // CAST_ecb_encrypt(in, out, encrypt_key, CAST_ENCRYPT);
             
             int num = 0; //	how much of the 64bit block we have used
-            CAST_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, decrypt_key, (UInt8 *)ivData.bytes, &num, CAST_DECRYPT);
+            CAST_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, decrypt_key, (UInt8 *)ivData.bytes, &num, decrypt ? CAST_DECRYPT : CAST_ENCRYPT);
             decryptedData = [NSData dataWithBytes:outBuffer length:outButterLength];
             
             if (encrypt_key) free(encrypt_key);

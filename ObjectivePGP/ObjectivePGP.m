@@ -20,6 +20,7 @@
 #import "PGPArmor.h"
 #import "PGPCryptoUtils.h"
 #import "PGPPublicKeyEncryptedSessionKeyPacket.h"
+#import "PGPSymmetricallyEncryptedDataPacket.h"
 #import "PGPMPI.h"
 
 @implementation ObjectivePGP
@@ -165,7 +166,7 @@
     // Random bytes as a string to be used as a key
     NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:preferredSymmeticAlgorithm];
     NSMutableData *sessionKeyData = [NSMutableData data];
-    for (int i = 0; i < keySize; i++) {
+    for (int i = 0; i < (keySize); i++) {
         Byte b = arc4random_uniform(126) + 1;
         [sessionKeyData appendBytes:&b length:1];
     }
@@ -186,16 +187,25 @@
     }
     
     //TODO: there is more.. integrity packet
-    
+
     // literal packet
     PGPLiteralPacket *literalPacket = [PGPLiteralPacket literalPacket:PGPLiteralPacketBinary withData:dataToEncrypt];
     literalPacket.filename = nil;
     literalPacket.timestamp = [NSDate date];
-    [encryptedMessage appendData:[literalPacket exportPacket:error]];
     NSAssert(!(*error), @"Missing literal data");
     if (*error) {
         return nil;
     }
+
+    //  Encrypted Data :- Symmetrically Encrypted Data Packet | Symmetrically Encrypted Integrity Protected Data Packet
+    PGPSymmetricallyEncryptedDataPacket *symEncryptedDataPacket = [[PGPSymmetricallyEncryptedDataPacket alloc] init];
+    [symEncryptedDataPacket encrypt:[literalPacket exportPacket:nil] withPublicKeyPacket:encryptionKeyPacket symmetricAlgorithm:preferredSymmeticAlgorithm sessionKeyData:sessionKeyData];
+    [encryptedMessage appendData:[symEncryptedDataPacket exportPacket:error]];
+    if (*error) {
+        return nil;
+    }
+
+    
     
 
     return [encryptedMessage copy];

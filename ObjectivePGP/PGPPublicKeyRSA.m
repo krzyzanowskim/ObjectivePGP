@@ -38,15 +38,24 @@
     }
     
     uint8_t *encrypted_em = calloc(RSA_size(rsa) - 11, sizeof(UInt8));
-    int em_len = RSA_public_encrypt(toEncrypt.length, toEncrypt.bytes, encrypted_em, rsa, RSA_NO_PADDING);
+    int em_len = RSA_public_encrypt((int)toEncrypt.length, toEncrypt.bytes, encrypted_em, rsa, RSA_NO_PADDING);
     
     if (em_len != publicKeyPacket.keySize) {
+        ERR_load_crypto_strings();
+        SSL_load_error_strings();
+        
+        unsigned long err_code = ERR_get_error();
+        char *errBuf = calloc(512, sizeof(UInt8));
+        ERR_error_string(err_code, errBuf);
+        NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
+        free(errBuf);
+
         free(encrypted_em);
         RSA_free(rsa);
         return nil;
     }
     
-    // decrypted PKCS emsa
+    // decrypted encoded EME
     NSData *encryptedEm = [NSData dataWithBytes:encrypted_em length:em_len];
     
     RSA_free(rsa);
@@ -56,6 +65,65 @@
     return encryptedEm;
 }
 
+// decrypt bytes
++ (NSData *) privateDecrypt:(NSData *)toDecrypt withSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket
+{
+    RSA *rsa = RSA_new();
+    if (!rsa) {
+        return nil;
+    }
+    
+    rsa->n = BN_dup([[secretKeyPacket publicMPI:@"N"] bignumRef]);
+    rsa->d = BN_dup([[secretKeyPacket secretMPI:@"D"] bignumRef]);
+    rsa->p = BN_dup([[secretKeyPacket secretMPI:@"Q"] bignumRef]);	/* p and q are round the other way in openssl */
+    rsa->q = BN_dup([[secretKeyPacket secretMPI:@"P"] bignumRef]);
+    rsa->e = BN_dup([[secretKeyPacket publicMPI:@"E"] bignumRef]);
+    
+    if (rsa->d == NULL) {
+        return nil;
+    }
+    
+    if (RSA_check_key(rsa) != 1) {
+        ERR_load_crypto_strings();
+        SSL_load_error_strings();
+        
+        unsigned long err_code = ERR_get_error();
+        char *errBuf = calloc(512, sizeof(UInt8));
+        ERR_error_string(err_code, errBuf);
+        NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
+        free(errBuf);
+        
+        ERR_free_strings();
+        return nil;
+    }
+
+    UInt8 *outbuf = calloc(RSA_size(rsa), sizeof(UInt8));
+    int t = RSA_private_decrypt(secretKeyPacket.keySize, (UInt8 *)toDecrypt.bytes, outbuf, rsa, RSA_NO_PADDING);
+    if (t < 0) {
+        ERR_load_crypto_strings();
+        SSL_load_error_strings();
+        
+        unsigned long err_code = ERR_get_error();
+        char *errBuf = calloc(512, sizeof(UInt8));
+        ERR_error_string(err_code, errBuf);
+        NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
+        free(errBuf);
+        
+        ERR_free_strings();
+        free(outbuf);
+        return nil;
+    }
+    
+    NSData *decryptedData = [NSData dataWithBytes:outbuf length:t];
+    NSAssert(decryptedData, @"Missing data");
+    
+    
+    free(outbuf);
+    RSA_free(rsa);
+    rsa->n = rsa->d = rsa->p = rsa->q = rsa->e = NULL;
+    
+    return decryptedData;
+}
 
 // sign
 + (NSData *) privateEncrypt:(NSData *)toEncrypt withSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket
@@ -65,7 +133,6 @@
         return nil;
     }
 
-    ;
     rsa->n = BN_dup([[secretKeyPacket publicMPI:@"N"] bignumRef]);
     rsa->d = BN_dup([[secretKeyPacket secretMPI:@"D"] bignumRef]);
     rsa->p = BN_dup([[secretKeyPacket secretMPI:@"Q"] bignumRef]);	/* p and q are round the other way in openssl */
@@ -121,7 +188,7 @@
 
     free(outbuf);
     RSA_free(rsa);
-    rsa->n = rsa->d = rsa->p = rsa->q = NULL;
+    rsa->n = rsa->d = rsa->p = rsa->q = rsa->e = NULL;
 
     return encryptedData;
 }

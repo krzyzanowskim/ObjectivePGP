@@ -13,7 +13,12 @@
 @interface PGPCryptoCFB : NSObject
 
 + (NSData *) decryptData:(NSData *)encryptedData
-          sessionKeyData:(NSData *)sessionKeyData // s2k
+          sessionKeyData:(NSData *)sessionKeyData // s2k produceSessionKeyWithPassphrase
+      symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm
+                      iv:(NSData *)ivData;
+
++ (NSData *) encryptData:(NSData *)encryptedData
+          sessionKeyData:(NSData *)sessionKeyData // s2k produceSessionKeyWithPassphrase
       symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm
                       iv:(NSData *)ivData;
 

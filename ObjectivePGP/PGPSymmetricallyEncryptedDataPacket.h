@@ -8,6 +8,12 @@
 
 #import "PGPPacket.h"
 
+@class PGPSecretKeyPacket, PGPPublicKeyPacket;
+
 @interface PGPSymmetricallyEncryptedDataPacket : PGPPacket
+@property (strong) NSData *encryptedData;
+
+//- (NSData *) decrypt:(PGPSecretKeyPacket *)secretKeyPacket;
+- (void) encrypt:(NSData *)toEncrypt withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm sessionKeyData:(NSData *)sessionKeyData;
 
 @end
