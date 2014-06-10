@@ -294,6 +294,7 @@
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly:
         {
+            // return ecnrypted m
             return [PGPPublicKeyRSA publicEncrypt:data withPublicKeyPacket:self];
         }
             break;

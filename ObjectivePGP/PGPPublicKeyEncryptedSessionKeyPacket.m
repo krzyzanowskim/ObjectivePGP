@@ -3,7 +3,7 @@
 //  ObjectivePGP
 //
 //  Created by Marcin Krzyzanowski on 06/06/14.
-//  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
+//  Copyright (c) 2014 Marcin Krzyżanowski. All rencryptedMPIsPartDataights reserved.
 //
 //  5.1.  Public-Key Encrypted Session Key Packets (Tag 1)
 
@@ -16,7 +16,7 @@
 #import "PGPMPI.h"
 
 @interface PGPPublicKeyEncryptedSessionKeyPacket ()
-@property (strong) NSData *encryptedMPIsPartData;
+@property (strong) NSData *encryptedMPI_M;
 @end
 
 @implementation PGPPublicKeyEncryptedSessionKeyPacket
@@ -60,8 +60,8 @@
     //   RSA 1 MPI
     //   Elgamal 2 MPI
     
-    self.encryptedMPIsPartData = [packetBody subdataWithRange:(NSRange) {position, packetBody.length - position}];
-    position = position + self.encryptedMPIsPartData.length;
+    self.encryptedMPI_M = [packetBody subdataWithRange:(NSRange) {position, packetBody.length - position}];
+    position = position + self.encryptedMPI_M.length;
     
     self.encrypted = YES;
     
@@ -70,12 +70,14 @@
 
 - (NSData *)exportPacket:(NSError *__autoreleasing *)error
 {
+    NSAssert(self.encryptedMPI_M, @"Missing encrypted mpi m");
+    
     NSMutableData *bodyData = [NSMutableData data];
     
-    [bodyData appendBytes:&_version length:1];
-    [bodyData appendData:[self.keyID exportKeyData]];
-    [bodyData appendBytes:&_publicKeyAlgorithm length:1];
-    [bodyData appendData:self.encryptedMPIsPartData];
+    [bodyData appendBytes:&_version length:1]; //1
+    [bodyData appendData:[self.keyID exportKeyData]]; //8
+    [bodyData appendBytes:&_publicKeyAlgorithm length:1]; //1
+    [bodyData appendData:self.encryptedMPI_M]; // m
     
     NSMutableData *data = [NSMutableData data];
     NSData *headerData = [self buildHeaderData:bodyData];
@@ -119,16 +121,19 @@
     [mData appendData:sessionKeyData];
     
     UInt16 checksum = [sessionKeyData pgpChecksum];
+    checksum = CFSwapInt16HostToBig(checksum);
     [mData appendBytes:&checksum length:2];
     
-    PGPMPI *modulusMPI = publicKeyPacket.publicMPIArray[0];
-    NSAssert(modulusMPI, @"Missing public mpi (modulus)");
+    PGPMPI *modulusMPI = [publicKeyPacket publicMPI:@"N"];
     if (!modulusMPI)
         return;
     
-    NSData *mEMEEncoded = [PGPPKCSEme encodeMessage:mData keyModulusLength:modulusMPI.bodyData.length error:error];
+    BIGNUM *nBigNumRef = modulusMPI.bignumRef;
+    unsigned int k = (unsigned)BN_num_bytes(nBigNumRef);
+    
+    NSData *mEMEEncoded = [PGPPKCSEme encodeMessage:mData keyModulusLength:k error:error];
     PGPMPI *mpiEncoded = [[PGPMPI alloc] initWithData:[publicKeyPacket encryptData:mEMEEncoded withPublicKeyAlgorithm:self.publicKeyAlgorithm]];
-    self.encryptedMPIsPartData = [mpiEncoded exportMPI];
+    self.encryptedMPI_M = [mpiEncoded exportMPI];
 }
 
 
@@ -140,7 +145,7 @@
     copy->_version = self.version;
     copy->_keyID = self.keyID;
     copy->_publicKeyAlgorithm = self.publicKeyAlgorithm;
-    copy->_encryptedMPIsPartData = self.encryptedMPIsPartData;
+    copy->_encryptedMPI_M = self.encryptedMPI_M;
     return copy;
 }
 

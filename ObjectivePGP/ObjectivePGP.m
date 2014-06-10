@@ -20,7 +20,7 @@
 #import "PGPArmor.h"
 #import "PGPCryptoUtils.h"
 #import "PGPPublicKeyEncryptedSessionKeyPacket.h"
-#import "PGPSymmetricallyEncryptedDataPacket.h"
+#import "PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h"
 #import "PGPMPI.h"
 
 @implementation ObjectivePGP
@@ -161,15 +161,19 @@
     NSMutableData *encryptedMessage = [NSMutableData data];
     
     //PGPPublicKeyEncryptedSessionKeyPacket goes here
-    PGPSymmetricAlgorithm preferredSymmeticAlgorithm = [publicKey preferredSymmetricAlgorithm];
+    PGPSymmetricAlgorithm preferredSymmeticAlgorithm = PGPSymmetricCAST5; // [publicKey preferredSymmetricAlgorithm];
 
     // Random bytes as a string to be used as a key
-    NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:preferredSymmeticAlgorithm];
-    NSMutableData *sessionKeyData = [NSMutableData data];
-    for (int i = 0; i < (keySize); i++) {
-        Byte b = arc4random_uniform(126) + 1;
-        [sessionKeyData appendBytes:&b length:1];
-    }
+//    NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:preferredSymmeticAlgorithm];
+//    NSMutableData *sessionKeyData = [NSMutableData data];
+//    for (int i = 0; i < (keySize); i++) {
+//        Byte b = arc4random_uniform(126) + 1;
+//        [sessionKeyData appendBytes:&b length:1];
+//    }
+    // THIS IS JUST TESTING, HAVE TO BE RANDOM
+//    UInt8 sessionKey[] = {0x06, 0xc0, 0x06, 0x91, 0x91, 0x27, 0x96, 0x64, 0x06, 0x33, 0x9d, 0x71, 0x57, 0xfb, 0x77, 0x04,    0x00, 0x00, 0x00};
+    UInt8 sessionKey[] = {0x06, 0xc0, 0x06, 0x91, 0x91, 0x27, 0x96, 0x64, 0x06, 0x33, 0x9d, 0x71, 0x57, 0xfb, 0x77, 0x04};
+    NSData *sessionKeyData = [NSData dataWithBytes:&sessionKey length:sizeof(sessionKey)];
     
     PGPPublicKeyPacket *encryptionKeyPacket = (PGPPublicKeyPacket *)[publicKey encryptionKeyPacket];
     if (encryptionKeyPacket) {
@@ -177,7 +181,6 @@
         PGPPublicKeyEncryptedSessionKeyPacket *eskKeyPacket = [[PGPPublicKeyEncryptedSessionKeyPacket alloc] init];
         eskKeyPacket.keyID = encryptionKeyPacket.keyID;
         eskKeyPacket.publicKeyAlgorithm = encryptionKeyPacket.publicKeyAlgorithm;
-        //pkESKeyPacket.encrypt(encryptionKeyPacket);
         [eskKeyPacket encrypt:encryptionKeyPacket sessionKeyData:sessionKeyData sessionKeyAlgorithm:preferredSymmeticAlgorithm error:error];
         NSAssert(!(*error), @"Missing literal data");
         if (*error) {
@@ -198,7 +201,7 @@
     }
 
     //  Encrypted Data :- Symmetrically Encrypted Data Packet | Symmetrically Encrypted Integrity Protected Data Packet
-    PGPSymmetricallyEncryptedDataPacket *symEncryptedDataPacket = [[PGPSymmetricallyEncryptedDataPacket alloc] init];
+    PGPSymmetricallyEncryptedIntegrityProtectedDataPacket *symEncryptedDataPacket = [[PGPSymmetricallyEncryptedIntegrityProtectedDataPacket alloc] init];
     [symEncryptedDataPacket encrypt:[literalPacket exportPacket:nil] withPublicKeyPacket:encryptionKeyPacket symmetricAlgorithm:preferredSymmeticAlgorithm sessionKeyData:sessionKeyData];
     [encryptedMessage appendData:[symEncryptedDataPacket exportPacket:error]];
     if (*error) {

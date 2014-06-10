@@ -10,7 +10,8 @@
 
 @class PGPSecretKeyPacket, PGPPublicKeyPacket;
 
-@interface PGPSymmetricallyEncryptedDataPacket : PGPPacket
+@interface PGPSymmetricallyEncryptedIntegrityProtectedDataPacket : PGPPacket
+@property (assign) NSUInteger version;
 @property (strong) NSData *encryptedData;
 
 //- (NSData *) decrypt:(PGPSecretKeyPacket *)secretKeyPacket;
