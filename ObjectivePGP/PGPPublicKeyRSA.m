@@ -37,8 +37,8 @@
         return nil;
     }
     
-    uint8_t *encrypted_em = calloc(RSA_size(rsa) - 11, sizeof(UInt8));
-    int em_len = RSA_public_encrypt(toEncrypt.length, toEncrypt.bytes, encrypted_em, rsa, RSA_NO_PADDING);
+    uint8_t *encrypted_em = calloc((size_t)BN_num_bytes(rsa->n), sizeof(UInt8));
+    int em_len = RSA_public_encrypt((int)toEncrypt.length, toEncrypt.bytes, encrypted_em, rsa, RSA_NO_PADDING);
     
     if (em_len != publicKeyPacket.keySize) {
         free(encrypted_em);
@@ -143,7 +143,7 @@
     }
 
     uint8_t *decrypted_em = calloc(RSA_size(rsa) - 11, sizeof(UInt8));
-    int em_len = RSA_public_decrypt(toDecrypt.length, toDecrypt.bytes, decrypted_em, rsa, RSA_NO_PADDING);
+    int em_len = RSA_public_decrypt((int)toDecrypt.length, toDecrypt.bytes, decrypted_em, rsa, RSA_NO_PADDING);
 
     if (em_len != publicKeyPacket.keySize) {
         free(decrypted_em);
