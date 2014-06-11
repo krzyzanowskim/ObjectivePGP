@@ -9,6 +9,7 @@
 #import "PGPSymmetricallyEncryptedDataPacket.h"
 #import "PGPPublicKeyPacket.h"
 #import "PGPCryptoUtils.h"
+#import "PGPCryptoCFB.h"
 
 #import <CommonCrypto/CommonCrypto.h>
 #import <CommonCrypto/CommonDigest.h>
@@ -33,6 +34,8 @@
 
 - (void) encrypt:(NSData *)toEncrypt withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm sessionKeyData:(NSData *)sessionKeyData
 {
+    NSMutableData *data = [NSMutableData data];
+    
     // The Initial Vector (IV) is specified as all zeros.
     NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:symmetricAlgorithm];
     NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:symmetricAlgorithm];
@@ -48,28 +51,46 @@
     // and the following two octets are copies of the last two octets of the IV.
     [prefixData appendData:[prefixData subdataWithRange:(NSRange){prefixData.length - 2, 2}]];
     
-    // After encrypting the first block-size-plus-two octets, the CFB state is resynchronized.
-    // The last block-size octets of ciphertext are passed through the cipher and the block boundary is reset.
-    
-    // OpenPGP does symmetric encryption using a variant of Cipher Feedback mode (CFB mode).
-    // 13.9.  OpenPGP CFB Mode
-    
-    // 1.  The feedback register (FR) is set to the IV, which is all zeros.
-    NSMutableData *FR = [NSMutableData dataWithData:ivData];
-    
-    // 2.  FR is encrypted to produce FRE (FR Encrypted).  This is the encryption of an all-zero value.
+    // write encrypted preamble CFB
     CAST_KEY *encrypt_key = calloc(1, sizeof(CAST_KEY));
     CAST_set_key(encrypt_key, (unsigned int)keySize, sessionKeyData.bytes);
     CAST_KEY *decrypt_key = calloc(1, sizeof(CAST_KEY));
     CAST_set_key(decrypt_key, (unsigned int)keySize, sessionKeyData.bytes);
     UInt8 *outBuf = calloc(ivData.length, sizeof(UInt8));
     CAST_ecb_encrypt(ivData.bytes, outBuf, encrypt_key, CAST_ENCRYPT);
-    
     NSData *ivEncryptedData = [NSData dataWithBytes:&outBuf length:ivData.length];
     
-    // 3.  FRE is xored with the first BS octets of random data prefixed to
-    // the plaintext to produce C[1] through C[BS], the first BS octets
-    // of ciphertext.
+    NSData *part = [PGPCryptoCFB encryptData:ivEncryptedData sessionKeyData:sessionKeyData symmetricAlgorithm:symmetricAlgorithm iv:ivData];
+    [data appendData:part];
+    
+    
+    // write data CFB
+    NSData *part = [PGPCryptoCFB encryptData:toEncrypt sessionKeyData:sessionKeyData symmetricAlgorithm:symmetricAlgorithm iv:ivData];
+    
+    // write MDC CFB
+    
+    // After encrypting the first block-size-plus-two octets, the CFB state is resynchronized.
+    // The last block-size octets of ciphertext are passed through the cipher and the block boundary is reset.
+    
+//     OpenPGP does symmetric encryption using a variant of Cipher Feedback mode (CFB mode).
+//     13.9.  OpenPGP CFB Mode
+//    
+//    // 1.  The feedback register (FR) is set to the IV, which is all zeros.
+//    NSMutableData *FR = [NSMutableData dataWithData:ivData];
+//    
+//    // 2.  FR is encrypted to produce FRE (FR Encrypted).  This is the encryption of an all-zero value.
+//    CAST_KEY *encrypt_key = calloc(1, sizeof(CAST_KEY));
+//    CAST_set_key(encrypt_key, (unsigned int)keySize, sessionKeyData.bytes);
+//    CAST_KEY *decrypt_key = calloc(1, sizeof(CAST_KEY));
+//    CAST_set_key(decrypt_key, (unsigned int)keySize, sessionKeyData.bytes);
+//    UInt8 *outBuf = calloc(ivData.length, sizeof(UInt8));
+//    CAST_ecb_encrypt(ivData.bytes, outBuf, encrypt_key, CAST_ENCRYPT);
+//    
+//    NSData *ivEncryptedData = [NSData dataWithBytes:&outBuf length:ivData.length];
+//
+//    // 3.  FRE is xored with the first BS octets of random data prefixed to
+//    // the plaintext to produce C[1] through C[BS], the first BS octets
+//    // of ciphertext.
 }
 
 @end
