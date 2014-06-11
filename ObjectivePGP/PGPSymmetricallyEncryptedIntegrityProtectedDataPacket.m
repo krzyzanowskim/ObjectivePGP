@@ -42,7 +42,7 @@
 
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
 {
-    NSUInteger position = [super parsePacketBody:packetBody error:error];
+    NSUInteger position = 0;
 
     // The content of an encrypted data packet is more OpenPGP packets
     // once decrypted, so recursively handle them
@@ -87,52 +87,28 @@
 
 - (void) encrypt:(NSData *)toEncrypt withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm sessionKeyData:(NSData *)sessionKeyData
 {
-    switch (publicKeyPacket.publicKeyAlgorithm) {
-        case PGPPublicKeyAlgorithmRSA:
-        case PGPPublicKeyAlgorithmRSAEncryptOnly:
-        case PGPPublicKeyAlgorithmRSASignOnly:
-        {
-            // ivData is block size long with zeroes here
-            NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:symmetricAlgorithm];
-            UInt8 *zeroes = calloc(blockSize, sizeof(UInt8));
-            NSMutableData *ivData = [NSMutableData dataWithBytes:zeroes length:blockSize];
-            free(zeroes);
-            
-            
-            NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:symmetricAlgorithm];
-            
-            // Seems IV is encrypted (cant find it in docs)
-            //CAST_ecb_encrypt(in, out, crypt->encrypt_key, CAST_ENCRYPT);
-            
-            const void *encryptedBytes = ivData.bytes;
-            NSUInteger outButterLength = ivData.length;
-            UInt8 *outBuffer = calloc(outButterLength, sizeof(UInt8));
-            // initialize
-            CAST_KEY *encrypt_key = calloc(1, sizeof(CAST_KEY));
-            CAST_set_key(encrypt_key, (unsigned int)keySize, sessionKeyData.bytes);
-            
-            CAST_KEY *decrypt_key = calloc(1, sizeof(CAST_KEY));
-            CAST_set_key(decrypt_key, (unsigned int)keySize, sessionKeyData.bytes);
-            
-            // see __ops_decrypt_init block_encrypt siv,civ,iv comments. siv is needed for weird v3 resync,
-            // wtf civ ???
-            // CAST_ecb_encrypt(in, out, encrypt_key, CAST_ENCRYPT);
-            
-            CAST_ecb_encrypt(encryptedBytes, outBuffer, encrypt_key, CAST_ENCRYPT);
-            NSData *ivEncryptedData = [NSData dataWithBytes:outBuffer length:outButterLength];
-            NSLog(@"%@",ivEncryptedData);
-            if (encrypt_key) free(encrypt_key);
-            if (decrypt_key) free(decrypt_key);
-            
-            NSData *encryptedData = [PGPCryptoCFB encryptData:toEncrypt sessionKeyData:sessionKeyData symmetricAlgorithm:symmetricAlgorithm iv:ivData];
-            self.encryptedData = encryptedData;
-        }
-            break;
-        default:
-            //TODO: add algorithms
-            [NSException raise:@"PGPNotSupported" format:@"Algorith not supported"];
-            break;
-    }
+//    switch (publicKeyPacket.publicKeyAlgorithm) {
+//        case PGPPublicKeyAlgorithmRSA:
+//        case PGPPublicKeyAlgorithmRSAEncryptOnly:
+//        case PGPPublicKeyAlgorithmRSASignOnly:
+//        {
+//            // ivData is block size long with zeroes here
+//            NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:symmetricAlgorithm];
+//            UInt8 *zeroes = calloc(blockSize, sizeof(UInt8));
+//            NSMutableData *ivData = [NSMutableData dataWithBytes:zeroes length:blockSize];
+//            free(zeroes);
+//            
+//            // OpenPGP does symmetric encryption using a variant of Cipher Feedback
+//            // mode (CFB mode).
+//            NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:symmetricAlgorithm];
+////            self.encryptedData = encryptedData;
+//        }
+//            break;
+//        default:
+//            //TODO: add algorithms
+//            [NSException raise:@"PGPNotSupported" format:@"Algorith not supported"];
+//            break;
+//    }
 }
 
 @end

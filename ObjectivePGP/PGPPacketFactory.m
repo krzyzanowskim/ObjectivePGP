@@ -19,6 +19,7 @@
 #import "PGPUserAttributePacket.h"
 #import "PGPOnePassSignaturePacket.h"
 #import "PGPCompressedPacket.h"
+#import "PGPSymmetricallyEncryptedDataPacket.h"
 #import "PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h"
 
 @implementation PGPPacketFactory
@@ -81,6 +82,9 @@
                 break;
             case PGPCompressedDataPacketTag:
                 packet = [[PGPCompressedPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+                break;
+            case PGPSymmetricallyEncryptedDataPacketTag:
+                packet = [[PGPSymmetricallyEncryptedDataPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
                 break;
             case PGPSymmetricallyEncryptedIntegrityProtectedDataPacketTag:
                 packet = [[PGPSymmetricallyEncryptedIntegrityProtectedDataPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];

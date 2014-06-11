@@ -7,12 +7,12 @@
 //
 
 #import "PGPPacket.h"
+#import "PGPSymmetricallyEncryptedDataPacket.h"
 
 @class PGPSecretKeyPacket, PGPPublicKeyPacket;
 
-@interface PGPSymmetricallyEncryptedIntegrityProtectedDataPacket : PGPPacket
+@interface PGPSymmetricallyEncryptedIntegrityProtectedDataPacket : PGPSymmetricallyEncryptedDataPacket
 @property (assign) NSUInteger version;
-@property (strong) NSData *encryptedData;
 
 //- (NSData *) decrypt:(PGPSecretKeyPacket *)secretKeyPacket;
 - (void) encrypt:(NSData *)toEncrypt withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm sessionKeyData:(NSData *)sessionKeyData;
