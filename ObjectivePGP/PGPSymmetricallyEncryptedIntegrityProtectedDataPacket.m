@@ -87,28 +87,29 @@
 
 - (void) encrypt:(NSData *)toEncrypt withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm sessionKeyData:(NSData *)sessionKeyData
 {
-//    switch (publicKeyPacket.publicKeyAlgorithm) {
-//        case PGPPublicKeyAlgorithmRSA:
-//        case PGPPublicKeyAlgorithmRSAEncryptOnly:
-//        case PGPPublicKeyAlgorithmRSASignOnly:
-//        {
-//            // ivData is block size long with zeroes here
-//            NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:symmetricAlgorithm];
-//            UInt8 *zeroes = calloc(blockSize, sizeof(UInt8));
-//            NSMutableData *ivData = [NSMutableData dataWithBytes:zeroes length:blockSize];
-//            free(zeroes);
-//            
-//            // OpenPGP does symmetric encryption using a variant of Cipher Feedback
-//            // mode (CFB mode).
-//            NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:symmetricAlgorithm];
-////            self.encryptedData = encryptedData;
-//        }
-//            break;
-//        default:
-//            //TODO: add algorithms
-//            [NSException raise:@"PGPNotSupported" format:@"Algorith not supported"];
-//            break;
-//    }
+    //     OpenPGP does symmetric encryption using a variant of Cipher Feedback mode (CFB mode).
+    //     13.9.  OpenPGP CFB Mode
+
+    NSMutableData *data = [NSMutableData data];
+
+    // The Initial Vector (IV) is specified as all zeros.
+    NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:symmetricAlgorithm];
+    NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:symmetricAlgorithm];
+    NSMutableData *ivData = [NSMutableData dataWithLength:blockSize];
+
+    // Instead of using an IV, OpenPGP prefixes a string of length equal to the block size of the cipher plus two to the data before it is encrypted.
+    NSMutableData *prefixData = [NSMutableData dataWithCapacity:blockSize + 2];
+    // The first block-size octets (for example, 8 octets for a 64-bit block length) are random,
+    for (int i = 0; i < blockSize; i++) {
+        UInt8 b = arc4random_uniform(126) + 1;
+        [prefixData appendBytes:&b length:1];
+    }
+    // and the following two octets are copies of the last two octets of the IV.
+    [prefixData appendData:[prefixData subdataWithRange:(NSRange){prefixData.length - 2, 2}]];
+
+
+
+    self.encryptedData = [data copy];
 }
 
 @end
