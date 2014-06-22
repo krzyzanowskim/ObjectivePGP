@@ -180,16 +180,15 @@
 {
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.pubKeyringPath]);
 
-    
     PGPKey *keyToEncrypt = [self.oPGP getKeyForIdentifier:@"28A83333F9C27197"];
     XCTAssertNotNil(keyToEncrypt);
 
     NSData* plainData = [PLAINTEXT dataUsingEncoding:NSUTF8StringEncoding];
     [plainData writeToFile:[self.workingDirectory stringByAppendingPathComponent:@"plaintext.txt"] atomically:YES];
 
-    // encrypt secring-test-plaintext.gpg
+    // encrypt PLAINTEXT
     NSError *encryptError = nil;
-    NSData *encryptedData = [self.oPGP encryptData:plainData usingPublicKey:keyToEncrypt error:&encryptError];
+    NSData *encryptedData = [self.oPGP encryptData:plainData usingPublicKey:keyToEncrypt armored:NO error:&encryptError];
     XCTAssertNil(encryptError);
     XCTAssertNotNil(encryptedData);
     
@@ -198,8 +197,16 @@
     NSLog(@"%@",fileEncrypted);
     BOOL status = [encryptedData writeToFile:fileEncrypted atomically:YES];
     XCTAssertTrue(status);
-    
 
+    // ARMORED
+    NSData *encryptedDataArmored = [self.oPGP encryptData:plainData usingPublicKey:keyToEncrypt armored:YES error:&encryptError];
+    XCTAssertNil(encryptError);
+    XCTAssertNotNil(encryptedDataArmored);
+
+    NSString *fileEncryptedArmored = [self.workingDirectory stringByAppendingPathComponent:@"plaintext.encrypted.armored"];
+    NSLog(@"%@",fileEncryptedArmored);
+    status = [encryptedDataArmored writeToFile:fileEncryptedArmored atomically:YES];
+    XCTAssertTrue(status);
 }
 
 @end

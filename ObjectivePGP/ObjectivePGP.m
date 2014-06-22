@@ -155,7 +155,7 @@
 
 #pragma mark - Encrypt 
 
-- (NSData *) encryptData:(NSData *)dataToEncrypt usingPublicKey:(PGPKey *)publicKey error:(NSError * __autoreleasing *)error
+- (NSData *) encryptData:(NSData *)dataToEncrypt usingPublicKey:(PGPKey *)publicKey armored:(BOOL)armored error:(NSError * __autoreleasing *)error
 {
     // Message.prototype.encrypt = function(keys) {
     NSMutableData *encryptedMessage = [NSMutableData data];
@@ -175,7 +175,7 @@
     // Prepare literal packet
     PGPLiteralPacket *literalPacket = [PGPLiteralPacket literalPacket:PGPLiteralPacketBinary withData:dataToEncrypt];
     literalPacket.filename = nil;
-    literalPacket.timestamp = nil;
+    literalPacket.timestamp = [NSDate date];
     NSAssert(!(*error), @"Missing literal data");
     if (*error) {
         return nil;
@@ -217,6 +217,10 @@
     [encryptedMessage appendData:[symEncryptedDataPacket exportPacket:error]];
     if (*error) {
         return nil;
+    }
+    
+    if (armored) {
+        return [PGPArmor armoredData:encryptedMessage as:PGPArmorTypeMessage];
     }
 
     return [encryptedMessage copy];
