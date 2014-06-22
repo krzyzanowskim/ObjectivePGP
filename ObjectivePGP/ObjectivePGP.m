@@ -161,8 +161,8 @@
     NSMutableData *encryptedMessage = [NSMutableData data];
     
     //PGPPublicKeyEncryptedSessionKeyPacket goes here
-    PGPSymmetricAlgorithm preferredSymmeticAlgorithm = PGPSymmetricCAST5; // [publicKey preferredSymmetricAlgorithm];
-    //PGPSymmetricAlgorithm preferredSymmeticAlgorithm = [publicKey preferredSymmetricAlgorithm];
+    //PGPSymmetricAlgorithm preferredSymmeticAlgorithm = PGPSymmetricCAST5; // [publicKey preferredSymmetricAlgorithm];
+    PGPSymmetricAlgorithm preferredSymmeticAlgorithm = [publicKey preferredSymmetricAlgorithm];
 
     // Random bytes as a string to be used as a key
     NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:preferredSymmeticAlgorithm];
