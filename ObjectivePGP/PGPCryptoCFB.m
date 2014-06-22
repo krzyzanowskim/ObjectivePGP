@@ -119,19 +119,18 @@
             CAST_KEY *encrypt_key = calloc(1, sizeof(CAST_KEY));
             CAST_set_key(encrypt_key, (unsigned int)keySize, sessionKeyData.bytes);
             
-            CAST_KEY *decrypt_key = calloc(1, sizeof(CAST_KEY));
-            CAST_set_key(decrypt_key, (unsigned int)keySize, sessionKeyData.bytes);
-            
             // see __ops_decrypt_init block_encrypt siv,civ,iv comments. siv is needed for weird v3 resync,
             // wtf civ ???
             // CAST_ecb_encrypt(in, out, encrypt_key, CAST_ENCRYPT);
             
+            unsigned char *iv = calloc(1, ivData.length);
+            memcpy(iv, ivData.bytes, ivData.length);
+            
             int num = 0; //	how much of the 64bit block we have used
-            CAST_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, decrypt_key, (UInt8 *)ivData.bytes, &num, decrypt ? CAST_DECRYPT : CAST_ENCRYPT);
+            CAST_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, encrypt_key, iv, &num, decrypt ? CAST_DECRYPT : CAST_ENCRYPT);
             decryptedData = [NSData dataWithBytes:outBuffer length:outButterLength];
             
             if (encrypt_key) free(encrypt_key);
-            if (decrypt_key) free(decrypt_key);
         }
             break;
         case PGPSymmetricBlowfish:

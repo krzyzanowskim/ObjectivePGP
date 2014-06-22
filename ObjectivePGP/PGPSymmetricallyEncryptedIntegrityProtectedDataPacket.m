@@ -12,6 +12,8 @@
 #import "PGPPublicKeyRSA.h"
 #import "PGPCryptoCFB.h"
 #import "PGPCryptoUtils.h"
+#import "NSData+PGPUtils.h"
+#import "PGPModificationDetectionCodePacket.h"
 
 #import <CommonCrypto/CommonCrypto.h>
 #import <CommonCrypto/CommonDigest.h>
@@ -59,6 +61,8 @@
 - (NSData *)exportPacket:(NSError *__autoreleasing *)error
 {
     NSAssert(self.encryptedData, @"No encrypted data?");
+    NSAssert(self.version == 1, @"Require version == 1");
+    
     if (!self.encryptedData)
     {
         if (error) {
@@ -87,31 +91,59 @@
 //    return [PGPPublicKeyRSA privateDecrypt:self.encryptedData withSecretKeyPacket:secretKeyPacket];
 //}
 
-- (void) encrypt:(NSData *)toEncrypt withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm sessionKeyData:(NSData *)sessionKeyData
+- (void) encrypt:(NSData *)literalPacketData withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm sessionKeyData:(NSData *)sessionKeyData
 {
     //     OpenPGP does symmetric encryption using a variant of Cipher Feedback mode (CFB mode).
-    //     13.9.  OpenPGP CFB Mode
-
-    NSMutableData *data = [NSMutableData data];
+    NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:symmetricAlgorithm];
 
     // The Initial Vector (IV) is specified as all zeros.
-    NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:symmetricAlgorithm];
-    NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:symmetricAlgorithm];
     NSMutableData *ivData = [NSMutableData dataWithLength:blockSize];
-
+    
+    // Prepare preamble
     // Instead of using an IV, OpenPGP prefixes a string of length equal to the block size of the cipher plus two to the data before it is encrypted.
-    NSMutableData *prefixData = [NSMutableData dataWithCapacity:blockSize + 2];
     // The first block-size octets (for example, 8 octets for a 64-bit block length) are random,
+    NSMutableData *prefixRandomData = [NSMutableData dataWithCapacity:blockSize];
+#ifdef DEBUG
+    UInt8 nonRandomBytes[8] = {0x80, 0xfa, 0x06, 0xcc, 0xe3, 0x7b, 0xa8, 0x7a};
+    prefixRandomData = [[NSMutableData alloc] initWithBytes:nonRandomBytes length:8];
+#else
     for (int i = 0; i < blockSize; i++) {
-        UInt8 b = arc4random_uniform(126) + 1;
-        [prefixData appendBytes:&b length:1];
+        UInt8 byte = arc4random_uniform(255);
+        [prefixRandomData appendBytes:&byte length:1];
     }
+#endif
+                                      
     // and the following two octets are copies of the last two octets of the IV.
-    [prefixData appendData:[prefixData subdataWithRange:(NSRange){prefixData.length - 2, 2}]];
+    NSMutableData *prefixRandomFullData = [NSMutableData dataWithData:prefixRandomData];
+    [prefixRandomFullData appendData:[prefixRandomData subdataWithRange:(NSRange){prefixRandomData.length - 2, 2}]];
 
-
-
-    self.encryptedData = [data copy];
+    NSLog(@"preamble %@", prefixRandomFullData);
+    // Prepare MDC Packet
+    NSMutableData *toMDCData = [[NSMutableData alloc] init];
+    // preamble
+    [toMDCData appendData:prefixRandomFullData];
+    // plaintext
+    [toMDCData appendData:literalPacketData];
+    // and then also includes two octets of values 0xD3, 0x14 (sha length)
+    UInt8 mdc_suffix[2] = {0xD3, 0x14};
+    [toMDCData appendBytes:&mdc_suffix length:2];
+    
+    PGPModificationDetectionCodePacket *mdcPacket = [[PGPModificationDetectionCodePacket alloc] initWithData:toMDCData];
+    NSError *exportMDCError = nil;
+    NSData *mdcPacketData = [mdcPacket exportPacket:&exportMDCError];
+    if (exportMDCError) {
+        return;
+    }
+    
+    // Finally build encrypted packet data
+    // Encrypt at once (the same encrypt key) preamble + data + mdc
+    NSMutableData *toEncrypt = [NSMutableData data];
+    [toEncrypt appendData:prefixRandomFullData];
+    [toEncrypt appendData:literalPacketData];
+    [toEncrypt appendData:mdcPacketData];
+    NSData *encrypted = [PGPCryptoCFB encryptData:toEncrypt sessionKeyData:sessionKeyData symmetricAlgorithm:symmetricAlgorithm iv:ivData];
+    
+    self.encryptedData = encrypted;
 }
 
 @end

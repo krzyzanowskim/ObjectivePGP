@@ -9,9 +9,9 @@
 #import "PGPPacket.h"
 
 typedef NS_ENUM(UInt8, PGPLiteralPacketFormat) {
-    PGPLiteralPacketBinary   = 0x62,
-    PGPLiteralPacketText     = 0x74,
-    PGPLiteralPacketTextUTF8 = 0x75
+    PGPLiteralPacketBinary   = 'b',
+    PGPLiteralPacketText     = 't',
+    PGPLiteralPacketTextUTF8 = 'u'
 };
 
 @interface PGPLiteralPacket : PGPPacket

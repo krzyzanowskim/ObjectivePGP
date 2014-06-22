@@ -114,9 +114,14 @@
         [bodyData appendBytes:&zero length:sizeof(zero)];
     }
 
-    UInt32 timestampBytes = [self.timestamp timeIntervalSince1970];
-    timestampBytes = CFSwapInt32HostToBig(timestampBytes);
-    [bodyData appendBytes:&timestampBytes length:4];
+    if (self.timestamp) {
+        UInt32 timestampBytes = [self.timestamp timeIntervalSince1970];
+        timestampBytes = CFSwapInt32HostToBig(timestampBytes);
+        [bodyData appendBytes:&timestampBytes length:4];
+    } else {
+        UInt8 zero4[] = {0,0,0,0};
+        [bodyData appendBytes:&zero4 length:4];
+    }
 
     switch (self.format) {
         case PGPLiteralPacketBinary:

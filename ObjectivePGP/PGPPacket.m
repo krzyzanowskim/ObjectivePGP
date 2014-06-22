@@ -16,6 +16,14 @@
 
 @implementation PGPPacket
 
+- (instancetype)init
+{
+    if (self = [super init]) {
+        
+    }
+    return self;
+}
+
 - (instancetype)initWithHeader:(NSData *)headerData body:(NSData *)bodyData
 {
     if (self = [self init]) {

@@ -132,7 +132,8 @@
     unsigned int k = (unsigned)BN_num_bytes(nBigNumRef);
     
     NSData *mEMEEncoded = [PGPPKCSEme encodeMessage:mData keyModulusLength:k error:error];
-    PGPMPI *mpiEncoded = [[PGPMPI alloc] initWithData:[publicKeyPacket encryptData:mEMEEncoded withPublicKeyAlgorithm:self.publicKeyAlgorithm]];
+    NSData *encryptedData = [publicKeyPacket encryptData:mEMEEncoded withPublicKeyAlgorithm:self.publicKeyAlgorithm];
+    PGPMPI *mpiEncoded = [[PGPMPI alloc] initWithData:encryptedData];
     self.encryptedMPI_M = [mpiEncoded exportMPI];
 }
 

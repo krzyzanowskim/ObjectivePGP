@@ -185,6 +185,7 @@
     XCTAssertNotNil(keyToEncrypt);
 
     NSData* plainData = [PLAINTEXT dataUsingEncoding:NSUTF8StringEncoding];
+    [plainData writeToFile:[self.workingDirectory stringByAppendingPathComponent:@"plaintext.txt"] atomically:YES];
 
     // encrypt secring-test-plaintext.gpg
     NSError *encryptError = nil;
@@ -193,7 +194,7 @@
     XCTAssertNotNil(encryptedData);
     
     // file encrypted
-    NSString *fileEncrypted = [self.workingDirectory stringByAppendingPathComponent:@"secring-test-plaintext.encrypted"];
+    NSString *fileEncrypted = [self.workingDirectory stringByAppendingPathComponent:@"plaintext.encrypted"];
     NSLog(@"%@",fileEncrypted);
     BOOL status = [encryptedData writeToFile:fileEncrypted atomically:YES];
     XCTAssertTrue(status);

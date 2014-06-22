@@ -87,6 +87,10 @@
     if (!self)
         return self;
     
+//    unsigned char digest[CC_SHA1_DIGEST_LENGTH];
+//    CC_SHA1(self.bytes, self.length, digest);
+//    NSData *outData = [NSData dataWithBytes:digest length:CC_SHA1_DIGEST_LENGTH];
+    
     CC_SHA1_CTX *ctx = calloc(1, sizeof(CC_SHA1_CTX));
     if (!ctx) {
         return nil;
@@ -94,15 +98,15 @@
 
     CC_SHA1_Init(ctx);
     CC_SHA1_Update(ctx, self.bytes, self.length);
-    UInt8 *out = calloc(CC_SHA1_DIGEST_LENGTH, sizeof(UInt8));
-    if (!out) {
+    UInt8 *outBuf = calloc(CC_SHA1_DIGEST_LENGTH, 1);
+    if (!outBuf) {
         return nil;
     }
-    CC_SHA1_Final(out, ctx);
+    CC_SHA1_Final(outBuf, ctx);
 
-    NSData *outData = [NSData dataWithBytes:out length:CC_SHA1_DIGEST_LENGTH];
+    NSData *outData = [NSData dataWithBytes:outBuf length:CC_SHA1_DIGEST_LENGTH];
 
-    free(out);
+    free(outBuf);
     free(ctx);
     return outData;
 }

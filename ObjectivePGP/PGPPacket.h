@@ -16,6 +16,7 @@
 
 @property (assign, readonly)    PGPPacketTag tag;
 
+- (instancetype) init NS_DESIGNATED_INITIALIZER;
 - (instancetype) initWithHeader:(NSData *)headerData body:(NSData *)bodyData;
 
 + (NSData *) parsePacketHeader:(NSData *)headerData bodyLength:(UInt32 *)bodyLength packetTag:(PGPPacketTag *)tag;

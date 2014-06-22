@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "PGPTypes.h"
 
 @interface PGPOpenPGPCFB : NSObject
 

@@ -162,6 +162,7 @@
     
     //PGPPublicKeyEncryptedSessionKeyPacket goes here
     PGPSymmetricAlgorithm preferredSymmeticAlgorithm = PGPSymmetricCAST5; // [publicKey preferredSymmetricAlgorithm];
+    //PGPSymmetricAlgorithm preferredSymmeticAlgorithm = [publicKey preferredSymmetricAlgorithm];
 
 #ifdef DEBUG
     // THIS IS JUST TESTING, HAVE TO BE RANDOM
@@ -172,11 +173,31 @@
     NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:preferredSymmeticAlgorithm];
     NSMutableData *sessionKeyData = [NSMutableData data];
     for (int i = 0; i < (keySize); i++) {
-        Byte b = arc4random_uniform(126) + 1;
-        [sessionKeyData appendBytes:&b length:1];
+        UInt8 byte = arc4random_uniform(sizeof(UInt8) * 255);
+        [sessionKeyData appendBytes:&byte length:1];
     }
 #endif
     
+    
+    // Prepare literal packet
+    PGPLiteralPacket *literalPacket = [PGPLiteralPacket literalPacket:PGPLiteralPacketBinary withData:dataToEncrypt];
+    literalPacket.filename = nil;
+    literalPacket.timestamp = nil;
+    NSAssert(!(*error), @"Missing literal data");
+    if (*error) {
+        return nil;
+    }
+    NSData *literalPacketData = [literalPacket exportPacket:error];
+    if (*error) {
+        return nil;
+    }
+    
+    
+    // Encrypted Message :- Encrypted Data | ESK Sequence, Encrypted Data.
+    // Encrypted Data :- Symmetrically Encrypted Data Packet | Symmetrically Encrypted Integrity Protected Data Packet
+    // ESK :- Public-Key Encrypted Session Key Packet | Symmetric-Key Encrypted Session Key Packet.
+    
+    // ESK
     PGPPublicKeyPacket *encryptionKeyPacket = (PGPPublicKeyPacket *)[publicKey encryptionKeyPacket];
     if (encryptionKeyPacket) {
         // var pkESKeyPacket = new packet.PublicKeyEncryptedSessionKey();
@@ -188,24 +209,13 @@
         if (*error) {
             return nil;
         }
-        [encryptedMessage appendData:[eskKeyPacket exportPacket:nil]];
-    }
-    
-    //TODO: there is more.. integrity packet
-
-    // literal packet
-    PGPLiteralPacket *literalPacket = [PGPLiteralPacket literalPacket:PGPLiteralPacketBinary withData:dataToEncrypt];
-    literalPacket.filename = nil;
-    literalPacket.timestamp = [NSDate date];
-    NSAssert(!(*error), @"Missing literal data");
-    if (*error) {
-        return nil;
+        [encryptedMessage appendData:[eskKeyPacket exportPacket:error]];
+        if (*error) {
+            return nil;
+        }
     }
 
-    //  Encrypted Data :- Symmetrically Encrypted Data Packet | Symmetrically Encrypted Integrity Protected Data Packet
     PGPSymmetricallyEncryptedIntegrityProtectedDataPacket *symEncryptedDataPacket = [[PGPSymmetricallyEncryptedIntegrityProtectedDataPacket alloc] init];
-    NSData *literalPacketData = [literalPacket exportPacket:nil];
-    
     [symEncryptedDataPacket encrypt:literalPacketData
                 withPublicKeyPacket:encryptionKeyPacket
                  symmetricAlgorithm:preferredSymmeticAlgorithm
