@@ -81,22 +81,24 @@
             AES_cfb128_encrypt(encryptedBytes, outBuffer, outButterLength, decrypt ? &decrypt_key : &encrypt_key, iv, &num, decrypt ? AES_DECRYPT : AES_ENCRYPT);
             decryptedData = [NSData dataWithBytes:outBuffer length:outButterLength];
             
+            bzero(&encrypt_key, sizeof(AES_KEY));
+            bzero(&decrypt_key, sizeof(AES_KEY));
         }
             break;
         case PGPSymmetricIDEA:
         {
-            IDEA_KEY_SCHEDULE *encrypt_key = calloc(1, sizeof(IDEA_KEY_SCHEDULE));
-            idea_set_encrypt_key(sessionKeyData.bytes, encrypt_key);
+            IDEA_KEY_SCHEDULE encrypt_key;
+            idea_set_encrypt_key(sessionKeyData.bytes, &encrypt_key);
             
-            IDEA_KEY_SCHEDULE *decrypt_key = calloc(1, sizeof(IDEA_KEY_SCHEDULE));
-            idea_set_decrypt_key(encrypt_key, decrypt_key);
+            IDEA_KEY_SCHEDULE decrypt_key;
+            idea_set_decrypt_key(&encrypt_key, &decrypt_key);
             
             int num = 0;
-            idea_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, decrypt_key, iv, &num, decrypt ? CAST_DECRYPT : CAST_ENCRYPT);
+            idea_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, decrypt ? &decrypt_key : &encrypt_key, iv, &num, decrypt ? CAST_DECRYPT : CAST_ENCRYPT);
             decryptedData = [NSData dataWithBytes:outBuffer length:outButterLength];
             
-            if (encrypt_key) free(encrypt_key);
-            if (decrypt_key) free(decrypt_key);
+            bzero(&encrypt_key, sizeof(IDEA_KEY_SCHEDULE));
+            bzero(&decrypt_key, sizeof(IDEA_KEY_SCHEDULE));
         }
             break;
         case PGPSymmetricTripleDES:
@@ -111,7 +113,10 @@
             DES_ede3_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, &keys[0], &keys[1], &keys[2], (DES_cblock *)(void *)iv, &num, decrypt ? DES_DECRYPT : DES_ENCRYPT);
             decryptedData = [NSData dataWithBytes:outBuffer length:outButterLength];
             
-            if (keys) free(keys);
+            if (keys) {
+                bzero(keys, 3 * sizeof(DES_key_schedule));
+                free(keys);
+            }
         }
             break;
         case PGPSymmetricCAST5:
@@ -127,7 +132,10 @@
             CAST_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, encrypt_key, iv, &num, decrypt ? CAST_DECRYPT : CAST_ENCRYPT);
             decryptedData = [NSData dataWithBytes:outBuffer length:outButterLength];
             
-            if (encrypt_key) free(encrypt_key);
+            if (encrypt_key) {
+                bzero(encrypt_key, sizeof(CAST_KEY));
+                free(encrypt_key);
+            }
         }
             break;
         case PGPSymmetricBlowfish:
