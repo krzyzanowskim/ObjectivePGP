@@ -135,7 +135,7 @@
  *
  *  @return length
  */
-- (NSUInteger) parseEncryptedPart:(NSData *)data error:(NSError **)error
+- (NSUInteger) parseEncryptedPart:(NSData *)data error:(NSError * __autoreleasing *)error
 {
     NSUInteger position = 0;
 
@@ -176,7 +176,7 @@
  *
  *  @return length
  */
-- (NSUInteger) parseUnencryptedPart:(NSData *)data error:(NSError **)error
+- (NSUInteger) parseUnencryptedPart:(NSData *)data error:(NSError * __autoreleasing *)error
 {
     NSUInteger position = 0;
 

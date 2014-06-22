@@ -258,9 +258,11 @@
     NSMutableData *result = [NSMutableData data];
 
     for (PGPPacket * packet in [self allPacketsArray]) {
-        NSError *error = nil;
-        [result appendData:[packet exportPacket:&error]]; //TODO: decode secret key first
+        [result appendData:[packet exportPacket:error]]; //TODO: decode secret key first
         NSAssert(!error,@"Error while export public key");
+        if (*error) {
+            return nil;
+        }
     }
     return [result copy];
 }
@@ -268,7 +270,7 @@
 #pragma mark - Verification
 
 // Returns primary user with self certificate
-- (PGPUser *) primaryUserAndSelfCertificate:(PGPSignaturePacket **)selfCertificateOut
+- (PGPUser *) primaryUserAndSelfCertificate:(PGPSignaturePacket * __autoreleasing *)selfCertificateOut
 {
     PGPUser *foundUser = nil;
 

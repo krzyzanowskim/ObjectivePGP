@@ -22,8 +22,8 @@
 - (BOOL) importKey:(NSString *)shortKeyStringIdentifier fromFile:(NSString *)path;
 
 // Save to keyring
-- (BOOL) exportKeysOfType:(PGPKeyType)type toFile:(NSString *)path error:(NSError **)error;
-- (BOOL) exportKeys:(NSArray *)keys toFile:(NSString *)path error:(NSError **)error;
+- (BOOL) exportKeysOfType:(PGPKeyType)type toFile:(NSString *)path error:(NSError * __autoreleasing *)error;
+- (BOOL) exportKeys:(NSArray *)keys toFile:(NSString *)path error:(NSError * __autoreleasing *)error;
 - (NSData *) exportKey:(PGPKey *)key armored:(BOOL)armored;
 
 - (NSArray *) getKeysForUserID:(NSString *)userID;

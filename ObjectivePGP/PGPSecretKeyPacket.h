@@ -25,7 +25,7 @@
  *
  *  @return Decrypted key on success
  */
-- (PGPSecretKeyPacket *) decryptedKeyPacket:(NSString *)passphrase error:(NSError *__autoreleasing *)error;
+- (PGPSecretKeyPacket *) decryptedKeyPacket:(NSString *)passphrase error:(NSError * __autoreleasing *)error;
 
 - (PGPMPI *) secretMPI:(NSString *)identifier;
 

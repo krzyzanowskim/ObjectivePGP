@@ -85,12 +85,12 @@
 
 #pragma mark - Save
 
-- (BOOL) exportKeysOfType:(PGPKeyType)type toFile:(NSString *)path error:(NSError **)error
+- (BOOL) exportKeysOfType:(PGPKeyType)type toFile:(NSString *)path error:(NSError * __autoreleasing *)error
 {
     return [self exportKeys:[self getKeysOfType:type] toFile:path error:error];
 }
 
-- (BOOL) exportKeys:(NSArray *)keys toFile:(NSString *)path error:(NSError **)error
+- (BOOL) exportKeys:(NSArray *)keys toFile:(NSString *)path error:(NSError * __autoreleasing *)error
 {
     BOOL result = YES;
     for (PGPKey *key in keys) {
@@ -100,7 +100,7 @@
 }
 
 
-- (BOOL) appendKey:(PGPKey *)key toKeyring:(NSString *)path error:(NSError **)error
+- (BOOL) appendKey:(PGPKey *)key toKeyring:(NSString *)path error:(NSError * __autoreleasing *)error
 {
     NSFileManager *fm = [NSFileManager defaultManager];
 
@@ -163,17 +163,19 @@
     //PGPPublicKeyEncryptedSessionKeyPacket goes here
     PGPSymmetricAlgorithm preferredSymmeticAlgorithm = PGPSymmetricCAST5; // [publicKey preferredSymmetricAlgorithm];
 
-    // Random bytes as a string to be used as a key
-//    NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:preferredSymmeticAlgorithm];
-//    NSMutableData *sessionKeyData = [NSMutableData data];
-//    for (int i = 0; i < (keySize); i++) {
-//        Byte b = arc4random_uniform(126) + 1;
-//        [sessionKeyData appendBytes:&b length:1];
-//    }
+#ifdef DEBUG
     // THIS IS JUST TESTING, HAVE TO BE RANDOM
-//    UInt8 sessionKey[] = {0x06, 0xc0, 0x06, 0x91, 0x91, 0x27, 0x96, 0x64, 0x06, 0x33, 0x9d, 0x71, 0x57, 0xfb, 0x77, 0x04,    0x00, 0x00, 0x00};
     UInt8 sessionKey[] = {0x06, 0xc0, 0x06, 0x91, 0x91, 0x27, 0x96, 0x64, 0x06, 0x33, 0x9d, 0x71, 0x57, 0xfb, 0x77, 0x04};
     NSData *sessionKeyData = [NSData dataWithBytes:&sessionKey length:sizeof(sessionKey)];
+#else
+    // Random bytes as a string to be used as a key
+    NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:preferredSymmeticAlgorithm];
+    NSMutableData *sessionKeyData = [NSMutableData data];
+    for (int i = 0; i < (keySize); i++) {
+        Byte b = arc4random_uniform(126) + 1;
+        [sessionKeyData appendBytes:&b length:1];
+    }
+#endif
     
     PGPPublicKeyPacket *encryptionKeyPacket = (PGPPublicKeyPacket *)[publicKey encryptionKeyPacket];
     if (encryptionKeyPacket) {
@@ -202,14 +204,17 @@
 
     //  Encrypted Data :- Symmetrically Encrypted Data Packet | Symmetrically Encrypted Integrity Protected Data Packet
     PGPSymmetricallyEncryptedIntegrityProtectedDataPacket *symEncryptedDataPacket = [[PGPSymmetricallyEncryptedIntegrityProtectedDataPacket alloc] init];
-    [symEncryptedDataPacket encrypt:[literalPacket exportPacket:nil] withPublicKeyPacket:encryptionKeyPacket symmetricAlgorithm:preferredSymmeticAlgorithm sessionKeyData:sessionKeyData];
+    NSData *literalPacketData = [literalPacket exportPacket:nil];
+    
+    [symEncryptedDataPacket encrypt:literalPacketData
+                withPublicKeyPacket:encryptionKeyPacket
+                 symmetricAlgorithm:preferredSymmeticAlgorithm
+                     sessionKeyData:sessionKeyData];
+    
     [encryptedMessage appendData:[symEncryptedDataPacket exportPacket:error]];
     if (*error) {
         return nil;
     }
-
-    
-    
 
     return [encryptedMessage copy];
 }

@@ -37,7 +37,7 @@
 
 - (PGPPacketTag)tag
 {
-    return PGPSymmetricallyEncryptedIntegrityProtectedDataPacketTag;
+    return PGPSymmetricallyEncryptedIntegrityProtectedDataPacketTag; // 18
 }
 
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
@@ -68,7 +68,9 @@
     }
     
     NSMutableData *bodyData = [NSMutableData data];
+    // A one-octet version number.
     [bodyData appendBytes:&_version length:1];
+    // Encrypted data
     [bodyData appendData:self.encryptedData];
     
     NSMutableData *data = [NSMutableData data];

@@ -5,6 +5,7 @@
 //  Created by Marcin Krzyzanowski on 11/06/14.
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
+//  Parse only
 
 #import "PGPSymmetricallyEncryptedDataPacket.h"
 #import "PGPPublicKeyPacket.h"
@@ -43,10 +44,10 @@
     return self.encryptedData;
 }
 
-- (void) encrypt:(NSData *)toEncrypt withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm sessionKeyData:(NSData *)sessionKeyData
-{
-    [NSException raise:@"No encryption here, this is for read only" format:@"PGPSymmetricallyEncryptedDataPacket is for read only"];
-
+//- (void) encrypt:(NSData *)toEncrypt withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm sessionKeyData:(NSData *)sessionKeyData
+//{
+//    [NSException raise:@"No encryption here, this is for read only" format:@"PGPSymmetricallyEncryptedDataPacket is for read only"];
+//
 //    NSMutableData *data = [NSMutableData data];
 //    
 //    // The Initial Vector (IV) is specified as all zeros.
@@ -104,6 +105,6 @@
 //    // 3.  FRE is xored with the first BS octets of random data prefixed to
 //    // the plaintext to produce C[1] through C[BS], the first BS octets
 //    // of ciphertext.
-}
+//}
 
 @end

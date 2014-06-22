@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		530608F022BB406DA76684F0 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AFC8E128B0F4211888984C0 /* libPods.a */; };
 		7502CEFF1916DCE9001B32D7 /* PGPSignatureSubpacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 7502CEFE1916DCE9001B32D7 /* PGPSignatureSubpacket.m */; };
-		7502CF021916EFD5001B32D7 /* NSData+NSValue.m in Sources */ = {isa = PBXBuildFile; fileRef = 7502CF011916EFD5001B32D7 /* NSData+NSValue.m */; };
 		75040AB21926BB35000CEA93 /* ObjectivePGPTestArmor.m in Sources */ = {isa = PBXBuildFile; fileRef = 75040AB11926BB35000CEA93 /* ObjectivePGPTestArmor.m */; };
 		7507B72819170FE3003A2DC7 /* PGPUserIDPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 7507B72719170FE3003A2DC7 /* PGPUserIDPacket.m */; };
 		7508FFC819473AEB00205F76 /* pubring-test.gpg in Resources */ = {isa = PBXBuildFile; fileRef = 7508FFC619473AEB00205F76 /* pubring-test.gpg */; };
@@ -95,8 +94,6 @@
 		4AFC8E128B0F4211888984C0 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		7502CEFD1916DCE9001B32D7 /* PGPSignatureSubpacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSignatureSubpacket.h; sourceTree = "<group>"; };
 		7502CEFE1916DCE9001B32D7 /* PGPSignatureSubpacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSignatureSubpacket.m; sourceTree = "<group>"; };
-		7502CF001916EFD5001B32D7 /* NSData+NSValue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "NSData+NSValue.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		7502CF011916EFD5001B32D7 /* NSData+NSValue.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "NSData+NSValue.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		75040AB11926BB35000CEA93 /* ObjectivePGPTestArmor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectivePGPTestArmor.m; sourceTree = "<group>"; };
 		7507B72619170FE3003A2DC7 /* PGPUserIDPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPUserIDPacket.h; sourceTree = "<group>"; };
 		7507B72719170FE3003A2DC7 /* PGPUserIDPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPUserIDPacket.m; sourceTree = "<group>"; };
@@ -354,8 +351,6 @@
 				75B3952C193C8AE900297C8D /* NSData+Stream.m */,
 				759DBA121915B5BD00305549 /* NSData+PGPUtils.h */,
 				759DBA131915B5BD00305549 /* NSData+PGPUtils.m */,
-				7502CF001916EFD5001B32D7 /* NSData+NSValue.h */,
-				7502CF011916EFD5001B32D7 /* NSData+NSValue.m */,
 				75C4F0E11920FF5F005401A4 /* PGPCryptoUtils.h */,
 				75C4F0E21920FF5F005401A4 /* PGPCryptoUtils.m */,
 				758F3A18192935C7009307AD /* NSValue+PGPUtils.h */,
@@ -564,7 +559,6 @@
 				7597B79C192E9C7F003ABC65 /* PGPPKCSEmsa.m in Sources */,
 				753A65EF19487E3D0011A729 /* PGPSymmetricallyEncryptedDataPacket.m in Sources */,
 				7562858E19239F1B00127E24 /* PGPFingerprint.m in Sources */,
-				7502CF021916EFD5001B32D7 /* NSData+NSValue.m in Sources */,
 				75AE7E29194224CD004DD6A5 /* PGPPKCSEme.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -674,9 +668,21 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3C972ED037044C97BFE1043E /* Pods.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DEFINES_MODULE = YES;
 				DSTROOT = /tmp/ObjectivePGP.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ObjectivePGP/ObjectivePGP-Prefix.pch";
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
 				PRODUCT_NAME = ObjectivePGP;
 				SKIP_INSTALL = YES;
 			};
@@ -686,9 +692,21 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3C972ED037044C97BFE1043E /* Pods.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				DEFINES_MODULE = YES;
 				DSTROOT = /tmp/ObjectivePGP.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ObjectivePGP/ObjectivePGP-Prefix.pch";
+				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
+				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
+				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
+				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
+				GCC_WARN_SHADOW = YES;
+				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
 				PRODUCT_NAME = ObjectivePGP;
 				SKIP_INSTALL = YES;
 			};

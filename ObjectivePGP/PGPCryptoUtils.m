@@ -9,8 +9,6 @@
 #import "PGPCryptoUtils.h"
 
 #import <CommonCrypto/CommonCrypto.h>
-#import <CommonCrypto/CommonDigest.h>
-#import <CommonCrypto/CommonCryptor.h>
 
 #include <openssl/cast.h>
 #include <openssl/idea.h>

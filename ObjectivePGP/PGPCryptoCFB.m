@@ -10,6 +10,7 @@
 #import "PGPTypes.h"
 #import "PGPS2K.h"
 #import "PGPCryptoUtils.h"
+#import "NSData+PGPUtils.h"
 
 #import <CommonCrypto/CommonCrypto.h>
 #import <CommonCrypto/CommonDigest.h>
@@ -106,7 +107,7 @@
             }
             
             int num = 0;
-            DES_ede3_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, &keys[0], &keys[1], &keys[2], (DES_cblock *)ivData.bytes, &num, decrypt ? DES_DECRYPT : DES_ENCRYPT);
+            DES_ede3_cfb64_encrypt(encryptedBytes, outBuffer, outButterLength, &keys[0], &keys[1], &keys[2], (DES_cblock *)(void *)ivData.bytes, &num, decrypt ? DES_DECRYPT : DES_ENCRYPT);
             decryptedData = [NSData dataWithBytes:outBuffer length:outButterLength];
             
             if (keys) free(keys);

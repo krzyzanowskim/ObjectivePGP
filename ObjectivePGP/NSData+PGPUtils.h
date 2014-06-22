@@ -22,5 +22,6 @@
 - (NSData*) pgpRIPEMD160;
 
 - (NSData *) pgpHashedWithAlgorithm:(PGPHashAlgorithm)hashAlgorithm;
+- (NSData *) encryptBlockWithSymmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm sessionKeyData:(NSData *)sessionKeyData;
 
 @end
