@@ -164,11 +164,6 @@
     PGPSymmetricAlgorithm preferredSymmeticAlgorithm = PGPSymmetricCAST5; // [publicKey preferredSymmetricAlgorithm];
     //PGPSymmetricAlgorithm preferredSymmeticAlgorithm = [publicKey preferredSymmetricAlgorithm];
 
-#ifdef DEBUG
-    // THIS IS JUST TESTING, HAVE TO BE RANDOM
-    UInt8 sessionKey[] = {0x06, 0xc0, 0x06, 0x91, 0x91, 0x27, 0x96, 0x64, 0x06, 0x33, 0x9d, 0x71, 0x57, 0xfb, 0x77, 0x04};
-    NSData *sessionKeyData = [NSData dataWithBytes:&sessionKey length:sizeof(sessionKey)];
-#else
     // Random bytes as a string to be used as a key
     NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:preferredSymmeticAlgorithm];
     NSMutableData *sessionKeyData = [NSMutableData data];
@@ -176,8 +171,6 @@
         UInt8 byte = arc4random_uniform(sizeof(UInt8) * 255);
         [sessionKeyData appendBytes:&byte length:1];
     }
-#endif
-    
     
     // Prepare literal packet
     PGPLiteralPacket *literalPacket = [PGPLiteralPacket literalPacket:PGPLiteralPacketBinary withData:dataToEncrypt];

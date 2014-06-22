@@ -103,16 +103,12 @@
     // Instead of using an IV, OpenPGP prefixes a string of length equal to the block size of the cipher plus two to the data before it is encrypted.
     // The first block-size octets (for example, 8 octets for a 64-bit block length) are random,
     NSMutableData *prefixRandomData = [NSMutableData dataWithCapacity:blockSize];
-#ifdef DEBUG
-    UInt8 nonRandomBytes[8] = {0x80, 0xfa, 0x06, 0xcc, 0xe3, 0x7b, 0xa8, 0x7a};
-    prefixRandomData = [[NSMutableData alloc] initWithBytes:nonRandomBytes length:8];
-#else
+
     for (int i = 0; i < blockSize; i++) {
         UInt8 byte = arc4random_uniform(255);
         [prefixRandomData appendBytes:&byte length:1];
     }
-#endif
-                                      
+    
     // and the following two octets are copies of the last two octets of the IV.
     NSMutableData *prefixRandomFullData = [NSMutableData dataWithData:prefixRandomData];
     [prefixRandomFullData appendData:[prefixRandomData subdataWithRange:(NSRange){prefixRandomData.length - 2, 2}]];
