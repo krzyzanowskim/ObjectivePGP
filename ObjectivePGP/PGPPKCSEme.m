@@ -27,7 +27,7 @@
     // be at least eight octets.
     NSMutableData *psData = [NSMutableData data];
     for (NSUInteger i = 0; i < (k - m.length) - 3; i++) {
-        UInt8 b = arc4random_uniform(126) + 1;
+        UInt8 b = arc4random_uniform(254) + 1;
         [psData appendBytes:&b length:1];
     }
     

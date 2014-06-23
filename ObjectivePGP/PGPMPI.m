@@ -27,6 +27,7 @@
     return self;
 }
 
+// parse mpi "packet"
 - (instancetype) initWithMPIData:(NSData *)mpiData atPosition:(NSUInteger)position
 {
     if (self = [self init]) {

@@ -28,5 +28,6 @@
 - (PGPSecretKeyPacket *) decryptedKeyPacket:(NSString *)passphrase error:(NSError * __autoreleasing *)error;
 
 - (PGPMPI *) secretMPI:(NSString *)identifier;
+- (NSData *) decryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm;
 
 @end

@@ -74,10 +74,11 @@
     }
     
     rsa->n = BN_dup([[secretKeyPacket publicMPI:@"N"] bignumRef]);
+    rsa->e = BN_dup([[secretKeyPacket publicMPI:@"E"] bignumRef]);
+    
     rsa->d = BN_dup([[secretKeyPacket secretMPI:@"D"] bignumRef]);
     rsa->p = BN_dup([[secretKeyPacket secretMPI:@"Q"] bignumRef]);	/* p and q are round the other way in openssl */
     rsa->q = BN_dup([[secretKeyPacket secretMPI:@"P"] bignumRef]);
-    rsa->e = BN_dup([[secretKeyPacket publicMPI:@"E"] bignumRef]);
     
     if (rsa->d == NULL) {
         return nil;
@@ -98,7 +99,7 @@
     }
 
     UInt8 *outbuf = calloc(RSA_size(rsa), sizeof(UInt8));
-    int t = RSA_private_decrypt((int)secretKeyPacket.keySize, (UInt8 *)toDecrypt.bytes, outbuf, rsa, RSA_NO_PADDING);
+    int t = RSA_private_decrypt((int)secretKeyPacket.keySize, toDecrypt.bytes, outbuf, rsa, RSA_NO_PADDING);
     if (t < 0) {
         ERR_load_crypto_strings();
         SSL_load_error_strings();
@@ -209,12 +210,22 @@
         return nil;
     }
 
-    uint8_t *decrypted_em = calloc(RSA_size(rsa) - 11, sizeof(UInt8));
+    UInt8 *decrypted_em = calloc(RSA_size(rsa) - 11, sizeof(UInt8));
     int em_len = RSA_public_decrypt((int)toDecrypt.length, toDecrypt.bytes, decrypted_em, rsa, RSA_NO_PADDING);
 
     if (em_len != publicKeyPacket.keySize) {
         free(decrypted_em);
         RSA_free(rsa);
+        
+        ERR_load_crypto_strings();
+        SSL_load_error_strings();
+        
+        unsigned long err_code = ERR_get_error();
+        char *errBuf = calloc(512, sizeof(UInt8));
+        ERR_error_string(err_code, errBuf);
+        NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
+        free(errBuf);
+
         return nil;
     }
 

@@ -230,6 +230,34 @@
     return nil;
 }
 
+- (PGPPacket *) decryptionKeyPacket
+{
+    NSAssert(self.type == PGPKeySecret, @"Need secret key to encrypt");
+    if (self.type == PGPKeyPublic) {
+        NSLog(@"Need public key to encrypt");
+        return nil;
+    }
+    
+    for (PGPSubKey *subKey in self.subKeys) {
+        PGPSignaturePacket *signaturePacket = subKey.bindingSignature;
+        if (signaturePacket.canBeUsedToEncrypt) {
+            return subKey.keyPacket;
+        }
+    }
+    
+    // check primary user self certificates
+    PGPSignaturePacket *primaryUserSelfCertificate = nil;
+    [self primaryUserAndSelfCertificate:&primaryUserSelfCertificate];
+    if (primaryUserSelfCertificate)
+    {
+        if (primaryUserSelfCertificate.canBeUsedToEncrypt) {
+            return self.primaryKeyPacket;
+        }
+    }
+    
+    return nil;
+}
+
 // Note: After decryption encrypted packets are replaced with new decrypted instances on key.
 - (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error
 {

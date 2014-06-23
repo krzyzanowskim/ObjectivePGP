@@ -16,6 +16,7 @@
 #import "PGPCryptoUtils.h"
 #import "NSData+PGPUtils.h"
 #import "PGPCryptoCFB.h"
+#import "PGPPublicKeyRSA.h"
 
 #import <CommonCrypto/CommonCrypto.h>
 #import <CommonCrypto/CommonDigest.h>
@@ -323,6 +324,27 @@
         }
     }
     return encryptedKey;
+}
+
+#pragma mark - Decrypt
+
+- (NSData *) decryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm
+{
+    switch (publicKeyAlgorithm) {
+        case PGPPublicKeyAlgorithmRSA:
+        case PGPPublicKeyAlgorithmRSAEncryptOnly:
+        case PGPPublicKeyAlgorithmRSASignOnly:
+        {
+            // return ecnrypted m
+            return [PGPPublicKeyRSA privateDecrypt:data withSecretKeyPacket:self];
+        }
+            break;
+        default:
+            //TODO: add algorithms
+            [NSException raise:@"PGPNotSupported" format:@"Algorith not supported"];
+            break;
+    }
+    return nil;
 }
 
 #pragma mark - Private

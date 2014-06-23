@@ -13,10 +13,13 @@
 #import "NSData+PGPUtils.h"
 #import "PGPPKCSEme.h"
 #import "PGPPublicKeyPacket.h"
+#import "PGPSecretKeyPacket.h"
 #import "PGPMPI.h"
+#import "PGPPublicKeyRSA.h"
+#import "PGPFingerprint.h"
 
 @interface PGPPublicKeyEncryptedSessionKeyPacket ()
-@property (strong) NSData *encryptedMPI_M;
+@property (strong) PGPMPI *encryptedMPI_M;
 @end
 
 @implementation PGPPublicKeyEncryptedSessionKeyPacket
@@ -60,8 +63,9 @@
     //   RSA 1 MPI
     //   Elgamal 2 MPI
     
-    self.encryptedMPI_M = [packetBody subdataWithRange:(NSRange) {position, packetBody.length - position}];
-    position = position + self.encryptedMPI_M.length;
+    NSData *encryptedMPI_MData = [packetBody subdataWithRange:(NSRange) {position, packetBody.length - position}];
+    self.encryptedMPI_M = [[PGPMPI alloc] initWithMPIData:encryptedMPI_MData atPosition:0];
+    position = position + encryptedMPI_MData.length;
     
     self.encrypted = YES;
     
@@ -71,13 +75,16 @@
 - (NSData *)exportPacket:(NSError *__autoreleasing *)error
 {
     NSAssert(self.encryptedMPI_M, @"Missing encrypted mpi m");
+    if (!self.encryptedMPI_M) {
+        return nil;
+    }
     
     NSMutableData *bodyData = [NSMutableData data];
     
     [bodyData appendBytes:&_version length:1]; //1
     [bodyData appendData:[self.keyID exportKeyData]]; //8
     [bodyData appendBytes:&_publicKeyAlgorithm length:1]; //1
-    [bodyData appendData:self.encryptedMPI_M]; // m
+    [bodyData appendData:[self.encryptedMPI_M exportMPI]]; // m
     
     NSMutableData *data = [NSMutableData data];
     NSData *headerData = [self buildHeaderData:bodyData];
@@ -87,17 +94,37 @@
     return [data copy];
 }
 
-- (PGPPublicKeyEncryptedSessionKeyPacket *) decryptedPacket
+- (NSData *) decryptSessionKey:(PGPSecretKeyPacket *)secretKeyPacket error:(NSError * __autoreleasing *)error
 {
+    NSAssert(!secretKeyPacket.isEncrypted, @"Secret key can't be encrypted");
+    
+    PGPKeyID *secretKeyKeyID = [[PGPKeyID alloc] initWithFingerprint:secretKeyPacket.fingerprint];
+    if (![self.keyID isEqualToKeyID:secretKeyKeyID]) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Invalid secret key used to decrypt session key, expected %@, got %@",self.keyID, secretKeyKeyID] }];
+        }
+        return nil;
+    }
+    
     //TODO: decrypy from message decrypt
     // __ops_get_seckey_cb
-    PGPPublicKeyEncryptedSessionKeyPacket *decryptedPacket = [self copy];
-    decryptedPacket.encrypted = NO;
     
     // get pubkey by id
     
+    // encrypted m value
+    NSData *encryptedM = [self.encryptedMPI_M bodyData];
+    
+    // decrypted m value
+    NSData *mEMEEncoded = [secretKeyPacket decryptData:encryptedM withPublicKeyAlgorithm:self.publicKeyAlgorithm];
+    NSData *decodedM = [PGPPKCSEme decodeMessage:mEMEEncoded error:error];
+    if (error && *error) {
+        return nil;
+    }
+    
+//    PGPMPI *decryptedMPI_M = [[PGPMPI alloc] initWithData:decodedM];
+    
     // pkESKeyPacket.decrypt(privateKeyPacket);
-    return decryptedPacket;
+    return nil;
 }
 
 // encryption update self.encryptedMPIsPartData
@@ -132,9 +159,12 @@
     unsigned int k = (unsigned)BN_num_bytes(nBigNumRef);
     
     NSData *mEMEEncoded = [PGPPKCSEme encodeMessage:mData keyModulusLength:k error:error];
+    
+    
+    //FIXME: tutu
     NSData *encryptedData = [publicKeyPacket encryptData:mEMEEncoded withPublicKeyAlgorithm:self.publicKeyAlgorithm];
     PGPMPI *mpiEncoded = [[PGPMPI alloc] initWithData:encryptedData];
-    self.encryptedMPI_M = [mpiEncoded exportMPI];
+    self.encryptedMPI_M = mpiEncoded;
 }
 
 

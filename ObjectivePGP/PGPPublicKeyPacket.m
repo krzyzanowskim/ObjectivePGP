@@ -285,7 +285,7 @@
     return [data copy];
 }
 
-#pragma mark - Encrypt
+#pragma mark - Encrypt & Decrypt
 
 - (NSData *) encryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm
 {

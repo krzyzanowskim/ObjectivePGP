@@ -35,4 +35,32 @@
     return self.hashedData.length;
 }
 
+- (NSUInteger)hash
+{
+    const NSUInteger prime = 31;
+    NSUInteger result = 1;
+    result = prime * result + [_hashedData hash];
+    result = prime * result + [_keyData hash];
+    return result;
+}
+
+- (BOOL)isEqual:(id)object
+{
+    if (self == object) {
+        return YES;
+    }
+    
+    if ([self class] != [object class]) {
+        return NO;
+    }
+    
+    PGPFingerprint *other = object;
+    return [self.keyData isEqualToData:other.keyData] && [self.hashedData isEqualToData:other.hashedData];
+}
+
+- (BOOL) isEqualToFingerprint:(PGPFingerprint *)fingerprint
+{
+    return [self isEqual:fingerprint];
+}
+
 @end

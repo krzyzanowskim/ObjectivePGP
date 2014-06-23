@@ -40,5 +40,6 @@
 - (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPKey *)publicKey;
 
 - (NSData *) encryptData:(NSData *)dataToEncrypt usingPublicKey:(PGPKey *)publicKey armored:(BOOL)armored error:(NSError * __autoreleasing *)error;
+- (NSData *) decryptData:(NSData *)dataToDecrypt usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase error:(NSError * __autoreleasing *)error;
 
 @end

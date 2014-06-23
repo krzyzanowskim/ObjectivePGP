@@ -91,6 +91,21 @@
 //    return [PGPPublicKeyRSA privateDecrypt:self.encryptedData withSecretKeyPacket:secretKeyPacket];
 //}
 
+- (NSData *) decryptWithSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket passphrase:(NSString *)passphrase error:(NSError * __autoreleasing *)error
+{
+    NSAssert(secretKeyPacket, @"Missing secret key");
+    
+    PGPSecretKeyPacket *decryptionSecretKey = secretKeyPacket;
+    if (secretKeyPacket.isEncrypted) {
+        decryptionSecretKey = [secretKeyPacket decryptedKeyPacket:passphrase error:error];
+        if (error && *error) {
+            return nil;
+        }
+    }
+    
+    return nil;
+}
+
 - (void) encrypt:(NSData *)literalPacketData withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm sessionKeyData:(NSData *)sessionKeyData
 {
     //     OpenPGP does symmetric encryption using a variant of Cipher Feedback mode (CFB mode).

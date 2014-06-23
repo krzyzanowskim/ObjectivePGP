@@ -9,6 +9,10 @@
 #ifndef ObjectivePGP_PGPTypes_h
 #define ObjectivePGP_PGPTypes_h
 
+#ifndef NS_DESIGNATED_INITIALIZER
+#define NS_DESIGNATED_INITIALIZER
+#endif
+
 static NSString * const PGPErrorDomain = @"ObjectivePGP";
 
 typedef NS_ENUM(NSInteger, PGPFormatType) {

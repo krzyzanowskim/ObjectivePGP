@@ -13,6 +13,7 @@
 #import "PGPPacketFactory.h"
 #import "PGPUserIDPacket.h"
 #import "PGPPublicKeyPacket.h"
+#import "PGPSecretKeyPacket.h"
 #import "PGPLiteralPacket.h"
 #import "PGPUser.h"
 #import "PGPOnePassSignaturePacket.h"
@@ -153,7 +154,46 @@
     return nil;
 }
 
-#pragma mark - Encrypt 
+#pragma mark - Encrypt & Decrypt
+
+- (NSData *) decryptData:(NSData *)messageDataToDecrypt usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase error:(NSError * __autoreleasing *)error
+{
+    NSAssert(secretKey, @"Missing secret key");
+        
+    NSAssert([[secretKey decryptionKeyPacket] isKindOfClass:[PGPSecretKeyPacket class]], @"Invalid secret key");
+    PGPSecretKeyPacket *decryptKeyPacket = (PGPSecretKeyPacket *)[secretKey decryptionKeyPacket];
+    
+    if (![decryptKeyPacket isKindOfClass:[PGPSecretKeyPacket class]]) {
+        return nil;
+    }
+    
+    PGPSecretKeyPacket *decryptionSecretKey = decryptKeyPacket;
+    if (decryptionSecretKey.isEncrypted) {
+        decryptionSecretKey = [decryptionSecretKey decryptedKeyPacket:passphrase error:error];
+        if (error && *error) {
+            return nil;
+        }
+    }
+    
+    // parse packets
+    NSArray *packets = [self readPacketsFromData:messageDataToDecrypt];
+    NSLog(@"decrypt packets %@",packets);
+    for (PGPPacket *packet in packets) {
+        switch (packet.tag) {
+            case PGPPublicKeyEncryptedSessionKeyPacketTag:
+            {
+                PGPPublicKeyEncryptedSessionKeyPacket *pkESKPacket = (PGPPublicKeyEncryptedSessionKeyPacket *)packet;
+                NSData *sessionKeyData = [pkESKPacket decryptSessionKey:decryptionSecretKey error:error];
+                NSAssert(sessionKeyData, @"PublicKeyEncryptedSessionKeyPacket decryption failed");
+            }
+                break;
+                
+            default:
+                break;
+        }
+    }
+    return nil;
+}
 
 - (NSData *) encryptData:(NSData *)dataToEncrypt usingPublicKey:(PGPKey *)publicKey armored:(BOOL)armored error:(NSError * __autoreleasing *)error
 {
@@ -455,7 +495,7 @@
         }
     }
 
-    NSArray *parsedKeys = [self readPacketsBinaryData:binRingData];
+    NSArray *parsedKeys = [self readKeysFromData:binRingData];
     if (parsedKeys.count == 0) {
         return nil;
     }
@@ -465,22 +505,40 @@
 
 #pragma mark - Private
 
+- (NSArray *) readPacketsFromData:(NSData *)keyringData
+{
+    NSMutableArray *accumulatedPackets = [NSMutableArray array];
+    NSUInteger offset = 0;
+    
+    while (offset < keyringData.length) {
+        
+        PGPPacket *packet = [PGPPacketFactory packetWithData:keyringData offset:offset];
+        if (packet) {
+            [accumulatedPackets addObject:packet];
+        }
+        
+        offset = offset + packet.headerData.length + packet.bodyData.length;
+    }
+    
+    return [accumulatedPackets copy];
+}
+
 /**
- *  Parse keyring data
+ *  Parse PGP packets data
  *
- *  @param keyringData Keyring data
+ *  @param messageData PGP Message data with packets
  *
  *  @return Array of PGPKey
  */
-- (NSArray *) readPacketsBinaryData:(NSData *)keyringData
+- (NSArray *) readKeysFromData:(NSData *)messageData
 {
     NSMutableArray *keys = [NSMutableArray array];
     NSMutableArray *accumulatedPackets = [NSMutableArray array];
     NSUInteger offset = 0;
 
-    while (offset < keyringData.length) {
+    while (offset < messageData.length) {
         
-        PGPPacket *packet = [PGPPacketFactory packetWithData:keyringData offset:offset];
+        PGPPacket *packet = [PGPPacketFactory packetWithData:messageData offset:offset];
         if (packet) {
             if ((accumulatedPackets.count > 1) && ((packet.tag == PGPPublicKeyPacketTag) || (packet.tag == PGPSecretKeyPacketTag))) {
                 PGPKey *key = [[PGPKey alloc] initWithPackets:accumulatedPackets];
@@ -498,8 +556,7 @@
         [keys addObject:key];
         [accumulatedPackets removeAllObjects];
     }
-
-
+    
     return [keys copy];
 }
 

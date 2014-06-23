@@ -21,6 +21,7 @@
 #import "PGPCompressedPacket.h"
 #import "PGPSymmetricallyEncryptedDataPacket.h"
 #import "PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h"
+#import "PGPPublicKeyEncryptedSessionKeyPacket.h"
 
 @implementation PGPPacketFactory
 
@@ -88,6 +89,9 @@
                 break;
             case PGPSymmetricallyEncryptedIntegrityProtectedDataPacketTag:
                 packet = [[PGPSymmetricallyEncryptedIntegrityProtectedDataPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+                break;
+            case PGPPublicKeyEncryptedSessionKeyPacketTag:
+                packet = [[PGPPublicKeyEncryptedSessionKeyPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
                 break;
             default:
                 #ifdef DEBUG

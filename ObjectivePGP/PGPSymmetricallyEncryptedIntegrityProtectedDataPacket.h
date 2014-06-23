@@ -14,7 +14,6 @@
 @interface PGPSymmetricallyEncryptedIntegrityProtectedDataPacket : PGPSymmetricallyEncryptedDataPacket
 @property (assign) NSUInteger version;
 
-//- (NSData *) decrypt:(PGPSecretKeyPacket *)secretKeyPacket;
 - (void) encrypt:(NSData *)toEncrypt withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm sessionKeyData:(NSData *)sessionKeyData;
 
 @end

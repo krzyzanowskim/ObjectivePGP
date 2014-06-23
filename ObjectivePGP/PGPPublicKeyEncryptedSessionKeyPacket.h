@@ -8,7 +8,7 @@
 
 #import "PGPPacket.h"
 
-@class PGPKeyID, PGPPublicKeyPacket;
+@class PGPKeyID, PGPPublicKeyPacket, PGPSecretKeyPacket;
 
 @interface PGPPublicKeyEncryptedSessionKeyPacket : PGPPacket <NSCopying>
 @property (assign) UInt8 version;
@@ -17,5 +17,6 @@
 @property (assign, getter = isEncrypted) BOOL encrypted;
 
 - (void) encrypt:(PGPPublicKeyPacket *)publicKeyPacket sessionKeyData:(NSData *)sessionKeyData sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm error:(NSError * __autoreleasing *)error;
+- (NSData *) decryptSessionKey:(PGPSecretKeyPacket *)secretKeyPacket error:(NSError * __autoreleasing *)error;
 
 @end

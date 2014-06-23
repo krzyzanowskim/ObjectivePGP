@@ -16,4 +16,6 @@
 - (NSString *) description;
 - (NSUInteger) hashLength;
 
+- (BOOL) isEqualToFingerprint:(PGPFingerprint *)fingerprint;
+
 @end
