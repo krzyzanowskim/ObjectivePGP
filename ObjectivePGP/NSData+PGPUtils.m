@@ -31,7 +31,7 @@
 - (UInt16) pgpChecksum
 {
     UInt16 s = 0;
-    UInt8 *bytes = (UInt8 *)self.bytes;
+    const UInt8 *bytes = self.bytes;
     for (NSUInteger i = 0; i < self.length; i++) {
         s = (s + (UInt8)bytes[i]);
     }
@@ -46,7 +46,7 @@
 {
     UInt32 crc = CRC24_INIT;
     NSUInteger len = self.length;
-    UInt8 *octets = (UInt8 *)self.bytes;
+    const UInt8 *octets = self.bytes;
     int i;
     while (len--) {
         crc ^= (*octets++) << 16;

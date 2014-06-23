@@ -63,14 +63,16 @@
     position = position + 1;
 
     // filename
-    self.filename = [[NSString alloc] initWithData:[packetBody subdataWithRange:(NSRange){position, filenameLength}] encoding:NSUTF8StringEncoding];
-    position = position + filenameLength;
+    if (filenameLength > 0) {
+        self.filename = [[NSString alloc] initWithData:[packetBody subdataWithRange:(NSRange){position, filenameLength}] encoding:NSUTF8StringEncoding];
+        position = position + filenameLength;
+    }
 
     // If the special name "_CONSOLE" is used, the message is considered to be "for your eyes only".
 
     // data date
     UInt32 creationTimestamp = 0;
-    [packetBody getBytes:&creationTimestamp length:4];
+    [packetBody getBytes:&creationTimestamp range:(NSRange){position, 4}];
     creationTimestamp = CFSwapInt32BigToHost(creationTimestamp);
     self.timestamp = [NSDate dateWithTimeIntervalSince1970:creationTimestamp];
     position = position + 4;
@@ -115,7 +117,7 @@
     }
 
     if (self.timestamp) {
-        UInt32 timestampBytes = [self.timestamp timeIntervalSince1970];
+        UInt32 timestampBytes = (UInt32)[self.timestamp timeIntervalSince1970];
         timestampBytes = CFSwapInt32HostToBig(timestampBytes);
         [bodyData appendBytes:&timestampBytes length:4];
     } else {

@@ -178,13 +178,35 @@
     // parse packets
     NSArray *packets = [self readPacketsFromData:messageDataToDecrypt];
     NSLog(@"decrypt packets %@",packets);
+    
+    PGPSymmetricAlgorithm sessionKeyAlgorithm = 0;
+    NSData *sessionKeyData = nil;
+    NSData *decryptedData = nil;
+    
     for (PGPPacket *packet in packets) {
         switch (packet.tag) {
             case PGPPublicKeyEncryptedSessionKeyPacketTag:
             {
                 PGPPublicKeyEncryptedSessionKeyPacket *pkESKPacket = (PGPPublicKeyEncryptedSessionKeyPacket *)packet;
-                NSData *sessionKeyData = [pkESKPacket decryptSessionKey:decryptionSecretKey error:error];
+                sessionKeyData = [pkESKPacket decryptSessionKeyData:decryptionSecretKey sessionKeyAlgorithm:&sessionKeyAlgorithm error:error];
                 NSAssert(sessionKeyData, @"PublicKeyEncryptedSessionKeyPacket decryption failed");
+                NSAssert(sessionKeyAlgorithm > 0, @"Invalid session key algorithm");
+                
+                if (!sessionKeyData) {
+                    return nil;
+                }
+                // use decrypted sessionKeyData to decrypt literal packet
+            }
+                break;
+            case PGPSymmetricallyEncryptedIntegrityProtectedDataPacketTag:
+            {
+                NSAssert(sessionKeyData, @"Missing session key data");
+                // decrypt PGPSymmetricallyEncryptedIntegrityProtectedDataPacket
+                PGPSymmetricallyEncryptedIntegrityProtectedDataPacket *symEncryptedDataPacket = (PGPSymmetricallyEncryptedIntegrityProtectedDataPacket *)packet;
+                decryptedData = [symEncryptedDataPacket decryptWithSecretKeyPacket:decryptionSecretKey sessionKeyAlgorithm:sessionKeyAlgorithm sessionKeyData:sessionKeyData error:error];
+                if (!decryptedData) {
+                    return nil;
+                }
             }
                 break;
                 
@@ -192,7 +214,7 @@
                 break;
         }
     }
-    return nil;
+    return decryptedData;
 }
 
 - (NSData *) encryptData:(NSData *)dataToEncrypt usingPublicKey:(PGPKey *)publicKey armored:(BOOL)armored error:(NSError * __autoreleasing *)error
@@ -201,7 +223,6 @@
     NSMutableData *encryptedMessage = [NSMutableData data];
     
     //PGPPublicKeyEncryptedSessionKeyPacket goes here
-    //PGPSymmetricAlgorithm preferredSymmeticAlgorithm = PGPSymmetricCAST5; // [publicKey preferredSymmetricAlgorithm];
     PGPSymmetricAlgorithm preferredSymmeticAlgorithm = [publicKey preferredSymmetricAlgorithm];
 
     // Random bytes as a string to be used as a key

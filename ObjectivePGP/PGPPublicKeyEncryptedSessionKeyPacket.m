@@ -17,6 +17,7 @@
 #import "PGPMPI.h"
 #import "PGPPublicKeyRSA.h"
 #import "PGPFingerprint.h"
+#import "PGPCryptoUtils.h"
 
 @interface PGPPublicKeyEncryptedSessionKeyPacket ()
 @property (strong) PGPMPI *encryptedMPI_M;
@@ -94,9 +95,12 @@
     return [data copy];
 }
 
-- (NSData *) decryptSessionKey:(PGPSecretKeyPacket *)secretKeyPacket error:(NSError * __autoreleasing *)error
+- (NSData *) decryptSessionKeyData:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm *)sessionKeyAlgorithm error:(NSError * __autoreleasing *)error
 {
     NSAssert(!secretKeyPacket.isEncrypted, @"Secret key can't be encrypted");
+    
+    //FIXME: klucz jest odczytywany z pakietu więc tak naprawdę nie powinien być przekazywany jako parametr
+    //       bo wcześniej nie wiadomo jaki to będzie klucz
     
     PGPKeyID *secretKeyKeyID = [[PGPKeyID alloc] initWithFingerprint:secretKeyPacket.fingerprint];
     if (![self.keyID isEqualToKeyID:secretKeyKeyID]) {
@@ -106,25 +110,40 @@
         return nil;
     }
     
-    //TODO: decrypy from message decrypt
-    // __ops_get_seckey_cb
-    
-    // get pubkey by id
-    
     // encrypted m value
     NSData *encryptedM = [self.encryptedMPI_M bodyData];
     
     // decrypted m value
     NSData *mEMEEncoded = [secretKeyPacket decryptData:encryptedM withPublicKeyAlgorithm:self.publicKeyAlgorithm];
-    NSData *decodedM = [PGPPKCSEme decodeMessage:mEMEEncoded error:error];
+    NSData *mData = [PGPPKCSEme decodeMessage:mEMEEncoded error:error];
     if (error && *error) {
         return nil;
     }
     
-//    PGPMPI *decryptedMPI_M = [[PGPMPI alloc] initWithData:decodedM];
+    NSUInteger position = 0;
+    PGPSymmetricAlgorithm sessionKeyAlgorithmRead;
+    [mData getBytes:&sessionKeyAlgorithmRead range:(NSRange){position, 1}];
+    *sessionKeyAlgorithm = sessionKeyAlgorithmRead;
+    position = position + 1;
     
-    // pkESKeyPacket.decrypt(privateKeyPacket);
-    return nil;
+    NSUInteger sessionKeySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:sessionKeyAlgorithmRead];
+    NSData *sessionKeyData = [mData subdataWithRange:(NSRange){position, sessionKeySize}];
+    position = position + sessionKeySize;
+    
+    UInt16 checksum = 0;
+    [mData getBytes:&checksum range:(NSRange){position,2}];
+    checksum = CFSwapInt16BigToHost(checksum);
+    
+    // validate checksum
+    UInt16 calculatedChecksum = [sessionKeyData pgpChecksum];
+    if (calculatedChecksum != checksum) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Invalid session key, checksum mismatch"}];
+        }
+        return nil;
+    }
+    
+    return sessionKeyData;
 }
 
 // encryption update self.encryptedMPIsPartData
@@ -145,7 +164,7 @@
     
     [mData appendBytes:&sessionKeyAlgorithm length:1];
     
-    [mData appendData:sessionKeyData];
+    [mData appendData:sessionKeyData]; // keySize
     
     UInt16 checksum = [sessionKeyData pgpChecksum];
     checksum = CFSwapInt16HostToBig(checksum);
@@ -159,9 +178,6 @@
     unsigned int k = (unsigned)BN_num_bytes(nBigNumRef);
     
     NSData *mEMEEncoded = [PGPPKCSEme encodeMessage:mData keyModulusLength:k error:error];
-    
-    
-    //FIXME: tutu
     NSData *encryptedData = [publicKeyPacket encryptData:mEMEEncoded withPublicKeyAlgorithm:self.publicKeyAlgorithm];
     PGPMPI *mpiEncoded = [[PGPMPI alloc] initWithData:encryptedData];
     self.encryptedMPI_M = mpiEncoded;

@@ -17,6 +17,6 @@
 @property (assign, getter = isEncrypted) BOOL encrypted;
 
 - (void) encrypt:(PGPPublicKeyPacket *)publicKeyPacket sessionKeyData:(NSData *)sessionKeyData sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm error:(NSError * __autoreleasing *)error;
-- (NSData *) decryptSessionKey:(PGPSecretKeyPacket *)secretKeyPacket error:(NSError * __autoreleasing *)error;
+- (NSData *) decryptSessionKeyData:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm *)sessionKeyAlgorithm error:(NSError * __autoreleasing *)error;
 
 @end

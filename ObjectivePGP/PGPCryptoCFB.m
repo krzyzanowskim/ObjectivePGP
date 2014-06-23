@@ -83,15 +83,11 @@
             AES_KEY encrypt_key;
             AES_set_encrypt_key(sessionKeyData.bytes, (unsigned int)keySize * 8, &encrypt_key);
             
-            AES_KEY decrypt_key;
-            AES_set_decrypt_key(sessionKeyData.bytes, (unsigned int)keySize * 8, &decrypt_key);
-            
             int num = 0;
-            AES_cfb128_encrypt(encryptedBytes, outBuffer, outBufferLength, decrypt ? &decrypt_key : &encrypt_key, iv, &num, decrypt ? AES_DECRYPT : AES_ENCRYPT);
+            AES_cfb128_encrypt(encryptedBytes, outBuffer, outBufferLength, &encrypt_key, iv, &num, decrypt ? AES_DECRYPT : AES_ENCRYPT);
             decryptedData = [NSData dataWithBytes:outBuffer length:outBufferLength];
             
             memset(&encrypt_key, 0, sizeof(AES_KEY));
-            memset(&decrypt_key, 0, sizeof(AES_KEY));
         }
             break;
         case PGPSymmetricIDEA:

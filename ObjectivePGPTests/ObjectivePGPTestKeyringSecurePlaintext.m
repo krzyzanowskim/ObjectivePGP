@@ -204,19 +204,22 @@
     BOOL status = [encryptedData writeToFile:fileEncrypted atomically:YES];
     XCTAssertTrue(status);
 
-    // decrypt
+    // decrypt + validate decrypted message
     NSData *decryptedData = [self.oPGP decryptData:encryptedData usingSecretKey:keyToDecrypt passphrase:@"1234" error:nil];
-    XCTAssertNil(decryptedData);
+    XCTAssertNotNil(decryptedData);
+    NSString *decryptedString = [[NSString alloc] initWithData:decryptedData encoding:NSASCIIStringEncoding];
+    XCTAssertNotNil(decryptedString);
+    XCTAssertEqualObjects(decryptedString, PLAINTEXT, @"Decrypted data mismatch");
     
-//    // ARMORED
-//    NSData *encryptedDataArmored = [self.oPGP encryptData:plainData usingPublicKey:keyToEncrypt armored:YES error:&encryptError];
-//    XCTAssertNil(encryptError);
-//    XCTAssertNotNil(encryptedDataArmored);
-//
-//    NSString *fileEncryptedArmored = [self.workingDirectory stringByAppendingPathComponent:@"plaintext.encrypted.armored"];
-//    NSLog(@"%@",fileEncryptedArmored);
-//    status = [encryptedDataArmored writeToFile:fileEncryptedArmored atomically:YES];
-//    XCTAssertTrue(status);
+    // ARMORED
+    NSData *encryptedDataArmored = [self.oPGP encryptData:plainData usingPublicKey:keyToEncrypt armored:YES error:&encryptError];
+    XCTAssertNil(encryptError);
+    XCTAssertNotNil(encryptedDataArmored);
+
+    NSString *fileEncryptedArmored = [self.workingDirectory stringByAppendingPathComponent:@"plaintext.encrypted.armored"];
+    NSLog(@"%@",fileEncryptedArmored);
+    status = [encryptedDataArmored writeToFile:fileEncryptedArmored atomically:YES];
+    XCTAssertTrue(status);
 }
 
 @end
