@@ -73,7 +73,7 @@
     XCTAssertEqualObjects([secretKey.keyID longKeyString], @"9528AAA17A9BC007", @"Invalid key identifier");
 }
 
-- (void)testDecryption
+- (void)testKeyDecryption
 {
     [self.oPGP importKeysFromFile:self.secKeyringPath];
 

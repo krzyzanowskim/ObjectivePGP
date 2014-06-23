@@ -438,8 +438,9 @@
         return nil;
     }
 
-    NSData *fileData = [NSData dataWithContentsOfFile:fullPath];
-    if (!fileData) {
+    NSError *error = nil;
+    NSData *fileData = [NSData dataWithContentsOfFile:fullPath options:NSDataReadingMappedIfSafe | NSDataReadingUncached error:&error];
+    if (!fileData || error) {
         return nil;
     }
 
