@@ -15,6 +15,7 @@
 #import "NSData+PGPUtils.h"
 #import "PGPModificationDetectionCodePacket.h"
 #import "PGPLiteralPacket.h"
+#import "PGPCompressedPacket.h"
 #import "PGPModificationDetectionCodePacket.h"
 
 #import <CommonCrypto/CommonCrypto.h>
@@ -127,12 +128,34 @@
         return nil;
     }
     
-    // read literal packet data
-    //TODO: litera OR compressed packet
-    PGPLiteralPacket *literalPacket = (PGPLiteralPacket *)[PGPPacketFactory packetWithData:decryptedData offset:position];
-    NSAssert([literalPacket isKindOfClass:[PGPLiteralPacket class]], @"Invalid packet, expected Literal packet");
-    NSData *literalPacketData = [decryptedData subdataWithRange:(NSRange){position, literalPacket.headerData.length + literalPacket.bodyData.length}];
-    position = position + literalPacket.headerData.length + literalPacket.bodyData.length;
+    // read literal (or compressed) packet data
+    PGPPacket* plaintextPacket = [PGPPacketFactory packetWithData:decryptedData offset:position];
+    NSData *plaintextPacketData = [decryptedData subdataWithRange:(NSRange){position, plaintextPacket.headerData.length + plaintextPacket.bodyData.length}];
+    position = position + plaintextPacket.headerData.length + plaintextPacket.bodyData.length;
+    
+    NSData *plaintextData = nil;
+    switch (plaintextPacket.tag) {
+        case PGPLiteralDataPacketTag:
+        {
+            PGPLiteralPacket *literalPacket = (PGPLiteralPacket *)plaintextPacket;
+            plaintextData = literalPacket.literalRawData;
+        }
+            break;
+        case PGPCompressedDataPacketTag:
+        {
+            PGPCompressedPacket *compressedPacket = (PGPCompressedPacket *)plaintextPacket;
+            NSData *literalPacketData = compressedPacket.decompressedData;
+            PGPLiteralPacket *literalPacket = (PGPLiteralPacket *)[PGPPacketFactory packetWithData:literalPacketData offset:0];
+            plaintextData = literalPacket.literalRawData;
+        }
+            break;
+        default:
+            if (error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Unknown packet (expected literal or compressed)"}];
+            }
+            return nil;
+            break;
+    }
 
     // mdc packet
     PGPModificationDetectionCodePacket *mdcPacket = (PGPModificationDetectionCodePacket *)[PGPPacketFactory packetWithData:decryptedData offset:position];
@@ -143,7 +166,7 @@
     // preamble
     [toMDCData appendData:prefixRandomFullData];
     // plaintext
-    [toMDCData appendData:literalPacketData];
+    [toMDCData appendData:plaintextPacketData];
     // and then also includes two octets of values 0xD3, 0x14 (sha length)
     UInt8 mdc_suffix[2] = {0xD3, 0x14};
     [toMDCData appendBytes:&mdc_suffix length:2];
@@ -156,7 +179,7 @@
         return nil;
     }
     
-    return literalPacket.literalRawData;
+    return plaintextData;
 }
 
 - (void) encrypt:(NSData *)literalPacketData withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket symmetricAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData

@@ -36,33 +36,45 @@
             break;
 
         default:
-            @throw [NSException exceptionWithName:@"Unknown Compression" reason:@"Given compression algoritm is not supported" userInfo:nil];
+            if (error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"This type of compression is not supported"}];
+            }
+            @throw [NSException exceptionWithName:@"Unsupported Compression" reason:@"Compression type is not supported" userInfo:nil];
             break;
     }
 
+    compressedData = nil;
     return position;
 }
 
 - (NSData *)exportPacket:(NSError *__autoreleasing *)error
 {
-    NSMutableData *packetBody = [NSMutableData data];
+    NSMutableData *bodyData = [NSMutableData data];
     
     // - One octet that gives the algorithm used to compress the packet.
-    [packetBody appendBytes:&_compressionType length:sizeof(_compressionType)];
+    [bodyData appendBytes:&_compressionType length:sizeof(_compressionType)];
     
     // - Compressed data, which makes up the remainder of the packet.
     switch (self.compressionType) {
         case PGPCompressionZLIB:
-            [packetBody appendData:[self.decompressedData zlibCompressed:error]];
+            [bodyData appendData:[self.decompressedData zlibCompressed:error]];
             break;
             
         default:
-            @throw [NSException exceptionWithName:@"Unknown Compression" reason:@"Given compression algoritm is not supported" userInfo:nil];
+            if (error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"This type of compression is not supported"}];
+            }
+            return nil;
             break;
     }
-    [packetBody appendData:[self.decompressedData zlibCompressed:error]];
+    [bodyData appendData:[self.decompressedData zlibCompressed:error]];
     
-    return [packetBody copy];
+    NSMutableData *data = [NSMutableData data];
+    NSData *headerData = [self buildHeaderData:bodyData];
+    [data appendData: headerData];
+    [data appendData: bodyData];
+
+    return [data copy];
 }
 
 @end
