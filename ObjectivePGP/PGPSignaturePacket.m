@@ -194,13 +194,13 @@
     [data appendBytes:&exportVersion length:1];
 
     // One-octet signature type.
-    [data appendBytes:&_type length:sizeof(PGPSignatureType)];
+    [data appendBytes:&_type length:1];
 
     // One-octet public-key algorithm.
-    [data appendBytes:&_publicKeyAlgorithm length:sizeof(PGPPublicKeyAlgorithm)];
+    [data appendBytes:&_publicKeyAlgorithm length:1];
 
     // One-octet hash algorithm.
-    [data appendBytes:&_hashAlgoritm length:sizeof(PGPHashAlgorithm)];
+    [data appendBytes:&_hashAlgoritm length:1];
 
     // hashed Subpackets
     [data appendData:[self buildSubpacketsCollectionData:hashedSubpackets]];
@@ -258,8 +258,9 @@
     NSData *trailerData = [self calculateTrailerFor:signedPartData];
 
     //toHash = toSignData + signedPartData + trailerData;
-    NSMutableData *toHashData = [NSMutableData dataWithData:toSignData];
-    [toHashData appendData:self.rawReadedSignedPartData];
+    NSMutableData *toHashData = [NSMutableData data];
+    [toHashData appendData:toSignData];
+    [toHashData appendData:self.rawReadedSignedPartData ?: signedPartData];
     [toHashData appendData:trailerData];
 
 
@@ -406,10 +407,8 @@
             // of the key packet. (Note that this is an old-style packet header for
             // a key packet with two-octet length.)
 
-            if (self.version == 4) {
-                NSData *keyData = [keyPacket exportPublicPacketOldStyle];
-                [toSignData appendData:keyData];
-            }
+            NSData *keyData = [keyPacket exportPublicPacketOldStyle];
+            [toSignData appendData:keyData];
 
             NSAssert(key.users > 0, @"Key need at least one user");
 
@@ -425,17 +424,19 @@
             }
 
             if (userID.length > 0) {
-                // constant tag (1)
-                UInt8 userIDConstant = 0xB4;
-                [toSignData appendBytes:&userIDConstant length:1];
+                NSData *userIDData = [userID dataUsingEncoding:NSUTF8StringEncoding];
+                if (self.version == 4) {
+                    // constant tag (1)
+                    UInt8 userIDConstant = 0xB4;
+                    [toSignData appendBytes:&userIDConstant length:1];
 
-                // length (4)
-                UInt32 userIDLength = (UInt32)userID.length;
-                userIDLength = CFSwapInt32HostToBig(userIDLength);
-                [toSignData appendBytes:&userIDLength length:4];
-
+                    // length (4)
+                    UInt32 userIDLength = (UInt32)userIDData.length;
+                    userIDLength = CFSwapInt32HostToBig(userIDLength);
+                    [toSignData appendBytes:&userIDLength length:4];
+                }
                 // data
-                [toSignData appendData:[userID dataUsingEncoding:NSUTF8StringEncoding]];
+                [toSignData appendData:userIDData];
             }
             //TODO user attributes alternative
             //UInt8 userAttributeConstant = 0xD1;
@@ -453,16 +454,14 @@
 
 - (NSData *) calculateTrailerFor:(NSData *)signedPartData
 {
+    NSAssert(self.version == 4, @"Not supported signature version");
     if (self.version < 4)
         return nil;
 
     NSMutableData *trailerData = [NSMutableData data];
-    UInt8 version = 0x04;
-    [trailerData appendBytes:&version length:1];
-
-    UInt8 tag = 0xFF;
-    [trailerData appendBytes:&tag length:1];
-
+    UInt8 prefix[2] = {self.version, 0xFF};
+    [trailerData appendBytes:&prefix length:2];
+    
     UInt32 signatureLength = (UInt32)signedPartData.length; // + 6; // ??? (note that this number does not include these final six octets)
     signatureLength = CFSwapInt32HostToBig(signatureLength);
     [trailerData appendBytes:&signatureLength length:4];

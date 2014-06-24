@@ -1,1097 +1,3448 @@
-// !$*UTF8*$!
-{
-	archiveVersion = 1;
-	classes = {
-	};
-	objectVersion = 46;
-	objects = {
-
-/* Begin PBXBuildFile section */
-		7502CEFF1916DCE9001B32D7 /* PGPSignatureSubpacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 7502CEFE1916DCE9001B32D7 /* PGPSignatureSubpacket.m */; };
-		75040AB21926BB35000CEA93 /* ObjectivePGPTestArmor.m in Sources */ = {isa = PBXBuildFile; fileRef = 75040AB11926BB35000CEA93 /* ObjectivePGPTestArmor.m */; };
-		7507B72819170FE3003A2DC7 /* PGPUserIDPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 7507B72719170FE3003A2DC7 /* PGPUserIDPacket.m */; };
-		7508FFC819473AEB00205F76 /* pubring-test.gpg in Resources */ = {isa = PBXBuildFile; fileRef = 7508FFC619473AEB00205F76 /* pubring-test.gpg */; };
-		7508FFC919473AEB00205F76 /* secring-test.gpg in Resources */ = {isa = PBXBuildFile; fileRef = 7508FFC719473AEB00205F76 /* secring-test.gpg */; };
-		750BD0D9193F5AC3005B9840 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 750BD0D7193F5AAD005B9840 /* libz.dylib */; };
-		750EE3C41922C185009E818E /* PGPKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 750EE3C31922C185009E818E /* PGPKey.m */; };
-		751056131940A76F00653C0B /* PGPCryptoCFB.m in Sources */ = {isa = PBXBuildFile; fileRef = 751056121940A76F00653C0B /* PGPCryptoCFB.m */; };
-		751E07361937D53900CA7946 /* PGPOnePassSignaturePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 751E07351937D53900CA7946 /* PGPOnePassSignaturePacket.m */; };
-		753A65EF19487E3D0011A729 /* PGPSymmetricallyEncryptedDataPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 753A65EE19487E3D0011A729 /* PGPSymmetricallyEncryptedDataPacket.m */; };
-		755456C0192843E700E5526B /* PGPArmor.m in Sources */ = {isa = PBXBuildFile; fileRef = 755456BF192843E700E5526B /* PGPArmor.m */; };
-		7556464B1958FF6F00BFA34C /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7556464A1958FF6F00BFA34C /* libbz2.dylib */; };
-		7562858E19239F1B00127E24 /* PGPFingerprint.m in Sources */ = {isa = PBXBuildFile; fileRef = 7562858D19239F1B00127E24 /* PGPFingerprint.m */; };
-		756299B91914DE1A00C5AD3B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B81914DE1A00C5AD3B /* Foundation.framework */; };
-		756299BE1914DE1A00C5AD3B /* ObjectivePGP.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 756299BD1914DE1A00C5AD3B /* ObjectivePGP.h */; };
-		756299C01914DE1A00C5AD3B /* ObjectivePGP.m in Sources */ = {isa = PBXBuildFile; fileRef = 756299BF1914DE1A00C5AD3B /* ObjectivePGP.m */; };
-		756299C71914DE1A00C5AD3B /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299C61914DE1A00C5AD3B /* XCTest.framework */; };
-		756299C81914DE1A00C5AD3B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B81914DE1A00C5AD3B /* Foundation.framework */; };
-		756299CA1914DE1A00C5AD3B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299C91914DE1A00C5AD3B /* UIKit.framework */; };
-		756299CD1914DE1A00C5AD3B /* libObjectivePGP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B51914DE1A00C5AD3B /* libObjectivePGP.a */; };
-		756299D31914DE1A00C5AD3B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 756299D11914DE1A00C5AD3B /* InfoPlist.strings */; };
-		756299D51914DE1A00C5AD3B /* ObjectivePGPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 756299D41914DE1A00C5AD3B /* ObjectivePGPTests.m */; };
-		756299E71915AF0700C5AD3B /* PGPPublicKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 756299E61915AF0700C5AD3B /* PGPPublicKeyPacket.m */; };
-		7563356D19255C1A00414CCC /* PGPUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 7563356C19255C1A00414CCC /* PGPUser.m */; };
-		75633570192582CD00414CCC /* PGPSubKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 7563356F192582CD00414CCC /* PGPSubKey.m */; };
-		7563357619258F1700414CCC /* pubring-test-encrypted.gpg in Resources */ = {isa = PBXBuildFile; fileRef = 7563357219258F1700414CCC /* pubring-test-encrypted.gpg */; };
-		7563357719258F1700414CCC /* pubring-test-plaintext.gpg in Resources */ = {isa = PBXBuildFile; fileRef = 7563357319258F1700414CCC /* pubring-test-plaintext.gpg */; };
-		7563357819258F1700414CCC /* secring-test-encrypted.gpg in Resources */ = {isa = PBXBuildFile; fileRef = 7563357419258F1700414CCC /* secring-test-encrypted.gpg */; };
-		7563357919258F1700414CCC /* secring-test-plaintext.gpg in Resources */ = {isa = PBXBuildFile; fileRef = 7563357519258F1700414CCC /* secring-test-plaintext.gpg */; };
-		7563357B19258F7100414CCC /* ObjectivePGPTestKeyringSecurePlaintext.m in Sources */ = {isa = PBXBuildFile; fileRef = 7563357A19258F7100414CCC /* ObjectivePGPTestKeyringSecurePlaintext.m */; };
-		7563357D1925936900414CCC /* ObjectivePGPTestKeyringSecureEncrypted.m in Sources */ = {isa = PBXBuildFile; fileRef = 7563357C1925936900414CCC /* ObjectivePGPTestKeyringSecureEncrypted.m */; };
-		75734BD119181E5500A54D6E /* PGPPacketFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 75734BD019181E5500A54D6E /* PGPPacketFactory.m */; };
-		75734BD81918462900A54D6E /* PGPTrustPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75734BD71918462900A54D6E /* PGPTrustPacket.m */; };
-		75734BDB191853DF00A54D6E /* PGPKeyID.m in Sources */ = {isa = PBXBuildFile; fileRef = 75734BDA191853DF00A54D6E /* PGPKeyID.m */; };
-		757DDE7C1919371600A30F84 /* PGPPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 757DDE7B1919371600A30F84 /* PGPPacket.m */; };
-		758F3A1A192935C7009307AD /* NSValue+PGPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 758F3A19192935C7009307AD /* NSValue+PGPUtils.m */; };
-		7597B79C192E9C7F003ABC65 /* PGPPKCSEmsa.m in Sources */ = {isa = PBXBuildFile; fileRef = 7597B79B192E9C7F003ABC65 /* PGPPKCSEmsa.m */; };
-		759DBA141915B5BD00305549 /* NSData+PGPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 759DBA131915B5BD00305549 /* NSData+PGPUtils.m */; };
-		759DBA181915CBDF00305549 /* PGPMPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 759DBA171915CBDF00305549 /* PGPMPI.m */; };
-		759FF46919598227005B240C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 759FF46819598227005B240C /* main.m */; };
-		759FF46F19598248005B240C /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 759FF46E19598248005B240C /* libz.dylib */; };
-		759FF4711959824E005B240C /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 759FF4701959824E005B240C /* libbz2.dylib */; };
-		759FF475195982A6005B240C /* PGPCryptoCFB.m in Sources */ = {isa = PBXBuildFile; fileRef = 751056121940A76F00653C0B /* PGPCryptoCFB.m */; };
-		759FF476195982A6005B240C /* PGPKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 750EE3C31922C185009E818E /* PGPKey.m */; };
-		759FF477195982A6005B240C /* PGPSubKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 7563356F192582CD00414CCC /* PGPSubKey.m */; };
-		759FF478195982A6005B240C /* PGPPublicKeyEncryptedSessionKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AE7E251941C567004DD6A5 /* PGPPublicKeyEncryptedSessionKeyPacket.m */; };
-		759FF479195982A6005B240C /* PGPUserIDPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 7507B72719170FE3003A2DC7 /* PGPUserIDPacket.m */; };
-		759FF47A195982A6005B240C /* PGPSignaturePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75E7B6BA19167EFF00C96BAB /* PGPSignaturePacket.m */; };
-		759FF47B195982A6005B240C /* PGPPublicKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 756299E61915AF0700C5AD3B /* PGPPublicKeyPacket.m */; };
-		759FF47C195982A6005B240C /* PGPSecretKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75DA1357191A4E65004C9C76 /* PGPSecretKeyPacket.m */; };
-		759FF47D195982A6005B240C /* PGPOnePassSignaturePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 751E07351937D53900CA7946 /* PGPOnePassSignaturePacket.m */; };
-		759FF47E195982A6005B240C /* PGPPublicSubKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75E7B6B71916493600C96BAB /* PGPPublicSubKeyPacket.m */; };
-		759FF47F195982A6005B240C /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75FE9807193FB46200613549 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.m */; };
-		759FF480195982A6005B240C /* PGPSecretSubKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75DA135A191A4EA6004C9C76 /* PGPSecretSubKeyPacket.m */; };
-		759FF481195982A6005B240C /* ObjectivePGP.m in Sources */ = {isa = PBXBuildFile; fileRef = 756299BF1914DE1A00C5AD3B /* ObjectivePGP.m */; };
-		759FF482195982A6005B240C /* PGPMPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 759DBA171915CBDF00305549 /* PGPMPI.m */; };
-		759FF483195982A6005B240C /* PGPKeyID.m in Sources */ = {isa = PBXBuildFile; fileRef = 75734BDA191853DF00A54D6E /* PGPKeyID.m */; };
-		759FF484195982A6005B240C /* PGPUserAttributePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AEC4671930FC0B00974CBE /* PGPUserAttributePacket.m */; };
-		759FF485195982A6005B240C /* PGPUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 7563356C19255C1A00414CCC /* PGPUser.m */; };
-		759FF486195982A6005B240C /* PGPPublicKeyRSA.m in Sources */ = {isa = PBXBuildFile; fileRef = 75B2450E1933DB89003F24A0 /* PGPPublicKeyRSA.m */; };
-		759FF487195982A6005B240C /* NSData+PGPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 759DBA131915B5BD00305549 /* NSData+PGPUtils.m */; };
-		759FF488195982A6005B240C /* PGPUserAttributeSubpacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AEC46A1930FD3000974CBE /* PGPUserAttributeSubpacket.m */; };
-		759FF489195982A6005B240C /* PGPArmor.m in Sources */ = {isa = PBXBuildFile; fileRef = 755456BF192843E700E5526B /* PGPArmor.m */; };
-		759FF48A195982A6005B240C /* NSValue+PGPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 758F3A19192935C7009307AD /* NSValue+PGPUtils.m */; };
-		759FF48B195982A6005B240C /* NSData+compression.m in Sources */ = {isa = PBXBuildFile; fileRef = 75A5C153193CE3F6008A2543 /* NSData+compression.m */; };
-		759FF48C195982A6005B240C /* PGPS2K.m in Sources */ = {isa = PBXBuildFile; fileRef = 75DA135D191AE1D6004C9C76 /* PGPS2K.m */; };
-		759FF48D195982A6005B240C /* PGPTrustPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75734BD71918462900A54D6E /* PGPTrustPacket.m */; };
-		759FF48E195982A6005B240C /* PGPLiteralPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AEC4641930B5E400974CBE /* PGPLiteralPacket.m */; };
-		759FF48F195982A6005B240C /* PGPPacketFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 75734BD019181E5500A54D6E /* PGPPacketFactory.m */; };
-		759FF490195982A6005B240C /* PGPPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 757DDE7B1919371600A30F84 /* PGPPacket.m */; };
-		759FF491195982A6005B240C /* PGPSignatureSubpacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 7502CEFE1916DCE9001B32D7 /* PGPSignatureSubpacket.m */; };
-		759FF492195982A6005B240C /* PGPCompressedPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75B39529193C6FA100297C8D /* PGPCompressedPacket.m */; };
-		759FF493195982A6005B240C /* PGPCryptoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C4F0E21920FF5F005401A4 /* PGPCryptoUtils.m */; };
-		759FF494195982A6005B240C /* PGPModificationDetectionCodePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C4F0E5192163A3005401A4 /* PGPModificationDetectionCodePacket.m */; };
-		759FF495195982A6005B240C /* NSData+Stream.m in Sources */ = {isa = PBXBuildFile; fileRef = 75B3952C193C8AE900297C8D /* NSData+Stream.m */; };
-		759FF496195982A6005B240C /* PGPPKCSEmsa.m in Sources */ = {isa = PBXBuildFile; fileRef = 7597B79B192E9C7F003ABC65 /* PGPPKCSEmsa.m */; };
-		759FF497195982A6005B240C /* PGPSymmetricallyEncryptedDataPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 753A65EE19487E3D0011A729 /* PGPSymmetricallyEncryptedDataPacket.m */; };
-		759FF498195982A6005B240C /* PGPFingerprint.m in Sources */ = {isa = PBXBuildFile; fileRef = 7562858D19239F1B00127E24 /* PGPFingerprint.m */; };
-		759FF499195982A6005B240C /* PGPPKCSEme.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AE7E28194224CD004DD6A5 /* PGPPKCSEme.m */; };
-		759FF49B195982A6005B240C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B81914DE1A00C5AD3B /* Foundation.framework */; };
-		759FF49E195982A6005B240C /* ObjectivePGP.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 756299BD1914DE1A00C5AD3B /* ObjectivePGP.h */; };
-		75A5C154193CE3F6008A2543 /* NSData+compression.m in Sources */ = {isa = PBXBuildFile; fileRef = 75A5C153193CE3F6008A2543 /* NSData+compression.m */; };
-		75A5D20F195983430074A124 /* libObjectivePGPOSX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 759FF4A3195982A6005B240C /* libObjectivePGPOSX.a */; };
-		75AE7E261941C567004DD6A5 /* PGPPublicKeyEncryptedSessionKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AE7E251941C567004DD6A5 /* PGPPublicKeyEncryptedSessionKeyPacket.m */; };
-		75AE7E29194224CD004DD6A5 /* PGPPKCSEme.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AE7E28194224CD004DD6A5 /* PGPPKCSEme.m */; };
-		75AEC4651930B5E400974CBE /* PGPLiteralPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AEC4641930B5E400974CBE /* PGPLiteralPacket.m */; };
-		75AEC4681930FC0B00974CBE /* PGPUserAttributePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AEC4671930FC0B00974CBE /* PGPUserAttributePacket.m */; };
-		75AEC46B1930FD3000974CBE /* PGPUserAttributeSubpacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AEC46A1930FD3000974CBE /* PGPUserAttributeSubpacket.m */; };
-		75B2450F1933DB89003F24A0 /* PGPPublicKeyRSA.m in Sources */ = {isa = PBXBuildFile; fileRef = 75B2450E1933DB89003F24A0 /* PGPPublicKeyRSA.m */; };
-		75B3952A193C6FA100297C8D /* PGPCompressedPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75B39529193C6FA100297C8D /* PGPCompressedPacket.m */; };
-		75B3952D193C8AE900297C8D /* NSData+Stream.m in Sources */ = {isa = PBXBuildFile; fileRef = 75B3952C193C8AE900297C8D /* NSData+Stream.m */; };
-		75C4F0E31920FF5F005401A4 /* PGPCryptoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C4F0E21920FF5F005401A4 /* PGPCryptoUtils.m */; };
-		75C4F0E6192163A3005401A4 /* PGPModificationDetectionCodePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C4F0E5192163A3005401A4 /* PGPModificationDetectionCodePacket.m */; };
-		75DA1358191A4E65004C9C76 /* PGPSecretKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75DA1357191A4E65004C9C76 /* PGPSecretKeyPacket.m */; };
-		75DA135B191A4EA6004C9C76 /* PGPSecretSubKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75DA135A191A4EA6004C9C76 /* PGPSecretSubKeyPacket.m */; };
-		75DA135E191AE1D6004C9C76 /* PGPS2K.m in Sources */ = {isa = PBXBuildFile; fileRef = 75DA135D191AE1D6004C9C76 /* PGPS2K.m */; };
-		75E7B6B81916493600C96BAB /* PGPPublicSubKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75E7B6B71916493600C96BAB /* PGPPublicSubKeyPacket.m */; };
-		75E7B6BB19167EFF00C96BAB /* PGPSignaturePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75E7B6BA19167EFF00C96BAB /* PGPSignaturePacket.m */; };
-		75FE9808193FB46200613549 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75FE9807193FB46200613549 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.m */; };
-		BD78FA422A5543BEAA682BC8 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4AFC8E128B0F4211888984C0 /* libPods.a */; };
-/* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		756299CB1914DE1A00C5AD3B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 756299AD1914DE1A00C5AD3B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 756299B41914DE1A00C5AD3B;
-			remoteInfo = ObjectivePGP;
-		};
-		75A5D2101959834E0074A124 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 756299AD1914DE1A00C5AD3B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 759FF472195982A6005B240C;
-			remoteInfo = ObjectivePGPOSX;
-		};
-/* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		756299B31914DE1A00C5AD3B /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-				756299BE1914DE1A00C5AD3B /* ObjectivePGP.h in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		759FF46419598227005B240C /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-		759FF49D195982A6005B240C /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/$(PRODUCT_NAME)";
-			dstSubfolderSpec = 16;
-			files = (
-				759FF49E195982A6005B240C /* ObjectivePGP.h in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
-/* Begin PBXFileReference section */
-		3C972ED037044C97BFE1043E /* Pods.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.xcconfig; path = Pods/Pods.xcconfig; sourceTree = "<group>"; };
-		4AFC8E128B0F4211888984C0 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		7502CEFD1916DCE9001B32D7 /* PGPSignatureSubpacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSignatureSubpacket.h; sourceTree = "<group>"; };
-		7502CEFE1916DCE9001B32D7 /* PGPSignatureSubpacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSignatureSubpacket.m; sourceTree = "<group>"; };
-		75040AB11926BB35000CEA93 /* ObjectivePGPTestArmor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectivePGPTestArmor.m; sourceTree = "<group>"; };
-		7507B72619170FE3003A2DC7 /* PGPUserIDPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPUserIDPacket.h; sourceTree = "<group>"; };
-		7507B72719170FE3003A2DC7 /* PGPUserIDPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPUserIDPacket.m; sourceTree = "<group>"; };
-		7508FFC619473AEB00205F76 /* pubring-test.gpg */ = {isa = PBXFileReference; lastKnownFileType = file; path = "pubring-test.gpg"; sourceTree = "<group>"; };
-		7508FFC719473AEB00205F76 /* secring-test.gpg */ = {isa = PBXFileReference; lastKnownFileType = file; path = "secring-test.gpg"; sourceTree = "<group>"; };
-		750BD0D7193F5AAD005B9840 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
-		750EE3C21922C185009E818E /* PGPKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPKey.h; sourceTree = "<group>"; };
-		750EE3C31922C185009E818E /* PGPKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPKey.m; sourceTree = "<group>"; };
-		751056111940A76F00653C0B /* PGPCryptoCFB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPCryptoCFB.h; sourceTree = "<group>"; };
-		751056121940A76F00653C0B /* PGPCryptoCFB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPCryptoCFB.m; sourceTree = "<group>"; };
-		751E07341937D53900CA7946 /* PGPOnePassSignaturePacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPOnePassSignaturePacket.h; sourceTree = "<group>"; };
-		751E07351937D53900CA7946 /* PGPOnePassSignaturePacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPOnePassSignaturePacket.m; sourceTree = "<group>"; };
-		753A65ED19487E3D0011A729 /* PGPSymmetricallyEncryptedDataPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSymmetricallyEncryptedDataPacket.h; sourceTree = "<group>"; };
-		753A65EE19487E3D0011A729 /* PGPSymmetricallyEncryptedDataPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSymmetricallyEncryptedDataPacket.m; sourceTree = "<group>"; };
-		755456BE192843E700E5526B /* PGPArmor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPArmor.h; sourceTree = "<group>"; };
-		755456BF192843E700E5526B /* PGPArmor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPArmor.m; sourceTree = "<group>"; };
-		7556464A1958FF6F00BFA34C /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = usr/lib/libbz2.dylib; sourceTree = SDKROOT; };
-		7562858C19239F1B00127E24 /* PGPFingerprint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPFingerprint.h; sourceTree = "<group>"; };
-		7562858D19239F1B00127E24 /* PGPFingerprint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPFingerprint.m; sourceTree = "<group>"; };
-		756299B51914DE1A00C5AD3B /* libObjectivePGP.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libObjectivePGP.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		756299B81914DE1A00C5AD3B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		756299BC1914DE1A00C5AD3B /* ObjectivePGP-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ObjectivePGP-Prefix.pch"; sourceTree = "<group>"; };
-		756299BD1914DE1A00C5AD3B /* ObjectivePGP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ObjectivePGP.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		756299BF1914DE1A00C5AD3B /* ObjectivePGP.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ObjectivePGP.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		756299C51914DE1A00C5AD3B /* ObjectivePGPTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ObjectivePGPTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		756299C61914DE1A00C5AD3B /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
-		756299C91914DE1A00C5AD3B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = Library/Frameworks/UIKit.framework; sourceTree = DEVELOPER_DIR; };
-		756299D01914DE1A00C5AD3B /* ObjectivePGPTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ObjectivePGPTests-Info.plist"; sourceTree = "<group>"; };
-		756299D21914DE1A00C5AD3B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		756299D41914DE1A00C5AD3B /* ObjectivePGPTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ObjectivePGPTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		756299E51915AF0700C5AD3B /* PGPPublicKeyPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPublicKeyPacket.h; sourceTree = "<group>"; };
-		756299E61915AF0700C5AD3B /* PGPPublicKeyPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPublicKeyPacket.m; sourceTree = "<group>"; };
-		7563356B19255C1A00414CCC /* PGPUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPUser.h; sourceTree = "<group>"; };
-		7563356C19255C1A00414CCC /* PGPUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPUser.m; sourceTree = "<group>"; };
-		7563356E192582CD00414CCC /* PGPSubKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSubKey.h; sourceTree = "<group>"; };
-		7563356F192582CD00414CCC /* PGPSubKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSubKey.m; sourceTree = "<group>"; };
-		7563357219258F1700414CCC /* pubring-test-encrypted.gpg */ = {isa = PBXFileReference; lastKnownFileType = file; path = "pubring-test-encrypted.gpg"; sourceTree = "<group>"; };
-		7563357319258F1700414CCC /* pubring-test-plaintext.gpg */ = {isa = PBXFileReference; lastKnownFileType = file; path = "pubring-test-plaintext.gpg"; sourceTree = "<group>"; };
-		7563357419258F1700414CCC /* secring-test-encrypted.gpg */ = {isa = PBXFileReference; lastKnownFileType = file; path = "secring-test-encrypted.gpg"; sourceTree = "<group>"; };
-		7563357519258F1700414CCC /* secring-test-plaintext.gpg */ = {isa = PBXFileReference; lastKnownFileType = file; path = "secring-test-plaintext.gpg"; sourceTree = "<group>"; };
-		7563357A19258F7100414CCC /* ObjectivePGPTestKeyringSecurePlaintext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectivePGPTestKeyringSecurePlaintext.m; sourceTree = "<group>"; };
-		7563357C1925936900414CCC /* ObjectivePGPTestKeyringSecureEncrypted.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectivePGPTestKeyringSecureEncrypted.m; sourceTree = "<group>"; };
-		75734BD019181E5500A54D6E /* PGPPacketFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPacketFactory.m; sourceTree = "<group>"; };
-		75734BD61918462900A54D6E /* PGPTrustPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPTrustPacket.h; sourceTree = "<group>"; };
-		75734BD71918462900A54D6E /* PGPTrustPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPTrustPacket.m; sourceTree = "<group>"; };
-		75734BD9191853DF00A54D6E /* PGPKeyID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPKeyID.h; sourceTree = "<group>"; };
-		75734BDA191853DF00A54D6E /* PGPKeyID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPKeyID.m; sourceTree = "<group>"; };
-		757DDE7A1919338700A30F84 /* PGPPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPacket.h; sourceTree = "<group>"; };
-		757DDE7B1919371600A30F84 /* PGPPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPacket.m; sourceTree = "<group>"; };
-		758F3A18192935C7009307AD /* NSValue+PGPUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSValue+PGPUtils.h"; sourceTree = "<group>"; };
-		758F3A19192935C7009307AD /* NSValue+PGPUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSValue+PGPUtils.m"; sourceTree = "<group>"; };
-		7597B79A192E9C7F003ABC65 /* PGPPKCSEmsa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPKCSEmsa.h; sourceTree = "<group>"; };
-		7597B79B192E9C7F003ABC65 /* PGPPKCSEmsa.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPKCSEmsa.m; sourceTree = "<group>"; };
-		759DBA121915B5BD00305549 /* NSData+PGPUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "NSData+PGPUtils.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		759DBA131915B5BD00305549 /* NSData+PGPUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "NSData+PGPUtils.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
-		759DBA151915BC0400305549 /* PGPTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPTypes.h; sourceTree = "<group>"; };
-		759DBA161915CBDF00305549 /* PGPMPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPMPI.h; sourceTree = "<group>"; };
-		759DBA171915CBDF00305549 /* PGPMPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPMPI.m; sourceTree = "<group>"; };
-		759FF46619598227005B240C /* opgp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = opgp; sourceTree = BUILT_PRODUCTS_DIR; };
-		759FF46819598227005B240C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		759FF46E19598248005B240C /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/usr/lib/libz.dylib; sourceTree = DEVELOPER_DIR; };
-		759FF4701959824E005B240C /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/usr/lib/libbz2.dylib; sourceTree = DEVELOPER_DIR; };
-		759FF4A3195982A6005B240C /* libObjectivePGPOSX.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libObjectivePGPOSX.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		75A5C152193CE3F6008A2543 /* NSData+compression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+compression.h"; sourceTree = "<group>"; };
-		75A5C153193CE3F6008A2543 /* NSData+compression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+compression.m"; sourceTree = "<group>"; };
-		75AE7E241941C567004DD6A5 /* PGPPublicKeyEncryptedSessionKeyPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPublicKeyEncryptedSessionKeyPacket.h; sourceTree = "<group>"; };
-		75AE7E251941C567004DD6A5 /* PGPPublicKeyEncryptedSessionKeyPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPublicKeyEncryptedSessionKeyPacket.m; sourceTree = "<group>"; };
-		75AE7E27194224CD004DD6A5 /* PGPPKCSEme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPKCSEme.h; sourceTree = "<group>"; };
-		75AE7E28194224CD004DD6A5 /* PGPPKCSEme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPKCSEme.m; sourceTree = "<group>"; };
-		75AEC4631930B5E400974CBE /* PGPLiteralPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPLiteralPacket.h; sourceTree = "<group>"; };
-		75AEC4641930B5E400974CBE /* PGPLiteralPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPLiteralPacket.m; sourceTree = "<group>"; };
-		75AEC4661930FC0B00974CBE /* PGPUserAttributePacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPUserAttributePacket.h; sourceTree = "<group>"; };
-		75AEC4671930FC0B00974CBE /* PGPUserAttributePacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPUserAttributePacket.m; sourceTree = "<group>"; };
-		75AEC4691930FD3000974CBE /* PGPUserAttributeSubpacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPUserAttributeSubpacket.h; sourceTree = "<group>"; };
-		75AEC46A1930FD3000974CBE /* PGPUserAttributeSubpacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPUserAttributeSubpacket.m; sourceTree = "<group>"; };
-		75B2450D1933DB89003F24A0 /* PGPPublicKeyRSA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPublicKeyRSA.h; sourceTree = "<group>"; };
-		75B2450E1933DB89003F24A0 /* PGPPublicKeyRSA.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPublicKeyRSA.m; sourceTree = "<group>"; };
-		75B39528193C6FA100297C8D /* PGPCompressedPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPCompressedPacket.h; sourceTree = "<group>"; };
-		75B39529193C6FA100297C8D /* PGPCompressedPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPCompressedPacket.m; sourceTree = "<group>"; };
-		75B3952B193C8AE900297C8D /* NSData+Stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Stream.h"; sourceTree = "<group>"; };
-		75B3952C193C8AE900297C8D /* NSData+Stream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Stream.m"; sourceTree = "<group>"; };
-		75C4F0E11920FF5F005401A4 /* PGPCryptoUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = PGPCryptoUtils.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		75C4F0E21920FF5F005401A4 /* PGPCryptoUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPCryptoUtils.m; sourceTree = "<group>"; };
-		75C4F0E4192163A3005401A4 /* PGPModificationDetectionCodePacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPModificationDetectionCodePacket.h; sourceTree = "<group>"; };
-		75C4F0E5192163A3005401A4 /* PGPModificationDetectionCodePacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPModificationDetectionCodePacket.m; sourceTree = "<group>"; };
-		75DA1356191A4E65004C9C76 /* PGPSecretKeyPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSecretKeyPacket.h; sourceTree = "<group>"; };
-		75DA1357191A4E65004C9C76 /* PGPSecretKeyPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSecretKeyPacket.m; sourceTree = "<group>"; };
-		75DA1359191A4EA6004C9C76 /* PGPSecretSubKeyPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSecretSubKeyPacket.h; sourceTree = "<group>"; };
-		75DA135A191A4EA6004C9C76 /* PGPSecretSubKeyPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSecretSubKeyPacket.m; sourceTree = "<group>"; };
-		75DA135C191AE1D6004C9C76 /* PGPS2K.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPS2K.h; sourceTree = "<group>"; };
-		75DA135D191AE1D6004C9C76 /* PGPS2K.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPS2K.m; sourceTree = "<group>"; };
-		75E7B6B61916493600C96BAB /* PGPPublicSubKeyPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPublicSubKeyPacket.h; sourceTree = "<group>"; };
-		75E7B6B71916493600C96BAB /* PGPPublicSubKeyPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPublicSubKeyPacket.m; sourceTree = "<group>"; };
-		75E7B6B919167EFF00C96BAB /* PGPSignaturePacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSignaturePacket.h; sourceTree = "<group>"; };
-		75E7B6BA19167EFF00C96BAB /* PGPSignaturePacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSignaturePacket.m; sourceTree = "<group>"; };
-		75E7B6BC19167F1700C96BAB /* PGPPacketFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPacketFactory.h; sourceTree = "<group>"; };
-		75FE9806193FB46200613549 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h; sourceTree = "<group>"; };
-		75FE9807193FB46200613549 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.m; sourceTree = "<group>"; };
-/* End PBXFileReference section */
-
-/* Begin PBXFrameworksBuildPhase section */
-		756299B21914DE1A00C5AD3B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				756299B91914DE1A00C5AD3B /* Foundation.framework in Frameworks */,
-				BD78FA422A5543BEAA682BC8 /* libPods.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		756299C21914DE1A00C5AD3B /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				756299C71914DE1A00C5AD3B /* XCTest.framework in Frameworks */,
-				756299CA1914DE1A00C5AD3B /* UIKit.framework in Frameworks */,
-				756299C81914DE1A00C5AD3B /* Foundation.framework in Frameworks */,
-				756299CD1914DE1A00C5AD3B /* libObjectivePGP.a in Frameworks */,
-				750BD0D9193F5AC3005B9840 /* libz.dylib in Frameworks */,
-				7556464B1958FF6F00BFA34C /* libbz2.dylib in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		759FF46319598227005B240C /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				75A5D20F195983430074A124 /* libObjectivePGPOSX.a in Frameworks */,
-				759FF4711959824E005B240C /* libbz2.dylib in Frameworks */,
-				759FF46F19598248005B240C /* libz.dylib in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		759FF49A195982A6005B240C /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				759FF49B195982A6005B240C /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXFrameworksBuildPhase section */
-
-/* Begin PBXGroup section */
-		7507B72519170E6D003A2DC7 /* PGPSignature */ = {
-			isa = PBXGroup;
-			children = (
-				75E7B6B919167EFF00C96BAB /* PGPSignaturePacket.h */,
-				75E7B6BA19167EFF00C96BAB /* PGPSignaturePacket.m */,
-				7502CEFD1916DCE9001B32D7 /* PGPSignatureSubpacket.h */,
-				7502CEFE1916DCE9001B32D7 /* PGPSignatureSubpacket.m */,
-				751E07341937D53900CA7946 /* PGPOnePassSignaturePacket.h */,
-				751E07351937D53900CA7946 /* PGPOnePassSignaturePacket.m */,
-			);
-			name = PGPSignature;
-			sourceTree = "<group>";
-		};
-		756299AC1914DE1A00C5AD3B = {
-			isa = PBXGroup;
-			children = (
-				756299BA1914DE1A00C5AD3B /* ObjectivePGP */,
-				756299CE1914DE1A00C5AD3B /* ObjectivePGPTests */,
-				759FF46719598227005B240C /* opgp */,
-				756299B71914DE1A00C5AD3B /* Frameworks */,
-				756299B61914DE1A00C5AD3B /* Products */,
-				3C972ED037044C97BFE1043E /* Pods.xcconfig */,
-			);
-			sourceTree = "<group>";
-		};
-		756299B61914DE1A00C5AD3B /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				756299B51914DE1A00C5AD3B /* libObjectivePGP.a */,
-				756299C51914DE1A00C5AD3B /* ObjectivePGPTests.xctest */,
-				759FF46619598227005B240C /* opgp */,
-				759FF4A3195982A6005B240C /* libObjectivePGPOSX.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		756299B71914DE1A00C5AD3B /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-				759FF4701959824E005B240C /* libbz2.dylib */,
-				759FF46E19598248005B240C /* libz.dylib */,
-				7556464A1958FF6F00BFA34C /* libbz2.dylib */,
-				750BD0D7193F5AAD005B9840 /* libz.dylib */,
-				756299B81914DE1A00C5AD3B /* Foundation.framework */,
-				756299C61914DE1A00C5AD3B /* XCTest.framework */,
-				756299C91914DE1A00C5AD3B /* UIKit.framework */,
-				4AFC8E128B0F4211888984C0 /* libPods.a */,
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		756299BA1914DE1A00C5AD3B /* ObjectivePGP */ = {
-			isa = PBXGroup;
-			children = (
-				75E7B6B41916478000C96BAB /* Utility */,
-				756299BD1914DE1A00C5AD3B /* ObjectivePGP.h */,
-				756299BF1914DE1A00C5AD3B /* ObjectivePGP.m */,
-				759DBA151915BC0400305549 /* PGPTypes.h */,
-				75E7B6B51916478D00C96BAB /* Packets */,
-				759DBA161915CBDF00305549 /* PGPMPI.h */,
-				759DBA171915CBDF00305549 /* PGPMPI.m */,
-				7562858C19239F1B00127E24 /* PGPFingerprint.h */,
-				7562858D19239F1B00127E24 /* PGPFingerprint.m */,
-				75DA135C191AE1D6004C9C76 /* PGPS2K.h */,
-				75DA135D191AE1D6004C9C76 /* PGPS2K.m */,
-				75734BD9191853DF00A54D6E /* PGPKeyID.h */,
-				75734BDA191853DF00A54D6E /* PGPKeyID.m */,
-				7563356B19255C1A00414CCC /* PGPUser.h */,
-				7563356C19255C1A00414CCC /* PGPUser.m */,
-				7563356E192582CD00414CCC /* PGPSubKey.h */,
-				7563356F192582CD00414CCC /* PGPSubKey.m */,
-				750EE3C21922C185009E818E /* PGPKey.h */,
-				750EE3C31922C185009E818E /* PGPKey.m */,
-				755456BE192843E700E5526B /* PGPArmor.h */,
-				755456BF192843E700E5526B /* PGPArmor.m */,
-				7597B79A192E9C7F003ABC65 /* PGPPKCSEmsa.h */,
-				7597B79B192E9C7F003ABC65 /* PGPPKCSEmsa.m */,
-				75AE7E27194224CD004DD6A5 /* PGPPKCSEme.h */,
-				75AE7E28194224CD004DD6A5 /* PGPPKCSEme.m */,
-				75B2450D1933DB89003F24A0 /* PGPPublicKeyRSA.h */,
-				75B2450E1933DB89003F24A0 /* PGPPublicKeyRSA.m */,
-				751056111940A76F00653C0B /* PGPCryptoCFB.h */,
-				751056121940A76F00653C0B /* PGPCryptoCFB.m */,
-				756299BB1914DE1A00C5AD3B /* Supporting Files */,
-			);
-			path = ObjectivePGP;
-			sourceTree = "<group>";
-		};
-		756299BB1914DE1A00C5AD3B /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				756299BC1914DE1A00C5AD3B /* ObjectivePGP-Prefix.pch */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		756299CE1914DE1A00C5AD3B /* ObjectivePGPTests */ = {
-			isa = PBXGroup;
-			children = (
-				7563357119258F1700414CCC /* TestingFiles */,
-				756299D41914DE1A00C5AD3B /* ObjectivePGPTests.m */,
-				7563357A19258F7100414CCC /* ObjectivePGPTestKeyringSecurePlaintext.m */,
-				7563357C1925936900414CCC /* ObjectivePGPTestKeyringSecureEncrypted.m */,
-				75040AB11926BB35000CEA93 /* ObjectivePGPTestArmor.m */,
-				756299CF1914DE1A00C5AD3B /* Supporting Files */,
-			);
-			path = ObjectivePGPTests;
-			sourceTree = "<group>";
-		};
-		756299CF1914DE1A00C5AD3B /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				756299D01914DE1A00C5AD3B /* ObjectivePGPTests-Info.plist */,
-				756299D11914DE1A00C5AD3B /* InfoPlist.strings */,
-			);
-			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		7563357119258F1700414CCC /* TestingFiles */ = {
-			isa = PBXGroup;
-			children = (
-				7563357219258F1700414CCC /* pubring-test-encrypted.gpg */,
-				7563357319258F1700414CCC /* pubring-test-plaintext.gpg */,
-				7563357419258F1700414CCC /* secring-test-encrypted.gpg */,
-				7563357519258F1700414CCC /* secring-test-plaintext.gpg */,
-				7508FFC619473AEB00205F76 /* pubring-test.gpg */,
-				7508FFC719473AEB00205F76 /* secring-test.gpg */,
-			);
-			path = TestingFiles;
-			sourceTree = "<group>";
-		};
-		759FF46719598227005B240C /* opgp */ = {
-			isa = PBXGroup;
-			children = (
-				759FF46819598227005B240C /* main.m */,
-			);
-			path = opgp;
-			sourceTree = "<group>";
-		};
-		75E7B6B41916478000C96BAB /* Utility */ = {
-			isa = PBXGroup;
-			children = (
-				75A5C152193CE3F6008A2543 /* NSData+compression.h */,
-				75A5C153193CE3F6008A2543 /* NSData+compression.m */,
-				75B3952B193C8AE900297C8D /* NSData+Stream.h */,
-				75B3952C193C8AE900297C8D /* NSData+Stream.m */,
-				759DBA121915B5BD00305549 /* NSData+PGPUtils.h */,
-				759DBA131915B5BD00305549 /* NSData+PGPUtils.m */,
-				75C4F0E11920FF5F005401A4 /* PGPCryptoUtils.h */,
-				75C4F0E21920FF5F005401A4 /* PGPCryptoUtils.m */,
-				758F3A18192935C7009307AD /* NSValue+PGPUtils.h */,
-				758F3A19192935C7009307AD /* NSValue+PGPUtils.m */,
-			);
-			name = Utility;
-			sourceTree = "<group>";
-		};
-		75E7B6B51916478D00C96BAB /* Packets */ = {
-			isa = PBXGroup;
-			children = (
-				757DDE7A1919338700A30F84 /* PGPPacket.h */,
-				757DDE7B1919371600A30F84 /* PGPPacket.m */,
-				7507B72519170E6D003A2DC7 /* PGPSignature */,
-				75E7B6BC19167F1700C96BAB /* PGPPacketFactory.h */,
-				75734BD019181E5500A54D6E /* PGPPacketFactory.m */,
-				756299E51915AF0700C5AD3B /* PGPPublicKeyPacket.h */,
-				756299E61915AF0700C5AD3B /* PGPPublicKeyPacket.m */,
-				75E7B6B61916493600C96BAB /* PGPPublicSubKeyPacket.h */,
-				75E7B6B71916493600C96BAB /* PGPPublicSubKeyPacket.m */,
-				75DA1356191A4E65004C9C76 /* PGPSecretKeyPacket.h */,
-				75DA1357191A4E65004C9C76 /* PGPSecretKeyPacket.m */,
-				75DA1359191A4EA6004C9C76 /* PGPSecretSubKeyPacket.h */,
-				75DA135A191A4EA6004C9C76 /* PGPSecretSubKeyPacket.m */,
-				7507B72619170FE3003A2DC7 /* PGPUserIDPacket.h */,
-				7507B72719170FE3003A2DC7 /* PGPUserIDPacket.m */,
-				75734BD61918462900A54D6E /* PGPTrustPacket.h */,
-				75734BD71918462900A54D6E /* PGPTrustPacket.m */,
-				75C4F0E4192163A3005401A4 /* PGPModificationDetectionCodePacket.h */,
-				75C4F0E5192163A3005401A4 /* PGPModificationDetectionCodePacket.m */,
-				75AEC4631930B5E400974CBE /* PGPLiteralPacket.h */,
-				75AEC4641930B5E400974CBE /* PGPLiteralPacket.m */,
-				75AEC4661930FC0B00974CBE /* PGPUserAttributePacket.h */,
-				75AEC4671930FC0B00974CBE /* PGPUserAttributePacket.m */,
-				75AEC4691930FD3000974CBE /* PGPUserAttributeSubpacket.h */,
-				75AEC46A1930FD3000974CBE /* PGPUserAttributeSubpacket.m */,
-				75B39528193C6FA100297C8D /* PGPCompressedPacket.h */,
-				75B39529193C6FA100297C8D /* PGPCompressedPacket.m */,
-				75FE9806193FB46200613549 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h */,
-				75FE9807193FB46200613549 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.m */,
-				753A65ED19487E3D0011A729 /* PGPSymmetricallyEncryptedDataPacket.h */,
-				753A65EE19487E3D0011A729 /* PGPSymmetricallyEncryptedDataPacket.m */,
-				75AE7E241941C567004DD6A5 /* PGPPublicKeyEncryptedSessionKeyPacket.h */,
-				75AE7E251941C567004DD6A5 /* PGPPublicKeyEncryptedSessionKeyPacket.m */,
-			);
-			name = Packets;
-			sourceTree = "<group>";
-		};
-/* End PBXGroup section */
-
-/* Begin PBXNativeTarget section */
-		756299B41914DE1A00C5AD3B /* ObjectivePGP */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 756299D81914DE1A00C5AD3B /* Build configuration list for PBXNativeTarget "ObjectivePGP" */;
-			buildPhases = (
-				42358527E10D4EFBA1B711C3 /* Check Pods Manifest.lock */,
-				756299B11914DE1A00C5AD3B /* Sources */,
-				756299B21914DE1A00C5AD3B /* Frameworks */,
-				756299B31914DE1A00C5AD3B /* CopyFiles */,
-				9256C46EC203473495F54549 /* Copy Pods Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = ObjectivePGP;
-			productName = ObjectivePGP;
-			productReference = 756299B51914DE1A00C5AD3B /* libObjectivePGP.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		756299C41914DE1A00C5AD3B /* ObjectivePGPTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 756299DB1914DE1A00C5AD3B /* Build configuration list for PBXNativeTarget "ObjectivePGPTests" */;
-			buildPhases = (
-				756299C11914DE1A00C5AD3B /* Sources */,
-				756299C21914DE1A00C5AD3B /* Frameworks */,
-				756299C31914DE1A00C5AD3B /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				756299CC1914DE1A00C5AD3B /* PBXTargetDependency */,
-			);
-			name = ObjectivePGPTests;
-			productName = ObjectivePGPTests;
-			productReference = 756299C51914DE1A00C5AD3B /* ObjectivePGPTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		759FF46519598227005B240C /* opgp */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 759FF46A19598227005B240C /* Build configuration list for PBXNativeTarget "opgp" */;
-			buildPhases = (
-				759FF46219598227005B240C /* Sources */,
-				759FF46319598227005B240C /* Frameworks */,
-				759FF46419598227005B240C /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				75A5D2111959834E0074A124 /* PBXTargetDependency */,
-			);
-			name = opgp;
-			productName = opgp;
-			productReference = 759FF46619598227005B240C /* opgp */;
-			productType = "com.apple.product-type.tool";
-		};
-		759FF472195982A6005B240C /* ObjectivePGPOSX */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 759FF4A0195982A6005B240C /* Build configuration list for PBXNativeTarget "ObjectivePGPOSX" */;
-			buildPhases = (
-				759FF474195982A6005B240C /* Sources */,
-				759FF49A195982A6005B240C /* Frameworks */,
-				759FF49D195982A6005B240C /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = ObjectivePGPOSX;
-			productName = ObjectivePGP;
-			productReference = 759FF4A3195982A6005B240C /* libObjectivePGPOSX.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-/* End PBXNativeTarget section */
-
-/* Begin PBXProject section */
-		756299AD1914DE1A00C5AD3B /* Project object */ = {
-			isa = PBXProject;
-			attributes = {
-				CLASSPREFIX = PGP;
-				LastUpgradeCheck = 0510;
-				ORGANIZATIONNAME = "Marcin Krzyżanowski";
-				TargetAttributes = {
-					759FF46519598227005B240C = {
-						CreatedOnToolsVersion = 6.0;
-					};
-				};
-			};
-			buildConfigurationList = 756299B01914DE1A00C5AD3B /* Build configuration list for PBXProject "ObjectivePGP" */;
-			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
-			hasScannedForEncodings = 0;
-			knownRegions = (
-				en,
-			);
-			mainGroup = 756299AC1914DE1A00C5AD3B;
-			productRefGroup = 756299B61914DE1A00C5AD3B /* Products */;
-			projectDirPath = "";
-			projectRoot = "";
-			targets = (
-				756299B41914DE1A00C5AD3B /* ObjectivePGP */,
-				759FF472195982A6005B240C /* ObjectivePGPOSX */,
-				756299C41914DE1A00C5AD3B /* ObjectivePGPTests */,
-				759FF46519598227005B240C /* opgp */,
-			);
-		};
-/* End PBXProject section */
-
-/* Begin PBXResourcesBuildPhase section */
-		756299C31914DE1A00C5AD3B /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				756299D31914DE1A00C5AD3B /* InfoPlist.strings in Resources */,
-				7508FFC919473AEB00205F76 /* secring-test.gpg in Resources */,
-				7563357819258F1700414CCC /* secring-test-encrypted.gpg in Resources */,
-				7508FFC819473AEB00205F76 /* pubring-test.gpg in Resources */,
-				7563357619258F1700414CCC /* pubring-test-encrypted.gpg in Resources */,
-				7563357919258F1700414CCC /* secring-test-plaintext.gpg in Resources */,
-				7563357719258F1700414CCC /* pubring-test-plaintext.gpg in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		42358527E10D4EFBA1B711C3 /* Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-		9256C46EC203473495F54549 /* Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Pods-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
-
-/* Begin PBXSourcesBuildPhase section */
-		756299B11914DE1A00C5AD3B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				751056131940A76F00653C0B /* PGPCryptoCFB.m in Sources */,
-				750EE3C41922C185009E818E /* PGPKey.m in Sources */,
-				75633570192582CD00414CCC /* PGPSubKey.m in Sources */,
-				75AE7E261941C567004DD6A5 /* PGPPublicKeyEncryptedSessionKeyPacket.m in Sources */,
-				7507B72819170FE3003A2DC7 /* PGPUserIDPacket.m in Sources */,
-				75E7B6BB19167EFF00C96BAB /* PGPSignaturePacket.m in Sources */,
-				756299E71915AF0700C5AD3B /* PGPPublicKeyPacket.m in Sources */,
-				75DA1358191A4E65004C9C76 /* PGPSecretKeyPacket.m in Sources */,
-				751E07361937D53900CA7946 /* PGPOnePassSignaturePacket.m in Sources */,
-				75E7B6B81916493600C96BAB /* PGPPublicSubKeyPacket.m in Sources */,
-				75FE9808193FB46200613549 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.m in Sources */,
-				75DA135B191A4EA6004C9C76 /* PGPSecretSubKeyPacket.m in Sources */,
-				756299C01914DE1A00C5AD3B /* ObjectivePGP.m in Sources */,
-				759DBA181915CBDF00305549 /* PGPMPI.m in Sources */,
-				75734BDB191853DF00A54D6E /* PGPKeyID.m in Sources */,
-				75AEC4681930FC0B00974CBE /* PGPUserAttributePacket.m in Sources */,
-				7563356D19255C1A00414CCC /* PGPUser.m in Sources */,
-				75B2450F1933DB89003F24A0 /* PGPPublicKeyRSA.m in Sources */,
-				759DBA141915B5BD00305549 /* NSData+PGPUtils.m in Sources */,
-				75AEC46B1930FD3000974CBE /* PGPUserAttributeSubpacket.m in Sources */,
-				755456C0192843E700E5526B /* PGPArmor.m in Sources */,
-				758F3A1A192935C7009307AD /* NSValue+PGPUtils.m in Sources */,
-				75A5C154193CE3F6008A2543 /* NSData+compression.m in Sources */,
-				75DA135E191AE1D6004C9C76 /* PGPS2K.m in Sources */,
-				75734BD81918462900A54D6E /* PGPTrustPacket.m in Sources */,
-				75AEC4651930B5E400974CBE /* PGPLiteralPacket.m in Sources */,
-				75734BD119181E5500A54D6E /* PGPPacketFactory.m in Sources */,
-				757DDE7C1919371600A30F84 /* PGPPacket.m in Sources */,
-				7502CEFF1916DCE9001B32D7 /* PGPSignatureSubpacket.m in Sources */,
-				75B3952A193C6FA100297C8D /* PGPCompressedPacket.m in Sources */,
-				75C4F0E31920FF5F005401A4 /* PGPCryptoUtils.m in Sources */,
-				75C4F0E6192163A3005401A4 /* PGPModificationDetectionCodePacket.m in Sources */,
-				75B3952D193C8AE900297C8D /* NSData+Stream.m in Sources */,
-				7597B79C192E9C7F003ABC65 /* PGPPKCSEmsa.m in Sources */,
-				753A65EF19487E3D0011A729 /* PGPSymmetricallyEncryptedDataPacket.m in Sources */,
-				7562858E19239F1B00127E24 /* PGPFingerprint.m in Sources */,
-				75AE7E29194224CD004DD6A5 /* PGPPKCSEme.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		756299C11914DE1A00C5AD3B /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				7563357B19258F7100414CCC /* ObjectivePGPTestKeyringSecurePlaintext.m in Sources */,
-				75040AB21926BB35000CEA93 /* ObjectivePGPTestArmor.m in Sources */,
-				756299D51914DE1A00C5AD3B /* ObjectivePGPTests.m in Sources */,
-				7563357D1925936900414CCC /* ObjectivePGPTestKeyringSecureEncrypted.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		759FF46219598227005B240C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				759FF46919598227005B240C /* main.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		759FF474195982A6005B240C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				759FF475195982A6005B240C /* PGPCryptoCFB.m in Sources */,
-				759FF476195982A6005B240C /* PGPKey.m in Sources */,
-				759FF477195982A6005B240C /* PGPSubKey.m in Sources */,
-				759FF478195982A6005B240C /* PGPPublicKeyEncryptedSessionKeyPacket.m in Sources */,
-				759FF479195982A6005B240C /* PGPUserIDPacket.m in Sources */,
-				759FF47A195982A6005B240C /* PGPSignaturePacket.m in Sources */,
-				759FF47B195982A6005B240C /* PGPPublicKeyPacket.m in Sources */,
-				759FF47C195982A6005B240C /* PGPSecretKeyPacket.m in Sources */,
-				759FF47D195982A6005B240C /* PGPOnePassSignaturePacket.m in Sources */,
-				759FF47E195982A6005B240C /* PGPPublicSubKeyPacket.m in Sources */,
-				759FF47F195982A6005B240C /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.m in Sources */,
-				759FF480195982A6005B240C /* PGPSecretSubKeyPacket.m in Sources */,
-				759FF481195982A6005B240C /* ObjectivePGP.m in Sources */,
-				759FF482195982A6005B240C /* PGPMPI.m in Sources */,
-				759FF483195982A6005B240C /* PGPKeyID.m in Sources */,
-				759FF484195982A6005B240C /* PGPUserAttributePacket.m in Sources */,
-				759FF485195982A6005B240C /* PGPUser.m in Sources */,
-				759FF486195982A6005B240C /* PGPPublicKeyRSA.m in Sources */,
-				759FF487195982A6005B240C /* NSData+PGPUtils.m in Sources */,
-				759FF488195982A6005B240C /* PGPUserAttributeSubpacket.m in Sources */,
-				759FF489195982A6005B240C /* PGPArmor.m in Sources */,
-				759FF48A195982A6005B240C /* NSValue+PGPUtils.m in Sources */,
-				759FF48B195982A6005B240C /* NSData+compression.m in Sources */,
-				759FF48C195982A6005B240C /* PGPS2K.m in Sources */,
-				759FF48D195982A6005B240C /* PGPTrustPacket.m in Sources */,
-				759FF48E195982A6005B240C /* PGPLiteralPacket.m in Sources */,
-				759FF48F195982A6005B240C /* PGPPacketFactory.m in Sources */,
-				759FF490195982A6005B240C /* PGPPacket.m in Sources */,
-				759FF491195982A6005B240C /* PGPSignatureSubpacket.m in Sources */,
-				759FF492195982A6005B240C /* PGPCompressedPacket.m in Sources */,
-				759FF493195982A6005B240C /* PGPCryptoUtils.m in Sources */,
-				759FF494195982A6005B240C /* PGPModificationDetectionCodePacket.m in Sources */,
-				759FF495195982A6005B240C /* NSData+Stream.m in Sources */,
-				759FF496195982A6005B240C /* PGPPKCSEmsa.m in Sources */,
-				759FF497195982A6005B240C /* PGPSymmetricallyEncryptedDataPacket.m in Sources */,
-				759FF498195982A6005B240C /* PGPFingerprint.m in Sources */,
-				759FF499195982A6005B240C /* PGPPKCSEme.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		756299CC1914DE1A00C5AD3B /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 756299B41914DE1A00C5AD3B /* ObjectivePGP */;
-			targetProxy = 756299CB1914DE1A00C5AD3B /* PBXContainerItemProxy */;
-		};
-		75A5D2111959834E0074A124 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 759FF472195982A6005B240C /* ObjectivePGPOSX */;
-			targetProxy = 75A5D2101959834E0074A124 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
-
-/* Begin PBXVariantGroup section */
-		756299D11914DE1A00C5AD3B /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				756299D21914DE1A00C5AD3B /* en */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-/* End PBXVariantGroup section */
-
-/* Begin XCBuildConfiguration section */
-		756299D61914DE1A00C5AD3B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
-			};
-			name = Debug;
-		};
-		756299D71914DE1A00C5AD3B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				COPY_PHASE_STRIP = YES;
-				ENABLE_NS_ASSERTIONS = NO;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
-				SDKROOT = iphoneos;
-				VALIDATE_PRODUCT = YES;
-			};
-			name = Release;
-		};
-		756299D91914DE1A00C5AD3B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3C972ED037044C97BFE1043E /* Pods.xcconfig */;
-			buildSettings = {
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				DEFINES_MODULE = YES;
-				DSTROOT = /tmp/ObjectivePGP.dst;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ObjectivePGP/ObjectivePGP-Prefix.pch";
-				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
-				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
-				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
-				GCC_WARN_SHADOW = YES;
-				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
-				PRODUCT_NAME = ObjectivePGP;
-				SKIP_INSTALL = YES;
-			};
-			name = Debug;
-		};
-		756299DA1914DE1A00C5AD3B /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3C972ED037044C97BFE1043E /* Pods.xcconfig */;
-			buildSettings = {
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				DEFINES_MODULE = YES;
-				DSTROOT = /tmp/ObjectivePGP.dst;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ObjectivePGP/ObjectivePGP-Prefix.pch";
-				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
-				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
-				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
-				GCC_WARN_SHADOW = YES;
-				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
-				PRODUCT_NAME = ObjectivePGP;
-				SKIP_INSTALL = YES;
-			};
-			name = Release;
-		};
-		756299DC1914DE1A00C5AD3B /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ObjectivePGP/ObjectivePGP-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = "ObjectivePGPTests/ObjectivePGPTests-Info.plist";
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-framework",
-					XCTest,
-					"-ObjC",
-				);
-				PRODUCT_NAME = ObjectivePGPTests;
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Debug;
-		};
-		756299DD1914DE1A00C5AD3B /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ObjectivePGP/ObjectivePGP-Prefix.pch";
-				INFOPLIST_FILE = "ObjectivePGPTests/ObjectivePGPTests-Info.plist";
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-framework",
-					XCTest,
-					"-ObjC",
-				);
-				PRODUCT_NAME = ObjectivePGPTests;
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Release;
-		};
-		759FF46B19598227005B240C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
-				METAL_ENABLE_DEBUG_INFO = YES;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Debug;
-		};
-		759FF46C19598227005B240C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.9;
-				METAL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-			};
-			name = Release;
-		};
-		759FF4A1195982A6005B240C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3C972ED037044C97BFE1043E /* Pods.xcconfig */;
-			buildSettings = {
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				DEFINES_MODULE = YES;
-				DSTROOT = /tmp/ObjectivePGP.dst;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ObjectivePGP/ObjectivePGP-Prefix.pch";
-				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
-				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
-				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
-				GCC_WARN_SHADOW = YES;
-				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
-				PRODUCT_NAME = ObjectivePGPOSX;
-				SDKROOT = macosx10.9;
-				SKIP_INSTALL = YES;
-			};
-			name = Debug;
-		};
-		759FF4A2195982A6005B240C /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3C972ED037044C97BFE1043E /* Pods.xcconfig */;
-			buildSettings = {
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				DEFINES_MODULE = YES;
-				DSTROOT = /tmp/ObjectivePGP.dst;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "ObjectivePGP/ObjectivePGP-Prefix.pch";
-				GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES;
-				GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES;
-				GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES;
-				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
-				GCC_WARN_SHADOW = YES;
-				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
-				PRODUCT_NAME = ObjectivePGPOSX;
-				SDKROOT = macosx10.9;
-				SKIP_INSTALL = YES;
-			};
-			name = Release;
-		};
-/* End XCBuildConfiguration section */
-
-/* Begin XCConfigurationList section */
-		756299B01914DE1A00C5AD3B /* Build configuration list for PBXProject "ObjectivePGP" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				756299D61914DE1A00C5AD3B /* Debug */,
-				756299D71914DE1A00C5AD3B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		756299D81914DE1A00C5AD3B /* Build configuration list for PBXNativeTarget "ObjectivePGP" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				756299D91914DE1A00C5AD3B /* Debug */,
-				756299DA1914DE1A00C5AD3B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		756299DB1914DE1A00C5AD3B /* Build configuration list for PBXNativeTarget "ObjectivePGPTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				756299DC1914DE1A00C5AD3B /* Debug */,
-				756299DD1914DE1A00C5AD3B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		759FF46A19598227005B240C /* Build configuration list for PBXNativeTarget "opgp" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				759FF46B19598227005B240C /* Debug */,
-				759FF46C19598227005B240C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		759FF4A0195982A6005B240C /* Build configuration list for PBXNativeTarget "ObjectivePGPOSX" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				759FF4A1195982A6005B240C /* Debug */,
-				759FF4A2195982A6005B240C /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-/* End XCConfigurationList section */
-	};
-	rootObject = 756299AD1914DE1A00C5AD3B /* Project object */;
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>archiveVersion</key>
+	<string>1</string>
+	<key>classes</key>
+	<dict/>
+	<key>objectVersion</key>
+	<string>46</string>
+	<key>objects</key>
+	<dict>
+		<key>021A3AE4BB964E139FD5B376</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>Copy Pods Resources</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>"${SRCROOT}/Pods/Pods-ObjectivePGP-resources.sh"
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>059B85547F6245229D167817</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>archive.ar</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>libPods-ObjectivePGP.a</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>074C42D0AFAD4DC7AD76CF21</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>archive.ar</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>libPods-ObjectivePGPOSX.a</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>3758FC87F40D4FDDA85F72D0</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>Check Pods Manifest.lock</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>diff "${PODS_ROOT}/../Podfile.lock" "${PODS_ROOT}/Manifest.lock" &gt; /dev/null
+if [[ $? != 0 ]] ; then
+    cat &lt;&lt; EOM
+error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.
+EOM
+    exit 1
+fi
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>4337742A98234C6CB9ABF86F</key>
+		<dict>
+			<key>fileRef</key>
+			<string>059B85547F6245229D167817</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>4AFC8E128B0F4211888984C0</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>archive.ar</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>libPods.a</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>5A0AFDB5EA2347299F403C04</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods-ObjectivePGP.xcconfig</string>
+			<key>path</key>
+			<string>Pods/Pods-ObjectivePGP.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>60563AF8558A481E8E70EA5B</key>
+		<dict>
+			<key>fileRef</key>
+			<string>074C42D0AFAD4DC7AD76CF21</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>7502CEFD1916DCE9001B32D7</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPSignatureSubpacket.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>7502CEFE1916DCE9001B32D7</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPSignatureSubpacket.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>7502CEFF1916DCE9001B32D7</key>
+		<dict>
+			<key>fileRef</key>
+			<string>7502CEFE1916DCE9001B32D7</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>75040AB11926BB35000CEA93</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>ObjectivePGPTestArmor.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75040AB21926BB35000CEA93</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75040AB11926BB35000CEA93</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>7507B72519170E6D003A2DC7</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>75E7B6B919167EFF00C96BAB</string>
+				<string>75E7B6BA19167EFF00C96BAB</string>
+				<string>7502CEFD1916DCE9001B32D7</string>
+				<string>7502CEFE1916DCE9001B32D7</string>
+				<string>751E07341937D53900CA7946</string>
+				<string>751E07351937D53900CA7946</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>PGPSignature</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>7507B72619170FE3003A2DC7</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPUserIDPacket.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>7507B72719170FE3003A2DC7</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPUserIDPacket.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>7507B72819170FE3003A2DC7</key>
+		<dict>
+			<key>fileRef</key>
+			<string>7507B72719170FE3003A2DC7</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>7508FFC619473AEB00205F76</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>file</string>
+			<key>path</key>
+			<string>pubring-test.gpg</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>7508FFC719473AEB00205F76</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>file</string>
+			<key>path</key>
+			<string>secring-test.gpg</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>7508FFC819473AEB00205F76</key>
+		<dict>
+			<key>fileRef</key>
+			<string>7508FFC619473AEB00205F76</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>7508FFC919473AEB00205F76</key>
+		<dict>
+			<key>fileRef</key>
+			<string>7508FFC719473AEB00205F76</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>750BD0D7193F5AAD005B9840</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>compiled.mach-o.dylib</string>
+			<key>name</key>
+			<string>libz.dylib</string>
+			<key>path</key>
+			<string>usr/lib/libz.dylib</string>
+			<key>sourceTree</key>
+			<string>SDKROOT</string>
+		</dict>
+		<key>750BD0D9193F5AC3005B9840</key>
+		<dict>
+			<key>fileRef</key>
+			<string>750BD0D7193F5AAD005B9840</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>750EE3C21922C185009E818E</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPKey.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>750EE3C31922C185009E818E</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPKey.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>750EE3C41922C185009E818E</key>
+		<dict>
+			<key>fileRef</key>
+			<string>750EE3C31922C185009E818E</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>751056111940A76F00653C0B</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPCryptoCFB.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>751056121940A76F00653C0B</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPCryptoCFB.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>751056131940A76F00653C0B</key>
+		<dict>
+			<key>fileRef</key>
+			<string>751056121940A76F00653C0B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>751E07341937D53900CA7946</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPOnePassSignaturePacket.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>751E07351937D53900CA7946</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPOnePassSignaturePacket.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>751E07361937D53900CA7946</key>
+		<dict>
+			<key>fileRef</key>
+			<string>751E07351937D53900CA7946</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>753A65ED19487E3D0011A729</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPSymmetricallyEncryptedDataPacket.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>753A65EE19487E3D0011A729</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPSymmetricallyEncryptedDataPacket.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>753A65EF19487E3D0011A729</key>
+		<dict>
+			<key>fileRef</key>
+			<string>753A65EE19487E3D0011A729</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>755456BE192843E700E5526B</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPArmor.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>755456BF192843E700E5526B</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPArmor.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>755456C0192843E700E5526B</key>
+		<dict>
+			<key>fileRef</key>
+			<string>755456BF192843E700E5526B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>7556464A1958FF6F00BFA34C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>compiled.mach-o.dylib</string>
+			<key>name</key>
+			<string>libbz2.dylib</string>
+			<key>path</key>
+			<string>usr/lib/libbz2.dylib</string>
+			<key>sourceTree</key>
+			<string>SDKROOT</string>
+		</dict>
+		<key>7556464B1958FF6F00BFA34C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>7556464A1958FF6F00BFA34C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>7562858C19239F1B00127E24</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPFingerprint.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>7562858D19239F1B00127E24</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPFingerprint.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>7562858E19239F1B00127E24</key>
+		<dict>
+			<key>fileRef</key>
+			<string>7562858D19239F1B00127E24</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>756299AC1914DE1A00C5AD3B</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>756299BA1914DE1A00C5AD3B</string>
+				<string>756299CE1914DE1A00C5AD3B</string>
+				<string>759FF46719598227005B240C</string>
+				<string>756299B71914DE1A00C5AD3B</string>
+				<string>756299B61914DE1A00C5AD3B</string>
+				<string>5A0AFDB5EA2347299F403C04</string>
+				<string>D75D077981B34151BBB42CF2</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>756299AD1914DE1A00C5AD3B</key>
+		<dict>
+			<key>attributes</key>
+			<dict>
+				<key>CLASSPREFIX</key>
+				<string>PGP</string>
+				<key>LastUpgradeCheck</key>
+				<string>0510</string>
+				<key>ORGANIZATIONNAME</key>
+				<string>Marcin Krzy&#380;anowski</string>
+				<key>TargetAttributes</key>
+				<dict>
+					<key>759FF46519598227005B240C</key>
+					<dict>
+						<key>CreatedOnToolsVersion</key>
+						<string>6.0</string>
+					</dict>
+				</dict>
+			</dict>
+			<key>buildConfigurationList</key>
+			<string>756299B01914DE1A00C5AD3B</string>
+			<key>compatibilityVersion</key>
+			<string>Xcode 3.2</string>
+			<key>developmentRegion</key>
+			<string>English</string>
+			<key>hasScannedForEncodings</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXProject</string>
+			<key>knownRegions</key>
+			<array>
+				<string>en</string>
+			</array>
+			<key>mainGroup</key>
+			<string>756299AC1914DE1A00C5AD3B</string>
+			<key>productRefGroup</key>
+			<string>756299B61914DE1A00C5AD3B</string>
+			<key>projectDirPath</key>
+			<string></string>
+			<key>projectReferences</key>
+			<array/>
+			<key>projectRoot</key>
+			<string></string>
+			<key>targets</key>
+			<array>
+				<string>756299B41914DE1A00C5AD3B</string>
+				<string>759FF472195982A6005B240C</string>
+				<string>756299C41914DE1A00C5AD3B</string>
+				<string>759FF46519598227005B240C</string>
+			</array>
+		</dict>
+		<key>756299B01914DE1A00C5AD3B</key>
+		<dict>
+			<key>buildConfigurations</key>
+			<array>
+				<string>756299D61914DE1A00C5AD3B</string>
+				<string>756299D71914DE1A00C5AD3B</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+		</dict>
+		<key>756299B11914DE1A00C5AD3B</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>751056131940A76F00653C0B</string>
+				<string>750EE3C41922C185009E818E</string>
+				<string>75633570192582CD00414CCC</string>
+				<string>75AE7E261941C567004DD6A5</string>
+				<string>7507B72819170FE3003A2DC7</string>
+				<string>75E7B6BB19167EFF00C96BAB</string>
+				<string>756299E71915AF0700C5AD3B</string>
+				<string>75DA1358191A4E65004C9C76</string>
+				<string>751E07361937D53900CA7946</string>
+				<string>75E7B6B81916493600C96BAB</string>
+				<string>75FE9808193FB46200613549</string>
+				<string>75DA135B191A4EA6004C9C76</string>
+				<string>756299C01914DE1A00C5AD3B</string>
+				<string>759DBA181915CBDF00305549</string>
+				<string>75734BDB191853DF00A54D6E</string>
+				<string>75AEC4681930FC0B00974CBE</string>
+				<string>7563356D19255C1A00414CCC</string>
+				<string>75B2450F1933DB89003F24A0</string>
+				<string>759DBA141915B5BD00305549</string>
+				<string>75AEC46B1930FD3000974CBE</string>
+				<string>755456C0192843E700E5526B</string>
+				<string>758F3A1A192935C7009307AD</string>
+				<string>75A5C154193CE3F6008A2543</string>
+				<string>75DA135E191AE1D6004C9C76</string>
+				<string>75734BD81918462900A54D6E</string>
+				<string>75AEC4651930B5E400974CBE</string>
+				<string>75734BD119181E5500A54D6E</string>
+				<string>757DDE7C1919371600A30F84</string>
+				<string>7502CEFF1916DCE9001B32D7</string>
+				<string>75B3952A193C6FA100297C8D</string>
+				<string>75C4F0E31920FF5F005401A4</string>
+				<string>75C4F0E6192163A3005401A4</string>
+				<string>75B3952D193C8AE900297C8D</string>
+				<string>7597B79C192E9C7F003ABC65</string>
+				<string>753A65EF19487E3D0011A729</string>
+				<string>7562858E19239F1B00127E24</string>
+				<string>75AE7E29194224CD004DD6A5</string>
+			</array>
+			<key>isa</key>
+			<string>PBXSourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>756299B21914DE1A00C5AD3B</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>756299B91914DE1A00C5AD3B</string>
+				<string>4337742A98234C6CB9ABF86F</string>
+			</array>
+			<key>isa</key>
+			<string>PBXFrameworksBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>756299B31914DE1A00C5AD3B</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>dstPath</key>
+			<string>include/$(PRODUCT_NAME)</string>
+			<key>dstSubfolderSpec</key>
+			<string>16</string>
+			<key>files</key>
+			<array>
+				<string>756299BE1914DE1A00C5AD3B</string>
+			</array>
+			<key>isa</key>
+			<string>PBXCopyFilesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>756299B41914DE1A00C5AD3B</key>
+		<dict>
+			<key>buildConfigurationList</key>
+			<string>756299D81914DE1A00C5AD3B</string>
+			<key>buildPhases</key>
+			<array>
+				<string>F8E9240AB27D480BA9E80A18</string>
+				<string>756299B11914DE1A00C5AD3B</string>
+				<string>756299B21914DE1A00C5AD3B</string>
+				<string>756299B31914DE1A00C5AD3B</string>
+				<string>021A3AE4BB964E139FD5B376</string>
+			</array>
+			<key>buildRules</key>
+			<array/>
+			<key>dependencies</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXNativeTarget</string>
+			<key>name</key>
+			<string>ObjectivePGP</string>
+			<key>productName</key>
+			<string>ObjectivePGP</string>
+			<key>productReference</key>
+			<string>756299B51914DE1A00C5AD3B</string>
+			<key>productType</key>
+			<string>com.apple.product-type.library.static</string>
+		</dict>
+		<key>756299B51914DE1A00C5AD3B</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>archive.ar</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>libObjectivePGP.a</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>756299B61914DE1A00C5AD3B</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>756299B51914DE1A00C5AD3B</string>
+				<string>756299C51914DE1A00C5AD3B</string>
+				<string>759FF46619598227005B240C</string>
+				<string>759FF4A3195982A6005B240C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Products</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>756299B71914DE1A00C5AD3B</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>759FF4701959824E005B240C</string>
+				<string>759FF46E19598248005B240C</string>
+				<string>7556464A1958FF6F00BFA34C</string>
+				<string>750BD0D7193F5AAD005B9840</string>
+				<string>756299B81914DE1A00C5AD3B</string>
+				<string>756299C61914DE1A00C5AD3B</string>
+				<string>756299C91914DE1A00C5AD3B</string>
+				<string>4AFC8E128B0F4211888984C0</string>
+				<string>059B85547F6245229D167817</string>
+				<string>074C42D0AFAD4DC7AD76CF21</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Frameworks</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>756299B81914DE1A00C5AD3B</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>Foundation.framework</string>
+			<key>path</key>
+			<string>System/Library/Frameworks/Foundation.framework</string>
+			<key>sourceTree</key>
+			<string>SDKROOT</string>
+		</dict>
+		<key>756299B91914DE1A00C5AD3B</key>
+		<dict>
+			<key>fileRef</key>
+			<string>756299B81914DE1A00C5AD3B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>756299BA1914DE1A00C5AD3B</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>75E7B6B41916478000C96BAB</string>
+				<string>756299BD1914DE1A00C5AD3B</string>
+				<string>756299BF1914DE1A00C5AD3B</string>
+				<string>759DBA151915BC0400305549</string>
+				<string>75E7B6B51916478D00C96BAB</string>
+				<string>759DBA161915CBDF00305549</string>
+				<string>759DBA171915CBDF00305549</string>
+				<string>7562858C19239F1B00127E24</string>
+				<string>7562858D19239F1B00127E24</string>
+				<string>75DA135C191AE1D6004C9C76</string>
+				<string>75DA135D191AE1D6004C9C76</string>
+				<string>75734BD9191853DF00A54D6E</string>
+				<string>75734BDA191853DF00A54D6E</string>
+				<string>7563356B19255C1A00414CCC</string>
+				<string>7563356C19255C1A00414CCC</string>
+				<string>7563356E192582CD00414CCC</string>
+				<string>7563356F192582CD00414CCC</string>
+				<string>750EE3C21922C185009E818E</string>
+				<string>750EE3C31922C185009E818E</string>
+				<string>755456BE192843E700E5526B</string>
+				<string>755456BF192843E700E5526B</string>
+				<string>7597B79A192E9C7F003ABC65</string>
+				<string>7597B79B192E9C7F003ABC65</string>
+				<string>75AE7E27194224CD004DD6A5</string>
+				<string>75AE7E28194224CD004DD6A5</string>
+				<string>75B2450D1933DB89003F24A0</string>
+				<string>75B2450E1933DB89003F24A0</string>
+				<string>751056111940A76F00653C0B</string>
+				<string>751056121940A76F00653C0B</string>
+				<string>756299BB1914DE1A00C5AD3B</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>ObjectivePGP</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>756299BB1914DE1A00C5AD3B</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>756299BC1914DE1A00C5AD3B</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Supporting Files</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>756299BC1914DE1A00C5AD3B</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>ObjectivePGP-Prefix.pch</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>756299BD1914DE1A00C5AD3B</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>ObjectivePGP.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.objcpp</string>
+		</dict>
+		<key>756299BE1914DE1A00C5AD3B</key>
+		<dict>
+			<key>fileRef</key>
+			<string>756299BD1914DE1A00C5AD3B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>756299BF1914DE1A00C5AD3B</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>ObjectivePGP.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.objc</string>
+		</dict>
+		<key>756299C01914DE1A00C5AD3B</key>
+		<dict>
+			<key>fileRef</key>
+			<string>756299BF1914DE1A00C5AD3B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>756299C11914DE1A00C5AD3B</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>7563357B19258F7100414CCC</string>
+				<string>75040AB21926BB35000CEA93</string>
+				<string>756299D51914DE1A00C5AD3B</string>
+				<string>7563357D1925936900414CCC</string>
+			</array>
+			<key>isa</key>
+			<string>PBXSourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>756299C21914DE1A00C5AD3B</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>756299C71914DE1A00C5AD3B</string>
+				<string>756299CA1914DE1A00C5AD3B</string>
+				<string>756299C81914DE1A00C5AD3B</string>
+				<string>756299CD1914DE1A00C5AD3B</string>
+				<string>750BD0D9193F5AC3005B9840</string>
+				<string>7556464B1958FF6F00BFA34C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXFrameworksBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>756299C31914DE1A00C5AD3B</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>756299D31914DE1A00C5AD3B</string>
+				<string>7508FFC919473AEB00205F76</string>
+				<string>7563357819258F1700414CCC</string>
+				<string>7508FFC819473AEB00205F76</string>
+				<string>7563357619258F1700414CCC</string>
+				<string>7563357919258F1700414CCC</string>
+				<string>7563357719258F1700414CCC</string>
+			</array>
+			<key>isa</key>
+			<string>PBXResourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>756299C41914DE1A00C5AD3B</key>
+		<dict>
+			<key>buildConfigurationList</key>
+			<string>756299DB1914DE1A00C5AD3B</string>
+			<key>buildPhases</key>
+			<array>
+				<string>756299C11914DE1A00C5AD3B</string>
+				<string>756299C21914DE1A00C5AD3B</string>
+				<string>756299C31914DE1A00C5AD3B</string>
+			</array>
+			<key>buildRules</key>
+			<array/>
+			<key>dependencies</key>
+			<array>
+				<string>756299CC1914DE1A00C5AD3B</string>
+			</array>
+			<key>isa</key>
+			<string>PBXNativeTarget</string>
+			<key>name</key>
+			<string>ObjectivePGPTests</string>
+			<key>productName</key>
+			<string>ObjectivePGPTests</string>
+			<key>productReference</key>
+			<string>756299C51914DE1A00C5AD3B</string>
+			<key>productType</key>
+			<string>com.apple.product-type.bundle.unit-test</string>
+		</dict>
+		<key>756299C51914DE1A00C5AD3B</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>wrapper.cfbundle</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>ObjectivePGPTests.xctest</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>756299C61914DE1A00C5AD3B</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>XCTest.framework</string>
+			<key>path</key>
+			<string>Library/Frameworks/XCTest.framework</string>
+			<key>sourceTree</key>
+			<string>DEVELOPER_DIR</string>
+		</dict>
+		<key>756299C71914DE1A00C5AD3B</key>
+		<dict>
+			<key>fileRef</key>
+			<string>756299C61914DE1A00C5AD3B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>756299C81914DE1A00C5AD3B</key>
+		<dict>
+			<key>fileRef</key>
+			<string>756299B81914DE1A00C5AD3B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>756299C91914DE1A00C5AD3B</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>wrapper.framework</string>
+			<key>name</key>
+			<string>UIKit.framework</string>
+			<key>path</key>
+			<string>Library/Frameworks/UIKit.framework</string>
+			<key>sourceTree</key>
+			<string>DEVELOPER_DIR</string>
+		</dict>
+		<key>756299CA1914DE1A00C5AD3B</key>
+		<dict>
+			<key>fileRef</key>
+			<string>756299C91914DE1A00C5AD3B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>756299CB1914DE1A00C5AD3B</key>
+		<dict>
+			<key>containerPortal</key>
+			<string>756299AD1914DE1A00C5AD3B</string>
+			<key>isa</key>
+			<string>PBXContainerItemProxy</string>
+			<key>proxyType</key>
+			<string>1</string>
+			<key>remoteGlobalIDString</key>
+			<string>756299B41914DE1A00C5AD3B</string>
+			<key>remoteInfo</key>
+			<string>ObjectivePGP</string>
+		</dict>
+		<key>756299CC1914DE1A00C5AD3B</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXTargetDependency</string>
+			<key>target</key>
+			<string>756299B41914DE1A00C5AD3B</string>
+			<key>targetProxy</key>
+			<string>756299CB1914DE1A00C5AD3B</string>
+		</dict>
+		<key>756299CD1914DE1A00C5AD3B</key>
+		<dict>
+			<key>fileRef</key>
+			<string>756299B51914DE1A00C5AD3B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>756299CE1914DE1A00C5AD3B</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>7563357119258F1700414CCC</string>
+				<string>756299D41914DE1A00C5AD3B</string>
+				<string>7563357A19258F7100414CCC</string>
+				<string>7563357C1925936900414CCC</string>
+				<string>75040AB11926BB35000CEA93</string>
+				<string>756299CF1914DE1A00C5AD3B</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>ObjectivePGPTests</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>756299CF1914DE1A00C5AD3B</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>756299D01914DE1A00C5AD3B</string>
+				<string>756299D11914DE1A00C5AD3B</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Supporting Files</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>756299D01914DE1A00C5AD3B</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.plist.xml</string>
+			<key>path</key>
+			<string>ObjectivePGPTests-Info.plist</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>756299D11914DE1A00C5AD3B</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>756299D21914DE1A00C5AD3B</string>
+			</array>
+			<key>isa</key>
+			<string>PBXVariantGroup</string>
+			<key>name</key>
+			<string>InfoPlist.strings</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>756299D21914DE1A00C5AD3B</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.plist.strings</string>
+			<key>name</key>
+			<string>en</string>
+			<key>path</key>
+			<string>en.lproj/InfoPlist.strings</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>756299D31914DE1A00C5AD3B</key>
+		<dict>
+			<key>fileRef</key>
+			<string>756299D11914DE1A00C5AD3B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>756299D41914DE1A00C5AD3B</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>ObjectivePGPTests.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.objc</string>
+		</dict>
+		<key>756299D51914DE1A00C5AD3B</key>
+		<dict>
+			<key>fileRef</key>
+			<string>756299D41914DE1A00C5AD3B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>756299D61914DE1A00C5AD3B</key>
+		<dict>
+			<key>buildSettings</key>
+			<dict>
+				<key>ALWAYS_SEARCH_USER_PATHS</key>
+				<string>NO</string>
+				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
+				<string>gnu++0x</string>
+				<key>CLANG_CXX_LIBRARY</key>
+				<string>libc++</string>
+				<key>CLANG_ENABLE_MODULES</key>
+				<string>YES</string>
+				<key>CLANG_ENABLE_OBJC_ARC</key>
+				<string>YES</string>
+				<key>CLANG_WARN_BOOL_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_CONSTANT_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_DIRECT_OBJC_ISA_USAGE</key>
+				<string>YES_ERROR</string>
+				<key>CLANG_WARN_EMPTY_BODY</key>
+				<string>YES</string>
+				<key>CLANG_WARN_ENUM_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_INT_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_OBJC_ROOT_CLASS</key>
+				<string>YES_ERROR</string>
+				<key>CLANG_WARN__DUPLICATE_METHOD_MATCH</key>
+				<string>YES</string>
+				<key>COPY_PHASE_STRIP</key>
+				<string>NO</string>
+				<key>GCC_C_LANGUAGE_STANDARD</key>
+				<string>gnu99</string>
+				<key>GCC_DYNAMIC_NO_PIC</key>
+				<string>NO</string>
+				<key>GCC_OPTIMIZATION_LEVEL</key>
+				<string>0</string>
+				<key>GCC_PREPROCESSOR_DEFINITIONS</key>
+				<array>
+					<string>DEBUG=1</string>
+					<string>$(inherited)</string>
+				</array>
+				<key>GCC_SYMBOLS_PRIVATE_EXTERN</key>
+				<string>NO</string>
+				<key>GCC_WARN_64_TO_32_BIT_CONVERSION</key>
+				<string>YES</string>
+				<key>GCC_WARN_ABOUT_RETURN_TYPE</key>
+				<string>YES_ERROR</string>
+				<key>GCC_WARN_UNDECLARED_SELECTOR</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNINITIALIZED_AUTOS</key>
+				<string>YES_AGGRESSIVE</string>
+				<key>GCC_WARN_UNUSED_FUNCTION</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNUSED_VARIABLE</key>
+				<string>YES</string>
+				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+				<string>6.0</string>
+				<key>MACOSX_DEPLOYMENT_TARGET</key>
+				<string>10.7</string>
+				<key>ONLY_ACTIVE_ARCH</key>
+				<string>YES</string>
+				<key>SDKROOT</key>
+				<string>iphoneos</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+		<key>756299D71914DE1A00C5AD3B</key>
+		<dict>
+			<key>buildSettings</key>
+			<dict>
+				<key>ALWAYS_SEARCH_USER_PATHS</key>
+				<string>NO</string>
+				<key>CLANG_CXX_LANGUAGE_STANDARD</key>
+				<string>gnu++0x</string>
+				<key>CLANG_CXX_LIBRARY</key>
+				<string>libc++</string>
+				<key>CLANG_ENABLE_MODULES</key>
+				<string>YES</string>
+				<key>CLANG_ENABLE_OBJC_ARC</key>
+				<string>YES</string>
+				<key>CLANG_WARN_BOOL_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_CONSTANT_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_DIRECT_OBJC_ISA_USAGE</key>
+				<string>YES_ERROR</string>
+				<key>CLANG_WARN_EMPTY_BODY</key>
+				<string>YES</string>
+				<key>CLANG_WARN_ENUM_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_INT_CONVERSION</key>
+				<string>YES</string>
+				<key>CLANG_WARN_OBJC_ROOT_CLASS</key>
+				<string>YES_ERROR</string>
+				<key>CLANG_WARN__DUPLICATE_METHOD_MATCH</key>
+				<string>YES</string>
+				<key>COPY_PHASE_STRIP</key>
+				<string>YES</string>
+				<key>ENABLE_NS_ASSERTIONS</key>
+				<string>NO</string>
+				<key>GCC_C_LANGUAGE_STANDARD</key>
+				<string>gnu99</string>
+				<key>GCC_WARN_64_TO_32_BIT_CONVERSION</key>
+				<string>YES</string>
+				<key>GCC_WARN_ABOUT_RETURN_TYPE</key>
+				<string>YES_ERROR</string>
+				<key>GCC_WARN_UNDECLARED_SELECTOR</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNINITIALIZED_AUTOS</key>
+				<string>YES_AGGRESSIVE</string>
+				<key>GCC_WARN_UNUSED_FUNCTION</key>
+				<string>YES</string>
+				<key>GCC_WARN_UNUSED_VARIABLE</key>
+				<string>YES</string>
+				<key>IPHONEOS_DEPLOYMENT_TARGET</key>
+				<string>6.0</string>
+				<key>MACOSX_DEPLOYMENT_TARGET</key>
+				<string>10.7</string>
+				<key>SDKROOT</key>
+				<string>iphoneos</string>
+				<key>VALIDATE_PRODUCT</key>
+				<string>YES</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+		<key>756299D81914DE1A00C5AD3B</key>
+		<dict>
+			<key>buildConfigurations</key>
+			<array>
+				<string>756299D91914DE1A00C5AD3B</string>
+				<string>756299DA1914DE1A00C5AD3B</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+		</dict>
+		<key>756299D91914DE1A00C5AD3B</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>5A0AFDB5EA2347299F403C04</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS</key>
+				<string>YES</string>
+				<key>CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE</key>
+				<string>YES</string>
+				<key>CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF</key>
+				<string>YES</string>
+				<key>CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK</key>
+				<string>YES</string>
+				<key>CLANG_WARN_UNREACHABLE_CODE</key>
+				<string>YES</string>
+				<key>DEFINES_MODULE</key>
+				<string>YES</string>
+				<key>DSTROOT</key>
+				<string>/tmp/ObjectivePGP.dst</string>
+				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
+				<string>YES</string>
+				<key>GCC_PREFIX_HEADER</key>
+				<string>ObjectivePGP/ObjectivePGP-Prefix.pch</string>
+				<key>GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS</key>
+				<string>YES</string>
+				<key>GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS</key>
+				<string>YES</string>
+				<key>GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED</key>
+				<string>YES</string>
+				<key>GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR</key>
+				<string>YES</string>
+				<key>GCC_WARN_SHADOW</key>
+				<string>YES</string>
+				<key>GCC_WARN_STRICT_SELECTOR_MATCH</key>
+				<string>YES</string>
+				<key>PRODUCT_NAME</key>
+				<string>ObjectivePGP</string>
+				<key>SKIP_INSTALL</key>
+				<string>YES</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+		<key>756299DA1914DE1A00C5AD3B</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>5A0AFDB5EA2347299F403C04</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS</key>
+				<string>YES</string>
+				<key>CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE</key>
+				<string>YES</string>
+				<key>CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF</key>
+				<string>YES</string>
+				<key>CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK</key>
+				<string>YES</string>
+				<key>CLANG_WARN_UNREACHABLE_CODE</key>
+				<string>YES</string>
+				<key>DEFINES_MODULE</key>
+				<string>YES</string>
+				<key>DSTROOT</key>
+				<string>/tmp/ObjectivePGP.dst</string>
+				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
+				<string>YES</string>
+				<key>GCC_PREFIX_HEADER</key>
+				<string>ObjectivePGP/ObjectivePGP-Prefix.pch</string>
+				<key>GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS</key>
+				<string>YES</string>
+				<key>GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS</key>
+				<string>YES</string>
+				<key>GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED</key>
+				<string>YES</string>
+				<key>GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR</key>
+				<string>YES</string>
+				<key>GCC_WARN_SHADOW</key>
+				<string>YES</string>
+				<key>GCC_WARN_STRICT_SELECTOR_MATCH</key>
+				<string>YES</string>
+				<key>PRODUCT_NAME</key>
+				<string>ObjectivePGP</string>
+				<key>SKIP_INSTALL</key>
+				<string>YES</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+		<key>756299DB1914DE1A00C5AD3B</key>
+		<dict>
+			<key>buildConfigurations</key>
+			<array>
+				<string>756299DC1914DE1A00C5AD3B</string>
+				<string>756299DD1914DE1A00C5AD3B</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+		</dict>
+		<key>756299DC1914DE1A00C5AD3B</key>
+		<dict>
+			<key>buildSettings</key>
+			<dict>
+				<key>FRAMEWORK_SEARCH_PATHS</key>
+				<array>
+					<string>$(SDKROOT)/Developer/Library/Frameworks</string>
+					<string>$(inherited)</string>
+					<string>$(DEVELOPER_FRAMEWORKS_DIR)</string>
+				</array>
+				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
+				<string>YES</string>
+				<key>GCC_PREFIX_HEADER</key>
+				<string>ObjectivePGP/ObjectivePGP-Prefix.pch</string>
+				<key>GCC_PREPROCESSOR_DEFINITIONS</key>
+				<array>
+					<string>DEBUG=1</string>
+					<string>$(inherited)</string>
+				</array>
+				<key>INFOPLIST_FILE</key>
+				<string>ObjectivePGPTests/ObjectivePGPTests-Info.plist</string>
+				<key>OTHER_LDFLAGS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>-framework</string>
+					<string>XCTest</string>
+					<string>-ObjC</string>
+				</array>
+				<key>PRODUCT_NAME</key>
+				<string>ObjectivePGPTests</string>
+				<key>WRAPPER_EXTENSION</key>
+				<string>xctest</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+		<key>756299DD1914DE1A00C5AD3B</key>
+		<dict>
+			<key>buildSettings</key>
+			<dict>
+				<key>FRAMEWORK_SEARCH_PATHS</key>
+				<array>
+					<string>$(SDKROOT)/Developer/Library/Frameworks</string>
+					<string>$(inherited)</string>
+					<string>$(DEVELOPER_FRAMEWORKS_DIR)</string>
+				</array>
+				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
+				<string>YES</string>
+				<key>GCC_PREFIX_HEADER</key>
+				<string>ObjectivePGP/ObjectivePGP-Prefix.pch</string>
+				<key>INFOPLIST_FILE</key>
+				<string>ObjectivePGPTests/ObjectivePGPTests-Info.plist</string>
+				<key>OTHER_LDFLAGS</key>
+				<array>
+					<string>$(inherited)</string>
+					<string>-framework</string>
+					<string>XCTest</string>
+					<string>-ObjC</string>
+				</array>
+				<key>PRODUCT_NAME</key>
+				<string>ObjectivePGPTests</string>
+				<key>WRAPPER_EXTENSION</key>
+				<string>xctest</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+		<key>756299E51915AF0700C5AD3B</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPPublicKeyPacket.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>756299E61915AF0700C5AD3B</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPPublicKeyPacket.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>756299E71915AF0700C5AD3B</key>
+		<dict>
+			<key>fileRef</key>
+			<string>756299E61915AF0700C5AD3B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>7563356B19255C1A00414CCC</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPUser.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>7563356C19255C1A00414CCC</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPUser.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>7563356D19255C1A00414CCC</key>
+		<dict>
+			<key>fileRef</key>
+			<string>7563356C19255C1A00414CCC</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>7563356E192582CD00414CCC</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPSubKey.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>7563356F192582CD00414CCC</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPSubKey.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75633570192582CD00414CCC</key>
+		<dict>
+			<key>fileRef</key>
+			<string>7563356F192582CD00414CCC</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>7563357119258F1700414CCC</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>7563357219258F1700414CCC</string>
+				<string>7563357319258F1700414CCC</string>
+				<string>7563357419258F1700414CCC</string>
+				<string>7563357519258F1700414CCC</string>
+				<string>7508FFC619473AEB00205F76</string>
+				<string>7508FFC719473AEB00205F76</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>TestingFiles</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>7563357219258F1700414CCC</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>file</string>
+			<key>path</key>
+			<string>pubring-test-encrypted.gpg</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>7563357319258F1700414CCC</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>file</string>
+			<key>path</key>
+			<string>pubring-test-plaintext.gpg</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>7563357419258F1700414CCC</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>file</string>
+			<key>path</key>
+			<string>secring-test-encrypted.gpg</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>7563357519258F1700414CCC</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>file</string>
+			<key>path</key>
+			<string>secring-test-plaintext.gpg</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>7563357619258F1700414CCC</key>
+		<dict>
+			<key>fileRef</key>
+			<string>7563357219258F1700414CCC</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>7563357719258F1700414CCC</key>
+		<dict>
+			<key>fileRef</key>
+			<string>7563357319258F1700414CCC</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>7563357819258F1700414CCC</key>
+		<dict>
+			<key>fileRef</key>
+			<string>7563357419258F1700414CCC</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>7563357919258F1700414CCC</key>
+		<dict>
+			<key>fileRef</key>
+			<string>7563357519258F1700414CCC</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>7563357A19258F7100414CCC</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>ObjectivePGPTestKeyringSecurePlaintext.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>7563357B19258F7100414CCC</key>
+		<dict>
+			<key>fileRef</key>
+			<string>7563357A19258F7100414CCC</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>7563357C1925936900414CCC</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>ObjectivePGPTestKeyringSecureEncrypted.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>7563357D1925936900414CCC</key>
+		<dict>
+			<key>fileRef</key>
+			<string>7563357C1925936900414CCC</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>75734BD019181E5500A54D6E</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPPacketFactory.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75734BD119181E5500A54D6E</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75734BD019181E5500A54D6E</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>75734BD61918462900A54D6E</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPTrustPacket.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75734BD71918462900A54D6E</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPTrustPacket.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75734BD81918462900A54D6E</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75734BD71918462900A54D6E</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>75734BD9191853DF00A54D6E</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPKeyID.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75734BDA191853DF00A54D6E</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPKeyID.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75734BDB191853DF00A54D6E</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75734BDA191853DF00A54D6E</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>757DDE7A1919338700A30F84</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPPacket.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>757DDE7B1919371600A30F84</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPPacket.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>757DDE7C1919371600A30F84</key>
+		<dict>
+			<key>fileRef</key>
+			<string>757DDE7B1919371600A30F84</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>758F3A18192935C7009307AD</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>NSValue+PGPUtils.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>758F3A19192935C7009307AD</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>NSValue+PGPUtils.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>758F3A1A192935C7009307AD</key>
+		<dict>
+			<key>fileRef</key>
+			<string>758F3A19192935C7009307AD</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>7597B79A192E9C7F003ABC65</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPPKCSEmsa.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>7597B79B192E9C7F003ABC65</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPPKCSEmsa.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>7597B79C192E9C7F003ABC65</key>
+		<dict>
+			<key>fileRef</key>
+			<string>7597B79B192E9C7F003ABC65</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759DBA121915B5BD00305549</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>NSData+PGPUtils.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.objcpp</string>
+		</dict>
+		<key>759DBA131915B5BD00305549</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>NSData+PGPUtils.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.objc</string>
+		</dict>
+		<key>759DBA141915B5BD00305549</key>
+		<dict>
+			<key>fileRef</key>
+			<string>759DBA131915B5BD00305549</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759DBA151915BC0400305549</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPTypes.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>759DBA161915CBDF00305549</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPMPI.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>759DBA171915CBDF00305549</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPMPI.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>759DBA181915CBDF00305549</key>
+		<dict>
+			<key>fileRef</key>
+			<string>759DBA171915CBDF00305549</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF46219598227005B240C</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>759FF46919598227005B240C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXSourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>759FF46319598227005B240C</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>75A5D20F195983430074A124</string>
+				<string>759FF4711959824E005B240C</string>
+				<string>759FF46F19598248005B240C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXFrameworksBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>759FF46419598227005B240C</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>dstPath</key>
+			<string>/usr/share/man/man1/</string>
+			<key>dstSubfolderSpec</key>
+			<string>0</string>
+			<key>files</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXCopyFilesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>1</string>
+		</dict>
+		<key>759FF46519598227005B240C</key>
+		<dict>
+			<key>buildConfigurationList</key>
+			<string>759FF46A19598227005B240C</string>
+			<key>buildPhases</key>
+			<array>
+				<string>759FF46219598227005B240C</string>
+				<string>759FF46319598227005B240C</string>
+				<string>759FF46419598227005B240C</string>
+			</array>
+			<key>buildRules</key>
+			<array/>
+			<key>dependencies</key>
+			<array>
+				<string>75A5D2111959834E0074A124</string>
+			</array>
+			<key>isa</key>
+			<string>PBXNativeTarget</string>
+			<key>name</key>
+			<string>opgp</string>
+			<key>productName</key>
+			<string>opgp</string>
+			<key>productReference</key>
+			<string>759FF46619598227005B240C</string>
+			<key>productType</key>
+			<string>com.apple.product-type.tool</string>
+		</dict>
+		<key>759FF46619598227005B240C</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>compiled.mach-o.executable</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>opgp</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>759FF46719598227005B240C</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>759FF46819598227005B240C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>path</key>
+			<string>opgp</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>759FF46819598227005B240C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>main.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>759FF46919598227005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>759FF46819598227005B240C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF46A19598227005B240C</key>
+		<dict>
+			<key>buildConfigurations</key>
+			<array>
+				<string>759FF46B19598227005B240C</string>
+				<string>759FF46C19598227005B240C</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+		</dict>
+		<key>759FF46B19598227005B240C</key>
+		<dict>
+			<key>buildSettings</key>
+			<dict>
+				<key>CLANG_WARN_UNREACHABLE_CODE</key>
+				<string>YES</string>
+				<key>ENABLE_STRICT_OBJC_MSGSEND</key>
+				<string>YES</string>
+				<key>GCC_PREPROCESSOR_DEFINITIONS</key>
+				<array>
+					<string>DEBUG=1</string>
+					<string>$(inherited)</string>
+				</array>
+				<key>MACOSX_DEPLOYMENT_TARGET</key>
+				<string>10.9</string>
+				<key>METAL_ENABLE_DEBUG_INFO</key>
+				<string>YES</string>
+				<key>OTHER_LDFLAGS</key>
+				<string>-ObjC</string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+				<key>SDKROOT</key>
+				<string>macosx10.9</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+		<key>759FF46C19598227005B240C</key>
+		<dict>
+			<key>buildSettings</key>
+			<dict>
+				<key>CLANG_WARN_UNREACHABLE_CODE</key>
+				<string>YES</string>
+				<key>DEBUG_INFORMATION_FORMAT</key>
+				<string>dwarf-with-dsym</string>
+				<key>ENABLE_STRICT_OBJC_MSGSEND</key>
+				<string>YES</string>
+				<key>MACOSX_DEPLOYMENT_TARGET</key>
+				<string>10.9</string>
+				<key>METAL_ENABLE_DEBUG_INFO</key>
+				<string>NO</string>
+				<key>OTHER_LDFLAGS</key>
+				<string>-ObjC</string>
+				<key>PRODUCT_NAME</key>
+				<string>$(TARGET_NAME)</string>
+				<key>SDKROOT</key>
+				<string>macosx10.9</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+		<key>759FF46E19598248005B240C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>compiled.mach-o.dylib</string>
+			<key>name</key>
+			<string>libz.dylib</string>
+			<key>path</key>
+			<string>Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/usr/lib/libz.dylib</string>
+			<key>sourceTree</key>
+			<string>DEVELOPER_DIR</string>
+		</dict>
+		<key>759FF46F19598248005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>759FF46E19598248005B240C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF4701959824E005B240C</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>compiled.mach-o.dylib</string>
+			<key>name</key>
+			<string>libbz2.dylib</string>
+			<key>path</key>
+			<string>Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/usr/lib/libbz2.dylib</string>
+			<key>sourceTree</key>
+			<string>DEVELOPER_DIR</string>
+		</dict>
+		<key>759FF4711959824E005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>759FF4701959824E005B240C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF472195982A6005B240C</key>
+		<dict>
+			<key>buildConfigurationList</key>
+			<string>759FF4A0195982A6005B240C</string>
+			<key>buildPhases</key>
+			<array>
+				<string>3758FC87F40D4FDDA85F72D0</string>
+				<string>759FF474195982A6005B240C</string>
+				<string>759FF49A195982A6005B240C</string>
+				<string>759FF49D195982A6005B240C</string>
+				<string>AFF2DA4E81194DCCB6566FAB</string>
+			</array>
+			<key>buildRules</key>
+			<array/>
+			<key>dependencies</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXNativeTarget</string>
+			<key>name</key>
+			<string>ObjectivePGPOSX</string>
+			<key>productName</key>
+			<string>ObjectivePGP</string>
+			<key>productReference</key>
+			<string>759FF4A3195982A6005B240C</string>
+			<key>productType</key>
+			<string>com.apple.product-type.library.static</string>
+		</dict>
+		<key>759FF474195982A6005B240C</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>759FF475195982A6005B240C</string>
+				<string>759FF476195982A6005B240C</string>
+				<string>759FF477195982A6005B240C</string>
+				<string>759FF478195982A6005B240C</string>
+				<string>759FF479195982A6005B240C</string>
+				<string>759FF47A195982A6005B240C</string>
+				<string>759FF47B195982A6005B240C</string>
+				<string>759FF47C195982A6005B240C</string>
+				<string>759FF47D195982A6005B240C</string>
+				<string>759FF47E195982A6005B240C</string>
+				<string>759FF47F195982A6005B240C</string>
+				<string>759FF480195982A6005B240C</string>
+				<string>759FF481195982A6005B240C</string>
+				<string>759FF482195982A6005B240C</string>
+				<string>759FF483195982A6005B240C</string>
+				<string>759FF484195982A6005B240C</string>
+				<string>759FF485195982A6005B240C</string>
+				<string>759FF486195982A6005B240C</string>
+				<string>759FF487195982A6005B240C</string>
+				<string>759FF488195982A6005B240C</string>
+				<string>759FF489195982A6005B240C</string>
+				<string>759FF48A195982A6005B240C</string>
+				<string>759FF48B195982A6005B240C</string>
+				<string>759FF48C195982A6005B240C</string>
+				<string>759FF48D195982A6005B240C</string>
+				<string>759FF48E195982A6005B240C</string>
+				<string>759FF48F195982A6005B240C</string>
+				<string>759FF490195982A6005B240C</string>
+				<string>759FF491195982A6005B240C</string>
+				<string>759FF492195982A6005B240C</string>
+				<string>759FF493195982A6005B240C</string>
+				<string>759FF494195982A6005B240C</string>
+				<string>759FF495195982A6005B240C</string>
+				<string>759FF496195982A6005B240C</string>
+				<string>759FF497195982A6005B240C</string>
+				<string>759FF498195982A6005B240C</string>
+				<string>759FF499195982A6005B240C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXSourcesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>759FF475195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>751056121940A76F00653C0B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF476195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>750EE3C31922C185009E818E</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF477195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>7563356F192582CD00414CCC</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF478195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75AE7E251941C567004DD6A5</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF479195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>7507B72719170FE3003A2DC7</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF47A195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75E7B6BA19167EFF00C96BAB</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF47B195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>756299E61915AF0700C5AD3B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF47C195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75DA1357191A4E65004C9C76</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF47D195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>751E07351937D53900CA7946</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF47E195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75E7B6B71916493600C96BAB</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF47F195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75FE9807193FB46200613549</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF480195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75DA135A191A4EA6004C9C76</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF481195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>756299BF1914DE1A00C5AD3B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF482195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>759DBA171915CBDF00305549</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF483195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75734BDA191853DF00A54D6E</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF484195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75AEC4671930FC0B00974CBE</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF485195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>7563356C19255C1A00414CCC</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF486195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75B2450E1933DB89003F24A0</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF487195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>759DBA131915B5BD00305549</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF488195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75AEC46A1930FD3000974CBE</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF489195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>755456BF192843E700E5526B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF48A195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>758F3A19192935C7009307AD</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF48B195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75A5C153193CE3F6008A2543</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF48C195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75DA135D191AE1D6004C9C76</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF48D195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75734BD71918462900A54D6E</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF48E195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75AEC4641930B5E400974CBE</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF48F195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75734BD019181E5500A54D6E</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF490195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>757DDE7B1919371600A30F84</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF491195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>7502CEFE1916DCE9001B32D7</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF492195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75B39529193C6FA100297C8D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF493195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75C4F0E21920FF5F005401A4</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF494195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75C4F0E5192163A3005401A4</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF495195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75B3952C193C8AE900297C8D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF496195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>7597B79B192E9C7F003ABC65</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF497195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>753A65EE19487E3D0011A729</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF498195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>7562858D19239F1B00127E24</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF499195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75AE7E28194224CD004DD6A5</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF49A195982A6005B240C</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array>
+				<string>759FF49B195982A6005B240C</string>
+				<string>60563AF8558A481E8E70EA5B</string>
+			</array>
+			<key>isa</key>
+			<string>PBXFrameworksBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>759FF49B195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>756299B81914DE1A00C5AD3B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF49D195982A6005B240C</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>dstPath</key>
+			<string>include/$(PRODUCT_NAME)</string>
+			<key>dstSubfolderSpec</key>
+			<string>16</string>
+			<key>files</key>
+			<array>
+				<string>759FF49E195982A6005B240C</string>
+			</array>
+			<key>isa</key>
+			<string>PBXCopyFilesBuildPhase</string>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+		</dict>
+		<key>759FF49E195982A6005B240C</key>
+		<dict>
+			<key>fileRef</key>
+			<string>756299BD1914DE1A00C5AD3B</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>759FF4A0195982A6005B240C</key>
+		<dict>
+			<key>buildConfigurations</key>
+			<array>
+				<string>759FF4A1195982A6005B240C</string>
+				<string>759FF4A2195982A6005B240C</string>
+			</array>
+			<key>defaultConfigurationIsVisible</key>
+			<string>0</string>
+			<key>defaultConfigurationName</key>
+			<string>Release</string>
+			<key>isa</key>
+			<string>XCConfigurationList</string>
+		</dict>
+		<key>759FF4A1195982A6005B240C</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>D75D077981B34151BBB42CF2</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS</key>
+				<string>YES</string>
+				<key>CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE</key>
+				<string>YES</string>
+				<key>CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF</key>
+				<string>YES</string>
+				<key>CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK</key>
+				<string>YES</string>
+				<key>CLANG_WARN_UNREACHABLE_CODE</key>
+				<string>YES</string>
+				<key>DEFINES_MODULE</key>
+				<string>YES</string>
+				<key>DSTROOT</key>
+				<string>/tmp/ObjectivePGP.dst</string>
+				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
+				<string>YES</string>
+				<key>GCC_PREFIX_HEADER</key>
+				<string>ObjectivePGP/ObjectivePGP-Prefix.pch</string>
+				<key>GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS</key>
+				<string>YES</string>
+				<key>GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS</key>
+				<string>YES</string>
+				<key>GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED</key>
+				<string>YES</string>
+				<key>GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR</key>
+				<string>YES</string>
+				<key>GCC_WARN_SHADOW</key>
+				<string>YES</string>
+				<key>GCC_WARN_STRICT_SELECTOR_MATCH</key>
+				<string>YES</string>
+				<key>PRODUCT_NAME</key>
+				<string>ObjectivePGPOSX</string>
+				<key>SDKROOT</key>
+				<string>macosx10.9</string>
+				<key>SKIP_INSTALL</key>
+				<string>YES</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Debug</string>
+		</dict>
+		<key>759FF4A2195982A6005B240C</key>
+		<dict>
+			<key>baseConfigurationReference</key>
+			<string>D75D077981B34151BBB42CF2</string>
+			<key>buildSettings</key>
+			<dict>
+				<key>CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS</key>
+				<string>YES</string>
+				<key>CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE</key>
+				<string>YES</string>
+				<key>CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF</key>
+				<string>YES</string>
+				<key>CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK</key>
+				<string>YES</string>
+				<key>CLANG_WARN_UNREACHABLE_CODE</key>
+				<string>YES</string>
+				<key>DEFINES_MODULE</key>
+				<string>YES</string>
+				<key>DSTROOT</key>
+				<string>/tmp/ObjectivePGP.dst</string>
+				<key>GCC_PRECOMPILE_PREFIX_HEADER</key>
+				<string>YES</string>
+				<key>GCC_PREFIX_HEADER</key>
+				<string>ObjectivePGP/ObjectivePGP-Prefix.pch</string>
+				<key>GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS</key>
+				<string>YES</string>
+				<key>GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS</key>
+				<string>YES</string>
+				<key>GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED</key>
+				<string>YES</string>
+				<key>GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR</key>
+				<string>YES</string>
+				<key>GCC_WARN_SHADOW</key>
+				<string>YES</string>
+				<key>GCC_WARN_STRICT_SELECTOR_MATCH</key>
+				<string>YES</string>
+				<key>PRODUCT_NAME</key>
+				<string>ObjectivePGPOSX</string>
+				<key>SDKROOT</key>
+				<string>macosx10.9</string>
+				<key>SKIP_INSTALL</key>
+				<string>YES</string>
+			</dict>
+			<key>isa</key>
+			<string>XCBuildConfiguration</string>
+			<key>name</key>
+			<string>Release</string>
+		</dict>
+		<key>759FF4A3195982A6005B240C</key>
+		<dict>
+			<key>explicitFileType</key>
+			<string>archive.ar</string>
+			<key>includeInIndex</key>
+			<string>0</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>path</key>
+			<string>libObjectivePGPOSX.a</string>
+			<key>sourceTree</key>
+			<string>BUILT_PRODUCTS_DIR</string>
+		</dict>
+		<key>75A5C152193CE3F6008A2543</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>NSData+compression.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75A5C153193CE3F6008A2543</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>NSData+compression.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75A5C154193CE3F6008A2543</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75A5C153193CE3F6008A2543</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>75A5D20F195983430074A124</key>
+		<dict>
+			<key>fileRef</key>
+			<string>759FF4A3195982A6005B240C</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>75A5D2101959834E0074A124</key>
+		<dict>
+			<key>containerPortal</key>
+			<string>756299AD1914DE1A00C5AD3B</string>
+			<key>isa</key>
+			<string>PBXContainerItemProxy</string>
+			<key>proxyType</key>
+			<string>1</string>
+			<key>remoteGlobalIDString</key>
+			<string>759FF472195982A6005B240C</string>
+			<key>remoteInfo</key>
+			<string>ObjectivePGPOSX</string>
+		</dict>
+		<key>75A5D2111959834E0074A124</key>
+		<dict>
+			<key>isa</key>
+			<string>PBXTargetDependency</string>
+			<key>target</key>
+			<string>759FF472195982A6005B240C</string>
+			<key>targetProxy</key>
+			<string>75A5D2101959834E0074A124</string>
+		</dict>
+		<key>75AE7E241941C567004DD6A5</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPPublicKeyEncryptedSessionKeyPacket.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75AE7E251941C567004DD6A5</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPPublicKeyEncryptedSessionKeyPacket.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75AE7E261941C567004DD6A5</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75AE7E251941C567004DD6A5</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>75AE7E27194224CD004DD6A5</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPPKCSEme.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75AE7E28194224CD004DD6A5</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPPKCSEme.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75AE7E29194224CD004DD6A5</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75AE7E28194224CD004DD6A5</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>75AEC4631930B5E400974CBE</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPLiteralPacket.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75AEC4641930B5E400974CBE</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPLiteralPacket.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75AEC4651930B5E400974CBE</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75AEC4641930B5E400974CBE</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>75AEC4661930FC0B00974CBE</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPUserAttributePacket.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75AEC4671930FC0B00974CBE</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPUserAttributePacket.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75AEC4681930FC0B00974CBE</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75AEC4671930FC0B00974CBE</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>75AEC4691930FD3000974CBE</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPUserAttributeSubpacket.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75AEC46A1930FD3000974CBE</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPUserAttributeSubpacket.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75AEC46B1930FD3000974CBE</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75AEC46A1930FD3000974CBE</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>75B2450D1933DB89003F24A0</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPPublicKeyRSA.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75B2450E1933DB89003F24A0</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPPublicKeyRSA.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75B2450F1933DB89003F24A0</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75B2450E1933DB89003F24A0</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>75B39528193C6FA100297C8D</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPCompressedPacket.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75B39529193C6FA100297C8D</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPCompressedPacket.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75B3952A193C6FA100297C8D</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75B39529193C6FA100297C8D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>75B3952B193C8AE900297C8D</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>NSData+Stream.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75B3952C193C8AE900297C8D</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>NSData+Stream.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75B3952D193C8AE900297C8D</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75B3952C193C8AE900297C8D</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>75C4F0E11920FF5F005401A4</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>lineEnding</key>
+			<string>0</string>
+			<key>path</key>
+			<string>PGPCryptoUtils.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+			<key>xcLanguageSpecificationIdentifier</key>
+			<string>xcode.lang.objcpp</string>
+		</dict>
+		<key>75C4F0E21920FF5F005401A4</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPCryptoUtils.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75C4F0E31920FF5F005401A4</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75C4F0E21920FF5F005401A4</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>75C4F0E4192163A3005401A4</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPModificationDetectionCodePacket.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75C4F0E5192163A3005401A4</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPModificationDetectionCodePacket.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75C4F0E6192163A3005401A4</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75C4F0E5192163A3005401A4</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>75DA1356191A4E65004C9C76</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPSecretKeyPacket.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75DA1357191A4E65004C9C76</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPSecretKeyPacket.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75DA1358191A4E65004C9C76</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75DA1357191A4E65004C9C76</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>75DA1359191A4EA6004C9C76</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPSecretSubKeyPacket.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75DA135A191A4EA6004C9C76</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPSecretSubKeyPacket.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75DA135B191A4EA6004C9C76</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75DA135A191A4EA6004C9C76</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>75DA135C191AE1D6004C9C76</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPS2K.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75DA135D191AE1D6004C9C76</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPS2K.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75DA135E191AE1D6004C9C76</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75DA135D191AE1D6004C9C76</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>75E7B6B41916478000C96BAB</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>75A5C152193CE3F6008A2543</string>
+				<string>75A5C153193CE3F6008A2543</string>
+				<string>75B3952B193C8AE900297C8D</string>
+				<string>75B3952C193C8AE900297C8D</string>
+				<string>759DBA121915B5BD00305549</string>
+				<string>759DBA131915B5BD00305549</string>
+				<string>75C4F0E11920FF5F005401A4</string>
+				<string>75C4F0E21920FF5F005401A4</string>
+				<string>758F3A18192935C7009307AD</string>
+				<string>758F3A19192935C7009307AD</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Utility</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75E7B6B51916478D00C96BAB</key>
+		<dict>
+			<key>children</key>
+			<array>
+				<string>757DDE7A1919338700A30F84</string>
+				<string>757DDE7B1919371600A30F84</string>
+				<string>7507B72519170E6D003A2DC7</string>
+				<string>75E7B6BC19167F1700C96BAB</string>
+				<string>75734BD019181E5500A54D6E</string>
+				<string>756299E51915AF0700C5AD3B</string>
+				<string>756299E61915AF0700C5AD3B</string>
+				<string>75E7B6B61916493600C96BAB</string>
+				<string>75E7B6B71916493600C96BAB</string>
+				<string>75DA1356191A4E65004C9C76</string>
+				<string>75DA1357191A4E65004C9C76</string>
+				<string>75DA1359191A4EA6004C9C76</string>
+				<string>75DA135A191A4EA6004C9C76</string>
+				<string>7507B72619170FE3003A2DC7</string>
+				<string>7507B72719170FE3003A2DC7</string>
+				<string>75734BD61918462900A54D6E</string>
+				<string>75734BD71918462900A54D6E</string>
+				<string>75C4F0E4192163A3005401A4</string>
+				<string>75C4F0E5192163A3005401A4</string>
+				<string>75AEC4631930B5E400974CBE</string>
+				<string>75AEC4641930B5E400974CBE</string>
+				<string>75AEC4661930FC0B00974CBE</string>
+				<string>75AEC4671930FC0B00974CBE</string>
+				<string>75AEC4691930FD3000974CBE</string>
+				<string>75AEC46A1930FD3000974CBE</string>
+				<string>75B39528193C6FA100297C8D</string>
+				<string>75B39529193C6FA100297C8D</string>
+				<string>75FE9806193FB46200613549</string>
+				<string>75FE9807193FB46200613549</string>
+				<string>753A65ED19487E3D0011A729</string>
+				<string>753A65EE19487E3D0011A729</string>
+				<string>75AE7E241941C567004DD6A5</string>
+				<string>75AE7E251941C567004DD6A5</string>
+			</array>
+			<key>isa</key>
+			<string>PBXGroup</string>
+			<key>name</key>
+			<string>Packets</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75E7B6B61916493600C96BAB</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPPublicSubKeyPacket.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75E7B6B71916493600C96BAB</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPPublicSubKeyPacket.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75E7B6B81916493600C96BAB</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75E7B6B71916493600C96BAB</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>75E7B6B919167EFF00C96BAB</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPSignaturePacket.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75E7B6BA19167EFF00C96BAB</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPSignaturePacket.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75E7B6BB19167EFF00C96BAB</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75E7B6BA19167EFF00C96BAB</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>75E7B6BC19167F1700C96BAB</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPPacketFactory.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75FE9806193FB46200613549</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.h</string>
+			<key>path</key>
+			<string>PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75FE9807193FB46200613549</key>
+		<dict>
+			<key>fileEncoding</key>
+			<string>4</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>sourcecode.c.objc</string>
+			<key>path</key>
+			<string>PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.m</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>75FE9808193FB46200613549</key>
+		<dict>
+			<key>fileRef</key>
+			<string>75FE9807193FB46200613549</string>
+			<key>isa</key>
+			<string>PBXBuildFile</string>
+		</dict>
+		<key>AFF2DA4E81194DCCB6566FAB</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>Copy Pods Resources</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>"${SRCROOT}/Pods/Pods-ObjectivePGPOSX-resources.sh"
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+		<key>D75D077981B34151BBB42CF2</key>
+		<dict>
+			<key>includeInIndex</key>
+			<string>1</string>
+			<key>isa</key>
+			<string>PBXFileReference</string>
+			<key>lastKnownFileType</key>
+			<string>text.xcconfig</string>
+			<key>name</key>
+			<string>Pods-ObjectivePGPOSX.xcconfig</string>
+			<key>path</key>
+			<string>Pods/Pods-ObjectivePGPOSX.xcconfig</string>
+			<key>sourceTree</key>
+			<string>&lt;group&gt;</string>
+		</dict>
+		<key>F8E9240AB27D480BA9E80A18</key>
+		<dict>
+			<key>buildActionMask</key>
+			<string>2147483647</string>
+			<key>files</key>
+			<array/>
+			<key>inputPaths</key>
+			<array/>
+			<key>isa</key>
+			<string>PBXShellScriptBuildPhase</string>
+			<key>name</key>
+			<string>Check Pods Manifest.lock</string>
+			<key>outputPaths</key>
+			<array/>
+			<key>runOnlyForDeploymentPostprocessing</key>
+			<string>0</string>
+			<key>shellPath</key>
+			<string>/bin/sh</string>
+			<key>shellScript</key>
+			<string>diff "${PODS_ROOT}/../Podfile.lock" "${PODS_ROOT}/Manifest.lock" &gt; /dev/null
+if [[ $? != 0 ]] ; then
+    cat &lt;&lt; EOM
+error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.
+EOM
+    exit 1
+fi
+</string>
+			<key>showEnvVarsInLog</key>
+			<string>0</string>
+		</dict>
+	</dict>
+	<key>rootObject</key>
+	<string>756299AD1914DE1A00C5AD3B</string>
+</dict>
+</plist>

@@ -21,7 +21,7 @@
 - (instancetype) initWithData:(NSData *)dataToMPI
 {
     if (self = [self init]) {
-        self.bignumRef = BN_bin2bn(dataToMPI.bytes, dataToMPI.length, NULL);
+        self.bignumRef = BN_bin2bn(dataToMPI.bytes, (int)dataToMPI.length, NULL);
         self.packetLength = dataToMPI.length + 2;
     }
     return self;

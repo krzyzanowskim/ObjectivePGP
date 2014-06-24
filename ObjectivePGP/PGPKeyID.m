@@ -85,7 +85,7 @@
     NSMutableString *sbuf = [NSMutableString stringWithCapacity:sKey.length * 2];
     const unsigned char *buf = sKey.bytes;
     for (NSUInteger i = 0; i < sKey.length; ++i) {
-        [sbuf appendFormat:@"%02X", (NSUInteger)buf[i]];
+        [sbuf appendFormat:@"%02X", (unsigned int)buf[i]];
     }
     return [sbuf copy];
 }
@@ -96,7 +96,7 @@
     NSMutableString *sbuf = [NSMutableString stringWithCapacity:lKey.length * 2];
     const unsigned char *buf = lKey.bytes;
     for (NSUInteger i = 0; i < lKey.length; ++i) {
-        [sbuf appendFormat:@"%02X", (NSUInteger)buf[i]];
+        [sbuf appendFormat:@"%02X", (unsigned int)buf[i]];
     }
     return [sbuf copy];
 }

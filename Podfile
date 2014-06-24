@@ -1,14 +1,15 @@
-pod 'OpenSSL-Universal'
 
 #link_with 'ObjectivePGP', 'ObjectivePGPOSX'
 
 target :ObjectivePGP do
-	platform :ios
+	platform :ios, "6.0"
+	pod 'OpenSSL-Universal'
 	link_with 'ObjectivePGP'
 end
 
 target :ObjectivePGPOSX do
-	platform :osx
+	platform :osx, "10.7"
+	pod 'OpenSSL-Universal'
 	link_with 'ObjectivePGPOSX'
 end
 

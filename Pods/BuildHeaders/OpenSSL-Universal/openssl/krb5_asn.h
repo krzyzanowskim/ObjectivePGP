@@ -1,1 +1,1 @@
-../../../OpenSSL-Universal/include-ios/openssl/krb5_asn.h
+../../../OpenSSL-Universal/include-osx/openssl/krb5_asn.h

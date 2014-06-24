@@ -1,1 +1,1 @@
-../../../OpenSSL-Universal/include-ios/openssl/comp.h
+../../../OpenSSL-Universal/include-osx/openssl/comp.h
