@@ -247,6 +247,8 @@
         return NO;
     }
 
+    // 5.2.4.  Computing Signatures
+    
     // build toSignData, toSign
     NSData *toSignData = [self toSignDataForType:self.type inputData:inputData key:publicKey keyPacket:signingKeyPacket userID:userID];
 
@@ -461,7 +463,7 @@
     UInt8 tag = 0xFF;
     [trailerData appendBytes:&tag length:1];
 
-    UInt32 signatureLength = signedPartData.length; // + 6; // ??? (note that this number does not include these final six octets)
+    UInt32 signatureLength = (UInt32)signedPartData.length; // + 6; // ??? (note that this number does not include these final six octets)
     signatureLength = CFSwapInt32HostToBig(signatureLength);
     [trailerData appendBytes:&signatureLength length:4];
 

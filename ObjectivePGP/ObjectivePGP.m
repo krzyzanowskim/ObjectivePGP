@@ -117,8 +117,13 @@
 
     BOOL result = NO;
     if (![fm fileExistsAtPath:path]) {
-        result = [fm createFileAtPath:path contents:keyData attributes:@{NSFileProtectionKey: NSFileProtectionComplete,
-                                                                NSFilePosixPermissions: @(0600)}];
+        NSDictionary *attributes = nil;
+#ifdef __IPHONE_OS_VERSION_MAX_ALLOWED
+        attributes = @{NSFileProtectionKey: NSFileProtectionComplete, NSFilePosixPermissions: @(0600)};
+#else
+        attributes = @{NSFilePosixPermissions: @(0600)};
+#endif
+        result = [fm createFileAtPath:path contents:keyData attributes:attributes];
     } else {
         @try {
             NSFileHandle *fileHandle = [NSFileHandle fileHandleForUpdatingAtPath:path];
@@ -465,6 +470,10 @@
  */
 - (NSArray *) importKeysFromFile:(NSString *)path
 {
+    if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
+        return nil;
+    }
+    
     NSArray *loadedKeys = [self loadKeysFromFile:path];
     self.keys = [self.keys arrayByAddingObjectsFromArray:loadedKeys];
     return loadedKeys;
@@ -516,6 +525,11 @@
     if ([PGPArmor isArmoredData:fileData]) {
         NSError *deadmorError = nil;
         NSString *armoredString = [[NSString alloc] initWithData:fileData encoding:NSUTF8StringEncoding];
+        
+        // replace \n to \r\n
+        armoredString = [armoredString stringByReplacingOccurrencesOfString:@"\r\n" withString:@"\n"];
+        armoredString = [armoredString stringByReplacingOccurrencesOfString:@"\n" withString:@"\r\n"];
+        
         binRingData = [PGPArmor readArmoredData:armoredString error:&deadmorError];
         if (deadmorError) {
             return nil;

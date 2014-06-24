@@ -39,6 +39,11 @@
     return subpacket;
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"%@ %d %@", [super description], self.type, self.value];
+}
+
 /**
  *  5.2.3.1.  Signature Subpacket Specification
  *
@@ -368,6 +373,7 @@
         }
             break;
         default:
+            NSLog(@"Unsuported subpacket type %d", self.type);
             break;
     }
 

@@ -97,7 +97,7 @@
     }
 
     CC_SHA1_Init(ctx);
-    CC_SHA1_Update(ctx, self.bytes, self.length);
+    CC_SHA1_Update(ctx, self.bytes, (CC_LONG)self.length);
     UInt8 *outBuf = calloc(CC_SHA1_DIGEST_LENGTH, 1);
     if (!outBuf) {
         return nil;
@@ -197,16 +197,16 @@
     }
 
     CC_SHA512_Init(ctx);
-    CC_SHA512_Update(ctx, self.bytes, self.length);
-    UInt8 *out = calloc(CC_SHA512_DIGEST_LENGTH, sizeof(UInt8));
-    if (!out) {
+    CC_SHA512_Update(ctx, self.bytes, (CC_LONG)self.length);
+    UInt8 *outBuf = calloc(CC_SHA512_DIGEST_LENGTH, sizeof(UInt8));
+    if (!outBuf) {
         return nil;
     }
-    CC_SHA512_Final(out, ctx);
+    CC_SHA512_Final(outBuf, ctx);
 
-    NSData *outData = [NSData dataWithBytes:out length:CC_SHA512_DIGEST_LENGTH];
+    NSData *outData = [NSData dataWithBytes:outBuf length:CC_SHA512_DIGEST_LENGTH];
 
-    free(out);
+    free(outBuf);
     free(ctx);
     return outData;
 }

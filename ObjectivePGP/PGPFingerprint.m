@@ -25,7 +25,7 @@
     NSMutableString *sbuf = [NSMutableString stringWithCapacity:self.hashedData.length * 2];
     const unsigned char *buf = self.hashedData.bytes;
     for (NSUInteger i = 0; i < self.hashedData.length; ++i) {
-        [sbuf appendFormat:@"%02X", (NSUInteger)buf[i]];
+        [sbuf appendFormat:@"%02X", (unsigned int)buf[i]];
     }
     return [sbuf copy];
 }

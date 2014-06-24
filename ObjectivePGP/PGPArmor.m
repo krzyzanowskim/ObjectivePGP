@@ -125,6 +125,7 @@
 
     [scanner scanString:@"\r\n" intoString:nil];
 
+    // Scan headers
     NSString *line = nil;
     while ([scanner scanUpToString:@"\r\n" intoString:&line]) {
         [scanner scanString:@"\r\n" intoString:nil];
@@ -142,10 +143,12 @@
         base64Section = [scanner scanUpToString:@"\r\n" intoString:&line];
         [scanner scanString:@"\r\n" intoString:nil];
 
-        if (line.length < 76 || (line.length == 76 && [line hasSuffix:@"="])) {
+        if ([line hasPrefix:@"="]) {
+            scanner.scanLocation = scanner.scanLocation - (line.length + 2);
             base64Section = NO;
+        } else {
+            [base64String appendFormat:@"%@\r\n", line];
         }
-        [base64String appendFormat:@"%@\r\n", line];
     }
 
     // read checksum
