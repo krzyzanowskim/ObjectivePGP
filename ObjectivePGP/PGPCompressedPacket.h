@@ -19,4 +19,7 @@ typedef NS_ENUM(UInt8, PGPCompressionAlgorithm) {
 @interface PGPCompressedPacket : PGPPacket
 @property (assign, readonly) PGPCompressionAlgorithm compressionType;
 @property (strong) NSData *decompressedData;
+
+- (instancetype)initWithData:(NSData *)dataToCompress type:(PGPCompressionAlgorithm)type;
+
 @end

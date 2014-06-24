@@ -32,7 +32,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
     if (!_salt) {
         NSMutableData *s = [NSMutableData data];
         for (int i = 0; i < 8; i++) {
-            Byte b = arc4random_uniform(127);
+            Byte b = arc4random_uniform(255);
             [s appendBytes:&b length:sizeof(b)];
         }
         _salt = [s copy];

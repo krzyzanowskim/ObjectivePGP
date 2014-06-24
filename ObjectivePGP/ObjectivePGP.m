@@ -18,6 +18,7 @@
 #import "PGPUser.h"
 #import "PGPOnePassSignaturePacket.h"
 #import "PGPLiteralPacket.h"
+#import "PGPCompressedPacket.h"
 #import "PGPArmor.h"
 #import "PGPCryptoUtils.h"
 #import "PGPPublicKeyEncryptedSessionKeyPacket.h"
@@ -229,7 +230,7 @@
     NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:preferredSymmeticAlgorithm];
     NSMutableData *sessionKeyData = [NSMutableData data];
     for (int i = 0; i < (keySize); i++) {
-        UInt8 byte = arc4random_uniform(sizeof(UInt8) * 255);
+        UInt8 byte = arc4random_uniform(255);
         [sessionKeyData appendBytes:&byte length:1];
     }
     
@@ -246,6 +247,11 @@
         return nil;
     }
     
+    PGPCompressedPacket *compressedPacket = [[PGPCompressedPacket alloc] initWithData:literalPacketData type:PGPCompressionZLIB];
+    NSData *compressedPacketData = [compressedPacket exportPacket:error];
+    if (*error) {
+        return nil;
+    }
     
     // Encrypted Message :- Encrypted Data | ESK Sequence, Encrypted Data.
     // Encrypted Data :- Symmetrically Encrypted Data Packet | Symmetrically Encrypted Integrity Protected Data Packet
@@ -270,7 +276,7 @@
     }
 
     PGPSymmetricallyEncryptedIntegrityProtectedDataPacket *symEncryptedDataPacket = [[PGPSymmetricallyEncryptedIntegrityProtectedDataPacket alloc] init];
-    [symEncryptedDataPacket encrypt:literalPacketData
+    [symEncryptedDataPacket encrypt:compressedPacketData
                 withPublicKeyPacket:encryptionKeyPacket
                  symmetricAlgorithm:preferredSymmeticAlgorithm
                      sessionKeyData:sessionKeyData];

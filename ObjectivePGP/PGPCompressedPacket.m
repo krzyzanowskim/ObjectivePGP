@@ -13,6 +13,15 @@
 
 @implementation PGPCompressedPacket
 
+- (instancetype)initWithData:(NSData *)dataToCompress type:(PGPCompressionAlgorithm)type
+{
+    if (self = [self init]) {
+        self->_decompressedData = dataToCompress;
+        self->_compressionType = type;
+    }
+    return self;
+}
+
 - (PGPPacketTag)tag
 {
     return PGPCompressedDataPacketTag;
