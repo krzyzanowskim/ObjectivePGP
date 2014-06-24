@@ -3,10 +3,11 @@
 //
 // rfc1950 (zlib format)
 
-#import "NSData+zlib.h"
+#import "NSData+compression.h"
 #import <zlib.h>
+#import <bzlib.h>
 
-@implementation NSData (zlib)
+@implementation NSData (compression)
 
 - (NSData *)zlibCompressed:(NSError * __autoreleasing *)error
 {
@@ -19,7 +20,7 @@
 	strm.zalloc = Z_NULL;
 	strm.zfree = Z_NULL;
 	strm.opaque = Z_NULL;
-	if (Z_OK != deflateInit(&strm, Z_DEFAULT_COMPRESSION))
+	if (Z_OK != deflateInit(&strm, Z_DEFAULT_COMPRESSION)) //FIXME -13 for PGP 2.x
 	{
         if (error) {
             NSString *errorMsg = [NSString stringWithCString:strm.msg encoding:NSASCIIStringEncoding];
@@ -103,5 +104,76 @@
 	
 	return decompressed;
 }
+
+- (NSData *)bzip2Decompressed:(NSError * __autoreleasing *)error
+{
+    int bzret = 0;
+    bz_stream stream = {0x00};
+    stream.next_in = (void *)[self bytes];
+    stream.avail_in = self.length;
+    
+    const int buffer_size = 10000;
+    NSMutableData *buffer = [NSMutableData dataWithLength:buffer_size];
+    stream.next_out = [buffer mutableBytes];
+    stream.avail_out = buffer_size;
+    
+    NSMutableData * decompressed = [NSMutableData data];
+    
+    BZ2_bzDecompressInit(&stream, 0, NO);
+    do {
+        bzret = BZ2_bzDecompress(&stream);
+        if (bzret != BZ_OK && bzret != BZ_STREAM_END) {
+            if (error) {
+                *error = [NSError errorWithDomain:@"BZIP2" code:0 userInfo:@{NSLocalizedDescriptionKey: @"BZ2_bzDecompress failed"}];
+            }
+            BZ2_bzCompressEnd(&stream);
+            return nil;
+        }
+        
+        [decompressed appendBytes:[buffer bytes] length:(buffer_size - stream.avail_out)];
+        stream.next_out = [buffer mutableBytes];
+        stream.avail_out = buffer_size;
+    } while(bzret != BZ_STREAM_END);
+    
+    BZ2_bzDecompressEnd(&stream);
+    return decompressed;
+}
+
+- (NSData *)bzip2Compressed:(NSError * __autoreleasing *)error
+{
+    int bzret = 0;
+    bz_stream stream = {0x00};
+    stream.next_in = (void *)[self bytes];
+    stream.avail_in = self.length;
+    unsigned int compression = 9; // should be a value between 1 and 9 inclusive
+
+    const int buffer_size = 10000;
+    NSMutableData *buffer = [NSMutableData dataWithLength:buffer_size];
+    stream.next_out = [buffer mutableBytes];
+    stream.avail_out = buffer_size;
+    
+    NSMutableData * decompressed = [NSMutableData data];
+    
+    BZ2_bzCompressInit(&stream, compression, 0, 0);
+    do {
+        bzret = BZ2_bzCompress(&stream, (stream.avail_in) ? BZ_RUN : BZ_FINISH);
+        if (bzret != BZ_RUN_OK && bzret != BZ_STREAM_END) {
+            if (error) {
+                *error = [NSError errorWithDomain:@"BZIP2" code:0 userInfo:@{NSLocalizedDescriptionKey: @"BZ2_bzCompress failed"}];
+            }
+            BZ2_bzCompressEnd(&stream);
+            return nil;
+        }
+        
+        [decompressed appendBytes:[buffer bytes] length:(buffer_size - stream.avail_out)];
+        stream.next_out = [buffer mutableBytes];
+        stream.avail_out = buffer_size;
+    } while(bzret != BZ_STREAM_END);
+    
+    BZ2_bzCompressEnd(&stream);
+    return decompressed;
+}
+
+
 
 @end

@@ -247,7 +247,7 @@
         return nil;
     }
     
-    PGPCompressedPacket *compressedPacket = [[PGPCompressedPacket alloc] initWithData:literalPacketData type:PGPCompressionZLIB];
+    PGPCompressedPacket *compressedPacket = [[PGPCompressedPacket alloc] initWithData:literalPacketData type:PGPCompressionBZIP2];
     NSData *compressedPacketData = [compressedPacket exportPacket:error];
     if (*error) {
         return nil;

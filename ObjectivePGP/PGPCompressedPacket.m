@@ -9,7 +9,7 @@
 
 #import "PGPCompressedPacket.h"
 #import "NSData+Stream.h"
-#import "NSData+zlib.h"
+#import "NSData+compression.h"
 
 @implementation PGPCompressedPacket
 
@@ -43,6 +43,9 @@
         case PGPCompressionZLIB:
             self.decompressedData = [compressedData zlibDecompressed:error];
             break;
+        case PGPCompressionBZIP2:
+            self.decompressedData = [compressedData bzip2Decompressed:error];
+            break;
 
         default:
             if (error) {
@@ -64,9 +67,13 @@
     [bodyData appendBytes:&_compressionType length:sizeof(_compressionType)];
     
     // - Compressed data, which makes up the remainder of the packet.
+    NSData *compressedData = nil;
     switch (self.compressionType) {
         case PGPCompressionZLIB:
-            [bodyData appendData:[self.decompressedData zlibCompressed:error]];
+            compressedData = [self.decompressedData zlibCompressed:error];
+            break;
+        case PGPCompressionBZIP2:
+            compressedData =[self.decompressedData bzip2Compressed:error];
             break;
             
         default:
@@ -76,7 +83,8 @@
             return nil;
             break;
     }
-    [bodyData appendData:[self.decompressedData zlibCompressed:error]];
+    NSAssert(compressedData, @"Compression failed");
+    [bodyData appendData:compressedData];
     
     NSMutableData *data = [NSMutableData data];
     NSData *headerData = [self buildHeaderData:bodyData];

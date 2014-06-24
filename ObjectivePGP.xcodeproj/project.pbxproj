@@ -46,7 +46,7 @@
 		7597B79C192E9C7F003ABC65 /* PGPPKCSEmsa.m in Sources */ = {isa = PBXBuildFile; fileRef = 7597B79B192E9C7F003ABC65 /* PGPPKCSEmsa.m */; };
 		759DBA141915B5BD00305549 /* NSData+PGPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 759DBA131915B5BD00305549 /* NSData+PGPUtils.m */; };
 		759DBA181915CBDF00305549 /* PGPMPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 759DBA171915CBDF00305549 /* PGPMPI.m */; };
-		75A5C154193CE3F6008A2543 /* NSData+zlib.m in Sources */ = {isa = PBXBuildFile; fileRef = 75A5C153193CE3F6008A2543 /* NSData+zlib.m */; };
+		75A5C154193CE3F6008A2543 /* NSData+compression.m in Sources */ = {isa = PBXBuildFile; fileRef = 75A5C153193CE3F6008A2543 /* NSData+compression.m */; };
 		75AE7E261941C567004DD6A5 /* PGPPublicKeyEncryptedSessionKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AE7E251941C567004DD6A5 /* PGPPublicKeyEncryptedSessionKeyPacket.m */; };
 		75AE7E29194224CD004DD6A5 /* PGPPKCSEme.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AE7E28194224CD004DD6A5 /* PGPPKCSEme.m */; };
 		75AEC4651930B5E400974CBE /* PGPLiteralPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AEC4641930B5E400974CBE /* PGPLiteralPacket.m */; };
@@ -150,8 +150,8 @@
 		759DBA151915BC0400305549 /* PGPTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPTypes.h; sourceTree = "<group>"; };
 		759DBA161915CBDF00305549 /* PGPMPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPMPI.h; sourceTree = "<group>"; };
 		759DBA171915CBDF00305549 /* PGPMPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPMPI.m; sourceTree = "<group>"; };
-		75A5C152193CE3F6008A2543 /* NSData+zlib.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+zlib.h"; sourceTree = "<group>"; };
-		75A5C153193CE3F6008A2543 /* NSData+zlib.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+zlib.m"; sourceTree = "<group>"; };
+		75A5C152193CE3F6008A2543 /* NSData+compression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+compression.h"; sourceTree = "<group>"; };
+		75A5C153193CE3F6008A2543 /* NSData+compression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+compression.m"; sourceTree = "<group>"; };
 		75AE7E241941C567004DD6A5 /* PGPPublicKeyEncryptedSessionKeyPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPublicKeyEncryptedSessionKeyPacket.h; sourceTree = "<group>"; };
 		75AE7E251941C567004DD6A5 /* PGPPublicKeyEncryptedSessionKeyPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPublicKeyEncryptedSessionKeyPacket.m; sourceTree = "<group>"; };
 		75AE7E27194224CD004DD6A5 /* PGPPKCSEme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPKCSEme.h; sourceTree = "<group>"; };
@@ -340,8 +340,8 @@
 		75E7B6B41916478000C96BAB /* Utility */ = {
 			isa = PBXGroup;
 			children = (
-				75A5C152193CE3F6008A2543 /* NSData+zlib.h */,
-				75A5C153193CE3F6008A2543 /* NSData+zlib.m */,
+				75A5C152193CE3F6008A2543 /* NSData+compression.h */,
+				75A5C153193CE3F6008A2543 /* NSData+compression.m */,
 				75B3952B193C8AE900297C8D /* NSData+Stream.h */,
 				75B3952C193C8AE900297C8D /* NSData+Stream.m */,
 				759DBA121915B5BD00305549 /* NSData+PGPUtils.h */,
@@ -539,7 +539,7 @@
 				75AEC46B1930FD3000974CBE /* PGPUserAttributeSubpacket.m in Sources */,
 				755456C0192843E700E5526B /* PGPArmor.m in Sources */,
 				758F3A1A192935C7009307AD /* NSValue+PGPUtils.m in Sources */,
-				75A5C154193CE3F6008A2543 /* NSData+zlib.m in Sources */,
+				75A5C154193CE3F6008A2543 /* NSData+compression.m in Sources */,
 				75DA135E191AE1D6004C9C76 /* PGPS2K.m in Sources */,
 				75734BD81918462900A54D6E /* PGPTrustPacket.m in Sources */,
 				75AEC4651930B5E400974CBE /* PGPLiteralPacket.m in Sources */,

@@ -113,6 +113,7 @@
     if (![headerLine isEqualToString:@"-----BEGIN PGP MESSAGE-----"] &&
         ![headerLine isEqualToString:@"-----BEGIN PGP PUBLIC KEY BLOCK-----"] &&
         ![headerLine isEqualToString:@"-----BEGIN PGP PRIVATE KEY BLOCK-----"] &&
+        ![headerLine isEqualToString:@"-----BEGIN PGP SECRET KEY BLOCK-----"] && // PGP 2.x generates the header "BEGIN PGP SECRET KEY BLOCK" instead of "BEGIN PGP PRIVATE KEY BLOCK"
         ![headerLine isEqualToString:@"-----BEGIN PGP SIGNATURE-----"] &&
         ![headerLine hasPrefix:@"-----BEGIN PGP MESSAGE, PART"])
     {

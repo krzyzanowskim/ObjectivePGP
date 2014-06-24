@@ -8,9 +8,12 @@
 
 extern NSString* const ZlibErrorDomain;
 
-@interface NSData (zlib)
+@interface NSData (compression)
 
 - (NSData *)zlibCompressed:(NSError * __autoreleasing *)error;
 - (NSData *)zlibDecompressed:(NSError * __autoreleasing *)error;
+
+- (NSData *)bzip2Decompressed:(NSError * __autoreleasing *)error;
+- (NSData *)bzip2Compressed:(NSError * __autoreleasing *)error;
 
 @end
