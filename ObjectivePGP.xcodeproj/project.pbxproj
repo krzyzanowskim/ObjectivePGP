@@ -19,6 +19,7 @@
 		751E07361937D53900CA7946 /* PGPOnePassSignaturePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 751E07351937D53900CA7946 /* PGPOnePassSignaturePacket.m */; };
 		753A65EF19487E3D0011A729 /* PGPSymmetricallyEncryptedDataPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 753A65EE19487E3D0011A729 /* PGPSymmetricallyEncryptedDataPacket.m */; };
 		755456C0192843E700E5526B /* PGPArmor.m in Sources */ = {isa = PBXBuildFile; fileRef = 755456BF192843E700E5526B /* PGPArmor.m */; };
+		7556464B1958FF6F00BFA34C /* libbz2.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7556464A1958FF6F00BFA34C /* libbz2.dylib */; };
 		7562858E19239F1B00127E24 /* PGPFingerprint.m in Sources */ = {isa = PBXBuildFile; fileRef = 7562858D19239F1B00127E24 /* PGPFingerprint.m */; };
 		756299B91914DE1A00C5AD3B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B81914DE1A00C5AD3B /* Foundation.framework */; };
 		756299BE1914DE1A00C5AD3B /* ObjectivePGP.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 756299BD1914DE1A00C5AD3B /* ObjectivePGP.h */; };
@@ -109,6 +110,7 @@
 		753A65EE19487E3D0011A729 /* PGPSymmetricallyEncryptedDataPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSymmetricallyEncryptedDataPacket.m; sourceTree = "<group>"; };
 		755456BE192843E700E5526B /* PGPArmor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPArmor.h; sourceTree = "<group>"; };
 		755456BF192843E700E5526B /* PGPArmor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPArmor.m; sourceTree = "<group>"; };
+		7556464A1958FF6F00BFA34C /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = usr/lib/libbz2.dylib; sourceTree = SDKROOT; };
 		7562858C19239F1B00127E24 /* PGPFingerprint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPFingerprint.h; sourceTree = "<group>"; };
 		7562858D19239F1B00127E24 /* PGPFingerprint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPFingerprint.m; sourceTree = "<group>"; };
 		756299B51914DE1A00C5AD3B /* libObjectivePGP.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libObjectivePGP.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -206,6 +208,7 @@
 				756299C81914DE1A00C5AD3B /* Foundation.framework in Frameworks */,
 				756299CD1914DE1A00C5AD3B /* libObjectivePGP.a in Frameworks */,
 				750BD0D9193F5AC3005B9840 /* libz.dylib in Frameworks */,
+				7556464B1958FF6F00BFA34C /* libbz2.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -248,6 +251,7 @@
 		756299B71914DE1A00C5AD3B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7556464A1958FF6F00BFA34C /* libbz2.dylib */,
 				750BD0D7193F5AAD005B9840 /* libz.dylib */,
 				756299B81914DE1A00C5AD3B /* Foundation.framework */,
 				756299C61914DE1A00C5AD3B /* XCTest.framework */,
