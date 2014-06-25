@@ -324,17 +324,18 @@
 
 - (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase detached:(BOOL)detached
 {
-    NSData *signaturePacketData = nil;
+    //TODO: configurable defaults for prefered hash
+    return [self signData:dataToSign usingSecretKey:secretKey passphrase:passphrase hashAlgorithm:PGPHashSHA512 detached:detached];
+}
 
-    //TODO: Some defaults
-    PGPHashAlgorithm preferedHashAlgorithm = PGPHashSHA1;
-
+- (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase hashAlgorithm:(PGPHashAlgorithm)preferedHashAlgorithm detached:(BOOL)detached
+{
     PGPSignaturePacket *signaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureBinaryDocument
                                                                 hashAlgorithm:preferedHashAlgorithm];
 
     [signaturePacket signData:dataToSign secretKey:secretKey passphrase:passphrase userID:nil];
     NSError *exportError = nil;
-    signaturePacketData = [signaturePacket exportPacket:&exportError];
+    NSData *signaturePacketData = [signaturePacket exportPacket:&exportError];
     NSAssert(!exportError,@"Error on export packet");
 
     // Signed Message :- Signature Packet, Literal Message
@@ -479,6 +480,17 @@
     return loadedKeys;
 }
 
+- (NSArray *) importKeysFromData:(NSData *)data
+{
+    if (!data) {
+        return nil;
+    }
+    
+    NSArray *loadedKeys = [self loadKeysFromData:data];
+    self.keys = [self.keys arrayByAddingObjectsFromArray:loadedKeys];
+    return loadedKeys;
+}
+
 - (BOOL) importKey:(NSString *)shortKeyStringIdentifier fromFile:(NSString *)path
 {
     NSString *fullPath = [path stringByExpandingTildeInPath];
@@ -520,6 +532,16 @@
         return nil;
     }
 
+    return [self loadKeysFromData:fileData];
+}
+
+- (NSArray *) loadKeysFromData:(NSData *)fileData
+{
+    NSAssert(fileData, @"Missing data");
+    if (!fileData) {
+        return nil;
+    }
+    
     NSData *binRingData = fileData;
     // detect if armored, check for strin -----BEGIN PGP
     if ([PGPArmor isArmoredData:fileData]) {
@@ -535,14 +557,16 @@
             return nil;
         }
     }
-
+    
     NSArray *parsedKeys = [self readKeysFromData:binRingData];
     if (parsedKeys.count == 0) {
         return nil;
     }
-
+    
     return parsedKeys;
 }
+
+
 
 #pragma mark - Private
 

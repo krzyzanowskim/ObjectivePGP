@@ -19,6 +19,7 @@
 
 // Load from keyring
 - (NSArray *) importKeysFromFile:(NSString *)path;
+- (NSArray *) importKeysFromData:(NSData *)data;
 - (BOOL) importKey:(NSString *)shortKeyStringIdentifier fromFile:(NSString *)path;
 
 // Save to keyring

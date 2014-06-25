@@ -18,7 +18,6 @@
 {
     if (self = [self init]) {
         self->_hashData = [data pgpSHA1];
-        NSLog(@"MDC hash %@",self->_hashData);
     }
     return self;
 }
