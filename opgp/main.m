@@ -11,12 +11,10 @@
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
-        fprintf(stdout, "opgp (ObjectivePGP) 0.0.1 (alpha)\n");
-        fprintf(stdout, "Copyright (C) 2014 Marcin Krzyżanowski <marcin.krzyzanowski@hakore.com>\n");
-        fprintf(stdout, "All rights reserved. No warranty, explicit or implicit, provided.\n");
-        fprintf(stdout, "\n");
-
         NSUserDefaults *standardDefaults = [NSUserDefaults standardUserDefaults];
+        
+        [standardDefaults registerDefaults:@{@"armor":@(YES)}];
+        
         NSString *inputPath = [standardDefaults stringForKey:@"input"];
         NSString *messagePlaintext = [standardDefaults stringForKey:@"msg"];
         NSString *outputFile = [standardDefaults stringForKey:@"output"];
@@ -26,9 +24,16 @@ int main(int argc, const char * argv[]) {
         NSString *keyFile = [standardDefaults stringForKey:@"key"];
         NSString *passprase = [standardDefaults stringForKey:@"passphrase"];
         BOOL armor = [standardDefaults boolForKey:@"armor"];
-        
+
+        if (outputFile) {
+            fprintf(stdout, "opgp (ObjectivePGP) 0.0.2 (alpha)\n");
+            fprintf(stdout, "Copyright (C) 2014 Marcin Krzyżanowski <marcin.krzyzanowski@hakore.com>\n");
+            fprintf(stdout, "All rights reserved. No warranty, explicit or implicit, provided.\n");
+        }
+
         NSArray *commandLineArguments = [[NSProcessInfo processInfo] arguments];
         if (commandLineArguments.count == 1 || [commandLineArguments containsObject:@"-help"]) {
+            fprintf(stdout, "\n");
             fprintf(stdout, "Usage: opgp [-encrypt] [-key keyfile.asc] [-armor 1] [-msg \"message\"] ...\n");
             fprintf(stdout, "Options:\n");
             fprintf(stdout, "\t-decrypt     Decrypt mode (Default)\n");
@@ -105,8 +110,6 @@ Use within the scope of this License is free of charge and no royalty or licensi
             NSString *extension = armor ? @"asc" : @"gpg";
             if (inputPath) {
                 outputFile = [[inputPath lastPathComponent] stringByAppendingPathExtension:extension];
-            } else {
-                outputFile = [@"encrypted.txt" stringByAppendingPathExtension:extension];
             }
         }
         
@@ -167,11 +170,15 @@ Use within the scope of this License is free of charge and no royalty or licensi
         if (operationError) {
             fprintf(stderr, "ERROR: %s\n", operationError.localizedDescription.UTF8String);
         } else {
-            if (![outputData writeToFile:[outputFile stringByExpandingTildeInPath] atomically:YES]) {
-                fprintf(stderr, "ERROR: Can't write to output file\n");
-                return 1;
+            if (outputFile) {
+                if (![outputData writeToFile:[outputFile stringByExpandingTildeInPath] atomically:YES]) {
+                    fprintf(stderr, "ERROR: Can't write to output file\n");
+                    return 1;
+                }
+                fprintf(stdout, "Written to %s\n", outputFile.UTF8String);
+            } else {
+                fwrite(outputData.bytes, outputData.length, 1, stdout);
             }
-            fprintf(stdout, "Written to %s\n", outputFile.UTF8String);
         }
     }
     return 0;
