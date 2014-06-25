@@ -9,6 +9,7 @@
 #import "ObjectivePGP.h"
 #import "PGPPacketFactory.h"
 #import "PGPKey.h"
+#import "PGPSubKey.h"
 #import "PGPSignaturePacket.h"
 #import "PGPPacketFactory.h"
 #import "PGPUserIDPacket.h"
@@ -52,25 +53,66 @@
     return foundKeysArray.count > 0 ? [foundKeysArray copy] : nil;
 }
 
+- (PGPKey *) getKeyForKeyID:(PGPKeyID *)searchKeyID type:(PGPKeyType)keyType
+{
+    if (!searchKeyID) {
+        return nil;
+    }
+    
+    __block PGPKey *foundKey = nil;
+    [[self getKeysOfType:keyType] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+        PGPKey *key = obj;
+        if ([key.keyID isEqualToKeyID:searchKeyID]) {
+            foundKey = key;
+            *stop = YES;
+        }
+        
+        [key.subKeys enumerateObjectsUsingBlock:^(id objsub, NSUInteger idxsub, BOOL *stopsub) {
+            PGPSubKey *subKey = objsub;
+            if ([subKey.keyID isEqualToKeyID:searchKeyID]) {
+                foundKey = key;
+                *stopsub = YES;
+                *stop = YES;
+            }
+            
+        }];
+    }];
+    return foundKey;
+}
+
 // 16 or 8 chars identifier
-- (PGPKey *) getKeyForIdentifier:(NSString *)keyIdentifier
+- (PGPKey *) getKeyForIdentifier:(NSString *)keyIdentifier type:(PGPKeyType)keyType
 {
     if (keyIdentifier.length < 8 && keyIdentifier.length > 16)
         return nil;
 
     __block PGPKey *foundKey = nil;
-    [self.keys enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+    [[self getKeysOfType:keyType] enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         PGPKey *key = obj;
         PGPPublicKeyPacket *primaryPacket = (PGPPublicKeyPacket *)key.primaryKeyPacket;
         if (keyIdentifier.length == 16 && [[primaryPacket.keyID.longKeyString uppercaseString] isEqualToString:[keyIdentifier uppercaseString]]) {
             foundKey = key;
+            *stop = YES;
+            return;
         } else if (keyIdentifier.length == 8 && [[primaryPacket.keyID.shortKeyString uppercaseString] isEqualToString:[keyIdentifier uppercaseString]]) {
             foundKey = key;
+            *stop = YES;
+            return;
         }
 
-        if (foundKey) {
-            *stop = YES;
-        }
+        [[key subKeys] enumerateObjectsUsingBlock:^(id subobj, NSUInteger subidx, BOOL *substop) {
+            PGPSubKey *subKey = subobj;
+            PGPPublicKeyPacket *subprimaryPacket = (PGPPublicKeyPacket *)subKey.primaryKeyPacket;
+            if (keyIdentifier.length == 16 && [[subprimaryPacket.keyID.longKeyString uppercaseString] isEqualToString:[keyIdentifier uppercaseString]]) {
+                foundKey = key;
+                *substop = YES;
+                *stop = YES;
+            } else if (keyIdentifier.length == 8 && [[subprimaryPacket.keyID.shortKeyString uppercaseString] isEqualToString:[keyIdentifier uppercaseString]]) {
+                foundKey = key;
+                *substop = YES;
+                *stop = YES;
+            }
+        }];
     }];
     return foundKey;
 }
@@ -162,61 +204,66 @@
 
 #pragma mark - Encrypt & Decrypt
 
-- (NSData *) decryptData:(NSData *)messageDataToDecrypt usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase error:(NSError * __autoreleasing *)error
+- (NSData *) decryptData:(NSData *)messageDataToDecrypt passphrase:(NSString *)passphrase error:(NSError * __autoreleasing *)error
 {
-    NSAssert(secretKey, @"Missing secret key");
-        
-    NSAssert([[secretKey decryptionKeyPacket] isKindOfClass:[PGPSecretKeyPacket class]], @"Invalid secret key");
-    PGPSecretKeyPacket *decryptKeyPacket = (PGPSecretKeyPacket *)[secretKey decryptionKeyPacket];
-    
-    if (![decryptKeyPacket isKindOfClass:[PGPSecretKeyPacket class]]) {
-        return nil;
-    }
-    
-    PGPSecretKeyPacket *decryptionSecretKey = decryptKeyPacket;
-    if (decryptionSecretKey.isEncrypted) {
-        decryptionSecretKey = [decryptionSecretKey decryptedKeyPacket:passphrase error:error];
-        if (error && *error) {
-            return nil;
-        }
-    }
-    
     // parse packets
     NSArray *packets = [self readPacketsFromData:messageDataToDecrypt];
-    NSLog(@"decrypt packets %@",packets);
     
     PGPSymmetricAlgorithm sessionKeyAlgorithm = 0;
     NSData *sessionKeyData = nil;
     NSData *decryptedData = nil;
+    PGPSecretKeyPacket *decryptionSecretKeyPacket = nil; // found secret key to used to decrypt
     
     for (PGPPacket *packet in packets) {
         switch (packet.tag) {
             case PGPPublicKeyEncryptedSessionKeyPacketTag:
             {
+                // 1
                 PGPPublicKeyEncryptedSessionKeyPacket *pkESKPacket = (PGPPublicKeyEncryptedSessionKeyPacket *)packet;
-                sessionKeyData = [pkESKPacket decryptSessionKeyData:decryptionSecretKey sessionKeyAlgorithm:&sessionKeyAlgorithm error:error];
+                PGPKey *decryptionSecretKey = [self getKeyForKeyID:pkESKPacket.keyID type:PGPKeySecret];
+                PGPSecretKeyPacket *decryptKeyPacket = (PGPSecretKeyPacket *)[decryptionSecretKey decryptionKeyPacket];
+                NSAssert([decryptKeyPacket isKindOfClass:[PGPSecretKeyPacket class]], @"Invalid secret key");
+
+                // decrypt key if necessary
+                decryptionSecretKeyPacket = decryptKeyPacket;
+                if (decryptionSecretKeyPacket.isEncrypted) {
+                    decryptionSecretKeyPacket = [decryptionSecretKeyPacket decryptedKeyPacket:passphrase error:error];
+                    if (error && *error) {
+                        return nil;
+                    }
+                }
+                
+                sessionKeyData = [pkESKPacket decryptSessionKeyData:decryptionSecretKeyPacket sessionKeyAlgorithm:&sessionKeyAlgorithm error:error];
                 NSAssert(sessionKeyData, @"PublicKeyEncryptedSessionKeyPacket decryption failed");
                 NSAssert(sessionKeyAlgorithm > 0, @"Invalid session key algorithm");
                 
                 if (!sessionKeyData) {
                     return nil;
                 }
-                // use decrypted sessionKeyData to decrypt literal packet
             }
                 break;
             case PGPSymmetricallyEncryptedIntegrityProtectedDataPacketTag:
             {
+                // 2
                 NSAssert(sessionKeyData, @"Missing session key data");
+                NSAssert(decryptionSecretKeyPacket, @"Decryption secret key packet not found");
+                if (!decryptionSecretKeyPacket) {
+                    if (error) {
+                        *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Unable to find secret key"}];
+                    }
+                    return nil;
+                }
+                
                 // decrypt PGPSymmetricallyEncryptedIntegrityProtectedDataPacket
                 PGPSymmetricallyEncryptedIntegrityProtectedDataPacket *symEncryptedDataPacket = (PGPSymmetricallyEncryptedIntegrityProtectedDataPacket *)packet;
-                decryptedData = [symEncryptedDataPacket decryptWithSecretKeyPacket:decryptionSecretKey sessionKeyAlgorithm:sessionKeyAlgorithm sessionKeyData:sessionKeyData error:error];
+                decryptedData = [symEncryptedDataPacket decryptWithSecretKeyPacket:decryptionSecretKeyPacket sessionKeyAlgorithm:sessionKeyAlgorithm sessionKeyData:sessionKeyData error:error];
                 if (!decryptedData) {
                     return nil;
                 }
             }
                 break;
-                
             default:
+                
                 break;
         }
     }
@@ -518,23 +565,27 @@
     return foundKey;
 }
 
+#pragma mark - Private
+
+// private
 - (NSArray *) loadKeysFromFile:(NSString *)path
 {
     NSString *fullPath = [path stringByExpandingTildeInPath];
-
+    
     if (![[NSFileManager defaultManager] fileExistsAtPath:fullPath isDirectory:NO]) {
         return nil;
     }
-
+    
     NSError *error = nil;
     NSData *fileData = [NSData dataWithContentsOfFile:fullPath options:NSDataReadingMappedIfSafe | NSDataReadingUncached error:&error];
     if (!fileData || error) {
         return nil;
     }
-
+    
     return [self loadKeysFromData:fileData];
 }
 
+// private
 - (NSArray *) loadKeysFromData:(NSData *)fileData
 {
     NSAssert(fileData, @"Missing data");
@@ -565,11 +616,6 @@
     
     return parsedKeys;
 }
-
-
-
-#pragma mark - Private
-
 - (NSArray *) readPacketsFromData:(NSData *)keyringData
 {
     NSMutableArray *accumulatedPackets = [NSMutableArray array];

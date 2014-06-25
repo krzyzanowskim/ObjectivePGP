@@ -18,6 +18,8 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
     PGPKeyPublic  = 2
 };
 
+@class PGPSecretKeyPacket;
+
 @interface PGPKey : NSObject
 
 @property (assign, readonly ) PGPKeyType type;
@@ -27,6 +29,8 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
 @property (strong, nonatomic) NSMutableArray *subKeys;
 @property (strong, nonatomic) NSMutableArray *directSignatures;
 @property (strong, nonatomic) PGPPacket      *revocationSignature;
+
+@property (nonatomic, readonly) PGPKeyID *keyID;
 
 - (instancetype) initWithPackets:(NSArray *)packets;
 
@@ -49,12 +53,11 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
  */
 - (PGPPacket *) signingKeyPacket;
 - (PGPPacket *) encryptionKeyPacket;
-- (PGPPacket *) decryptionKeyPacket;
+- (PGPSecretKeyPacket *) decryptionKeyPacket;
 
 
 - (NSArray *) allKeyPackets;
 - (PGPSymmetricAlgorithm) preferredSymmetricAlgorithm;
-
 
 /**
  *  Export to transferable key packets sequence

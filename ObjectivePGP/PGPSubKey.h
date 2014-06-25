@@ -10,12 +10,14 @@
 #import "PGPKey.h"
 #import "PGPPacket.h"
 #import "PGPSignaturePacket.h"
+#import "PGPKeyID.h"
 
-@interface PGPSubKey : NSObject
+@interface PGPSubKey : PGPKey
 
-@property (strong, readonly) PGPPacket * keyPacket;
+@property (strong, nonatomic) PGPPacket * primaryKeyPacket;
 @property (strong) PGPSignaturePacket *bindingSignature;
 @property (strong, nonatomic) PGPSignaturePacket *revocationSignature;
+@property (nonatomic, readonly) PGPKeyID *keyID;
 
 - (instancetype) initWithPacket:(PGPPacket *)packet;
 - (NSArray *) allPackets;

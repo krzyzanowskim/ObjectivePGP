@@ -66,7 +66,7 @@
     foundKeys = [self.oPGP getKeysForUserID:@"ERR Marcin (test) <marcink@up-next.com>"];
     XCTAssertNil(foundKeys, @"found key, should not");
 
-    PGPKey *key = [self.oPGP getKeyForIdentifier:@"952E4E8B"];
+    PGPKey *key = [self.oPGP getKeyForIdentifier:@"952E4E8B" type:PGPKeySecret];
     XCTAssertNotNil(key, @"Key 952E4E8B not found");
 }
 
@@ -140,7 +140,7 @@
     BOOL status = [[NSFileManager defaultManager] copyItemAtPath:self.secKeyringPath toPath:fileToSignPath error:nil];
     XCTAssertTrue(status);
 
-    PGPKey *keyToSign = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B"];
+    PGPKey *keyToSign = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B" type:PGPKeySecret];
     XCTAssertNotNil(keyToSign);
 
     // detached signature
@@ -154,7 +154,7 @@
     NSLog(@"Signature %@", signaturePath);
 
     // Verify
-    PGPKey *keyToValidateSign = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B"];
+    PGPKey *keyToValidateSign = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B" type:PGPKeySecret];
     status = [self.oPGP verifyData:[NSData dataWithContentsOfFile:fileToSignPath] withSignature:signatureData usingKey:keyToValidateSign];
     XCTAssertTrue(status);
 
@@ -169,7 +169,7 @@
     NSLog(@"Signed file %@", signedPath);
 
     // Verify
-    keyToValidateSign = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B"];
+    keyToValidateSign = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B" type:PGPKeySecret];
     status = [self.oPGP verifyData:signedData];
     XCTAssertTrue(status);
 }
@@ -182,12 +182,9 @@
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
 
     // Public key
-    PGPKey *keyToEncrypt = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B"];
-    NSArray *secretKeys = [self.oPGP getKeysOfType:PGPKeySecret];
-    PGPKey *keyToDecrypt = secretKeys[0];
+    PGPKey *keyToEncrypt = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B" type:PGPKeyPublic];
     
     XCTAssertNotNil(keyToEncrypt);
-    XCTAssertNotNil(keyToDecrypt);
 
     NSData* plainData = [PLAINTEXT dataUsingEncoding:NSUTF8StringEncoding];
     [plainData writeToFile:[self.workingDirectory stringByAppendingPathComponent:@"plaintext.txt"] atomically:YES];
@@ -205,7 +202,7 @@
     XCTAssertTrue(status);
 
     // decrypt + validate decrypted message
-    NSData *decryptedData = [self.oPGP decryptData:encryptedData usingSecretKey:keyToDecrypt passphrase:@"1234" error:nil];
+    NSData *decryptedData = [self.oPGP decryptData:encryptedData passphrase:@"1234" error:nil];
     XCTAssertNotNil(decryptedData);
     NSString *decryptedString = [[NSString alloc] initWithData:decryptedData encoding:NSASCIIStringEncoding];
     XCTAssertNotNil(decryptedString);

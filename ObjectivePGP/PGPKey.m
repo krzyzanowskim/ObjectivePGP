@@ -73,15 +73,24 @@
 
     switch (self.primaryKeyPacket.tag) {
         case PGPPublicKeyPacketTag:
+        case PGPPublicSubkeyPacketTag:
             t = PGPKeyPublic;
             break;
         case PGPSecretKeyPacketTag:
+        case PGPSecretSubkeyPacketTag:
             t = PGPKeySecret;
         default:
             break;
     }
 
     return t;
+}
+
+- (PGPKeyID *)keyID
+{
+    PGPPublicKeyPacket *primaryKeyPacket = (PGPPublicKeyPacket *)self.primaryKeyPacket;
+    PGPKeyID *keyID = [[PGPKeyID alloc] initWithFingerprint:primaryKeyPacket.fingerprint];
+    return keyID;
 }
 
 - (void) loadPackets:(NSArray *)packets
@@ -194,7 +203,7 @@
     for (PGPSubKey *subKey in self.subKeys) {
         PGPSignaturePacket *signaturePacket = subKey.bindingSignature;
         if (signaturePacket.canBeUsedToSign) {
-            return subKey.keyPacket;
+            return subKey.primaryKeyPacket;
         }
     }
 
@@ -213,7 +222,7 @@
     for (PGPSubKey *subKey in self.subKeys) {
         PGPSignaturePacket *signaturePacket = subKey.bindingSignature;
         if (signaturePacket.canBeUsedToEncrypt) {
-            return subKey.keyPacket;
+            return subKey.primaryKeyPacket;
         }
     }
 
@@ -230,7 +239,7 @@
     return nil;
 }
 
-- (PGPPacket *) decryptionKeyPacket
+- (PGPSecretKeyPacket *) decryptionKeyPacket
 {
     NSAssert(self.type == PGPKeySecret, @"Need secret key to encrypt");
     if (self.type == PGPKeyPublic) {
@@ -241,7 +250,7 @@
     for (PGPSubKey *subKey in self.subKeys) {
         PGPSignaturePacket *signaturePacket = subKey.bindingSignature;
         if (signaturePacket.canBeUsedToEncrypt) {
-            return subKey.keyPacket;
+            return (PGPSecretKeyPacket *)subKey.primaryKeyPacket;
         }
     }
     
@@ -251,7 +260,7 @@
     if (primaryUserSelfCertificate)
     {
         if (primaryUserSelfCertificate.canBeUsedToEncrypt) {
-            return self.primaryKeyPacket;
+            return (PGPSecretKeyPacket *)self.primaryKeyPacket;
         }
     }
     
@@ -270,8 +279,8 @@
     }
 
     for (PGPSubKey *subKey in self.subKeys) {
-        if ([subKey.keyPacket isKindOfClass:[PGPSecretKeyPacket class]]) {
-            PGPSecretKeyPacket *secretPacket = (PGPSecretKeyPacket *)subKey.keyPacket;
+        if ([subKey.primaryKeyPacket isKindOfClass:[PGPSecretKeyPacket class]]) {
+            PGPSecretKeyPacket *secretPacket = (PGPSecretKeyPacket *)subKey.primaryKeyPacket;
             self.primaryKeyPacket = [secretPacket decryptedKeyPacket:passphrase error:error];
             if (*error) {
                 return NO;
@@ -380,7 +389,7 @@
 {
     NSMutableArray *arr = [NSMutableArray arrayWithObject:self.primaryKeyPacket];
     for (PGPSubKey *subKey in self.subKeys) {
-        [arr addObject:subKey.keyPacket];
+        [arr addObject:subKey.primaryKeyPacket];
     }
     return [arr copy];
 }

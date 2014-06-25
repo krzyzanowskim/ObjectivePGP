@@ -27,8 +27,9 @@
 - (BOOL) exportKeys:(NSArray *)keys toFile:(NSString *)path error:(NSError * __autoreleasing *)error;
 - (NSData *) exportKey:(PGPKey *)key armored:(BOOL)armored;
 
+- (PGPKey *) getKeyForIdentifier:(NSString *)keyIdentifier type:(PGPKeyType)keyType;
+- (PGPKey *) getKeyForKeyID:(PGPKeyID *)searchKeyID type:(PGPKeyType)keyType;
 - (NSArray *) getKeysForUserID:(NSString *)userID;
-- (PGPKey *)  getKeyForIdentifier:(NSString *)keyIdentifier;
 - (NSArray *) getKeysOfType:(PGPKeyType)keyType;
 
 - (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase;
@@ -41,6 +42,6 @@
 - (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPKey *)publicKey;
 
 - (NSData *) encryptData:(NSData *)dataToEncrypt usingPublicKey:(PGPKey *)publicKey armored:(BOOL)armored error:(NSError * __autoreleasing *)error;
-- (NSData *) decryptData:(NSData *)dataToDecrypt usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase error:(NSError * __autoreleasing *)error;
+- (NSData *) decryptData:(NSData *)messageDataToDecrypt passphrase:(NSString *)passphrase error:(NSError * __autoreleasing *)error;
 
 @end

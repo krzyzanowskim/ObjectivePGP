@@ -7,31 +7,36 @@
 //
 
 #import "PGPSubKey.h"
-
-@interface PGPSubKey ()
-@property (strong, readwrite) PGPPacket * keyPacket;
-@end
+#import "PGPPublicKeyPacket.h"
 
 @implementation PGPSubKey
 
 - (instancetype) initWithPacket:(PGPPacket *)packet
 {
     if (self = [self init]) {
-        self.keyPacket = packet;
+        self.primaryKeyPacket = packet;
     }
     return self;
 }
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"%@ %@",[super description], [self.keyPacket description]];
+    return [NSString stringWithFormat:@"%@ %@",[super description], [self.primaryKeyPacket description]];
+}
+
+- (PGPKeyID *)keyID
+{
+    //note: public key packet because this is main class for public and secret class
+    PGPPublicKeyPacket *primaryKeyPacket = (PGPPublicKeyPacket *)self.primaryKeyPacket;
+    PGPKeyID *keyID = [[PGPKeyID alloc] initWithFingerprint:primaryKeyPacket.fingerprint];
+    return keyID;
 }
 
 - (NSArray *) allPackets
 {
     NSMutableArray *arr = [NSMutableArray array];
 
-    [arr addObject:self.keyPacket];
+    [arr addObject:self.primaryKeyPacket];
 
     if (self.revocationSignature) {
         [arr addObject:self.revocationSignature];

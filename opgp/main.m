@@ -144,7 +144,12 @@ Use within the scope of this License is free of charge and no royalty or licensi
         }
 
         if (keyIdentifier) {
-            operationKey = [pgp getKeyForIdentifier:keyIdentifier];
+            if (encrypt) {
+                operationKey = [pgp getKeyForIdentifier:keyIdentifier type:PGPKeyPublic];
+            } else {
+                operationKey = [pgp getKeyForIdentifier:keyIdentifier type:PGPKeySecret];
+            }
+            
             if (!operationKey) {
                 fprintf(stderr, "ERROR: Can't use key %s\n", keyIdentifier.UTF8String);
                 return 1;
@@ -156,7 +161,7 @@ Use within the scope of this License is free of charge and no royalty or licensi
         if (encrypt) {
             outputData = [pgp encryptData:inputData usingPublicKey:operationKey armored:armor error:&operationError];
         } else {
-            outputData = [pgp decryptData:inputData usingSecretKey:operationKey passphrase:passprase error:&operationError];
+            outputData = [pgp decryptData:inputData passphrase:passprase error:&operationError];
         }
         
         if (operationError) {

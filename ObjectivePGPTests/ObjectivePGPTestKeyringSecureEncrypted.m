@@ -96,7 +96,7 @@
     status = [[NSFileManager defaultManager] copyItemAtPath:self.secKeyringPath toPath:fileToSignPath error:nil];
     XCTAssertTrue(status);
 
-    PGPKey *keyToSign = [self.oPGP getKeyForIdentifier:@"9528AAA17A9BC007"];
+    PGPKey *keyToSign = [self.oPGP getKeyForIdentifier:@"9528AAA17A9BC007" type:PGPKeySecret];
     XCTAssertNotNil(keyToSign);
 
     // detached signature
