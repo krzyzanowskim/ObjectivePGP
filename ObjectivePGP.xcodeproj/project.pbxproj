@@ -89,7 +89,6 @@
 		759FF498195982A6005B240C /* PGPFingerprint.m in Sources */ = {isa = PBXBuildFile; fileRef = 7562858D19239F1B00127E24 /* PGPFingerprint.m */; };
 		759FF499195982A6005B240C /* PGPPKCSEme.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AE7E28194224CD004DD6A5 /* PGPPKCSEme.m */; };
 		759FF49B195982A6005B240C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B81914DE1A00C5AD3B /* Foundation.framework */; };
-		759FF49E195982A6005B240C /* ObjectivePGP.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 756299BD1914DE1A00C5AD3B /* ObjectivePGP.h */; };
 		75A5C154193CE3F6008A2543 /* NSData+compression.m in Sources */ = {isa = PBXBuildFile; fileRef = 75A5C153193CE3F6008A2543 /* NSData+compression.m */; };
 		75A5D20F195983430074A124 /* libObjectivePGPOSX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 759FF4A3195982A6005B240C /* libObjectivePGPOSX.a */; };
 		75AE7E261941C567004DD6A5 /* PGPPublicKeyEncryptedSessionKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AE7E251941C567004DD6A5 /* PGPPublicKeyEncryptedSessionKeyPacket.m */; };
@@ -107,6 +106,71 @@
 		75DA135E191AE1D6004C9C76 /* PGPS2K.m in Sources */ = {isa = PBXBuildFile; fileRef = 75DA135D191AE1D6004C9C76 /* PGPS2K.m */; };
 		75E7B6B81916493600C96BAB /* PGPPublicSubKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75E7B6B71916493600C96BAB /* PGPPublicSubKeyPacket.m */; };
 		75E7B6BB19167EFF00C96BAB /* PGPSignaturePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75E7B6BA19167EFF00C96BAB /* PGPSignaturePacket.m */; };
+		75F81A9E195B834600704164 /* PGPTypes.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 759DBA151915BC0400305549 /* PGPTypes.h */; };
+		75F81A9F195B834600704164 /* PGPPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 757DDE7A1919338700A30F84 /* PGPPacket.h */; };
+		75F81AA0195B834600704164 /* PGPSignaturePacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75E7B6B919167EFF00C96BAB /* PGPSignaturePacket.h */; };
+		75F81AA1195B834600704164 /* PGPSignatureSubpacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7502CEFD1916DCE9001B32D7 /* PGPSignatureSubpacket.h */; };
+		75F81AA2195B834600704164 /* PGPOnePassSignaturePacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 751E07341937D53900CA7946 /* PGPOnePassSignaturePacket.h */; };
+		75F81AA3195B834600704164 /* PGPPacketFactory.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75E7B6BC19167F1700C96BAB /* PGPPacketFactory.h */; };
+		75F81AA4195B834600704164 /* PGPPublicKeyPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 756299E51915AF0700C5AD3B /* PGPPublicKeyPacket.h */; };
+		75F81AA5195B834600704164 /* PGPPublicSubKeyPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75E7B6B61916493600C96BAB /* PGPPublicSubKeyPacket.h */; };
+		75F81AA6195B834600704164 /* PGPSecretKeyPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75DA1356191A4E65004C9C76 /* PGPSecretKeyPacket.h */; };
+		75F81AA7195B834600704164 /* PGPSecretSubKeyPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75DA1359191A4EA6004C9C76 /* PGPSecretSubKeyPacket.h */; };
+		75F81AA8195B834600704164 /* PGPUserIDPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7507B72619170FE3003A2DC7 /* PGPUserIDPacket.h */; };
+		75F81AA9195B834600704164 /* PGPTrustPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75734BD61918462900A54D6E /* PGPTrustPacket.h */; };
+		75F81AAA195B834600704164 /* PGPModificationDetectionCodePacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75C4F0E4192163A3005401A4 /* PGPModificationDetectionCodePacket.h */; };
+		75F81AAB195B834600704164 /* PGPLiteralPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75AEC4631930B5E400974CBE /* PGPLiteralPacket.h */; };
+		75F81AAC195B834600704164 /* PGPUserAttributePacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75AEC4661930FC0B00974CBE /* PGPUserAttributePacket.h */; };
+		75F81AAD195B834600704164 /* PGPUserAttributeSubpacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75AEC4691930FD3000974CBE /* PGPUserAttributeSubpacket.h */; };
+		75F81AAE195B834600704164 /* PGPCompressedPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75B39528193C6FA100297C8D /* PGPCompressedPacket.h */; };
+		75F81AAF195B834600704164 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75FE9806193FB46200613549 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h */; };
+		75F81AB0195B834600704164 /* PGPSymmetricallyEncryptedDataPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 753A65ED19487E3D0011A729 /* PGPSymmetricallyEncryptedDataPacket.h */; };
+		75F81AB1195B834600704164 /* PGPPublicKeyEncryptedSessionKeyPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75AE7E241941C567004DD6A5 /* PGPPublicKeyEncryptedSessionKeyPacket.h */; };
+		75F81AB2195B834600704164 /* PGPMPI.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 759DBA161915CBDF00305549 /* PGPMPI.h */; };
+		75F81AB3195B834600704164 /* PGPFingerprint.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7562858C19239F1B00127E24 /* PGPFingerprint.h */; };
+		75F81AB4195B834600704164 /* PGPS2K.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75DA135C191AE1D6004C9C76 /* PGPS2K.h */; };
+		75F81AB5195B834600704164 /* PGPKeyID.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75734BD9191853DF00A54D6E /* PGPKeyID.h */; };
+		75F81AB6195B834600704164 /* PGPUser.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7563356B19255C1A00414CCC /* PGPUser.h */; };
+		75F81AB7195B834600704164 /* PGPSubKey.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7563356E192582CD00414CCC /* PGPSubKey.h */; };
+		75F81AB8195B834600704164 /* PGPKey.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 750EE3C21922C185009E818E /* PGPKey.h */; };
+		75F81AB9195B834600704164 /* PGPArmor.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 755456BE192843E700E5526B /* PGPArmor.h */; };
+		75F81ABA195B834600704164 /* PGPPKCSEmsa.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7597B79A192E9C7F003ABC65 /* PGPPKCSEmsa.h */; };
+		75F81ABB195B834600704164 /* PGPPKCSEme.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75AE7E27194224CD004DD6A5 /* PGPPKCSEme.h */; };
+		75F81ABC195B834600704164 /* PGPPublicKeyRSA.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75B2450D1933DB89003F24A0 /* PGPPublicKeyRSA.h */; };
+		75F81ABD195B834600704164 /* PGPCryptoCFB.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 751056111940A76F00653C0B /* PGPCryptoCFB.h */; };
+		75F81ABE195B835300704164 /* ObjectivePGP.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 756299BD1914DE1A00C5AD3B /* ObjectivePGP.h */; };
+		75F81ABF195B835300704164 /* PGPTypes.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 759DBA151915BC0400305549 /* PGPTypes.h */; };
+		75F81AC0195B835300704164 /* PGPPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 757DDE7A1919338700A30F84 /* PGPPacket.h */; };
+		75F81AC1195B835300704164 /* PGPSignaturePacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75E7B6B919167EFF00C96BAB /* PGPSignaturePacket.h */; };
+		75F81AC2195B835300704164 /* PGPSignatureSubpacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7502CEFD1916DCE9001B32D7 /* PGPSignatureSubpacket.h */; };
+		75F81AC3195B835300704164 /* PGPOnePassSignaturePacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 751E07341937D53900CA7946 /* PGPOnePassSignaturePacket.h */; };
+		75F81AC4195B835300704164 /* PGPPacketFactory.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75E7B6BC19167F1700C96BAB /* PGPPacketFactory.h */; };
+		75F81AC5195B835300704164 /* PGPPublicKeyPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 756299E51915AF0700C5AD3B /* PGPPublicKeyPacket.h */; };
+		75F81AC6195B835300704164 /* PGPPublicSubKeyPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75E7B6B61916493600C96BAB /* PGPPublicSubKeyPacket.h */; };
+		75F81AC7195B835300704164 /* PGPSecretKeyPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75DA1356191A4E65004C9C76 /* PGPSecretKeyPacket.h */; };
+		75F81AC8195B835300704164 /* PGPSecretSubKeyPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75DA1359191A4EA6004C9C76 /* PGPSecretSubKeyPacket.h */; };
+		75F81AC9195B835300704164 /* PGPUserIDPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7507B72619170FE3003A2DC7 /* PGPUserIDPacket.h */; };
+		75F81ACA195B835300704164 /* PGPTrustPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75734BD61918462900A54D6E /* PGPTrustPacket.h */; };
+		75F81ACB195B835300704164 /* PGPModificationDetectionCodePacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75C4F0E4192163A3005401A4 /* PGPModificationDetectionCodePacket.h */; };
+		75F81ACC195B835300704164 /* PGPLiteralPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75AEC4631930B5E400974CBE /* PGPLiteralPacket.h */; };
+		75F81ACD195B835300704164 /* PGPUserAttributePacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75AEC4661930FC0B00974CBE /* PGPUserAttributePacket.h */; };
+		75F81ACE195B835300704164 /* PGPUserAttributeSubpacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75AEC4691930FD3000974CBE /* PGPUserAttributeSubpacket.h */; };
+		75F81ACF195B835300704164 /* PGPCompressedPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75B39528193C6FA100297C8D /* PGPCompressedPacket.h */; };
+		75F81AD0195B835300704164 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75FE9806193FB46200613549 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h */; };
+		75F81AD1195B835300704164 /* PGPSymmetricallyEncryptedDataPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 753A65ED19487E3D0011A729 /* PGPSymmetricallyEncryptedDataPacket.h */; };
+		75F81AD2195B835300704164 /* PGPPublicKeyEncryptedSessionKeyPacket.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75AE7E241941C567004DD6A5 /* PGPPublicKeyEncryptedSessionKeyPacket.h */; };
+		75F81AD3195B835300704164 /* PGPMPI.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 759DBA161915CBDF00305549 /* PGPMPI.h */; };
+		75F81AD4195B835300704164 /* PGPFingerprint.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7562858C19239F1B00127E24 /* PGPFingerprint.h */; };
+		75F81AD5195B835300704164 /* PGPS2K.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75DA135C191AE1D6004C9C76 /* PGPS2K.h */; };
+		75F81AD6195B835300704164 /* PGPKeyID.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75734BD9191853DF00A54D6E /* PGPKeyID.h */; };
+		75F81AD7195B835300704164 /* PGPUser.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7563356B19255C1A00414CCC /* PGPUser.h */; };
+		75F81AD8195B835300704164 /* PGPSubKey.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7563356E192582CD00414CCC /* PGPSubKey.h */; };
+		75F81AD9195B835300704164 /* PGPKey.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 750EE3C21922C185009E818E /* PGPKey.h */; };
+		75F81ADA195B835300704164 /* PGPArmor.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 755456BE192843E700E5526B /* PGPArmor.h */; };
+		75F81ADB195B835300704164 /* PGPPKCSEmsa.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 7597B79A192E9C7F003ABC65 /* PGPPKCSEmsa.h */; };
+		75F81ADC195B835300704164 /* PGPPKCSEme.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75AE7E27194224CD004DD6A5 /* PGPPKCSEme.h */; };
+		75F81ADD195B835300704164 /* PGPPublicKeyRSA.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75B2450D1933DB89003F24A0 /* PGPPublicKeyRSA.h */; };
+		75F81ADE195B835300704164 /* PGPCryptoCFB.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 751056111940A76F00653C0B /* PGPCryptoCFB.h */; };
 		75FE9808193FB46200613549 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75FE9807193FB46200613549 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.m */; };
 /* End PBXBuildFile section */
 
@@ -134,6 +198,38 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
+				75F81A9E195B834600704164 /* PGPTypes.h in CopyFiles */,
+				75F81A9F195B834600704164 /* PGPPacket.h in CopyFiles */,
+				75F81AA0195B834600704164 /* PGPSignaturePacket.h in CopyFiles */,
+				75F81AA1195B834600704164 /* PGPSignatureSubpacket.h in CopyFiles */,
+				75F81AA2195B834600704164 /* PGPOnePassSignaturePacket.h in CopyFiles */,
+				75F81AA3195B834600704164 /* PGPPacketFactory.h in CopyFiles */,
+				75F81AA4195B834600704164 /* PGPPublicKeyPacket.h in CopyFiles */,
+				75F81AA5195B834600704164 /* PGPPublicSubKeyPacket.h in CopyFiles */,
+				75F81AA6195B834600704164 /* PGPSecretKeyPacket.h in CopyFiles */,
+				75F81AA7195B834600704164 /* PGPSecretSubKeyPacket.h in CopyFiles */,
+				75F81AA8195B834600704164 /* PGPUserIDPacket.h in CopyFiles */,
+				75F81AA9195B834600704164 /* PGPTrustPacket.h in CopyFiles */,
+				75F81AAA195B834600704164 /* PGPModificationDetectionCodePacket.h in CopyFiles */,
+				75F81AAB195B834600704164 /* PGPLiteralPacket.h in CopyFiles */,
+				75F81AAC195B834600704164 /* PGPUserAttributePacket.h in CopyFiles */,
+				75F81AAD195B834600704164 /* PGPUserAttributeSubpacket.h in CopyFiles */,
+				75F81AAE195B834600704164 /* PGPCompressedPacket.h in CopyFiles */,
+				75F81AAF195B834600704164 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h in CopyFiles */,
+				75F81AB0195B834600704164 /* PGPSymmetricallyEncryptedDataPacket.h in CopyFiles */,
+				75F81AB1195B834600704164 /* PGPPublicKeyEncryptedSessionKeyPacket.h in CopyFiles */,
+				75F81AB2195B834600704164 /* PGPMPI.h in CopyFiles */,
+				75F81AB3195B834600704164 /* PGPFingerprint.h in CopyFiles */,
+				75F81AB4195B834600704164 /* PGPS2K.h in CopyFiles */,
+				75F81AB5195B834600704164 /* PGPKeyID.h in CopyFiles */,
+				75F81AB6195B834600704164 /* PGPUser.h in CopyFiles */,
+				75F81AB7195B834600704164 /* PGPSubKey.h in CopyFiles */,
+				75F81AB8195B834600704164 /* PGPKey.h in CopyFiles */,
+				75F81AB9195B834600704164 /* PGPArmor.h in CopyFiles */,
+				75F81ABA195B834600704164 /* PGPPKCSEmsa.h in CopyFiles */,
+				75F81ABB195B834600704164 /* PGPPKCSEme.h in CopyFiles */,
+				75F81ABC195B834600704164 /* PGPPublicKeyRSA.h in CopyFiles */,
+				75F81ABD195B834600704164 /* PGPCryptoCFB.h in CopyFiles */,
 				756299BE1914DE1A00C5AD3B /* ObjectivePGP.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -153,7 +249,39 @@
 			dstPath = "include/$(PRODUCT_NAME)";
 			dstSubfolderSpec = 16;
 			files = (
-				759FF49E195982A6005B240C /* ObjectivePGP.h in CopyFiles */,
+				75F81ABE195B835300704164 /* ObjectivePGP.h in CopyFiles */,
+				75F81ABF195B835300704164 /* PGPTypes.h in CopyFiles */,
+				75F81AC0195B835300704164 /* PGPPacket.h in CopyFiles */,
+				75F81AC1195B835300704164 /* PGPSignaturePacket.h in CopyFiles */,
+				75F81AC2195B835300704164 /* PGPSignatureSubpacket.h in CopyFiles */,
+				75F81AC3195B835300704164 /* PGPOnePassSignaturePacket.h in CopyFiles */,
+				75F81AC4195B835300704164 /* PGPPacketFactory.h in CopyFiles */,
+				75F81AC5195B835300704164 /* PGPPublicKeyPacket.h in CopyFiles */,
+				75F81AC6195B835300704164 /* PGPPublicSubKeyPacket.h in CopyFiles */,
+				75F81AC7195B835300704164 /* PGPSecretKeyPacket.h in CopyFiles */,
+				75F81AC8195B835300704164 /* PGPSecretSubKeyPacket.h in CopyFiles */,
+				75F81AC9195B835300704164 /* PGPUserIDPacket.h in CopyFiles */,
+				75F81ACA195B835300704164 /* PGPTrustPacket.h in CopyFiles */,
+				75F81ACB195B835300704164 /* PGPModificationDetectionCodePacket.h in CopyFiles */,
+				75F81ACC195B835300704164 /* PGPLiteralPacket.h in CopyFiles */,
+				75F81ACD195B835300704164 /* PGPUserAttributePacket.h in CopyFiles */,
+				75F81ACE195B835300704164 /* PGPUserAttributeSubpacket.h in CopyFiles */,
+				75F81ACF195B835300704164 /* PGPCompressedPacket.h in CopyFiles */,
+				75F81AD0195B835300704164 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h in CopyFiles */,
+				75F81AD1195B835300704164 /* PGPSymmetricallyEncryptedDataPacket.h in CopyFiles */,
+				75F81AD2195B835300704164 /* PGPPublicKeyEncryptedSessionKeyPacket.h in CopyFiles */,
+				75F81AD3195B835300704164 /* PGPMPI.h in CopyFiles */,
+				75F81AD4195B835300704164 /* PGPFingerprint.h in CopyFiles */,
+				75F81AD5195B835300704164 /* PGPS2K.h in CopyFiles */,
+				75F81AD6195B835300704164 /* PGPKeyID.h in CopyFiles */,
+				75F81AD7195B835300704164 /* PGPUser.h in CopyFiles */,
+				75F81AD8195B835300704164 /* PGPSubKey.h in CopyFiles */,
+				75F81AD9195B835300704164 /* PGPKey.h in CopyFiles */,
+				75F81ADA195B835300704164 /* PGPArmor.h in CopyFiles */,
+				75F81ADB195B835300704164 /* PGPPKCSEmsa.h in CopyFiles */,
+				75F81ADC195B835300704164 /* PGPPKCSEme.h in CopyFiles */,
+				75F81ADD195B835300704164 /* PGPPublicKeyRSA.h in CopyFiles */,
+				75F81ADE195B835300704164 /* PGPCryptoCFB.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
