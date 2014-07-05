@@ -30,13 +30,13 @@
  */
 - (UInt16) pgpChecksum
 {
-    UInt16 s = 0;
+    UInt32 s = 0;
     const UInt8 *bytes = self.bytes;
     for (NSUInteger i = 0; i < self.length; i++) {
         s = (s + (UInt8)bytes[i]);
     }
     s = s % 65536;
-    return s;
+    return (UInt16)s;
 }
 
 #define CRC24_POLY 0x1864cfbL
@@ -173,7 +173,7 @@
 
     CC_SHA384_Init(ctx);
     CC_SHA384_Update(ctx, self.bytes, self.length);
-    UInt8 *out = calloc(CC_SHA512_DIGEST_LENGTH, sizeof(UInt8));
+    UInt8 *out = calloc(CC_SHA384_DIGEST_LENGTH, sizeof(UInt8));
     if (!out) {
         return nil;
     }
