@@ -3,6 +3,7 @@ Implementation of RFC4880 (OpenPGP)
 Working, but it's in early alpha stage.
 
 Known issues:
+
 1. Revocation is not fully supported
 2. Embeded signatures - not supported
 3. ZIP compression not supported
