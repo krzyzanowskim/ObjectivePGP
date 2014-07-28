@@ -18,11 +18,17 @@ xcodebuild build -workspace ${WORKSPACE} -scheme ${SCHEME} -configuration ${CONF
 
 xcodebuild build -workspace ${WORKSPACE} -scheme ${SCHEME} -configuration ${CONFIGURATION} -arch i386 -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO SYMROOT=${BUILD_DIR}
 mv ${DEST_DIR}-iphonesimulator/libObjectivePGP.a ${DEST_DIR}-iphonesimulator/libObjectivePGP-i386.a
+mv ${DEST_DIR}-iphonesimulator/libPods-ObjectivePGP-OpenSSL-Universal.a ${DEST_DIR}-iphonesimulator/libPods-ObjectivePGP-OpenSSL-Universal-i386.a
+mv ${DEST_DIR}-iphonesimulator/libPods-ObjectivePGP.a ${DEST_DIR}-iphonesimulator/libPods-ObjectivePGP-i386.a
 
 xcodebuild build -workspace ${WORKSPACE} -scheme ${SCHEME} -configuration ${CONFIGURATION} -arch x86_64 -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO SYMROOT=${BUILD_DIR}
 mv ${DEST_DIR}-iphonesimulator/libObjectivePGP.a ${DEST_DIR}-iphonesimulator/libObjectivePGP-x86_64.a
+mv ${DEST_DIR}-iphonesimulator/libPods-ObjectivePGP-OpenSSL-Universal.a ${DEST_DIR}-iphonesimulator/libPods-ObjectivePGP-OpenSSL-Universal-x86_64.a
+mv ${DEST_DIR}-iphonesimulator/libPods-ObjectivePGP.a ${DEST_DIR}-iphonesimulator/libPods-ObjectivePGP-x86_64.a
 
 lipo -create ${DEST_DIR}-iphoneos/libObjectivePGP.a ${DEST_DIR}-iphonesimulator/libObjectivePGP-i386.a ${DEST_DIR}-iphonesimulator/libObjectivePGP-x86_64.a -output ${DEST_DIR}/libObjectivePGP.a
+lipo -create ${DEST_DIR}-iphoneos/libPods-ObjectivePGP-OpenSSL-Universal.a ${DEST_DIR}-iphonesimulator/libPods-ObjectivePGP-OpenSSL-Universal-i386.a ${DEST_DIR}-iphonesimulator/libPods-ObjectivePGP-OpenSSL-Universal-x86_64.a -output ${DEST_DIR}/libPods-ObjectivePGP-OpenSSL-Universal.a
+lipo -create ${DEST_DIR}-iphoneos/libPods-ObjectivePGP.a ${DEST_DIR}-iphonesimulator/libPods-ObjectivePGP-i386.a ${DEST_DIR}-iphonesimulator/libPods-ObjectivePGP-x86_64.a -output ${DEST_DIR}/libPods-ObjectivePGP.a
 cp -pR ${DEST_DIR}-iphoneos/include ${DEST_DIR}
 
 rm -rf ${BUILD_DIR}/${CONFIGURATION}-iphoneos
