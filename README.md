@@ -3,8 +3,7 @@ ObjectivePGP
 
 ObjectivePGP is OpenPGP implementation for iOS and OSX.
 
-Installation
-============
+##Installation
 
 ###CocoaPods (easy way)
 
@@ -19,8 +18,7 @@ Installation
 ![Sample configuration](http://cl.ly/image/1z2s1O1h0c0F/objectivepgp-link-to-library.png)
 4. link target with OpenSSL to satisfy dependency (`-lssl -lcrypto`). To bring OpenSSL to you project you can use precompiled binaries from my other project https://github.com/krzyzanowskim/OpenSSL
 
-Usage
-=====
+##Usage
 
 #####Initialization
 
@@ -119,19 +117,50 @@ Usage
 	if (encryptedData && !error) {
 		NSLog(@"decryption success");
 	}
+	
+##opgp - command line tool
 
-Authors
-=======
+For you convenience I've build command line tool (OS X) - [opgp](https://github.com/krzyzanowskim/ObjectivePGP/blob/master/usr/local/bin/opgp) that uses this library, so you can play with it easily.
 
-Marcin Krzyżanowski [@krzyzanowskim](http://twitter.com/krzyzanowskim)
+If you want to install this tool, simply copy file to `/usr/local/bin` directory on you mac.
 
-Release notes
-=============
+	Usage: opgp [-encrypt] [-key keyfile.asc] [-armor 1] [-msg "message"] ...
+	Options:
+		-decrypt     Decrypt mode (Default)
+		-encrypt     Encrypt mode 
+		-input       file.txt - path or URL to input file
+		-msg         "message" - input text
+		-keyid       [28A83333F9C27197|F9C27197] - public or secret key identifier (Optional if "-key" is specified)
+		-key         key.asc - public or secret key file
+		-output      file.txt.gpg - output path (Optional)
+		-pubring     [pubring.gpg|pubring.asc] - keyring with public keys (Optional)
+		-secring     [secring.gpg|secring.asc] - keyring with public keys (Optional)
+		-passphrase  12345 - secret key password (Optional)
+		-armor       [1|0] - output format (Optional)
+		-help        Help
+		-license     License
+	
+##Release notes
 
-Library will be published in next few days, until then you can see how it already looks like.
+Known issues (0.1)
 
-License
-=======
+- Embeded signatures are not supported
+- ZIP compression not fully
+- Multiple keys for single encoding - not supported
+- Old encrypted packets - sometimes not supported
+- Only RSA cipher is fully supported
+- Defaults hardcoded
+
+
+###Contact
+
+Follow me on Twitter ([@krzyzanowskim](http://twitter.com/krzyzanowskim))
+
+###Creator
+
+Marcin Krzyżanowski ([@krzyzanowskim](http://twitter.com/krzyzanowskim))
+
+#License
 
 ```
 Copyright (C) 2014 Marcin Krzyżanowski
