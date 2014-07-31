@@ -141,7 +141,7 @@ Use within the scope of this License is free of charge and no royalty or licensi
 
             NSArray *loadedKeys = [pgp importKeysFromData:fetchedKeyData];
             if (!keyIdentifier) {
-                PGPKey *key = [loadedKeys firstObject];
+                PGPKey *key = loadedKeys[0];
                 operationKey = key;
             }
         }
