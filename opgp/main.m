@@ -107,7 +107,7 @@ Use within the scope of this License is free of charge and no royalty or licensi
 
         // Build output filename
         if (!outputFile) {
-            NSString *extension = armor ? @"asc" : @"gpg";
+            NSString *extension = armor ? @"gpg.asc" : @"gpg";
             if (inputPath) {
                 outputFile = [[inputPath lastPathComponent] stringByAppendingPathExtension:extension];
             }
@@ -157,6 +157,11 @@ Use within the scope of this License is free of charge and no royalty or licensi
                 fprintf(stderr, "ERROR: Can't use key %s\n", keyIdentifier.UTF8String);
                 return 1;
             }
+        }
+        
+        if (encrypt && !operationKey) {
+            fprintf(stderr, "ERROR: Can't find key to encrypt message, please specify one\n");
+            return 1;
         }
         
         NSData *outputData = nil;
