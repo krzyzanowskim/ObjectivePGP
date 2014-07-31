@@ -90,7 +90,7 @@
 		759FF499195982A6005B240C /* PGPPKCSEme.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AE7E28194224CD004DD6A5 /* PGPPKCSEme.m */; };
 		759FF49B195982A6005B240C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B81914DE1A00C5AD3B /* Foundation.framework */; };
 		75A5C154193CE3F6008A2543 /* NSData+compression.m in Sources */ = {isa = PBXBuildFile; fileRef = 75A5C153193CE3F6008A2543 /* NSData+compression.m */; };
-		75A5D20F195983430074A124 /* libObjectivePGPOSX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 759FF4A3195982A6005B240C /* libObjectivePGPOSX.a */; };
+		75A5D20F195983430074A124 /* libObjectivePGP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 759FF4A3195982A6005B240C /* libObjectivePGP.a */; };
 		75AE7E261941C567004DD6A5 /* PGPPublicKeyEncryptedSessionKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AE7E251941C567004DD6A5 /* PGPPublicKeyEncryptedSessionKeyPacket.m */; };
 		75AE7E29194224CD004DD6A5 /* PGPPKCSEme.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AE7E28194224CD004DD6A5 /* PGPPKCSEme.m */; };
 		75AEC4651930B5E400974CBE /* PGPLiteralPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AEC4641930B5E400974CBE /* PGPLiteralPacket.m */; };
@@ -357,7 +357,7 @@
 		759FF46819598227005B240C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		759FF46E19598248005B240C /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/usr/lib/libz.dylib; sourceTree = DEVELOPER_DIR; };
 		759FF4701959824E005B240C /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/usr/lib/libbz2.dylib; sourceTree = DEVELOPER_DIR; };
-		759FF4A3195982A6005B240C /* libObjectivePGPOSX.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libObjectivePGPOSX.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		759FF4A3195982A6005B240C /* libObjectivePGP.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libObjectivePGP.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		75A5C152193CE3F6008A2543 /* NSData+compression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+compression.h"; sourceTree = "<group>"; };
 		75A5C153193CE3F6008A2543 /* NSData+compression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+compression.m"; sourceTree = "<group>"; };
 		75AE7E241941C567004DD6A5 /* PGPPublicKeyEncryptedSessionKeyPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPublicKeyEncryptedSessionKeyPacket.h; sourceTree = "<group>"; };
@@ -423,7 +423,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				75A5D20F195983430074A124 /* libObjectivePGPOSX.a in Frameworks */,
+				75A5D20F195983430074A124 /* libObjectivePGP.a in Frameworks */,
 				759FF4711959824E005B240C /* libbz2.dylib in Frameworks */,
 				759FF46F19598248005B240C /* libz.dylib in Frameworks */,
 				38AF05C782074E1E9B286C11 /* libPods-ObjectivePGPOSX.a in Frameworks */,
@@ -474,7 +474,7 @@
 				756299B51914DE1A00C5AD3B /* libObjectivePGP.a */,
 				756299C51914DE1A00C5AD3B /* ObjectivePGPTests.xctest */,
 				759FF46619598227005B240C /* opgp */,
-				759FF4A3195982A6005B240C /* libObjectivePGPOSX.a */,
+				759FF4A3195982A6005B240C /* libObjectivePGP.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -715,7 +715,7 @@
 			);
 			name = ObjectivePGPOSX;
 			productName = ObjectivePGP;
-			productReference = 759FF4A3195982A6005B240C /* libObjectivePGPOSX.a */;
+			productReference = 759FF4A3195982A6005B240C /* libObjectivePGP.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 /* End PBXNativeTarget section */
@@ -1197,7 +1197,7 @@
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
 				OTHER_LIBTOOLFLAGS = "-lssl -lcrypto";
-				PRODUCT_NAME = ObjectivePGPOSX;
+				PRODUCT_NAME = ObjectivePGP;
 				SDKROOT = macosx10.9;
 				SKIP_INSTALL = YES;
 			};
@@ -1223,7 +1223,7 @@
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
 				OTHER_LIBTOOLFLAGS = "-lssl -lcrypto";
-				PRODUCT_NAME = ObjectivePGPOSX;
+				PRODUCT_NAME = ObjectivePGP;
 				SDKROOT = macosx10.9;
 				SKIP_INSTALL = YES;
 			};
