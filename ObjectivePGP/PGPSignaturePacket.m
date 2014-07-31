@@ -140,7 +140,7 @@
 - (BOOL) isPrimaryUserID
 {
     PGPSignatureSubpacket *primaryUserIDSubpacket =  [[self subpacketsOfType:PGPSignatureSubpacketTypePrimaryUserID] firstObject];
-    return [(NSNumber *)primaryUserIDSubpacket boolValue];
+    return [(NSNumber *)primaryUserIDSubpacket.value boolValue];
 }
 
 - (BOOL)canBeUsedToSign
