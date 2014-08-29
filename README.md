@@ -144,7 +144,7 @@ If you want to install this tool, simply copy file to `/usr/local/bin` directory
 	
 ##Release notes
 
-Known issues (0.1)
+Known issues (0.2)
 
 - Embeded signatures are not supported
 - ZIP compression not fully
