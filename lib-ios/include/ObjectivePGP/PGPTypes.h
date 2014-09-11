@@ -35,7 +35,7 @@ typedef NS_ENUM(UInt8, PGPPacketTag) {
     PGPSecretKeyPacketTag                                    = 5,
     PGPPublicKeyPacketTag                                    = 6,
     PGPSecretSubkeyPacketTag                                 = 7,
-    PGPCompressedDataPacketTag                               = 8,  //TODO
+    PGPCompressedDataPacketTag                               = 8,  
     PGPSymmetricallyEncryptedDataPacketTag                   = 9,  //TODO
     PGPMarkerPacketTag                                       = 10, //Ignored (Obsolete Literal Packet)
     PGPLiteralDataPacketTag                                  = 11,

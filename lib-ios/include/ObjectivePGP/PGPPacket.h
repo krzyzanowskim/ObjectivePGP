@@ -13,6 +13,7 @@
 
 @property (copy, readonly) NSData *headerData;
 @property (copy, readonly) NSData *bodyData;
+@property (assign) BOOL indeterminateLength; // should not be used, but gpg use it
 
 @property (assign, readonly)    PGPPacketTag tag;
 
