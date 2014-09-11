@@ -219,4 +219,16 @@
     XCTAssertTrue(status);
 }
 
+- (void) testGPGEncryptedMessage
+{
+    XCTAssertNotNil([self.oPGP importKeysFromFile:self.pubKeyringPath]);
+    XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
+
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSString *encryptedPath = [bundle pathForResource:@"secring-test-plaintext-encrypted-message" ofType:@"asc"];
+
+    NSError *error = nil;
+    [self.oPGP decryptData:[NSData dataWithContentsOfFile:encryptedPath] passphrase:nil error:&error];
+}
+
 @end

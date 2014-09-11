@@ -206,8 +206,14 @@
 
 - (NSData *) decryptData:(NSData *)messageDataToDecrypt passphrase:(NSString *)passphrase error:(NSError * __autoreleasing *)error
 {
+    NSData *binaryMessageToDecrypt = [self convertArmoredMessage2BinaryWhenNecessary:messageDataToDecrypt];
+    NSAssert(binaryMessageToDecrypt != nil, @"Ivalid input data");
+    if (!binaryMessageToDecrypt) {
+        return nil;
+    }
+    
     // parse packets
-    NSArray *packets = [self readPacketsFromData:messageDataToDecrypt];
+    NSArray *packets = [self readPacketsFromData:binaryMessageToDecrypt];
     
     PGPSymmetricAlgorithm sessionKeyAlgorithm = 0;
     NSData *sessionKeyData = nil;
@@ -592,21 +598,11 @@
     if (!fileData) {
         return nil;
     }
-    
-    NSData *binRingData = fileData;
-    // detect if armored, check for strin -----BEGIN PGP
-    if ([PGPArmor isArmoredData:fileData]) {
-        NSError *deadmorError = nil;
-        NSString *armoredString = [[NSString alloc] initWithData:fileData encoding:NSUTF8StringEncoding];
-        
-        // replace \n to \r\n
-        armoredString = [armoredString stringByReplacingOccurrencesOfString:@"\r\n" withString:@"\n"];
-        armoredString = [armoredString stringByReplacingOccurrencesOfString:@"\n" withString:@"\r\n"];
-        
-        binRingData = [PGPArmor readArmoredData:armoredString error:&deadmorError];
-        if (deadmorError) {
-            return nil;
-        }
+
+    NSData *binRingData = [self convertArmoredMessage2BinaryWhenNecessary:fileData];
+    NSAssert(binRingData != nil, @"Invalid input data");
+    if (!binRingData) {
+        return nil;
     }
     
     NSArray *parsedKeys = [self readKeysFromData:binRingData];
@@ -616,6 +612,9 @@
     
     return parsedKeys;
 }
+
+
+
 - (NSArray *) readPacketsFromData:(NSData *)keyringData
 {
     NSMutableArray *accumulatedPackets = [NSMutableArray array];
@@ -689,6 +688,26 @@
 
 found_key_label:
     return foundKey;
+}
+
+- (NSData *) convertArmoredMessage2BinaryWhenNecessary:(NSData *)binOrArmorData
+{
+    NSData *binRingData = binOrArmorData;
+    // detect if armored, check for strin -----BEGIN PGP
+    if ([PGPArmor isArmoredData:binRingData]) {
+        NSError *deadmorError = nil;
+        NSString *armoredString = [[NSString alloc] initWithData:binRingData encoding:NSUTF8StringEncoding];
+        
+        // replace \n to \r\n
+        armoredString = [armoredString stringByReplacingOccurrencesOfString:@"\r\n" withString:@"\n"];
+        armoredString = [armoredString stringByReplacingOccurrencesOfString:@"\n" withString:@"\r\n"];
+        
+        binRingData = [PGPArmor readArmoredData:armoredString error:&deadmorError];
+        if (deadmorError) {
+            return nil;
+        }
+    }
+    return binRingData;
 }
 
 

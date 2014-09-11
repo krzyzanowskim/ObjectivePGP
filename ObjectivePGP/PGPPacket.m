@@ -187,8 +187,10 @@
             break;
         case 3:
         {
-            //TODO: The packet is of indeterminate length.
-            NSAssert(false, @"The packet is of indeterminate length - unsuported");
+#ifdef DEBUG
+            NSLog(@"(Old) The packet is of indeterminate length - partially supported");
+#endif
+            bodyLength = NSNotFound;
             headerLength = 1;
         }
             break;
@@ -197,7 +199,7 @@
             break;
     }
 
-    NSAssert(bodyLength > 0, @"The packet is of indeterminate length");
+    NSAssert(bodyLength > 0, @"Invalid packet length");
     *length = bodyLength;
     
     return headerLength;

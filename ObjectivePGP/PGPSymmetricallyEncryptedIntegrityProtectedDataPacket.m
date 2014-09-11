@@ -115,7 +115,6 @@
     NSUInteger position = 0;
     // preamble + data + mdc
     NSData *decryptedData = [PGPCryptoCFB decryptData:self.encryptedData sessionKeyData:sessionKeyData symmetricAlgorithm:sessionKeyAlgorithm iv:ivData];
-    NSLog(@"decrypted\n%@",decryptedData);
     // full prefix blockSize + 2
     NSData *prefixRandomFullData = [decryptedData subdataWithRange:(NSRange){position, blockSize + 2}];
     position = position + blockSize + 2;
@@ -130,8 +129,16 @@
     
     // read literal (or compressed) packet data
     PGPPacket* plaintextPacket = [PGPPacketFactory packetWithData:decryptedData offset:position];
-    NSData *plaintextPacketData = [decryptedData subdataWithRange:(NSRange){position, plaintextPacket.headerData.length + plaintextPacket.bodyData.length}];
-    position = position + plaintextPacket.headerData.length + plaintextPacket.bodyData.length;
+    
+    int plaintextPacketLength = plaintextPacket.headerData.length + plaintextPacket.bodyData.length;
+    if (plaintextPacket.indeterminateLength) {
+        // adjust packet length required if packet length is not exactly set in header
+        int MDCLength = 22;
+        plaintextPacketLength = plaintextPacketLength - MDCLength;
+    }
+    
+    NSData *plaintextPacketData = [decryptedData subdataWithRange:(NSRange){position, plaintextPacketLength}];
+    position = position + plaintextPacketLength;
     
     NSData *plaintextData = nil;
     switch (plaintextPacket.tag) {
@@ -158,6 +165,8 @@
     }
 
     // mdc packet
+    NSAssert(position < decryptedData.length, @"Invalid packet length. Missing MDC?");
+    
     PGPModificationDetectionCodePacket *mdcPacket = (PGPModificationDetectionCodePacket *)[PGPPacketFactory packetWithData:decryptedData offset:position];
     NSAssert([mdcPacket isKindOfClass:[PGPModificationDetectionCodePacket class]], @"Invalid packet, expected MDC");
     
@@ -178,7 +187,6 @@
         }
         return nil;
     }
-    
     return plaintextData;
 }
 

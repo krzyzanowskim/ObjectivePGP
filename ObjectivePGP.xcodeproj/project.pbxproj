@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		38AF05C782074E1E9B286C11 /* libPods-ObjectivePGPOSX.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 074C42D0AFAD4DC7AD76CF21 /* libPods-ObjectivePGPOSX.a */; };
 		713B6813B2DD45E5B30B5EA1 /* libPods-ObjectivePGP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 059B85547F6245229D167817 /* libPods-ObjectivePGP.a */; };
+		750016A919C22E7100EAF308 /* secring-test-plaintext-encrypted-message.asc in Resources */ = {isa = PBXBuildFile; fileRef = 750016A819C22E7100EAF308 /* secring-test-plaintext-encrypted-message.asc */; };
 		7502CEFF1916DCE9001B32D7 /* PGPSignatureSubpacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 7502CEFE1916DCE9001B32D7 /* PGPSignatureSubpacket.m */; };
 		75040AB21926BB35000CEA93 /* ObjectivePGPTestArmor.m in Sources */ = {isa = PBXBuildFile; fileRef = 75040AB11926BB35000CEA93 /* ObjectivePGPTestArmor.m */; };
 		7507B72819170FE3003A2DC7 /* PGPUserIDPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 7507B72719170FE3003A2DC7 /* PGPUserIDPacket.m */; };
@@ -292,6 +293,7 @@
 		074C42D0AFAD4DC7AD76CF21 /* libPods-ObjectivePGPOSX.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ObjectivePGPOSX.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4AFC8E128B0F4211888984C0 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5A0AFDB5EA2347299F403C04 /* Pods-ObjectivePGP.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ObjectivePGP.xcconfig"; path = "Pods/Pods-ObjectivePGP.xcconfig"; sourceTree = "<group>"; };
+		750016A819C22E7100EAF308 /* secring-test-plaintext-encrypted-message.asc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "secring-test-plaintext-encrypted-message.asc"; sourceTree = "<group>"; };
 		7502CEFD1916DCE9001B32D7 /* PGPSignatureSubpacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSignatureSubpacket.h; sourceTree = "<group>"; };
 		7502CEFE1916DCE9001B32D7 /* PGPSignatureSubpacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSignatureSubpacket.m; sourceTree = "<group>"; };
 		75040AB11926BB35000CEA93 /* ObjectivePGPTestArmor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectivePGPTestArmor.m; sourceTree = "<group>"; };
@@ -566,6 +568,7 @@
 		7563357119258F1700414CCC /* TestingFiles */ = {
 			isa = PBXGroup;
 			children = (
+				750016A819C22E7100EAF308 /* secring-test-plaintext-encrypted-message.asc */,
 				7563357219258F1700414CCC /* pubring-test-encrypted.gpg */,
 				7563357319258F1700414CCC /* pubring-test-plaintext.gpg */,
 				7563357419258F1700414CCC /* secring-test-encrypted.gpg */,
@@ -761,6 +764,7 @@
 				756299D31914DE1A00C5AD3B /* InfoPlist.strings in Resources */,
 				7508FFC919473AEB00205F76 /* secring-test.gpg in Resources */,
 				7563357819258F1700414CCC /* secring-test-encrypted.gpg in Resources */,
+				750016A919C22E7100EAF308 /* secring-test-plaintext-encrypted-message.asc in Resources */,
 				7508FFC819473AEB00205F76 /* pubring-test.gpg in Resources */,
 				7563357619258F1700414CCC /* pubring-test-encrypted.gpg in Resources */,
 				7563357919258F1700414CCC /* secring-test-plaintext.gpg in Resources */,

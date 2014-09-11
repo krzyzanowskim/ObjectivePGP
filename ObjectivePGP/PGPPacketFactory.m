@@ -33,19 +33,27 @@
  *
  *  @return Packet instance object
  */
-+ (PGPPacket * ) packetWithData:(NSData *)packetsData offset:(NSUInteger)offset
++ (PGPPacket * ) packetWithData:(NSData *)packetData offset:(NSUInteger)offset
 {
-    NSData *guessPacketHeaderData = [packetsData subdataWithRange:(NSRange) {offset + 0, MIN(6,packetsData.length - offset)}]; // up to 6 octets for complete header
+    NSData *guessPacketHeaderData = [packetData subdataWithRange:(NSRange) {offset + 0, MIN(6,packetData.length - offset)}]; // up to 6 octets for complete header
 
     // parse header and get actual header data
-    UInt32 bodyLength       = 0;
-    PGPPacketTag packetTag  = 0;
-    NSData *packetHeaderData = [PGPPacket parsePacketHeader:guessPacketHeaderData bodyLength:&bodyLength packetTag:&packetTag];
+    UInt32 definedBodyLength    = 0;
+    UInt32 finalBodyLength      = 0;
+    PGPPacketTag packetTag      = 0;
+    NSData *packetHeaderData = [PGPPacket parsePacketHeader:guessPacketHeaderData bodyLength:&definedBodyLength packetTag:&packetTag];
 
     if (packetHeaderData.length > 0) {
-        NSData *packetBodyData = [packetsData subdataWithRange:(NSRange) {offset + packetHeaderData.length, bodyLength}];
-        // Analyze body0
+        finalBodyLength = definedBodyLength;
+        if (definedBodyLength == NSNotFound) {
+            // well.. if length is unknown then get all data as packet body
+            // which is not true because sometimes at the very end there is MDC packet
+            // this is handled in PGPSymmetricallyEncryptedIntegrityProtectedDataPacket
+            finalBodyLength = MAX(0,packetData.length - offset - packetHeaderData.length);
+        }
+        NSData *packetBodyData = [packetData subdataWithRange:(NSRange) {offset + packetHeaderData.length, finalBodyLength}];
 
+        // Analyze body0
         PGPPacket * packet = nil;
         switch (packetTag) {
             case PGPPublicKeyPacketTag:
@@ -100,6 +108,10 @@
                 
                 packet = [[PGPPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
                 break;
+        }
+        
+        if (definedBodyLength == NSNotFound) {
+            packet.indeterminateLength = YES;
         }
         return packet;
     }
