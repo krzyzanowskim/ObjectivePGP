@@ -25,5 +25,5 @@ Pod::Spec.new do |s|
   s.osx.preserve_paths      = 'lib-osx/libObjectivePGP.a'
   s.osx.vendored_libraries  = 'lib-osx/libObjectivePGP.a'
 
-  s.libraries = 'ObjectivePGP'
+  s.libraries = 'ObjectivePGP', 'z', 'bz2'
 end
