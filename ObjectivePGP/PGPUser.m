@@ -147,7 +147,9 @@
         BOOL status = [signature verifyData:nil withKey:key signingKeyPacket:(PGPPublicKeyPacket *)key.primaryKeyPacket userID:self.userID];
         NSAssert(status == YES,@"not verified");
 
-        [certs addObject:signature];
+        if (status == YES) {
+            [certs addObject:signature];
+        }
     }
 
     [certs sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
