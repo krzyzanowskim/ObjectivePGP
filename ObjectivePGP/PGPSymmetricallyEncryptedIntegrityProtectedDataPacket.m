@@ -130,7 +130,7 @@
     // read literal (or compressed) packet data
     PGPPacket* plaintextPacket = [PGPPacketFactory packetWithData:decryptedData offset:position];
     
-    int plaintextPacketLength = plaintextPacket.headerData.length + plaintextPacket.bodyData.length;
+    NSUInteger plaintextPacketLength = plaintextPacket.headerData.length + plaintextPacket.bodyData.length;
     if (plaintextPacket.indeterminateLength) {
         // adjust packet length required if packet length is not exactly set in header
         int MDCLength = 22;

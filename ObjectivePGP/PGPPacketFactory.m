@@ -45,11 +45,11 @@
 
     if (packetHeaderData.length > 0) {
         finalBodyLength = definedBodyLength;
-        if (definedBodyLength == NSNotFound) {
+        if (definedBodyLength == UnknownLength) {
             // well.. if length is unknown then get all data as packet body
             // which is not true because sometimes at the very end there is MDC packet
             // this is handled in PGPSymmetricallyEncryptedIntegrityProtectedDataPacket
-            finalBodyLength = MAX(0,packetData.length - offset - packetHeaderData.length);
+            finalBodyLength = MAX(0.0,packetData.length - offset - packetHeaderData.length);
         }
         NSData *packetBodyData = [packetData subdataWithRange:(NSRange) {offset + packetHeaderData.length, finalBodyLength}];
 
@@ -110,7 +110,7 @@
                 break;
         }
         
-        if (definedBodyLength == NSNotFound) {
+        if (definedBodyLength == UnknownLength) {
             packet.indeterminateLength = YES;
         }
         return packet;

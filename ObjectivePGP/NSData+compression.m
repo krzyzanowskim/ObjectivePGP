@@ -31,16 +31,16 @@
 	
 	NSMutableData *compressed = [NSMutableData dataWithLength: deflateBound(&strm, [self length])];
 	strm.next_out = [compressed mutableBytes];
-	strm.avail_out = [compressed length];
+	strm.avail_out = (uInt)compressed.length;
 	strm.next_in = (void *)[self bytes];
-	strm.avail_in = [self length];
+	strm.avail_in = (uInt)[self length];
 	
 	while (deflate(&strm, Z_FINISH) != Z_STREAM_END)
 	{
 		// deflate should return Z_STREAM_END on the first call
 		[compressed setLength: [compressed length] * 1.5];
 		strm.next_out = [compressed mutableBytes] + strm.total_out;
-		strm.avail_out = [compressed length] - strm.total_out;
+		strm.avail_out = (uInt)(compressed.length - strm.total_out);
 	}
 	
 	[compressed setLength: strm.total_out];

@@ -67,7 +67,7 @@
     CC_MD5_CTX *ctx = calloc(1, sizeof(CC_MD5_CTX));
 
     CC_MD5_Init(ctx);
-    CC_MD5_Update(ctx, self.bytes, self.length);
+    CC_MD5_Update(ctx, self.bytes, (CC_LONG)self.length);
     UInt8 *out = calloc(CC_MD5_DIGEST_LENGTH, sizeof(UInt8));
     if (!out) {
         free(ctx);
@@ -122,7 +122,7 @@
     }
 
     CC_SHA224_Init(ctx);
-    CC_SHA224_Update(ctx, self.bytes, self.length);
+    CC_SHA224_Update(ctx, self.bytes, (CC_LONG)self.length);
     UInt8 *out = calloc(CC_SHA224_DIGEST_LENGTH, sizeof(UInt8));
     if (!out) {
         return nil;
@@ -147,7 +147,7 @@
     }
 
     CC_SHA256_Init(ctx);
-    CC_SHA256_Update(ctx, self.bytes, self.length);
+    CC_SHA256_Update(ctx, self.bytes, (CC_LONG)self.length);
     UInt8 *out = calloc(CC_SHA256_DIGEST_LENGTH, sizeof(UInt8));
     if (!out) {
         return nil;
@@ -172,7 +172,7 @@
     }
 
     CC_SHA384_Init(ctx);
-    CC_SHA384_Update(ctx, self.bytes, self.length);
+    CC_SHA384_Update(ctx, self.bytes, (CC_LONG)self.length);
     UInt8 *out = calloc(CC_SHA384_DIGEST_LENGTH, sizeof(UInt8));
     if (!out) {
         return nil;
@@ -301,7 +301,7 @@
         case PGPSymmetricAES192:
         {
             AES_KEY *encrypt_key = calloc(1, sizeof(AES_KEY));
-            AES_set_encrypt_key(sessionKeyData.bytes, keySize * 8, encrypt_key);
+            AES_set_encrypt_key(sessionKeyData.bytes, keySize * 8.0, encrypt_key);
 
             UInt8 *outBuf = calloc(self.length, sizeof(UInt8));
             AES_encrypt(self.bytes, outBuf, encrypt_key);

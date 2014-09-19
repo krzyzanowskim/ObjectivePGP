@@ -81,6 +81,7 @@
 }
 
 // 16 or 8 chars identifier
+//TODO: renamte to getKeyForFingerprint or something
 - (PGPKey *) getKeyForIdentifier:(NSString *)keyIdentifier type:(PGPKeyType)keyType
 {
     if (keyIdentifier.length < 8 && keyIdentifier.length > 16)
@@ -578,7 +579,12 @@
 {
     NSString *fullPath = [path stringByExpandingTildeInPath];
     
-    if (![[NSFileManager defaultManager] fileExistsAtPath:fullPath isDirectory:NO]) {
+    BOOL isDirectory = NO;
+    if (![[NSFileManager defaultManager] fileExistsAtPath:fullPath isDirectory:&isDirectory]) {
+        return nil;
+    }
+    
+    if (isDirectory) {
         return nil;
     }
     

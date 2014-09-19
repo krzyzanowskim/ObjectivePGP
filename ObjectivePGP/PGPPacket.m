@@ -9,6 +9,8 @@
 #import "PGPPacket.h"
 #import "NSData+PGPUtils.h"
 
+const UInt32 UnknownLength = UINT32_MAX;
+
 @interface PGPPacket ()
 @property (copy, readwrite) NSData *headerData;
 @property (copy, readwrite) NSData *bodyData;
@@ -190,7 +192,7 @@
 #ifdef DEBUG
             NSLog(@"(Old) The packet is of indeterminate length - partially supported");
 #endif
-            bodyLength = NSNotFound;
+            bodyLength = UnknownLength;
             headerLength = 1;
         }
             break;

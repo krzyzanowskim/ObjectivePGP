@@ -320,7 +320,7 @@
     if (decryptedData) {
         [encryptedKey parseUnencryptedPart:decryptedData error:error];
         if (*error) {
-            return NO;
+            return nil;
         }
     }
     return encryptedKey;
