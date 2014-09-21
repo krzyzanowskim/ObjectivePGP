@@ -173,6 +173,7 @@
             [fileHandle seekToEndOfFile];
             [fileHandle writeData:keyData];
             [fileHandle closeFile];
+            result = YES;
         }
         @catch (NSException *exception) {
             result = NO;
