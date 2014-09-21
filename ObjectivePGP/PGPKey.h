@@ -58,6 +58,7 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
 
 - (NSArray *) allKeyPackets;
 - (PGPSymmetricAlgorithm) preferredSymmetricAlgorithm;
++ (PGPSymmetricAlgorithm) preferredSymmetricAlgorithmForKeys:(NSArray *)keys;
 
 /**
  *  Export to transferable key packets sequence

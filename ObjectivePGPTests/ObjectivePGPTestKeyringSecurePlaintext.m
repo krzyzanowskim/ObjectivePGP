@@ -231,4 +231,38 @@
     [self.oPGP decryptData:[NSData dataWithContentsOfFile:encryptedPath] passphrase:nil error:&error];
 }
 
+- (void) testEcnryptWithMultipleRecipients
+{
+    XCTAssertNotNil([self.oPGP importKeysFromFile:self.pubKeyringPath]);
+    XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
+    
+    // Public key
+    PGPKey *keyToEncrypt1 = [self.oPGP getKeyForIdentifier:@"952E4E8B" type:PGPKeyPublic];
+    PGPKey *keyToEncrypt2 = [self.oPGP getKeyForIdentifier:@"66753341" type:PGPKeyPublic];
+    
+    XCTAssertNotNil(keyToEncrypt1);
+    XCTAssertNotNil(keyToEncrypt2);
+    
+    NSData* plainData = [PLAINTEXT dataUsingEncoding:NSUTF8StringEncoding];
+    [plainData writeToFile:[self.workingDirectory stringByAppendingPathComponent:@"plaintext.txt"] atomically:YES];
+    
+    // encrypt PLAINTEXT
+    NSError *encryptError = nil;
+    NSData *encryptedData = [self.oPGP encryptData:plainData usingPublicKeys:@[keyToEncrypt1, keyToEncrypt2] armored:NO error:&encryptError];
+    XCTAssertNil(encryptError);
+    XCTAssertNotNil(encryptedData);
+    
+    // file encrypted
+    NSString *fileEncrypted = [self.workingDirectory stringByAppendingPathComponent:@"plaintext.multiple.encrypted"];
+    NSLog(@"%@",fileEncrypted);
+    BOOL status = [encryptedData writeToFile:fileEncrypted atomically:YES];
+    XCTAssertTrue(status);
+    
+    // decrypt + validate decrypted message
+    NSData *decryptedData = [self.oPGP decryptData:encryptedData passphrase:@"1234" error:nil];
+    XCTAssertNotNil(decryptedData);
+    NSString *decryptedString = [[NSString alloc] initWithData:decryptedData encoding:NSASCIIStringEncoding];
+    XCTAssertNotNil(decryptedString);
+    XCTAssertEqualObjects(decryptedString, PLAINTEXT, @"Decrypted data mismatch");
+}
 @end

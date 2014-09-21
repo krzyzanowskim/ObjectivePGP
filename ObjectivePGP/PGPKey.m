@@ -335,21 +335,45 @@
 
 - (PGPSymmetricAlgorithm) preferredSymmetricAlgorithm
 {
-    PGPSymmetricAlgorithm pref = PGPSymmetricAES256; //TODO: configurable default
-    PGPSignaturePacket *selfCertificate = nil;
-    PGPUser *primaryUser = [self primaryUserAndSelfCertificate:&selfCertificate];
-    if (!primaryUser || !selfCertificate) {
-        return pref;
+    return [[self class] preferredSymmetricAlgorithmForKeys:@[self]];
+}
+
++ (PGPSymmetricAlgorithm) preferredSymmetricAlgorithmForKeys:(NSArray *)keys
+{
+    // 13.2.  Symmetric Algorithm Preferences
+    // Since TripleDES is the MUST-implement algorithm, if it is not explicitly in the list, it is tacitly at the end.
+
+    NSMutableArray *preferecesArray = [NSMutableArray array];
+    for (PGPKey *key in keys) {
+        NSMutableArray *keyAlgorithms = [NSMutableArray array];
+        
+        PGPSignaturePacket *selfCertificate = nil;
+        PGPUser *primaryUser = [key primaryUserAndSelfCertificate:&selfCertificate];
+        if (primaryUser && selfCertificate) {
+            PGPSignatureSubpacket *subpacket = [[selfCertificate subpacketsOfType:PGPSignatureSubpacketTypePreferredSymetricAlgorithm] firstObject];
+            NSArray *preferencesArray = subpacket.value;
+            for (NSValue *preferedValue in preferencesArray) {
+                if ([preferedValue objCTypeIsEqualTo:@encode(PGPSymmetricAlgorithm)]) {
+                    PGPSymmetricAlgorithm algorithm = PGPSymmetricPlaintext;
+                    [preferedValue getValue:&algorithm];
+                    [keyAlgorithms addObject:@(algorithm)];
+                }
+            }
+        }
+        
+        [preferecesArray addObject:keyAlgorithms];
     }
     
-    PGPSignatureSubpacket *subpacket = [[selfCertificate subpacketsOfType:PGPSignatureSubpacketTypePreferredSymetricAlgorithm] firstObject];
-    NSArray *preferencesArray = subpacket.value;
-    NSValue *preferedValue = preferencesArray[0];
-    if ([preferedValue objCTypeIsEqualTo:@encode(PGPSymmetricAlgorithm)]) {
-        [preferedValue getValue:&pref];
+    // intersect
+    if (preferecesArray.count > 0) {
+        NSMutableOrderedSet *set = [NSMutableOrderedSet orderedSetWithArray:preferecesArray[0]];
+        for (NSArray *prefArray in preferecesArray) {
+            [set intersectSet:[NSSet setWithArray:prefArray]];
+        }
+        return [set[0] unsignedIntValue];
     }
     
-    return pref;
+    return PGPSymmetricTripleDES;
 }
 
 #pragma mark - Private

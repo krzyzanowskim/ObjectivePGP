@@ -280,19 +280,13 @@
 
 - (NSData *) encryptData:(NSData *)dataToEncrypt usingPublicKey:(PGPKey *)publicKey armored:(BOOL)armored error:(NSError * __autoreleasing *)error
 {
+    return [self encryptData:dataToEncrypt usingPublicKeys:@[publicKey] armored:armored error:error];
+}
+
+- (NSData *) encryptData:(NSData *)dataToEncrypt usingPublicKeys:(NSArray *)publicKeys armored:(BOOL)armored error:(NSError * __autoreleasing *)error
+{
     // Message.prototype.encrypt = function(keys) {
     NSMutableData *encryptedMessage = [NSMutableData data];
-    
-    //PGPPublicKeyEncryptedSessionKeyPacket goes here
-    PGPSymmetricAlgorithm preferredSymmeticAlgorithm = [publicKey preferredSymmetricAlgorithm];
-
-    // Random bytes as a string to be used as a key
-    NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:preferredSymmeticAlgorithm];
-    NSMutableData *sessionKeyData = [NSMutableData data];
-    for (int i = 0; i < (keySize); i++) {
-        UInt8 byte = arc4random_uniform(255);
-        [sessionKeyData appendBytes:&byte length:1];
-    }
     
     // Prepare literal packet
     PGPLiteralPacket *literalPacket = [PGPLiteralPacket literalPacket:PGPLiteralPacketBinary withData:dataToEncrypt];
@@ -312,32 +306,45 @@
     if (*error) {
         return nil;
     }
+
+    //PGPPublicKeyEncryptedSessionKeyPacket goes here
+    //FIXME: check all keys preferency and choose common prefered
+    PGPSymmetricAlgorithm preferredSymmeticAlgorithm = [PGPKey preferredSymmetricAlgorithmForKeys:publicKeys];
     
-    // Encrypted Message :- Encrypted Data | ESK Sequence, Encrypted Data.
-    // Encrypted Data :- Symmetrically Encrypted Data Packet | Symmetrically Encrypted Integrity Protected Data Packet
-    // ESK :- Public-Key Encrypted Session Key Packet | Symmetric-Key Encrypted Session Key Packet.
-    
-    // ESK
-    PGPPublicKeyPacket *encryptionKeyPacket = (PGPPublicKeyPacket *)[publicKey encryptionKeyPacket];
-    if (encryptionKeyPacket) {
-        // var pkESKeyPacket = new packet.PublicKeyEncryptedSessionKey();
-        PGPPublicKeyEncryptedSessionKeyPacket *eskKeyPacket = [[PGPPublicKeyEncryptedSessionKeyPacket alloc] init];
-        eskKeyPacket.keyID = encryptionKeyPacket.keyID;
-        eskKeyPacket.publicKeyAlgorithm = encryptionKeyPacket.publicKeyAlgorithm;
-        [eskKeyPacket encrypt:encryptionKeyPacket sessionKeyData:sessionKeyData sessionKeyAlgorithm:preferredSymmeticAlgorithm error:error];
-        NSAssert(!(*error), @"Missing literal data");
-        if (*error) {
-            return nil;
-        }
-        [encryptedMessage appendData:[eskKeyPacket exportPacket:error]];
-        if (*error) {
-            return nil;
+    // Random bytes as a string to be used as a key
+    NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:preferredSymmeticAlgorithm];
+    NSMutableData *sessionKeyData = [NSMutableData data];
+    for (int i = 0; i < (keySize); i++) {
+        UInt8 byte = arc4random_uniform(255);
+        [sessionKeyData appendBytes:&byte length:1];
+    }
+
+    for (PGPKey *publicKey in publicKeys) {
+        // Encrypted Message :- Encrypted Data | ESK Sequence, Encrypted Data.
+        // Encrypted Data :- Symmetrically Encrypted Data Packet | Symmetrically Encrypted Integrity Protected Data Packet
+        // ESK :- Public-Key Encrypted Session Key Packet | Symmetric-Key Encrypted Session Key Packet.
+        
+        // ESK
+        PGPPublicKeyPacket *encryptionKeyPacket = (PGPPublicKeyPacket *)[publicKey encryptionKeyPacket];
+        if (encryptionKeyPacket) {
+            // var pkESKeyPacket = new packet.PublicKeyEncryptedSessionKey();
+            PGPPublicKeyEncryptedSessionKeyPacket *eskKeyPacket = [[PGPPublicKeyEncryptedSessionKeyPacket alloc] init];
+            eskKeyPacket.keyID = encryptionKeyPacket.keyID;
+            eskKeyPacket.publicKeyAlgorithm = encryptionKeyPacket.publicKeyAlgorithm;
+            [eskKeyPacket encrypt:encryptionKeyPacket sessionKeyData:sessionKeyData sessionKeyAlgorithm:preferredSymmeticAlgorithm error:error];
+            NSAssert(!(*error), @"Missing literal data");
+            if (*error) {
+                return nil;
+            }
+            [encryptedMessage appendData:[eskKeyPacket exportPacket:error]];
+            if (*error) {
+                return nil;
+            }
         }
     }
 
     PGPSymmetricallyEncryptedIntegrityProtectedDataPacket *symEncryptedDataPacket = [[PGPSymmetricallyEncryptedIntegrityProtectedDataPacket alloc] init];
     [symEncryptedDataPacket encrypt:compressedPacketData
-                withPublicKeyPacket:encryptionKeyPacket
                  symmetricAlgorithm:preferredSymmeticAlgorithm
                      sessionKeyData:sessionKeyData];
     
@@ -345,7 +352,7 @@
     if (*error) {
         return nil;
     }
-    
+
     if (armored) {
         return [PGPArmor armoredData:encryptedMessage as:PGPArmorTypeMessage];
     }
