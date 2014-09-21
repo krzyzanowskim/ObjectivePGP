@@ -218,50 +218,61 @@
     NSArray *packets = [self readPacketsFromData:binaryMessageToDecrypt];
     
     PGPSymmetricAlgorithm sessionKeyAlgorithm = 0;
-    NSData *sessionKeyData = nil;
-    NSData *decryptedData = nil;
     PGPSecretKeyPacket *decryptionSecretKeyPacket = nil; // found secret key to used to decrypt
+    NSData *decryptedData = nil;
     
+    // 1. search for valid and known (do I have specified key?) ESK
+    PGPPublicKeyEncryptedSessionKeyPacket *eskPacket = nil;
     for (PGPPacket *packet in packets) {
-        switch (packet.tag) {
-            case PGPPublicKeyEncryptedSessionKeyPacketTag:
-            {
-                // 1
-                PGPPublicKeyEncryptedSessionKeyPacket *pkESKPacket = (PGPPublicKeyEncryptedSessionKeyPacket *)packet;
-                PGPKey *decryptionSecretKey = [self getKeyForKeyID:pkESKPacket.keyID type:PGPKeySecret];
-                PGPSecretKeyPacket *decryptKeyPacket = (PGPSecretKeyPacket *)[decryptionSecretKey decryptionKeyPacket];
-                NSAssert([decryptKeyPacket isKindOfClass:[PGPSecretKeyPacket class]], @"Invalid secret key");
-
-                // decrypt key if necessary
-                decryptionSecretKeyPacket = decryptKeyPacket;
-                if (decryptionSecretKeyPacket.isEncrypted) {
-                    decryptionSecretKeyPacket = [decryptionSecretKeyPacket decryptedKeyPacket:passphrase error:error];
-                    if (error && *error) {
-                        return nil;
-                    }
-                }
-                
-                sessionKeyData = [pkESKPacket decryptSessionKeyData:decryptionSecretKeyPacket sessionKeyAlgorithm:&sessionKeyAlgorithm error:error];
-                NSAssert(sessionKeyData, @"PublicKeyEncryptedSessionKeyPacket decryption failed");
-                NSAssert(sessionKeyAlgorithm > 0, @"Invalid session key algorithm");
-                
-                if (!sessionKeyData) {
+        if (packet.tag == PGPPublicKeyEncryptedSessionKeyPacketTag) {
+            PGPPublicKeyEncryptedSessionKeyPacket *pkESKPacket = (PGPPublicKeyEncryptedSessionKeyPacket *)packet;
+            PGPKey *decryptionSecretKey = [self getKeyForKeyID:pkESKPacket.keyID type:PGPKeySecret];
+            if (!decryptionSecretKey) {
+                continue;
+            }
+            
+            decryptionSecretKeyPacket = (PGPSecretKeyPacket *)[decryptionSecretKey decryptionKeyPacket];;
+            
+            // decrypt key with passphrase if encrypted
+            if (decryptionSecretKeyPacket.isEncrypted) {
+                decryptionSecretKeyPacket = [decryptionSecretKeyPacket decryptedKeyPacket:passphrase error:error];
+                if (error && *error) {
                     return nil;
                 }
             }
-                break;
+            eskPacket = pkESKPacket;
+        }
+    }
+    
+    NSAssert(eskPacket, @"Valid PublicKeyEncryptedSessionKeyPacket not found");
+    if (!eskPacket) {
+        *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Valid PublicKeyEncryptedSessionKeyPacket not found"}];
+        return nil;
+    }
+    
+    NSAssert(decryptionSecretKeyPacket, @"Decryption secret key packet not found");
+    if (!decryptionSecretKeyPacket) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Unable to find secret key"}];
+        }
+        return nil;
+    }
+
+    
+    NSData *sessionKeyData = [eskPacket decryptSessionKeyData:decryptionSecretKeyPacket sessionKeyAlgorithm:&sessionKeyAlgorithm error:error];
+    NSAssert(sessionKeyAlgorithm > 0, @"Invalid session key algorithm");
+    
+    NSAssert(sessionKeyData, @"Missing session key data");
+    if (!sessionKeyData) {
+        *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Missing session key data"}];
+        return nil;
+    }
+
+    // 2
+    for (PGPPacket *packet in packets) {
+        switch (packet.tag) {
             case PGPSymmetricallyEncryptedIntegrityProtectedDataPacketTag:
             {
-                // 2
-                NSAssert(sessionKeyData, @"Missing session key data");
-                NSAssert(decryptionSecretKeyPacket, @"Decryption secret key packet not found");
-                if (!decryptionSecretKeyPacket) {
-                    if (error) {
-                        *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Unable to find secret key"}];
-                    }
-                    return nil;
-                }
-                
                 // decrypt PGPSymmetricallyEncryptedIntegrityProtectedDataPacket
                 PGPSymmetricallyEncryptedIntegrityProtectedDataPacket *symEncryptedDataPacket = (PGPSymmetricallyEncryptedIntegrityProtectedDataPacket *)packet;
                 decryptedData = [symEncryptedDataPacket decryptWithSecretKeyPacket:decryptionSecretKeyPacket sessionKeyAlgorithm:sessionKeyAlgorithm sessionKeyData:sessionKeyData error:error];
