@@ -361,7 +361,9 @@
             }
         }
         
-        [preferecesArray addObject:keyAlgorithms];
+        if (keyAlgorithms.count > 0) {
+            [preferecesArray addObject:keyAlgorithms];
+        }
     }
     
     // intersect
