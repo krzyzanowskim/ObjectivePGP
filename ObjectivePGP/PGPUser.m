@@ -145,7 +145,7 @@
 
         // (this is craziest think I ever seen today)
         BOOL status = [signature verifyData:nil withKey:key signingKeyPacket:(PGPPublicKeyPacket *)key.primaryKeyPacket userID:self.userID];
-        NSAssert(status == YES,@"not verified");
+        //NSAssert(status == YES,@"not verified");
 
         if (status == YES) {
             [certs addObject:signature];
