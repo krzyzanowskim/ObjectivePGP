@@ -17,12 +17,16 @@
  */
 @property (strong, nonatomic) NSArray *keys;
 
-// Load from keyring
+// Import keys
 - (NSArray *) importKeysFromFile:(NSString *)path;
 - (NSArray *) importKeysFromData:(NSData *)data;
 - (BOOL) importKey:(NSString *)shortKeyStringIdentifier fromFile:(NSString *)path;
 
-// Save to keyring
+// Read keys
+- (NSArray *) keysFromData:(NSData *)fileData;
+- (NSArray *) keysFromFile:(NSString *)path;
+
+// Export keys
 - (BOOL) exportKeysOfType:(PGPKeyType)type toFile:(NSString *)path error:(NSError * __autoreleasing *)error;
 - (BOOL) exportKeys:(NSArray *)keys toFile:(NSString *)path error:(NSError * __autoreleasing *)error;
 - (NSData *) exportKey:(PGPKey *)key armored:(BOOL)armored;

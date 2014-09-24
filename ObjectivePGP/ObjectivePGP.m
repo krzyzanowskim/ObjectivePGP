@@ -548,7 +548,7 @@
         return nil;
     }
     
-    NSArray *loadedKeys = [self loadKeysFromFile:path];
+    NSArray *loadedKeys = [self keysFromFile:path];
     self.keys = [self.keys arrayByAddingObjectsFromArray:loadedKeys];
     return loadedKeys;
 }
@@ -559,7 +559,7 @@
         return nil;
     }
     
-    NSArray *loadedKeys = [self loadKeysFromData:data];
+    NSArray *loadedKeys = [self keysFromData:data];
     self.keys = [self.keys arrayByAddingObjectsFromArray:loadedKeys];
     return loadedKeys;
 }
@@ -568,7 +568,7 @@
 {
     NSString *fullPath = [path stringByExpandingTildeInPath];
 
-    NSArray *loadedKeys = [self loadKeysFromFile:fullPath];
+    NSArray *loadedKeys = [self keysFromFile:fullPath];
     if (loadedKeys.count == 0) {
         return NO;
     }
@@ -591,10 +591,7 @@
     return foundKey;
 }
 
-#pragma mark - Private
-
-// private
-- (NSArray *) loadKeysFromFile:(NSString *)path
+- (NSArray *) keysFromFile:(NSString *)path
 {
     NSString *fullPath = [path stringByExpandingTildeInPath];
     
@@ -613,17 +610,16 @@
         return nil;
     }
     
-    return [self loadKeysFromData:fileData];
+    return [self keysFromData:fileData];
 }
 
-// private
-- (NSArray *) loadKeysFromData:(NSData *)fileData
+- (NSArray *) keysFromData:(NSData *)fileData
 {
     NSAssert(fileData, @"Missing data");
     if (!fileData) {
         return nil;
     }
-
+    
     NSData *binRingData = [self convertArmoredMessage2BinaryWhenNecessary:fileData];
     NSAssert(binRingData != nil, @"Invalid input data");
     if (!binRingData) {
@@ -638,7 +634,7 @@
     return parsedKeys;
 }
 
-
+#pragma mark - Private
 
 - (NSArray *) readPacketsFromData:(NSData *)keyringData
 {
