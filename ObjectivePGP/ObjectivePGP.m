@@ -542,25 +542,29 @@
  *
  *  @return YES on success
  */
-- (NSArray *) importKeysFromFile:(NSString *)path
+- (NSArray *) importKeysFromFile:(NSString *)path allowDuplicates:(BOOL)allowDuplicates
 {
     if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
         return nil;
     }
     
-    NSArray *loadedKeys = [self keysFromFile:path];
-    self.keys = [self.keys arrayByAddingObjectsFromArray:loadedKeys];
-    return loadedKeys;
+    return [self importKeysFromData:[NSData dataWithContentsOfFile:path] allowDuplicates:allowDuplicates];
 }
 
-- (NSArray *) importKeysFromData:(NSData *)data
+- (NSArray *) importKeysFromData:(NSData *)data allowDuplicates:(BOOL)allowDuplicates
 {
     if (!data) {
         return nil;
     }
     
     NSArray *loadedKeys = [self keysFromData:data];
-    self.keys = [self.keys arrayByAddingObjectsFromArray:loadedKeys];
+    if (!allowDuplicates) {
+        NSMutableSet *keysSet = [NSMutableSet setWithArray:self.keys];
+        [keysSet addObjectsFromArray:loadedKeys];
+        self.keys = [keysSet allObjects];
+    } else {
+        self.keys = [self.keys arrayByAddingObjectsFromArray:loadedKeys];
+    }
     return loadedKeys;
 }
 

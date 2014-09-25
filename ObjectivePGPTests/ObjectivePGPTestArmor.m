@@ -53,7 +53,7 @@
 
 - (void) testArmorPublicKey
 {
-    [self.oPGP importKeysFromFile:self.pubKeyringPath];
+    [self.oPGP importKeysFromFile:self.pubKeyringPath allowDuplicates:NO];
 
     PGPKey *key = self.oPGP.keys[0];
 

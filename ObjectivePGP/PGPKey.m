@@ -34,6 +34,37 @@
     return [NSString stringWithFormat:@"%@ primary key: %@",[super description], self.primaryKeyPacket];
 }
 
+- (BOOL)isEqual:(id)object
+{
+    if (self == object)
+        return YES;
+    
+    if (![object isKindOfClass:[PGPKey class]]) {
+        return NO;
+    }
+    
+    //TODO: check all properties
+    PGPKey *objectKey = (PGPKey *)object;
+    return [self.keyID isEqual:objectKey.keyID];
+}
+
+- (NSUInteger)hash
+{
+#ifndef NSUINTROTATE
+#define NSUINT_BIT (CHAR_BIT * sizeof(NSUInteger))
+#define NSUINTROTATE(val, howmuch) ((((NSUInteger)val) << howmuch) | (((NSUInteger)val) >> (NSUINT_BIT - howmuch)))
+#endif
+    
+    NSUInteger hash = [self.primaryKeyPacket hash];
+    hash = NSUINTROTATE(hash, NSUINT_BIT / 2) ^ [self.users hash];
+    hash = NSUINTROTATE(hash, NSUINT_BIT / 2) ^ [self.subKeys hash];
+    hash = NSUINTROTATE(hash, NSUINT_BIT / 2) ^ [self.directSignatures hash];
+    hash = NSUINTROTATE(hash, NSUINT_BIT / 2) ^ [self.revocationSignature hash];
+    hash = NSUINTROTATE(hash, NSUINT_BIT / 2) ^ [self.keyID hash];
+    
+    return hash;
+}
+
 - (NSMutableArray *)users
 {
     if (!_users) {

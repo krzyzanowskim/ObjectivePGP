@@ -18,8 +18,8 @@
 @property (strong, nonatomic) NSArray *keys;
 
 // Import keys
-- (NSArray *) importKeysFromFile:(NSString *)path;
-- (NSArray *) importKeysFromData:(NSData *)data;
+- (NSArray *) importKeysFromFile:(NSString *)path allowDuplicates:(BOOL)duplicates;
+- (NSArray *) importKeysFromData:(NSData *)data allowDuplicates:(BOOL)duplicates;
 - (BOOL) importKey:(NSString *)shortKeyStringIdentifier fromFile:(NSString *)path;
 
 // Read keys

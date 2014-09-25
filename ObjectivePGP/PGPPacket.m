@@ -41,6 +41,19 @@ const UInt32 UnknownLength = UINT32_MAX;
 }
 
 
+- (NSUInteger)hash
+{
+#ifndef NSUINTROTATE
+    #define NSUINT_BIT (CHAR_BIT * sizeof(NSUInteger))
+    #define NSUINTROTATE(val, howmuch) ((((NSUInteger)val) << howmuch) | (((NSUInteger)val) >> (NSUINT_BIT - howmuch)))
+#endif
+
+    NSUInteger hash = [self.headerData hash];
+    hash = NSUINTROTATE(hash, NSUINT_BIT / 2) ^ [self.bodyData hash];
+    return hash;
+}
+
+
 - (NSUInteger) parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
 {
     NSAssert(packetBody.length == self.bodyData.length, @"length mismach");

@@ -57,7 +57,7 @@
 {
     NSLog(@"%s doing work...", __PRETTY_FUNCTION__);
 
-    XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath], @"Unable to load keyring");
+    XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath allowDuplicates:NO], @"Unable to load keyring");
     XCTAssert(self.oPGP.keys.count == 1, @"Should load 1 key");
 
     NSArray *foundKeys = [self.oPGP getKeysForUserID:@"Marcin (test) <marcink@up-next.com>"];
@@ -74,7 +74,7 @@
 {
     NSLog(@"%s doing work...", __PRETTY_FUNCTION__);
 
-    XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
+    XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath allowDuplicates:NO]);
 
     NSString *exportSecretKeyringPath = [self.workingDirectory stringByAppendingPathComponent:@"export-secring-test-plaintext.gpg"];
 
@@ -88,7 +88,7 @@
 
     // Check if can be load
     ObjectivePGP *checkPGP = [[ObjectivePGP alloc] init];
-    XCTAssertNotNil([checkPGP importKeysFromFile:exportSecretKeyringPath]);
+    XCTAssertNotNil([checkPGP importKeysFromFile:exportSecretKeyringPath allowDuplicates:NO]);
     XCTAssert(self.oPGP.keys.count > 0, @"Keys not loaded");
 
     PGPKey *key = checkPGP.keys[0];
@@ -102,7 +102,7 @@
 {
     NSLog(@"%s doing work...", __PRETTY_FUNCTION__);
 
-    XCTAssertNotNil([self.oPGP importKeysFromFile:self.pubKeyringPath]);
+    XCTAssertNotNil([self.oPGP importKeysFromFile:self.pubKeyringPath allowDuplicates:NO]);
 
     NSString *exportPublicKeyringPath = [self.workingDirectory stringByAppendingPathComponent:@"export-pubring-test-plaintext.gpg"];
 
@@ -120,7 +120,7 @@
 {
     NSLog(@"%s doing work...", __PRETTY_FUNCTION__);
 
-    XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
+    XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath allowDuplicates:NO]);
     XCTAssert(self.oPGP.keys.count > 0, @"Keys not loaded");
 
     PGPKey *key = self.oPGP.keys[0];
@@ -133,7 +133,7 @@
 
 - (void) testSigning
 {
-    XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
+    XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath allowDuplicates:NO]);
 
     // file to sign
     NSString *fileToSignPath = [self.workingDirectory stringByAppendingPathComponent:@"signed_file.bin"];
@@ -178,8 +178,8 @@
 
 - (void) testEncryption
 {
-    XCTAssertNotNil([self.oPGP importKeysFromFile:self.pubKeyringPath]);
-    XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
+    XCTAssertNotNil([self.oPGP importKeysFromFile:self.pubKeyringPath allowDuplicates:NO]);
+    XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath allowDuplicates:NO]);
 
     // Public key
     PGPKey *keyToEncrypt = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B" type:PGPKeyPublic];
@@ -221,8 +221,8 @@
 
 - (void) testGPGEncryptedMessage
 {
-    XCTAssertNotNil([self.oPGP importKeysFromFile:self.pubKeyringPath]);
-    XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
+    XCTAssertNotNil([self.oPGP importKeysFromFile:self.pubKeyringPath allowDuplicates:NO]);
+    XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath allowDuplicates:NO]);
 
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *encryptedPath = [bundle pathForResource:@"secring-test-plaintext-encrypted-message" ofType:@"asc"];
@@ -233,8 +233,8 @@
 
 - (void) testEcnryptWithMultipleRecipients
 {
-    XCTAssertNotNil([self.oPGP importKeysFromFile:self.pubKeyringPath]);
-    XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
+    XCTAssertNotNil([self.oPGP importKeysFromFile:self.pubKeyringPath allowDuplicates:NO]);
+    XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath allowDuplicates:NO]);
     
     // Public key
     PGPKey *keyToEncrypt1 = [self.oPGP getKeyForIdentifier:@"952E4E8B" type:PGPKeyPublic];

@@ -23,7 +23,7 @@
 
 
 @interface ObjectivePGPTests : XCTestCase
-@property (strong) ObjectivePGP *keyring;
+@property (strong) ObjectivePGP *oPGP;
 @property (strong) NSString *secringPathPlaintext, *secringPathEncrypted;
 @property (strong) NSString *pubringPlaintext, *pubringEncrypted;
 @end
@@ -40,13 +40,33 @@
     self.pubringPlaintext = [bundle pathForResource:@"pubring-test-plaintext" ofType:@"gpg"];
     self.pubringEncrypted = [bundle pathForResource:@"pubring-test-encrypted" ofType:@"gpg"];
 
-    self.keyring = [[ObjectivePGP alloc] init];
+    self.oPGP = [[ObjectivePGP alloc] init];
 }
 
 - (void)tearDown
 {
     [super tearDown];
-    self.keyring = nil;
+    self.oPGP = nil;
+}
+
+- (void) testDuplicates
+{
+    [self.oPGP importKeysFromFile:self.pubringPlaintext allowDuplicates:YES];
+    NSUInteger count1 = self.oPGP.keys.count;
+    [self.oPGP importKeysFromFile:self.pubringPlaintext allowDuplicates:YES];
+    NSUInteger count2 = self.oPGP.keys.count;
+    
+    NSAssert((count1 * 2) == count2, @"Loaded keys should be duplicated in count");
+}
+
+- (void) testNotDuplicates
+{
+    [self.oPGP importKeysFromFile:self.pubringPlaintext allowDuplicates:NO];
+    NSUInteger count1 = self.oPGP.keys.count;
+    [self.oPGP importKeysFromFile:self.pubringPlaintext allowDuplicates:NO];
+    NSUInteger count2 = self.oPGP.keys.count;
+    
+    NSAssert(count1 == count2, @"Loaded keys should be equal");
 }
 
 //- (void) testNewOpenKeyring
