@@ -481,14 +481,16 @@
     NSUInteger position = [super parsePacketBody:packetBody error:error];
     NSUInteger startPosition = position;
 
+    UInt8 parsedVersion = 0;
     // V4
     // One-octet version number (4).
-    [packetBody getBytes:&_version range:(NSRange){position,1}];
+    [packetBody getBytes:&parsedVersion range:(NSRange){position,1}];
     position = position + 1;
-
+    
     //  TODO: Implementations SHOULD accept V3 signatures
-    NSAssert(_version == 4, @"Only signature V4 is supported at the moment. Implementations SHOULD accept V3 signatures, but it's not.");
-    if (_version != 4) {
+    NSAssert(parsedVersion == 4, @"Only signature V4 is supported at the moment. Implementations SHOULD accept V3 signatures, but it's not.");
+    if (parsedVersion != 4) {
+        *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Only signature V4 is supported at the moment"}];
         return startPosition + packetBody.length;
     }
 
