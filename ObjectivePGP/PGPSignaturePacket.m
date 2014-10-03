@@ -245,7 +245,6 @@
 }
 
 // Opposite to sign, with readed data (not produced)
-// TODO: propably will fail on V3 signature
 - (BOOL) verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(NSString *)userID
 {
     if (self.type == PGPSignatureBinaryDocument && inputData.length == 0) {
@@ -272,6 +271,7 @@
     NSData *hashData = [toHashData pgpHashedWithAlgorithm:self.hashAlgoritm];
 
     // check signed hash value, should match
+    // FIXME: propably will fail on V3 signature, need investigate how to handle V3 scenario here
     if (![self.signedHashValueData isEqualToData:[hashData subdataWithRange:(NSRange){0,2}]]) {
         return NO;
     }
@@ -507,18 +507,8 @@
     return position;
 }
 
-//Old: Signature Packet(tag 2)(149 bytes)
-//        Ver 3 - old
-//        Hash material(5 bytes):
-//                Sig type - Generic certification of a User ID and Public Key packet(0x10).
-//                Creation time - Mon Feb 25 19:10:54 CET 2002
-//        Key ID - 0x3B6DC98248002481
-//        Pub alg - RSA Encrypt or Sign(pub 1)
-//        Hash alg - MD5(hash 1)
-//        Hash left 2 bytes - e4 ef 
-//        RSA m^d mod n(1023 bits) - ...
-//                -> PKCS-1
-
+// FIXME: V3 signatures fail somewehere (I don't know where yet) because everything is designed
+// for V4 and uses V4 specific data to (for example) validate signature
 - (NSUInteger)parseV3PacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
 {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
