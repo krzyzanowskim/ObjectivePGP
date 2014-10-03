@@ -15,7 +15,8 @@ typedef NS_ENUM(NSUInteger, PGPArmorType)
     PGPArmorTypeSecretKey                = 3,
     PGPArmorTypeMultipartMessagePartXOfY = 4,
     PGPArmorTypeMultipartMessagePartX    = 5,
-    PGPArmorTypeSignature                = 6
+    PGPArmorTypeSignature                = 6,
+    PGPArmorCleartextSignedMessage       = 7, //TODO: -----BEGIN PGP SIGNED MESSAGE-----
 };
 
 @interface PGPArmor : NSObject

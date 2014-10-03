@@ -30,8 +30,8 @@
 
 + (NSData *) armoredData:(NSData *)dataToArmor as:(PGPArmorType)armorType part:(NSUInteger)part of:(NSUInteger)ofParts
 {
-    NSDictionary *headers = @{@"Creator": @"ObjectivePGP",
-                              @"Charset": @"UTF-8"};
+    NSMutableDictionary *headers = [@{@"Comment": @"Created with http://github.com/krzyzanowskim/ObjectivePGP",
+                                      @"Charset": @"UTF-8"} mutableCopy];
 
     NSMutableString *headerString = [NSMutableString stringWithString:@"-----"];
     NSMutableString *footerString = [NSMutableString stringWithString:@"-----"];
@@ -61,6 +61,7 @@
             [footerString appendFormat:@"END PGP MESSAGE, PART %@/%@", @(part), @(ofParts)];
             break;
         default:
+            NSAssert(true, @"Message type not supported");
             break;
     }
 
