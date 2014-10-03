@@ -241,6 +241,7 @@
 }
 
 // Opposite to sign, with readed data (not produced)
+// TODO: propably will fail on V3 signature
 - (BOOL) verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(NSString *)userID
 {
     if (self.type == PGPSignatureBinaryDocument && inputData.length == 0) {
@@ -262,7 +263,6 @@
     [toHashData appendData:toSignData];
     [toHashData appendData:self.rawReadedSignedPartData ?: signedPartData];
     [toHashData appendData:trailerData];
-
 
     // Calculate hash value
     NSData *hashData = [toHashData pgpHashedWithAlgorithm:self.hashAlgoritm];
@@ -476,7 +476,126 @@
  *
  *  @param packetBody Packet body
  */
+
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
+{
+    NSUInteger position = [super parsePacketBody:packetBody error:error];
+    NSUInteger startPosition = position;
+
+    UInt8 parsedVersion = 0;
+    // One-octet version number.
+    [packetBody getBytes:&parsedVersion range:(NSRange){position,1}];
+    position = position + 1;
+    
+    switch (parsedVersion) {
+        case 0x04:
+            position = [self parseV4PacketBody:packetBody error:error];
+            break;
+        case 0x03:
+            position = [self parseV3PacketBody:packetBody error:error];
+            break;
+        default:
+            NSAssert(true, @"Unsupported signature packet version");
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Signature version %@ is supported at the moment", @(parsedVersion)]}];
+            return startPosition + packetBody.length;
+            break;
+    }
+    return position;
+}
+
+//Old: Signature Packet(tag 2)(149 bytes)
+//        Ver 3 - old
+//        Hash material(5 bytes):
+//                Sig type - Generic certification of a User ID and Public Key packet(0x10).
+//                Creation time - Mon Feb 25 19:10:54 CET 2002
+//        Key ID - 0x3B6DC98248002481
+//        Pub alg - RSA Encrypt or Sign(pub 1)
+//        Hash alg - MD5(hash 1)
+//        Hash left 2 bytes - e4 ef 
+//        RSA m^d mod n(1023 bits) - ...
+//                -> PKCS-1
+
+- (NSUInteger)parseV3PacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
+{
+    NSUInteger position = [super parsePacketBody:packetBody error:error];
+    
+    // V3
+    // One-octet version number (3).
+    UInt8 parsedVersion = 0;
+    [packetBody getBytes:&parsedVersion range:(NSRange){position,1}];
+    position = position + 1;
+
+    // One-octet length of following hashed material.  MUST be 5.
+    UInt8 parsedLength = 0;
+    [packetBody getBytes:&parsedLength range:(NSRange){position,1}];
+    position = position + 1;
+    NSAssert(parsedLength == 5, @"Invalid signature data");
+    
+    // One-octet signature type.
+    [packetBody getBytes:&_type range:(NSRange){position,1}];
+    position = position + 1;
+    
+    // Four-octet creation time
+    UInt32 parsedCreationTimestamp = 0;
+    [packetBody getBytes:&parsedCreationTimestamp range:(NSRange){position,4}];
+    parsedCreationTimestamp = CFSwapInt32BigToHost(parsedCreationTimestamp);
+    position = position + 4;
+    
+    // Eight-octet Key ID of signer
+    PGPKeyID *parsedkeyID = [[PGPKeyID alloc] initWithLongKey:[packetBody subdataWithRange:(NSRange){position, 8}]];
+    position = position + 8;
+    
+    // One-octet public-key algorithm.
+    [packetBody getBytes:&_publicKeyAlgorithm range:(NSRange){position,1}];
+    position = position + 1;
+
+    // One-octet hash algorithm.
+    [packetBody getBytes:&_hashAlgoritm range:(NSRange){position,1}];
+    position = position + 1;
+    
+    // Two-octet field holding the left 16 bits of the signed hash value.
+    self.signedHashValueData = [packetBody subdataWithRange:(NSRange){position, 2}];
+    position = position + 2;
+    
+    // 5.2.2. One or more multiprecision integers comprising the signature. This portion is algorithm specific
+    // Signature
+    switch (_publicKeyAlgorithm) {
+        case PGPPublicKeyAlgorithmRSA:
+        case PGPPublicKeyAlgorithmRSAEncryptOnly:
+        case PGPPublicKeyAlgorithmRSASignOnly:
+        {
+            // multiprecision integer (MPI) of RSA signature value m**d mod n.
+            // MPI of RSA public modulus n;
+            PGPMPI *mpiN = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
+            mpiN.identifier = @"N";
+            position = position + mpiN.packetLength;
+            
+            self.signatureMPIs = [NSArray arrayWithObject:mpiN];
+        }
+            break;
+        case PGPPublicKeyAlgorithmDSA:
+        case PGPPublicKeyAlgorithmECDSA:
+        {
+            // MPI of DSA value r.
+            PGPMPI *mpiR = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
+            mpiR.identifier = @"R";
+            position = position + mpiR.packetLength;
+            
+            // MPI of DSA value s.
+            PGPMPI *mpiS = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
+            mpiS.identifier = @"S";
+            position = position + mpiS.packetLength;
+            
+            self.signatureMPIs = [NSArray arrayWithObjects:mpiR, mpiS, nil];
+        }
+            break;
+        default:
+            break;
+    }
+    return position;
+}
+
+- (NSUInteger)parseV4PacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
 {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
     NSUInteger startPosition = position;
@@ -487,13 +606,6 @@
     [packetBody getBytes:&parsedVersion range:(NSRange){position,1}];
     position = position + 1;
     
-    //  TODO: Implementations SHOULD accept V3 signatures
-    NSAssert(parsedVersion == 4, @"Only signature V4 is supported at the moment. Implementations SHOULD accept V3 signatures, but it's not.");
-    if (parsedVersion != 4) {
-        *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Only signature V4 is supported at the moment"}];
-        return startPosition + packetBody.length;
-    }
-
     // One-octet signature type.
     [packetBody getBytes:&_type range:(NSRange){position,1}];
     position = position + 1;
