@@ -31,7 +31,7 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"%@ primary key: %@",[super description], self.primaryKeyPacket];
+    return [NSString stringWithFormat:@"Type %@, %@ primary key: %@",self.type == PGPKeyPublic ? @"public" : @"secret", [super description], self.primaryKeyPacket];
 }
 
 - (BOOL)isEqual:(id)object
@@ -45,7 +45,7 @@
     
     //TODO: check all properties
     PGPKey *objectKey = (PGPKey *)object;
-    return [self.keyID isEqual:objectKey.keyID];
+    return [self.keyID isEqual:objectKey.keyID] && (self.type == objectKey.type);
 }
 
 - (NSUInteger)hash
@@ -56,6 +56,7 @@
 #endif
     
     NSUInteger hash = [self.primaryKeyPacket hash];
+    hash = NSUINTROTATE(hash, NSUINT_BIT / 2) ^ self.type;
     hash = NSUINTROTATE(hash, NSUINT_BIT / 2) ^ [self.users hash];
     hash = NSUINTROTATE(hash, NSUINT_BIT / 2) ^ [self.subKeys hash];
     hash = NSUINTROTATE(hash, NSUINT_BIT / 2) ^ [self.directSignatures hash];
