@@ -24,6 +24,10 @@
 #import <openssl/err.h>
 #import <openssl/ssl.h>
 
+@interface PGPSignatureSubpacket ()
+@property (strong, readwrite) id value;
+@end
+
 @interface PGPSignaturePacket ()
 @property (strong, readwrite, nonatomic) NSArray *hashedSubpackets;
 @property (strong, readwrite, nonatomic) NSArray *unhashedSubpackets;
@@ -592,6 +596,18 @@
         default:
             break;
     }
+    
+    // convert V3 values to V4 subpackets
+    PGPSignatureSubpacket *keyIDSubpacket = [[PGPSignatureSubpacket alloc] init];
+    keyIDSubpacket.type = PGPSignatureSubpacketTypeIssuerKeyID;
+    keyIDSubpacket.value = parsedkeyID;
+    self.unhashedSubpackets = [self.unhashedSubpackets arrayByAddingObject:keyIDSubpacket];
+
+    PGPSignatureSubpacket *creationTimeSubpacket = [[PGPSignatureSubpacket alloc] init];
+    creationTimeSubpacket.type = PGPSignatureSubpacketTypeSignatureCreationTime;
+    creationTimeSubpacket.value = [NSDate dateWithTimeIntervalSince1970:parsedCreationTimestamp];
+    self.hashedSubpackets = [self.hashedSubpackets arrayByAddingObject:creationTimeSubpacket];
+
     return position;
 }
 
