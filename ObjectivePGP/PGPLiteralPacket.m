@@ -103,6 +103,12 @@
 - (NSData *) exportPacket:(NSError *__autoreleasing *)error
 {
     NSAssert(self.literalRawData, @"Missing literal data");
+    if (!self.literalRawData) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Missing literal data"}];
+        }
+        return nil;
+    }
 
     NSMutableData *bodyData = [NSMutableData data];
     [bodyData appendBytes:&_format length:1];

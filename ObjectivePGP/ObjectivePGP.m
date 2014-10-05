@@ -209,8 +209,11 @@
 - (NSData *) decryptData:(NSData *)messageDataToDecrypt passphrase:(NSString *)passphrase error:(NSError * __autoreleasing *)error
 {
     NSData *binaryMessageToDecrypt = [self convertArmoredMessage2BinaryWhenNecessary:messageDataToDecrypt];
-    NSAssert(binaryMessageToDecrypt != nil, @"Ivalid input data");
+    NSAssert(binaryMessageToDecrypt != nil, @"Invalid input data");
     if (!binaryMessageToDecrypt) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Invalid input data"}];
+        }
         return nil;
     }
     
@@ -246,7 +249,9 @@
     
     NSAssert(eskPacket, @"Valid PublicKeyEncryptedSessionKeyPacket not found");
     if (!eskPacket) {
-        *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Valid PublicKeyEncryptedSessionKeyPacket not found"}];
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Valid PublicKeyEncryptedSessionKeyPacket not found"}];
+        }
         return nil;
     }
     
@@ -264,7 +269,9 @@
     
     NSAssert(sessionKeyData, @"Missing session key data");
     if (!sessionKeyData) {
-        *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Missing session key data"}];
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Missing session key data"}];
+        }
         return nil;
     }
 
@@ -410,6 +417,9 @@
     NSError *exportError = nil;
     NSData *signaturePacketData = [signaturePacket exportPacket:&exportError];
     NSAssert(!exportError,@"Error on export packet");
+    if (exportError) {
+        return nil;
+    }
 
     // Signed Message :- Signature Packet, Literal Message
     NSMutableData *signedMessage = [NSMutableData data];
@@ -426,6 +436,9 @@
         NSError *onePassExportError = nil;
         [signedMessage appendData:[onePassPacket exportPacket:&onePassExportError]];
         NSAssert(!onePassExportError, @"Missing one password data");
+        if (onePassExportError) {
+            return nil;
+        }
 
         // Literal
         PGPLiteralPacket *literalPacket = [PGPLiteralPacket literalPacket:PGPLiteralPacketBinary withData:dataToSign];
@@ -434,6 +447,9 @@
         NSError *literalExportError = nil;
         [signedMessage appendData:[literalPacket exportPacket:&literalExportError]];
         NSAssert(!literalExportError, @"Missing literal data");
+        if (literalExportError) {
+            return nil;
+        }
     }
     [signedMessage appendData:signaturePacketData];
     return [signedMessage copy];
