@@ -47,7 +47,9 @@
         unsigned long err_code = ERR_get_error();
         char *errBuf = calloc(512, sizeof(UInt8));
         ERR_error_string(err_code, errBuf);
+#ifdef DEBUG
         NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
+#endif
         free(errBuf);
 
         free(encrypted_em);
@@ -91,7 +93,9 @@
         unsigned long err_code = ERR_get_error();
         char *errBuf = calloc(512, sizeof(UInt8));
         ERR_error_string(err_code, errBuf);
+#ifdef DEBUG
         NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
+#endif
         free(errBuf);
         
         ERR_free_strings();
@@ -107,7 +111,9 @@
         unsigned long err_code = ERR_get_error();
         char *errBuf = calloc(512, sizeof(UInt8));
         ERR_error_string(err_code, errBuf);
+#ifdef DEBUG
         NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
+#endif
         free(errBuf);
         
         ERR_free_strings();
