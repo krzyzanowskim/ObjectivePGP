@@ -234,7 +234,7 @@
                 continue;
             }
             
-            decryptionSecretKeyPacket = (PGPSecretKeyPacket *)[decryptionSecretKey decryptionKeyPacket];;
+            decryptionSecretKeyPacket = (PGPSecretKeyPacket *)[decryptionSecretKey decryptionKeyPacket:error];
             
             // decrypt key with passphrase if encrypted
             if (decryptionSecretKeyPacket.isEncrypted) {
@@ -245,6 +245,10 @@
             }
             eskPacket = pkESKPacket;
         }
+    }
+    
+    if (*error) {
+        return nil;
     }
     
     NSAssert(eskPacket, @"Valid PublicKeyEncryptedSessionKeyPacket not found");

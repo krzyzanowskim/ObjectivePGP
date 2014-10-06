@@ -163,16 +163,17 @@
 
 - (BOOL)canBeUsedToEncrypt
 {
-    BOOL result = self.publicKeyAlgorithm != PGPPublicKeyAlgorithmDSA && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmRSASignOnly;
-    
-    if (result) {
-        PGPSignatureSubpacket *subpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeKeyFlags] firstObject];
-        NSArray *flags = subpacket.value;
-        if ([flags containsObject:@(PGPSignatureFlagAllowEncryptStorage)] || [flags containsObject:@(PGPSignatureFlagAllowEncryptCommunications)]) {
-            return YES;
-        }
+    BOOL result = NO;
+    PGPSignatureSubpacket *subpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeKeyFlags] firstObject];
+    NSArray *flags = subpacket.value;
+    if ([flags containsObject:@(PGPSignatureFlagAllowEncryptStorage)] || [flags containsObject:@(PGPSignatureFlagAllowEncryptCommunications)]) {
+        result = YES;
     }
-    return NO;
+    
+    // I'm not convinced if DSA is allowed here self.publicKeyAlgorithm != PGPPublicKeyAlgorithmDSA
+    result = result && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmRSASignOnly && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmElgamalEncryptorSign;
+    
+    return result;
 }
 
 #pragma mark - Build packet

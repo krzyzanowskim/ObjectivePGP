@@ -278,10 +278,13 @@
     return nil;
 }
 
-- (PGPSecretKeyPacket *) decryptionKeyPacket
+- (PGPSecretKeyPacket *) decryptionKeyPacket:(NSError * __autoreleasing *)error
 {
     NSAssert(self.type == PGPKeySecret, @"Need secret key to encrypt");
     if (self.type == PGPKeyPublic) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Wrong key type, require secret key"}];
+        }
         NSLog(@"Need public key to encrypt");
         return nil;
     }
@@ -301,6 +304,10 @@
         if (primaryUserSelfCertificate.canBeUsedToEncrypt) {
             return (PGPSecretKeyPacket *)self.primaryKeyPacket;
         }
+    }
+    
+    if (error) {
+        *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Decryption key not found"}];
     }
     
     return nil;
