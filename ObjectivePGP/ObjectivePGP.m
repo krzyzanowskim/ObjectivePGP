@@ -247,7 +247,7 @@
         }
     }
     
-    if (*error) {
+    if (error && *error) {
         return nil;
     }
     

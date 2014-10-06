@@ -259,7 +259,8 @@
     XCTAssertTrue(status);
     
     // decrypt + validate decrypted message
-    NSData *decryptedData = [self.oPGP decryptData:encryptedData passphrase:@"1234" error:nil];
+    NSData *decryptedData = [self.oPGP decryptData:encryptedData passphrase:@"1234" error:&encryptError];
+    XCTAssertNil(encryptError);
     XCTAssertNotNil(decryptedData);
     NSString *decryptedString = [[NSString alloc] initWithData:decryptedData encoding:NSASCIIStringEncoding];
     XCTAssertNotNil(decryptedString);

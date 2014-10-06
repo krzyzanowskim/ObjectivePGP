@@ -223,7 +223,7 @@
     [toMDCData appendBytes:&mdc_suffix length:2];
     
     PGPModificationDetectionCodePacket *mdcPacket = [[PGPModificationDetectionCodePacket alloc] initWithData:toMDCData];
-    NSData *mdcPacketData = [mdcPacket exportPacket:&error];
+    NSData *mdcPacketData = [mdcPacket exportPacket:error];
     if (*error) {
         return;
     }
