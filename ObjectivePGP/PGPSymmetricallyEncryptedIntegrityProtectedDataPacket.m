@@ -190,7 +190,7 @@
     return plaintextData;
 }
 
-- (void) encrypt:(NSData *)literalPacketData symmetricAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData
+- (void) encrypt:(NSData *)literalPacketData symmetricAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData error:(NSError * __autoreleasing *)error
 {
     // OpenPGP does symmetric encryption using a variant of Cipher Feedback mode (CFB mode).
     NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:sessionKeyAlgorithm];
@@ -223,9 +223,8 @@
     [toMDCData appendBytes:&mdc_suffix length:2];
     
     PGPModificationDetectionCodePacket *mdcPacket = [[PGPModificationDetectionCodePacket alloc] initWithData:toMDCData];
-    NSError *exportMDCError = nil;
-    NSData *mdcPacketData = [mdcPacket exportPacket:&exportMDCError];
-    if (exportMDCError) {
+    NSData *mdcPacketData = [mdcPacket exportPacket:&error];
+    if (*error) {
         return;
     }
     

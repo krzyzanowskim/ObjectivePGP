@@ -343,7 +343,7 @@
         // ESK :- Public-Key Encrypted Session Key Packet | Symmetric-Key Encrypted Session Key Packet.
         
         // ESK
-        PGPPublicKeyPacket *encryptionKeyPacket = (PGPPublicKeyPacket *)[publicKey encryptionKeyPacket];
+        PGPPublicKeyPacket *encryptionKeyPacket = (PGPPublicKeyPacket *)[publicKey encryptionKeyPacket:error];
         if (encryptionKeyPacket) {
             // var pkESKeyPacket = new packet.PublicKeyEncryptedSessionKey();
             PGPPublicKeyEncryptedSessionKeyPacket *eskKeyPacket = [[PGPPublicKeyEncryptedSessionKeyPacket alloc] init];
@@ -361,11 +361,20 @@
         }
     }
 
+    if (*error) {
+        return nil;
+    }
+
     PGPSymmetricallyEncryptedIntegrityProtectedDataPacket *symEncryptedDataPacket = [[PGPSymmetricallyEncryptedIntegrityProtectedDataPacket alloc] init];
     [symEncryptedDataPacket encrypt:compressedPacketData
                  symmetricAlgorithm:preferredSymmeticAlgorithm
-                     sessionKeyData:sessionKeyData];
-    
+                     sessionKeyData:sessionKeyData
+                              error: error];
+
+    if (*error) {
+        return nil;
+    }
+
     [encryptedMessage appendData:[symEncryptedDataPacket exportPacket:error]];
     if (*error) {
         return nil;

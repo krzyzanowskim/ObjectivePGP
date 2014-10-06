@@ -243,10 +243,13 @@
 }
 
 // signature packet that is available for signing data
-- (PGPPacket *) encryptionKeyPacket
+- (PGPPacket *) encryptionKeyPacket:(NSError * __autoreleasing *)error
 {
     NSAssert(self.type == PGPKeyPublic, @"Need public key to encrypt");
     if (self.type == PGPKeySecret) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Wrong key type, require public key"}];
+        }
         NSLog(@"Need public key to encrypt");
         return nil;
     }
@@ -267,7 +270,11 @@
             return self.primaryKeyPacket;
         }
     }
-    
+
+    if (error) {
+        *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Encryption key not found"}];
+    }
+
     return nil;
 }
 

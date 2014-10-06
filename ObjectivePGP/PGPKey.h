@@ -52,7 +52,7 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
  *  @return PGPSecureKeyPacket that can be used to signing
  */
 - (PGPPacket *) signingKeyPacket;
-- (PGPPacket *) encryptionKeyPacket;
+- (PGPPacket *) encryptionKeyPacket:(NSError * __autoreleasing *)error;
 - (PGPSecretKeyPacket *) decryptionKeyPacket;
 
 
