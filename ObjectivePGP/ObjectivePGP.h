@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "PGPTypes.h"
 #import "PGPKey.h"
+#import "PGPUser.h"
 
 @interface ObjectivePGP : NSObject
 
