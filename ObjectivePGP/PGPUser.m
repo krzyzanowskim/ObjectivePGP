@@ -70,6 +70,7 @@
 - (PGPUserIDPacket *)userIDPacket
 {
     if (!_userIDPacket) {
+        NSAssert(false, @"wat?");
         // build userIDPacket
     }
     return _userIDPacket;
