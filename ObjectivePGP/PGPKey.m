@@ -149,10 +149,13 @@
                 user.userAttribute = (PGPUserAttributePacket *)packet;
                 break;
             case PGPUserIDPacketTag:
+            {
+                PGPUser *parsedUser = [[PGPUser alloc] initWithUserIDPacket:(PGPUserIDPacket *)packet];
                 if (!user) {
-                    user = [[PGPUser alloc] initWithUserIDPacket:(PGPUserIDPacket *)packet];
+                    user = parsedUser;
                 }
-                [self.users addObject:user];
+                [self.users addObject:parsedUser];
+            }
                 break;
             case PGPPublicSubkeyPacketTag:
             case PGPSecretSubkeyPacketTag:
