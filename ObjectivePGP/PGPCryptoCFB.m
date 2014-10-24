@@ -81,11 +81,7 @@
         case PGPSymmetricAES256:
         {
             AES_KEY aes_key;
-            if (decrypt) {
-                AES_set_decrypt_key(sessionKeyData.bytes, (unsigned int)keySize * 8, &aes_key);
-            } else {
-                AES_set_encrypt_key(sessionKeyData.bytes, (unsigned int)keySize * 8, &aes_key);
-            }
+            AES_set_encrypt_key(sessionKeyData.bytes, (unsigned int)keySize * 8, &aes_key);
             
             int num = 0;
             AES_cfb128_encrypt(encryptedBytes, outBuffer, outBufferLength, &aes_key, iv, &num, decrypt ? AES_DECRYPT : AES_ENCRYPT);
