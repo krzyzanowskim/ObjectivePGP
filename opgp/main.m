@@ -116,11 +116,11 @@ Use within the scope of this License is free of charge and no royalty or licensi
         ObjectivePGP *pgp = [[ObjectivePGP alloc] init];
         
         if (pubringFile) {
-            [pgp importKeysFromFile:[pubringFile stringByExpandingTildeInPath]];
+            [pgp importKeysFromFile:[pubringFile stringByExpandingTildeInPath] allowDuplicates:NO];
         }
         
         if (secringFile) {
-            [pgp importKeysFromFile:[secringFile stringByExpandingTildeInPath]];
+            [pgp importKeysFromFile:[secringFile stringByExpandingTildeInPath] allowDuplicates:NO];
         }
         
         // load key
@@ -139,7 +139,7 @@ Use within the scope of this License is free of charge and no royalty or licensi
                 fetchedKeyData = [NSData dataWithContentsOfMappedFile:[keyFile stringByExpandingTildeInPath]];
             }
 
-            NSArray *loadedKeys = [pgp importKeysFromData:fetchedKeyData];
+            NSArray *loadedKeys = [pgp importKeysFromData:fetchedKeyData allowDuplicates:NO];
             if (!keyIdentifier) {
                 PGPKey *key = loadedKeys[0];
                 operationKey = key;

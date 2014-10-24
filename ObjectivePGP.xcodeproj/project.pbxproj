@@ -1157,8 +1157,7 @@
 					"-lssl",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.8;
-				VALID_ARCHS = x86_64;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
@@ -1176,8 +1175,7 @@
 					"-lssl",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx10.8;
-				VALID_ARCHS = x86_64;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
