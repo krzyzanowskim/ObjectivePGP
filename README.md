@@ -31,8 +31,8 @@ See [this post](https://medium.com/@krzyzanowskim/short-story-about-openpgp-for-
 #####Load keys (private or public)
 
 	/* From file */
-	[pgp importKeysFromFile:@"/path/to/secring.gpg"];
-	[pgp importKeysFromFile:@"/path/to/key.asc"];
+	[pgp importKeysFromFile:@"/path/to/secring.gpg" allowDuplicates:NO];
+	[pgp importKeysFromFile:@"/path/to/key.asc" allowDuplicates:NO];
 	
 	/* Load single key from keyring */
 	[pgp importKey:@"979E4B03DFFE30C6" fromFile:@"/path/to/secring.gpg"];
@@ -119,7 +119,30 @@ See [this post](https://medium.com/@krzyzanowskim/short-story-about-openpgp-for-
 	if (encryptedData && !error) {
 		NSLog(@"decryption success");
 	}
-	
+
+###Author
+
+Marcin Krzyżanowski
+
+Follow me on Twitter ([@krzyzanowskim](http://twitter.com/krzyzanowskim))
+
+#License
+
+If you use this software in a product, an acknowledgment in the product documentation is required. You can purchase a Non-Attribution-License for 75 Euros for not having to include the LICENSE text.
+
+```
+Copyright (C) 2014 Marcin Krzyżanowski
+This software is provided 'as-is', without any express or implied warranty. 
+
+In no event will the authors be held liable for any damages arising from the use of this software. 
+
+Permission is granted to anyone to use this software for any purpose,including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
+
+- The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation is required.
+- Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+- This notice may not be removed or altered from any source or binary distribution.
+```
+
 ##opgp - command line tool
 
 For you convenience I've build command line tool (OS X) - [opgp](https://github.com/krzyzanowskim/ObjectivePGP/blob/master/usr/local/bin/opgp) that uses this library, so you can play with it easily.
@@ -141,38 +164,28 @@ If you want to install this tool, simply copy file to `/usr/local/bin` directory
 		-armor       [1|0] - output format (Optional)
 		-help        Help
 		-license     License
-	
+
 ##Release notes
 
-Known issues (0.2)
+Version 0.3
+
+- NEW encrypt for multiple recipients at once
+- NEW decrypt with multiple recipients
+- NEW read key from file without importing to keyring
+- NEW import keys with or without duplicates
+- NEW Support for V3 of signature packets
+- NEW armv7s binary added
+- IMPROVED overall error handling
+- IMPROVED preferred key algorithm chooser
+- FIX handle DSA keys for encryption
+- FIX self certificate validation check
+- FIX export multiple keys to single file
+- FIX reading user id packet
+- FIX other minor fixes
+
+Known issues
 
 - Embeded signatures are not supported
-- ZIP compression not fully
-- Multiple keys for single encoding - not supported
-- Old encrypted packets - sometimes not supported
+- ZIP compression not fully supported
 - Only RSA cipher is fully supported
 - Defaults hardcoded
-
-
-###Contact
-
-Follow me on Twitter ([@krzyzanowskim](http://twitter.com/krzyzanowskim))
-
-###Creator
-
-Marcin Krzyżanowski ([@krzyzanowskim](http://twitter.com/krzyzanowskim))
-
-#License
-
-```
-Copyright (C) 2014 Marcin Krzyżanowski
-This software is provided 'as-is', without any express or implied warranty. 
-
-In no event will the authors be held liable for any damages arising from the use of this software. 
-
-Permission is granted to anyone to use this software for any purpose,including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
-
-- The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation is required.
-- Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
-- This notice may not be removed or altered from any source or binary distribution.
-```

@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "PGPTypes.h"
 #import "PGPKey.h"
+#import "PGPUser.h"
 
 @interface ObjectivePGP : NSObject
 
@@ -17,12 +18,16 @@
  */
 @property (strong, nonatomic) NSArray *keys;
 
-// Load from keyring
-- (NSArray *) importKeysFromFile:(NSString *)path;
-- (NSArray *) importKeysFromData:(NSData *)data;
+// Import keys
+- (NSArray *) importKeysFromFile:(NSString *)path allowDuplicates:(BOOL)duplicates;
+- (NSArray *) importKeysFromData:(NSData *)data allowDuplicates:(BOOL)duplicates;
 - (BOOL) importKey:(NSString *)shortKeyStringIdentifier fromFile:(NSString *)path;
 
-// Save to keyring
+// Read keys
+- (NSArray *) keysFromData:(NSData *)fileData;
+- (NSArray *) keysFromFile:(NSString *)path;
+
+// Export keys
 - (BOOL) exportKeysOfType:(PGPKeyType)type toFile:(NSString *)path error:(NSError * __autoreleasing *)error;
 - (BOOL) exportKeys:(NSArray *)keys toFile:(NSString *)path error:(NSError * __autoreleasing *)error;
 - (NSData *) exportKey:(PGPKey *)key armored:(BOOL)armored;
@@ -42,6 +47,7 @@
 - (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPKey *)publicKey;
 
 - (NSData *) encryptData:(NSData *)dataToEncrypt usingPublicKey:(PGPKey *)publicKey armored:(BOOL)armored error:(NSError * __autoreleasing *)error;
+- (NSData *) encryptData:(NSData *)dataToEncrypt usingPublicKeys:(NSArray *)publicKeys armored:(BOOL)armored error:(NSError * __autoreleasing *)error;
 - (NSData *) decryptData:(NSData *)messageDataToDecrypt passphrase:(NSString *)passphrase error:(NSError * __autoreleasing *)error;
 
 @end

@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "PGPTypes.h"
 
+extern const UInt32 UnknownLength;
+
 @interface PGPPacket : NSObject <NSCopying>
 
 @property (copy, readonly) NSData *headerData;
