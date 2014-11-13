@@ -18,7 +18,8 @@ See [this post](https://medium.com/@krzyzanowskim/short-story-about-openpgp-for-
 ![Sample configuration](http://cl.ly/image/153n3S2H0W2S/objectivepgp-set-headers.png)
 3. Link project target to "libObjectivePGP" (`-lObjectivePGP`)
 ![Sample configuration](http://cl.ly/image/1z2s1O1h0c0F/objectivepgp-link-to-library.png)
-4. link target with OpenSSL to satisfy dependency (`-lssl -lcrypto`). To bring OpenSSL to you project you can use precompiled binaries from my other project https://github.com/krzyzanowskim/OpenSSL
+4. link target with bz2, zlib and OpenSSL to satisfy dependency (`-lssl -lcrypto -lbz2 -lz`). To bring OpenSSL to you project you can use precompiled binaries from my other project https://github.com/krzyzanowskim/OpenSSL. bz2 and zlib are already delivered with Xcode.
+5. Set the ObjC-Flag in linker settings (Build Settings -> Linking -> Other Linker Flags: `-ObjC`)
 
 ##Usage
 
