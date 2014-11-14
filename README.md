@@ -117,7 +117,7 @@ See [this post](https://medium.com/@krzyzanowskim/short-story-about-openpgp-for-
 	/* need provide passphrase if required */
     NSError *error = nil;
 	NSData *decryptedData = [pgp decryptData:encryptedFileContent passphrase:nil error:&error];
-	if (encryptedData && !error) {
+	if (decryptedData && !error) {
 		NSLog(@"decryption success");
 	}
 
