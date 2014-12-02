@@ -65,8 +65,8 @@
             break;
     }
 
-    [headerString appendString:@"-----\r\n"];
-    [footerString appendString:@"-----\r\n"];
+    [headerString appendString:@"-----\n"];
+    [footerString appendString:@"-----\n"];
 
     NSMutableString *armoredMessage = [NSMutableString string];
     // - An Armor Header Line, appropriate for the type of data
@@ -74,16 +74,16 @@
 
     // - Armor Headers
     for (NSString *key in headers.allKeys) {
-        [armoredMessage appendFormat:@"%@: %@\r\n", key, headers[key]];
+        [armoredMessage appendFormat:@"%@: %@\n", key, headers[key]];
     }
 
     // - A blank (zero-length, or containing only whitespace) line
-    [armoredMessage appendString:@"\r\n"];
+    [armoredMessage appendString:@"\n"];
 
     // - The ASCII-Armored data
-    NSString *radix64 = [dataToArmor base64EncodedStringWithOptions:(NSDataBase64Encoding76CharacterLineLength | NSDataBase64EncodingEndLineWithCarriageReturn | NSDataBase64EncodingEndLineWithLineFeed)];
+    NSString *radix64 = [dataToArmor base64EncodedStringWithOptions:(NSDataBase64Encoding76CharacterLineLength | NSDataBase64EncodingEndLineWithLineFeed)];
     [armoredMessage appendString:radix64];
-    [armoredMessage appendString:@"\r\n"];
+    [armoredMessage appendString:@"\n"];
 
     // - An Armor Checksum
     UInt32 checksum = [dataToArmor pgpCRC24];
@@ -94,8 +94,8 @@
 
     NSData *checksumData = [NSData dataWithBytes:&c length:sizeof(c)];
     [armoredMessage appendString:@"="];
-    [armoredMessage appendString:[checksumData base64EncodedStringWithOptions:(NSDataBase64Encoding76CharacterLineLength | NSDataBase64EncodingEndLineWithCarriageReturn | NSDataBase64EncodingEndLineWithLineFeed)]];
-    [armoredMessage appendString:@"\r\n"];
+    [armoredMessage appendString:[checksumData base64EncodedStringWithOptions:(NSDataBase64Encoding76CharacterLineLength | NSDataBase64EncodingEndLineWithLineFeed)]];
+    [armoredMessage appendString:@"\n"];
 
     // - The Armor Tail, which depends on the Armor Header Line
     [armoredMessage appendString:footerString];
@@ -153,19 +153,22 @@
             scanner.scanLocation = scanner.scanLocation - (line.length + 2);
             base64Section = NO;
         } else {
-            [base64String appendFormat:@"%@\r\n", line];
+            [base64String appendFormat:@"%@\n", line];
         }
     }
 
     // read checksum
     NSString *checksumString = nil;
-    [scanner scanUpToCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:&line];
+    [scanner scanUpToCharactersFromSet:[[NSCharacterSet newlineCharacterSet] invertedSet] intoString:&line];
     // consume newline
     [scanner scanString:@"\r" intoString:nil];
     [scanner scanString:@"\n" intoString:nil];
     
-    if ([line hasPrefix:@"="]) {
-        checksumString = [line substringFromIndex:1];
+    if ([scanner scanString:@"=" intoString:nil]) {
+        [scanner scanUpToCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:&checksumString];
+        // consume newline
+        [scanner scanString:@"\r" intoString:nil];
+        [scanner scanString:@"\n" intoString:nil];
     }
 
     if (!checksumString) {
