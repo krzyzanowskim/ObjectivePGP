@@ -753,6 +753,7 @@ found_key_label:
         NSString *armoredString = [[NSString alloc] initWithData:binRingData encoding:NSUTF8StringEncoding];
         
         // replace \n to \r\n
+        // propably unecessary since armore code care about \r\n or \n as newline sentence
         armoredString = [armoredString stringByReplacingOccurrencesOfString:@"\r\n" withString:@"\n"];
         armoredString = [armoredString stringByReplacingOccurrencesOfString:@"\n" withString:@"\r\n"];
         

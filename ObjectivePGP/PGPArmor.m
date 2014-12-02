@@ -110,7 +110,7 @@
 
     // check header line
     NSString *headerLine = nil;
-    [scanner scanUpToString:@"\r\n" intoString:&headerLine];
+    [scanner scanUpToCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:&headerLine];
     if (![headerLine isEqualToString:@"-----BEGIN PGP MESSAGE-----"] &&
         ![headerLine isEqualToString:@"-----BEGIN PGP PUBLIC KEY BLOCK-----"] &&
         ![headerLine isEqualToString:@"-----BEGIN PGP PRIVATE KEY BLOCK-----"] &&
@@ -124,26 +124,31 @@
         return nil;
     }
 
-    [scanner scanString:@"\r\n" intoString:nil];
+    [scanner scanUpToCharactersFromSet:[[NSCharacterSet newlineCharacterSet] invertedSet] intoString:nil];
 
     // Scan headers
     NSString *line = nil;
-    while ([scanner scanUpToString:@"\r\n" intoString:&line]) {
-        [scanner scanString:@"\r\n" intoString:nil];
+    while ([scanner scanCharactersFromSet:[[NSCharacterSet newlineCharacterSet] invertedSet] intoString:&line])
+    {
+        // consume newline
+        [scanner scanString:@"\r" intoString:nil];
+        [scanner scanString:@"\n" intoString:nil];
+#ifdef DEBUG
         NSLog(@"%@",line);
+#endif
     }
-
-    // blank line
-    [scanner scanString:@"\r\n" intoString:nil];
+    
+    // skip blank line
+    [scanner scanCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:nil];
 
     // read base64 data
     BOOL base64Section = YES;
     NSMutableString *base64String = [NSMutableString string];
-
-    while (base64Section) {
-        base64Section = [scanner scanUpToString:@"\r\n" intoString:&line];
-        [scanner scanString:@"\r\n" intoString:nil];
-
+    while (base64Section && [scanner scanCharactersFromSet:[[NSCharacterSet newlineCharacterSet] invertedSet] intoString:&line]) {
+        // consume newline
+        [scanner scanString:@"\r" intoString:nil];
+        [scanner scanString:@"\n" intoString:nil];
+        
         if ([line hasPrefix:@"="]) {
             scanner.scanLocation = scanner.scanLocation - (line.length + 2);
             base64Section = NO;
@@ -155,7 +160,10 @@
     // read checksum
     NSString *checksumString = nil;
     [scanner scanUpToCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:&line];
-    [scanner scanString:@"\r\n" intoString:nil];
+    // consume newline
+    [scanner scanString:@"\r" intoString:nil];
+    [scanner scanString:@"\n" intoString:nil];
+    
     if ([line hasPrefix:@"="]) {
         checksumString = [line substringFromIndex:1];
     }
@@ -170,7 +178,10 @@
     //read footer
     BOOL footerMatchHeader = NO;
     [scanner scanUpToCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:&line];
-    [scanner scanString:@"\r\n" intoString:nil];
+    // consume newline
+    [scanner scanString:@"\r" intoString:nil];
+    [scanner scanString:@"\n" intoString:nil];
+    
     if ([line hasSuffix:[headerLine substringFromIndex:12]]) {
         footerMatchHeader = YES;
     }
