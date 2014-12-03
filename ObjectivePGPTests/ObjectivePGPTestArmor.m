@@ -50,6 +50,14 @@
     self.oPGP = nil;
 }
 
+- (void) testMultipleKeys
+{
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSString *path = [bundle pathForResource:@"multiple-keys" ofType:@"asc"];
+    NSArray *keys = [self.oPGP importKeysFromFile:path allowDuplicates:NO];
+    NSAssert(keys.count == 3, @"Keys not imported properly");
+}
+
 
 - (void) testArmorPublicKey
 {

@@ -123,19 +123,26 @@
         }
         return nil;
     }
+    
+    // consume newline
+    [scanner scanString:@"\r" intoString:nil];
+    [scanner scanString:@"\n" intoString:nil];
 
-    [scanner scanUpToCharactersFromSet:[[NSCharacterSet newlineCharacterSet] invertedSet] intoString:nil];
-
-    // Scan headers
     NSString *line = nil;
-    while ([scanner scanCharactersFromSet:[[NSCharacterSet newlineCharacterSet] invertedSet] intoString:&line])
-    {
-        // consume newline
-        [scanner scanString:@"\r" intoString:nil];
-        [scanner scanString:@"\n" intoString:nil];
-#ifdef DEBUG
-        NSLog(@"%@",line);
-#endif
+    
+    if (![scanner scanCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:nil]) {
+        // Scan headers (Optional)
+        [scanner scanUpToCharactersFromSet:[[NSCharacterSet newlineCharacterSet] invertedSet] intoString:nil];
+
+        while ([scanner scanCharactersFromSet:[[NSCharacterSet newlineCharacterSet] invertedSet] intoString:&line])
+        {
+            // consume newline
+            [scanner scanString:@"\r" intoString:nil];
+            [scanner scanString:@"\n" intoString:nil];
+    #ifdef DEBUG
+            NSLog(@"%@",line);
+    #endif
+        }
     }
     
     // skip blank line
