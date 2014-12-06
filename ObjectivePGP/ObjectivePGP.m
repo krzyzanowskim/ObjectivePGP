@@ -238,6 +238,14 @@
             
             // decrypt key with passphrase if encrypted
             if (decryptionSecretKeyPacket.isEncrypted) {
+                
+                if (!passphrase) {
+                    if (error) {
+                        *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorPassphraseRequired userInfo:@{NSLocalizedDescriptionKey: @"Password is required for key"}];
+                    }
+                    return nil;
+                }
+                
                 decryptionSecretKeyPacket = [decryptionSecretKeyPacket decryptedKeyPacket:passphrase error:error];
                 if (error && *error) {
                     return nil;

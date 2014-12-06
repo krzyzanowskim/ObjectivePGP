@@ -12,6 +12,7 @@
 #import "PGPSecretKeyPacket.h"
 #import "PGPS2K.h"
 #import "PGPMPI.h"
+#import "PGPTypes.h"
 
 #import "PGPCryptoUtils.h"
 #import "NSData+PGPUtils.h"
@@ -196,7 +197,7 @@
 
             if (![hashData isEqualToData:calculatedHashData]) {
                 if (error) {
-                    *error = [NSError errorWithDomain:@"objectivepgp.hakore.com" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Decrypted hash mismatch, check password."}];
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Decrypted hash mismatch, check password."}];
                     return data.length;
                 }
             }
@@ -217,7 +218,7 @@
 
             if (checksum != calculatedChecksum) {
                 if (error) {
-                    *error = [NSError errorWithDomain:@"objectivepgp.hakore.com" code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Decrypted hash mismatch, check password."}];
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Decrypted hash mismatch, check password."}];
                     return data.length;
                 }
             }
