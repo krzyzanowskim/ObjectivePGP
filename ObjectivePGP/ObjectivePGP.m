@@ -237,7 +237,7 @@
             decryptionSecretKeyPacket = (PGPSecretKeyPacket *)[decryptionSecretKey decryptionKeyPacket:error];
             
             // decrypt key with passphrase if encrypted
-            if (decryptionSecretKeyPacket.isEncrypted) {
+            if (decryptionSecretKeyPacket.isEncryptedWithPassword) {
                 
                 if (!passphrase) {
                     if (error) {

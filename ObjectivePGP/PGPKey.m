@@ -94,7 +94,7 @@
 {
     if (self.type == PGPKeySecret) {
         PGPSecretKeyPacket *secretPacket = (PGPSecretKeyPacket *)self.primaryKeyPacket;
-        return secretPacket.isEncrypted;
+        return secretPacket.isEncryptedWithPassword;
     }
     return NO;
 }

@@ -97,7 +97,7 @@
 
 - (NSData *) decryptSessionKeyData:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm *)sessionKeyAlgorithm error:(NSError * __autoreleasing *)error
 {
-    NSAssert(!secretKeyPacket.isEncrypted, @"Secret key can't be encrypted");
+    NSAssert(!secretKeyPacket.isEncryptedWithPassword, @"Secret key can't be encrypted");
     
     //FIXME: klucz jest odczytywany z pakietu więc tak naprawdę nie powinien być przekazywany jako parametr
     //       bo wcześniej nie wiadomo jaki to będzie klucz

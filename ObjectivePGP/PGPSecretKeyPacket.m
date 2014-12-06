@@ -40,6 +40,8 @@
 @property (strong, readwrite) NSData *encryptedMPIsPartData; // after decrypt -> secretMPIArray
 @property (strong, readwrite) NSData *ivData;
 @property (strong, readwrite) NSArray *secretMPIArray; // decrypted MPI
+
+@property (assign, readwrite) BOOL wasDecrypted; // is decrypted
 @end
 
 @implementation PGPSecretKeyPacket
@@ -51,11 +53,15 @@
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"%@ isEncrypted: %@", [super description], @(self.isEncrypted)];
+    return [NSString stringWithFormat:@"%@ isEncrypted: %@", [super description], @(self.isEncryptedWithPassword)];
 }
 
-- (BOOL)isEncrypted
+- (BOOL)isEncryptedWithPassword
 {
+    if (self.wasDecrypted) {
+        return NO;
+    }
+    
     return (self.s2kUsage == PGPS2KUsageEncrypted || self.s2kUsage == PGPS2KUsageEncryptedAndHashed);
 }
 
@@ -120,7 +126,7 @@
     }
 
     NSData *encryptedData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
-    if (self.isEncrypted) {
+    if (self.isEncryptedWithPassword) {
         position = position + [self parseEncryptedPart:encryptedData error:error];
     } else {
         position = position + [self parseUnencryptedPart:encryptedData error:error];
@@ -292,7 +298,7 @@
  */
 - (PGPSecretKeyPacket *) decryptedKeyPacket:(NSString *)passphrase error:(NSError *__autoreleasing *)error
 {
-    if (!self.isEncrypted) {
+    if (!self.isEncryptedWithPassword) {
         return self;
     }
 
@@ -324,6 +330,7 @@
             return nil;
         }
     }
+    encryptedKey.wasDecrypted = YES;
     return encryptedKey;
 }
 

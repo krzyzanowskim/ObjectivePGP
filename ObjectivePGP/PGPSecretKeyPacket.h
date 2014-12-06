@@ -11,7 +11,7 @@
 
 @interface PGPSecretKeyPacket : PGPPublicKeyPacket <NSCopying>
 
-@property (assign, readonly, nonatomic) BOOL isEncrypted;
+@property (assign, readonly, nonatomic) BOOL isEncryptedWithPassword;
 @property (assign) PGPS2KUsage s2kUsage;
 @property (strong) PGPS2K *s2k;
 @property (assign) PGPSymmetricAlgorithm symmetricAlgorithm;

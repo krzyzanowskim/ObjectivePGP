@@ -91,7 +91,7 @@
 {
     NSAssert(self.encryptedData, @"Missing encrypted data to decrypt");
     NSAssert(secretKeyPacket, @"Missing secret key");
-    NSAssert(!secretKeyPacket.isEncrypted, @"Decrypt secret key first");
+    NSAssert(!secretKeyPacket.isEncryptedWithPassword, @"Decrypt secret key first");
     
     if (!self.encryptedData) {
         if (error) {
@@ -100,7 +100,7 @@
         return nil;
     }
     
-    if (secretKeyPacket.isEncrypted) {
+    if (secretKeyPacket.isEncryptedWithPassword) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Encrypted secret key used to decryption. Decrypt key first"}];
         }

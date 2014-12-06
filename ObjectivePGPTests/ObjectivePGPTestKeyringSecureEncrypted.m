@@ -85,6 +85,31 @@
     XCTAssertNil(decryptError, @"Decryption failed");
 }
 
+- (void)testDataDecryption
+{
+    [self.oPGP importKeysFromFile:self.secKeyringPath allowDuplicates:NO];
+    [self.oPGP importKeysFromFile:self.pubKeyringPath allowDuplicates:NO];
+    
+    
+    PGPKey *encKey = [self.oPGP getKeyForIdentifier:@"9528AAA17A9BC007" type:PGPKeyPublic];
+    // encrypt
+    NSData *tmpdata = [@"this is test" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *encError;
+    NSData *encData = [self.oPGP encryptData:tmpdata usingPublicKey:encKey armored:NO error:&encError];
+    XCTAssertNil(encError, @"Encryption failed");
+
+    NSError *decError;
+    NSData *decData = [self.oPGP decryptData:encData passphrase:@"1234" error:&decError];
+    XCTAssertNil(decError, @"Decryption failed");
+    
+//    PGPKey *key = self.oPGP.keys[0];
+//    
+//    NSError *decryptError = nil;
+//    BOOL status = [key decrypt:@"1234" error:&decryptError];
+//    XCTAssertTrue(status, @"Decryption failed");
+//    XCTAssertNil(decryptError, @"Decryption failed");
+}
+
 - (void) testEncryptedSignature
 {
     BOOL status;

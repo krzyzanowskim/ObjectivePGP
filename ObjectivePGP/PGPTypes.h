@@ -13,7 +13,7 @@
 #define NS_DESIGNATED_INITIALIZER
 #endif
 
-NSString * const PGPErrorDomain = @"ObjectivePGP";
+static NSString * const PGPErrorDomain = @"ObjectivePGP";
 
 typedef NS_ENUM(NSInteger, PGPErrorCode) {
     PGPErrorGeneral = -1,
