@@ -125,8 +125,10 @@
     XCTAssertNotNil(keyToSign);
 
     // detached signature
-    NSData *signatureData = [self.oPGP signData:[NSData dataWithContentsOfFile:fileToSignPath] usingSecretKey:keyToSign passphrase:@"1234" detached:YES];
+    NSError *signatureError = nil;
+    NSData *signatureData = [self.oPGP signData:[NSData dataWithContentsOfFile:fileToSignPath] usingSecretKey:keyToSign passphrase:@"1234" detached:YES error:&signatureError];
     XCTAssertNotNil(signatureData);
+    XCTAssertNil(signatureError);
 
     NSString *signaturePath = [self.workingDirectory stringByAppendingPathComponent:@"signature.sig"];
     status = [signatureData writeToFile:signaturePath atomically:YES];

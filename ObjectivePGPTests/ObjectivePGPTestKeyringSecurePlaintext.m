@@ -144,8 +144,10 @@
     XCTAssertNotNil(keyToSign);
 
     // detached signature
-    NSData *signatureData = [self.oPGP signData:[NSData dataWithContentsOfFile:fileToSignPath] usingSecretKey:keyToSign passphrase:nil detached:YES];
+    NSError *signatureError = nil;
+    NSData *signatureData = [self.oPGP signData:[NSData dataWithContentsOfFile:fileToSignPath] usingSecretKey:keyToSign passphrase:nil detached:YES error:&signatureError];
     XCTAssertNotNil(signatureData);
+    XCTAssertNil(signatureError);
 
     NSString *signaturePath = [self.workingDirectory stringByAppendingPathComponent:@"signature.sig"];
     status = [signatureData writeToFile:signaturePath atomically:YES];
@@ -155,12 +157,15 @@
 
     // Verify
     PGPKey *keyToValidateSign = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B" type:PGPKeySecret];
-    status = [self.oPGP verifyData:[NSData dataWithContentsOfFile:fileToSignPath] withSignature:signatureData usingKey:keyToValidateSign];
+    NSError *verifyError = nil;
+    status = [self.oPGP verifyData:[NSData dataWithContentsOfFile:fileToSignPath] withSignature:signatureData usingKey:keyToValidateSign error:&verifyError];
     XCTAssertTrue(status);
+    XCTAssertNil(verifyError);
 
     // Signed data
-    NSData *signedData = [self.oPGP signData:[NSData dataWithContentsOfFile:fileToSignPath] usingSecretKey:keyToSign passphrase:nil detached:NO];
+    NSData *signedData = [self.oPGP signData:[NSData dataWithContentsOfFile:fileToSignPath] usingSecretKey:keyToSign passphrase:nil detached:NO error:&signatureError];
     XCTAssertNotNil(signedData);
+    XCTAssertNil(signatureError);
 
     NSString *signedPath = [self.workingDirectory stringByAppendingPathComponent:@"signed_file.bin.sig"];
     status = [signedData writeToFile:signedPath atomically:YES];
@@ -170,8 +175,9 @@
 
     // Verify
     keyToValidateSign = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B" type:PGPKeySecret];
-    status = [self.oPGP verifyData:signedData];
+    status = [self.oPGP verifyData:signedData error:&verifyError];
     XCTAssertTrue(status);
+    XCTAssertNil(verifyError);
 }
 
 #define PLAINTEXT @"Plaintext: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse blandit justo eros.\n"

@@ -145,7 +145,11 @@
         }
 
         // (this is craziest think I ever seen today)
-        BOOL status = [signature verifyData:nil withKey:key signingKeyPacket:(PGPPublicKeyPacket *)key.primaryKeyPacket userID:self.userID];
+        NSError *error;
+        BOOL status = [signature verifyData:nil withKey:key signingKeyPacket:(PGPPublicKeyPacket *)key.primaryKeyPacket userID:self.userID error:&error];
+        if (!status) {
+            NSLog(@"ObjectivePGP: %@",error);
+        }
         //NSAssert(status == YES,@"not verified");
 
         if (status == YES) {

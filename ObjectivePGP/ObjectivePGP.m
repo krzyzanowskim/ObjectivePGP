@@ -401,44 +401,50 @@
 
 #pragma mark - Sign & Verify
 
-- (NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID passphrase:(NSString *)passphrase
+- (NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID passphrase:(NSString *)passphrase error:(NSError * __autoreleasing *)error
 {
-    return [self signData:dataToSign withKeyForUserID:userID passphrase:passphrase detached:YES];
+    return [self signData:dataToSign withKeyForUserID:userID passphrase:passphrase detached:YES error:error];
 }
 
-- (NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID passphrase:(NSString *)passphrase detached:(BOOL)detached
+- (NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID passphrase:(NSString *)passphrase detached:(BOOL)detached error:(NSError * __autoreleasing *)error
 {
     PGPKey *key = [[self getKeysForUserID:userID] lastObject];
     NSAssert(key, @"Key is missing");
 
     if (!key) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Key is missing"}];
+        }
         return nil;
     }
 
-    return [self signData:dataToSign usingSecretKey:key passphrase:passphrase];
+    return [self signData:dataToSign usingSecretKey:key passphrase:passphrase error:error];
 }
 
-- (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase
+- (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase error:(NSError * __autoreleasing *)error
 {
-    return [self signData:dataToSign usingSecretKey:secretKey passphrase:passphrase detached:YES];
+    return [self signData:dataToSign usingSecretKey:secretKey passphrase:passphrase detached:YES error:error];
 }
 
-- (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase detached:(BOOL)detached
+- (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase detached:(BOOL)detached  error:(NSError * __autoreleasing *)error
 {
     //TODO: configurable defaults for prefered hash
-    return [self signData:dataToSign usingSecretKey:secretKey passphrase:passphrase hashAlgorithm:PGPHashSHA512 detached:detached];
+    return [self signData:dataToSign usingSecretKey:secretKey passphrase:passphrase hashAlgorithm:PGPHashSHA512 detached:detached error:error];
 }
 
-- (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase hashAlgorithm:(PGPHashAlgorithm)preferedHashAlgorithm detached:(BOOL)detached
+- (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase hashAlgorithm:(PGPHashAlgorithm)preferedHashAlgorithm detached:(BOOL)detached error:(NSError * __autoreleasing *)error
 {
     PGPSignaturePacket *signaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureBinaryDocument
                                                                 hashAlgorithm:preferedHashAlgorithm];
 
-    [signaturePacket signData:dataToSign secretKey:secretKey passphrase:passphrase userID:nil];
+    [signaturePacket signData:dataToSign secretKey:secretKey passphrase:passphrase userID:nil error:error];
     NSError *exportError = nil;
     NSData *signaturePacketData = [signaturePacket exportPacket:&exportError];
     NSAssert(!exportError,@"Error on export packet");
     if (exportError) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Error on export packet"}];
+        }
         return nil;
     }
 
@@ -458,6 +464,9 @@
         [signedMessage appendData:[onePassPacket exportPacket:&onePassExportError]];
         NSAssert(!onePassExportError, @"Missing one password data");
         if (onePassExportError) {
+            if (error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Missing one password data"}];
+            }
             return nil;
         }
 
@@ -469,6 +478,9 @@
         [signedMessage appendData:[literalPacket exportPacket:&literalExportError]];
         NSAssert(!literalExportError, @"Missing literal data");
         if (literalExportError) {
+            if (error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Missing literal data"}];
+            }
             return nil;
         }
     }
@@ -476,9 +488,12 @@
     return [signedMessage copy];
 }
 
-- (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData
+- (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData error:(NSError * __autoreleasing *)error
 {
     if (!signedData || !signatureData) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Missing input data"}];
+        }
         return NO;
     }
 
@@ -486,6 +501,9 @@
     id packet = [PGPPacketFactory packetWithData:signatureData offset:0];
     if (![packet isKindOfClass:[PGPSignaturePacket class]]) {
         NSAssert(false, @"need signature");
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Missing signature packet"}];
+        }
         return NO;
     }
 
@@ -494,31 +512,40 @@
 
     PGPKey *issuerKey = [self findKeyForKeyID:issuerKeyID];
     if (!issuerKey) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Missing issuer"}];
+        }
         return NO;
     }
 
-    return [self verifyData:signedData withSignature:signatureData usingKey:issuerKey];
+    return [self verifyData:signedData withSignature:signatureData usingKey:issuerKey error:error];
 }
 
-- (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPKey *)publicKey
+- (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPKey *)publicKey error:(NSError * __autoreleasing *)error
 {
     if (!publicKey || !signatureData || !signatureData) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Invalid input data"}];
+        }
         return NO;
     }
 
     id packet = [PGPPacketFactory packetWithData:signatureData offset:0];
     if (![packet isKindOfClass:[PGPSignaturePacket class]]) {
         NSAssert(false, @"need signature");
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Missing signature"}];
+        }
         return NO;
     }
 
     PGPSignaturePacket *signaturePacket = packet;
-    BOOL verified = [signaturePacket verifyData:signedData withKey:publicKey userID:nil];
+    BOOL verified = [signaturePacket verifyData:signedData withKey:publicKey userID:nil error:error];
 
     return verified;
 }
 
-- (BOOL) verifyData:(NSData *)signedDataPackets
+- (BOOL) verifyData:(NSData *)signedDataPackets error:(NSError * __autoreleasing *)error
 {
     // this is propably not the best solution when it comes to memory consumption
     // because literal data is copied more than once (first at parse phase, then when is come to build signature packet data
@@ -555,6 +582,9 @@
 
         NSAssert(signaturePacket && literalDataPacket, @"Missing signature packet or literal data packet");
         if (!signaturePacket || !literalDataPacket) {
+            if (error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Missing signature packet or literal data packet"}];
+            }
             return NO;
         }
 
@@ -566,7 +596,7 @@
         [signaturePacketData appendData:[NSData dataWithBytesNoCopy:(void *)signaturePacket.headerData.bytes length:signaturePacket.headerData.length freeWhenDone:NO]];
         [signaturePacketData appendData:[NSData dataWithBytesNoCopy:(void *)signaturePacket.bodyData.bytes length:signaturePacket.bodyData.length freeWhenDone:NO]];
 
-        return [self verifyData:literalDataPacket.literalRawData withSignature:signaturePacketData];
+        return [self verifyData:literalDataPacket.literalRawData withSignature:signaturePacketData error:error];
     }
 }
 
