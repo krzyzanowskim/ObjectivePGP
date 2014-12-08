@@ -168,6 +168,14 @@ If you want to install this tool, simply copy file to `/usr/local/bin` directory
 
 ##Release notes
 
+Version 0.3.1
+
+- NEW multiple keys for single encryption
+- NEW error codes PGPErrorPassphraseRequired, PGPErrorPassphraseInvalid
+- CHANGE export armored data with \n instead \r\n
+- FIX decrypt message using key encrypted with password
+- FIX handling armored data regarding newline
+
 Version 0.3
 
 - NEW encrypt for multiple recipients at once
