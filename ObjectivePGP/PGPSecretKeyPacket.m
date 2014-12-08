@@ -203,7 +203,7 @@
 
             if (![hashData isEqualToData:calculatedHashData]) {
                 if (error) {
-                    *error = [NSError errorWithDomain:PGPErrorDomain code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Decrypted hash mismatch, check password."}];
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorPassphraseInvalid userInfo:@{NSLocalizedDescriptionKey: @"Decrypted hash mismatch, invalid password."}];
                     return data.length;
                 }
             }
