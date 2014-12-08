@@ -192,9 +192,9 @@ Version 0.3
 - FIX reading user id packet
 - FIX other minor fixes
 
-Known issues
+Known limitations
 
-- Embeded signatures are not supported
+- Embedded signatures are not supported
 - ZIP compression not fully supported
-- Only RSA cipher is fully supported
-- Defaults hardcoded
+- Blowfish and Twofish are not supported
+- No external configuration for defaults
