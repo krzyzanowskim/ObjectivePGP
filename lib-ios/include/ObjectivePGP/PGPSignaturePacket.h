@@ -56,13 +56,13 @@
  *
  *  @return Signature packet data
  */
-- (void) signData:(NSData *)inputData secretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase userID:(NSString *)userID;
-- (void) signData:(NSData *)inputData  secretKey:(PGPKey *)secretKey;
+- (void) signData:(NSData *)inputData  secretKey:(PGPKey *)secretKey error:(NSError * __autoreleasing *)error;
+- (void) signData:(NSData *)inputData secretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase userID:(NSString *)userID error:(NSError * __autoreleasing *)error;
 
 
-- (BOOL) verifyData:(NSData *)inputData  withKey:(PGPKey *)publicKey;
-- (BOOL) verifyData:(NSData *)inputData  withKey:(PGPKey *)publicKey userID:(NSString *)userID;
-- (BOOL) verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(NSString *)userID;
+- (BOOL) verifyData:(NSData *)inputData  withKey:(PGPKey *)publicKey error:(NSError * __autoreleasing *)error;
+- (BOOL) verifyData:(NSData *)inputData  withKey:(PGPKey *)publicKey userID:(NSString *)userID error:(NSError * __autoreleasing *)error;
+- (BOOL) verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(NSString *)userID error:(NSError * __autoreleasing *)error;
 
 
 @end

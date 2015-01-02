@@ -168,6 +168,10 @@ If you want to install this tool, simply copy file to `/usr/local/bin` directory
 
 ##Release notes
 
+Version 0.3.2
+- CHANGE error handling for sign/verify methods
+- FIX disable check for signing key while it can be public to verify.
+
 Version 0.3.1
 
 - NEW multiple keys for single encryption
