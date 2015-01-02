@@ -219,11 +219,13 @@
 // signature packet that is available for signing data
 - (PGPPacket *) signingKeyPacket
 {
-    NSAssert(self.type == PGPKeySecret, @"Need secret key to sign");
-    if (self.type == PGPKeyPublic) {
-        NSLog(@"Need secret key to sign");
-        return nil;
-    }
+//  It's private key for sign and public for verify as so thi can't be checked here
+    
+//    NSAssert(self.type == PGPKeySecret, @"Need secret key to sign");
+//    if (self.type == PGPKeyPublic) {
+//        NSLog(@"Need secret key to sign\n %@",[NSThread callStackSymbols]);
+//        return nil;
+//    }
 
     // check primary user self certificates
     PGPSignaturePacket *primaryUserSelfCertificate = nil;

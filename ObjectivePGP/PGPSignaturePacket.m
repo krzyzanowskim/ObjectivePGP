@@ -248,6 +248,8 @@
 // Opposite to sign, with readed data (not produced)
 - (BOOL) verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(NSString *)userID error:(NSError * __autoreleasing *)error
 {
+    //FIXME: publicKey is actually secret key sometimes?
+
     if (self.type == PGPSignatureBinaryDocument && inputData.length == 0) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Invalid signature packet type"}];
