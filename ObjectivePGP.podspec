@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "ObjectivePGP"
-  s.version      = "0.2.1"
+  s.version      = "0.3.2"
   s.summary      = "OpenPGP implementation for iOS and OSX"
   s.description  = "ObjectivePGP is OpenPGP implementation for iOS and OSX."
   s.homepage     = "https://krzyzanowskim@bitbucket.org/krzyzanowskim/objectivepgp.git"
@@ -26,10 +26,10 @@ Pod::Spec.new do |s|
   # s.osx.vendored_libraries  = 'lib-osx/libObjectivePGP.a'
 
   s.source_files = 'ObjectivePGP/*.{h,m}'
-  #s.public_header_files = 'ObjectivePGP/*.h'
+  s.public_header_files = 'ObjectivePGP/*.h'
 
   s.dependency 'OpenSSL-Universal'
   s.requires_arc = true
 
-  s.libraries =  'z', 'bz2'
+  s.libraries =  'ObjectivePGP', 'z', 'bz2'
 end
