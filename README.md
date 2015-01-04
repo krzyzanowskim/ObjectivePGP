@@ -3,7 +3,7 @@ ObjectivePGP
 
 ObjectivePGP is OpenPGP implementation for iOS and OSX.
 
-See [this post](https://medium.com/@krzyzanowskim/short-story-about-openpgp-for-ios-and-os-x-objectivepgp-9994547d4bea) for full story.
+See [this post](http://blog.krzyzanowskim.com/2014/07/31/short-story-about-openpgp-for-ios-and-os-x-objectivepgp/) for full story.
 
 ##Installation
 
