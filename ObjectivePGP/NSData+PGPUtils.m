@@ -96,12 +96,13 @@
         return nil;
     }
 
-    CC_SHA1_Init(ctx);
-    CC_SHA1_Update(ctx, self.bytes, (CC_LONG)self.length);
     UInt8 *outBuf = calloc(CC_SHA1_DIGEST_LENGTH, 1);
     if (!outBuf) {
+        free(ctx);
         return nil;
     }
+    CC_SHA1_Init(ctx);
+    CC_SHA1_Update(ctx, self.bytes, (CC_LONG)self.length);
     CC_SHA1_Final(outBuf, ctx);
 
     NSData *outData = [NSData dataWithBytes:outBuf length:CC_SHA1_DIGEST_LENGTH];

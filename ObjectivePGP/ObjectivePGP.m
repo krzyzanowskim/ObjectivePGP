@@ -81,7 +81,7 @@
 }
 
 // 16 or 8 chars identifier
-//TODO: renamte to getKeyForFingerprint or something
+//TODO: rename to getKeyForFingerprint or something
 - (PGPKey *) getKeyForIdentifier:(NSString *)keyIdentifier type:(PGPKeyType)keyType
 {
     if (keyIdentifier.length < 8 && keyIdentifier.length > 16)
@@ -338,7 +338,6 @@
     }
 
     //PGPPublicKeyEncryptedSessionKeyPacket goes here
-    //FIXME: check all keys preferency and choose common prefered
     PGPSymmetricAlgorithm preferredSymmeticAlgorithm = [PGPKey preferredSymmetricAlgorithmForKeys:publicKeys];
     
     // Random bytes as a string to be used as a key

@@ -292,8 +292,7 @@
 /**
  *  Decrypt parsed encrypted packet
  *  Decrypt packet and store decrypted data on instance
- *  TODO: V3 support
- *  TODO: encrypt
+ *  TODO: V3 support - partially supported, need testing.
  *  NOTE: Decrypted packet data should be released/forget after use
  */
 - (PGPSecretKeyPacket *) decryptedKeyPacket:(NSString *)passphrase error:(NSError *__autoreleasing *)error

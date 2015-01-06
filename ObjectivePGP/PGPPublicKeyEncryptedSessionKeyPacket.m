@@ -99,9 +99,8 @@
 {
     NSAssert(!secretKeyPacket.isEncryptedWithPassword, @"Secret key can't be encrypted");
     
-    //FIXME: klucz jest odczytywany z pakietu więc tak naprawdę nie powinien być przekazywany jako parametr
-    //       bo wcześniej nie wiadomo jaki to będzie klucz
-    
+    //FIXME: Key is read from the packet, so it shouldn't be passed as parameter to the method because
+    //       key is unknown earlier
     PGPKeyID *secretKeyKeyID = [[PGPKeyID alloc] initWithFingerprint:secretKeyPacket.fingerprint];
     if (![self.keyID isEqualToKeyID:secretKeyKeyID]) {
         if (error) {
