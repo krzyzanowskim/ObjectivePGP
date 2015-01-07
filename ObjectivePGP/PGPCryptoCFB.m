@@ -157,9 +157,7 @@
         free(outBuffer);
     }
     
-    if (iv) {
-        free(iv);
-    }
+    free(iv);
     
     return [decryptedData copy];
 }
