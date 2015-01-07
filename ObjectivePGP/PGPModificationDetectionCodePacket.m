@@ -17,7 +17,7 @@
 - (instancetype)initWithData:(NSData *)data
 {
     if (self = [self init]) {
-        self->_hashData = [data pgpSHA1];
+        self->_hashData = [data pgp_SHA1];
     }
     return self;
 }

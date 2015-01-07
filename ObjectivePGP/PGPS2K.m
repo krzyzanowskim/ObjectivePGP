@@ -172,7 +172,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
             break;
     }
 
-    NSData *hash = [toHashData pgpHashedWithAlgorithm:self.hashAlgorithm];
+    NSData *hash = [toHashData pgp_HashedWithAlgorithm:self.hashAlgorithm];
     [result appendData:hash];
 
     return [result copy];

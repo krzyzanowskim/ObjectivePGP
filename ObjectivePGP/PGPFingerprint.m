@@ -15,7 +15,7 @@
 {
     if (self = [self init]) {
         _keyData = keyData;
-        _hashedData = [keyData pgpSHA1];
+        _hashedData = [keyData pgp_SHA1];
     }
     return self;
 }

@@ -11,17 +11,17 @@
 
 @interface NSData (PGPUtils)
 
-- (UInt16) pgpChecksum;
-- (UInt32) pgpCRC24;
-- (NSData*) pgpMD5;
-- (NSData*) pgpSHA1;
-- (NSData*) pgpSHA224;
-- (NSData*) pgpSHA256;
-- (NSData*) pgpSHA384;
-- (NSData*) pgpSHA512;
-- (NSData*) pgpRIPEMD160;
+- (UInt16) pgp_Checksum;
+- (UInt32) pgp_CRC24;
+- (NSData*) pgp_MD5;
+- (NSData*) pgp_SHA1;
+- (NSData*) pgp_SHA224;
+- (NSData*) pgp_SHA256;
+- (NSData*) pgp_SHA384;
+- (NSData*) pgp_SHA512;
+- (NSData*) pgp_RIPEMD160;
 
-- (NSData *) pgpHashedWithAlgorithm:(PGPHashAlgorithm)hashAlgorithm;
-- (NSData *) encryptBlockWithSymmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm sessionKeyData:(NSData *)sessionKeyData;
+- (NSData *) pgp_HashedWithAlgorithm:(PGPHashAlgorithm)hashAlgorithm;
+- (NSData *) pgp_encryptBlockWithSymmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm sessionKeyData:(NSData *)sessionKeyData;
 
 @end

@@ -28,7 +28,7 @@
  *
  *  @return checksum
  */
-- (UInt16) pgpChecksum
+- (UInt16) pgp_Checksum
 {
     UInt32 s = 0;
     const UInt8 *bytes = self.bytes;
@@ -42,7 +42,7 @@
 #define CRC24_POLY 0x1864cfbL
 #define CRC24_INIT 0xB704CEL
 
-- (UInt32) pgpCRC24
+- (UInt32) pgp_CRC24
 {
     UInt32 crc = CRC24_INIT;
     NSUInteger len = self.length;
@@ -59,7 +59,7 @@
     return crc & 0xFFFFFFL;
 }
 
-- (NSData*) pgpMD5
+- (NSData*) pgp_MD5
 {
     if (!self)
         return self;
@@ -82,7 +82,7 @@
     return outData;
 }
 
-- (NSData *) pgpSHA1
+- (NSData *) pgp_SHA1
 {
     if (!self)
         return self;
@@ -112,7 +112,7 @@
     return outData;
 }
 
-- (NSData*) pgpSHA224
+- (NSData*) pgp_SHA224
 {
     if (!self)
         return self;
@@ -137,7 +137,7 @@
     return outData;
 }
 
-- (NSData*) pgpSHA256
+- (NSData*) pgp_SHA256
 {
     if (!self)
         return self;
@@ -162,7 +162,7 @@
     return outData;
 }
 
-- (NSData*) pgpSHA384
+- (NSData*) pgp_SHA384
 {
     if (!self)
         return self;
@@ -187,7 +187,7 @@
     return outData;
 }
 
-- (NSData*) pgpSHA512
+- (NSData*) pgp_SHA512
 {
     if (!self)
         return self;
@@ -212,7 +212,7 @@
     return outData;
 }
 
-- (NSData*) pgpRIPEMD160
+- (NSData*) pgp_RIPEMD160
 {
     if (!self)
         return self;
@@ -237,30 +237,30 @@
     return outData;
 }
 
-- (NSData *) pgpHashedWithAlgorithm:(PGPHashAlgorithm)hashAlgorithm
+- (NSData *) pgp_HashedWithAlgorithm:(PGPHashAlgorithm)hashAlgorithm
 {
     NSData *hashData = nil;
     switch (hashAlgorithm) {
         case PGPHashMD5:
-            hashData = [self pgpMD5];
+            hashData = [self pgp_MD5];
             break;
         case PGPHashSHA1:
-            hashData = [self pgpSHA1];
+            hashData = [self pgp_SHA1];
             break;
         case PGPHashSHA224:
-            hashData = [self pgpSHA224];
+            hashData = [self pgp_SHA224];
             break;
         case PGPHashSHA256:
-            hashData = [self pgpSHA256];
+            hashData = [self pgp_SHA256];
             break;
         case PGPHashSHA384:
-            hashData = [self pgpSHA384];
+            hashData = [self pgp_SHA384];
             break;
         case PGPHashSHA512:
-            hashData = [self pgpSHA512];
+            hashData = [self pgp_SHA512];
             break;
         case PGPHashRIPEMD160:
-            hashData = [self pgpRIPEMD160];
+            hashData = [self pgp_RIPEMD160];
             break;
 
         default:
@@ -272,7 +272,7 @@
 
 #pragma mark - Encryption
 
-- (NSData *) encryptBlockWithSymmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm sessionKeyData:(NSData *)sessionKeyData
+- (NSData *) pgp_encryptBlockWithSymmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm sessionKeyData:(NSData *)sessionKeyData
 {
     NSAssert(sessionKeyData,@"Missing key data");
     

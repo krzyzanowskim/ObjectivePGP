@@ -199,7 +199,7 @@
 
             NSData *clearTextData = [data subdataWithRange:(NSRange) {0, data.length - hashSize}];
             NSData *hashData = [data subdataWithRange:(NSRange){data.length - hashSize, hashSize}];
-            NSData *calculatedHashData = [clearTextData pgpSHA1];
+            NSData *calculatedHashData = [clearTextData pgp_SHA1];
 
             if (![hashData isEqualToData:calculatedHashData]) {
                 if (error) {
@@ -216,7 +216,7 @@
             NSUInteger checksumLength = 2;
             NSData *clearTextData = [data subdataWithRange:(NSRange) {0, data.length - checksumLength}];
             NSData *checksumData = [data subdataWithRange:(NSRange){data.length - checksumLength, checksumLength}];
-            NSUInteger calculatedChecksum = [clearTextData pgpChecksum];
+            NSUInteger calculatedChecksum = [clearTextData pgp_Checksum];
 
             UInt16 checksum = 0;
             [checksumData getBytes:&checksum length:checksumLength];
@@ -391,7 +391,7 @@
             [data appendData:self.encryptedMPIsPartData];
 
             // Hash
-            [data appendData:[data pgpSHA1]];
+            [data appendData:[data pgp_SHA1]];
         }
             break;
         case PGPS2KUsageNone:
@@ -400,7 +400,7 @@
             }
 
             // Checksum
-            UInt16 checksum = CFSwapInt16HostToBig([data pgpChecksum]);
+            UInt16 checksum = CFSwapInt16HostToBig([data pgp_Checksum]);
             [data appendBytes:&checksum length:2];
             break;
         default:

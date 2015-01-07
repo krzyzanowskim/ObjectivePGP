@@ -86,7 +86,7 @@
     [armoredMessage appendString:@"\n"];
 
     // - An Armor Checksum
-    UInt32 checksum = [dataToArmor pgpCRC24];
+    UInt32 checksum = [dataToArmor pgp_CRC24];
     UInt8  c[3]; // 24 bit
     c[0] = checksum >> 16;
 	c[1] = checksum >> 8;
@@ -210,7 +210,7 @@
     // validate checksum
     NSData *readChecksumData = [[NSData alloc] initWithBase64EncodedString:checksumString options:NSDataBase64DecodingIgnoreUnknownCharacters];
 
-    UInt32 calculatedCRC24 = [binaryData pgpCRC24];
+    UInt32 calculatedCRC24 = [binaryData pgp_CRC24];
     calculatedCRC24 = CFSwapInt32HostToBig(calculatedCRC24);
     calculatedCRC24 = calculatedCRC24 >> 8;
     NSData *calculatedCRC24Data = [NSData dataWithBytes:&calculatedCRC24 length:3];

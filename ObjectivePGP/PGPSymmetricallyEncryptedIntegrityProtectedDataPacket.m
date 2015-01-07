@@ -180,7 +180,7 @@
     UInt8 mdc_suffix[2] = {0xD3, 0x14};
     [toMDCData appendBytes:&mdc_suffix length:2];
     
-    NSData *mdcHash = [toMDCData pgpSHA1];
+    NSData *mdcHash = [toMDCData pgp_SHA1];
     if (![mdcHash isEqualToData:mdcPacket.hashData]) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"MDC validation failed"}];

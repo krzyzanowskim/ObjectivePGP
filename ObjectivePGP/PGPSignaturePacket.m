@@ -274,7 +274,7 @@
     [toHashData appendData:trailerData];
 
     // Calculate hash value
-    NSData *hashData = [toHashData pgpHashedWithAlgorithm:self.hashAlgoritm];
+    NSData *hashData = [toHashData pgp_HashedWithAlgorithm:self.hashAlgoritm];
 
     // check signed hash value, should match
     // FIXME: propably will fail on V3 signature, need investigate how to handle V3 scenario here
@@ -365,7 +365,7 @@
     [toHashData appendData:trailerData];
 
     // Calculate hash value
-    NSData *hashData = [toHashData pgpHashedWithAlgorithm:self.hashAlgoritm];
+    NSData *hashData = [toHashData pgp_HashedWithAlgorithm:self.hashAlgoritm];
 
     // == Computing Signatures ==
     // Encrypt hash data Packet signature MPIs

@@ -71,49 +71,49 @@ static UInt8 prefix_ripemd160[] = {
         {
             NSData *hashPrefixData = [NSData dataWithBytes:prefix_md5 length:sizeof(prefix_md5)];
             [tData appendData:hashPrefixData];
-            [tData appendData:[m pgpMD5]];
+            [tData appendData:[m pgp_MD5]];
         }
             break;
         case PGPHashSHA1:
         {
             NSData *hashPrefixData = [NSData dataWithBytes:prefix_sha1 length:sizeof(prefix_sha1)];
             [tData appendData:hashPrefixData];
-            [tData appendData:[m pgpSHA1]];
+            [tData appendData:[m pgp_SHA1]];
         }
             break;
         case PGPHashSHA224:
         {
             NSData *hashPrefixData = [NSData dataWithBytes:prefix_sha224 length:sizeof(prefix_sha224)];
             [tData appendData:hashPrefixData];
-            [tData appendData:[m pgpSHA224]];
+            [tData appendData:[m pgp_SHA224]];
         }
             break;
         case PGPHashSHA256:
         {
             NSData *hashPrefixData = [NSData dataWithBytes:prefix_sha256 length:sizeof(prefix_sha256)];
             [tData appendData:hashPrefixData];
-            [tData appendData:[m pgpSHA256]];
+            [tData appendData:[m pgp_SHA256]];
         }
             break;
         case PGPHashSHA384:
         {
             NSData *hashPrefixData = [NSData dataWithBytes:prefix_sha384 length:sizeof(prefix_sha384)];
             [tData appendData:hashPrefixData];
-            [tData appendData:[m pgpSHA384]];
+            [tData appendData:[m pgp_SHA384]];
         }
             break;
         case PGPHashSHA512:
         {
             NSData *hashPrefixData = [NSData dataWithBytes:prefix_sha512 length:sizeof(prefix_sha512)];
             [tData appendData:hashPrefixData];
-            [tData appendData:[m pgpSHA512]];
+            [tData appendData:[m pgp_SHA512]];
         }
             break;
         case PGPHashRIPEMD160:
         {
             NSData *hashPrefixData = [NSData dataWithBytes:prefix_ripemd160 length:sizeof(prefix_ripemd160)];
             [tData appendData:hashPrefixData];
-            [tData appendData:[m pgpRIPEMD160]];
+            [tData appendData:[m pgp_RIPEMD160]];
         }
             break;
         default:

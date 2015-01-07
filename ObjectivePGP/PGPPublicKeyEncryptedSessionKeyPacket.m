@@ -134,7 +134,7 @@
     checksum = CFSwapInt16BigToHost(checksum);
     
     // validate checksum
-    UInt16 calculatedChecksum = [sessionKeyData pgpChecksum];
+    UInt16 calculatedChecksum = [sessionKeyData pgp_Checksum];
     if (calculatedChecksum != checksum) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Invalid session key, checksum mismatch"}];
@@ -165,7 +165,7 @@
     
     [mData appendData:sessionKeyData]; // keySize
     
-    UInt16 checksum = [sessionKeyData pgpChecksum];
+    UInt16 checksum = [sessionKeyData pgp_Checksum];
     checksum = CFSwapInt16HostToBig(checksum);
     [mData appendBytes:&checksum length:2];
     
