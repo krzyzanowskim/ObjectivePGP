@@ -406,7 +406,7 @@
             PGPSignatureSubpacket *subpacket = [[selfCertificate subpacketsOfType:PGPSignatureSubpacketTypePreferredSymetricAlgorithm] firstObject];
             NSArray *preferencesArray = subpacket.value;
             for (NSValue *preferedValue in preferencesArray) {
-                if ([preferedValue objCTypeIsEqualTo:@encode(PGPSymmetricAlgorithm)]) {
+                if ([preferedValue pgp_objCTypeIsEqualTo:@encode(PGPSymmetricAlgorithm)]) {
                     PGPSymmetricAlgorithm algorithm = PGPSymmetricPlaintext;
                     [preferedValue getValue:&algorithm];
                     [keyAlgorithms addObject:@(algorithm)];

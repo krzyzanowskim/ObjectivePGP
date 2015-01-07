@@ -310,7 +310,7 @@
         {
             NSArray *algorithmsArray = self.value;
             for (NSValue *val in algorithmsArray) {
-                if (![val objCTypeIsEqualTo:@encode(PGPSymmetricAlgorithm)]) {
+                if (![val pgp_objCTypeIsEqualTo:@encode(PGPSymmetricAlgorithm)]) {
                     continue;
                 }
 
@@ -325,7 +325,7 @@
         {
             NSArray *algorithmsArray = self.value;
             for (NSValue *val in algorithmsArray) {
-                if (![val objCTypeIsEqualTo:@encode(PGPHashAlgorithm)]) {
+                if (![val pgp_objCTypeIsEqualTo:@encode(PGPHashAlgorithm)]) {
                     continue;
                 }
 
@@ -339,7 +339,7 @@
         {
             NSArray *algorithmsArray = self.value;
             for (NSValue *val in algorithmsArray) {
-                if (![val objCTypeIsEqualTo:@encode(PGPCompressionAlgorithm)]) {
+                if (![val pgp_objCTypeIsEqualTo:@encode(PGPCompressionAlgorithm)]) {
                     continue;
                 }
 
