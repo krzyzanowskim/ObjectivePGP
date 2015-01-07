@@ -365,7 +365,6 @@
 {
     NSAssert(forceV4 == YES,@"Only V4 is supported");
 
-    NSError *exportError = nil;
 
     NSMutableData *data = [NSMutableData data];
     [data appendBytes:&_s2kUsage length:1];
@@ -373,11 +372,17 @@
     switch (self.s2kUsage) {
         case PGPS2KUsageEncrypted:
         case PGPS2KUsageEncryptedAndHashed:
+        {
             // If string-to-key usage octet was 255 or 254, a one-octet symmetric encryption algorithm
             [data appendBytes:&_symmetricAlgorithm length:1];
 
             // S2K
+            NSError *exportError = nil;
             [data appendData:[self.s2k export:&exportError]];
+            NSAssert(exportError, @"export failed");
+            if (exportError) {
+                return nil;
+            }
 
             // Initial Vector (IV) of the same length as the cipher's block size
             [data appendBytes:self.ivData.bytes length:self.ivData.length];
@@ -387,6 +392,7 @@
 
             // Hash
             [data appendData:[data pgpSHA1]];
+        }
             break;
         case PGPS2KUsageNone:
             for (PGPMPI *mpi in self.secretMPIArray) {
