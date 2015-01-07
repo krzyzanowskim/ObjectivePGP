@@ -82,7 +82,6 @@
 		759FF492195982A6005B240C /* PGPCompressedPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75B39529193C6FA100297C8D /* PGPCompressedPacket.m */; };
 		759FF493195982A6005B240C /* PGPCryptoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C4F0E21920FF5F005401A4 /* PGPCryptoUtils.m */; };
 		759FF494195982A6005B240C /* PGPModificationDetectionCodePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C4F0E5192163A3005401A4 /* PGPModificationDetectionCodePacket.m */; };
-		759FF495195982A6005B240C /* NSData+Stream.m in Sources */ = {isa = PBXBuildFile; fileRef = 75B3952C193C8AE900297C8D /* NSData+Stream.m */; };
 		759FF496195982A6005B240C /* PGPPKCSEmsa.m in Sources */ = {isa = PBXBuildFile; fileRef = 7597B79B192E9C7F003ABC65 /* PGPPKCSEmsa.m */; };
 		759FF497195982A6005B240C /* PGPSymmetricallyEncryptedDataPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 753A65EE19487E3D0011A729 /* PGPSymmetricallyEncryptedDataPacket.m */; };
 		759FF498195982A6005B240C /* PGPFingerprint.m in Sources */ = {isa = PBXBuildFile; fileRef = 7562858D19239F1B00127E24 /* PGPFingerprint.m */; };
@@ -97,7 +96,6 @@
 		75AEC46B1930FD3000974CBE /* PGPUserAttributeSubpacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AEC46A1930FD3000974CBE /* PGPUserAttributeSubpacket.m */; };
 		75B2450F1933DB89003F24A0 /* PGPPublicKeyRSA.m in Sources */ = {isa = PBXBuildFile; fileRef = 75B2450E1933DB89003F24A0 /* PGPPublicKeyRSA.m */; };
 		75B3952A193C6FA100297C8D /* PGPCompressedPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75B39529193C6FA100297C8D /* PGPCompressedPacket.m */; };
-		75B3952D193C8AE900297C8D /* NSData+Stream.m in Sources */ = {isa = PBXBuildFile; fileRef = 75B3952C193C8AE900297C8D /* NSData+Stream.m */; };
 		75C4F0E31920FF5F005401A4 /* PGPCryptoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C4F0E21920FF5F005401A4 /* PGPCryptoUtils.m */; };
 		75C4F0E6192163A3005401A4 /* PGPModificationDetectionCodePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C4F0E5192163A3005401A4 /* PGPModificationDetectionCodePacket.m */; };
 		75D53ADF1A2FCDEE00ED9707 /* multiple-keys.asc in Resources */ = {isa = PBXBuildFile; fileRef = 75D53ADE1A2FCDEE00ED9707 /* multiple-keys.asc */; };
@@ -373,8 +371,6 @@
 		75B2450E1933DB89003F24A0 /* PGPPublicKeyRSA.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPublicKeyRSA.m; sourceTree = "<group>"; };
 		75B39528193C6FA100297C8D /* PGPCompressedPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPCompressedPacket.h; sourceTree = "<group>"; };
 		75B39529193C6FA100297C8D /* PGPCompressedPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPCompressedPacket.m; sourceTree = "<group>"; };
-		75B3952B193C8AE900297C8D /* NSData+Stream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+Stream.h"; sourceTree = "<group>"; };
-		75B3952C193C8AE900297C8D /* NSData+Stream.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+Stream.m"; sourceTree = "<group>"; };
 		75C4F0E11920FF5F005401A4 /* PGPCryptoUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = PGPCryptoUtils.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		75C4F0E21920FF5F005401A4 /* PGPCryptoUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPCryptoUtils.m; sourceTree = "<group>"; };
 		75C4F0E4192163A3005401A4 /* PGPModificationDetectionCodePacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPModificationDetectionCodePacket.h; sourceTree = "<group>"; };
@@ -589,8 +585,6 @@
 			children = (
 				75A5C152193CE3F6008A2543 /* NSData+compression.h */,
 				75A5C153193CE3F6008A2543 /* NSData+compression.m */,
-				75B3952B193C8AE900297C8D /* NSData+Stream.h */,
-				75B3952C193C8AE900297C8D /* NSData+Stream.m */,
 				759DBA121915B5BD00305549 /* NSData+PGPUtils.h */,
 				759DBA131915B5BD00305549 /* NSData+PGPUtils.m */,
 				75C4F0E11920FF5F005401A4 /* PGPCryptoUtils.h */,
@@ -870,7 +864,6 @@
 				75B3952A193C6FA100297C8D /* PGPCompressedPacket.m in Sources */,
 				75C4F0E31920FF5F005401A4 /* PGPCryptoUtils.m in Sources */,
 				75C4F0E6192163A3005401A4 /* PGPModificationDetectionCodePacket.m in Sources */,
-				75B3952D193C8AE900297C8D /* NSData+Stream.m in Sources */,
 				7597B79C192E9C7F003ABC65 /* PGPPKCSEmsa.m in Sources */,
 				753A65EF19487E3D0011A729 /* PGPSymmetricallyEncryptedDataPacket.m in Sources */,
 				7562858E19239F1B00127E24 /* PGPFingerprint.m in Sources */,
@@ -933,7 +926,6 @@
 				759FF492195982A6005B240C /* PGPCompressedPacket.m in Sources */,
 				759FF493195982A6005B240C /* PGPCryptoUtils.m in Sources */,
 				759FF494195982A6005B240C /* PGPModificationDetectionCodePacket.m in Sources */,
-				759FF495195982A6005B240C /* NSData+Stream.m in Sources */,
 				759FF496195982A6005B240C /* PGPPKCSEmsa.m in Sources */,
 				759FF497195982A6005B240C /* PGPSymmetricallyEncryptedDataPacket.m in Sources */,
 				759FF498195982A6005B240C /* PGPFingerprint.m in Sources */,

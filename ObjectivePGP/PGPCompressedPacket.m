@@ -8,7 +8,6 @@
 //  TODO: add support for ZIP and BZIP2
 
 #import "PGPCompressedPacket.h"
-#import "NSData+Stream.h"
 #import "NSData+compression.h"
 
 @implementation PGPCompressedPacket
