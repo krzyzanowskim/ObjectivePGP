@@ -28,9 +28,9 @@
 - (instancetype)init
 {
     if (self = [super init]) {
-        self.version = 3;
-        self.encrypted = NO;
-        self.publicKeyAlgorithm = PGPPublicKeyAlgorithmRSA;
+        _version = 3;
+        _encrypted = NO;
+        _publicKeyAlgorithm = PGPPublicKeyAlgorithmRSA;
     }
     return self;
 }

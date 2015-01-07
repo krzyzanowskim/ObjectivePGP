@@ -18,7 +18,7 @@
 - (instancetype) initWithUserIDPacket:(PGPUserIDPacket *)userPacket
 {
     if (self = [self init]) {
-        self.userIDPacket = userPacket;
+        _userIDPacket = userPacket;
     }
     return self;
 }

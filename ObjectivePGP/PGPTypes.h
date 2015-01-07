@@ -6,8 +6,7 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#ifndef ObjectivePGP_PGPTypes_h
-#define ObjectivePGP_PGPTypes_h
+#pragma once
 
 #ifndef NS_DESIGNATED_INITIALIZER
 #define NS_DESIGNATED_INITIALIZER
@@ -178,5 +177,3 @@ typedef NS_ENUM(UInt8, PGPS2KUsage) {
     PGPS2KUsageEncryptedAndHashed = 254,
     PGPS2KUsageEncrypted          = 255
 };
-
-#endif

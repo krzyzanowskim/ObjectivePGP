@@ -14,7 +14,7 @@
 - (id)init
 {
     if (self = [super init]) {
-        self.version = 0x03;
+        _version = 0x03;
     }
     return self;
 }

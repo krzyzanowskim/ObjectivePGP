@@ -153,7 +153,7 @@
             mpiE.identifier = @"E";
             position = position + mpiE.packetLength;
 
-            self.publicMPIArray = [NSArray arrayWithObjects:mpiN, mpiE, nil];
+            self.publicMPIArray = @[mpiN, mpiE];
         }
             break;
         case PGPPublicKeyAlgorithmDSA:
@@ -179,7 +179,7 @@
             mpiY.identifier = @"Y";
             position = position + mpiY.packetLength;
 
-            self.publicMPIArray = [NSArray arrayWithObjects:mpiP, mpiQ, mpiG, mpiY, nil];
+            self.publicMPIArray = @[mpiP, mpiQ, mpiG, mpiY];
         }
             break;
         case PGPPublicKeyAlgorithmElgamal:
@@ -200,7 +200,7 @@
             mpiY.identifier = @"Y";
             position = position + mpiY.packetLength;
 
-            self.publicMPIArray = [NSArray arrayWithObjects:mpiP, mpiG, mpiY, nil];
+            self.publicMPIArray = @[mpiP, mpiG, mpiY];
         }
             break;
         default:

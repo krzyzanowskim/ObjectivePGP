@@ -35,7 +35,7 @@
 - (instancetype)init
 {
     if (self = [super init]) {
-        self.version = 1;
+        _version = 1;
     }
     return self;
 }

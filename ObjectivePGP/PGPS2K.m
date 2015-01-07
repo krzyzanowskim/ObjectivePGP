@@ -40,11 +40,12 @@ static const unsigned int PGP_SALT_SIZE = 8;
     return _salt;
 }
 
-- (NSUInteger) parseS2K:(NSData *)data atPosition:(NSUInteger)position
+- (NSUInteger) parseS2K:(NSData *)data atPosition:(NSUInteger)startingPosition
 {
     // S2K
 
     // string-to-key specifier is being given
+    NSUInteger position = startingPosition;
     [data getBytes:&_specifier range:(NSRange) {position, 1}];
     position = position + 1;
 

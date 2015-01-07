@@ -21,8 +21,8 @@
 - (instancetype) initWithData:(NSData *)dataToMPI
 {
     if (self = [self init]) {
-        self.bignumRef = BN_bin2bn(dataToMPI.bytes, (int)dataToMPI.length, NULL);
-        self.packetLength = dataToMPI.length + 2;
+        _bignumRef = BN_bin2bn(dataToMPI.bytes, (int)dataToMPI.length, NULL);
+        _packetLength = dataToMPI.length + 2;
     }
     return self;
 }
@@ -37,7 +37,7 @@
         NSUInteger mpiBytesLength = (bits + 7) / 8;
 
         NSData *intdata = [mpiData subdataWithRange:(NSRange){position + 2, mpiBytesLength}];
-        self.bignumRef = BN_bin2bn(intdata.bytes, (int)intdata.length, NULL);
+        _bignumRef = BN_bin2bn(intdata.bytes, (int)intdata.length, NULL);
         // Additinal rule: The size of an MPI is ((MPI.length + 7) / 8) + 2 octets.
         _packetLength = intdata.length + 2;
     }
@@ -94,7 +94,7 @@
 {
     if (self.bignumRef != NULL) {
         BN_clear_free(self.bignumRef);
-        self.bignumRef = nil;
+        _bignumRef = nil;
     }
 }
 

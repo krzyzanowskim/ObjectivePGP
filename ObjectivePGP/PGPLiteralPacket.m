@@ -17,7 +17,7 @@
 - (id)init
 {
     if (self = [super init]) {
-        self.format = PGPLiteralPacketBinary;
+        _format = PGPLiteralPacketBinary;
     }
     return self;
 }
@@ -25,7 +25,7 @@
 - (instancetype) initWithData:(NSData *)rawData
 {
     if (self = [self init]) {
-        self.literalRawData = rawData;
+        _literalRawData = rawData;
     }
     return self;
 }

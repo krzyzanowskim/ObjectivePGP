@@ -30,8 +30,8 @@ const UInt32 UnknownLength = UINT32_MAX;
 {
     if (self = [self init]) {
         NSError *error = nil;
-        self.headerData = headerData;
-        self.bodyData = bodyData;
+        _headerData = headerData;
+        _bodyData = bodyData;
         [self parsePacketBody:self.bodyData error:&error];
         if (error) {
             return nil;

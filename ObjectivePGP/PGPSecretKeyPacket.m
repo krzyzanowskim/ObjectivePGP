@@ -258,7 +258,7 @@
             mpiU.identifier = @"U";
             position = position + mpiU.packetLength;
 
-            self.secretMPIArray = [NSArray arrayWithObjects:mpiD, mpiP, mpiQ, mpiU, nil];
+            self.secretMPIArray = @[mpiD, mpiP, mpiQ, mpiU];
         }
             break;
         case PGPPublicKeyAlgorithmDSA:
@@ -268,7 +268,7 @@
             mpiX.identifier = @"X";
             position = position + mpiX.packetLength;
 
-            self.secretMPIArray = [NSArray arrayWithObjects:mpiX, nil];
+            self.secretMPIArray = @[mpiX];
         }
             break;
         case PGPPublicKeyAlgorithmElgamal:
@@ -279,7 +279,7 @@
             mpiX.identifier = @"X";
             position = position + mpiX.packetLength;
 
-            self.secretMPIArray = [NSArray arrayWithObjects:mpiX, nil];
+            self.secretMPIArray = @[mpiX];
         }
             break;
         default:

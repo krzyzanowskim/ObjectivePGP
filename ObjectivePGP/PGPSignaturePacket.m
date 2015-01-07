@@ -585,7 +585,7 @@
             mpiN.identifier = @"N";
             position = position + mpiN.packetLength;
             
-            self.signatureMPIs = [NSArray arrayWithObject:mpiN];
+            self.signatureMPIs = @[mpiN];
         }
             break;
         case PGPPublicKeyAlgorithmDSA:
@@ -601,7 +601,7 @@
             mpiS.identifier = @"S";
             position = position + mpiS.packetLength;
             
-            self.signatureMPIs = [NSArray arrayWithObjects:mpiR, mpiS, nil];
+            self.signatureMPIs = @[mpiR, mpiS];
         }
             break;
         default:
@@ -714,7 +714,7 @@
             mpiN.identifier = @"N";
             position = position + mpiN.packetLength;
 
-            self.signatureMPIs = [NSArray arrayWithObject:mpiN];
+            self.signatureMPIs = @[mpiN];
         }
             break;
         case PGPPublicKeyAlgorithmDSA:
@@ -730,7 +730,7 @@
             mpiS.identifier = @"S";
             position = position + mpiS.packetLength;
 
-            self.signatureMPIs = [NSArray arrayWithObjects:mpiR, mpiS, nil];
+            self.signatureMPIs = @[mpiR, mpiS];
         }
             break;
         default:
