@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		75413BE11A6AD386004C8807 /* ObjectivePGPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 75413BE01A6AD386004C8807 /* ObjectivePGPTests.m */; };
+		75413BE21A6AD386004C8807 /* libObjectivePGP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B51914DE1A00C5AD3B /* libObjectivePGP.a */; };
 		756299B91914DE1A00C5AD3B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B81914DE1A00C5AD3B /* Foundation.framework */; };
 		757D26D51A6AB768005CE2E3 /* PGPSignaturePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 757D26D41A6AB768005CE2E3 /* PGPSignaturePacket.m */; };
 		757D26D81A6AB937005CE2E3 /* PGPParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 757D26D71A6AB937005CE2E3 /* PGPParser.m */; };
@@ -15,7 +17,18 @@
 		757D26E11A6ABF2F005CE2E3 /* PGPPacketHeaderNew.m in Sources */ = {isa = PBXBuildFile; fileRef = 757D26E01A6ABF2F005CE2E3 /* PGPPacketHeaderNew.m */; };
 		757D26E41A6ABF41005CE2E3 /* PGPPacketHeaderOld.m in Sources */ = {isa = PBXBuildFile; fileRef = 757D26E31A6ABF41005CE2E3 /* PGPPacketHeaderOld.m */; };
 		75C257DB1A6AB1870095E1A2 /* PGPMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C257DA1A6AB1870095E1A2 /* PGPMessage.m */; };
+		7F1FCE46C5FA594A1CD2AEAE /* libPods-ObjectivePGP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 501A20B5B542FB6B199B28C2 /* libPods-ObjectivePGP.a */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		75413BE31A6AD386004C8807 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 756299AD1914DE1A00C5AD3B /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 756299B41914DE1A00C5AD3B;
+			remoteInfo = ObjectivePGP;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		756299B31914DE1A00C5AD3B /* CopyFiles */ = {
@@ -30,7 +43,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		342510E82279C69DE5EEF7FD /* Pods-ObjectivePGP.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ObjectivePGP.release.xcconfig"; path = "Pods/Target Support Files/Pods-ObjectivePGP/Pods-ObjectivePGP.release.xcconfig"; sourceTree = "<group>"; };
+		501A20B5B542FB6B199B28C2 /* libPods-ObjectivePGP.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ObjectivePGP.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		750BD0D7193F5AAD005B9840 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		75413BDC1A6AD386004C8807 /* ObjectivePGPTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ObjectivePGPTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		75413BDF1A6AD386004C8807 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		75413BE01A6AD386004C8807 /* ObjectivePGPTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ObjectivePGPTests.m; sourceTree = "<group>"; };
 		7556464A1958FF6F00BFA34C /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = usr/lib/libbz2.dylib; sourceTree = SDKROOT; };
 		756299B51914DE1A00C5AD3B /* libObjectivePGP.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libObjectivePGP.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		756299B81914DE1A00C5AD3B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -53,9 +71,19 @@
 		759FF4701959824E005B240C /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/usr/lib/libbz2.dylib; sourceTree = DEVELOPER_DIR; };
 		75C257D91A6AB1870095E1A2 /* PGPMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPMessage.h; sourceTree = "<group>"; };
 		75C257DA1A6AB1870095E1A2 /* PGPMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPMessage.m; sourceTree = "<group>"; };
+		92AB78D2428FF47CA4E3EEE9 /* Pods-ObjectivePGP.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ObjectivePGP.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ObjectivePGP/Pods-ObjectivePGP.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		75413BD91A6AD386004C8807 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				75413BE21A6AD386004C8807 /* libObjectivePGP.a in Frameworks */,
+				7F1FCE46C5FA594A1CD2AEAE /* libPods-ObjectivePGP.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		756299B21914DE1A00C5AD3B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -67,13 +95,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		75413BDD1A6AD386004C8807 /* ObjectivePGPTests */ = {
+			isa = PBXGroup;
+			children = (
+				75413BE01A6AD386004C8807 /* ObjectivePGPTests.m */,
+				75413BDE1A6AD386004C8807 /* Supporting Files */,
+			);
+			path = ObjectivePGPTests;
+			sourceTree = "<group>";
+		};
+		75413BDE1A6AD386004C8807 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				75413BDF1A6AD386004C8807 /* Info.plist */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		756299AC1914DE1A00C5AD3B = {
 			isa = PBXGroup;
 			children = (
 				758475E1195AF866003953B2 /* README.md */,
 				756299BA1914DE1A00C5AD3B /* ObjectivePGP */,
+				75413BDD1A6AD386004C8807 /* ObjectivePGPTests */,
 				756299B71914DE1A00C5AD3B /* Frameworks */,
 				756299B61914DE1A00C5AD3B /* Products */,
+				93BEB2532C682A75D6CE6DD2 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -81,6 +128,7 @@
 			isa = PBXGroup;
 			children = (
 				756299B51914DE1A00C5AD3B /* libObjectivePGP.a */,
+				75413BDC1A6AD386004C8807 /* ObjectivePGPTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -93,6 +141,7 @@
 				7556464A1958FF6F00BFA34C /* libbz2.dylib */,
 				750BD0D7193F5AAD005B9840 /* libz.dylib */,
 				756299B81914DE1A00C5AD3B /* Foundation.framework */,
+				501A20B5B542FB6B199B28C2 /* libPods-ObjectivePGP.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -128,9 +177,38 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		93BEB2532C682A75D6CE6DD2 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				92AB78D2428FF47CA4E3EEE9 /* Pods-ObjectivePGP.debug.xcconfig */,
+				342510E82279C69DE5EEF7FD /* Pods-ObjectivePGP.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		75413BDB1A6AD386004C8807 /* ObjectivePGPTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 75413BE71A6AD386004C8807 /* Build configuration list for PBXNativeTarget "ObjectivePGPTests" */;
+			buildPhases = (
+				F8A2ACB2F3C0CC40A7592B79 /* Check Pods Manifest.lock */,
+				75413BD81A6AD386004C8807 /* Sources */,
+				75413BD91A6AD386004C8807 /* Frameworks */,
+				75413BDA1A6AD386004C8807 /* Resources */,
+				31AD50CE6BA7096D4F820156 /* Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				75413BE41A6AD386004C8807 /* PBXTargetDependency */,
+			);
+			name = ObjectivePGPTests;
+			productName = ObjectivePGPTests;
+			productReference = 75413BDC1A6AD386004C8807 /* ObjectivePGPTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		756299B41914DE1A00C5AD3B /* ObjectivePGP */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 756299D81914DE1A00C5AD3B /* Build configuration list for PBXNativeTarget "ObjectivePGP" */;
@@ -157,6 +235,11 @@
 				CLASSPREFIX = PGP;
 				LastUpgradeCheck = 0510;
 				ORGANIZATIONNAME = "Marcin Krzyżanowski";
+				TargetAttributes = {
+					75413BDB1A6AD386004C8807 = {
+						CreatedOnToolsVersion = 6.1.1;
+					};
+				};
 			};
 			buildConfigurationList = 756299B01914DE1A00C5AD3B /* Build configuration list for PBXProject "ObjectivePGP" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -171,11 +254,63 @@
 			projectRoot = "";
 			targets = (
 				756299B41914DE1A00C5AD3B /* ObjectivePGP */,
+				75413BDB1A6AD386004C8807 /* ObjectivePGPTests */,
 			);
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		75413BDA1A6AD386004C8807 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		31AD50CE6BA7096D4F820156 /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ObjectivePGP/Pods-ObjectivePGP-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F8A2ACB2F3C0CC40A7592B79 /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
+		75413BD81A6AD386004C8807 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				75413BE11A6AD386004C8807 /* ObjectivePGPTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		756299B11914DE1A00C5AD3B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -192,7 +327,55 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		75413BE41A6AD386004C8807 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 756299B41914DE1A00C5AD3B /* ObjectivePGP */;
+			targetProxy = 75413BE31A6AD386004C8807 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		75413BE51A6AD386004C8807 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 92AB78D2428FF47CA4E3EEE9 /* Pods-ObjectivePGP.debug.xcconfig */;
+			buildSettings = {
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = ObjectivePGPTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		75413BE61A6AD386004C8807 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 342510E82279C69DE5EEF7FD /* Pods-ObjectivePGP.release.xcconfig */;
+			buildSettings = {
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(SDKROOT)/Developer/Library/Frameworks",
+					"$(inherited)",
+				);
+				INFOPLIST_FILE = ObjectivePGPTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
 		756299D61914DE1A00C5AD3B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -321,6 +504,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		75413BE71A6AD386004C8807 /* Build configuration list for PBXNativeTarget "ObjectivePGPTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				75413BE51A6AD386004C8807 /* Debug */,
+				75413BE61A6AD386004C8807 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		756299B01914DE1A00C5AD3B /* Build configuration list for PBXProject "ObjectivePGP" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

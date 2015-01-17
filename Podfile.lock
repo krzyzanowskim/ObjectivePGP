@@ -1,0 +1,10 @@
+PODS:
+  - OpenSSL-Universal (1.0.1.k)
+
+DEPENDENCIES:
+  - OpenSSL-Universal (= 1.0.1.k)
+
+SPEC CHECKSUMS:
+  OpenSSL-Universal: 60ee5ddf6530100c0aa702c2e0c9881cfd4a89a5
+
+COCOAPODS: 0.36.0.beta.1

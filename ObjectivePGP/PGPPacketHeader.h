@@ -24,4 +24,7 @@ typedef NS_ENUM(NSUInteger, PGPHeaderPacketTag) {
 @property (assign, readonly) UInt32 bodyLength;
 
 @property (assign, readonly, getter=isBodyLengthPartial) BOOL bodyLengthPartial;
+
++ (id <PGPPacketHeader> )packetHeaderWithData:(NSData *)headerData error:(NSError * __autoreleasing *)error;
+
 @end
