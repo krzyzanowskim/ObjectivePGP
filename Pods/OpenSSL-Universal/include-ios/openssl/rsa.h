@@ -97,7 +97,7 @@ struct rsa_meth_st
 	int (*rsa_priv_dec)(int flen,const unsigned char *from,
 			    unsigned char *to,
 			    RSA *rsa,int padding);
-	int (*rsa_mod_exp)(BIGNUM *r0,const BIGNUM *I,RSA *rsa,BN_CTX *ctx); /* Can be null */
+	int (*rsa_mod_exp)(BIGNUM *r0,const BIGNUM *i,RSA *rsa,BN_CTX *ctx); /* Can be null */
 	int (*bn_mod_exp)(BIGNUM *r, const BIGNUM *a, const BIGNUM *p,
 			  const BIGNUM *m, BN_CTX *ctx,
 			  BN_MONT_CTX *m_ctx); /* Can be null */
@@ -559,6 +559,7 @@ void ERR_load_RSA_strings(void);
 #define RSA_R_OPERATION_NOT_ALLOWED_IN_FIPS_MODE	 158
 #define RSA_R_OPERATION_NOT_SUPPORTED_FOR_THIS_KEYTYPE	 148
 #define RSA_R_PADDING_CHECK_FAILED			 114
+#define RSA_R_PKCS_DECODING_ERROR			 159
 #define RSA_R_P_NOT_PRIME				 128
 #define RSA_R_Q_NOT_PRIME				 129
 #define RSA_R_RSA_OPERATIONS_NOT_SUPPORTED		 130

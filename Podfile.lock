@@ -1,10 +1,13 @@
 PODS:
-  - OpenSSL-Universal (1.0.1.h)
+  - MKDataScanner (0.2)
+  - OpenSSL-Universal (1.0.1.k)
 
 DEPENDENCIES:
-  - OpenSSL-Universal
+  - MKDataScanner
+  - OpenSSL-Universal (= 1.0.1.k)
 
 SPEC CHECKSUMS:
-  OpenSSL-Universal: 9c112508615ed33bb35f730eed820e93175a9dec
+  MKDataScanner: 09984139106fee04004d8556f606d9ecd56a1487
+  OpenSSL-Universal: 60ee5ddf6530100c0aa702c2e0c9881cfd4a89a5
 
-COCOAPODS: 0.33.1
+COCOAPODS: 0.36.0.beta.1
