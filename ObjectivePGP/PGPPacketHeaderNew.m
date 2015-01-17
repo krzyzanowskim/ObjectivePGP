@@ -51,7 +51,7 @@
     // body length
     self.headerLength = 1;
     
-    UInt8 *lengthOctets = (UInt8 *)[headerData subdataWithRange:NSMakeRange(1, MIN(5, headerData.length - 1))].bytes;
+    const UInt8 *lengthOctets = (const UInt8 *)[headerData subdataWithRange:NSMakeRange(1, MIN(5, headerData.length - 1))].bytes;
     UInt8 firstOctet  = lengthOctets[0];
     
     if (lengthOctets[0] < 192) {
@@ -59,17 +59,25 @@
         // bodyLen = 1st_octet;
         self.bodyLength   = lengthOctets[0];
         self.headerLength = 1 + 1;
-    } else if (lengthOctets[0] >= 192 && lengthOctets[0] <= 223) {
+    } else if (lengthOctets[0] >= 192 && lengthOctets[0] < 224) {
         // 4.2.2.2.  Two-Octet Lengths
         self.bodyLength   = ((lengthOctets[0] - 192) << 8) + (lengthOctets[1]) + 192;
         self.headerLength = 1 + 2;
-    } else if (lengthOctets[0] >= 223 && lengthOctets[0] < 255) {
+    } else if (lengthOctets[0] >= 224 && lengthOctets[0] < 255) {
         // 4.2.2.4.  Partial Body Length
         // A Partial Body Length header is one octet long and encodes the length of only part of the data packet.
         // partialBodyLen = 1 << (1st_octet & 0x1F);
         self.bodyLength   = 1 << (lengthOctets[0] & 0x1F);
         self.headerLength = 1 + 1;
         self.bodyLengthPartial   = YES;
+        
+        NSAssert(self.bodyLength % 2 == 0, @"Partial length is not a power of 2");
+        if (self.bodyLength % 2 != 0) {
+            if (error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Partial length is not a power of 2"}];
+            }
+            return NO;
+        }
         
         //TODO: Partial body Length is not supported
         NSAssert(self.bodyLengthPartial == NO, @"Partial body Length is not supported");
