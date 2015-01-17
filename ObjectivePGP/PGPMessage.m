@@ -8,31 +8,26 @@
 //    11.3.  OpenPGP Messages
 //
 //    An OpenPGP message is a packet or sequence of packets that
-//    corresponds to the following grammatical rules (comma represents
-//                                                    sequential composition, and vertical bar separates alternatives):
+//    corresponds to the following grammatical rules (comma represents sequential composition,
+//    and vertical bar separates alternatives):
 //
-//    OpenPGP Message :- Encrypted Message | Signed Message |
-//    Compressed Message | Literal Message.
+//    OpenPGP Message :- Encrypted Message | Signed Message | Compressed Message | Literal Message.
 //
 //    Compressed Message :- Compressed Data Packet.
 //
 //    Literal Message :- Literal Data Packet.
 //
-//    ESK :- Public-Key Encrypted Session Key Packet |
-//    Symmetric-Key Encrypted Session Key Packet.
+//    ESK :- Public-Key Encrypted Session Key Packet | Symmetric-Key Encrypted Session Key Packet.
 //
 //    ESK Sequence :- ESK | ESK Sequence, ESK.
 //
-//    Encrypted Data :- Symmetrically Encrypted Data Packet |
-//    Symmetrically Encrypted Integrity Protected Data Packet
+//    Encrypted Data :- Symmetrically Encrypted Data Packet | Symmetrically Encrypted Integrity Protected Data Packet
 //
 //    Encrypted Message :- Encrypted Data | ESK Sequence, Encrypted Data.
 //
-//    One-Pass Signed Message :- One-Pass Signature Packet,
-//    OpenPGP Message, Corresponding Signature Packet.
+//    One-Pass Signed Message :- One-Pass Signature Packet, OpenPGP Message, Corresponding Signature Packet.
 //
-//    Signed Message :- Signature Packet, OpenPGP Message |
-//    One-Pass Signed Message.
+//    Signed Message :- Signature Packet, OpenPGP Message | One-Pass Signed Message.
 //
 //    In addition, decrypting a Symmetrically Encrypted Data packet or a
 //    Symmetrically Encrypted Integrity Protected Data packet as well as
