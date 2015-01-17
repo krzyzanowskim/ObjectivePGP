@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		75413BE11A6AD386004C8807 /* ObjectivePGPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 75413BE01A6AD386004C8807 /* ObjectivePGPTests.m */; };
+		75413BE11A6AD386004C8807 /* PGPPacketHeaderOldTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 75413BE01A6AD386004C8807 /* PGPPacketHeaderOldTests.m */; };
 		75413BE21A6AD386004C8807 /* libObjectivePGP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B51914DE1A00C5AD3B /* libObjectivePGP.a */; };
 		756299B91914DE1A00C5AD3B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B81914DE1A00C5AD3B /* Foundation.framework */; };
 		757D26D51A6AB768005CE2E3 /* PGPSignaturePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 757D26D41A6AB768005CE2E3 /* PGPSignaturePacket.m */; };
@@ -17,6 +17,7 @@
 		757D26E11A6ABF2F005CE2E3 /* PGPPacketHeaderNew.m in Sources */ = {isa = PBXBuildFile; fileRef = 757D26E01A6ABF2F005CE2E3 /* PGPPacketHeaderNew.m */; };
 		757D26E41A6ABF41005CE2E3 /* PGPPacketHeaderOld.m in Sources */ = {isa = PBXBuildFile; fileRef = 757D26E31A6ABF41005CE2E3 /* PGPPacketHeaderOld.m */; };
 		75C257DB1A6AB1870095E1A2 /* PGPMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C257DA1A6AB1870095E1A2 /* PGPMessage.m */; };
+		75F2DE6D1A6ADBB60084A3AE /* PGPPacketHeaderNewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 75F2DE6C1A6ADBB60084A3AE /* PGPPacketHeaderNewTests.m */; };
 		7F1FCE46C5FA594A1CD2AEAE /* libPods-ObjectivePGP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 501A20B5B542FB6B199B28C2 /* libPods-ObjectivePGP.a */; };
 /* End PBXBuildFile section */
 
@@ -48,7 +49,7 @@
 		750BD0D7193F5AAD005B9840 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		75413BDC1A6AD386004C8807 /* ObjectivePGPTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ObjectivePGPTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		75413BDF1A6AD386004C8807 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		75413BE01A6AD386004C8807 /* ObjectivePGPTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ObjectivePGPTests.m; sourceTree = "<group>"; };
+		75413BE01A6AD386004C8807 /* PGPPacketHeaderOldTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PGPPacketHeaderOldTests.m; sourceTree = "<group>"; };
 		7556464A1958FF6F00BFA34C /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = usr/lib/libbz2.dylib; sourceTree = SDKROOT; };
 		756299B51914DE1A00C5AD3B /* libObjectivePGP.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libObjectivePGP.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		756299B81914DE1A00C5AD3B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -71,6 +72,7 @@
 		759FF4701959824E005B240C /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/usr/lib/libbz2.dylib; sourceTree = DEVELOPER_DIR; };
 		75C257D91A6AB1870095E1A2 /* PGPMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPMessage.h; sourceTree = "<group>"; };
 		75C257DA1A6AB1870095E1A2 /* PGPMessage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPMessage.m; sourceTree = "<group>"; };
+		75F2DE6C1A6ADBB60084A3AE /* PGPPacketHeaderNewTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPacketHeaderNewTests.m; sourceTree = "<group>"; };
 		92AB78D2428FF47CA4E3EEE9 /* Pods-ObjectivePGP.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ObjectivePGP.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ObjectivePGP/Pods-ObjectivePGP.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -98,7 +100,8 @@
 		75413BDD1A6AD386004C8807 /* ObjectivePGPTests */ = {
 			isa = PBXGroup;
 			children = (
-				75413BE01A6AD386004C8807 /* ObjectivePGPTests.m */,
+				75413BE01A6AD386004C8807 /* PGPPacketHeaderOldTests.m */,
+				75F2DE6C1A6ADBB60084A3AE /* PGPPacketHeaderNewTests.m */,
 				75413BDE1A6AD386004C8807 /* Supporting Files */,
 			);
 			path = ObjectivePGPTests;
@@ -307,7 +310,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				75413BE11A6AD386004C8807 /* ObjectivePGPTests.m in Sources */,
+				75413BE11A6AD386004C8807 /* PGPPacketHeaderOldTests.m in Sources */,
+				75F2DE6D1A6ADBB60084A3AE /* PGPPacketHeaderNewTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

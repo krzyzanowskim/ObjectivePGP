@@ -31,7 +31,9 @@
     
     BOOL isNewFormat = !!(headerByte & PGPHeaderPacketTagNewFormat);
     if (isNewFormat) {
-        return [[PGPPacketHeaderNew alloc] initWithData:headerData];
+        return [[PGPPacketHeaderNew alloc] initWithData:headerData error:error];
+    } else {
+        return [[PGPPacketHeaderOld alloc] initWithData:headerData error:error];
     }
 
     return nil;

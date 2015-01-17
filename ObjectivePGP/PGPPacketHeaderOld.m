@@ -10,18 +10,16 @@
 #import "PGPPacket.h"
 #import "PGPCommon.h"
 
-@interface PGPPacketHeader ()
-@property (assign, readwrite) NSInteger packetTag;
+@interface PGPPacketHeaderOld ()
+@property (assign, readwrite) PGPPacketTag packetTag;
 @property (assign, readwrite) UInt8 headerLength;
 @property (assign, readwrite) UInt32 bodyLength;
-
 @property (assign, readwrite, getter=isBodyLengthPartial) BOOL bodyLengthPartial;
 @end
 
-
 @implementation PGPPacketHeaderOld
 
-- (instancetype)initWithData:(NSData *)headerData
+- (instancetype)initWithData:(NSData *)headerData error:(NSError * __autoreleasing *)error
 {
     NSParameterAssert(headerData);
     
@@ -30,9 +28,8 @@
     }
     
     if (self = [self init]) {
-        NSError *parseError = nil;
-        if (![self parse:headerData error:&parseError]) {
-            NSAssert(parseError, @"Header parse error");
+        if (![self parse:headerData error:error]) {
+            NSAssert(*error, @"Header parse error");
             return nil;
         }
         
@@ -49,9 +46,9 @@
     UInt8 headerByte = 0;
     [headerData getBytes:&headerByte length:1];
     //  Bits 5-2 -- packet tag
-    self.packetTag = ((headerByte << 2) >> 4);
+    self.packetTag = ((UInt8)(headerByte << 2) >> 4);
     //  Bits 1-0 -- length-type
-    UInt8 bodyLengthType = (headerByte << 6) >> 6;
+    UInt8 bodyLengthType = (UInt8)(headerByte << 6) >> 6;
     
     switch (bodyLengthType) {
         case 0:

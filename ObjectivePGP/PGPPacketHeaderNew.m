@@ -10,17 +10,16 @@
 #import "PGPPacket.h"
 #import "PGPCommon.h"
 
-@interface PGPPacketHeader ()
-@property (assign, readwrite) NSInteger packetTag;
+@interface PGPPacketHeaderNew ()
+@property (assign, readwrite) PGPPacketTag packetTag;
 @property (assign, readwrite) UInt8 headerLength;
 @property (assign, readwrite) UInt32 bodyLength;
-
 @property (assign, readwrite, getter=isBodyLengthPartial) BOOL bodyLengthPartial;
 @end
 
 @implementation PGPPacketHeaderNew
 
-- (instancetype)initWithData:(NSData *)headerData
+- (instancetype)initWithData:(NSData *)headerData error:(NSError * __autoreleasing *)error
 {
     NSParameterAssert(headerData);
     
@@ -29,9 +28,8 @@
     }
     
     if (self = [self init]) {
-        NSError *parseError = nil;
-        if (![self parse:headerData error:&parseError]) {
-            NSAssert(parseError, @"Header parse error");
+        if (![self parse:headerData error:error]) {
+            NSAssert(*error, @"Header parse error");
             return nil;
         }
         
@@ -48,12 +46,12 @@
     UInt8 headerByte = 0;
     [headerData getBytes:&headerByte length:1];
     // Bits 5-0 -- packet tag
-    self.packetTag = ((headerByte << 2) >> 2);
+    self.packetTag = ((UInt8)(headerByte << 2) >> 2);
     
     // body length
     self.headerLength = 1;
     
-    UInt8 *lengthOctets = (UInt8 *)[headerData subdataWithRange:NSMakeRange(1, MIN(5, headerData.length))].bytes;
+    UInt8 *lengthOctets = (UInt8 *)[headerData subdataWithRange:NSMakeRange(1, MIN(5, headerData.length - 1))].bytes;
     UInt8 firstOctet  = lengthOctets[0];
     
     if (lengthOctets[0] < 192) {
@@ -73,13 +71,14 @@
         self.headerLength = 1 + 1;
         self.bodyLengthPartial   = YES;
         
-        NSAssert(self.bodyLengthPartial == NO, @"Partial Body Lengths is not supported");
+        //TODO: Partial body Length is not supported
+        NSAssert(self.bodyLengthPartial == NO, @"Partial body Length is not supported");
         // An implementation MAY use Partial Body Lengths for data packets, be
         // they literal, compressed, or encrypted. The first partial length
         // MUST be at least 512 octets long.  Partial Body Lengths MUST NOT be
         // used for any other packet types
         //
-        //TODO: Note also that the last Body Length header can be a zero-length header.
+        // Note also that the last Body Length header can be a zero-length header.
         if (self.bodyLengthPartial && error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Partial Body Lengths is not supported"}];
             return NO;
