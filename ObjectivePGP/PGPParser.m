@@ -9,10 +9,11 @@
 #import "PGPParser.h"
 #import "PGPPacketHeader.h"
 #import "PGPPacketLengthHeader.h"
+#import "PGPCommon.h"
 
 @implementation PGPParser
 
-- (BOOL) readKeys:(NSInputStream *)inputStream
+- (BOOL) readStream:(NSInputStream *)inputStream error:(NSError * __autoreleasing *)error
 {
     switch (inputStream.streamStatus) {
         case NSStreamStatusAtEnd:
@@ -31,10 +32,24 @@
     // read stream
     while (inputStream.hasBytesAvailable && inputStream.streamStatus != NSStreamStatusAtEnd) {
         // parse packet header
-        NSError *headerError = nil;
-        PGPPacketHeader *header = [PGPPacketHeader readFromStream:inputStream error:&headerError];
-        NSAssert(header, @"Header expected but not found");
-        NSAssert(headerError, headerError.localizedDescription);
+        PGPPacketHeader *header = [PGPPacketHeader readFromStream:inputStream error:error];
+        NSAssert(error, @"Header expected, but not found!");
+        if (!header) {
+            return NO;
+        }
+        
+        // read packet data
+        if (header.bodyLengthIsPartial == NO) {
+            // read packet body from stream
+            // whole packet read at once which is not good for some big packets (literal etc)
+            // however it's fine for small packets like key related
+            UInt8 *bodyBuffer = calloc(1, header.bodyLength);
+            [inputStream read:bodyBuffer maxLength:header.bodyLength];
+            free(bodyBuffer);
+        } else {
+            //TODO: partial body length
+            NSAssert(false, @"not supported");
+        }
     }
     
     return NO;
