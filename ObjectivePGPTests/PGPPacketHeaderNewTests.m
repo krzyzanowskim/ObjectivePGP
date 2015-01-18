@@ -8,8 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
+#import "NSInputStream+PGPTests.h"
 #import "PGPPacketHeader.h"
-#import "PGPPacketHeaderNew.h"
 
 @interface PGPPacketHeaderNewTests : XCTestCase
 
@@ -28,51 +28,67 @@
 - (void)testNewHeader0 {
     UInt8 headerBytes[] = {0xC2, 0x64};
     NSError *error;
-    id <PGPPacketHeader> packetHeader = [PGPPacketHeader packetHeaderWithData:[NSData dataWithBytes:headerBytes length:sizeof(headerBytes)] error:&error];
+    
+    NSInputStream *stream = [NSInputStream inputStreamWithBytes:headerBytes length:sizeof(headerBytes)];
+    [stream open];
+    PGPPacketHeader *header = [PGPPacketHeader readFromStream:stream error:&error];
+    [stream close];
+
     XCTAssertNil(error);
-    XCTAssertTrue([packetHeader isKindOfClass:[PGPPacketHeaderNew class]]);
-    XCTAssertNotNil(packetHeader);
-    XCTAssertEqual([packetHeader packetTag], PGPSignaturePacketTag);
-    XCTAssertEqual([packetHeader headerLength], 2);
-    XCTAssertEqual([packetHeader bodyLength], 0x64);
+    XCTAssertNotNil(header);
+    XCTAssertEqual(header.packetTag, PGPSignaturePacketTag);
+    XCTAssertEqual(header.bodyLength, 0x64);
 }
 
 - (void)testNewHeader1 {
+    
     UInt8 headerBytes[] = {0xC2, 0xC5, 0xFB};
     NSError *error;
-    id <PGPPacketHeader> packetHeader = [PGPPacketHeader packetHeaderWithData:[NSData dataWithBytes:headerBytes length:sizeof(headerBytes)] error:&error];
+    
+    NSInputStream *stream = [NSInputStream inputStreamWithBytes:headerBytes length:sizeof(headerBytes)];
+    [stream open];
+    PGPPacketHeader *header = [PGPPacketHeader readFromStream:stream error:&error];
+    [stream close];
+    
     XCTAssertNil(error);
-    XCTAssertTrue([packetHeader isKindOfClass:[PGPPacketHeaderNew class]]);
-    XCTAssertNotNil(packetHeader);
-    XCTAssertEqual([packetHeader packetTag], PGPSignaturePacketTag);
-    XCTAssertEqual([packetHeader headerLength], 3);
-    XCTAssertEqual([packetHeader bodyLength], 1723);
+    XCTAssertNotNil(header);
+    XCTAssertEqual(header.packetTag, PGPSignaturePacketTag);
+    XCTAssertEqual(header.bodyLength, 1723);
 }
 
 - (void)testNewHeader2 {
+    
     UInt8 headerBytes[] = {0xC2, 0xFF, 0x00, 0x01, 0x86, 0xA0};
     NSError *error;
-    id <PGPPacketHeader> packetHeader = [PGPPacketHeader packetHeaderWithData:[NSData dataWithBytes:headerBytes length:sizeof(headerBytes)] error:&error];
+    
+    NSInputStream *stream = [NSInputStream inputStreamWithBytes:headerBytes length:sizeof(headerBytes)];
+    [stream open];
+    PGPPacketHeader *header = [PGPPacketHeader readFromStream:stream error:&error];
+    [stream close];
+    
     XCTAssertNil(error);
-    XCTAssertTrue([packetHeader isKindOfClass:[PGPPacketHeaderNew class]]);
-    XCTAssertNotNil(packetHeader);
-    XCTAssertEqual([packetHeader packetTag], PGPSignaturePacketTag);
-    XCTAssertEqual([packetHeader headerLength], 6);
-    XCTAssertEqual([packetHeader bodyLength], 100000);
+    XCTAssertNotNil(header);
+    XCTAssertEqual(header.packetTag, PGPSignaturePacketTag);
+    XCTAssertEqual(header.bodyLength, 100000);
+    XCTAssertEqual(header.bodyLengthIsPartial, NO);
 }
 
 - (void)testNewHeader3 {
+    
     UInt8 headerBytes[] = {0xC2, 0xEF};
     NSError *error;
-    id <PGPPacketHeader> packetHeader = nil;
-    XCTAssertNoThrowSpecificNamed(packetHeader = [PGPPacketHeader packetHeaderWithData:[NSData dataWithBytes:headerBytes length:sizeof(headerBytes)] error:&error], NSException, @"Partial body Length is not supported");
+    
+    NSInputStream *stream = [NSInputStream inputStreamWithBytes:headerBytes length:sizeof(headerBytes)];
+    [stream open];
+    PGPPacketHeader *header = [PGPPacketHeader readFromStream:stream error:&error];
+    [stream close];
+    
     XCTAssertNil(error);
-//    XCTAssertTrue([packetHeader isKindOfClass:[PGPPacketHeaderNew class]]);
-//    XCTAssertNotNil(packetHeader);
-//    XCTAssertEqual([packetHeader packetTag], PGPSignaturePacketTag);
-//    XCTAssertEqual([packetHeader isBodyLengthPartial], YES);
-//    XCTAssertEqual([packetHeader headerLength], 2);
-//    XCTAssertEqual([packetHeader bodyLength], 32768);
+    XCTAssertNotNil(header);
+    XCTAssertEqual(header.packetTag, PGPSignaturePacketTag);
+    XCTAssertEqual(header.isNew, YES);
+    XCTAssertEqual(header.bodyLength, 32768);
+    XCTAssertEqual(header.bodyLengthIsPartial, YES);
 }
 
 @end

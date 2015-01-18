@@ -8,8 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import <XCTest/XCTest.h>
+#import "NSInputStream+PGPTests.h"
 #import "PGPPacketHeader.h"
-#import "PGPPacketHeaderOld.h"
 #import "PGPCommon.h"
 
 @interface PGPPacketHeaderOldTests : XCTestCase
@@ -29,46 +29,61 @@
 - (void)testOldHeader0 {
     UInt8 headerBytes[] = {0x88, 0x10};
     NSError *error;
-    id <PGPPacketHeader> packetHeader = [PGPPacketHeader packetHeaderWithData:[NSData dataWithBytes:headerBytes length:sizeof(headerBytes)] error:&error];
+    
+    NSInputStream *stream = [NSInputStream inputStreamWithBytes:headerBytes length:sizeof(headerBytes)];
+    [stream open];
+    PGPPacketHeader *header = [PGPPacketHeader readFromStream:stream error:&error];
+    [stream close];
+    
     XCTAssertNil(error);
-    XCTAssertTrue([packetHeader isKindOfClass:[PGPPacketHeaderOld class]]);
-    XCTAssertNotNil(packetHeader);
-    XCTAssertEqual([packetHeader packetTag], PGPSignaturePacketTag);
-    XCTAssertEqual([packetHeader headerLength], 2);
-    XCTAssertEqual([packetHeader bodyLength], 0x10);
+    XCTAssertNotNil(header);
+    XCTAssertEqual(header.packetTag, PGPSignaturePacketTag);
+    XCTAssertEqual(header.bodyLength, 0x10);
 }
 
 - (void)testOldHeader1 {
     UInt8 headerBytes[] = {0x89, 0x10, 0x10};
     NSError *error;
-    id <PGPPacketHeader> packetHeader = [PGPPacketHeader packetHeaderWithData:[NSData dataWithBytes:headerBytes length:sizeof(headerBytes)] error:&error];
+    
+    NSInputStream *stream = [NSInputStream inputStreamWithBytes:headerBytes length:sizeof(headerBytes)];
+    [stream open];
+    PGPPacketHeader *header = [PGPPacketHeader readFromStream:stream error:&error];
+    [stream close];
+    
     XCTAssertNil(error);
-    XCTAssertNotNil(packetHeader);
-    XCTAssertEqual([packetHeader packetTag], PGPSignaturePacketTag);
-    XCTAssertEqual([packetHeader headerLength], 3);
-    XCTAssertEqual([packetHeader bodyLength], 0x1010);
+    XCTAssertNotNil(header);
+    XCTAssertEqual(header.packetTag, PGPSignaturePacketTag);
+    XCTAssertEqual(header.bodyLength, 0x1010);
 }
 
 - (void)testOldHeader2 {
     UInt8 headerBytes[] = {0x8A, 0x10, 0x10, 0x10, 0x10};
     NSError *error;
-    id <PGPPacketHeader> packetHeader = [PGPPacketHeader packetHeaderWithData:[NSData dataWithBytes:headerBytes length:sizeof(headerBytes)] error:&error];
+    
+    NSInputStream *stream = [NSInputStream inputStreamWithBytes:headerBytes length:sizeof(headerBytes)];
+    [stream open];
+    PGPPacketHeader *header = [PGPPacketHeader readFromStream:stream error:&error];
+    [stream close];
+    
     XCTAssertNil(error);
-    XCTAssertNotNil(packetHeader);
-    XCTAssertEqual([packetHeader packetTag], PGPSignaturePacketTag);
-    XCTAssertEqual([packetHeader headerLength], 5);
-    XCTAssertEqual([packetHeader bodyLength], 0x10101010);
+    XCTAssertNotNil(header);
+    XCTAssertEqual(header.packetTag, PGPSignaturePacketTag);
+    XCTAssertEqual(header.bodyLength, 0x10101010);
 }
 
-- (void)testOldHeader3 {
+- (void)testOldHeaderIndeterminateLength {
     UInt8 headerBytes[] = {0x8B, 0x10, 0x10, 0x10, 0x10};
     NSError *error;
-    id <PGPPacketHeader> packetHeader = [PGPPacketHeader packetHeaderWithData:[NSData dataWithBytes:headerBytes length:sizeof(headerBytes)] error:&error];
+    
+    NSInputStream *stream = [NSInputStream inputStreamWithBytes:headerBytes length:sizeof(headerBytes)];
+    [stream open];
+    PGPPacketHeader *header = [PGPPacketHeader readFromStream:stream error:&error];
+    [stream close];
+    
     XCTAssertNil(error);
-    XCTAssertNotNil(packetHeader);
-    XCTAssertEqual([packetHeader packetTag], PGPSignaturePacketTag);
-    XCTAssertEqual([packetHeader headerLength], 1);
-    XCTAssertEqual([packetHeader bodyLength], PGPIndeterminateLength);
+    XCTAssertNotNil(header);
+    XCTAssertEqual(header.packetTag, PGPSignaturePacketTag);
+    XCTAssertEqual(header.bodyLength, PGPIndeterminateLength);
 }
 
 @end

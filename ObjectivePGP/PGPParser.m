@@ -8,6 +8,7 @@
 
 #import "PGPParser.h"
 #import "PGPPacketHeader.h"
+#import "PGPPacketLengthHeader.h"
 
 @implementation PGPParser
 
@@ -21,17 +22,19 @@
             return NO;
             break;
         case NSStreamStatusClosed:
+        case NSStreamStatusNotOpen:
             [inputStream open];
         default:
             break;
     }
+    
     // read stream
     while (inputStream.hasBytesAvailable && inputStream.streamStatus != NSStreamStatusAtEnd) {
-        // search for packets
-        uint8_t bytes[6];
-        [inputStream read:bytes maxLength:6]; //TODO: what if not
-        
-        
+        // parse packet header
+        NSError *headerError = nil;
+        PGPPacketHeader *header = [PGPPacketHeader readFromStream:inputStream error:&headerError];
+        NSAssert(header, @"Header expected but not found");
+        NSAssert(headerError, headerError.localizedDescription);
     }
     
     return NO;

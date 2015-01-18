@@ -9,13 +9,14 @@
 /* Begin PBXBuildFile section */
 		75413BE11A6AD386004C8807 /* PGPPacketHeaderOldTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 75413BE01A6AD386004C8807 /* PGPPacketHeaderOldTests.m */; };
 		75413BE21A6AD386004C8807 /* libObjectivePGP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B51914DE1A00C5AD3B /* libObjectivePGP.a */; };
+		7550466A1A6BEC78008E5203 /* PGPPacketHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 755046691A6BEC78008E5203 /* PGPPacketHeader.m */; };
+		755046701A6BFFEE008E5203 /* PGPPacketLengthHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 7550466F1A6BFFEE008E5203 /* PGPPacketLengthHeader.m */; };
+		755046731A6C11F1008E5203 /* NSInputStream+PGP.m in Sources */ = {isa = PBXBuildFile; fileRef = 755046721A6C11F1008E5203 /* NSInputStream+PGP.m */; };
+		755046771A6C1CD0008E5203 /* NSInputStream+PGPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 755046761A6C1CD0008E5203 /* NSInputStream+PGPTests.m */; };
 		756299B91914DE1A00C5AD3B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B81914DE1A00C5AD3B /* Foundation.framework */; };
 		757D26D51A6AB768005CE2E3 /* PGPSignaturePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 757D26D41A6AB768005CE2E3 /* PGPSignaturePacket.m */; };
 		757D26D81A6AB937005CE2E3 /* PGPParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 757D26D71A6AB937005CE2E3 /* PGPParser.m */; };
 		757D26DB1A6ABBA7005CE2E3 /* PGPPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 757D26DA1A6ABBA7005CE2E3 /* PGPPacket.m */; };
-		757D26DE1A6ABD61005CE2E3 /* PGPPacketHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 757D26DD1A6ABD61005CE2E3 /* PGPPacketHeader.m */; };
-		757D26E11A6ABF2F005CE2E3 /* PGPPacketHeaderNew.m in Sources */ = {isa = PBXBuildFile; fileRef = 757D26E01A6ABF2F005CE2E3 /* PGPPacketHeaderNew.m */; };
-		757D26E41A6ABF41005CE2E3 /* PGPPacketHeaderOld.m in Sources */ = {isa = PBXBuildFile; fileRef = 757D26E31A6ABF41005CE2E3 /* PGPPacketHeaderOld.m */; };
 		75C257DB1A6AB1870095E1A2 /* PGPMessage.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C257DA1A6AB1870095E1A2 /* PGPMessage.m */; };
 		75F2DE6D1A6ADBB60084A3AE /* PGPPacketHeaderNewTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 75F2DE6C1A6ADBB60084A3AE /* PGPPacketHeaderNewTests.m */; };
 		7F1FCE46C5FA594A1CD2AEAE /* libPods-ObjectivePGP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 501A20B5B542FB6B199B28C2 /* libPods-ObjectivePGP.a */; };
@@ -50,6 +51,14 @@
 		75413BDC1A6AD386004C8807 /* ObjectivePGPTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ObjectivePGPTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		75413BDF1A6AD386004C8807 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		75413BE01A6AD386004C8807 /* PGPPacketHeaderOldTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PGPPacketHeaderOldTests.m; sourceTree = "<group>"; };
+		755046681A6BEC78008E5203 /* PGPPacketHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPacketHeader.h; sourceTree = "<group>"; };
+		755046691A6BEC78008E5203 /* PGPPacketHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPacketHeader.m; sourceTree = "<group>"; };
+		7550466E1A6BFFEE008E5203 /* PGPPacketLengthHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPacketLengthHeader.h; sourceTree = "<group>"; };
+		7550466F1A6BFFEE008E5203 /* PGPPacketLengthHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPacketLengthHeader.m; sourceTree = "<group>"; };
+		755046711A6C11F1008E5203 /* NSInputStream+PGP.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSInputStream+PGP.h"; path = "Categories/NSInputStream+PGP.h"; sourceTree = "<group>"; };
+		755046721A6C11F1008E5203 /* NSInputStream+PGP.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSInputStream+PGP.m"; path = "Categories/NSInputStream+PGP.m"; sourceTree = "<group>"; };
+		755046751A6C1CD0008E5203 /* NSInputStream+PGPTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSInputStream+PGPTests.h"; sourceTree = "<group>"; };
+		755046761A6C1CD0008E5203 /* NSInputStream+PGPTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSInputStream+PGPTests.m"; sourceTree = "<group>"; };
 		7556464A1958FF6F00BFA34C /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = usr/lib/libbz2.dylib; sourceTree = SDKROOT; };
 		756299B51914DE1A00C5AD3B /* libObjectivePGP.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libObjectivePGP.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		756299B81914DE1A00C5AD3B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -60,12 +69,6 @@
 		757D26D71A6AB937005CE2E3 /* PGPParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPParser.m; sourceTree = "<group>"; };
 		757D26D91A6ABBA7005CE2E3 /* PGPPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPacket.h; sourceTree = "<group>"; };
 		757D26DA1A6ABBA7005CE2E3 /* PGPPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPacket.m; sourceTree = "<group>"; };
-		757D26DC1A6ABD61005CE2E3 /* PGPPacketHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPacketHeader.h; sourceTree = "<group>"; };
-		757D26DD1A6ABD61005CE2E3 /* PGPPacketHeader.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPacketHeader.m; sourceTree = "<group>"; };
-		757D26DF1A6ABF2F005CE2E3 /* PGPPacketHeaderNew.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPacketHeaderNew.h; sourceTree = "<group>"; };
-		757D26E01A6ABF2F005CE2E3 /* PGPPacketHeaderNew.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPacketHeaderNew.m; sourceTree = "<group>"; };
-		757D26E21A6ABF41005CE2E3 /* PGPPacketHeaderOld.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPacketHeaderOld.h; sourceTree = "<group>"; };
-		757D26E31A6ABF41005CE2E3 /* PGPPacketHeaderOld.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPacketHeaderOld.m; sourceTree = "<group>"; };
 		757D26E51A6AC605005CE2E3 /* PGPCommon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPCommon.h; sourceTree = "<group>"; };
 		758475E1195AF866003953B2 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		759FF46E19598248005B240C /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/usr/lib/libz.dylib; sourceTree = DEVELOPER_DIR; };
@@ -100,6 +103,8 @@
 		75413BDD1A6AD386004C8807 /* ObjectivePGPTests */ = {
 			isa = PBXGroup;
 			children = (
+				755046751A6C1CD0008E5203 /* NSInputStream+PGPTests.h */,
+				755046761A6C1CD0008E5203 /* NSInputStream+PGPTests.m */,
 				75413BE01A6AD386004C8807 /* PGPPacketHeaderOldTests.m */,
 				75F2DE6C1A6ADBB60084A3AE /* PGPPacketHeaderNewTests.m */,
 				75413BDE1A6AD386004C8807 /* Supporting Files */,
@@ -113,6 +118,15 @@
 				75413BDF1A6AD386004C8807 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		755046741A6C11F6008E5203 /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				755046711A6C11F1008E5203 /* NSInputStream+PGP.h */,
+				755046721A6C11F1008E5203 /* NSInputStream+PGP.m */,
+			);
+			name = Categories;
 			sourceTree = "<group>";
 		};
 		756299AC1914DE1A00C5AD3B = {
@@ -153,6 +167,7 @@
 			isa = PBXGroup;
 			children = (
 				757D26E51A6AC605005CE2E3 /* PGPCommon.h */,
+				755046741A6C11F6008E5203 /* Categories */,
 				756299BB1914DE1A00C5AD3B /* Supporting Files */,
 				75C257D91A6AB1870095E1A2 /* PGPMessage.h */,
 				75C257DA1A6AB1870095E1A2 /* PGPMessage.m */,
@@ -160,14 +175,12 @@
 				757D26D41A6AB768005CE2E3 /* PGPSignaturePacket.m */,
 				757D26D61A6AB937005CE2E3 /* PGPParser.h */,
 				757D26D71A6AB937005CE2E3 /* PGPParser.m */,
+				755046681A6BEC78008E5203 /* PGPPacketHeader.h */,
+				755046691A6BEC78008E5203 /* PGPPacketHeader.m */,
+				7550466E1A6BFFEE008E5203 /* PGPPacketLengthHeader.h */,
+				7550466F1A6BFFEE008E5203 /* PGPPacketLengthHeader.m */,
 				757D26D91A6ABBA7005CE2E3 /* PGPPacket.h */,
 				757D26DA1A6ABBA7005CE2E3 /* PGPPacket.m */,
-				757D26DC1A6ABD61005CE2E3 /* PGPPacketHeader.h */,
-				757D26DD1A6ABD61005CE2E3 /* PGPPacketHeader.m */,
-				757D26DF1A6ABF2F005CE2E3 /* PGPPacketHeaderNew.h */,
-				757D26E01A6ABF2F005CE2E3 /* PGPPacketHeaderNew.m */,
-				757D26E21A6ABF41005CE2E3 /* PGPPacketHeaderOld.h */,
-				757D26E31A6ABF41005CE2E3 /* PGPPacketHeaderOld.m */,
 			);
 			path = ObjectivePGP;
 			sourceTree = "<group>";
@@ -310,6 +323,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				755046771A6C1CD0008E5203 /* NSInputStream+PGPTests.m in Sources */,
 				75413BE11A6AD386004C8807 /* PGPPacketHeaderOldTests.m in Sources */,
 				75F2DE6D1A6ADBB60084A3AE /* PGPPacketHeaderNewTests.m in Sources */,
 			);
@@ -321,11 +335,11 @@
 			files = (
 				757D26D51A6AB768005CE2E3 /* PGPSignaturePacket.m in Sources */,
 				757D26DB1A6ABBA7005CE2E3 /* PGPPacket.m in Sources */,
+				755046731A6C11F1008E5203 /* NSInputStream+PGP.m in Sources */,
 				757D26D81A6AB937005CE2E3 /* PGPParser.m in Sources */,
-				757D26E11A6ABF2F005CE2E3 /* PGPPacketHeaderNew.m in Sources */,
 				75C257DB1A6AB1870095E1A2 /* PGPMessage.m in Sources */,
-				757D26E41A6ABF41005CE2E3 /* PGPPacketHeaderOld.m in Sources */,
-				757D26DE1A6ABD61005CE2E3 /* PGPPacketHeader.m in Sources */,
+				755046701A6BFFEE008E5203 /* PGPPacketLengthHeader.m in Sources */,
+				7550466A1A6BEC78008E5203 /* PGPPacketHeader.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
