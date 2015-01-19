@@ -20,6 +20,8 @@
 		755046841A6C76AA008E5203 /* PGPParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 755046831A6C76AA008E5203 /* PGPParserTests.m */; };
 		755046871A6C7970008E5203 /* PGPSignaturePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 755046861A6C7970008E5203 /* PGPSignaturePacket.m */; };
 		7550468D1A6C799A008E5203 /* PGPUserIDPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 7550468C1A6C799A008E5203 /* PGPUserIDPacket.m */; };
+		755046901A6C873B008E5203 /* PGPKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 7550468F1A6C873B008E5203 /* PGPKey.m */; };
+		755046931A6C891B008E5203 /* PGPSubKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 755046921A6C891B008E5203 /* PGPSubKey.m */; };
 		756299B91914DE1A00C5AD3B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B81914DE1A00C5AD3B /* Foundation.framework */; };
 		757D26D81A6AB937005CE2E3 /* PGPParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 757D26D71A6AB937005CE2E3 /* PGPParser.m */; };
 		757D26DB1A6ABBA7005CE2E3 /* PGPPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 757D26DA1A6ABBA7005CE2E3 /* PGPPacket.m */; };
@@ -76,6 +78,10 @@
 		755046861A6C7970008E5203 /* PGPSignaturePacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGPSignaturePacket.m; path = Packets/PGPSignaturePacket.m; sourceTree = "<group>"; };
 		7550468B1A6C799A008E5203 /* PGPUserIDPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGPUserIDPacket.h; path = Packets/PGPUserIDPacket.h; sourceTree = "<group>"; };
 		7550468C1A6C799A008E5203 /* PGPUserIDPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGPUserIDPacket.m; path = Packets/PGPUserIDPacket.m; sourceTree = "<group>"; };
+		7550468E1A6C873B008E5203 /* PGPKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPKey.h; sourceTree = "<group>"; };
+		7550468F1A6C873B008E5203 /* PGPKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPKey.m; sourceTree = "<group>"; };
+		755046911A6C891B008E5203 /* PGPSubKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSubKey.h; sourceTree = "<group>"; };
+		755046921A6C891B008E5203 /* PGPSubKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSubKey.m; sourceTree = "<group>"; };
 		7556464A1958FF6F00BFA34C /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = usr/lib/libbz2.dylib; sourceTree = SDKROOT; };
 		756299B51914DE1A00C5AD3B /* libObjectivePGP.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libObjectivePGP.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		756299B81914DE1A00C5AD3B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -204,6 +210,10 @@
 				75C257DA1A6AB1870095E1A2 /* PGPMessage.m */,
 				757D26D61A6AB937005CE2E3 /* PGPParser.h */,
 				757D26D71A6AB937005CE2E3 /* PGPParser.m */,
+				7550468E1A6C873B008E5203 /* PGPKey.h */,
+				7550468F1A6C873B008E5203 /* PGPKey.m */,
+				755046911A6C891B008E5203 /* PGPSubKey.h */,
+				755046921A6C891B008E5203 /* PGPSubKey.m */,
 				755046681A6BEC78008E5203 /* PGPPacketHeader.h */,
 				755046691A6BEC78008E5203 /* PGPPacketHeader.m */,
 				7550466E1A6BFFEE008E5203 /* PGPPacketLengthHeader.h */,
@@ -368,6 +378,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				755046931A6C891B008E5203 /* PGPSubKey.m in Sources */,
+				755046901A6C873B008E5203 /* PGPKey.m in Sources */,
 				7550467E1A6C6861008E5203 /* PGPMPI.m in Sources */,
 				7550468D1A6C799A008E5203 /* PGPUserIDPacket.m in Sources */,
 				757D26DB1A6ABBA7005CE2E3 /* PGPPacket.m in Sources */,

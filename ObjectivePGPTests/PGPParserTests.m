@@ -114,7 +114,7 @@
     
     PGPParser *parser = [[PGPParser alloc] init];
     NSError *error = nil;
-    XCTAssertTrue([parser readStream:stream error:&error]);
+    XCTAssertTrue([parser readFromStream:stream error:&error]);
     XCTAssertNil(error);
     
     [stream close];

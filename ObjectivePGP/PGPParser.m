@@ -13,10 +13,12 @@
 #import "PGPPacketLengthHeader.h"
 #import "PGPPublicKeyPacket.h"
 #import "PGPUserIDPacket.h"
+#import "PGPKey.h"
+#import "PGPSubKey.h"
 
 @implementation PGPParser
 
-- (BOOL) readStream:(NSInputStream *)inputStream error:(NSError * __autoreleasing *)error
+- (BOOL) readFromStream:(NSInputStream *)inputStream error:(NSError * __autoreleasing *)error
 {
     switch (inputStream.streamStatus) {
         case NSStreamStatusAtEnd:
@@ -33,9 +35,10 @@
     }
     
     // read stream
-    id parsedPacket = nil;
+    id lastParsedPacket = nil;
+    PGPKey *key = nil;
     while (inputStream.hasBytesAvailable && inputStream.streamStatus != NSStreamStatusAtEnd) {
-        parsedPacket = nil;
+        lastParsedPacket = nil;
         // parse packet header
         PGPPacketHeader *header = [PGPPacketHeader readFromStream:inputStream error:error];
         NSAssert(error, @"Header expected, but not found!");
@@ -46,19 +49,42 @@
         
         // read packet data
         if (header.bodyLengthIsPartial == NO) {
-            // read packet body from stream
-            // whole packet read at once which is not good for some big packets (literal etc)
-            // however it's fine for small packets like key related
             switch (header.packetTag) {
                 case PGPPublicKeyPacketTag:
                 case PGPPublicSubkeyPacketTag:
                 {
+                    // The Public-Key packet occurs first.
+                    // Each of the following User ID packets provides the identity of the owner of this public key.
                     PGPPublicKeyPacket *packet = [PGPPublicKeyPacket readFromStream:inputStream error:error];
                     NSAssert(packet, @"Missing or invalid packet %@", *error);
                     if (!packet) {
                         return NO;
                     }
-                    parsedPacket = packet;
+                    
+                    //TODO: flow is not finished!
+                    // re-start key context
+                    key = [[PGPKey alloc] init];
+                    if (header.packetTag == PGPPublicKeyPacketTag) {
+                        key.publicKeyPacket = packet;
+                    } else if (header.packetTag == PGPPublicSubkeyPacketTag) {
+                        // add subkey
+                        PGPSubKey *subKey = [[PGPSubKey alloc] init];
+                        subKey.publicKeyPacket = packet;
+                        if (!key.subkeys) {
+                            key.subkeys = [NSArray array];
+                        }
+                        key.subkeys = [key.subkeys arrayByAddingObject:subKey];
+                    }
+                    
+                    lastParsedPacket = packet;
+                }
+                break;
+                case PGPSignaturePacketTag:
+                {
+                    // key context
+                    if (key) {
+                        
+                    }
                 }
                 break;
                 case PGPUserIDPacketTag:
@@ -68,7 +94,16 @@
                     if (!packet) {
                         return NO;
                     }
-                    parsedPacket = packet;
+                    
+                    // key context
+                    if (key) {
+                        if (!key.userIDPackets) {
+                            key.userIDPackets = [NSArray array];
+                        }
+                        key.userIDPackets = [key.userIDPackets arrayByAddingObject:packet];
+                    }
+                    
+                    lastParsedPacket = packet;
                 }
                 break;
                 default:
@@ -81,7 +116,11 @@
             return NO;
         }
         
-        if (!parsedPacket) {
+        if (lastParsedPacket) {
+            #ifdef DEBUG
+            NSLog(@"%@ Parsed %@", self, lastParsedPacket);
+            #endif
+        } else {
             // read unknown packets here
             UInt8 *bodyBuffer = calloc(1, header.bodyLength);
             [inputStream read:bodyBuffer maxLength:header.bodyLength];
