@@ -21,7 +21,6 @@
     PGPMPI *mpi = [[PGPMPI alloc] init];
     
     UInt16 bits = [inputStream readUInt16];
-    bits = CFSwapInt16BigToHost(bits);
     NSUInteger bytesCount = (bits + 7) / 8;
     
     UInt8 *mpiBuffer = calloc(1, bytesCount);
@@ -34,6 +33,10 @@
     }
     
     mpi.data = [NSData dataWithBytes:mpiBuffer length:bytesCount];
+    
+    // forget buffer
+    memset(mpiBuffer, arc4random(), bytesCount);
+    free(mpiBuffer);
     
     return mpi;
 }

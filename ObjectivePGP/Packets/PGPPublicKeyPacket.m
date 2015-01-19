@@ -32,8 +32,9 @@
     }
     
     // A four-octet number denoting the time that the key was created.
-    //TODO: why no byte swap from bigint here?
     UInt32 timestamp = [inputStream readUInt32];
+    //TODO: why no byte swap here?
+    //timestamp = CFSwapInt32BigToHost(timestamp);
     if (timestamp) {
         packet.createDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
     }
@@ -42,7 +43,6 @@
         // A two-octet number denoting the time in days that this key is
         // valid.  If this number is zero, then it does not expire.
         UInt16 validityPeriod = [inputStream readUInt16];
-        validityPeriod = CFSwapInt16BigToHost(validityPeriod);
     }
     
     // A one-octet number denoting the public-key algorithm of this key.
@@ -116,7 +116,6 @@
     }
 
     packet.MPIs = [mpis copy];
-    
     return packet;
 }
 

@@ -9,5 +9,5 @@
 #import <Foundation/Foundation.h>
 
 @interface PGPParser : NSObject
-
+- (BOOL) readStream:(NSInputStream *)inputStream error:(NSError * __autoreleasing *)error;
 @end

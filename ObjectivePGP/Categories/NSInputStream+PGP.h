@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @interface NSInputStream (PGP)
-- (UInt8) readUInt8;
-- (UInt16) readUInt16;
-- (UInt32) readUInt32;
+- (UInt8) readUInt8; // BE->LE
+- (UInt16) readUInt16; // BE->LE
+- (UInt32) readUInt32; // BE->LE
 @end

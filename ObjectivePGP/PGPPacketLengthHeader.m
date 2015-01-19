@@ -61,12 +61,12 @@
         case 1:
         {
             // value of a two-octet scalar is ((n[0] << 8) + n[1]).
-            self.bodyLength = CFSwapInt16BigToHost([inputStream readUInt16]);
+            self.bodyLength = [inputStream readUInt16];
         }
             break;
         case 2:
         {
-            self.bodyLength = CFSwapInt32BigToHost([inputStream readUInt32]);
+            self.bodyLength = [inputStream readUInt32];
         }
             break;
         case 3:
