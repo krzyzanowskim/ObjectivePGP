@@ -58,6 +58,7 @@
                     PGPPublicKeyPacket *packet = [PGPPublicKeyPacket readFromStream:inputStream error:error];
                     NSAssert(packet, @"Missing or invalid packet %@", *error);
                     if (!packet) {
+                        NSAssert(*error != nil, @"Error expected");
                         return NO;
                     }
                     
