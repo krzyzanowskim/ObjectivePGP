@@ -54,28 +54,40 @@
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly:
-            {
-                // multiprecision integer (MPI) of RSA signature value m**d mod n.
-                // MPI of RSA public modulus n;
-                PGPMPI *mpiN = [PGPMPI readFromStream:inputStream error:error];
-                mpiN.identifier = @"N";
-                [mpis addObject:mpiN];
-            }
+        {
+            // MPI of RSA public modulus n;
+            PGPMPI *mpiN = [PGPMPI readFromStream:inputStream error:error];
+            mpiN.identifier = @"N";
+            [mpis addObject:mpiN];
+            // MPI of RSA public encryption exponent e.
+            PGPMPI *mpiE = [PGPMPI readFromStream:inputStream error:error];
+            mpiE.identifier = @"E";
+            [mpis addObject:mpiE];
+        }
             break;
         case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmECDSA:
-            {
-                // MPI of DSA value r.
-                PGPMPI *mpiR = [PGPMPI readFromStream:inputStream error:error];
-                mpiR.identifier = @"R";
-                [mpis addObject:mpiR];
-                
-                // MPI of DSA value s.
-                PGPMPI *mpiS = [PGPMPI readFromStream:inputStream error:error];
-                mpiS.identifier = @"S";
-                [mpis addObject:mpiS];
-                
-            }
+        {
+            // MPI of DSA prime p;
+            PGPMPI *mpiP = [PGPMPI readFromStream:inputStream error:error];
+            mpiP.identifier = @"P";
+            [mpis addObject:mpiP];
+            
+            //MPI of DSA group order q (q is a prime divisor of p-1);
+            PGPMPI *mpiQ = [PGPMPI readFromStream:inputStream error:error];
+            mpiQ.identifier = @"Q";
+            [mpis addObject:mpiQ];
+            
+            //MPI of DSA group generator g;
+            PGPMPI *mpiG = [PGPMPI readFromStream:inputStream error:error];
+            mpiG.identifier = @"G";
+            [mpis addObject:mpiG];
+            
+            //MPI of DSA public-key value y (= g**x mod p where x is secret).
+            PGPMPI *mpiY = [PGPMPI readFromStream:inputStream error:error];
+            mpiY.identifier = @"Y";
+            [mpis addObject:mpiY];
+        }
             break;
         case PGPPublicKeyAlgorithmElgamal:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:

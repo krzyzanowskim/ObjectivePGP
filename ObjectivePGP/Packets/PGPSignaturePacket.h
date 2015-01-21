@@ -10,6 +10,18 @@
 #import "PGPPublicKeyPacket.h"
 #import "PGPCommon.h"
 
+// 5.2.3.21.  Key Flags
+typedef NS_ENUM(UInt8, PGPSignatureFlags) {
+    PGPSignatureFlagAllowCertifyOtherKeys                      = 0x01,// indicates that this key may be used to certify other keys
+    PGPSignatureFlagAllowSignData                              = 0x02,// indicates that this key may be used to sign data.
+    PGPSignatureFlagAllowEncryptCommunications                 = 0x04,// indicates that this key may be used to encrypt communication.
+    PGPSignatureFlagAllowEncryptStorage                        = 0x08,// indicates that this key may be used to encrypt storage.
+    PGPSignatureFlagSecretComponentMayBeSplit                  = 0x10,// indicates that the secret components of this key may have been split using a secret-sharing mechanism.
+    PGPSignatureFlagAllowAuthentication                        = 0x20,// indicates that this key may be used for authentication.
+    PGPSignatureFlagPrivateKeyMayBeInThePossesionOfManyPersons = 0x80 // indicates that the secret components of this key may be in the possession of more than one person.
+};
+
+
 typedef NS_ENUM(UInt8, PGPSignatureType) {
     PGPSignatureBinaryDocument                          = 0x00,
     PGPSignatureCanonicalTextDocument                   = 0x01,

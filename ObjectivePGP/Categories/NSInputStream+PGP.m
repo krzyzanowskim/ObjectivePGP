@@ -23,7 +23,7 @@
     if ([self read:bytes maxLength:sizeof(bytes)] > 0) {
         return bytes[0] << 8 | bytes[1];
     }
-    
+    NSAssert(false,@"readUInt16 failed");
     return 0;
 }
 
@@ -33,7 +33,7 @@
     if ([self read:bytes maxLength:sizeof(bytes)] > 0) {
         return bytes[0] << 24 | bytes[1] << 16 | bytes[2] << 8 | bytes[3];
     }
-    
+    NSAssert(false,@"readUInt32 failed");
     return 0;
 }
 

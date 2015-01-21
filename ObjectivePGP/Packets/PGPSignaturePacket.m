@@ -89,18 +89,26 @@
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly:
         {
+            // multiprecision integer (MPI) of RSA signature value m**d mod n.
             // MPI of RSA public modulus n;
             PGPMPI *mpiN = [PGPMPI readFromStream:inputStream error:error];
             mpiN.identifier = @"N";
             [mpis addObject:mpiN];
-            // MPI of RSA public encryption exponent e.
-            PGPMPI *mpiE = [PGPMPI readFromStream:inputStream error:error];
-            mpiE.identifier = @"E";
-            [mpis addObject:mpiE];
         }
             break;
         case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmECDSA:
+        {
+            // MPI of DSA value r.
+            PGPMPI *mpiR = [PGPMPI readFromStream:inputStream error:error];
+            mpiR.identifier = @"R";
+            [mpis addObject:mpiR];
+            
+            // MPI of DSA value s.
+            PGPMPI *mpiS = [PGPMPI readFromStream:inputStream error:error];
+            mpiS.identifier = @"S";
+            [mpis addObject:mpiS];
+        }
             break;
         default:
             NSAssert(false, @"Invalid public key algorithm. RSA or DSA expected.");
@@ -112,6 +120,7 @@
     
     self.MPIs = [mpis copy];
     
+    //TODO: verify hash with hashed packets
     NSAssert(false, @"to be done... need V3 key for testing");
     return YES;
 }
@@ -131,10 +140,16 @@
     UInt16 hashedSubpacketsCount = [inputStream readUInt16];
     if (hashedSubpacketsCount) {
         //TODO: read subpackets
+        Byte buffer[hashedSubpacketsCount];
+        NSUInteger ret = [inputStream read:buffer maxLength:hashedSubpacketsCount];
+        NSLog(@"%@",@(ret));
     }
     UInt16 unhashedSubpacketsCount = [inputStream readUInt16];
     if (unhashedSubpacketsCount) {
         //TODO: read subpackets
+        Byte buffer[unhashedSubpacketsCount];
+        NSUInteger ret = [inputStream read:buffer maxLength:unhashedSubpacketsCount];
+        NSLog(@"%@",@(ret));
     }
     
     // Two-octet field holding the left 16 bits of the signed hash value.
@@ -147,18 +162,36 @@
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly:
         {
+            // multiprecision integer (MPI) of RSA signature value m**d mod n.
             // MPI of RSA public modulus n;
             PGPMPI *mpiN = [PGPMPI readFromStream:inputStream error:error];
+            if (*error) {
+                return NO;
+            }
             mpiN.identifier = @"N";
             [mpis addObject:mpiN];
-            // MPI of RSA public encryption exponent e.
-            PGPMPI *mpiE = [PGPMPI readFromStream:inputStream error:error];
-            mpiE.identifier = @"E";
-            [mpis addObject:mpiE];
         }
             break;
         case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmECDSA:
+        {
+            // MPI of DSA value r.
+            PGPMPI *mpiR = [PGPMPI readFromStream:inputStream error:error];
+            if (*error) {
+                return NO;
+            }
+            mpiR.identifier = @"R";
+            [mpis addObject:mpiR];
+            
+            // MPI of DSA value s.
+            PGPMPI *mpiS = [PGPMPI readFromStream:inputStream error:error];
+            if (*error) {
+                return NO;
+            }
+            mpiS.identifier = @"S";
+            [mpis addObject:mpiS];
+            
+        }
             break;
         default:
             NSAssert(false, @"Invalid public key algorithm. RSA or DSA expected.");
@@ -169,6 +202,9 @@
     }
     
     self.MPIs = [mpis copy];
+    
+    //TODO: verify hash with hashed packets
+    
     return YES;
 }
 
