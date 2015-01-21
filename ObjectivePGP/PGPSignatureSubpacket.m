@@ -168,6 +168,13 @@
     }
 
     NSAssert(lengthLeft == 0,@"Invalid signature subpacket");
+    if (lengthLeft != 0) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Invalid signature subpacket."}];
+        }
+        return nil;
+    }
+
     return subpacket;
 }
 
