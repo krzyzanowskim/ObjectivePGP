@@ -14,6 +14,8 @@
 #import "NSInputStream+PGP.h"
 #import "PGPCommon.h"
 #import "PGPMPI.h"
+#import "PGPSignatureSubpacket.h"
+#import <CommonCrypto/CommonDigest.h>
 
 @implementation PGPSignaturePacket
 
@@ -127,6 +129,7 @@
 
 - (BOOL) readV4FromStream:(NSInputStream *)inputStream error:(NSError * __autoreleasing *)error
 {
+    //-->HASHED
     // One-octet signature type.
     self.signatureType = [inputStream readUInt8];
     
@@ -137,19 +140,30 @@
     self.hashAlgoritm = [inputStream readUInt8];
     
     // Two-octet scalar octet count for following hashed subpacket data.
-    UInt16 hashedSubpacketsCount = [inputStream readUInt16];
-    if (hashedSubpacketsCount) {
-        //TODO: read subpackets
-        Byte buffer[hashedSubpacketsCount];
-        NSUInteger ret = [inputStream read:buffer maxLength:hashedSubpacketsCount];
-        NSLog(@"%@",@(ret));
+    UInt16 hashedSubpacketsBytes = [inputStream readUInt16];
+    UInt16 consumedBytes = 0;
+    if (hashedSubpacketsBytes) {
+        while (consumedBytes < hashedSubpacketsBytes) {
+            PGPSignatureSubpacket *subpacket = [PGPSignatureSubpacket readFromStream:inputStream error:error];
+            if (*error) {
+                return NO;
+            }
+            consumedBytes += subpacket.totalLength;
+        }
     }
-    UInt16 unhashedSubpacketsCount = [inputStream readUInt16];
-    if (unhashedSubpacketsCount) {
-        //TODO: read subpackets
-        Byte buffer[unhashedSubpacketsCount];
-        NSUInteger ret = [inputStream read:buffer maxLength:unhashedSubpacketsCount];
-        NSLog(@"%@",@(ret));
+    //-->HASHED
+    
+    // Two-octet scalar octet count for following unhashed subpacket data.
+    UInt16 unhashedSubpacketsBytes = [inputStream readUInt16];
+    consumedBytes = 0;
+    if (unhashedSubpacketsBytes) {
+        while (consumedBytes < unhashedSubpacketsBytes) {
+            PGPSignatureSubpacket *subpacket = [PGPSignatureSubpacket readFromStream:inputStream error:error];
+            if (*error) {
+                return NO;
+            }
+            consumedBytes += subpacket.totalLength;
+        }
     }
     
     // Two-octet field holding the left 16 bits of the signed hash value.
@@ -204,7 +218,7 @@
     self.MPIs = [mpis copy];
     
     //TODO: verify hash with hashed packets
-    
+    // Validate hash by computing hash against toHashData and compare with signedHashValue
     return YES;
 }
 

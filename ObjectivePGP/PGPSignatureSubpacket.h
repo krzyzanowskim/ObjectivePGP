@@ -36,8 +36,11 @@ typedef NS_ENUM(UInt8, PGPSignatureSubpacketType) {
 
 @interface PGPSignatureSubpacket : NSObject
 @property (assign) PGPSignatureSubpacketType type;
+@property (assign) NSUInteger totalLength;
 @property (assign, getter=isCritical) BOOL critical;
 @property (strong) id value;
+
+@property (strong) NSData *rawData;
 
 + (instancetype) readFromStream:(NSInputStream *)inputStream error:(NSError * __autoreleasing *)error;
 @end
