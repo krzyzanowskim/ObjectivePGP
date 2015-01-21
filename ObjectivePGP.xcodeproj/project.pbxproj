@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		752CB2BD1A6FA3EB007292F2 /* PGPFunctions.m in Sources */ = {isa = PBXBuildFile; fileRef = 752CB2BC1A6FA3EB007292F2 /* PGPFunctions.m */; };
 		75321D741A6F056C00F8FE95 /* PGPSignatureSubpacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75321D731A6F056C00F8FE95 /* PGPSignatureSubpacket.m */; };
 		75321D771A6F135000F8FE95 /* PGPKeyID.m in Sources */ = {isa = PBXBuildFile; fileRef = 75321D761A6F135000F8FE95 /* PGPKeyID.m */; };
 		75321D7C1A6F16EB00F8FE95 /* PGPSignaturePacketTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 75321D7B1A6F16EB00F8FE95 /* PGPSignaturePacketTests.m */; };
@@ -59,6 +60,8 @@
 		342510E82279C69DE5EEF7FD /* Pods-ObjectivePGP.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ObjectivePGP.release.xcconfig"; path = "Pods/Target Support Files/Pods-ObjectivePGP/Pods-ObjectivePGP.release.xcconfig"; sourceTree = "<group>"; };
 		501A20B5B542FB6B199B28C2 /* libPods-ObjectivePGP.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ObjectivePGP.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		750BD0D7193F5AAD005B9840 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		752CB2BB1A6FA3EB007292F2 /* PGPFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PGPFunctions.h; path = Helpers/PGPFunctions.h; sourceTree = "<group>"; };
+		752CB2BC1A6FA3EB007292F2 /* PGPFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = PGPFunctions.m; path = Helpers/PGPFunctions.m; sourceTree = "<group>"; };
 		75321D721A6F056C00F8FE95 /* PGPSignatureSubpacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSignatureSubpacket.h; sourceTree = "<group>"; };
 		75321D731A6F056C00F8FE95 /* PGPSignatureSubpacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSignatureSubpacket.m; sourceTree = "<group>"; };
 		75321D751A6F135000F8FE95 /* PGPKeyID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPKeyID.h; sourceTree = "<group>"; };
@@ -129,6 +132,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		752CB2BE1A6FA3F0007292F2 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				752CB2BB1A6FA3EB007292F2 /* PGPFunctions.h */,
+				752CB2BC1A6FA3EB007292F2 /* PGPFunctions.m */,
+			);
+			name = Helpers;
+			sourceTree = "<group>";
+		};
 		75413BDD1A6AD386004C8807 /* ObjectivePGPTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -215,6 +227,7 @@
 			isa = PBXGroup;
 			children = (
 				757D26E51A6AC605005CE2E3 /* PGPCommon.h */,
+				752CB2BE1A6FA3F0007292F2 /* Helpers */,
 				755046741A6C11F6008E5203 /* Categories */,
 				7550467B1A6C6260008E5203 /* Packets */,
 				75C257D91A6AB1870095E1A2 /* PGPMessage.h */,
@@ -394,6 +407,7 @@
 			files = (
 				755046931A6C891B008E5203 /* PGPSubKey.m in Sources */,
 				755046901A6C873B008E5203 /* PGPKey.m in Sources */,
+				752CB2BD1A6FA3EB007292F2 /* PGPFunctions.m in Sources */,
 				7550467E1A6C6861008E5203 /* PGPMPI.m in Sources */,
 				7550468D1A6C799A008E5203 /* PGPUserIDPacket.m in Sources */,
 				757D26DB1A6ABBA7005CE2E3 /* PGPPacket.m in Sources */,

@@ -15,7 +15,6 @@
 #import "PGPCommon.h"
 #import "PGPMPI.h"
 #import "PGPSignatureSubpacket.h"
-#import <CommonCrypto/CommonDigest.h>
 
 @implementation PGPSignaturePacket
 
