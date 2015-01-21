@@ -40,5 +40,5 @@ typedef NS_ENUM(UInt8, PGPSignatureSubpacketType) {
 @property (assign, getter=isCritical) BOOL critical;
 @property (strong) id value;
 
-+ (instancetype) readFromStream:(NSInputStream *)inputStream error:(NSError * __autoreleasing *)error;
++ (instancetype) readFromStream:(NSInputStream *)inputStream  error:(NSError * __autoreleasing *)error;
 @end

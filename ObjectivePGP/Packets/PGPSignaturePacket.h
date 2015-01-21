@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "PGPPublicKeyPacket.h"
+#import "PGPSignatureSubpacket.h"
 #import "PGPCommon.h"
 
 // 5.2.3.21.  Key Flags
@@ -42,11 +43,13 @@ typedef NS_ENUM(UInt8, PGPSignatureType) {
 
 @interface PGPSignaturePacket : NSObject
 @property (assign) PGPSignatureType signatureType;
-@property (strong) NSData *keyID; // 8 bytes long
-@property (strong) NSDate *creationData;
+//@property (strong) NSData *keyID; // 8 bytes long
+@property (strong) NSDate *creationDate;
 @property (assign) PGPPublicKeyAlgorithm publicKeyAlgorithm;
 @property (assign) PGPHashAlgorithm hashAlgoritm;
 @property (strong) NSSet *MPIs; // key algorithm specific MPIs
 
 + (instancetype) readFromStream:(NSInputStream *)inputStream error:(NSError * __autoreleasing *)error;
+- (id) valueOfSubacketOfType:(PGPSignatureSubpacketType)type found:(BOOL *)isFound;
+
 @end

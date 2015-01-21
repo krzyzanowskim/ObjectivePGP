@@ -16,6 +16,11 @@
 #import "PGPMPI.h"
 #import "PGPSignatureSubpacket.h"
 
+@interface PGPSignaturePacket ()
+@property (copy, nonatomic) NSArray *hashedSubpackets;
+@property (copy, nonatomic) NSArray *unhashedSubpackets;
+@end
+
 @implementation PGPSignaturePacket
 
 + (instancetype) readFromStream:(NSInputStream *)inputStream error:(NSError * __autoreleasing *)error
@@ -64,13 +69,13 @@
     
     // - Four-octet creation time
     UInt32 timestamp = [inputStream readUInt32];
-    self.creationData = [NSDate dateWithTimeIntervalSince1970:timestamp];
+    self.creationDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
     
     // Eight-octet Key ID of signer
     UInt8 *keyIDBuffer = calloc(1, 8);
     NSInteger readResult = [inputStream read:keyIDBuffer maxLength:8];
     if (readResult > 0) {
-        self.keyID = [NSData dataWithBytes:keyIDBuffer length:readResult];
+        NSData *keyID = [NSData dataWithBytes:keyIDBuffer length:readResult];
     }
     free(keyIDBuffer);
     
@@ -148,6 +153,7 @@
                 return NO;
             }
             consumedBytes += subpacket.totalLength;
+            self.hashedSubpackets = [self.hashedSubpackets arrayByAddingObject:subpacket];
         }
     }
     //-->HASHED
@@ -162,6 +168,7 @@
                 return NO;
             }
             consumedBytes += subpacket.totalLength;
+            self.unhashedSubpackets = [self.unhashedSubpackets arrayByAddingObject:subpacket];
         }
     }
     
@@ -215,10 +222,45 @@
     }
     
     self.MPIs = [mpis copy];
+    self.creationDate = [self valueOfSubacketOfType:PGPSignatureSubpacketTypeSignatureCreationTime found:nil];
     
     //TODO: verify hash with hashed packets
     // Validate hash by computing hash against toHashData and compare with signedHashValue
     return YES;
+}
+
+- (id) valueOfSubacketOfType:(PGPSignatureSubpacketType)type found:(BOOL *)isFound
+{
+    for (PGPSignatureSubpacket *subpacket in [self.hashedSubpackets arrayByAddingObjectsFromArray:self.unhashedSubpackets]) {
+        if (subpacket.type == type) {
+            if (isFound) {
+                *isFound = YES;
+            }
+            return subpacket.value;
+        }
+    }
+    if (isFound) {
+        *isFound = NO;
+    }
+    return nil;
+}
+
+#pragma mark - Properties
+
+- (NSArray *)hashedSubpackets
+{
+    if (!_hashedSubpackets) {
+        _hashedSubpackets = [NSArray array];
+    }
+    return _hashedSubpackets;
+}
+
+- (NSArray *)unhashedSubpackets
+{
+    if (!_unhashedSubpackets) {
+        _unhashedSubpackets = [NSArray array];
+    }
+    return _unhashedSubpackets;
 }
 
 @end
