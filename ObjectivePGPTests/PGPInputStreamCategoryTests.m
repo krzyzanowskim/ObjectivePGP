@@ -31,8 +31,10 @@
     NSInputStream *stream = [NSInputStream inputStreamWithBytes:bytes length:sizeof(bytes)];
     [stream open];
     XCTAssertNotNil(stream);
-    UInt8 result = [stream readUInt8];
+    UInt8 readByte;
+    UInt8 result = [stream readUInt8:&readByte];
     XCTAssertEqual(result, 0x01);
+    XCTAssertEqual(readByte, 0x01);
     [stream close];
 }
 
@@ -42,8 +44,12 @@
     NSInputStream *stream = [NSInputStream inputStreamWithBytes:bytes length:sizeof(bytes)];
     [stream open];
     XCTAssertNotNil(stream);
-    UInt16 result = [stream readUInt16];
+    UInt8 readBytes[2];
+    UInt16 result = [stream readUInt16:readBytes];
     XCTAssertEqual(result, 0x0102);
+    for (int i = 0; i < sizeof(bytes); i++) {
+        XCTAssertEqual(readBytes[i], bytes[i]);
+    }
     [stream close];
 }
 
@@ -53,8 +59,12 @@
     NSInputStream *stream = [NSInputStream inputStreamWithBytes:bytes length:sizeof(bytes)];
     [stream open];
     XCTAssertNotNil(stream);
-    UInt32 result = [stream readUInt32];
+    UInt8 readBytes[4];
+    UInt32 result = [stream readUInt32:readBytes];
     XCTAssertEqual(result, 0x01020304);
+    for (int i = 0; i < sizeof(bytes); i++) {
+        XCTAssertEqual(readBytes[i], bytes[i]);
+    }
     [stream close];
 }
 @end

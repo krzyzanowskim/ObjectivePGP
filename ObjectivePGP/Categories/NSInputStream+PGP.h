@@ -10,6 +10,9 @@
 
 @interface NSInputStream (PGP)
 - (UInt8) readUInt8; // BE->LE
+- (UInt8) readUInt8:(UInt8 *)bytes;
 - (UInt16) readUInt16; // BE->LE
+- (UInt16) readUInt16:(UInt8 *)readBytes;
 - (UInt32) readUInt32; // BE->LE
+- (UInt32) readUInt32:(UInt8 *)readBytes;
 @end
