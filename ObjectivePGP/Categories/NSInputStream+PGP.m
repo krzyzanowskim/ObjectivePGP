@@ -46,7 +46,7 @@
 {
     NSParameterAssert(data);
     
-    UInt8 result;
+    UInt16 result;
     UInt8 bytes[2];
     result = [self readUInt16:bytes];
     [data appendBytes:bytes length:sizeof(bytes)];
@@ -75,7 +75,7 @@
 {
     NSParameterAssert(data);
     
-    UInt8 result;
+    UInt32 result;
     UInt8 bytes[4];
     result = [self readUInt32:bytes];
     [data appendBytes:bytes length:sizeof(bytes)];
