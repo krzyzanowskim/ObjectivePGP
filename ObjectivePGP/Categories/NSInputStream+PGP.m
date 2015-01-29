@@ -15,6 +15,17 @@
     return [self readUInt8:nil];
 }
 
+- (UInt8) readUInt8BytesAppendTo:(NSMutableData *)data
+{
+    NSParameterAssert(data);
+    
+    UInt8 result;
+    UInt8 byte;
+    result = [self readUInt8:&byte];
+    [data appendBytes:&byte length:1];
+    return result;
+}
+
 - (UInt8) readUInt8:(UInt8 *)readBytes
 {
     UInt8 result = 0;
@@ -29,6 +40,17 @@
 - (UInt16) readUInt16
 {
     return [self readUInt16:nil];
+}
+
+- (UInt16) readUInt16BytesAppendTo:(NSMutableData *)data
+{
+    NSParameterAssert(data);
+    
+    UInt8 result;
+    UInt8 bytes[2];
+    result = [self readUInt16:bytes];
+    [data appendBytes:bytes length:sizeof(bytes)];
+    return result;
 }
 
 - (UInt16) readUInt16:(UInt8 *)readBytes
@@ -48,6 +70,18 @@
 {
     return [self readUInt32:nil];
 }
+
+- (UInt32) readUInt32BytesAppendTo:(NSMutableData *)data
+{
+    NSParameterAssert(data);
+    
+    UInt8 result;
+    UInt8 bytes[4];
+    result = [self readUInt32:bytes];
+    [data appendBytes:bytes length:sizeof(bytes)];
+    return result;
+}
+
 
 - (UInt32) readUInt32:(UInt8 *)readBytes
 {

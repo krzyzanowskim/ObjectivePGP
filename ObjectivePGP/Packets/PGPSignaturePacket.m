@@ -29,6 +29,7 @@
     
     // One-octet version number
     UInt8 version = [inputStream readUInt8];
+    
     NSAssert(version == 3 || version == 4, @"Invalid version of signature packet");
     if (version < 3 && version > 4) {
         if (error) {
