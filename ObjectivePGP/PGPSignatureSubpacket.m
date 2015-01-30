@@ -14,9 +14,10 @@
 
 @implementation PGPSignatureSubpacket
 
-+ (instancetype) readFromStream:(NSInputStream *)inputStream error:(NSError * __autoreleasing *)error
++ (instancetype) readFromStream:(NSInputStream *)inputStream data:(NSData * __autoreleasing *)readData error:(NSError * __autoreleasing *)error
 {
     PGPSignatureSubpacket *subpacket = [[PGPSignatureSubpacket alloc] init];
+    NSMutableData *rawData = [NSMutableData data];
     
     // the subpacket length (1, 2, or 5 octets)
     // Note: "The length includes the type octet but not this length"
@@ -28,25 +29,25 @@
     // this is because given body length include type octet which is from header namespace, not body really.
     // I'm drunk, or person who defined it this way was drunk.
     
-    UInt8 firstOctet = [inputStream readUInt8];
+    UInt8 firstOctet = [inputStream readUInt8BytesAppendTo:rawData];
     NSUInteger length = 0;
     NSUInteger lengthOfLength = 0;
     if (firstOctet < 192) {
         length  = firstOctet;
         lengthOfLength = 1;
     } else if (firstOctet >= 192 && firstOctet < 255) {
-        UInt8 secondOctet = [inputStream readUInt8];
+        UInt8 secondOctet = [inputStream readUInt8BytesAppendTo:rawData];
         length   = ((firstOctet - 192) << 8) + (secondOctet) + 192;
         lengthOfLength = 2;
     } else if (firstOctet == 255) {
-        length  = [inputStream readUInt32];
+        length  = [inputStream readUInt32BytesAppendTo:rawData];
         lengthOfLength = 5;
     }
     subpacket.totalLength = length + lengthOfLength;
     NSUInteger lengthLeft = length;
 
     // the subpacket type (1 octet),
-    subpacket.type = [inputStream readUInt8];
+    subpacket.type = [inputStream readUInt8BytesAppendTo:rawData];
     lengthLeft -= 1;
     
     // Bit 7 of the subpacket type is the "critical" bit.
@@ -63,7 +64,7 @@
         case PGPSignatureSubpacketTypeSignatureExpirationTime:
         {
             // (4 octets) The time the signature was made.
-            UInt32 timestamp = [inputStream readUInt32];
+            UInt32 timestamp = [inputStream readUInt32BytesAppendTo:rawData];
             subpacket.value = [NSDate dateWithTimeIntervalSince1970:timestamp];;
             lengthLeft -= 4;
         }
@@ -74,7 +75,7 @@
         {
             NSMutableArray *elements = [NSMutableArray array];
             while (lengthLeft) {
-                UInt8 value = [inputStream readUInt8];
+                UInt8 value = [inputStream readUInt8BytesAppendTo:rawData];
                 [elements addObject:@(value)];
                 lengthLeft -= 1;
             }
@@ -84,7 +85,7 @@
         case PGPSignatureSubpacketTypeReasonForRevocation:
         {
             // (1 octet of revocability, 0 for not, 1 for revocable)
-            UInt8 value = [inputStream readUInt8];
+            UInt8 value = [inputStream readUInt8BytesAppendTo:rawData];
             subpacket.value = @(value);
             lengthLeft -= 1;
         }
@@ -101,6 +102,7 @@
             }
             lengthLeft -= result;
             subpacket.value = [[PGPKeyID alloc] initWithBytes:buffer length:sizeof(buffer)];
+            [rawData appendBytes:buffer length:sizeof(buffer)];
             NSAssert(subpacket.value, @"Invalid value");
         }
             break;
@@ -116,13 +118,14 @@
             }
             lengthLeft -= result;
             subpacket.value = [[NSString alloc] initWithBytes:buffer length:sizeof(buffer) encoding:NSUTF8StringEncoding];
+            [rawData appendBytes:buffer length:sizeof(buffer)];
             NSAssert(subpacket.value, @"Invalid value");
         }
             break;
         case PGPSignatureSubpacketTypeKeyFlags:
         {
             // (1 octet)
-            UInt8 flags = [inputStream readUInt8];
+            UInt8 flags = [inputStream readUInt8BytesAppendTo:rawData];
             lengthLeft -= 1;
             
             NSMutableArray *elements = [NSMutableArray array];
@@ -163,6 +166,7 @@
                 return nil;
             }
             lengthLeft -= result;
+            [rawData appendBytes:buffer length:sizeof(buffer)];
         }
             break;
     }
@@ -175,6 +179,9 @@
         return nil;
     }
 
+    if (readData) {
+        *readData = [rawData copy];
+    }
     return subpacket;
 }
 

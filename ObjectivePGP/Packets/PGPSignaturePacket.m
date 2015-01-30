@@ -19,6 +19,7 @@
 @interface PGPSignaturePacket ()
 @property (copy, nonatomic) NSArray *hashedSubpackets;
 @property (copy, nonatomic) NSArray *unhashedSubpackets;
+@property (strong) NSMutableData *hashedData;
 @end
 
 @implementation PGPSignaturePacket
@@ -26,9 +27,10 @@
 + (instancetype) readFromStream:(NSInputStream *)inputStream error:(NSError * __autoreleasing *)error
 {
     PGPSignaturePacket *packet = [[PGPSignaturePacket alloc] init];
+    packet.hashedData = [NSMutableData data];
     
     // One-octet version number
-    UInt8 version = [inputStream readUInt8];
+    UInt8 version = [inputStream readUInt8BytesAppendTo:packet.hashedData];
     
     NSAssert(version == 3 || version == 4, @"Invalid version of signature packet");
     if (version < 3 && version > 4) {
@@ -136,25 +138,27 @@
 {
     //-->HASHED
     // One-octet signature type.
-    self.signatureType = [inputStream readUInt8];
+    self.signatureType = [inputStream readUInt8BytesAppendTo:_hashedData];
     
     // One-octet public-key algorithm.
-    self.publicKeyAlgorithm = [inputStream readUInt8];
+    self.publicKeyAlgorithm = [inputStream readUInt8BytesAppendTo:_hashedData];
     
     // One-octet hash algorithm.
-    self.hashAlgoritm = [inputStream readUInt8];
-    
+    self.hashAlgoritm = [inputStream readUInt8BytesAppendTo:_hashedData];
+
     // Two-octet scalar octet count for following hashed subpacket data.
-    UInt16 hashedSubpacketsBytes = [inputStream readUInt16];
+    UInt16 hashedSubpacketsBytes = [inputStream readUInt16BytesAppendTo:_hashedData];
     UInt16 consumedBytes = 0;
     if (hashedSubpacketsBytes) {
         while (consumedBytes < hashedSubpacketsBytes) {
-            PGPSignatureSubpacket *subpacket = [PGPSignatureSubpacket readFromStream:inputStream error:error];
+            NSData *rawData;
+            PGPSignatureSubpacket *subpacket = [PGPSignatureSubpacket readFromStream:inputStream data:&rawData error:error];
             if (*error) {
                 return NO;
             }
             consumedBytes += subpacket.totalLength;
             self.hashedSubpackets = [self.hashedSubpackets arrayByAddingObject:subpacket];
+            [_hashedData appendData:rawData];
         }
     }
     //-->HASHED
@@ -164,7 +168,7 @@
     consumedBytes = 0;
     if (unhashedSubpacketsBytes) {
         while (consumedBytes < unhashedSubpacketsBytes) {
-            PGPSignatureSubpacket *subpacket = [PGPSignatureSubpacket readFromStream:inputStream error:error];
+            PGPSignatureSubpacket *subpacket = [PGPSignatureSubpacket readFromStream:inputStream data:nil error:error];
             if (*error) {
                 return NO;
             }
@@ -229,6 +233,13 @@
     // Validate hash by computing hash against toHashData and compare with signedHashValue
     return YES;
 }
+
+
+//TODO: export key data
+//- (NSData *) calculateHashOfData:(NSData *)hashedData withAlgorithm:(PGPHashAlgorithm)algorithm
+//{
+//    return nil;
+//}
 
 - (id) valueOfSubacketOfType:(PGPSignatureSubpacketType)type found:(BOOL *)isFound
 {
