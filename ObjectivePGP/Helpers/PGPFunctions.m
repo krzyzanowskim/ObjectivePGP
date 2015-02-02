@@ -44,3 +44,28 @@ UInt8 *pgpCalculateMD5(const void *bytes, unsigned int length)
     unsigned char hash[CC_MD5_DIGEST_LENGTH];
     return CC_MD5(bytes, length, hash);
 }
+
+NSUInteger pgpNumBits(Byte *bytes, NSUInteger maxLength)
+{
+    if (maxLength == 0 || bytes[0] == 0x00) {
+        return 0;
+    }
+    
+    // remove zeros
+    int i = 0;
+    for (i = 0; i < maxLength; i++) {
+        if (bytes[i] != 0x00) {
+            break;
+        }
+    }
+    
+    // first byte
+    Byte first = bytes[0 + i];
+    int idxFirst = 0;
+    while (first != 0) {
+        idxFirst++;
+        first = first >> 1;
+    }
+    
+    return idxFirst + ((maxLength - 1 - i) * 8);
+}

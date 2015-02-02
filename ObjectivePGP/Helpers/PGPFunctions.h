@@ -16,5 +16,6 @@ UInt8 *pgpCalculateSHA256(const void *bytes, unsigned int length);
 UInt8 *pgpCalculateSHA224(const void *bytes, unsigned int length);
 UInt8 *pgpCalculateSHA1(const void *bytes, unsigned int length);
 UInt8 *pgpCalculateMD5(const void *bytes, unsigned int length);
+NSUInteger pgpNumBits(Byte *bytes, NSUInteger maxLength);
 
 
