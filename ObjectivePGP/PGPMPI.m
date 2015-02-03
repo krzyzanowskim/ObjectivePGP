@@ -12,12 +12,16 @@
 
 #import "PGPMPI.h"
 #import "PGPCommon.h"
+#import "PGPFunctions.h"
 #import "NSInputStream+PGP.h"
+#import <CommonCrypto/CommonCrypto.h>
 
 @implementation PGPMPI
 
 + (instancetype) readFromStream:(NSInputStream *)inputStream error:(NSError * __autoreleasing *)error
 {
+    NSParameterAssert(inputStream);
+    
     PGPMPI *mpi = [[PGPMPI alloc] init];
     
     UInt16 bits = [inputStream readUInt16];
@@ -39,6 +43,70 @@
     free(mpiBuffer);
     
     return mpi;
+}
+
+- (BOOL) writeToStream:(NSOutputStream *)outputStream error:(NSError * __autoreleasing *)error
+{
+    NSParameterAssert(outputStream);
+    
+    if (!outputStream.hasSpaceAvailable) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"No space on stream"}];
+        }
+        return NO;
+    }
+    
+    NSData *data = [PGPMPI buildMPIForData:self.data error:error];
+    if (!data || *error) {
+        return NO;
+    }
+    
+    if ([outputStream write:data.bytes maxLength:data.length] == -1) {
+        if (error && outputStream.streamError) {
+            *error = [outputStream.streamError copy];
+        }
+        return NO;
+    }
+    
+    return YES;
+}
+
+#pragma mark - Private
+
++ (NSData *) buildMPIForData:(NSData *)data error:(NSError * __autoreleasing *)error
+{
+    NSParameterAssert(data);
+    
+    if (!data) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Missing MPI data"}];
+        }
+        return nil;
+    }
+    
+    NSMutableData *outData = [NSMutableData data];
+
+    // length in bits
+    UInt16 bits = pgpNumBits((Byte *)[data bytes], data.length);
+    UInt16 bitsBE = CFSwapInt16HostToBig(bits);
+    [outData appendBytes:&bitsBE length:2];
+    
+    // mpi
+    [outData appendData:data];
+    
+//    // length
+//    UInt16 bits = BN_num_bits(self.bignumRef);
+//    UInt16 bitsBE = CFSwapInt16HostToBig(bits);
+//    [outData appendBytes:&bitsBE length:2];
+//    
+//    // mpi
+//    UInt8 *buf = calloc(BN_num_bytes(self.bignumRef), sizeof(UInt8));
+//    UInt16 bytes = (bits + 7) / 8;
+//    BN_bn2bin(self.bignumRef, buf);
+//    [outData appendBytes:buf length:bytes];
+//    free(buf);
+    
+    return [outData copy];
 }
 
 @end

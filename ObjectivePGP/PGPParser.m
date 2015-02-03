@@ -10,11 +10,12 @@
 #import "PGPCommon.h"
 #import "NSInputStream+PGP.h"
 #import "PGPPacketHeader.h"
-#import "PGPPacketLengthHeader.h"
 #import "PGPPublicKeyPacket.h"
 #import "PGPUserIDPacket.h"
+#import "PGPUser.h"
 #import "PGPKey.h"
 #import "PGPSubKey.h"
+#import "PGPSignature.h"
 
 @implementation PGPParser
 
@@ -35,10 +36,11 @@
     }
     
     // read stream
-    id lastParsedPacket = nil;
-    PGPKey *key = nil;
+    PGPKey *contextKey = nil;
+    PGPUserIDPacket *contextUserIDPacket = nil;
+    
     while (inputStream.hasBytesAvailable && inputStream.streamStatus != NSStreamStatusAtEnd) {
-        lastParsedPacket = nil;
+        id parsedPacket = nil;
         // parse packet header
         PGPPacketHeader *header = [PGPPacketHeader readFromStream:inputStream error:error];
         NSAssert(error, @"Header expected, but not found!");
@@ -48,14 +50,15 @@
         }
         
         // read packet data
-        if (header.bodyLengthIsPartial == NO) {
+        if (header.isPartial == NO) {
             switch (header.packetTag) {
                 case PGPPublicKeyPacketTag:
                 case PGPPublicSubkeyPacketTag:
                 {
+                    // - One Public-Key packet
                     // The Public-Key packet occurs first.
                     // Each of the following User ID packets provides the identity of the owner of this public key.
-                    PGPPublicKeyPacket *packet = [PGPPublicKeyPacket readFromStream:inputStream error:error];
+                    PGPPublicKeyPacket *packet = [PGPPublicKeyPacket readFromStream:inputStream maxLength:header.bodyLength error:error];
                     NSAssert(packet, @"Missing or invalid packet %@", *error);
                     if (!packet) {
                         NSAssert(*error != nil, @"Error expected");
@@ -64,47 +67,80 @@
                     
                     //TODO: flow is not finished!
                     // re-start key context
-                    key = [[PGPKey alloc] init];
+                    contextKey = nil;
+                    contextUserIDPacket = nil;
+                    
                     if (header.packetTag == PGPPublicKeyPacketTag) {
-                        key.publicKeyPacket = packet;
+                        PGPKey *key = [[PGPKey alloc] initWithPacket:packet];
+                        contextKey = key;
                     } else if (header.packetTag == PGPPublicSubkeyPacketTag) {
                         // add subkey
-                        PGPSubKey *subKey = [[PGPSubKey alloc] init];
-                        subKey.publicKeyPacket = packet;
-                        if (!key.subkeys) {
-                            key.subkeys = [NSArray array];
+                        PGPSubKey *subKey = [[PGPSubKey alloc] initWithPacket:packet];
+                        if (!contextKey.subkeys) {
+                            contextKey.subkeys = [NSArray array];
                         }
-                        key.subkeys = [key.subkeys arrayByAddingObject:subKey];
+                        contextKey.subkeys = [contextKey.subkeys arrayByAddingObject:subKey];
                     }
                     
-                    lastParsedPacket = packet;
+                    parsedPacket = packet;
                 }
                 break;
                 case PGPSignaturePacketTag:
                 {
-                    // key context
-                    if (key) {
-                        
+                    // - After each User ID packet, zero or more Signature packets (certifications)
+                    // Immediately following each User ID packet, there are zero or more Signature packets.
+                    // Each Signature packet is calculated on the
+                    // immediately preceding User ID packet and the initial Public-Key
+                    // packet.
+                    
+                    // The signature serves to certify the corresponding public key
+                    // and User ID.  In effect, the signer is testifying to his or her
+                    // belief that this public key belongs to the user identified by this
+                    // User ID.
+                    
+                    if (contextKey && contextUserIDPacket) {
+                        PGPSignaturePacket *packet = [PGPSignaturePacket readFromStream:inputStream error:error];
+                        NSAssert(packet, @"Missing or invalid packet %@", *error);
+                        if (!packet) {
+                            return NO;
+                        }
+                        PGPSignature *signature = [[PGPSignature alloc] initWithPacket:packet];
+                        switch (signature.type) {
+                            case PGPSignatureGenericCertificationUserIDandPublicKey:
+                            case PGPSignatureCasualCertificationUserIDandPublicKey:
+                            case PGPSignaturePositiveCertificationUserIDandPublicKey:
+                            case PGPSignaturePersonalCertificationUserIDandPublicKey:
+                                //if ([signature.issuerKeyID isEqualToKeyID:contextKey.packet.keyAlgorithm];
+                                break;
+                                
+                            default:
+                                break;
+                        }
+                        NSLog(@"Signature for UserID %@",contextUserIDPacket.userID);
                     }
                 }
                 break;
                 case PGPUserIDPacketTag:
                 {
-                    PGPUserIDPacket *packet = [PGPUserIDPacket readFromStream:inputStream length:header.bodyLength error:error];
+                    // - One or more User ID packets. One at a time.
+                    PGPUserIDPacket *packet = [PGPUserIDPacket readFromStream:inputStream maxLength:header.bodyLength error:error];
                     NSAssert(packet, @"Missing or invalid packet %@", *error);
                     if (!packet) {
                         return NO;
                     }
                     
+                    PGPUser *user = [[PGPUser alloc] initWithPacket:packet];
                     // key context
-                    if (key) {
-                        if (!key.userIDPackets) {
-                            key.userIDPackets = [NSArray array];
+                    if (contextKey) {
+                        // Each of the following User ID packets provides the identity of the owner of this public key.
+                        if (!contextKey.users) {
+                            contextKey.users = [NSArray array];
                         }
-                        key.userIDPackets = [key.userIDPackets arrayByAddingObject:packet];
+                        contextKey.users = [contextKey.users arrayByAddingObject:user];
                     }
                     
-                    lastParsedPacket = packet;
+                    contextUserIDPacket = packet;
+                    parsedPacket = packet;
                 }
                 break;
                 default:
@@ -117,9 +153,9 @@
             return NO;
         }
         
-        if (lastParsedPacket) {
+        if (parsedPacket) {
             #ifdef DEBUG
-            NSLog(@"%@ Parsed %@", self, lastParsedPacket);
+            NSLog(@"%@ Parsed %@", self, parsedPacket);
             #endif
         } else {
             // read unknown packets here

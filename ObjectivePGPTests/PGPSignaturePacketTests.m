@@ -77,6 +77,7 @@
     XCTAssertEqual(packet.signatureType, PGPSignaturePositiveCertificationUserIDandPublicKey);
     XCTAssertEqual(packet.publicKeyAlgorithm, PGPPublicKeyAlgorithmRSA);
     XCTAssertEqual(packet.hashAlgoritm, PGPHashSHA512);
+    XCTAssertEqual(packet.hashValue, 7833);
     XCTAssertEqualObjects(packet.creationDate, [NSDate dateWithTimeIntervalSince1970:1401855676]);
     [stream close];
 }

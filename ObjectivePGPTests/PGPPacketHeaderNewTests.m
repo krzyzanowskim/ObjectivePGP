@@ -70,7 +70,7 @@
     XCTAssertNotNil(header);
     XCTAssertEqual(header.packetTag, PGPSignaturePacketTag);
     XCTAssertEqual(header.bodyLength, 100000);
-    XCTAssertEqual(header.bodyLengthIsPartial, NO);
+    XCTAssertEqual(header.isPartial, NO);
 }
 
 - (void)testNewHeader3 {
@@ -88,7 +88,7 @@
     XCTAssertEqual(header.packetTag, PGPSignaturePacketTag);
     XCTAssertEqual(header.isNew, YES);
     XCTAssertEqual(header.bodyLength, 32768);
-    XCTAssertEqual(header.bodyLengthIsPartial, YES);
+    XCTAssertEqual(header.isPartial, YES);
 }
 
 @end

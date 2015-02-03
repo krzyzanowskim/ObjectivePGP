@@ -7,14 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "PGPPacket.h"
+#import "PGPCommon.h"
 
-@interface PGPPacketHeader : NSObject
+@interface PGPPacketHeader : NSObject <NSCopying>
 @property (assign) BOOL isNew;
 @property (assign) PGPPacketTag packetTag;
-@property (assign) NSUInteger bodyLength;
-@property (assign) BOOL bodyLengthIsPartial;
+@property (assign) UInt32 bodyLength;
+@property (assign, getter=isPartial) BOOL partial;
 
 + (instancetype) readFromStream:(NSInputStream *)inputStream error:(NSError * __autoreleasing *)error;
+- (BOOL) writeToStream:(NSOutputStream *)outputStream error:(NSError * __autoreleasing *)error;
 
 @end

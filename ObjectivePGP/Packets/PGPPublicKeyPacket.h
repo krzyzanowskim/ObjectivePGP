@@ -33,10 +33,12 @@ typedef NS_ENUM(UInt8, PGPPublicKeyAlgorithm) {
 };
 
 @interface PGPPublicKeyPacket : NSObject
+@property (assign)  NSUInteger version; // 0x03 or 0x04
 @property (copy) NSDate *createDate;
 @property (assign) PGPPublicKeyAlgorithm keyAlgorithm;
+@property (assign) NSUInteger validityPeriod;
 @property (strong) NSSet *MPIs; // key algorithm specific MPIs
 
-+ (instancetype) readFromStream:(NSInputStream *)inputStream error:(NSError * __autoreleasing *)error;
++ (instancetype) readFromStream:(NSInputStream *)inputStream maxLength:(NSUInteger)maxLength error:(NSError * __autoreleasing *)error;
 
 @end

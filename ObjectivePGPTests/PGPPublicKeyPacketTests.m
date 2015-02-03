@@ -45,7 +45,7 @@
     XCTAssertNil(error);
     XCTAssertEqual(header.packetTag, PGPPublicKeyPacketTag);
     
-    PGPPublicKeyPacket *packet = [PGPPublicKeyPacket readFromStream:stream error:&error];
+    PGPPublicKeyPacket *packet = [PGPPublicKeyPacket readFromStream:stream maxLength:header.bodyLength error:&error];
     XCTAssertNotNil(packet);
     XCTAssertNil(error);
     XCTAssertEqualObjects(packet.createDate, [NSDate dateWithTimeIntervalSince1970:1401855676]);

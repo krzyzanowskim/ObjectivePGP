@@ -72,11 +72,11 @@
     UInt32 timestamp = [inputStream readUInt32];
     self.creationDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
     
-    // Eight-octet Key ID of signer
+    //TODO: Eight-octet Key ID of signer
     UInt8 *keyIDBuffer = calloc(1, 8);
     NSInteger readResult = [inputStream read:keyIDBuffer maxLength:8];
     if (readResult > 0) {
-        NSData *keyID = [NSData dataWithBytes:keyIDBuffer length:readResult];
+        NSData *keyID = [NSData dataWithBytes:keyIDBuffer length:readResult]; // 8 bytes long
     }
     free(keyIDBuffer);
     
@@ -88,6 +88,7 @@
     
     // Two-octet field holding the left 16 bits of the signed hash value.
     UInt16 signedHashValue = [inputStream readUInt16];
+    self.hashValue = signedHashValue;
     
     // 5.2.2. One or more multiprecision integers comprising the signature. This portion is algorithm specific Signature
     NSMutableSet *mpis = [NSMutableSet set];
@@ -134,19 +135,20 @@
 
 - (BOOL) readV4FromStream:(NSInputStream *)inputStream error:(NSError * __autoreleasing *)error
 {
-    NSMutableData *hashedData = [NSMutableData dataWithBytes:(UInt8[]){0x04} length:1];
+    NSMutableData *toHashData = [NSMutableData dataWithBytes:(UInt8[]){0x04} length:1]; // data to hash
+    
     //-->HASHED
     // One-octet signature type.
-    self.signatureType = [inputStream readUInt8BytesAppendTo:hashedData];
+    self.signatureType = [inputStream readUInt8BytesAppendTo:toHashData];
     
     // One-octet public-key algorithm.
-    self.publicKeyAlgorithm = [inputStream readUInt8BytesAppendTo:hashedData];
+    self.publicKeyAlgorithm = [inputStream readUInt8BytesAppendTo:toHashData];
     
     // One-octet hash algorithm.
-    self.hashAlgoritm = [inputStream readUInt8BytesAppendTo:hashedData];
+    self.hashAlgoritm = [inputStream readUInt8BytesAppendTo:toHashData];
 
     // Two-octet scalar octet count for following hashed subpacket data.
-    UInt16 hashedSubpacketsBytes = [inputStream readUInt16BytesAppendTo:hashedData];
+    UInt16 hashedSubpacketsBytes = [inputStream readUInt16BytesAppendTo:toHashData];
     UInt16 consumedBytes = 0;
     if (hashedSubpacketsBytes) {
         while (consumedBytes < hashedSubpacketsBytes) {
@@ -157,7 +159,7 @@
             }
             consumedBytes += subpacket.totalLength;
             self.hashedSubpackets = [self.hashedSubpackets arrayByAddingObject:subpacket];
-            [hashedData appendData:rawData];
+            [toHashData appendData:rawData];
         }
     }
     //-->HASHED
@@ -178,6 +180,7 @@
     
     // Two-octet field holding the left 16 bits of the signed hash value.
     UInt16 signedHashValue = [inputStream readUInt16];
+    self.hashValue = signedHashValue;
 
     // One or more multiprecision integers comprising the signature.
     NSMutableSet *mpis = [NSMutableSet set];

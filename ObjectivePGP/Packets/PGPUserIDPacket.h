@@ -11,5 +11,5 @@
 @interface PGPUserIDPacket : NSObject
 @property (copy) NSString *userID;
 
-+ (instancetype) readFromStream:(NSInputStream *)inputStream length:(NSUInteger)length error:(NSError * __autoreleasing *)error;
++ (instancetype) readFromStream:(NSInputStream *)inputStream maxLength:(NSUInteger)length error:(NSError * __autoreleasing *)error;
 @end

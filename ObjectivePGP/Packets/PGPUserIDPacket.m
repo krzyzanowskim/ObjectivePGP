@@ -11,7 +11,7 @@
 
 @implementation PGPUserIDPacket
 
-+ (instancetype) readFromStream:(NSInputStream *)inputStream length:(NSUInteger)length error:(NSError * __autoreleasing *)error
++ (instancetype) readFromStream:(NSInputStream *)inputStream maxLength:(NSUInteger)length error:(NSError * __autoreleasing *)error
 {
     PGPUserIDPacket *packet = [[PGPUserIDPacket alloc] init];
     

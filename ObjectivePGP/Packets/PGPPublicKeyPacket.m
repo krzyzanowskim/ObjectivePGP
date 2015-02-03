@@ -17,14 +17,25 @@
 
 @implementation PGPPublicKeyPacket
 
-+ (instancetype) readFromStream:(NSInputStream *)inputStream error:(NSError * __autoreleasing *)error
++ (instancetype) readFromStream:(NSInputStream *)inputStream maxLength:(NSUInteger)maxLength error:(NSError * __autoreleasing *)error
 {
+//    // read packet body at once
+//    Byte bytes[maxLength];
+//    if ([stream read:bytes maxLength:maxLength] == -1) {
+//        if (error) {
+//            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Can't read from stream"}];
+//        }
+//        return nil;
+//    }
+//    
+//    NSInputStream *inputStream = [NSInputStream inputStreamWithData:[NSData dataWithBytes:bytes length:sizeof(bytes)]];
     PGPPublicKeyPacket *packet = [[PGPPublicKeyPacket alloc] init];
     
     // A one-octet version number
     UInt8 version = [inputStream readUInt8];
-    NSAssert(version >= 3 && version <= 4, @"Version not supported");
-    if (version < 3 && version > 4) {
+    packet.version = version;
+    NSAssert(version >= 0x03 && version <= 0x04, @"Version not supported");
+    if (version < 0x03 && version > 0x04) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Version %@ not supported", @(version)]}];
         }
@@ -43,6 +54,7 @@
         // A two-octet number denoting the time in days that this key is
         // valid.  If this number is zero, then it does not expire.
         UInt16 validityPeriod = [inputStream readUInt16];
+        packet.validityPeriod = validityPeriod;
     }
     
     // A one-octet number denoting the public-key algorithm of this key.
@@ -118,5 +130,35 @@
     packet.MPIs = [mpis copy];
     return packet;
 }
+
+//TODO: to be done too
+//- (NSData *) buildKeyBodyData:(NSUInteger)version validityPeriod:(NSUInteger)validityPeriod keyAlgorithm:(PGPPublicKeyAlgorithm)keyAlgorithm error:(NSError * __autoreleasing *)error
+//{
+//    NSMutableData *data = [NSMutableData dataWithCapacity:128];
+//    [data appendBytes:&version length:1];
+//    
+//    UInt32 timestamp = [self.createDate timeIntervalSince1970];
+//    UInt32 timestampBE = CFSwapInt32HostToBig(timestamp);
+//    [data appendBytes:&timestampBE length:4];
+//    
+//    if (version == 0x03) {
+//        // implementation MUST NOT generate a V3 key, but MAY accept it.
+//        // however it have to be generated here to calculate the very same fingerprint
+//        UInt16 V3ValidityPeriodBE = CFSwapInt16HostToBig(validityPeriod);
+//        [data appendBytes:&V3ValidityPeriodBE length:2];
+//    }
+//    
+//    [data appendBytes:&_keyAlgorithm length:1];
+//    
+//    // publicMPI is allways available, no need to decrypt
+//    for (PGPMPI *mpi in self.MPIs) {
+//        NSOutputStream *outputStream = [NSOutputStream outputStreamToMemory];
+//        [outputStream open];
+//        [mpi writeToStream:outputStream error:error];
+//        [outputStream close];
+//        [data appendData:[outputStream propertyForKey:NSStreamDataWrittenToMemoryStreamKey]];
+//    }
+//    return [data copy];
+//}
 
 @end

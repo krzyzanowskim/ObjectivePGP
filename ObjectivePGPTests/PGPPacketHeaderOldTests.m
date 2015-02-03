@@ -39,6 +39,16 @@
     XCTAssertNotNil(header);
     XCTAssertEqual(header.packetTag, PGPSignaturePacketTag);
     XCTAssertEqual(header.bodyLength, 0x10);
+    
+    NSOutputStream *outputStream = [NSOutputStream outputStreamToMemory];
+    [outputStream open];
+    XCTAssertTrue([header writeToStream:outputStream error:&error]);
+    XCTAssertNil(error);
+    NSData *data = [outputStream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
+    XCTAssertNotNil(data);
+    XCTAssertEqualObjects([NSData dataWithBytes:headerBytes length:sizeof(headerBytes)], data);
+    
+    [outputStream close];
 }
 
 - (void)testOldHeader1 {

@@ -43,10 +43,10 @@ typedef NS_ENUM(UInt8, PGPSignatureType) {
 
 @interface PGPSignaturePacket : NSObject
 @property (assign) PGPSignatureType signatureType;
-//@property (strong) NSData *keyID; // 8 bytes long
 @property (strong) NSDate *creationDate;
 @property (assign) PGPPublicKeyAlgorithm publicKeyAlgorithm;
 @property (assign) PGPHashAlgorithm hashAlgoritm;
+@property (assign) UInt16 hashValue;
 @property (strong) NSSet *MPIs; // key algorithm specific MPIs
 
 + (instancetype) readFromStream:(NSInputStream *)inputStream error:(NSError * __autoreleasing *)error;

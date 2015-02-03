@@ -9,7 +9,25 @@
 //
 
 #import "PGPKey.h"
+#import "PGPFunctions.h"
 
 @implementation PGPKey
+
+- (instancetype)initWithPacket:(PGPPublicKeyPacket *)packet
+{
+    if (self = [super init]) {
+        NSAssert([packet isKindOfClass:[PGPPublicKeyPacket class]], @"Invalid class");
+        [self calculateFingerprint];
+        _packet = packet;
+    }
+    return self;
+}
+
+- (void) calculateFingerprint
+{
+    // build key as old style packet
+    
+    //_hashedData = [keyData pgp_SHA1];
+}
 
 @end
