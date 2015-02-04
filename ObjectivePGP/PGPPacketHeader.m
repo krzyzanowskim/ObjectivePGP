@@ -9,6 +9,7 @@
 #import "PGPPacketHeader.h"
 #import "PGPCommon.h"
 #import "NSInputStream+PGP.h"
+#import "PGPFunctions.h"
 
 typedef NS_ENUM(NSUInteger, PGPHeaderPacketTag) {
     PGPHeaderPacketTagNewFormat  = 0x40,
@@ -59,6 +60,12 @@ typedef NS_ENUM(NSUInteger, PGPHeaderPacketTag) {
         if (self.isPartial) {
             int shift = (int)log2(self.bodyLength);
             UInt8 partialOctet = shift | 224;
+            if (!isPowerOfTwo(self.bodyLength)) {
+                if (error) {
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Partial length have to be power of two"}];
+                }
+                return NO;
+            }
             [lengthData appendBytes:&partialOctet length:1];
         } else if (self.bodyLength < 192) {
             [lengthData appendBytes:&_bodyLength length:1];
@@ -88,13 +95,11 @@ typedef NS_ENUM(NSUInteger, PGPHeaderPacketTag) {
         packetTag |= self.packetTag << 2;
         // determine length type 0-1 bit
         UInt8 lengthType = 0;
-        if (self.isPartial) {
+        if (self.isPartial || self.bodyLength == PGPIndeterminateLength) {
             // The packet is of indeterminate length.  The header is 1 octet
             // long, and the implementation must determine how long the packet
             // is.
             lengthType = 3;
-            [lengthData appendBytes:(UInt8[]){0x00} length:1];
-            self.bodyLength = PGPIndeterminateLength;
         } else if (self.bodyLength <= UINT8_MAX) {
             lengthType = 0;
             [lengthData appendBytes:&_bodyLength length:1];
@@ -167,8 +172,6 @@ typedef NS_ENUM(NSUInteger, PGPHeaderPacketTag) {
 
 - (BOOL) readOldLengthFromStream:(NSInputStream *)inputStream lengthType:(UInt8)lengthType error:(NSError * __autoreleasing *)error
 {
-    self.isNew = NO;
-    
     switch (lengthType) {
         case 0:
             self.bodyLength = [inputStream readUInt8];

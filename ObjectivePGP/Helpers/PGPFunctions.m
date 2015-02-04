@@ -69,3 +69,8 @@ NSUInteger pgpNumBits(Byte *bytes, NSUInteger maxLength)
     
     return idxFirst + ((maxLength - 1 - i) * 8);
 }
+
+NSInteger isPowerOfTwo (NSUInteger x)
+{
+    return ((x != 0) && !(x & (x - 1)));
+}

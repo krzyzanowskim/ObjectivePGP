@@ -26,6 +26,20 @@
     [super tearDown];
 }
 
+- (NSData *) checkOutput:(PGPPacketHeader *)header expectedBytes:(const UInt8 *)expectedBytes length:(NSUInteger)length
+{
+    NSError *error;
+    NSOutputStream *outputStream = [NSOutputStream outputStreamToMemory];
+    [outputStream open];
+    XCTAssertTrue([header writeToStream:outputStream error:&error]);
+    XCTAssertNil(error);
+    NSData *data = [outputStream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
+    XCTAssertNotNil(data);
+    XCTAssertEqualObjects([NSData dataWithBytes:expectedBytes length:length], data);
+    [outputStream close];
+    return data;
+}
+
 - (void)testOldHeader0 {
     UInt8 headerBytes[] = {0x88, 0x10};
     NSError *error;
@@ -39,16 +53,8 @@
     XCTAssertNotNil(header);
     XCTAssertEqual(header.packetTag, PGPSignaturePacketTag);
     XCTAssertEqual(header.bodyLength, 0x10);
-    
-    NSOutputStream *outputStream = [NSOutputStream outputStreamToMemory];
-    [outputStream open];
-    XCTAssertTrue([header writeToStream:outputStream error:&error]);
-    XCTAssertNil(error);
-    NSData *data = [outputStream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
-    XCTAssertNotNil(data);
-    XCTAssertEqualObjects([NSData dataWithBytes:headerBytes length:sizeof(headerBytes)], data);
-    
-    [outputStream close];
+
+    [self checkOutput:header expectedBytes:headerBytes length:sizeof(headerBytes)];
 }
 
 - (void)testOldHeader1 {
@@ -64,6 +70,8 @@
     XCTAssertNotNil(header);
     XCTAssertEqual(header.packetTag, PGPSignaturePacketTag);
     XCTAssertEqual(header.bodyLength, 0x1010);
+    
+    [self checkOutput:header expectedBytes:headerBytes length:sizeof(headerBytes)];
 }
 
 - (void)testOldHeader2 {
@@ -79,6 +87,8 @@
     XCTAssertNotNil(header);
     XCTAssertEqual(header.packetTag, PGPSignaturePacketTag);
     XCTAssertEqual(header.bodyLength, 0x10101010);
+
+    [self checkOutput:header expectedBytes:headerBytes length:sizeof(headerBytes)];
 }
 
 - (void)testOldHeaderIndeterminateLength {
@@ -94,6 +104,9 @@
     XCTAssertNotNil(header);
     XCTAssertEqual(header.packetTag, PGPSignaturePacketTag);
     XCTAssertEqual(header.bodyLength, PGPIndeterminateLength);
+    XCTAssertTrue(header.isPartial);
+    
+    [self checkOutput:header expectedBytes:headerBytes length:1];
 }
 
 @end
