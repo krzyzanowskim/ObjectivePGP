@@ -7,6 +7,8 @@
 //
 
 #import "PGPUserIDPacket.h"
+#import "NSInputStream+PGP.h"
+#import "NSOutputStream+PGP.h"
 #import "PGPCommon.h"
 
 @implementation PGPUserIDPacket
@@ -15,7 +17,7 @@
 {
     PGPUserIDPacket *packet = [[PGPUserIDPacket alloc] init];
     
-    UInt8 *buffer = calloc(1, length);
+    UInt8 buffer[length];
     NSInteger result = [inputStream read:buffer maxLength:length];
     if (result < 0 || result < length) {
         if (error) {
@@ -28,8 +30,30 @@
 
     // forget buffer
     memset(buffer, arc4random(), length);
-    free(buffer);
 
     return packet;
 }
+
+- (BOOL) writeToStream:(NSOutputStream *)outputStream error:(NSError * __autoreleasing *)error
+{
+    NSParameterAssert(outputStream);
+    
+    NSUInteger maxLength = [self.userID lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+    void *buffer = calloc(1, maxLength);
+    [self.userID getBytes:buffer
+                maxLength:maxLength
+               usedLength:nil
+                 encoding:NSUTF8StringEncoding
+                  options:NSStringEncodingConversionAllowLossy
+                    range:NSMakeRange(0, self.userID.length)
+           remainingRange:nil];
+    
+    [outputStream write:buffer maxLength:[self.userID lengthOfBytesUsingEncoding:NSUTF8StringEncoding]];
+
+    memset(buffer, arc4random(), maxLength);
+    free(buffer);
+    
+    return YES;
+}
+
 @end

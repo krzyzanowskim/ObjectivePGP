@@ -20,16 +20,6 @@
 
 + (instancetype) readFromStream:(NSInputStream *)inputStream maxLength:(NSUInteger)maxLength error:(NSError * __autoreleasing *)error
 {
-//    // read packet body at once
-//    Byte bytes[maxLength];
-//    if ([stream read:bytes maxLength:maxLength] == -1) {
-//        if (error) {
-//            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Can't read from stream"}];
-//        }
-//        return nil;
-//    }
-//    
-//    NSInputStream *inputStream = [NSInputStream inputStreamWithData:[NSData dataWithBytes:bytes length:sizeof(bytes)]];
     PGPPublicKeyPacket *packet = [[PGPPublicKeyPacket alloc] init];
     
     // A one-octet version number
