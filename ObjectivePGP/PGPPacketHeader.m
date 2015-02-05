@@ -23,6 +23,8 @@ typedef NS_ENUM(NSUInteger, PGPHeaderPacketTag) {
 
 + (instancetype) readFromStream:(NSInputStream *)inputStream error:(NSError * __autoreleasing *)error
 {
+    NSParameterAssert(inputStream);
+    
     UInt8 headerByte;
     PGPPacketHeader *header = nil;
     if ([inputStream read:&headerByte maxLength:sizeof(headerByte)] > 0) {
@@ -45,6 +47,7 @@ typedef NS_ENUM(NSUInteger, PGPHeaderPacketTag) {
 
 - (BOOL) writeToStream:(NSOutputStream *)outputStream error:(NSError * __autoreleasing *)error
 {
+    NSParameterAssert(outputStream);
     if (!outputStream.hasSpaceAvailable) {
         return NO;
     }

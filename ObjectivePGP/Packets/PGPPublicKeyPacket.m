@@ -13,6 +13,7 @@
 #import "PGPPublicKeyPacket.h"
 #import "PGPCommon.h"
 #import "NSInputStream+PGP.h"
+#import "NSOutputStream+PGP.h"
 #import "PGPMPI.h"
 
 @implementation PGPPublicKeyPacket
@@ -44,8 +45,6 @@
     
     // A four-octet number denoting the time that the key was created.
     UInt32 timestamp = [inputStream readUInt32];
-    //TODO: why no byte swap here?
-    //timestamp = CFSwapInt32BigToHost(timestamp);
     if (timestamp) {
         packet.createDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
     }
@@ -131,34 +130,23 @@
     return packet;
 }
 
-//TODO: to be done too
-//- (NSData *) buildKeyBodyData:(NSUInteger)version validityPeriod:(NSUInteger)validityPeriod keyAlgorithm:(PGPPublicKeyAlgorithm)keyAlgorithm error:(NSError * __autoreleasing *)error
-//{
-//    NSMutableData *data = [NSMutableData dataWithCapacity:128];
-//    [data appendBytes:&version length:1];
-//    
-//    UInt32 timestamp = [self.createDate timeIntervalSince1970];
-//    UInt32 timestampBE = CFSwapInt32HostToBig(timestamp);
-//    [data appendBytes:&timestampBE length:4];
-//    
-//    if (version == 0x03) {
-//        // implementation MUST NOT generate a V3 key, but MAY accept it.
-//        // however it have to be generated here to calculate the very same fingerprint
-//        UInt16 V3ValidityPeriodBE = CFSwapInt16HostToBig(validityPeriod);
-//        [data appendBytes:&V3ValidityPeriodBE length:2];
-//    }
-//    
-//    [data appendBytes:&_keyAlgorithm length:1];
-//    
-//    // publicMPI is allways available, no need to decrypt
-//    for (PGPMPI *mpi in self.MPIs) {
-//        NSOutputStream *outputStream = [NSOutputStream outputStreamToMemory];
-//        [outputStream open];
-//        [mpi writeToStream:outputStream error:error];
-//        [outputStream close];
-//        [data appendData:[outputStream propertyForKey:NSStreamDataWrittenToMemoryStreamKey]];
-//    }
-//    return [data copy];
-//}
+- (BOOL) writeToStream:(NSOutputStream *)outputStream error:(NSError * __autoreleasing *)error
+{
+    NSParameterAssert(outputStream);
+    
+    [outputStream writeUInt8:self.version];
+    [outputStream writeUInt32:[self.createDate timeIntervalSince1970]];
+    if (self.version == 0x03) {
+        [outputStream writeUInt16:self.validityPeriod];
+    }
+    [outputStream writeUInt8:self.keyAlgorithm];
+    for (PGPMPI *mpi in self.MPIs) {
+        if (![mpi writeToStream:outputStream error:error]) {
+            return NO;
+        }
+    }
+    
+    return YES;
+}
 
 @end
