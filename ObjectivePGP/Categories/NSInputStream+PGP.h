@@ -18,4 +18,5 @@
 - (UInt32) readUInt32; // BE->LE
 - (UInt32) readUInt32:(UInt8 *)readBytes;
 - (UInt32) readUInt32BytesAppendTo:(NSMutableData *)data;
+- (NSData *) readDataLength:(NSUInteger)length;
 @end

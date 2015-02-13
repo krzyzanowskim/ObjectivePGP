@@ -23,7 +23,7 @@
     return self;
 }
 
-- (void) calculateFingerprint
+- (void) calculateFingerprint // aka PGPKeyID, right ?
 {
     // build key as old style packet
     

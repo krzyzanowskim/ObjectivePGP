@@ -42,4 +42,12 @@
     return YES;
 }
 
+- (BOOL) writeData:(NSData *)data
+{
+    if ([self write:data.bytes maxLength:data.length] == -1) {
+        return NO;
+    }
+    return YES;
+}
+
 @end

@@ -12,6 +12,7 @@
 
 #import "PGPSignaturePacket.h"
 #import "NSInputStream+PGP.h"
+#import "NSOutputStream+PGP.h"
 #import "PGPCommon.h"
 #import "PGPMPI.h"
 #import "PGPSignatureSubpacket.h"
@@ -28,17 +29,17 @@
     PGPSignaturePacket *packet = [[PGPSignaturePacket alloc] init];
     
     // One-octet version number
-    UInt8 version = [inputStream readUInt8];
+    packet.version = [inputStream readUInt8];
     
-    NSAssert(version == 3 || version == 4, @"Invalid version of signature packet");
-    if (version < 3 && version > 4) {
+    NSAssert(packet.version == 3 || packet.version == 4, @"Invalid version of signature packet");
+    if (packet.version < 3 && packet.version > 4) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Invalid version of signature packet"}];
         }
         return nil;
     }
     
-    switch (version) {
+    switch (packet.version) {
         case 0x03:
             [packet readV3FromStream:inputStream error:error];
             break;
@@ -72,13 +73,9 @@
     UInt32 timestamp = [inputStream readUInt32];
     self.creationDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
     
-    //TODO: Eight-octet Key ID of signer
-    UInt8 *keyIDBuffer = calloc(1, 8);
-    NSInteger readResult = [inputStream read:keyIDBuffer maxLength:8];
-    if (readResult > 0) {
-        NSData *keyID = [NSData dataWithBytes:keyIDBuffer length:readResult]; // 8 bytes long
-    }
-    free(keyIDBuffer);
+    //Eight-octet Key ID of signer
+    NSData *issuerKeyIDData = [inputStream readDataLength:8];
+    self.issuerKeyID = [[PGPKeyID alloc] initWithBytes:issuerKeyIDData.bytes length:issuerKeyIDData.length];
     
     // One-octet public-key algorithm.
     self.publicKeyAlgorithm = [inputStream readUInt8];
@@ -123,7 +120,7 @@
             if (error) {
                 *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Invalid public key algorithm. RSA or DSA expected."}];
             }
-            return nil;
+            return NO;
     }
     
     self.MPIs = [mpis copy];
@@ -225,7 +222,7 @@
             if (error) {
                 *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Invalid public key algorithm. RSA or DSA expected."}];
             }
-            return nil;
+            return NO;
     }
     
     self.MPIs = [mpis copy];
@@ -259,7 +256,58 @@
     return nil;
 }
 
+#pragma write - Output
 
+- (BOOL) writeToStream:(NSOutputStream *)outputStream error:(NSError * __autoreleasing *)error
+{
+    NSParameterAssert(outputStream);
+    
+    [outputStream writeUInt8:self.version];
+    switch (self.version) {
+        case 0x04:
+        {
+            [outputStream writeUInt8:self.signatureType];
+            [outputStream writeUInt8:self.publicKeyAlgorithm];
+            [outputStream writeUInt8:self.hashAlgoritm];
+            [outputStream writeUInt16:self.hashedSubpackets.count];
+            //TODO: hashed subpackets here
+            //TODO: Two-octet field holding the left 16 bits of the signed hash value.
+            [outputStream writeUInt16:self.hashValue]; //TODO: calculate hash first
+            NSAssert(self.hashValue != 0, @"Calculate hash");
+            [outputStream writeUInt16:self.unhashedSubpackets.count];
+            //TODO: unhashed subpackets here
+            for (PGPMPI *mpi in self.MPIs) {
+                if (![mpi writeToStream:outputStream error:error]) {
+                    return NO;
+                }
+            }
+        }
+        break;
+        case 0x03:
+        {
+            [outputStream writeUInt8:0x05];
+            [outputStream writeUInt8:self.signatureType];
+            [outputStream writeUInt32:[self.creationDate timeIntervalSince1970]];
+            
+            NSAssert(self.issuerKeyID, @"Missing issued key id");
+            [outputStream writeData:self.issuerKeyID.octetsData];
+            
+            [outputStream writeUInt16:self.hashValue];
+            NSAssert(self.hashValue != 0, @"Calculate hash");
+            
+            for (PGPMPI *mpi in self.MPIs) {
+                if (![mpi writeToStream:outputStream error:error]) {
+                    return NO;
+                }
+            }
+        }
+        default:
+        break;
+    }
+    
+    
+    return YES;
+}
 
 #pragma mark - Properties
 

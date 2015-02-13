@@ -96,4 +96,16 @@
     return 0;
 }
 
+- (NSData *) readDataLength:(NSUInteger)length
+{
+    NSData *output = nil;
+    UInt8 buffer[length];
+    NSInteger readResult = [self read:buffer maxLength:length];
+    if (readResult > 0) {
+        output = [NSData dataWithBytes:buffer length:readResult]; // 8 bytes long
+    }
+    free(buffer);
+    return output;
+}
+
 @end

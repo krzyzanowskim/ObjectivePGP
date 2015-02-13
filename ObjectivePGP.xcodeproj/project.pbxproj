@@ -449,6 +449,7 @@
 			baseConfigurationReference = 92AB78D2428FF47CA4E3EEE9 /* Pods-ObjectivePGP.debug.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -471,6 +472,7 @@
 			baseConfigurationReference = 342510E82279C69DE5EEF7FD /* Pods-ObjectivePGP.release.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",

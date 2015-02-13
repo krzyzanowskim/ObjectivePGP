@@ -37,7 +37,7 @@
     
     // read stream
     PGPKey *contextKey = nil;
-    PGPUserIDPacket *contextUserIDPacket = nil;
+    PGPUser *contextUserID = nil;
     
     while (inputStream.hasBytesAvailable && inputStream.streamStatus != NSStreamStatusAtEnd) {
         id parsedPacket = nil;
@@ -68,7 +68,7 @@
                     //TODO: flow is not finished!
                     // re-start key context
                     contextKey = nil;
-                    contextUserIDPacket = nil;
+                    contextUserID = nil;
                     
                     if (header.packetTag == PGPPublicKeyPacketTag) {
                         PGPKey *key = [[PGPKey alloc] initWithPacket:packet];
@@ -98,7 +98,7 @@
                     // belief that this public key belongs to the user identified by this
                     // User ID.
                     
-                    if (contextKey && contextUserIDPacket) {
+                    if (contextKey && contextUserID) {
                         PGPSignaturePacket *packet = [PGPSignaturePacket readFromStream:inputStream error:error];
                         NSAssert(packet, @"Missing or invalid packet %@", *error);
                         if (!packet) {
@@ -106,17 +106,20 @@
                         }
                         PGPSignature *signature = [[PGPSignature alloc] initWithPacket:packet];
                         switch (signature.type) {
-                            case PGPSignatureGenericCertificationUserIDandPublicKey:
-                            case PGPSignatureCasualCertificationUserIDandPublicKey:
-                            case PGPSignaturePositiveCertificationUserIDandPublicKey:
-                            case PGPSignaturePersonalCertificationUserIDandPublicKey:
-                                //if ([signature.issuerKeyID isEqualToKeyID:contextKey.packet.keyAlgorithm];
+                            case PGPSignatureGenericCertificationUserIDandPublicKey:  // 0x10
+                            case PGPSignaturePersonalCertificationUserIDandPublicKey: // 0x11
+                            case PGPSignatureCasualCertificationUserIDandPublicKey:   // 0x12
+                            case PGPSignaturePositiveCertificationUserIDandPublicKey: // 0x13
+                                if (!contextUserID) {
+                                    continue;
+                                }
+                                
                                 break;
                                 
                             default:
                                 break;
                         }
-                        NSLog(@"Signature for UserID %@",contextUserIDPacket.userID);
+                        NSLog(@"Signature for UserID %@",contextUserID.userID);
                     }
                 }
                 break;
@@ -139,7 +142,7 @@
                         contextKey.users = [contextKey.users arrayByAddingObject:user];
                     }
                     
-                    contextUserIDPacket = packet;
+                    contextUserID = [[PGPUser alloc] initWithPacket:packet];
                     parsedPacket = packet;
                 }
                 break;
