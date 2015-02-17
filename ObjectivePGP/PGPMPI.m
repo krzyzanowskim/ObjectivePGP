@@ -14,6 +14,8 @@
 #import "PGPCommon.h"
 #import "PGPFunctions.h"
 #import "NSInputStream+PGP.h"
+#import "NSOutputStream+PGP.h"
+#import "NSMutableData+PGP.h"
 #import <CommonCrypto/CommonCrypto.h>
 
 @implementation PGPMPI
@@ -56,19 +58,21 @@
         return NO;
     }
     
+    NSData *mpiData = [self buildData:error];
+    if (!mpiData || *error) {
+        return NO;
+    }
+    
+    return [outputStream writeData:mpiData];
+}
+
+- (NSData *) buildData:(NSError * __autoreleasing *)error
+{
     NSData *data = [PGPMPI buildMPIForData:self.data error:error];
     if (!data || *error) {
-        return NO;
+        return nil;
     }
-    
-    if ([outputStream write:data.bytes maxLength:data.length] == -1) {
-        if (error && outputStream.streamError) {
-            *error = [outputStream.streamError copy];
-        }
-        return NO;
-    }
-    
-    return YES;
+    return data;
 }
 
 #pragma mark - Private

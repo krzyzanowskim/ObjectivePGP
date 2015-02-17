@@ -14,5 +14,6 @@
 
 + (instancetype) readFromStream:(NSInputStream *)inputStream error:(NSError * __autoreleasing *)error;
 - (BOOL) writeToStream:(NSOutputStream *)outputStream error:(NSError * __autoreleasing *)error;
+- (NSData *) buildData:(NSError * __autoreleasing *)error;
 
 @end

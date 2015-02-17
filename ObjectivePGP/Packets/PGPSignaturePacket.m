@@ -307,15 +307,9 @@
             
 
             // MPI
-            NSOutputStream *mpiStream = [NSOutputStream outputStreamToMemory];
-            [mpiStream open];
             for (PGPMPI *mpi in self.MPIs) {
-                if (![mpi writeToStream:mpiStream error:error]) {
-                    return nil;
-                }
+                [outputData appendData:[mpi buildData:error]];
             }
-            [mpiStream close];
-            [outputData appendData:[mpiStream propertyForKey:NSStreamDataWrittenToMemoryStreamKey]];
         }
         break;
         case 0x03:
