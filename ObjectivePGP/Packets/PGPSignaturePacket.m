@@ -274,7 +274,7 @@
             if (self.hashedSubpackets.count > 0) {
                 NSMutableData *subpacketsData = [NSMutableData dataWithCapacity:256];
                 for (PGPSignatureSubpacket *subpacket in self.hashedSubpackets) {
-                    [subpacket appendToData:subpacketsData error:error];
+                    [subpacketsData appendData:[subpacket buildData:error]];
                 }
                 [outputData appendUInt16BE:subpacketsData.length];
                 [outputData appendData:subpacketsData];
@@ -284,7 +284,7 @@
             if (self.unhashedSubpackets.count > 0) {
                 NSMutableData *subpacketsData = [NSMutableData dataWithCapacity:256];
                 for (PGPSignatureSubpacket *subpacket in self.unhashedSubpackets) {
-                    [subpacket appendToData:subpacketsData error:error];
+                    [subpacketsData appendData:[subpacket buildData:error]];
                 }
                 [outputData appendUInt16BE:subpacketsData.length];
                 [outputData appendData:subpacketsData];

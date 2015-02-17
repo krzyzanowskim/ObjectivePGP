@@ -255,22 +255,16 @@
     return subpacket;
 }
 
-- (BOOL) appendToData:(NSMutableData *)outputData error:(NSError *__autoreleasing *)error
+- (BOOL) writeToStream:(NSOutputStream *)outputStream error:(NSError *__autoreleasing *)error
 {
-    NSOutputStream *stream = [NSOutputStream outputStreamToMemory];
-    [stream open];
-    BOOL res = [self writeToStream:stream error:error];
-    [stream close];
-    if (!res || *error) {
+    NSData *subpacketData = [self buildData:error];
+    if (!subpacketData || *error) {
         return NO;
     }
-    
-    NSData *streamData = [stream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
-    [outputData appendData:streamData];
-    return res;
+    return [outputStream writeData:subpacketData];
 }
 
-- (BOOL) writeToStream:(NSOutputStream *)outputStream error:(NSError *__autoreleasing *)error
+- (NSData *) buildData:(NSError *__autoreleasing *)error
 {
     NSMutableData *bodyData = [NSMutableData dataWithCapacity:self.totalLength];
     if (self.critical) {
@@ -365,10 +359,12 @@
     }
     
     NSData *lengthData = buildNewFormatLengthBytesForData(bodyData);
+    
+    // build final data
     NSMutableData *outputData = [NSMutableData data];
     [outputData appendData:lengthData];
     [outputData appendData:bodyData];
-    return [outputStream writeData:outputData];
+    return [outputData copy];
 }
 
 
