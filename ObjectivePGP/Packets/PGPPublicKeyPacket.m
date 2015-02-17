@@ -15,6 +15,7 @@
 #import "NSInputStream+PGP.h"
 #import "NSOutputStream+PGP.h"
 #import "PGPMPI.h"
+#import "NSMutableData+PGP.h"
 
 @implementation PGPPublicKeyPacket
 
@@ -123,20 +124,35 @@
 - (BOOL) writeToStream:(NSOutputStream *)outputStream error:(NSError * __autoreleasing *)error
 {
     NSParameterAssert(outputStream);
-    
-    [outputStream writeUInt8:self.version];
-    [outputStream writeUInt32BE:[self.createDate timeIntervalSince1970]];
-    if (self.version == 0x03) {
-        [outputStream writeUInt16BE:self.validityPeriod];
+    NSData *packetData = [self buildData:error];
+    if (!packetData || *error) {
+        return NO;
     }
-    [outputStream writeUInt8:self.keyAlgorithm];
+    return [outputStream writeData:packetData];
+}
+
+- (NSData *) buildData:(NSError * __autoreleasing *)error
+{
+    NSMutableData *outputData = [NSMutableData dataWithCapacity:256];
+    
+    [outputData appendUInt8:self.version];
+    [outputData appendUInt32BE:[self.createDate timeIntervalSince1970]];
+    if (self.version == 0x03) {
+        [outputData appendUInt16BE:self.validityPeriod];
+    }
+    [outputData appendUInt8:self.keyAlgorithm];
+    
+    NSOutputStream *mpiStream = [NSOutputStream outputStreamToMemory];
+    [mpiStream open];
     for (PGPMPI *mpi in self.MPIs) {
-        if (![mpi writeToStream:outputStream error:error]) {
-            return NO;
+        if (![mpi writeToStream:mpiStream error:error]) {
+            return nil;
         }
     }
+    [mpiStream close];
+    [outputData appendData:[mpiStream propertyForKey:NSStreamDataWrittenToMemoryStreamKey]];
     
-    return YES;
+    return [outputData copy];
 }
 
 @end

@@ -41,5 +41,6 @@ typedef NS_ENUM(UInt8, PGPPublicKeyAlgorithm) {
 
 + (instancetype) readFromStream:(NSInputStream *)inputStream maxLength:(NSUInteger)maxLength error:(NSError * __autoreleasing *)error;
 - (BOOL) writeToStream:(NSOutputStream *)outputStream error:(NSError * __autoreleasing *)error;
+- (NSData *) buildData:(NSError * __autoreleasing *)error;
 
 @end

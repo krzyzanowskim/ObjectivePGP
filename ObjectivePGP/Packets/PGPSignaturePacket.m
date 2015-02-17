@@ -255,9 +255,19 @@
 - (BOOL) writeToStream:(NSOutputStream *)outputStream error:(NSError * __autoreleasing *)error
 {
     NSParameterAssert(outputStream);
+    NSData *packetData = [self buildData:error];
+    if (!packetData || *error) {
+        return NO;
+    }
+    
+    return [outputStream writeData:packetData];
+}
+
+- (NSData *) buildData:(NSError * __autoreleasing *)error
+{
     if (self.version == 0x03 && error) {
         *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Can't export signature with version 0x03"}];
-        return NO;
+        return nil;
     }
     
     NSMutableData *outputData = [NSMutableData data];
@@ -301,7 +311,7 @@
             [mpiStream open];
             for (PGPMPI *mpi in self.MPIs) {
                 if (![mpi writeToStream:mpiStream error:error]) {
-                    return NO;
+                    return nil;
                 }
             }
             [mpiStream close];
@@ -312,13 +322,13 @@
         {
             //TODO: Export V3 Signature
             NSAssert(false, @"Can't export version 0x03");
-            return NO;
+            return nil;
         }
         default:
         break;
     }
     
-    return [outputStream writeData:outputData];
+    return [outputData copy];
 }
 
 #pragma mark - Properties
