@@ -16,6 +16,7 @@
 #import "PGPCommon.h"
 #import "PGPMPI.h"
 #import "PGPSignatureSubpacket.h"
+#import "NSMutableData+PGP.h"
 
 @interface PGPSignaturePacket ()
 @property (copy, nonatomic) NSArray *hashedSubpackets;
@@ -233,13 +234,6 @@
     return YES;
 }
 
-
-//TODO: export key data
-//- (NSData *) calculateHashOfData:(NSData *)hashedData withAlgorithm:(PGPHashAlgorithm)algorithm
-//{
-//    return nil;
-//}
-
 - (id) valueOfSubacketOfType:(PGPSignatureSubpacketType)type found:(BOOL *)isFound
 {
     for (PGPSignatureSubpacket *subpacket in [self.hashedSubpackets arrayByAddingObjectsFromArray:self.unhashedSubpackets]) {
@@ -261,52 +255,70 @@
 - (BOOL) writeToStream:(NSOutputStream *)outputStream error:(NSError * __autoreleasing *)error
 {
     NSParameterAssert(outputStream);
+    if (self.version == 0x03 && error) {
+        *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Can't export signature with version 0x03"}];
+        return NO;
+    }
     
-    [outputStream writeUInt8:self.version];
+    NSMutableData *outputData = [NSMutableData data];
+    
+    [outputData appendUInt8:self.version];
     switch (self.version) {
         case 0x04:
         {
-            [outputStream writeUInt8:self.signatureType];
-            [outputStream writeUInt8:self.publicKeyAlgorithm];
-            [outputStream writeUInt8:self.hashAlgoritm];
-            [outputStream writeUInt16BE:self.hashedSubpackets.count];
-            //TODO: hashed subpackets here
-            //TODO: Two-octet field holding the left 16 bits of the signed hash value.
-            [outputStream writeUInt16BE:self.hashValue]; //TODO: calculate hash first
+            [outputData appendUInt8:self.signatureType];
+            [outputData appendUInt8:self.publicKeyAlgorithm];
+            [outputData appendUInt8:self.hashAlgoritm];
+            
+            // hashed subpackets
+            if (self.hashedSubpackets.count > 0) {
+                NSMutableData *subpacketsData = [NSMutableData dataWithCapacity:256];
+                for (PGPSignatureSubpacket *subpacket in self.hashedSubpackets) {
+                    [subpacket appendToData:subpacketsData error:error];
+                }
+                [outputData appendUInt16BE:subpacketsData.length];
+                [outputData appendData:subpacketsData];
+            }
+            
+            // unhashed subpackets
+            if (self.unhashedSubpackets.count > 0) {
+                NSMutableData *subpacketsData = [NSMutableData dataWithCapacity:256];
+                for (PGPSignatureSubpacket *subpacket in self.unhashedSubpackets) {
+                    [subpacket appendToData:subpacketsData error:error];
+                }
+                [outputData appendUInt16BE:subpacketsData.length];
+                [outputData appendData:subpacketsData];
+            } else {
+                [outputData appendUInt16BE:0x0000];
+            }
+
             NSAssert(self.hashValue != 0, @"Calculate hash");
-            [outputStream writeUInt16BE:self.unhashedSubpackets.count];
-            //TODO: unhashed subpackets here
+            [outputData appendUInt16BE:self.hashValue]; //Two-octet field holding the left 16 bits of the signed hash value.
+            
+
+            // MPI
+            NSOutputStream *mpiStream = [NSOutputStream outputStreamToMemory];
+            [mpiStream open];
             for (PGPMPI *mpi in self.MPIs) {
-                if (![mpi writeToStream:outputStream error:error]) {
+                if (![mpi writeToStream:mpiStream error:error]) {
                     return NO;
                 }
             }
+            [mpiStream close];
+            [outputData appendData:[mpiStream propertyForKey:NSStreamDataWrittenToMemoryStreamKey]];
         }
         break;
         case 0x03:
         {
-            [outputStream writeUInt8:0x05];
-            [outputStream writeUInt8:self.signatureType];
-            [outputStream writeUInt32BE:[self.creationDate timeIntervalSince1970]];
-            
-            NSAssert(self.issuerKeyID, @"Missing issued key id");
-            [outputStream writeData:self.issuerKeyID.octetsData];
-            
-            [outputStream writeUInt16BE:self.hashValue];
-            NSAssert(self.hashValue != 0, @"Calculate hash");
-            
-            for (PGPMPI *mpi in self.MPIs) {
-                if (![mpi writeToStream:outputStream error:error]) {
-                    return NO;
-                }
-            }
+            //TODO: Export V3 Signature
+            NSAssert(false, @"Can't export version 0x03");
+            return NO;
         }
         default:
         break;
     }
     
-    
-    return YES;
+    return [outputStream writeData:outputData];
 }
 
 #pragma mark - Properties

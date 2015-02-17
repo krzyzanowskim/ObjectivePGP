@@ -72,6 +72,7 @@
     
     NSError *error;
     PGPPacketHeader *header = [PGPPacketHeader readFromStream:stream error:&error];
+    XCTAssertNil(error);
     XCTAssertEqual(header.bodyLength, 317);
     PGPSignaturePacket *packet = [PGPSignaturePacket readFromStream:stream error:&error];
     XCTAssertEqual(packet.signatureType, PGPSignaturePositiveCertificationUserIDandPublicKey);
@@ -80,6 +81,16 @@
     XCTAssertEqual(packet.hashValue, 7833);
     XCTAssertEqualObjects(packet.creationDate, [NSDate dateWithTimeIntervalSince1970:1401855676]);
     [stream close];
+    
+    // check output
+    NSOutputStream *outputStream = [NSOutputStream outputStreamToMemory];
+    [outputStream open];
+    XCTAssertTrue([packet writeToStream:outputStream error:&error]);
+    XCTAssertNil(error);
+    [outputStream close];
+    NSData *outputData = [outputStream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
+    XCTAssertEqualObjects(outputData, [NSData dataWithBytes:signature+3 length:sizeof(signature)-3]);
+    
 }
 
 @end

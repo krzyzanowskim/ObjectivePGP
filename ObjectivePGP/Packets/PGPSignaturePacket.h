@@ -54,6 +54,7 @@ typedef NS_ENUM(UInt8, PGPSignatureType) {
 @property (strong) PGPKeyID *issuerKeyID;
 
 + (instancetype) readFromStream:(NSInputStream *)inputStream error:(NSError * __autoreleasing *)error;
+- (BOOL) writeToStream:(NSOutputStream *)outputStream error:(NSError * __autoreleasing *)error;
 - (id) valueOfSubacketOfType:(PGPSignatureSubpacketType)type found:(BOOL *)isFound;
 
 @end

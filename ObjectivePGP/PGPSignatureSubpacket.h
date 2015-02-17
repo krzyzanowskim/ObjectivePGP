@@ -47,4 +47,5 @@ typedef NS_ENUM(UInt8, PGPKeyServerPreferenceFlags) {
 
 + (instancetype) readFromStream:(NSInputStream *)inputStream data:(NSData * __autoreleasing *)readData error:(NSError * __autoreleasing *)error;
 - (BOOL) writeToStream:(NSOutputStream *)outputStream error:(NSError *__autoreleasing *)error;
+- (BOOL) appendToData:(NSMutableData *)outputData error:(NSError *__autoreleasing *)error;
 @end

@@ -21,6 +21,11 @@
 
 @implementation PGPSignatureSubpacket
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"%@ type %@", [super description], @(self.type)];
+}
+
 + (instancetype) readFromStream:(NSInputStream *)inputStream data:(NSData * __autoreleasing *)readData error:(NSError * __autoreleasing *)error
 {
     PGPSignatureSubpacket *subpacket = [[PGPSignatureSubpacket alloc] init];
@@ -250,6 +255,21 @@
     return subpacket;
 }
 
+- (BOOL) appendToData:(NSMutableData *)outputData error:(NSError *__autoreleasing *)error
+{
+    NSOutputStream *stream = [NSOutputStream outputStreamToMemory];
+    [stream open];
+    BOOL res = [self writeToStream:stream error:error];
+    [stream close];
+    if (!res || *error) {
+        return NO;
+    }
+    
+    NSData *streamData = [stream propertyForKey:NSStreamDataWrittenToMemoryStreamKey];
+    [outputData appendData:streamData];
+    return res;
+}
+
 - (BOOL) writeToStream:(NSOutputStream *)outputStream error:(NSError *__autoreleasing *)error
 {
     NSMutableData *bodyData = [NSMutableData dataWithCapacity:self.totalLength];
@@ -345,9 +365,10 @@
     }
     
     NSData *lengthData = buildNewFormatLengthBytesForData(bodyData);
-    [bodyData appendData:lengthData];
-    [bodyData appendData:bodyData];
-    return [outputStream writeData:lengthData];
+    NSMutableData *outputData = [NSMutableData data];
+    [outputData appendData:lengthData];
+    [outputData appendData:bodyData];
+    return [outputStream writeData:outputData];
 }
 
 
