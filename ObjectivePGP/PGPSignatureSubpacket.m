@@ -9,8 +9,15 @@
 #import "PGPSignatureSubpacket.h"
 #import "PGPCommon.h"
 #import "NSInputStream+PGP.h"
+#import "NSOutputStream+PGP.h"
 #import "PGPKeyID.h"
 #import "PGPSignaturePacket.h"
+#import "PGPPacketHeader.h"
+#import "PGPFunctions.h"
+#import "NSMutableData+PGP.h"
+
+@interface PGPSignatureSubpacket ()
+@end
 
 @implementation PGPSignatureSubpacket
 
@@ -62,9 +69,11 @@
     switch (subpacket.type) {
         case PGPSignatureSubpacketTypeSignatureCreationTime:
         case PGPSignatureSubpacketTypeSignatureExpirationTime:
+        case PGPSignatureSubpacketTypeKeyExpirationTime:
         {
             // (4 octets) The time the signature was made.
-            UInt32 timestamp = [inputStream readUInt32BytesAppendTo:rawData];
+            UInt32 timestamp = [inputStream readUInt32BE];
+            [rawData appendUInt32BE:timestamp];
             subpacket.value = [NSDate dateWithTimeIntervalSince1970:timestamp];;
             lengthLeft -= 4;
         }
@@ -72,24 +81,36 @@
         case PGPSignatureSubpacketTypePreferredSymetricAlgorithm:
         case PGPSignatureSubpacketTypePreferredHashAlgorithm:
         case PGPSignatureSubpacketTypePreferredCompressionAlgorithm:
+        case PGPSignatureSubpacketTypeFeatures:
         {
             NSMutableArray *elements = [NSMutableArray array];
             while (lengthLeft) {
-                UInt8 value = [inputStream readUInt8BytesAppendTo:rawData];
+                UInt8 value = [inputStream readUInt8];
+                [rawData appendUInt8:value];
                 [elements addObject:@(value)];
                 lengthLeft -= 1;
             }
             subpacket.value = [elements copy];
         }
             break;
-        case PGPSignatureSubpacketTypeReasonForRevocation:
-        {
-            // (1 octet of revocability, 0 for not, 1 for revocable)
-            UInt8 value = [inputStream readUInt8BytesAppendTo:rawData];
-            subpacket.value = @(value);
-            lengthLeft -= 1;
-        }
-            break;
+//        case PGPSignatureSubpacketTypeRegularExpression:
+//        {
+//            //TODO: this feature is not supported
+//            // (null-terminated regular expression)
+//            UInt8 buffer[lengthLeft];
+//            NSUInteger result = [inputStream read:buffer maxLength:sizeof(buffer)];
+//            if (result < lengthLeft) {
+//                if (error) {
+//                    *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Problem occur with signature subpacket."}];
+//                }
+//                return nil;
+//            }
+//            lengthLeft -= result;
+//            subpacket.value = [[NSString alloc] initWithBytes:buffer length:sizeof(buffer) encoding:NSUTF8StringEncoding];
+//            [rawData appendBytes:buffer length:sizeof(buffer)];
+//            NSAssert(subpacket.value, @"Invalid value");
+//        }
+//        break;
         case PGPSignatureSubpacketTypeIssuerKeyID:
         {
             UInt8 buffer[lengthLeft];
@@ -106,7 +127,29 @@
             NSAssert(subpacket.value, @"Invalid value");
         }
             break;
+        case PGPSignatureSubpacketTypeTrustSignature:
+        {
+            // (1 octet of revocability, 0 for not, 1 for revocable)
+            UInt8 value = [inputStream readUInt8];
+            [rawData appendUInt8:value];
+            subpacket.value = @(value);
+            lengthLeft -= 1;
+        }
+            break;
+        case PGPSignatureSubpacketTypeRevocable:
+        case PGPSignatureSubpacketTypeExportableCertification:
         case PGPSignatureSubpacketTypePrimaryUserID:
+        {
+            UInt8 value = [inputStream readUInt8];
+            NSAssert(value < 2, @"Invalid bool value");
+            [rawData appendUInt8:value];
+            lengthLeft -= 1;
+            subpacket.value = @((BOOL)value);
+        }
+            break;
+        case PGPSignatureSubpacketTypeSignerUserID:
+        case PGPSignatureSubpacketTypePreferredKeyServer:
+        case PGPSignatureSubpacketTypePolicyURI:
         {
             UInt8 buffer[lengthLeft];
             NSUInteger result = [inputStream read:buffer maxLength:sizeof(buffer)];
@@ -125,7 +168,7 @@
         case PGPSignatureSubpacketTypeKeyFlags:
         {
             // (1 octet)
-            UInt8 flags = [inputStream readUInt8BytesAppendTo:rawData];
+            UInt8 flags = [inputStream readUInt8];
             lengthLeft -= 1;
             
             NSMutableArray *elements = [NSMutableArray array];
@@ -151,14 +194,31 @@
             if (flags & PGPSignatureFlagPrivateKeyMayBeInThePossesionOfManyPersons) {
                 [elements addObject:@(PGPSignatureFlagPrivateKeyMayBeInThePossesionOfManyPersons)];
             }
+            [rawData appendUInt8:flags];
             subpacket.value = [elements copy];
             NSAssert(elements.count > 0, @"At least one flag is expected");
         }
             break;
-        default:
+        case PGPSignatureSubpacketTypeKeyServerPreference:
+        {
+            UInt8 flags = [inputStream readUInt8];
+            lengthLeft -= 1;
+            NSMutableArray *elements = [NSMutableArray array];
+            if (flags & PGPKeyServerPreferenceNoModify) {
+                [elements addObject:@(PGPKeyServerPreferenceNoModify)];
+            }
+            [rawData appendUInt8:flags];
+            subpacket.value = [elements copy];
+        }
+            break;
+        case PGPSignatureSubpacketTypeRegularExpression: //TODO: This feature is not supported
+        case PGPSignatureSubpacketTypeReasonForRevocation:
+        case PGPSignatureSubpacketTypeRevocationKey: //TODO: (1 octet of class, 1 octet of public-key algorithm ID, 20 octets of fingerprint)
+        case PGPSignatureSubpacketTypeSignatureTarget: //TODO
+        case PGPSignatureSubpacketTypeNotationData:
         {
             UInt8 buffer[lengthLeft];
-            NSUInteger result = [inputStream read:buffer maxLength:lengthLeft];
+            NSUInteger result = [inputStream read:buffer maxLength:sizeof(buffer)];
             if (result != lengthLeft) {
                 if (error) {
                     *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Problem occur with signature subpacket."}];
@@ -166,8 +226,12 @@
                 return nil;
             }
             lengthLeft -= result;
-            [rawData appendBytes:buffer length:sizeof(buffer)];
+            [rawData appendBytes:buffer length:result];
+            subpacket.value = [NSData dataWithBytes:buffer length:result];
         }
+            break;
+        default:
+            NSAssert(false, @"Not handled");
             break;
     }
 
@@ -182,7 +246,108 @@
     if (readData) {
         *readData = [rawData copy];
     }
+    
     return subpacket;
+}
+
+- (BOOL) writeToStream:(NSOutputStream *)outputStream error:(NSError *__autoreleasing *)error
+{
+    NSMutableData *bodyData = [NSMutableData dataWithCapacity:self.totalLength];
+    if (self.critical) {
+        //TODO: remove critical bit and update type
+    }
+    [bodyData appendUInt8:self.type];
+    
+    // new format length
+    switch (self.type) {
+        case PGPSignatureSubpacketTypeSignatureCreationTime:
+        case PGPSignatureSubpacketTypeSignatureExpirationTime:
+        case PGPSignatureSubpacketTypeKeyExpirationTime:
+        {
+            NSAssert([self.value isKindOfClass:[NSDate class]], @"Invalid value");
+            NSDate *date = (NSDate *)self.value;
+            [bodyData appendUInt32BE:[date timeIntervalSince1970]];
+        }
+        break;
+        case PGPSignatureSubpacketTypePreferredSymetricAlgorithm:
+        case PGPSignatureSubpacketTypePreferredHashAlgorithm:
+        case PGPSignatureSubpacketTypePreferredCompressionAlgorithm:
+        case PGPSignatureSubpacketTypeFeatures:
+        {
+            NSAssert([self.value isKindOfClass:[NSArray class]], @"Invalid value");
+            NSArray *elements = (NSArray *)self.value;
+            for (NSNumber *number in elements) {
+                [bodyData appendUInt8:number.unsignedShortValue];
+            }
+        }
+        break;
+        case PGPSignatureSubpacketTypeSignerUserID:
+        case PGPSignatureSubpacketTypePreferredKeyServer:
+        case PGPSignatureSubpacketTypePolicyURI:
+        {
+            NSAssert([self.value isKindOfClass:[NSString class]], @"Invalid value");
+            NSString *value = (NSString *)self.value;
+            [bodyData appendData:[value dataUsingEncoding:NSUTF8StringEncoding]];
+        }
+        break;
+        case PGPSignatureSubpacketTypeIssuerKeyID:
+        {
+            NSAssert([self.value isKindOfClass:[PGPKeyID class]], @"Invalid value");
+            PGPKeyID *keyID = self.value;
+            [bodyData appendData:[keyID octetsData]];
+        }
+        break;
+        case PGPSignatureSubpacketTypeTrustSignature:
+        {
+            // 1 octet
+            NSAssert([self.value isKindOfClass:[NSNumber class]], @"Invalid value");
+            NSNumber *number = (NSNumber *)self.value;
+            [bodyData appendUInt8:number.unsignedShortValue];
+        }
+            break;
+        case PGPSignatureSubpacketTypeRevocable:
+        case PGPSignatureSubpacketTypeExportableCertification:
+        case PGPSignatureSubpacketTypePrimaryUserID:
+        {
+            NSAssert([self.value isKindOfClass:[NSNumber class]], @"Invalid value");
+            NSNumber *value = (NSNumber *)self.value;
+            NSAssert(value.unsignedShortValue > 1, @"Invalid value");
+            [bodyData appendUInt8:(UInt8)value.unsignedShortValue];
+        }
+        break;
+        case PGPSignatureSubpacketTypeKeyFlags:
+        case PGPSignatureSubpacketTypeKeyServerPreference:
+        {
+            NSAssert([self.value isKindOfClass:[NSArray class]], @"Invalid value");
+            NSArray *elements = (NSArray *)self.value;
+            UInt8 flags = 0;
+            for (NSNumber *flag in elements) {
+                flags = flags | (UInt8)flag.unsignedShortValue;
+            }
+            [bodyData appendUInt8:flags];
+        }
+        break;
+        case PGPSignatureSubpacketTypeRegularExpression: //TODO: this feature is not supported
+        case PGPSignatureSubpacketTypeReasonForRevocation:
+        case PGPSignatureSubpacketTypeRevocationKey:
+        case PGPSignatureSubpacketTypeSignatureTarget:
+        case PGPSignatureSubpacketTypeNotationData:
+        {
+            //NSData raw data
+            NSAssert([self.value isKindOfClass:[NSData class]], @"Invalid raw data");
+            NSData *value = (NSData *)self.value;
+            [bodyData appendData:value];
+        }
+            break;
+        default:
+            NSAssert(false, @"Not handled");
+            break;
+    }
+    
+    NSData *lengthData = buildNewFormatLengthBytesForData(bodyData);
+    [bodyData appendData:lengthData];
+    [bodyData appendData:bodyData];
+    return [outputStream writeData:lengthData];
 }
 
 

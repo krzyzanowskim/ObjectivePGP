@@ -262,8 +262,6 @@
 {
     NSParameterAssert(outputStream);
     
-    NSMutableData *outputData = [NSMutableData dataWithCapacity:5];
-    
     [outputStream writeUInt8:self.version];
     switch (self.version) {
         case 0x04:

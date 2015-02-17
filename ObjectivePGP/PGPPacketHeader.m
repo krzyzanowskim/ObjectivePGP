@@ -72,7 +72,7 @@ typedef NS_ENUM(NSUInteger, PGPHeaderPacketTag) {
             [lengthData appendBytes:&partialOctet length:1];
         } else if (self.bodyLength < 192) {
             [lengthData appendBytes:&_bodyLength length:1];
-        } else if (self.bodyLength >= 192 && self.bodyLength <= 8393) {
+        } else if (self.bodyLength >= 192 && self.bodyLength <= 8383) {
             UInt8 buf[2] = {0,0};
             UInt16 twoOctets = self.bodyLength;
             buf[0] = (UInt8)((twoOctets - 192) >> 8) + 192;

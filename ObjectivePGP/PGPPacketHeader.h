@@ -18,4 +18,6 @@
 + (instancetype) readFromStream:(NSInputStream *)inputStream error:(NSError * __autoreleasing *)error;
 - (BOOL) writeToStream:(NSOutputStream *)outputStream error:(NSError * __autoreleasing *)error;
 
++ (NSData *) buildNewFormatLengthBytesForData:(NSData *)bodyData;
+
 @end

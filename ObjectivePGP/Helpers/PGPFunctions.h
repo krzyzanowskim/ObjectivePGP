@@ -18,5 +18,6 @@ UInt8 *pgpCalculateSHA1(const void *bytes, unsigned int length);
 UInt8 *pgpCalculateMD5(const void *bytes, unsigned int length);
 NSUInteger pgpNumBits(Byte *bytes, NSUInteger maxLength);
 NSInteger isPowerOfTwo (NSUInteger x);
+NSData *buildNewFormatLengthBytesForData(NSData *bodyData);
 
 
