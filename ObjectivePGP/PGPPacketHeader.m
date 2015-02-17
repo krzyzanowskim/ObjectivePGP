@@ -152,7 +152,7 @@ typedef NS_ENUM(NSUInteger, PGPHeaderPacketTag) {
         // 4.2.2.3.  Five-Octet Length
         // bodyLen = (2nd_octet << 24) | (3rd_octet << 16) |
         //           (4th_octet << 8)  | 5th_octet
-        self.bodyLength = [inputStream readUInt32];
+        self.bodyLength = [inputStream readUInt32BE];
         //self.bodyLength   = (secondOctet << 24) | (thirdOctet << 16) | (fourthOctet << 8)  | fifthOctet;
     } else if (firstOctet >= 224 && firstOctet < 255) {
         // 4.2.2.4.  Partial Body Length
@@ -182,12 +182,12 @@ typedef NS_ENUM(NSUInteger, PGPHeaderPacketTag) {
         case 1:
         {
             // value of a two-octet scalar is ((n[0] << 8) + n[1]).
-            self.bodyLength = [inputStream readUInt16];
+            self.bodyLength = [inputStream readUInt16BE];
         }
             break;
         case 2:
         {
-            self.bodyLength = [inputStream readUInt32];
+            self.bodyLength = [inputStream readUInt32BE];
         }
             break;
         case 3:

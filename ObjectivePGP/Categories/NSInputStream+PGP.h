@@ -12,11 +12,11 @@
 - (UInt8) readUInt8; // BE->LE
 - (UInt8) readUInt8:(UInt8 *)bytes;
 - (UInt8) readUInt8BytesAppendTo:(NSMutableData *)data;
-- (UInt16) readUInt16; // BE->LE
-- (UInt16) readUInt16:(UInt8 *)readBytes;
-- (UInt16) readUInt16BytesAppendTo:(NSMutableData *)data;
-- (UInt32) readUInt32; // BE->LE
-- (UInt32) readUInt32:(UInt8 *)readBytes;
+- (UInt16) readUInt16BE; // BE->LE
+- (UInt16) readUInt16BE:(UInt8 *)readBytes;
+- (UInt16) readUInt16BEBytesAppendTo:(NSMutableData *)data;
+- (UInt32) readUInt32BE; // BE->LE
+- (UInt32) readUInt32BE:(UInt8 *)readBytes;
 - (UInt32) readUInt32BytesAppendTo:(NSMutableData *)data;
 - (NSData *) readDataLength:(NSUInteger)length;
 @end

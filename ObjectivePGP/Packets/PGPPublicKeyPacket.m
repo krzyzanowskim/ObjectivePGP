@@ -34,7 +34,7 @@
     }
     
     // A four-octet number denoting the time that the key was created.
-    UInt32 timestamp = [inputStream readUInt32];
+    UInt32 timestamp = [inputStream readUInt32BE];
     if (timestamp) {
         packet.createDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
     }
@@ -42,7 +42,7 @@
     if (version == 0x03) {
         // A two-octet number denoting the time in days that this key is
         // valid.  If this number is zero, then it does not expire.
-        UInt16 validityPeriod = [inputStream readUInt16];
+        UInt16 validityPeriod = [inputStream readUInt16BE];
         packet.validityPeriod = validityPeriod;
     }
     
@@ -125,9 +125,9 @@
     NSParameterAssert(outputStream);
     
     [outputStream writeUInt8:self.version];
-    [outputStream writeUInt32:[self.createDate timeIntervalSince1970]];
+    [outputStream writeUInt32BE:[self.createDate timeIntervalSince1970]];
     if (self.version == 0x03) {
-        [outputStream writeUInt16:self.validityPeriod];
+        [outputStream writeUInt16BE:self.validityPeriod];
     }
     [outputStream writeUInt8:self.keyAlgorithm];
     for (PGPMPI *mpi in self.MPIs) {

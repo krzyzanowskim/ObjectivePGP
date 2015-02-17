@@ -10,7 +10,7 @@
 
 @interface NSOutputStream (PGP)
 - (BOOL) writeUInt8:(UInt8)value;
-- (BOOL) writeUInt16:(UInt16)value;
-- (BOOL) writeUInt32:(UInt32)value;
+- (BOOL) writeUInt16BE:(UInt16)value;
+- (BOOL) writeUInt32BE:(UInt32)value;
 - (BOOL) writeData:(NSData *)data;
 @end

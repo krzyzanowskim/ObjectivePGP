@@ -70,7 +70,7 @@
     self.signatureType = [inputStream readUInt8];
     
     // - Four-octet creation time
-    UInt32 timestamp = [inputStream readUInt32];
+    UInt32 timestamp = [inputStream readUInt32BE];
     self.creationDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
     
     //Eight-octet Key ID of signer
@@ -84,7 +84,7 @@
     self.hashAlgoritm = [inputStream readUInt8];
     
     // Two-octet field holding the left 16 bits of the signed hash value.
-    UInt16 signedHashValue = [inputStream readUInt16];
+    UInt16 signedHashValue = [inputStream readUInt16BE];
     self.hashValue = signedHashValue;
     
     // 5.2.2. One or more multiprecision integers comprising the signature. This portion is algorithm specific Signature
@@ -145,7 +145,7 @@
     self.hashAlgoritm = [inputStream readUInt8BytesAppendTo:toHashData];
 
     // Two-octet scalar octet count for following hashed subpacket data.
-    UInt16 hashedSubpacketsBytes = [inputStream readUInt16BytesAppendTo:toHashData];
+    UInt16 hashedSubpacketsBytes = [inputStream readUInt16BEBytesAppendTo:toHashData];
     UInt16 consumedBytes = 0;
     if (hashedSubpacketsBytes) {
         while (consumedBytes < hashedSubpacketsBytes) {
@@ -162,7 +162,7 @@
     //-->HASHED
     
     // Two-octet scalar octet count for following unhashed subpacket data.
-    UInt16 unhashedSubpacketsBytes = [inputStream readUInt16];
+    UInt16 unhashedSubpacketsBytes = [inputStream readUInt16BE];
     consumedBytes = 0;
     if (unhashedSubpacketsBytes) {
         while (consumedBytes < unhashedSubpacketsBytes) {
@@ -176,7 +176,7 @@
     }
     
     // Two-octet field holding the left 16 bits of the signed hash value.
-    UInt16 signedHashValue = [inputStream readUInt16];
+    UInt16 signedHashValue = [inputStream readUInt16BE];
     self.hashValue = signedHashValue;
 
     // One or more multiprecision integers comprising the signature.
@@ -262,6 +262,8 @@
 {
     NSParameterAssert(outputStream);
     
+    NSMutableData *outputData = [NSMutableData dataWithCapacity:5];
+    
     [outputStream writeUInt8:self.version];
     switch (self.version) {
         case 0x04:
@@ -269,12 +271,12 @@
             [outputStream writeUInt8:self.signatureType];
             [outputStream writeUInt8:self.publicKeyAlgorithm];
             [outputStream writeUInt8:self.hashAlgoritm];
-            [outputStream writeUInt16:self.hashedSubpackets.count];
+            [outputStream writeUInt16BE:self.hashedSubpackets.count];
             //TODO: hashed subpackets here
             //TODO: Two-octet field holding the left 16 bits of the signed hash value.
-            [outputStream writeUInt16:self.hashValue]; //TODO: calculate hash first
+            [outputStream writeUInt16BE:self.hashValue]; //TODO: calculate hash first
             NSAssert(self.hashValue != 0, @"Calculate hash");
-            [outputStream writeUInt16:self.unhashedSubpackets.count];
+            [outputStream writeUInt16BE:self.unhashedSubpackets.count];
             //TODO: unhashed subpackets here
             for (PGPMPI *mpi in self.MPIs) {
                 if (![mpi writeToStream:outputStream error:error]) {
@@ -287,12 +289,12 @@
         {
             [outputStream writeUInt8:0x05];
             [outputStream writeUInt8:self.signatureType];
-            [outputStream writeUInt32:[self.creationDate timeIntervalSince1970]];
+            [outputStream writeUInt32BE:[self.creationDate timeIntervalSince1970]];
             
             NSAssert(self.issuerKeyID, @"Missing issued key id");
             [outputStream writeData:self.issuerKeyID.octetsData];
             
-            [outputStream writeUInt16:self.hashValue];
+            [outputStream writeUInt16BE:self.hashValue];
             NSAssert(self.hashValue != 0, @"Calculate hash");
             
             for (PGPMPI *mpi in self.MPIs) {

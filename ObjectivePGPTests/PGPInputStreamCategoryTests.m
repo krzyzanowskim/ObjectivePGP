@@ -45,7 +45,7 @@
     [stream open];
     XCTAssertNotNil(stream);
     UInt8 readBytes[2];
-    UInt16 result = [stream readUInt16:readBytes];
+    UInt16 result = [stream readUInt16BE:readBytes];
     XCTAssertEqual(result, 0x0102);
     for (int i = 0; i < sizeof(bytes); i++) {
         XCTAssertEqual(readBytes[i], bytes[i]);
@@ -60,7 +60,7 @@
     [stream open];
     XCTAssertNotNil(stream);
     UInt8 readBytes[4];
-    UInt32 result = [stream readUInt32:readBytes];
+    UInt32 result = [stream readUInt32BE:readBytes];
     XCTAssertEqual(result, 0x01020304);
     for (int i = 0; i < sizeof(bytes); i++) {
         XCTAssertEqual(readBytes[i], bytes[i]);

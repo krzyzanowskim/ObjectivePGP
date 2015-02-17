@@ -21,10 +21,11 @@
 
 }
 
-- (BOOL) writeUInt16:(UInt16)value
+- (BOOL) writeUInt16BE:(UInt16)value
 {
+    UInt16 valueBE = CFSwapInt16HostToBig(value);
     UInt8 bytes[2];
-    bcopy(&value, bytes, sizeof(bytes));
+    bcopy(&valueBE, bytes, sizeof(bytes));
     if ([self write:bytes maxLength:sizeof(bytes)] == -1) {
         return NO;
     }
@@ -32,10 +33,11 @@
 }
 
 
-- (BOOL) writeUInt32:(UInt32)value
+- (BOOL) writeUInt32BE:(UInt32)value
 {
+    UInt32 valueBE = CFSwapInt32BigToHost(value);
     UInt8 bytes[4];
-    bcopy(&value, bytes, sizeof(bytes));
+    bcopy(&valueBE, bytes, sizeof(bytes));
     if ([self write:bytes maxLength:sizeof(bytes)] == -1) {
         return NO;
     }

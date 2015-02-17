@@ -24,7 +24,7 @@
     
     PGPMPI *mpi = [[PGPMPI alloc] init];
     
-    UInt16 bits = [inputStream readUInt16];
+    UInt16 bits = [inputStream readUInt16BE];
     NSUInteger bytesCount = (bits + 7) / 8;
     
     UInt8 *mpiBuffer = calloc(1, bytesCount);
