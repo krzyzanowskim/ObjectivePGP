@@ -10,6 +10,8 @@
 #import "PGPSignatureSubpacket.h"
 #import "PGPSignaturePacket.h"
 #import "PGPKeyID.h"
+#import "PGPKey.h"
+#import "PGPUser.h"
 
 @interface PGPSignature : NSObject
 @property (assign) PGPSignatureType type;
@@ -18,5 +20,6 @@
 @property (strong, readonly) PGPSignaturePacket *packet;
 
 - (instancetype)initWithPacket:(PGPSignaturePacket *)packet NS_DESIGNATED_INITIALIZER;
+- (UInt16) computeSignatureHashOverKey:(PGPKey *)key user:(PGPUser *)user error:(NSError * __autoreleasing *)error;
 
 @end

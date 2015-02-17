@@ -1,5 +1,5 @@
 //
-//  NSMutableData+PGP.h
+//  NSData+PGP.h
 //  ObjectivePGP
 //
 //  Created by Marcin Krzyzanowski on 17/02/15.
@@ -8,10 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface NSMutableData (PGP)
-
-- (void) appendUInt8:(UInt8)value;
-- (void) appendUInt16BE:(UInt16)value;
-- (void) appendUInt32BE:(UInt32)value;
-
+@interface NSData (PGP)
+- (UInt16) readUInt16BE:(NSRange)range;
+- (UInt32) readUInt32BE:(NSRange)range;
 @end

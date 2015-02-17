@@ -10,22 +10,6 @@
 
 @implementation NSMutableData (PGP)
 
-- (UInt16) readUInt16BE:(NSRange)range
-{
-    NSAssert(range.length == 2, @"Invalid length");
-    UInt16 value = 0;
-    [self getBytes:&value range:range];
-    return CFSwapInt16BigToHost(value);
-}
-
-- (UInt32) readUInt32BE:(NSRange)range
-{
-    NSAssert(range.length == 4, @"Invalid length");
-    UInt32 value = 0;
-    [self getBytes:&value range:range];
-    return CFSwapInt32BigToHost(value);
-}
-
 - (void) appendUInt8:(UInt8)value
 {
     [self appendBytes:&value length:1];

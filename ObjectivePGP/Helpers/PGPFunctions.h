@@ -10,7 +10,7 @@
 
 #pragma once
 
-UInt8 *pgpCalculateSHA512(const void *bytes, unsigned int length);
+NSData *pgpCalculateSHA512(const void *bytes, unsigned int length);
 UInt8 *pgpCalculateSHA384(const void *bytes, unsigned int length);
 UInt8 *pgpCalculateSHA256(const void *bytes, unsigned int length);
 UInt8 *pgpCalculateSHA224(const void *bytes, unsigned int length);
@@ -19,5 +19,6 @@ UInt8 *pgpCalculateMD5(const void *bytes, unsigned int length);
 NSUInteger pgpNumBits(Byte *bytes, NSUInteger maxLength);
 NSInteger isPowerOfTwo (NSUInteger x);
 NSData *buildNewFormatLengthBytesForData(NSData *bodyData);
+NSData *buildOldFormatLengthBytesForData(NSData *bodyData);
 
 

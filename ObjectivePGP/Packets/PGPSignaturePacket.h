@@ -56,6 +56,7 @@ typedef NS_ENUM(UInt8, PGPSignatureType) {
 + (instancetype) readFromStream:(NSInputStream *)inputStream error:(NSError * __autoreleasing *)error;
 - (BOOL) writeToStream:(NSOutputStream *)outputStream error:(NSError * __autoreleasing *)error;
 - (NSData *) buildData:(NSError * __autoreleasing *)error;
+- (NSData *) buildData:(NSError * __autoreleasing *)error onlySignedPart:(BOOL)onlySigned;
 - (id) valueOfSubacketOfType:(PGPSignatureSubpacketType)type found:(BOOL *)isFound;
 
 @end

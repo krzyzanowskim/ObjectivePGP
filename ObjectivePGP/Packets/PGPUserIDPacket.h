@@ -13,5 +13,6 @@
 
 + (instancetype) readFromStream:(NSInputStream *)inputStream maxLength:(NSUInteger)length error:(NSError * __autoreleasing *)error;
 - (BOOL) writeToStream:(NSOutputStream *)outputStream error:(NSError * __autoreleasing *)error;
+- (NSData *) buildData:(NSError * __autoreleasing *)error;
 
 @end

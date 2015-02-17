@@ -9,10 +9,11 @@
 #import "PGPFunctions.h"
 #import <CommonCrypto/CommonDigest.h>
 
-UInt8 *pgpCalculateSHA512(const void *bytes, unsigned int length)
+NSData *pgpCalculateSHA512(const void *bytes, unsigned int length)
 {
     unsigned char hash[CC_SHA512_DIGEST_LENGTH];
-    return CC_SHA512(bytes, length, hash);
+    CC_SHA512(bytes, length, hash);
+    return [NSData dataWithBytes:&hash length:sizeof(hash)];
 }
 
 UInt8 *pgpCalculateSHA384(const void *bytes, unsigned int length)
@@ -107,4 +108,13 @@ NSData *buildNewFormatLengthBytesForData(NSData *bodyData)
         [data appendBytes:buf length:5];
     }
     return [data copy];
+}
+
+NSData *buildOldFormatLengthBytesForData(NSData *bodyData)
+{
+    NSUInteger length = bodyData.length;
+    UInt8 upper = length >> 8;
+    UInt8 lower = length & 0xff;
+    UInt8 headWithLength[3] = {0x99, upper, lower};
+    return [NSData dataWithBytes:&headWithLength length:3];
 }

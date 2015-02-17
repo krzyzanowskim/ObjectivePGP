@@ -12,8 +12,8 @@
 @interface PGPUser : NSObject
 @property (strong, readonly) PGPUserIDPacket *packet;
 @property (copy) NSString *userID;
-@property (copy) NSArray *selfCertifications;  // me
-@property (copy) NSArray *otherCertifications; // others
+//@property (copy) NSArray *selfCertifications;  // me
+//@property (copy) NSArray *otherCertifications; // others
 
 - (instancetype)initWithPacket:(PGPUserIDPacket *)packet NS_DESIGNATED_INITIALIZER;
 

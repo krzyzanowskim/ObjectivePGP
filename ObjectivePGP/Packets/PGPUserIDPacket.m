@@ -26,6 +26,7 @@
         return nil;
     }
     
+    NSLog(@"%@",[NSData dataWithBytes:buffer length:sizeof(buffer)]);
     packet.userID = [[NSString alloc] initWithBytes:buffer length:length encoding:NSUTF8StringEncoding];
 
     // forget buffer
@@ -48,12 +49,34 @@
                     range:NSMakeRange(0, self.userID.length)
            remainingRange:nil];
     
-    [outputStream write:buffer maxLength:[self.userID lengthOfBytesUsingEncoding:NSUTF8StringEncoding]];
+    [outputStream write:buffer maxLength:maxLength];
 
     memset(buffer, arc4random(), maxLength);
     free(buffer);
     
     return YES;
+}
+
+- (NSData *) buildData:(NSError * __autoreleasing *)error
+{
+    NSUInteger maxLength = [self.userID lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+    NSMutableData *outputData = [NSMutableData dataWithCapacity:maxLength];
+    
+    void *buffer = calloc(1, maxLength);
+    [self.userID getBytes:buffer
+                maxLength:maxLength
+               usedLength:nil
+                 encoding:NSUTF8StringEncoding
+                  options:NSStringEncodingConversionAllowLossy
+                    range:NSMakeRange(0, self.userID.length)
+           remainingRange:nil];
+    
+    
+    [outputData appendBytes:buffer length:maxLength];
+    
+    memset(buffer, arc4random(), maxLength);
+    free(buffer);
+    return [outputData copy];
 }
 
 @end

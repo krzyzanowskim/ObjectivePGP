@@ -265,6 +265,11 @@
 
 - (NSData *) buildData:(NSError * __autoreleasing *)error
 {
+    return [self buildData:error onlySignedPart:NO];
+}
+
+- (NSData *) buildData:(NSError * __autoreleasing *)error onlySignedPart:(BOOL)onlySigned
+{
     if (self.version == 0x03 && error) {
         *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Can't export signature with version 0x03"}];
         return nil;
@@ -288,6 +293,10 @@
                 }
                 [outputData appendUInt16BE:subpacketsData.length];
                 [outputData appendData:subpacketsData];
+            }
+            
+            if (onlySigned) {
+                return [outputData copy];
             }
             
             // unhashed subpackets
