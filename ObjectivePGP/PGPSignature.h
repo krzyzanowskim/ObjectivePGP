@@ -21,5 +21,6 @@
 
 - (instancetype)initWithPacket:(PGPSignaturePacket *)packet NS_DESIGNATED_INITIALIZER;
 - (UInt16) computeSignatureHashOverKey:(PGPKey *)key user:(PGPUser *)user error:(NSError * __autoreleasing *)error;
++ (NSData *) toSign:(PGPSignatureType)type version:(NSUInteger)version key:(PGPKey *)key user:(PGPUser *)user userAttribute:(NSData *)userAttribute data:(NSData *)data error:(NSError * __autoreleasing *)error;
 
 @end

@@ -60,7 +60,7 @@
 - (NSData *) buildData:(NSError * __autoreleasing *)error
 {
     NSUInteger maxLength = [self.userID lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
-    NSMutableData *outputData = [NSMutableData dataWithCapacity:maxLength];
+    NSMutableData *outputData = [NSMutableData data];
     
     void *buffer = calloc(1, maxLength);
     [self.userID getBytes:buffer

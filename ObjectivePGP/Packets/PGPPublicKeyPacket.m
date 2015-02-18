@@ -133,7 +133,7 @@
 
 - (NSData *) buildData:(NSError * __autoreleasing *)error
 {
-    NSMutableData *outputData = [NSMutableData dataWithCapacity:256];
+    NSMutableData *outputData = [NSMutableData data];
     
     [outputData appendUInt8:self.version];
     [outputData appendUInt32BE:[self.createDate timeIntervalSince1970]];

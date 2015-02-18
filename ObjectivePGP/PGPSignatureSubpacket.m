@@ -266,7 +266,7 @@
 
 - (NSData *) buildData:(NSError *__autoreleasing *)error
 {
-    NSMutableData *bodyData = [NSMutableData dataWithCapacity:self.totalLength];
+    NSMutableData *bodyData = [NSMutableData data];
     if (self.critical) {
         //TODO: remove critical bit and update type
     }

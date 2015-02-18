@@ -11,6 +11,8 @@
 #import "PGPSignatureSubpacket.h"
 #import "PGPCommon.h"
 #import "PGPKeyID.h"
+#import "PGPUser.h"
+#import "PGPKey.h"
 
 // 5.2.3.21.  Key Flags
 typedef NS_ENUM(UInt8, PGPSignatureFlags) {
@@ -58,5 +60,4 @@ typedef NS_ENUM(UInt8, PGPSignatureType) {
 - (NSData *) buildData:(NSError * __autoreleasing *)error;
 - (NSData *) buildData:(NSError * __autoreleasing *)error onlySignedPart:(BOOL)onlySigned;
 - (id) valueOfSubacketOfType:(PGPSignatureSubpacketType)type found:(BOOL *)isFound;
-
 @end
