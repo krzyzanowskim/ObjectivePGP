@@ -12,8 +12,8 @@
 NSData *pgpCalculateSHA512(const void *bytes, unsigned int length)
 {
     unsigned char hash[CC_SHA512_DIGEST_LENGTH];
-    CC_SHA512(bytes, length, hash);
-    return [NSData dataWithBytes:&hash length:sizeof(hash)];
+    unsigned char *output = CC_SHA512(bytes, length, hash);
+    return [NSData dataWithBytes:output length:CC_SHA512_DIGEST_LENGTH];
 }
 
 UInt8 *pgpCalculateSHA384(const void *bytes, unsigned int length)

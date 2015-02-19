@@ -51,7 +51,7 @@
     packet.keyAlgorithm = [inputStream readUInt8];
     
     // A series of multiprecision integers comprising the key material.
-    NSMutableSet *mpis = [NSMutableSet set];
+    NSMutableOrderedSet *mpis = [NSMutableOrderedSet orderedSet];
     switch (packet.keyAlgorithm) {
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:

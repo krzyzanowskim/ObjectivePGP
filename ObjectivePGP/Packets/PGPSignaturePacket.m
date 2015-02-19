@@ -89,7 +89,7 @@
     self.hashValue = signedHashValue;
     
     // 5.2.2. One or more multiprecision integers comprising the signature. This portion is algorithm specific Signature
-    NSMutableSet *mpis = [NSMutableSet set];
+    NSMutableOrderedSet *mpis = [NSMutableOrderedSet orderedSet];
     switch (self.publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
@@ -181,7 +181,7 @@
     self.hashValue = signedHashValue;
 
     // One or more multiprecision integers comprising the signature.
-    NSMutableSet *mpis = [NSMutableSet set];
+    NSMutableOrderedSet *mpis = [NSMutableOrderedSet orderedSet];
     switch (self.publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:

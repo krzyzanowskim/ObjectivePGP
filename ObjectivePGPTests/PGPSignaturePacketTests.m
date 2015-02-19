@@ -108,7 +108,8 @@
     PGPUser *userID = [[PGPUser alloc] initWithPacket:userIDPacket];
 
     PGPSignature *signature = [[PGPSignature alloc] initWithPacket:packet];
-    [signature computeSignatureHashOverKey:key user:userID error:&error];
+    UInt16 hashValue = [signature computeSignatureHashOverKey:key user:userID error:&error];
+    XCTAssertEqual(hashValue, 0x1E99);
     
 }
 

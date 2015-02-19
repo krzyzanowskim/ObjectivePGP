@@ -91,9 +91,10 @@
     NSMutableData *outData = [NSMutableData data];
 
     // length in bits
-    UInt16 bits = pgpNumBits((Byte *)[data bytes], data.length);
-    UInt16 bitsBE = CFSwapInt16HostToBig(bits);
-    [outData appendBytes:&bitsBE length:2];
+    UInt16 bits = pgpNumBits((Byte *)data.bytes, data.length);
+    [outData appendUInt16BE:bits];
+//    UInt16 bitsBE = CFSwapInt16HostToBig(bits);
+//    [outData appendBytes:&bitsBE length:2];
     
     // mpi
     [outData appendData:data];

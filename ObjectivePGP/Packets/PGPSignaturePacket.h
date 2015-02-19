@@ -50,7 +50,7 @@ typedef NS_ENUM(UInt8, PGPSignatureType) {
 @property (copy) NSDate *creationDate;
 @property (assign) PGPPublicKeyAlgorithm publicKeyAlgorithm;
 @property (assign) PGPHashAlgorithm hashAlgoritm;
-@property (copy) NSSet *MPIs; // key algorithm specific MPIs
+@property (copy) NSOrderedSet *MPIs; // key algorithm specific MPIs
 
 @property (assign) UInt16 hashValue;
 @property (strong) PGPKeyID *issuerKeyID;
