@@ -43,6 +43,10 @@
     
     NSData *hash = pgpCalculateSHA512(toHash.bytes, (unsigned int)toHash.length);
     UInt16 hashValue = [hash readUInt16BE:(NSRange){0,2}]; // leftmost 16 bits
+    
+    self.packet.hashValue = hashValue;
+    self.issuerKeyID = [key keyID];
+    
     return hashValue;
 }
 
@@ -65,12 +69,12 @@
 @end
 
 // data to produce signature on
-NSData *buildDataToSign(PGPSignatureType type, NSUInteger version, PGPKey *key, PGPUser *user, NSData *userAttribute, NSData *data, NSError * __autoreleasing *error)
+NSData *buildDataToSign(PGPSignatureType type, NSUInteger version, PGPKey *key, PGPUser *user, NSData *userAttribute, NSData *standaloneData, NSError * __autoreleasing *error)
 {
     switch (type) {
         case PGPSignatureBinaryDocument:
         case PGPSignatureCanonicalTextDocument:
-            return data;
+            return standaloneData;
         case PGPSignatureTimestamp:
         case PGPSignatureStandalone:
             return [NSData data]; // empty
@@ -82,7 +86,7 @@ NSData *buildDataToSign(PGPSignatureType type, NSUInteger version, PGPKey *key, 
         {
             NSMutableData *outputData = [NSMutableData data];
             // key
-            [outputData appendData:buildDataToSign(PGPSignatureDirectlyOnKey, version, key, user, userAttribute, data, error)];
+            [outputData appendData:buildDataToSign(PGPSignatureDirectlyOnKey, version, key, user, userAttribute, standaloneData, error)];
             
             // user
             if (user) {

@@ -14,7 +14,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface PGPKeyID : NSObject
+@interface PGPKeyID : NSObject <NSCopying>
 @property (copy, readonly) NSData *octetsData;
 
 - (instancetype) initWithBytes:(const void *)bytes length:(NSUInteger)length;

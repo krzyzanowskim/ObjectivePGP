@@ -34,16 +34,18 @@ UInt8 *pgpCalculateSHA224(const void *bytes, unsigned int length)
     return CC_SHA224(bytes, length, hash);
 }
 
-UInt8 *pgpCalculateSHA1(const void *bytes, unsigned int length)
+NSData *pgpCalculateSHA1(const void *bytes, unsigned int length)
 {
     unsigned char hash[CC_SHA1_DIGEST_LENGTH];
-    return CC_SHA1(bytes, length, hash);
+    unsigned char *output = CC_SHA1(bytes, length, hash);
+    return [NSData dataWithBytes:output length:CC_SHA1_DIGEST_LENGTH];
 }
 
-UInt8 *pgpCalculateMD5(const void *bytes, unsigned int length)
+NSData *pgpCalculateMD5(const void *bytes, unsigned int length)
 {
     unsigned char hash[CC_MD5_DIGEST_LENGTH];
-    return CC_MD5(bytes, length, hash);
+    unsigned char *output = CC_MD5(bytes, length, hash);
+    return [NSData dataWithBytes:output length:CC_MD5_DIGEST_LENGTH];
 }
 
 NSUInteger pgpNumBits(Byte *bytes, NSUInteger maxLength)

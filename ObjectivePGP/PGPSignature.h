@@ -23,4 +23,4 @@
 - (UInt16) computeSignatureHashOverKey:(PGPKey *)key user:(PGPUser *)user error:(NSError * __autoreleasing *)error;
 @end
 
-NSData *buildDataToSign(PGPSignatureType type, NSUInteger version, PGPKey *key, PGPUser *user, NSData *userAttribute, NSData *data, NSError * __autoreleasing *error);
+NSData *buildDataToSign(PGPSignatureType type, NSUInteger version, PGPKey *key, PGPUser *user, NSData *userAttribute, NSData *standaloneData, NSError * __autoreleasing *error);

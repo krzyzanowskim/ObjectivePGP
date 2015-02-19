@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "PGPPublicKeyPacket.h"
+#import "PGPKeyID.h"
 
 @interface PGPKey : NSObject
 @property (strong, readonly) PGPPublicKeyPacket *packet;
@@ -20,5 +21,7 @@
 //After each Subkey packet, one Signature packet, plus optionally a revocation
 
 - (instancetype)initWithPacket:(PGPPublicKeyPacket *)packet NS_DESIGNATED_INITIALIZER;
+- (PGPKeyID *)keyID;
+- (NSData *)fingerprint;
 
 @end

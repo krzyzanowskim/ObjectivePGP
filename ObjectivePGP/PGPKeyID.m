@@ -7,12 +7,18 @@
 //
 
 #import "PGPKeyID.h"
+#import "PGPKey.h"
+#import "PGPFunctions.h"
+
+@interface PGPKeyID ()
+@property (copy, readwrite) NSData *octetsData;
+@end
 
 @implementation PGPKeyID
 
 - (instancetype) initWithBytes:(const void *)bytes length:(NSUInteger)length
 {
-    if (self = [self init]) {
+    if (self = [super init]) {
         _octetsData = [NSData dataWithBytes:bytes length:length];
     }
     return self;
@@ -57,4 +63,12 @@
     return [self isEqual:keyID];
 }
 
+#pragma mark - NSCopying
+
+- (instancetype)copyWithZone:(NSZone *)zone
+{
+    PGPKeyID *copy = [[PGPKeyID alloc] init];
+    copy.octetsData = self.octetsData;
+    return copy;
+}
 @end
