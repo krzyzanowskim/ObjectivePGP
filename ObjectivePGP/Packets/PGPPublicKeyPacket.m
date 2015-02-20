@@ -149,4 +149,10 @@
     return [outputData copy];
 }
 
+- (NSData *) mpiForIdentifier:(NSString *)key
+{
+    NSParameterAssert(key);
+    return [[self.MPIs filteredOrderedSetUsingPredicate:[NSPredicate predicateWithFormat:@"SELF.identifier == %@", key]] firstObject];
+}
+
 @end

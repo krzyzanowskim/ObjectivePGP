@@ -49,6 +49,7 @@
             break;
         case 0x03:
         {
+            // TODO: untested
             // The fingerprint of a V3 key is formed by hashing the body of the MPIs that form the key material
             NSError *error = nil;
             NSMutableData *toHash = [NSMutableData data];
@@ -56,7 +57,6 @@
                 [toHash appendData:[mpi buildData:&error]];
             }
 
-            // TODO: check V3 subkey
             // Finally, the Key ID and fingerprint of a subkey are calculated in the
             // same way as for a primary key, including the 0x99 as the first octet
             //    (even though this is not a valid packet ID for a public subkey).
@@ -91,9 +91,11 @@
             break;
         case 0x03:
         {
+            //TODO: untested
             // For a V3 key, the eight-octet Key ID consists of the low 64 bits of the public modulus of the RSA key.
-            // TODO: should be implemented
-            NSAssert(false, @"Not implemented, deprecated.");
+            NSData *modulus = [self.packet mpiForIdentifier:@"N"];
+            NSData *keyIDBytes = [modulus subdataWithRange:(NSRange){modulus.length - 8,8}];
+            return [[PGPKeyID alloc] initWithBytes:keyIDBytes.bytes length:keyIDBytes.length];
         }
             break;
         default:
