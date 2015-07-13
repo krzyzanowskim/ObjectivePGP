@@ -130,12 +130,12 @@ const UInt32 UnknownLength = UINT32_MAX;
         // bodyLen = 1st_octet;
         bodyLength   = lengthOctets[0];
         headerLength = 1 + 1;
-    } else if (lengthOctets[0] >= 192 && lengthOctets[0] <= 223) {
+    } else if (lengthOctets[0] >= 192 && lengthOctets[0] < 224) {
         // 4.2.2.2.  Two-Octet Lengths
         // bodyLen = ((1st_octet - 192) << 8) + (2nd_octet) + 192
         bodyLength   = ((lengthOctets[0] - 192) << 8) + (lengthOctets[1]) + 192;
         headerLength = 1 + 2;
-    } else if (lengthOctets[0] >= 223 && lengthOctets[0] < 255) {
+    } else if (lengthOctets[0] >= 224 && lengthOctets[0] < 255) {
         // 4.2.2.4.  Partial Body Length
         // partialBodyLen = 1 << (1st_octet & 0x1F);
         UInt32 partianBodyLength = lengthOctets[0] << (lengthOctets[0] & 0x1F);
