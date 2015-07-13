@@ -3,23 +3,19 @@ ObjectivePGP
 
 ObjectivePGP is OpenPGP implementation for iOS and OSX.
 
-See [this post](http://blog.krzyzanowskim.com/2014/07/31/short-story-about-openpgp-for-ios-and-os-x-objectivepgp/) for full story.
+See [blog post](http://blog.krzyzanowskim.com/2014/07/31/short-story-about-openpgp-for-ios-and-os-x-objectivepgp/) for full story.
 
 ##Installation
 
-###CocoaPods (easy way)
+###CocoaPods
 
 	pod 'ObjectivePGP', :git => 'https://github.com/krzyzanowskim/ObjectivePGP.git', :branch => :master
 
-###Manual (hard way)
+##The licence
 
-1. download library from github
-2. Setup Header Search Path (you need setup valid path to headers)
-![Sample configuration](http://cl.ly/image/153n3S2H0W2S/objectivepgp-set-headers.png)
-3. Link project target to "libObjectivePGP" (`-lObjectivePGP`)
-![Sample configuration](http://cl.ly/image/1z2s1O1h0c0F/objectivepgp-link-to-library.png)
-4. link target with bz2, zlib and OpenSSL to satisfy dependency (`-lssl -lcrypto -lbz2 -lz`). To bring OpenSSL to you project you can use precompiled binaries from my other project https://github.com/krzyzanowskim/OpenSSL. bz2 and zlib are already delivered with Xcode.
-5. Set the ObjC-Flag in linker settings (Build Settings -> Linking -> Other Linker Flags: `-ObjC`)
+It is open source and covered by a standard 2-clause BSD license. That means you have to mention Marcin Krzyżanowski as the original author of this code and reproduce the LICENSE text inside your app.
+
+You can purchase a Non-Attribution-License for 75 Euros for not having to include the LICENSE text. I also accept sponsorship for specific enhancements which you might need. Please contact me via email for inquiries.
 
 ##Usage
 
@@ -121,51 +117,6 @@ See [this post](http://blog.krzyzanowskim.com/2014/07/31/short-story-about-openp
 		NSLog(@"decryption success");
 	}
 
-###Author
-
-Marcin Krzyżanowski
-
-Follow me on Twitter ([@krzyzanowskim](http://twitter.com/krzyzanowskim))
-
-#License
-
-If you use this software in a product, an acknowledgment in the product documentation is required. You can purchase a Non-Attribution-License for 75 Euros for not having to include the LICENSE text.
-
-```
-Copyright (C) 2014 Marcin Krzyżanowski
-This software is provided 'as-is', without any express or implied warranty. 
-
-In no event will the authors be held liable for any damages arising from the use of this software. 
-
-Permission is granted to anyone to use this software for any purpose,including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
-
-- The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation is required.
-- Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
-- This notice may not be removed or altered from any source or binary distribution.
-```
-
-##opgp - command line tool
-
-For you convenience I've build command line tool (OS X) - [opgp](https://github.com/krzyzanowskim/ObjectivePGP/blob/master/usr/local/bin/opgp) that uses this library, so you can play with it easily.
-
-If you want to install this tool, simply copy file to `/usr/local/bin` directory on you mac.
-
-	Usage: opgp [-encrypt] [-key keyfile.asc] [-armor 1] [-msg "message"] ...
-	Options:
-		-decrypt     Decrypt mode (Default)
-		-encrypt     Encrypt mode 
-		-input       file.txt - path or URL to input file
-		-msg         "message" - input text
-		-keyid       [28A83333F9C27197|F9C27197] - public or secret key identifier (Optional if "-key" is specified)
-		-key         key.asc - public or secret key file
-		-output      file.txt.gpg - output path (Optional)
-		-pubring     [pubring.gpg|pubring.asc] - keyring with public keys (Optional)
-		-secring     [secring.gpg|secring.asc] - keyring with public keys (Optional)
-		-passphrase  12345 - secret key password (Optional)
-		-armor       [1|0] - output format (Optional)
-		-help        Help
-		-license     License
-
 ##Release notes
 
 Version 0.3.2
@@ -202,3 +153,13 @@ Known limitations
 - ZIP compression not fully supported
 - Blowfish and Twofish are not supported
 - No external configuration for defaults
+
+###Acknowledgment
+
+This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit. (http://www.openssl.org/)
+
+###Author
+
+Marcin Krzyżanowski
+
+Follow me on Twitter [@krzyzanowskim](http://twitter.com/krzyzanowskim)
