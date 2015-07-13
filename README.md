@@ -10,6 +10,12 @@ See [blog post](http://blog.krzyzanowskim.com/2014/07/31/short-story-about-openp
 ###CocoaPods
 
 	pod 'ObjectivePGP', :git => 'https://github.com/krzyzanowskim/ObjectivePGP.git', :branch => :master
+	
+##Contribution
+
+You are welcome to contribute. Current version can be found on branch `master`. I started work on new version on branch `ObjectivePGP2` - however it is not finished, not even sure if it should be done this way. It is more Work In Progress with new approach.
+
+If you want fix the bug, please create Pull Request against `master` branch. If you want to work on future version, look at `ObjectivePGP2` branch.
 
 ##The licence
 
@@ -118,6 +124,10 @@ You can purchase a Non-Attribution-License for 75 Euros for not having to includ
 	}
 
 ##Release notes
+
+Version 0.4.0
+- ObjectivePGP goes Open Source
+- Fix length header for some double-octet length
 
 Version 0.3.2
 - CHANGE error handling for sign/verify methods
