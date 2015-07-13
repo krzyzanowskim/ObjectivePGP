@@ -1,0 +1,7 @@
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
+HEADER_SEARCH_PATHS = $(inherited) "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/OpenSSL-Universal" "${PODS_ROOT}/Headers/Public/OpenSSL-Universal/openssl"
+LIBRARY_SEARCH_PATHS = "$(PODS_ROOT)/OpenSSL-Universal/lib-osx" "$(PODS_ROOT)/OpenSSL-Universal/lib-osx"
+OTHER_CFLAGS = $(inherited) -isystem "${PODS_ROOT}/Headers/Public" -isystem "${PODS_ROOT}/Headers/Public/OpenSSL-Universal" -isystem "${PODS_ROOT}/Headers/Public/OpenSSL-Universal/openssl"
+OTHER_LDFLAGS = $(inherited) -ObjC -l"crypto" -l"ssl"
+OTHER_LIBTOOLFLAGS = $(OTHER_LDFLAGS)
+PODS_ROOT = ${SRCROOT}/Pods

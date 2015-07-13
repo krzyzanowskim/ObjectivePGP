@@ -288,8 +288,9 @@
 /* Begin PBXFileReference section */
 		059B85547F6245229D167817 /* libPods-ObjectivePGP.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ObjectivePGP.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		074C42D0AFAD4DC7AD76CF21 /* libPods-ObjectivePGPOSX.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ObjectivePGPOSX.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		176F70F4FE5C0E221452B266 /* Pods-ObjectivePGP.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ObjectivePGP.release.xcconfig"; path = "Pods/Target Support Files/Pods-ObjectivePGP/Pods-ObjectivePGP.release.xcconfig"; sourceTree = "<group>"; };
 		4AFC8E128B0F4211888984C0 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		5A0AFDB5EA2347299F403C04 /* Pods-ObjectivePGP.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ObjectivePGP.xcconfig"; path = "Pods/Pods-ObjectivePGP.xcconfig"; sourceTree = "<group>"; };
+		68876505925AB2A6F894CC37 /* Pods-ObjectivePGP.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ObjectivePGP.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ObjectivePGP/Pods-ObjectivePGP.debug.xcconfig"; sourceTree = "<group>"; };
 		750016A819C22E7100EAF308 /* secring-test-plaintext-encrypted-message.asc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "secring-test-plaintext-encrypted-message.asc"; sourceTree = "<group>"; };
 		7502CEFD1916DCE9001B32D7 /* PGPSignatureSubpacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSignatureSubpacket.h; sourceTree = "<group>"; };
 		7502CEFE1916DCE9001B32D7 /* PGPSignatureSubpacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSignatureSubpacket.m; sourceTree = "<group>"; };
@@ -389,7 +390,8 @@
 		75E7B6BC19167F1700C96BAB /* PGPPacketFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPacketFactory.h; sourceTree = "<group>"; };
 		75FE9806193FB46200613549 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h; sourceTree = "<group>"; };
 		75FE9807193FB46200613549 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.m; sourceTree = "<group>"; };
-		D75D077981B34151BBB42CF2 /* Pods-ObjectivePGPOSX.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ObjectivePGPOSX.xcconfig"; path = "Pods/Pods-ObjectivePGPOSX.xcconfig"; sourceTree = "<group>"; };
+		8E4D315DBBA7D34FD265EC3C /* Pods-ObjectivePGPOSX.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ObjectivePGPOSX.release.xcconfig"; path = "Pods/Target Support Files/Pods-ObjectivePGPOSX/Pods-ObjectivePGPOSX.release.xcconfig"; sourceTree = "<group>"; };
+		B7165102DEEFEC13F605D91B /* Pods-ObjectivePGPOSX.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ObjectivePGPOSX.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ObjectivePGPOSX/Pods-ObjectivePGPOSX.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -459,8 +461,7 @@
 				759FF46719598227005B240C /* opgp */,
 				756299B71914DE1A00C5AD3B /* Frameworks */,
 				756299B61914DE1A00C5AD3B /* Products */,
-				5A0AFDB5EA2347299F403C04 /* Pods-ObjectivePGP.xcconfig */,
-				D75D077981B34151BBB42CF2 /* Pods-ObjectivePGPOSX.xcconfig */,
+				EDE5FD42D446DC6FD9AAA307 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -635,6 +636,17 @@
 			name = Packets;
 			sourceTree = "<group>";
 		};
+		EDE5FD42D446DC6FD9AAA307 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				68876505925AB2A6F894CC37 /* Pods-ObjectivePGP.debug.xcconfig */,
+				176F70F4FE5C0E221452B266 /* Pods-ObjectivePGP.release.xcconfig */,
+				B7165102DEEFEC13F605D91B /* Pods-ObjectivePGPOSX.debug.xcconfig */,
+				8E4D315DBBA7D34FD265EC3C /* Pods-ObjectivePGPOSX.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -807,7 +819,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Pods-ObjectivePGP-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ObjectivePGP/Pods-ObjectivePGP-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		B334A9D9043846FA92E990EF /* Copy Pods Resources */ = {
@@ -822,7 +834,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Pods-ObjectivePGPOSX-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ObjectivePGPOSX/Pods-ObjectivePGPOSX-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -963,7 +975,6 @@
 		756299D61914DE1A00C5AD3B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -1001,7 +1012,6 @@
 		756299D71914DE1A00C5AD3B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -1033,12 +1043,8 @@
 		};
 		756299D91914DE1A00C5AD3B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5A0AFDB5EA2347299F403C04 /* Pods-ObjectivePGP.xcconfig */;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					armv7s,
-				);
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
@@ -1054,7 +1060,11 @@
 				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
-				OTHER_LIBTOOLFLAGS = "-lssl -lcrypto";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"Pods/Headers/Public/OpenSSL-Universal",
+				);
 				PRODUCT_NAME = ObjectivePGP;
 				SKIP_INSTALL = YES;
 			};
@@ -1062,12 +1072,8 @@
 		};
 		756299DA1914DE1A00C5AD3B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5A0AFDB5EA2347299F403C04 /* Pods-ObjectivePGP.xcconfig */;
 			buildSettings = {
-				ARCHS = (
-					"$(ARCHS_STANDARD)",
-					armv7s,
-				);
+				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
@@ -1083,7 +1089,11 @@
 				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
-				OTHER_LIBTOOLFLAGS = "-lssl -lcrypto";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"Pods/Headers/Public/OpenSSL-Universal",
+				);
 				PRODUCT_NAME = ObjectivePGP;
 				SKIP_INSTALL = YES;
 			};
@@ -1091,7 +1101,7 @@
 		};
 		756299DC1914DE1A00C5AD3B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5A0AFDB5EA2347299F403C04 /* Pods-ObjectivePGP.xcconfig */;
+			baseConfigurationReference = 68876505925AB2A6F894CC37 /* Pods-ObjectivePGP.debug.xcconfig */;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -1105,11 +1115,6 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "ObjectivePGPTests/ObjectivePGPTests-Info.plist";
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-framework",
-					XCTest,
-				);
 				PRODUCT_NAME = ObjectivePGPTests;
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -1117,7 +1122,7 @@
 		};
 		756299DD1914DE1A00C5AD3B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5A0AFDB5EA2347299F403C04 /* Pods-ObjectivePGP.xcconfig */;
+			baseConfigurationReference = 176F70F4FE5C0E221452B266 /* Pods-ObjectivePGP.release.xcconfig */;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(SDKROOT)/Developer/Library/Frameworks",
@@ -1127,11 +1132,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ObjectivePGP/ObjectivePGP-Prefix.pch";
 				INFOPLIST_FILE = "ObjectivePGPTests/ObjectivePGPTests-Info.plist";
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-framework",
-					XCTest,
-				);
 				PRODUCT_NAME = ObjectivePGPTests;
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -1139,7 +1139,7 @@
 		};
 		759FF46B19598227005B240C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D75D077981B34151BBB42CF2 /* Pods-ObjectivePGPOSX.xcconfig */;
+			baseConfigurationReference = B7165102DEEFEC13F605D91B /* Pods-ObjectivePGPOSX.debug.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -1148,11 +1148,6 @@
 					"$(inherited)",
 				);
 				METAL_ENABLE_DEBUG_INFO = YES;
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-lcrypto",
-					"-lssl",
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -1160,17 +1155,12 @@
 		};
 		759FF46C19598227005B240C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D75D077981B34151BBB42CF2 /* Pods-ObjectivePGPOSX.xcconfig */;
+			baseConfigurationReference = 8E4D315DBBA7D34FD265EC3C /* Pods-ObjectivePGPOSX.release.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				METAL_ENABLE_DEBUG_INFO = NO;
-				OTHER_LDFLAGS = (
-					"-ObjC",
-					"-lcrypto",
-					"-lssl",
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = macosx;
 			};
@@ -1178,7 +1168,6 @@
 		};
 		759FF4A1195982A6005B240C /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D75D077981B34151BBB42CF2 /* Pods-ObjectivePGPOSX.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE = YES;
@@ -1195,7 +1184,11 @@
 				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
-				OTHER_LIBTOOLFLAGS = "-lssl -lcrypto";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"Pods/Headers/Public/OpenSSL-Universal",
+				);
 				PRODUCT_NAME = ObjectivePGP;
 				SDKROOT = macosx10.9;
 				SKIP_INSTALL = YES;
@@ -1204,7 +1197,6 @@
 		};
 		759FF4A2195982A6005B240C /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D75D077981B34151BBB42CF2 /* Pods-ObjectivePGPOSX.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE = YES;
@@ -1221,7 +1213,11 @@
 				GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES;
 				GCC_WARN_SHADOW = YES;
 				GCC_WARN_STRICT_SELECTOR_MATCH = YES;
-				OTHER_LIBTOOLFLAGS = "-lssl -lcrypto";
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
+					"Pods/Headers/Public/OpenSSL-Universal",
+				);
 				PRODUCT_NAME = ObjectivePGP;
 				SDKROOT = macosx10.9;
 				SKIP_INSTALL = YES;

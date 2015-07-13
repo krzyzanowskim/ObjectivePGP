@@ -2,9 +2,9 @@ PODS:
   - OpenSSL-Universal (1.0.1.h)
 
 DEPENDENCIES:
-  - OpenSSL-Universal
+  - OpenSSL-Universal (= 1.0.1.h)
 
 SPEC CHECKSUMS:
-  OpenSSL-Universal: 9c112508615ed33bb35f730eed820e93175a9dec
+  OpenSSL-Universal: 08f02000517f319870cc2dd1006ac3e65b1233e0
 
-COCOAPODS: 0.33.1
+COCOAPODS: 0.37.2
