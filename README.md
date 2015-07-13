@@ -7,25 +7,15 @@ See [blog post](http://blog.krzyzanowskim.com/2014/07/31/short-story-about-openp
 
 ##Installation
 
-###CocoaPods (easy way)
+###CocoaPods
 
 	pod 'ObjectivePGP', :git => 'https://github.com/krzyzanowskim/ObjectivePGP.git', :branch => :master
 
-###Manual (hard way)
-
-1. download library from github
-2. Setup Header Search Path (you need setup valid path to headers)
-![Sample configuration](http://cl.ly/image/153n3S2H0W2S/objectivepgp-set-headers.png)
-3. Link project target to "libObjectivePGP" (`-lObjectivePGP`)
-![Sample configuration](http://cl.ly/image/1z2s1O1h0c0F/objectivepgp-link-to-library.png)
-4. link target with `bz2`, `zlib` and `OpenSSL` to satisfy dependency (`-lssl -lcrypto -lbz2 -lz`). To bring OpenSSL to you project you can use precompiled binaries from my other project https://github.com/krzyzanowskim/OpenSSL. `bz2` and `zlib` are already distributed with Xcode.
-5. Set the ObjC-Flag in linker settings (Build Settings -> Linking -> Other Linker Flags: `-ObjC`)
-
-##License
+##The licence
 
 It is open source and covered by a standard 2-clause BSD license. That means you have to mention Marcin Krzyżanowski as the original author of this code and reproduce the LICENSE text inside your app.
 
-You can donate 75 euros for a non-attribution license.
+You can purchase a Non-Attribution-License for 75 Euros for not having to include the LICENSE text. I also accept sponsorship for specific enhancements which you might need. Please contact me via email for inquiries.
 
 ##Usage
 
