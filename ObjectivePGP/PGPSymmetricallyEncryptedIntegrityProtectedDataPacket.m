@@ -16,6 +16,7 @@
 #import "PGPModificationDetectionCodePacket.h"
 #import "PGPLiteralPacket.h"
 #import "PGPCompressedPacket.h"
+#import "PGPOnePassSignaturePacket.h"
 #import "PGPModificationDetectionCodePacket.h"
 
 #import <CommonCrypto/CommonCrypto.h>
@@ -87,7 +88,29 @@
     return [data copy];
 }
 
-- (NSData *) decryptWithSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData error:(NSError * __autoreleasing *)error
+- (NSArray *) readPacketsFromData:(NSData *)keyringData offset:(NSUInteger) offset
+{
+    NSMutableArray *accumulatedPackets = [NSMutableArray array];
+    
+    while (offset < keyringData.length) {
+        
+        PGPPacket *packet = [PGPPacketFactory packetWithData:keyringData offset:offset];
+        if (packet) {
+            [accumulatedPackets addObject:packet];
+        }
+        offset = offset + packet.headerData.length + packet.bodyData.length;
+        if (packet.indeterminateLength && accumulatedPackets.count == 1 && [accumulatedPackets[0] isKindOfClass:[PGPCompressedPacket class]])
+        {
+            // substract size of PGPModificationDetectionCodePacket in this very special case - TODO: fix this
+            offset -= 22;
+        }
+    }
+    
+    return [accumulatedPackets copy];
+}
+
+// return array of packets
+- (NSArray *) decryptWithSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData error:(NSError * __autoreleasing *)error
 {
     NSAssert(self.encryptedData, @"Missing encrypted data to decrypt");
     NSAssert(secretKeyPacket, @"Missing secret key");
@@ -126,56 +149,82 @@
         }
         return nil;
     }
-    
-    // read literal (or compressed) packet data
-    PGPPacket* plaintextPacket = [PGPPacketFactory packetWithData:decryptedData offset:position];
-    
-    NSUInteger plaintextPacketLength = plaintextPacket.headerData.length + plaintextPacket.bodyData.length;
-    if (plaintextPacket.indeterminateLength) {
-        // adjust packet length required if packet length is not exactly set in header
-        int MDCLength = 22;
-        plaintextPacketLength = plaintextPacketLength - MDCLength;
-    }
-    
-    NSData *plaintextPacketData = [decryptedData subdataWithRange:(NSRange){position, plaintextPacketLength}];
-    position = position + plaintextPacketLength;
-    
-    NSData *plaintextData = nil;
-    switch (plaintextPacket.tag) {
-        case PGPLiteralDataPacketTag:
-        {
-            PGPLiteralPacket *literalPacket = (PGPLiteralPacket *)plaintextPacket;
-            plaintextData = literalPacket.literalRawData;
-        }
-            break;
-        case PGPCompressedDataPacketTag:
-        {
-            PGPCompressedPacket *compressedPacket = (PGPCompressedPacket *)plaintextPacket;
-            NSData *literalPacketData = compressedPacket.decompressedData;
-            PGPLiteralPacket *literalPacket = (PGPLiteralPacket *)[PGPPacketFactory packetWithData:literalPacketData offset:0];
-            plaintextData = literalPacket.literalRawData;
-        }
-            break;
-        default:
-            if (error) {
-                *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Unknown packet (expected literal or compressed)"}];
-            }
-            return nil;
-            break;
-    }
 
-    // mdc packet
-    NSAssert(position < decryptedData.length, @"Invalid packet length. Missing MDC?");
     
-    PGPModificationDetectionCodePacket *mdcPacket = (PGPModificationDetectionCodePacket *)[PGPPacketFactory packetWithData:decryptedData offset:position];
-    NSAssert([mdcPacket isKindOfClass:[PGPModificationDetectionCodePacket class]], @"Invalid packet, expected MDC");
+    NSArray *packets = [self readPacketsFromData:decryptedData offset:position];
+    
+    PGPLiteralPacket *literalPacket;
+    PGPCompressedPacket *compressedPacket;
+    PGPOnePassSignaturePacket *onePassSignaturePacket;
+    PGPSignaturePacket *signaturePacket;
+    PGPModificationDetectionCodePacket *mdcPacket;
+    for (PGPPacket *packet in packets)
+    {
+        switch (packet.tag) {
+            case PGPLiteralDataPacketTag:
+                {
+                    literalPacket = (PGPLiteralPacket *)packet;
+                }
+                break;
+                case PGPCompressedDataPacketTag:
+                {
+                    compressedPacket = (PGPCompressedPacket *)packet;
+                }
+                break;
+                case PGPOnePassSignaturePacketTag:
+                {
+                    onePassSignaturePacket = (PGPOnePassSignaturePacket *)packet;
+                }
+                break;
+                case PGPSignaturePacketTag:
+                {
+                    signaturePacket = (PGPSignaturePacket *)packet;
+                }
+                break;
+                case PGPModificationDetectionCodePacketTag:
+                {
+                    mdcPacket = (PGPModificationDetectionCodePacket *)packet;
+                }
+                break;
+            default:
+                if (error) {
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Unknown packet (expected literal or compressed)"}];
+                }
+                return nil;
+                break;
+        }
+    }
+    
+    // mdc packet
+    NSAssert(mdcPacket != nil, @"Expected MDC");
     
     // validation: calculate MDC hash to check if literal data is modified
     NSMutableData *toMDCData = [[NSMutableData alloc] init];
     // preamble
     [toMDCData appendData:prefixRandomFullData];
-    // plaintext
-    [toMDCData appendData:plaintextPacketData];
+    if (onePassSignaturePacket)
+    {
+        // add onepass paket if exists
+        [toMDCData appendData:onePassSignaturePacket.headerData];
+        [toMDCData appendData:onePassSignaturePacket.bodyData];
+    }
+    // add literal paket
+    if (literalPacket)
+    {
+        [toMDCData appendData:literalPacket.headerData];
+        [toMDCData appendData:literalPacket.bodyData];
+    }
+    if (compressedPacket)
+    {
+        [toMDCData appendData:compressedPacket.headerData];
+        [toMDCData appendData:compressedPacket.bodyData];
+    }
+    if (signaturePacket)
+    {
+        // add signature paket if exists
+        [toMDCData appendData:signaturePacket.headerData];
+        [toMDCData appendData:signaturePacket.bodyData];
+    }
     // and then also includes two octets of values 0xD3, 0x14 (sha length)
     UInt8 mdc_suffix[2] = {0xD3, 0x14};
     [toMDCData appendBytes:&mdc_suffix length:2];
@@ -187,7 +236,8 @@
         }
         return nil;
     }
-    return plaintextData;
+    
+    return [packets subarrayWithRange:(NSRange){0, packets.count - 1}];
 }
 
 - (void) encrypt:(NSData *)literalPacketData symmetricAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData error:(NSError * __autoreleasing *)error
@@ -201,12 +251,9 @@
     // Prepare preamble
     // Instead of using an IV, OpenPGP prefixes a string of length equal to the block size of the cipher plus two to the data before it is encrypted.
     // The first block-size octets (for example, 8 octets for a 64-bit block length) are random,
-    NSMutableData *prefixRandomData = [NSMutableData dataWithCapacity:blockSize];
-
-    for (int i = 0; i < blockSize; i++) {
-        UInt8 byte = arc4random_uniform(255);
-        [prefixRandomData appendBytes:&byte length:1];
-    }
+    uint8_t buf[blockSize];
+    SecRandomCopyBytes(kSecRandomDefault, blockSize, buf);
+    NSMutableData *prefixRandomData = [NSMutableData dataWithBytes:buf length:blockSize];
     
     // and the following two octets are copies of the last two octets of the IV.
     NSMutableData *prefixRandomFullData = [NSMutableData dataWithData:prefixRandomData];

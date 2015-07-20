@@ -284,4 +284,14 @@ const UInt32 UnknownLength = UINT32_MAX;
     return copy;
 }
 
+#pragma mark - conversion
+
+- (NSData *)packetData
+{
+    NSMutableData *result = [NSMutableData data];
+    [result appendData:self.headerData];
+    [result appendData:self.bodyData];
+    return result;
+}
+
 @end
