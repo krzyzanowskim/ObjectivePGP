@@ -263,12 +263,11 @@ const UInt32 UnknownLength = UINT32_MAX;
         UInt8 marker = 255;
         [data appendBytes:&marker length:1];
 
-        buf[0] = 0xff;
-		buf[1] = (UInt8)(fiveOctets >> 24);
-		buf[2] = (UInt8)(fiveOctets >> 16);
-		buf[3] = (UInt8)(fiveOctets >> 8);
-		buf[4] = (UInt8)(fiveOctets);
-        [data appendBytes:buf length:5];
+		buf[0] = (UInt8)(fiveOctets >> 24);
+		buf[1] = (UInt8)(fiveOctets >> 16);
+		buf[2] = (UInt8)(fiveOctets >> 8);
+		buf[3] = (UInt8)(fiveOctets);
+        [data appendBytes:buf length:4];
     }
     return [data copy];
 
