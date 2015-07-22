@@ -541,11 +541,12 @@
             }
             return nil;
         }
-
+        
         // Literal
         PGPLiteralPacket *literalPacket = [PGPLiteralPacket literalPacket:PGPLiteralPacketBinary withData:dataToSign];
         literalPacket.filename = nil;
         literalPacket.timestamp = [NSDate date];
+        
         NSError *literalExportError = nil;
         [signedMessage appendData:[literalPacket exportPacket:&literalExportError]];
         NSAssert(!literalExportError, @"Missing literal data");
@@ -555,6 +556,27 @@
             }
             return nil;
         }
+        
+//        // Compressed
+//        NSError *literalExportError = nil;
+//        PGPCompressedPacket *compressedPacket = [[PGPCompressedPacket alloc] initWithData:[literalPacket exportPacket:&literalExportError] type:PGPCompressionBZIP2];
+//        NSAssert(!literalExportError, @"Missing literal data");
+//        if (literalExportError) {
+//            if (error) {
+//                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Missing literal data"}];
+//            }
+//            return nil;
+//        }
+//
+//        NSError *compressedExportError = nil;
+//        [signedMessage appendData:[compressedPacket exportPacket:&compressedExportError]];
+//        NSAssert(!compressedExportError, @"Missing compressed data");
+//        if (compressedExportError) {
+//            if (error) {
+//                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Missing compressed data"}];
+//            }
+//            return nil;
+//        }
     }
     [signedMessage appendData:signaturePacketData];
     return [signedMessage copy];

@@ -390,6 +390,7 @@
 		75E7B6BC19167F1700C96BAB /* PGPPacketFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPacketFactory.h; sourceTree = "<group>"; };
 		75FE9806193FB46200613549 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h; sourceTree = "<group>"; };
 		75FE9807193FB46200613549 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.m; sourceTree = "<group>"; };
+		8191ED3556BC916D4D9205E2 /* libPods-ObjectivePGPTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ObjectivePGPTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E4D315DBBA7D34FD265EC3C /* Pods-ObjectivePGPOSX.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ObjectivePGPOSX.release.xcconfig"; path = "Pods/Target Support Files/Pods-ObjectivePGPOSX/Pods-ObjectivePGPOSX.release.xcconfig"; sourceTree = "<group>"; };
 		B7165102DEEFEC13F605D91B /* Pods-ObjectivePGPOSX.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ObjectivePGPOSX.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ObjectivePGPOSX/Pods-ObjectivePGPOSX.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -489,6 +490,7 @@
 				4AFC8E128B0F4211888984C0 /* libPods.a */,
 				059B85547F6245229D167817 /* libPods-ObjectivePGP.a */,
 				074C42D0AFAD4DC7AD76CF21 /* libPods-ObjectivePGPOSX.a */,
+				8191ED3556BC916D4D9205E2 /* libPods-ObjectivePGPTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1063,7 +1065,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"Pods/Headers/Public/OpenSSL-Universal",
+					Pods/Headers/Public/OpenSSL,
 				);
 				PRODUCT_NAME = ObjectivePGP;
 				SKIP_INSTALL = YES;
@@ -1092,7 +1094,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"Pods/Headers/Public/OpenSSL-Universal",
+					Pods/Headers/Public/OpenSSL,
 				);
 				PRODUCT_NAME = ObjectivePGP;
 				SKIP_INSTALL = YES;
@@ -1187,7 +1189,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"Pods/Headers/Public/OpenSSL-Universal",
+					Pods/Headers/Public/OpenSSL,
 				);
 				PRODUCT_NAME = ObjectivePGP;
 				SDKROOT = macosx10.9;
@@ -1216,7 +1218,7 @@
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include,
-					"Pods/Headers/Public/OpenSSL-Universal",
+					Pods/Headers/Public/OpenSSL,
 				);
 				PRODUCT_NAME = ObjectivePGP;
 				SDKROOT = macosx10.9;

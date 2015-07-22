@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
   s.source_files = 'ObjectivePGP/*.{h,m}'
   s.public_header_files = 'ObjectivePGP/*.h'
 
-  s.dependency 'OpenSSL-Universal'
+  s.dependency 'OpenSSL'
   s.requires_arc = true
 
   s.libraries =  'z', 'bz2'
