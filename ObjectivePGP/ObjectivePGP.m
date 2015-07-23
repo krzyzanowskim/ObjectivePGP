@@ -313,7 +313,6 @@
     
     PGPLiteralPacket *literalPacket;
     PGPCompressedPacket *compressedPacket;
-    PGPOnePassSignaturePacket *onePassSignaturePacket;
     PGPSignaturePacket *signaturePacket;
     NSData *plaintextData = nil;
     for (PGPPacket *packet in packets)
@@ -335,7 +334,7 @@
                 break;
             case PGPOnePassSignaturePacketTag:
             {
-                onePassSignaturePacket = (PGPOnePassSignaturePacket *)packet;
+                //onePassSignaturePacket = (PGPOnePassSignaturePacket *)packet;
             }
                 break;
             case PGPSignaturePacketTag:

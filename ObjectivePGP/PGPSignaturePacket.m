@@ -320,12 +320,12 @@
 // 5.2.4.  Computing Signatures
 // http://tools.ietf.org/html/rfc4880#section-5.2.4
 // @see https://github.com/singpolyma/openpgp-spec/blob/master/key-signatures
-- (void) signData:(NSData *)inputData  secretKey:(PGPKey *)secretKey error:(NSError * __autoreleasing *)error
+- (BOOL) signData:(NSData *)inputData  secretKey:(PGPKey *)secretKey error:(NSError * __autoreleasing *)error
 {
     return [self signData:inputData secretKey:secretKey passphrase:nil userID:nil error:error];
 }
 
-- (void) signData:(NSData *)inputData secretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase userID:(NSString *)userID error:(NSError * __autoreleasing *)error
+- (BOOL) signData:(NSData *)inputData secretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase userID:(NSString *)userID error:(NSError * __autoreleasing *)error
 {
     NSAssert(secretKey.type == PGPKeySecret,@"Need secret key");
     NSAssert([secretKey.primaryKeyPacket isKindOfClass:[PGPSecretKeyPacket class]], @"Signing key packet not found");
@@ -336,7 +336,7 @@
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"No signing signature found"}];
         }
-        return;
+        return NO;
     }
 
     //TODO: check it this is right ? setup public key algorithm from secret key packet
@@ -393,7 +393,7 @@
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Sign Encryption failed"}];
         }
-        return;
+        return NO;
     }
     // store signature data as MPI
     self.signatureMPIs = @[[[PGPMPI alloc] initWithData:encryptedEmData]];
@@ -407,6 +407,7 @@
     // Two-octet field holding the left 16 bits of the signed hash value.
     NSData *signedHashValue = [hashData subdataWithRange:(NSRange){0,2}];
     self.signedHashValueData = signedHashValue;
+    return YES;
 }
 
 - (NSData *) toSignDataForType:(PGPSignatureType)type inputData:(NSData *)inputData key:(PGPKey *)key keyPacket:(PGPPublicKeyPacket *)keyPacket userID:(NSString *)userID error:(NSError * __autoreleasing *)error

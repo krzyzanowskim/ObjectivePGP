@@ -14,9 +14,9 @@
 
 @interface PGPSubKey : PGPKey
 
-@property (strong, nonatomic) PGPPacket * primaryKeyPacket;
+//@property (strong, nonatomic) PGPPacket * primaryKeyPacket;
 @property (strong) PGPSignaturePacket *bindingSignature;
-@property (strong, nonatomic) PGPSignaturePacket *revocationSignature;
+//@property (strong, nonatomic) PGPSignaturePacket *revocationSignature;
 @property (nonatomic, readonly) PGPKeyID *keyID;
 
 - (instancetype) initWithPacket:(PGPPacket *)packet;

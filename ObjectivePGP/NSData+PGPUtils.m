@@ -126,6 +126,7 @@
     CC_SHA224_Update(ctx, self.bytes, (CC_LONG)self.length);
     UInt8 *out = calloc(CC_SHA224_DIGEST_LENGTH, sizeof(UInt8));
     if (!out) {
+        free(ctx);
         return nil;
     }
     CC_SHA224_Final(out, ctx);
@@ -151,6 +152,7 @@
     CC_SHA256_Update(ctx, self.bytes, (CC_LONG)self.length);
     UInt8 *out = calloc(CC_SHA256_DIGEST_LENGTH, sizeof(UInt8));
     if (!out) {
+        free(ctx);
         return nil;
     }
     CC_SHA256_Final(out, ctx);
@@ -176,6 +178,7 @@
     CC_SHA384_Update(ctx, self.bytes, (CC_LONG)self.length);
     UInt8 *out = calloc(CC_SHA384_DIGEST_LENGTH, sizeof(UInt8));
     if (!out) {
+        free(ctx);
         return nil;
     }
     CC_SHA384_Final(out, ctx);
@@ -201,6 +204,7 @@
     CC_SHA512_Update(ctx, self.bytes, (CC_LONG)self.length);
     UInt8 *outBuf = calloc(CC_SHA512_DIGEST_LENGTH, sizeof(UInt8));
     if (!outBuf) {
+        free(ctx);
         return nil;
     }
     CC_SHA512_Final(outBuf, ctx);
