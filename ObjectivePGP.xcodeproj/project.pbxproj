@@ -733,7 +733,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = PGP;
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0640;
 				ORGANIZATIONNAME = "Marcin Krzyżanowski";
 				TargetAttributes = {
 					759FF46519598227005B240C = {
@@ -1046,7 +1046,6 @@
 		756299D91914DE1A00C5AD3B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
@@ -1075,7 +1074,6 @@
 		756299DA1914DE1A00C5AD3B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD)";
 				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE = YES;
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
@@ -1176,6 +1174,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
 				DSTROOT = /tmp/ObjectivePGP.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1192,7 +1191,7 @@
 					Pods/Headers/Public/OpenSSL,
 				);
 				PRODUCT_NAME = ObjectivePGP;
-				SDKROOT = macosx10.9;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -1205,6 +1204,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
 				DSTROOT = /tmp/ObjectivePGP.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -1221,7 +1221,7 @@
 					Pods/Headers/Public/OpenSSL,
 				);
 				PRODUCT_NAME = ObjectivePGP;
-				SDKROOT = macosx10.9;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
