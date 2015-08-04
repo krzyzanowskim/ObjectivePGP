@@ -80,19 +80,10 @@
 
     switch (self.format) {
         case PGPLiteralPacketBinary:
-        {
-            self.literalRawData = data;
-        }
-            break;
         case PGPLiteralPacketText:
         case PGPLiteralPacketTextUTF8:
-        {
-            NSString *literalString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-            // Text data is stored with <CR><LF>
-            // These should be converted to native line endings by the receiving software.
-            NSString *literalStringWithHostNewLine = [[literalString componentsSeparatedByString:@"\r\n"] componentsJoinedByString:@"\n"];
-            self.literalRawData = [literalStringWithHostNewLine dataUsingEncoding:NSUTF8StringEncoding];
-        }
+            // don't tamper the data, otherwise signature verification fails
+            self.literalRawData = data;
             break;
         default:
             break;
@@ -133,17 +124,10 @@
     }
 
     switch (self.format) {
-        case PGPLiteralPacketBinary:
-            [bodyData appendData:self.literalRawData];
-            break;
         case PGPLiteralPacketText:
         case PGPLiteralPacketTextUTF8:
-        {
-            // Convert to <CR><LF>
-            NSString *literalStringWithHostNewLine = [[NSString alloc] initWithData:self.literalRawData encoding:NSUTF8StringEncoding];
-            NSString *literalStringWithCRLF = [[literalStringWithHostNewLine componentsSeparatedByString:@"\n"] componentsJoinedByString:@"\r\n"];
-            [bodyData appendData:[literalStringWithCRLF dataUsingEncoding:NSUTF8StringEncoding]];
-        }
+        case PGPLiteralPacketBinary:
+            [bodyData appendData:self.literalRawData];
             break;
         default:
             break;
