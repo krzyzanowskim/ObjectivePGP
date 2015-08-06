@@ -4,6 +4,7 @@
 // rfc1950 (zlib format)
 
 #import "NSData+compression.h"
+#import "PGPCompressedPacket.h"
 #import <zlib.h>
 #import <bzlib.h>
 
@@ -57,7 +58,7 @@
 	return compressed;
 }
 
-- (NSData *)zlibDecompressed:(NSError * __autoreleasing *)error
+- (NSData *)zlibDecompressed:(NSError * __autoreleasing *)error compressionType:(int)compressionType
 {
 	if ([self length] == 0)
 	{
@@ -68,7 +69,7 @@
 	strm.zalloc = Z_NULL;
 	strm.zfree = Z_NULL;
 	strm.opaque = Z_NULL;
-	if (Z_OK != inflateInit(&strm))
+	if (Z_OK != (compressionType == PGPCompressionZIP ? inflateInit2( &strm, -15) : inflateInit(&strm)))
 	{
         if (error) {
             NSString *errorMsg = [NSString stringWithCString:strm.msg encoding:NSASCIIStringEncoding];
@@ -82,6 +83,11 @@
 	strm.avail_out = (uInt)[decompressed length];
 	strm.next_in = (void *)[self bytes];
 	strm.avail_in = (uInt)[self length];
+	// From the gnupg sources this might be needed - of course not like this, as we need to extend the input buffer length for this
+	//if (compressionType == PGPCompressionZIP)
+	//{
+	//    *(strm.next_in + (uInt)[self length]) = 0xFF;
+	//}
 	
 	while (inflate(&strm, Z_FINISH) != Z_STREAM_END)
 	{

@@ -40,7 +40,8 @@
     //TODO: for ZIP use AgileBits/objective-zip
     switch (self.compressionType) {
         case PGPCompressionZLIB:
-            self.decompressedData = [compressedData zlibDecompressed:error];
+        case PGPCompressionZIP:
+            self.decompressedData = [compressedData zlibDecompressed:error compressionType:self.compressionType];
             break;
         case PGPCompressionBZIP2:
             self.decompressedData = [compressedData bzip2Decompressed:error];
