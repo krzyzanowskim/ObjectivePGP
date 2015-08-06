@@ -171,7 +171,7 @@
     
     PGPMPI *modulusMPI = [publicKeyPacket publicMPI:@"N"];
     if (!modulusMPI)
-        return NO;
+        return error == nil;
     
     BIGNUM *nBigNumRef = modulusMPI.bignumRef;
     unsigned int k = (unsigned)BN_num_bytes(nBigNumRef);

@@ -88,7 +88,7 @@
 		// inflate should return Z_STREAM_END on the first call
 		[decompressed setLength: [decompressed length] * 1.5];
 		strm.next_out = [decompressed mutableBytes] + strm.total_out;
-		strm.avail_out = (uInt)[decompressed length] - (uInt)strm.total_out;
+		strm.avail_out = (uInt)([decompressed length] - strm.total_out);
 	}
 	
 	[decompressed setLength: strm.total_out];
@@ -110,7 +110,7 @@
     int bzret = 0;
     bz_stream stream = {0x00};
     stream.next_in = (void *)[self bytes];
-    stream.avail_in = (unsigned int) self.length;
+    stream.avail_in = (uInt)self.length;
     
     const int buffer_size = 10000;
     NSMutableData *buffer = [NSMutableData dataWithLength:buffer_size];
@@ -144,7 +144,7 @@
     int bzret = 0;
     bz_stream stream = {0x00};
     stream.next_in = (void *)[self bytes];
-    stream.avail_in = (int)self.length;
+    stream.avail_in = (uInt)self.length;
     unsigned int compression = 9; // should be a value between 1 and 9 inclusive
 
     const int buffer_size = 10000;

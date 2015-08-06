@@ -27,32 +27,26 @@
 
 /**
  *  Parse packet data and return packet object instance
- *
+ *cc
  *  @param packetsData Data with all packets. Packet sequence data. Keyring.
  *  @param offset      offset of current packet
  *
  *  @return Packet instance object
  */
-+ (PGPPacket * ) packetWithData:(NSData *)packetData offset:(NSUInteger)offset
++ (PGPPacket * ) packetWithData:(NSData *)packetData offset:(NSUInteger)offset nextPacketOffset:(NSUInteger *)nextPacketOffset
 {
-    NSData *guessPacketHeaderData = [packetData subdataWithRange:(NSRange) {offset + 0, MIN(6,packetData.length - offset)}]; // up to 6 octets for complete header
 
     // parse header and get actual header data
-    UInt32 definedBodyLength    = 0;
-    UInt32 finalBodyLength      = 0;
-    PGPPacketTag packetTag      = 0;
-    NSData *packetHeaderData = [PGPPacket parsePacketHeader:guessPacketHeaderData bodyLength:&definedBodyLength packetTag:&packetTag];
+
+    PGPPacketTag packetTag = 0;
+    NSData *data = [packetData subdataWithRange:(NSRange) {offset, packetData.length - offset}];
+    UInt32 headerLength;
+    BOOL indeterminateLength;
+    NSData *packetBodyData = [PGPPacket parsePacketHeader:data headerLength:&headerLength nextPacketOffset:nextPacketOffset packetTag:&packetTag indeterminateLength:&indeterminateLength];
+    NSData *packetHeaderData = [packetData subdataWithRange:(NSRange) {offset, headerLength}];
 
     if (packetHeaderData.length > 0) {
-        finalBodyLength = definedBodyLength;
-        if (definedBodyLength == UnknownLength) {
-            // well.. if length is unknown then get all data as packet body
-            // which is not true because sometimes at the very end there is MDC packet
-            // this is handled in PGPSymmetricallyEncryptedIntegrityProtectedDataPacket
-            finalBodyLength = MAX(0.0,packetData.length - offset - packetHeaderData.length);
-        }
-        NSData *packetBodyData = [packetData subdataWithRange:(NSRange) {offset + packetHeaderData.length, finalBodyLength}];
-
+        
         // Analyze body0
         PGPPacket * packet = nil;
         switch (packetTag) {
@@ -110,7 +104,7 @@
                 break;
         }
         
-        if (definedBodyLength == UnknownLength) {
+        if (indeterminateLength) {
             packet.indeterminateLength = YES;
         }
         return packet;

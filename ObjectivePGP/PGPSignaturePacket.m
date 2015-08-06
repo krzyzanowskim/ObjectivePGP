@@ -505,7 +505,7 @@
 
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
 {
-    NSUInteger position = [super parsePacketBody:packetBody error:error];
+    __unused NSUInteger position = [super parsePacketBody:packetBody error:error];
     NSUInteger startPosition = position;
 
     UInt8 parsedVersion = 0;
@@ -522,7 +522,10 @@
             break;
         default:
             NSAssert(true, @"Unsupported signature packet version");
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Signature version %@ is supported at the moment", @(parsedVersion)]}];
+            if (error)
+            {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Signature version %@ is supported at the moment", @(parsedVersion)]}];
+            }
             return startPosition + packetBody.length;
             break;
     }

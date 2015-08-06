@@ -12,6 +12,6 @@
 
 @interface PGPPacketFactory : NSObject
 
-+ (PGPPacket *) packetWithData:(NSData *)packetsData offset:(NSUInteger)offset;
++ (PGPPacket *) packetWithData:(NSData *)packetsData offset:(NSUInteger)offset nextPacketOffset:(NSUInteger *)nextPacketOffset;
 
 @end

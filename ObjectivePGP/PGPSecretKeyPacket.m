@@ -145,7 +145,7 @@
  */
 - (NSUInteger) parseEncryptedPart:(NSData *)data error:(NSError * __autoreleasing *)error
 {
-    NSUInteger position = 0;
+    __unused NSUInteger position = 0;
 
     // If string-to-key usage octet was 255 or 254, a one-octet symmetric encryption algorithm
     [data getBytes:&_symmetricAlgorithm range:(NSRange){position, 1}];
@@ -186,7 +186,7 @@
  */
 - (NSUInteger) parseUnencryptedPart:(NSData *)data error:(NSError * __autoreleasing *)error
 {
-    NSUInteger position = 0;
+    __unused NSUInteger position = 0;
 
     // check hash before read actual data
     // hash is physically located at the end of dataBody

@@ -313,6 +313,7 @@
     
     PGPLiteralPacket *literalPacket;
     PGPCompressedPacket *compressedPacket;
+    __unused PGPOnePassSignaturePacket *onePassSignaturePacket;
     PGPSignaturePacket *signaturePacket;
     NSData *plaintextData = nil;
     for (PGPPacket *packet in packets)
@@ -328,13 +329,13 @@
             {
                 compressedPacket = (PGPCompressedPacket *)packet;
                 NSData *literalPacketData = compressedPacket.decompressedData;
-                literalPacket = (PGPLiteralPacket *)[PGPPacketFactory packetWithData:literalPacketData offset:0];
+                literalPacket = (PGPLiteralPacket *)[PGPPacketFactory packetWithData:literalPacketData offset:0 nextPacketOffset:NULL];
                 plaintextData = literalPacket.literalRawData;
             }
                 break;
             case PGPOnePassSignaturePacketTag:
             {
-                //onePassSignaturePacket = (PGPOnePassSignaturePacket *)packet;
+                onePassSignaturePacket = (PGPOnePassSignaturePacket *)packet;
             }
                 break;
             case PGPSignaturePacketTag:
@@ -591,7 +592,7 @@
     }
 
     // search for key in keys
-    id packet = [PGPPacketFactory packetWithData:signatureData offset:0];
+    id packet = [PGPPacketFactory packetWithData:signatureData offset:0 nextPacketOffset:NULL];
     if (![packet isKindOfClass:[PGPSignaturePacket class]]) {
         NSAssert(false, @"need signature");
         if (error) {
@@ -623,7 +624,7 @@
         return NO;
     }
 
-    id packet = [PGPPacketFactory packetWithData:signatureData offset:0];
+    id packet = [PGPPacketFactory packetWithData:signatureData offset:0 nextPacketOffset:NULL];
     if (![packet isKindOfClass:[PGPSignaturePacket class]]) {
         NSAssert(false, @"need signature");
         if (error) {
@@ -647,16 +648,16 @@
         // search for signature packet
         NSMutableArray *accumulatedPackets = [NSMutableArray array];
         NSUInteger offset = 0;
-
+        NSUInteger nextPacketOffset;
         //TODO: dont parse data here, get raw data and pass to verifyData:withsignature:
         while (offset < signedDataPackets.length) {
 
-            PGPPacket *packet = [PGPPacketFactory packetWithData:signedDataPackets offset:offset];
+            PGPPacket *packet = [PGPPacketFactory packetWithData:signedDataPackets offset:offset nextPacketOffset:&nextPacketOffset];
             if (packet) {
                 [accumulatedPackets addObject:packet];
             }
 
-            offset = offset + packet.headerData.length + packet.bodyData.length;
+            offset += nextPacketOffset;
         }
 
         //NSLog(@"%@",accumulatedPackets);
@@ -804,15 +805,16 @@
 {
     NSMutableArray *accumulatedPackets = [NSMutableArray array];
     NSUInteger offset = 0;
+    NSUInteger nextPacketOffset = 0;
     
     while (offset < keyringData.length) {
         
-        PGPPacket *packet = [PGPPacketFactory packetWithData:keyringData offset:offset];
+        PGPPacket *packet = [PGPPacketFactory packetWithData:keyringData offset:offset nextPacketOffset:&nextPacketOffset];
         if (packet) {
             [accumulatedPackets addObject:packet];
         }
         
-        offset = offset + packet.headerData.length + packet.bodyData.length;
+        offset += nextPacketOffset;
     }
     
     return [accumulatedPackets copy];
@@ -833,7 +835,8 @@
 
     while (offset < messageData.length) {
         
-        PGPPacket *packet = [PGPPacketFactory packetWithData:messageData offset:offset];
+        NSUInteger nextPacketOffset;
+        PGPPacket *packet = [PGPPacketFactory packetWithData:messageData offset:offset nextPacketOffset:&nextPacketOffset];
         if (packet) {
             if ((accumulatedPackets.count > 1) && ((packet.tag == PGPPublicKeyPacketTag) || (packet.tag == PGPSecretKeyPacketTag))) {
                 PGPKey *key = [[PGPKey alloc] initWithPackets:accumulatedPackets];
@@ -842,8 +845,7 @@
             }
             [accumulatedPackets addObject:packet];
         }
-
-        offset = offset + packet.headerData.length + packet.bodyData.length;
+        offset += nextPacketOffset;
     }
 
     if (accumulatedPackets.count > 1) {

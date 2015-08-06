@@ -88,24 +88,29 @@
     return [data copy];
 }
 
-- (NSArray *) readPacketsFromData:(NSData *)keyringData offset:(NSUInteger) offset
+- (NSArray *) readPacketsFromData:(NSData *)keyringData offset:(NSUInteger)offset mdcLength:(NSUInteger*)mdcLength
 {
     NSMutableArray *accumulatedPackets = [NSMutableArray array];
-    
+    NSUInteger nextPacketOffset;
+    *mdcLength = 0;
     while (offset < keyringData.length) {
         
-        PGPPacket *packet = [PGPPacketFactory packetWithData:keyringData offset:offset];
+        PGPPacket *packet = [PGPPacketFactory packetWithData:keyringData offset:offset nextPacketOffset:&nextPacketOffset];
         if (packet) {
             [accumulatedPackets addObject:packet];
+            if (packet.tag != PGPModificationDetectionCodePacketTag)
+            {
+                *mdcLength += nextPacketOffset;
+            }
         }
-        offset = offset + packet.headerData.length + packet.bodyData.length;
+        offset += nextPacketOffset;
         if (packet.indeterminateLength && accumulatedPackets.count == 1 && [accumulatedPackets[0] isKindOfClass:[PGPCompressedPacket class]])
         {
             // substract size of PGPModificationDetectionCodePacket in this very special case - TODO: fix this
             offset -= 22;
+            *mdcLength -= 22;
         }
     }
-    
     return [accumulatedPackets copy];
 }
 
@@ -150,81 +155,25 @@
         return nil;
     }
 
+    NSUInteger mdcLength;
+    NSArray *packets = [self readPacketsFromData:decryptedData offset:position mdcLength:&mdcLength];
     
-    NSArray *packets = [self readPacketsFromData:decryptedData offset:position];
-    
-    PGPLiteralPacket *literalPacket;
-    PGPCompressedPacket *compressedPacket;
-    PGPOnePassSignaturePacket *onePassSignaturePacket;
-    PGPSignaturePacket *signaturePacket;
-    PGPModificationDetectionCodePacket *mdcPacket;
-    for (PGPPacket *packet in packets)
+    PGPPacket* lastPacket = (PGPPacket*)[packets lastObject];
+    if (!lastPacket || lastPacket.tag != PGPModificationDetectionCodePacketTag)
     {
-        switch (packet.tag) {
-            case PGPLiteralDataPacketTag:
-                {
-                    literalPacket = (PGPLiteralPacket *)packet;
-                }
-                break;
-                case PGPCompressedDataPacketTag:
-                {
-                    compressedPacket = (PGPCompressedPacket *)packet;
-                }
-                break;
-                case PGPOnePassSignaturePacketTag:
-                {
-                    onePassSignaturePacket = (PGPOnePassSignaturePacket *)packet;
-                }
-                break;
-                case PGPSignaturePacketTag:
-                {
-                    signaturePacket = (PGPSignaturePacket *)packet;
-                }
-                break;
-                case PGPModificationDetectionCodePacketTag:
-                {
-                    mdcPacket = (PGPModificationDetectionCodePacket *)packet;
-                }
-                break;
-            default:
-                if (error) {
-                    *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Unknown packet (expected literal or compressed)"}];
-                }
-                return nil;
-                break;
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Expected PGPModificationDetectionCodePacket as last packet"}];
         }
+        return nil;
     }
+    PGPModificationDetectionCodePacket *mdcPacket = (PGPModificationDetectionCodePacket *)lastPacket;
     
-    // mdc packet
-    NSAssert(mdcPacket != nil, @"Expected MDC");
-    
-    // validation: calculate MDC hash to check if literal data is modified
     NSMutableData *toMDCData = [[NSMutableData alloc] init];
     // preamble
     [toMDCData appendData:prefixRandomFullData];
-    if (onePassSignaturePacket)
-    {
-        // add onepass paket if exists
-        [toMDCData appendData:onePassSignaturePacket.headerData];
-        [toMDCData appendData:onePassSignaturePacket.bodyData];
-    }
-    // add literal paket
-    if (literalPacket)
-    {
-        [toMDCData appendData:literalPacket.headerData];
-        [toMDCData appendData:literalPacket.bodyData];
-    }
-    if (compressedPacket)
-    {
-        [toMDCData appendData:compressedPacket.headerData];
-        [toMDCData appendData:compressedPacket.bodyData];
-    }
-    if (signaturePacket)
-    {
-        // add signature paket if exists
-        [toMDCData appendData:signaturePacket.headerData];
-        [toMDCData appendData:signaturePacket.bodyData];
-    }
+    // validation: calculate MDC hash to check if literal data is modified
+    [toMDCData appendData:[decryptedData subdataWithRange:(NSRange){position, mdcLength}]];
+    
     // and then also includes two octets of values 0xD3, 0x14 (sha length)
     UInt8 mdc_suffix[2] = {0xD3, 0x14};
     [toMDCData appendBytes:&mdc_suffix length:2];
