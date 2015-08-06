@@ -312,37 +312,22 @@
     }
     
     PGPLiteralPacket *literalPacket;
-    PGPCompressedPacket *compressedPacket;
-    __unused PGPOnePassSignaturePacket *onePassSignaturePacket;
     PGPSignaturePacket *signaturePacket;
     NSData *plaintextData = nil;
     for (PGPPacket *packet in packets)
     {
         switch (packet.tag) {
+            case PGPCompressedDataPacketTag:
+            case PGPOnePassSignaturePacketTag:
+                // ignore here
+                break;
             case PGPLiteralDataPacketTag:
-            {
                 literalPacket = (PGPLiteralPacket *)packet;
                 plaintextData = literalPacket.literalRawData;
-            }
-                break;
-            case PGPCompressedDataPacketTag:
-            {
-                compressedPacket = (PGPCompressedPacket *)packet;
-                NSData *literalPacketData = compressedPacket.decompressedData;
-                literalPacket = (PGPLiteralPacket *)[PGPPacketFactory packetWithData:literalPacketData offset:0 nextPacketOffset:NULL];
-                plaintextData = literalPacket.literalRawData;
-            }
-                break;
-            case PGPOnePassSignaturePacketTag:
-            {
-                onePassSignaturePacket = (PGPOnePassSignaturePacket *)packet;
-            }
                 break;
             case PGPSignaturePacketTag:
-            {
                 signaturePacket = (PGPSignaturePacket *)packet;
-            }
-            break;
+                break;
             default:
                 if (error) {
                     *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Unknown packet (expected literal or compressed)"}];

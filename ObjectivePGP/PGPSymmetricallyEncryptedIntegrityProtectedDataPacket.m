@@ -92,7 +92,7 @@
 {
     NSMutableArray *accumulatedPackets = [NSMutableArray array];
     NSUInteger nextPacketOffset;
-    *mdcLength = 0;
+    if (mdcLength) *mdcLength = 0;
     while (offset < keyringData.length) {
         
         PGPPacket *packet = [PGPPacketFactory packetWithData:keyringData offset:offset nextPacketOffset:&nextPacketOffset];
@@ -100,15 +100,20 @@
             [accumulatedPackets addObject:packet];
             if (packet.tag != PGPModificationDetectionCodePacketTag)
             {
-                *mdcLength += nextPacketOffset;
+                if (mdcLength) *mdcLength += nextPacketOffset;
             }
+        }
+        // A compressed Packet contains more packets
+        if ([packet isKindOfClass:[PGPCompressedPacket class]])
+        {
+            [accumulatedPackets addObjectsFromArray:[self readPacketsFromData:((PGPCompressedPacket*)packet).decompressedData offset:0 mdcLength:NULL]];
         }
         offset += nextPacketOffset;
         if (packet.indeterminateLength && accumulatedPackets.count == 1 && [accumulatedPackets[0] isKindOfClass:[PGPCompressedPacket class]])
         {
             // substract size of PGPModificationDetectionCodePacket in this very special case - TODO: fix this
             offset -= 22;
-            *mdcLength -= 22;
+            if (mdcLength) *mdcLength -= 22;
         }
     }
     return [accumulatedPackets copy];
@@ -161,10 +166,8 @@
     PGPPacket* lastPacket = (PGPPacket*)[packets lastObject];
     if (!lastPacket || lastPacket.tag != PGPModificationDetectionCodePacketTag)
     {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Expected PGPModificationDetectionCodePacket as last packet"}];
-        }
-        return nil;
+        // Not Integrity Protected - actually should break here but for compatibility reasons we still accept it for now
+        return packets;
     }
     PGPModificationDetectionCodePacket *mdcPacket = (PGPModificationDetectionCodePacket *)lastPacket;
     
