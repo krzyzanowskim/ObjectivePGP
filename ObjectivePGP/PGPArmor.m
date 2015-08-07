@@ -139,9 +139,6 @@
             // consume newline
             [scanner scanString:@"\r" intoString:nil];
             [scanner scanString:@"\n" intoString:nil];
-    #ifdef DEBUG
-            NSLog(@"%@",line);
-    #endif
         }
     }
     
