@@ -248,6 +248,12 @@
 // Opposite to sign, with readed data (not produced)
 - (BOOL) verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(NSString *)userID error:(NSError * __autoreleasing *)error
 {
+    if (!signingKeyPacket)
+    {
+        // no signing packet was found, this we have no valid signature
+        return NO;
+    }
+    
     //FIXME: publicKey is actually secret key sometimes?
 
     if (self.type == PGPSignatureBinaryDocument && inputData.length == 0) {
@@ -279,9 +285,6 @@
     // check signed hash value, should match
     // FIXME: propably will fail on V3 signature, need investigate how to handle V3 scenario here
     if (![self.signedHashValueData isEqualToData:[hashData subdataWithRange:(NSRange){0,2}]]) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"signed hash dont match"}];
-        }
         return NO;
     }
 
@@ -307,12 +310,13 @@
                 }
                 return NO;
             }
+            return YES;
         }
             break;
         default:
             break;
     }
-    return YES;
+    return NO;
 }
 
 #pragma mark - Sign
