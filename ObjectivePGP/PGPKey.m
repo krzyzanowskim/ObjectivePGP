@@ -219,13 +219,13 @@
 // signature packet that is available for signing data
 - (PGPPacket *) signingKeyPacket
 {
-//  It's private key for sign and public for verify as so thi can't be checked here
+    //  It's private key for sign and public for verify as so thi can't be checked here
     
-//    NSAssert(self.type == PGPKeySecret, @"Need secret key to sign");
-//    if (self.type == PGPKeyPublic) {
-//        NSLog(@"Need secret key to sign\n %@",[NSThread callStackSymbols]);
-//        return nil;
-//    }
+    NSAssert(self.type == PGPKeySecret, @"Need secret key to sign");
+    if (self.type == PGPKeyPublic) {
+        NSLog(@"Need secret key to sign\n %@",[NSThread callStackSymbols]);
+        return nil;
+    }
 
     // check primary user self certificates
     PGPSignaturePacket *primaryUserSelfCertificate = nil;
@@ -243,7 +243,36 @@
             return subKey.primaryKeyPacket;
         }
     }
+    
+    return nil;
+}
 
+// signature packet that is available for verifying signature with a keyID
+- (PGPPacket *) signingKeyPacketWithKeyID:(PGPKeyID *)keyID
+{
+    // check primary user self certificates
+    PGPSignaturePacket *primaryUserSelfCertificate = nil;
+    [self primaryUserAndSelfCertificate:&primaryUserSelfCertificate];
+    if (primaryUserSelfCertificate)
+    {
+        if ([self.keyID isEqualToKeyID:keyID])
+        {
+            if (primaryUserSelfCertificate.canBeUsedToSign) {
+                return self.primaryKeyPacket;
+            }
+        }
+    }
+    
+    for (PGPSubKey *subKey in self.subKeys) {
+        if ([subKey.keyID isEqualToKeyID:keyID])
+        {
+            PGPSignaturePacket *signaturePacket = subKey.bindingSignature;
+            if (signaturePacket.canBeUsedToSign) {
+                return subKey.primaryKeyPacket;
+            }
+        }
+    }
+    
     return nil;
 }
 

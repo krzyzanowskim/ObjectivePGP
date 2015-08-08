@@ -237,12 +237,12 @@
 
 - (BOOL) verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey error:(NSError * __autoreleasing *)error;
 {
-    return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)publicKey.signingKeyPacket userID:nil error:error];
+    return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:nil error:error];
 }
 
 - (BOOL) verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey userID:(NSString *)userID error:(NSError * __autoreleasing *)error;
 {
-    return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)publicKey.signingKeyPacket userID:userID error:error];
+    return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:userID error:error];
 }
 
 // Opposite to sign, with readed data (not produced)
