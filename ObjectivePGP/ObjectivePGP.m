@@ -239,8 +239,8 @@
                 continue;
             }
             
-            decryptionSecretKeyPacket = (PGPSecretKeyPacket *)[decryptionSecretKey decryptionKeyPacket:error];
-            
+            decryptionSecretKeyPacket = (PGPSecretKeyPacket *)[decryptionSecretKey decryptionKeyPacketWithID:pkESKPacket.keyID error:error];
+
             // decrypt key with passphrase if encrypted
             if (decryptionSecretKeyPacket.isEncryptedWithPassword) {
                 

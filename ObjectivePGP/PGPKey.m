@@ -102,7 +102,7 @@
 - (PGPKeyType)type
 {
     PGPKeyType t = PGPKeyUnknown;
-
+    
     switch (self.primaryKeyPacket.tag) {
         case PGPPublicKeyPacketTag:
         case PGPPublicSubkeyPacketTag:
@@ -114,7 +114,7 @@
         default:
             break;
     }
-
+    
     return t;
 }
 
@@ -131,7 +131,7 @@
     PGPKeyID *primaryKeyID = nil;
     PGPSubKey *subKey      = nil;
     PGPUser *user          = nil;
-
+    
     for (PGPPacket *packet in packets) {
         switch (packet.tag) {
             case PGPPublicKeyPacketTag:
@@ -312,7 +312,7 @@
     return nil;
 }
 
-- (PGPSecretKeyPacket *) decryptionKeyPacket:(NSError * __autoreleasing *)error
+- (PGPSecretKeyPacket *) decryptionKeyPacketWithID:(PGPKeyID *)keyID error:(NSError * __autoreleasing *)error
 {
     NSAssert(self.type == PGPKeySecret, @"Need secret key to encrypt");
     if (self.type == PGPKeyPublic) {
@@ -325,25 +325,16 @@
     
     for (PGPSubKey *subKey in self.subKeys) {
         PGPSignaturePacket *signaturePacket = subKey.bindingSignature;
-        if (signaturePacket.canBeUsedToEncrypt) {
+        if (signaturePacket.canBeUsedToEncrypt && [((PGPSecretKeyPacket *)subKey.primaryKeyPacket).keyID isEqualToKeyID:keyID]) {
             return (PGPSecretKeyPacket *)subKey.primaryKeyPacket;
         }
     }
     
-    // check primary user self certificates
-    PGPSignaturePacket *primaryUserSelfCertificate = nil;
-    [self primaryUserAndSelfCertificate:&primaryUserSelfCertificate];
-    if (primaryUserSelfCertificate)
+    if ([((PGPSecretKeyPacket *)self.primaryKeyPacket).keyID isEqualToKeyID:keyID])
     {
-        if (primaryUserSelfCertificate.canBeUsedToEncrypt) {
-            return (PGPSecretKeyPacket *)self.primaryKeyPacket;
-        }
+        // assume primary key is always cabable
+        return (PGPSecretKeyPacket *)self.primaryKeyPacket;
     }
-    
-    if (error) {
-        *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Decryption key not found"}];
-    }
-    
     return nil;
 }
 
