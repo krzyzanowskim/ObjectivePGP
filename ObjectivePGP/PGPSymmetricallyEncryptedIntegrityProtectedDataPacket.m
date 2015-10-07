@@ -109,7 +109,7 @@
             [accumulatedPackets addObjectsFromArray:[self readPacketsFromData:((PGPCompressedPacket*)packet).decompressedData offset:0 mdcLength:NULL]];
         }
         offset += nextPacketOffset;
-        if (packet.indeterminateLength && accumulatedPackets.count == 1 && [accumulatedPackets[0] isKindOfClass:[PGPCompressedPacket class]])
+        if (packet.indeterminateLength && [accumulatedPackets[0] isKindOfClass:[PGPCompressedPacket class]])
         {
             // substract size of PGPModificationDetectionCodePacket in this very special case - TODO: fix this
             offset -= 22;
