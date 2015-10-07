@@ -120,11 +120,14 @@
 }
 
 // return array of packets
-- (NSArray *) decryptWithSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData error:(NSError * __autoreleasing *)error
+- (NSArray *) decryptWithSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData isIntegrityProtected:(BOOL *)isIntegrityProtected error:(NSError * __autoreleasing *)error
 {
     NSAssert(self.encryptedData, @"Missing encrypted data to decrypt");
     NSAssert(secretKeyPacket, @"Missing secret key");
     NSAssert(!secretKeyPacket.isEncryptedWithPassword, @"Decrypt secret key first");
+    
+    // initialize if Packet isIntegrityProtected
+    if (isIntegrityProtected) *isIntegrityProtected = NO;
     
     if (!self.encryptedData) {
         if (error) {
@@ -166,9 +169,12 @@
     PGPPacket* lastPacket = (PGPPacket*)[packets lastObject];
     if (!lastPacket || lastPacket.tag != PGPModificationDetectionCodePacketTag)
     {
-        // Not Integrity Protected - actually should break here but for compatibility reasons we still accept it for now
+        // Not Integrity Protected, isIntegrityProtected will be reported to NO (see initialization)
         return packets;
     }
+    // indicate accordingly if packet was found (might still be invalid)
+    if (isIntegrityProtected) *isIntegrityProtected = YES;
+    
     PGPModificationDetectionCodePacket *mdcPacket = (PGPModificationDetectionCodePacket *)lastPacket;
     
     NSMutableData *toMDCData = [[NSMutableData alloc] init];

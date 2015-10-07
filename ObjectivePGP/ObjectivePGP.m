@@ -209,10 +209,10 @@
 
 - (NSData *) decryptData:(NSData *)messageDataToDecrypt passphrase:(NSString *)passphrase error:(NSError * __autoreleasing *)error
 {
-    return [self decryptData:messageDataToDecrypt passphrase:passphrase verifyWithPublicKey:nil signed:nil valid:nil error:error];
+    return [self decryptData:messageDataToDecrypt passphrase:passphrase verifyWithPublicKey:nil signed:nil valid:nil integrityProtected:nil error:error];
 }
 
-- (NSData *) decryptData:(NSData *)messageDataToDecrypt passphrase:(NSString *)passphrase verifyWithPublicKey:(PGPKey *)publicKey signed:(BOOL*)isSigned valid:(BOOL*)isValid error:(NSError * __autoreleasing *)error
+- (NSData *) decryptData:(NSData *)messageDataToDecrypt passphrase:(NSString *)passphrase verifyWithPublicKey:(PGPKey *)publicKey signed:(BOOL*)isSigned valid:(BOOL*)isValid integrityProtected:(BOOL*)isIntegrityProtected error:(NSError * __autoreleasing *)error
 {
     NSData *binaryMessageToDecrypt = [self convertArmoredMessage2BinaryWhenNecessary:messageDataToDecrypt];
     NSAssert(binaryMessageToDecrypt != nil, @"Invalid input data");
@@ -299,7 +299,7 @@
             {
                 // decrypt PGPSymmetricallyEncryptedIntegrityProtectedDataPacket
                 PGPSymmetricallyEncryptedIntegrityProtectedDataPacket *symEncryptedDataPacket = (PGPSymmetricallyEncryptedIntegrityProtectedDataPacket *)packet;
-                packets = [symEncryptedDataPacket decryptWithSecretKeyPacket:decryptionSecretKeyPacket sessionKeyAlgorithm:sessionKeyAlgorithm sessionKeyData:sessionKeyData error:error];
+                packets = [symEncryptedDataPacket decryptWithSecretKeyPacket:decryptionSecretKeyPacket sessionKeyAlgorithm:sessionKeyAlgorithm sessionKeyData:sessionKeyData isIntegrityProtected:isIntegrityProtected error:error];
                 if (!packets) {
                     return nil;
                 }
