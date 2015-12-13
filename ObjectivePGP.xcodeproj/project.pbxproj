@@ -1190,7 +1190,7 @@
 					"Pods/Headers/Public/OpenSSL-Universal",
 				);
 				PRODUCT_NAME = ObjectivePGP;
-				SDKROOT = macosx10.9;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -1219,7 +1219,7 @@
 					"Pods/Headers/Public/OpenSSL-Universal",
 				);
 				PRODUCT_NAME = ObjectivePGP;
-				SDKROOT = macosx10.9;
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 			};
 			name = Release;

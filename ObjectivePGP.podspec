@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "ObjectivePGP"
-  s.version      = "0.4.0"
+  s.version      = "0.4.1"
   s.summary      = "OpenPGP implementation for iOS and OSX"
   s.description  = "ObjectivePGP is OpenPGP implementation for iOS and OSX."
   s.homepage     = "https://krzyzanowskim@bitbucket.org/krzyzanowskim/objectivepgp.git"
