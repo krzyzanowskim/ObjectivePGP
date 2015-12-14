@@ -676,6 +676,7 @@
 				756299C21914DE1A00C5AD3B /* Frameworks */,
 				756299C31914DE1A00C5AD3B /* Resources */,
 				97BBFE57986D4AC4BAE98D62 /* Copy Pods Resources */,
+				1F830C32D3AD59DC17779B33 /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -777,6 +778,21 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		1F830C32D3AD59DC17779B33 /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ObjectivePGP/Pods-ObjectivePGP-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		3682BA07B85E42CF9A5FDDE3 /* Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
