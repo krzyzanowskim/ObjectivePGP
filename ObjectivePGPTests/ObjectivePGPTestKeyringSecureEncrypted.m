@@ -99,7 +99,7 @@
     XCTAssertNil(encError, @"Encryption failed");
 
     NSError *decError;
-    NSData *decData = [self.oPGP decryptData:encData passphrase:@"1234" error:&decError];
+    __unused NSData *decData = [self.oPGP decryptData:encData passphrase:@"1234" error:&decError];
     XCTAssertNil(decError, @"Decryption failed");
     
 //    PGPKey *key = self.oPGP.keys[0];
