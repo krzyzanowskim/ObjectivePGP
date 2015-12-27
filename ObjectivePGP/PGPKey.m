@@ -102,7 +102,7 @@
 - (PGPKeyType)type
 {
     PGPKeyType t = PGPKeyUnknown;
-
+    
     switch (self.primaryKeyPacket.tag) {
         case PGPPublicKeyPacketTag:
         case PGPPublicSubkeyPacketTag:
@@ -114,7 +114,7 @@
         default:
             break;
     }
-
+    
     return t;
 }
 
@@ -131,7 +131,7 @@
     PGPKeyID *primaryKeyID = nil;
     PGPSubKey *subKey      = nil;
     PGPUser *user          = nil;
-
+    
     for (PGPPacket *packet in packets) {
         switch (packet.tag) {
             case PGPPublicKeyPacketTag:
@@ -219,13 +219,13 @@
 // signature packet that is available for signing data
 - (PGPPacket *) signingKeyPacket
 {
-//  It's private key for sign and public for verify as so thi can't be checked here
+    //  It's private key for sign and public for verify as so thi can't be checked here
     
-//    NSAssert(self.type == PGPKeySecret, @"Need secret key to sign");
-//    if (self.type == PGPKeyPublic) {
-//        NSLog(@"Need secret key to sign\n %@",[NSThread callStackSymbols]);
-//        return nil;
-//    }
+    NSAssert(self.type == PGPKeySecret, @"Need secret key to sign");
+    if (self.type == PGPKeyPublic) {
+        NSLog(@"Need secret key to sign\n %@",[NSThread callStackSymbols]);
+        return nil;
+    }
 
     // check primary user self certificates
     PGPSignaturePacket *primaryUserSelfCertificate = nil;
@@ -243,7 +243,36 @@
             return subKey.primaryKeyPacket;
         }
     }
+    
+    return nil;
+}
 
+// signature packet that is available for verifying signature with a keyID
+- (PGPPacket *) signingKeyPacketWithKeyID:(PGPKeyID *)keyID
+{
+    // check primary user self certificates
+    PGPSignaturePacket *primaryUserSelfCertificate = nil;
+    [self primaryUserAndSelfCertificate:&primaryUserSelfCertificate];
+    if (primaryUserSelfCertificate)
+    {
+        if ([self.keyID isEqualToKeyID:keyID])
+        {
+            if (primaryUserSelfCertificate.canBeUsedToSign) {
+                return self.primaryKeyPacket;
+            }
+        }
+    }
+    
+    for (PGPSubKey *subKey in self.subKeys) {
+        if ([subKey.keyID isEqualToKeyID:keyID])
+        {
+            PGPSignaturePacket *signaturePacket = subKey.bindingSignature;
+            if (signaturePacket.canBeUsedToSign) {
+                return subKey.primaryKeyPacket;
+            }
+        }
+    }
+    
     return nil;
 }
 
@@ -283,7 +312,7 @@
     return nil;
 }
 
-- (PGPSecretKeyPacket *) decryptionKeyPacket:(NSError * __autoreleasing *)error
+- (PGPSecretKeyPacket *) decryptionKeyPacketWithID:(PGPKeyID *)keyID error:(NSError * __autoreleasing *)error
 {
     NSAssert(self.type == PGPKeySecret, @"Need secret key to encrypt");
     if (self.type == PGPKeyPublic) {
@@ -296,25 +325,16 @@
     
     for (PGPSubKey *subKey in self.subKeys) {
         PGPSignaturePacket *signaturePacket = subKey.bindingSignature;
-        if (signaturePacket.canBeUsedToEncrypt) {
+        if (signaturePacket.canBeUsedToEncrypt && [((PGPSecretKeyPacket *)subKey.primaryKeyPacket).keyID isEqualToKeyID:keyID]) {
             return (PGPSecretKeyPacket *)subKey.primaryKeyPacket;
         }
     }
     
-    // check primary user self certificates
-    PGPSignaturePacket *primaryUserSelfCertificate = nil;
-    [self primaryUserAndSelfCertificate:&primaryUserSelfCertificate];
-    if (primaryUserSelfCertificate)
+    if ([((PGPSecretKeyPacket *)self.primaryKeyPacket).keyID isEqualToKeyID:keyID])
     {
-        if (primaryUserSelfCertificate.canBeUsedToEncrypt) {
-            return (PGPSecretKeyPacket *)self.primaryKeyPacket;
-        }
+        // assume primary key is always cabable
+        return (PGPSecretKeyPacket *)self.primaryKeyPacket;
     }
-    
-    if (error) {
-        *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Decryption key not found"}];
-    }
-    
     return nil;
 }
 

@@ -143,18 +143,22 @@
         if (signature.isExpired) {
             continue;
         }
-
-        // (this is craziest think I ever seen today)
-        NSError *error;
-        BOOL status = [signature verifyData:nil withKey:key signingKeyPacket:(PGPPublicKeyPacket *)key.primaryKeyPacket userID:self.userID error:&error];
-        if (!status) {
-            NSLog(@"ObjectivePGP: %@",error);
-        }
-        //NSAssert(status == YES,@"not verified");
-
-        if (status == YES) {
-            [certs addObject:signature];
-        }
+        [certs addObject:signature];
+        // This only worked as verify wasn't implemented correctly
+        // TODO: find a better solution
+        //
+        //        // (this is craziest think I ever seen today)
+        //        NSError *error;
+        //        [signature verifyData:nil withKey:key signingKeyPacket:(PGPPublicKeyPacket *)key.primaryKeyPacket userID:self.userID error:&error];
+        //        //BOOL status = [signature verifyData:nil withKey:key signingKeyPacket:(PGPPublicKeyPacket *)key.primaryKeyPacket userID:self.userID error:&error];
+        //        //if (!status) {
+        //        //    NSLog(@"ObjectivePGP: %@",error);
+        //        //}
+        //        //NSAssert(status == YES,@"not verified");
+        //
+        //        if (status == YES) {
+        //            [certs addObject:signature];
+        //        }
     }
 
     [certs sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {

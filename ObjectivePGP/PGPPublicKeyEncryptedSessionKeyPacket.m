@@ -146,7 +146,7 @@
 }
 
 // encryption update self.encryptedMPIsPartData
-- (void) encrypt:(PGPPublicKeyPacket *)publicKeyPacket sessionKeyData:(NSData *)sessionKeyData sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm error:(NSError * __autoreleasing *)error
+- (BOOL) encrypt:(PGPPublicKeyPacket *)publicKeyPacket sessionKeyData:(NSData *)sessionKeyData sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm error:(NSError * __autoreleasing *)error
 {
     NSMutableData *mData = [NSMutableData data];
 
@@ -171,7 +171,7 @@
     
     PGPMPI *modulusMPI = [publicKeyPacket publicMPI:@"N"];
     if (!modulusMPI)
-        return;
+        return error == nil;
     
     BIGNUM *nBigNumRef = modulusMPI.bignumRef;
     unsigned int k = (unsigned)BN_num_bytes(nBigNumRef);
@@ -180,6 +180,7 @@
     NSData *encryptedData = [publicKeyPacket encryptData:mEMEEncoded withPublicKeyAlgorithm:self.publicKeyAlgorithm];
     PGPMPI *mpiEncoded = [[PGPMPI alloc] initWithData:encryptedData];
     self.encryptedMPI_M = mpiEncoded;
+    return error == nil;
 }
 
 

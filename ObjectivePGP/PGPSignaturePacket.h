@@ -56,8 +56,8 @@
  *
  *  @return Signature packet data
  */
-- (void) signData:(NSData *)inputData  secretKey:(PGPKey *)secretKey error:(NSError * __autoreleasing *)error;
-- (void) signData:(NSData *)inputData secretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase userID:(NSString *)userID error:(NSError * __autoreleasing *)error;
+- (BOOL) signData:(NSData *)inputData  secretKey:(PGPKey *)secretKey error:(NSError * __autoreleasing *)error;
+- (BOOL) signData:(NSData *)inputData secretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase userID:(NSString *)userID error:(NSError * __autoreleasing *)error;
 
 
 - (BOOL) verifyData:(NSData *)inputData  withKey:(PGPKey *)publicKey error:(NSError * __autoreleasing *)error;

@@ -18,11 +18,12 @@ extern const UInt32 UnknownLength;
 @property (assign) BOOL indeterminateLength; // should not be used, but gpg use it
 
 @property (assign, readonly)    PGPPacketTag tag;
+@property (readonly)    NSData *packetData;
 
 - (instancetype) init NS_DESIGNATED_INITIALIZER;
 - (instancetype) initWithHeader:(NSData *)headerData body:(NSData *)bodyData;
 
-+ (NSData *) parsePacketHeader:(NSData *)headerData bodyLength:(UInt32 *)bodyLength packetTag:(PGPPacketTag *)tag;
++ (NSData *) parsePacketHeader:(NSData*)data headerLength:(UInt32 *)headerLength nextPacketOffset:(NSUInteger *)nextPacketOffset packetTag:(PGPPacketTag *)tag indeterminateLength:(BOOL*)indeterminateLength;
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error;
 
 - (NSData *) exportPacket:(NSError *__autoreleasing *)error;

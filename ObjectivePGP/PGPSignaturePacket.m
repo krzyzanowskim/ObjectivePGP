@@ -237,17 +237,23 @@
 
 - (BOOL) verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey error:(NSError * __autoreleasing *)error;
 {
-    return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)publicKey.signingKeyPacket userID:nil error:error];
+    return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:nil error:error];
 }
 
 - (BOOL) verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey userID:(NSString *)userID error:(NSError * __autoreleasing *)error;
 {
-    return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)publicKey.signingKeyPacket userID:userID error:error];
+    return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:userID error:error];
 }
 
 // Opposite to sign, with readed data (not produced)
 - (BOOL) verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(NSString *)userID error:(NSError * __autoreleasing *)error
 {
+    if (!signingKeyPacket)
+    {
+        // no signing packet was found, this we have no valid signature
+        return NO;
+    }
+    
     //FIXME: publicKey is actually secret key sometimes?
 
     if (self.type == PGPSignatureBinaryDocument && inputData.length == 0) {
@@ -279,9 +285,6 @@
     // check signed hash value, should match
     // FIXME: propably will fail on V3 signature, need investigate how to handle V3 scenario here
     if (![self.signedHashValueData isEqualToData:[hashData subdataWithRange:(NSRange){0,2}]]) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"signed hash dont match"}];
-        }
         return NO;
     }
 
@@ -307,12 +310,13 @@
                 }
                 return NO;
             }
+            return YES;
         }
             break;
         default:
             break;
     }
-    return YES;
+    return NO;
 }
 
 #pragma mark - Sign
@@ -320,12 +324,12 @@
 // 5.2.4.  Computing Signatures
 // http://tools.ietf.org/html/rfc4880#section-5.2.4
 // @see https://github.com/singpolyma/openpgp-spec/blob/master/key-signatures
-- (void) signData:(NSData *)inputData  secretKey:(PGPKey *)secretKey error:(NSError * __autoreleasing *)error
+- (BOOL) signData:(NSData *)inputData  secretKey:(PGPKey *)secretKey error:(NSError * __autoreleasing *)error
 {
     return [self signData:inputData secretKey:secretKey passphrase:nil userID:nil error:error];
 }
 
-- (void) signData:(NSData *)inputData secretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase userID:(NSString *)userID error:(NSError * __autoreleasing *)error
+- (BOOL) signData:(NSData *)inputData secretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase userID:(NSString *)userID error:(NSError * __autoreleasing *)error
 {
     NSAssert(secretKey.type == PGPKeySecret,@"Need secret key");
     NSAssert([secretKey.primaryKeyPacket isKindOfClass:[PGPSecretKeyPacket class]], @"Signing key packet not found");
@@ -336,7 +340,7 @@
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"No signing signature found"}];
         }
-        return;
+        return NO;
     }
 
     //TODO: check it this is right ? setup public key algorithm from secret key packet
@@ -393,7 +397,7 @@
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Sign Encryption failed"}];
         }
-        return;
+        return NO;
     }
     // store signature data as MPI
     self.signatureMPIs = @[[[PGPMPI alloc] initWithData:encryptedEmData]];
@@ -407,6 +411,7 @@
     // Two-octet field holding the left 16 bits of the signed hash value.
     NSData *signedHashValue = [hashData subdataWithRange:(NSRange){0,2}];
     self.signedHashValueData = signedHashValue;
+    return YES;
 }
 
 - (NSData *) toSignDataForType:(PGPSignatureType)type inputData:(NSData *)inputData key:(PGPKey *)key keyPacket:(PGPPublicKeyPacket *)keyPacket userID:(NSString *)userID error:(NSError * __autoreleasing *)error
@@ -504,7 +509,7 @@
 
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
 {
-    NSUInteger position = [super parsePacketBody:packetBody error:error];
+    __unused NSUInteger position = [super parsePacketBody:packetBody error:error];
     NSUInteger startPosition = position;
 
     UInt8 parsedVersion = 0;
@@ -521,7 +526,10 @@
             break;
         default:
             NSAssert(true, @"Unsupported signature packet version");
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Signature version %@ is supported at the moment", @(parsedVersion)]}];
+            if (error)
+            {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Signature version %@ is supported at the moment", @(parsedVersion)]}];
+            }
             return startPosition + packetBody.length;
             break;
     }

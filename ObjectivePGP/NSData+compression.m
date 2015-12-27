@@ -4,6 +4,7 @@
 // rfc1950 (zlib format)
 
 #import "NSData+compression.h"
+#import "PGPCompressedPacket.h"
 #import <zlib.h>
 #import <bzlib.h>
 
@@ -57,7 +58,7 @@
 	return compressed;
 }
 
-- (NSData *)zlibDecompressed:(NSError * __autoreleasing *)error
+- (NSData *)zlibDecompressed:(NSError * __autoreleasing *)error compressionType:(int)compressionType
 {
 	if ([self length] == 0)
 	{
@@ -68,7 +69,7 @@
 	strm.zalloc = Z_NULL;
 	strm.zfree = Z_NULL;
 	strm.opaque = Z_NULL;
-	if (Z_OK != inflateInit(&strm))
+	if (Z_OK != (compressionType == PGPCompressionZIP ? inflateInit2( &strm, -15) : inflateInit(&strm)))
 	{
         if (error) {
             NSString *errorMsg = [NSString stringWithCString:strm.msg encoding:NSASCIIStringEncoding];
@@ -79,16 +80,21 @@
 	
 	NSMutableData *decompressed = [NSMutableData dataWithLength: [self length]*2.5];
 	strm.next_out = [decompressed mutableBytes];
-	strm.avail_out = [decompressed length];
+	strm.avail_out = (uInt)[decompressed length];
 	strm.next_in = (void *)[self bytes];
-	strm.avail_in = [self length];
+	strm.avail_in = (uInt)[self length];
+	// From the gnupg sources this might be needed - of course not like this, as we need to extend the input buffer length for this
+	//if (compressionType == PGPCompressionZIP)
+	//{
+	//    *(strm.next_in + (uInt)[self length]) = 0xFF;
+	//}
 	
 	while (inflate(&strm, Z_FINISH) != Z_STREAM_END)
 	{
 		// inflate should return Z_STREAM_END on the first call
 		[decompressed setLength: [decompressed length] * 1.5];
 		strm.next_out = [decompressed mutableBytes] + strm.total_out;
-		strm.avail_out = [decompressed length] - strm.total_out;
+		strm.avail_out = (uInt)([decompressed length] - strm.total_out);
 	}
 	
 	[decompressed setLength: strm.total_out];
@@ -110,7 +116,7 @@
     int bzret = 0;
     bz_stream stream = {0x00};
     stream.next_in = (void *)[self bytes];
-    stream.avail_in = self.length;
+    stream.avail_in = (uInt)self.length;
     
     const int buffer_size = 10000;
     NSMutableData *buffer = [NSMutableData dataWithLength:buffer_size];
@@ -144,7 +150,7 @@
     int bzret = 0;
     bz_stream stream = {0x00};
     stream.next_in = (void *)[self bytes];
-    stream.avail_in = self.length;
+    stream.avail_in = (uInt)self.length;
     unsigned int compression = 9; // should be a value between 1 and 9 inclusive
 
     const int buffer_size = 10000;

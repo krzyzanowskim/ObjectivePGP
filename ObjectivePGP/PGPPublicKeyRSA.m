@@ -45,7 +45,7 @@
         SSL_load_error_strings();
         
         unsigned long err_code = ERR_get_error();
-        char *errBuf = calloc(512, sizeof(UInt8));
+        char *errBuf = calloc(512, sizeof(char));
         ERR_error_string(err_code, errBuf);
 #ifdef DEBUG
         NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
@@ -91,7 +91,7 @@
         SSL_load_error_strings();
         
         unsigned long err_code = ERR_get_error();
-        char *errBuf = calloc(512, sizeof(UInt8));
+        char *errBuf = calloc(512, sizeof(char));
         ERR_error_string(err_code, errBuf);
 #ifdef DEBUG
         NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
@@ -162,7 +162,7 @@
         SSL_load_error_strings();
 
         unsigned long err_code = ERR_get_error();
-        char *errBuf = calloc(512, sizeof(UInt8));
+        char *errBuf = calloc(512, sizeof(char));
         ERR_error_string(err_code, errBuf);
         NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
         free(errBuf);
@@ -179,7 +179,7 @@
         SSL_load_error_strings();
 
         unsigned long err_code = ERR_get_error();
-        char *errBuf = calloc(512, sizeof(UInt8));
+        char *errBuf = calloc(512, sizeof(char));
         ERR_error_string(err_code, errBuf);
         NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
         free(errBuf);
@@ -227,7 +227,7 @@
         SSL_load_error_strings();
         
         unsigned long err_code = ERR_get_error();
-        char *errBuf = calloc(512, sizeof(UInt8));
+        char *errBuf = calloc(512, sizeof(char));
         ERR_error_string(err_code, errBuf);
         NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
         free(errBuf);

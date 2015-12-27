@@ -16,6 +16,7 @@
 #import "PGPModificationDetectionCodePacket.h"
 #import "PGPLiteralPacket.h"
 #import "PGPCompressedPacket.h"
+#import "PGPOnePassSignaturePacket.h"
 #import "PGPModificationDetectionCodePacket.h"
 
 #import <CommonCrypto/CommonCrypto.h>
@@ -87,11 +88,46 @@
     return [data copy];
 }
 
-- (NSData *) decryptWithSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData error:(NSError * __autoreleasing *)error
+- (NSArray *) readPacketsFromData:(NSData *)keyringData offset:(NSUInteger)offset mdcLength:(NSUInteger*)mdcLength
+{
+    NSMutableArray *accumulatedPackets = [NSMutableArray array];
+    NSUInteger nextPacketOffset;
+    if (mdcLength) *mdcLength = 0;
+    while (offset < keyringData.length) {
+        
+        PGPPacket *packet = [PGPPacketFactory packetWithData:keyringData offset:offset nextPacketOffset:&nextPacketOffset];
+        if (packet) {
+            [accumulatedPackets addObject:packet];
+            if (packet.tag != PGPModificationDetectionCodePacketTag)
+            {
+                if (mdcLength) *mdcLength += nextPacketOffset;
+            }
+        }
+        // A compressed Packet contains more packets
+        if ([packet isKindOfClass:[PGPCompressedPacket class]])
+        {
+            [accumulatedPackets addObjectsFromArray:[self readPacketsFromData:((PGPCompressedPacket*)packet).decompressedData offset:0 mdcLength:NULL]];
+        }
+        offset += nextPacketOffset;
+        if (packet.indeterminateLength && [accumulatedPackets[0] isKindOfClass:[PGPCompressedPacket class]])
+        {
+            // substract size of PGPModificationDetectionCodePacket in this very special case - TODO: fix this
+            offset -= 22;
+            if (mdcLength) *mdcLength -= 22;
+        }
+    }
+    return [accumulatedPackets copy];
+}
+
+// return array of packets
+- (NSArray *) decryptWithSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData isIntegrityProtected:(BOOL *)isIntegrityProtected error:(NSError * __autoreleasing *)error
 {
     NSAssert(self.encryptedData, @"Missing encrypted data to decrypt");
     NSAssert(secretKeyPacket, @"Missing secret key");
     NSAssert(!secretKeyPacket.isEncryptedWithPassword, @"Decrypt secret key first");
+    
+    // initialize if Packet isIntegrityProtected
+    if (isIntegrityProtected) *isIntegrityProtected = NO;
     
     if (!self.encryptedData) {
         if (error) {
@@ -126,56 +162,27 @@
         }
         return nil;
     }
-    
-    // read literal (or compressed) packet data
-    PGPPacket* plaintextPacket = [PGPPacketFactory packetWithData:decryptedData offset:position];
-    
-    NSUInteger plaintextPacketLength = plaintextPacket.headerData.length + plaintextPacket.bodyData.length;
-    if (plaintextPacket.indeterminateLength) {
-        // adjust packet length required if packet length is not exactly set in header
-        int MDCLength = 22;
-        plaintextPacketLength = plaintextPacketLength - MDCLength;
-    }
-    
-    NSData *plaintextPacketData = [decryptedData subdataWithRange:(NSRange){position, plaintextPacketLength}];
-    position = position + plaintextPacketLength;
-    
-    NSData *plaintextData = nil;
-    switch (plaintextPacket.tag) {
-        case PGPLiteralDataPacketTag:
-        {
-            PGPLiteralPacket *literalPacket = (PGPLiteralPacket *)plaintextPacket;
-            plaintextData = literalPacket.literalRawData;
-        }
-            break;
-        case PGPCompressedDataPacketTag:
-        {
-            PGPCompressedPacket *compressedPacket = (PGPCompressedPacket *)plaintextPacket;
-            NSData *literalPacketData = compressedPacket.decompressedData;
-            PGPLiteralPacket *literalPacket = (PGPLiteralPacket *)[PGPPacketFactory packetWithData:literalPacketData offset:0];
-            plaintextData = literalPacket.literalRawData;
-        }
-            break;
-        default:
-            if (error) {
-                *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Unknown packet (expected literal or compressed)"}];
-            }
-            return nil;
-            break;
-    }
 
-    // mdc packet
-    NSAssert(position < decryptedData.length, @"Invalid packet length. Missing MDC?");
+    NSUInteger mdcLength;
+    NSArray *packets = [self readPacketsFromData:decryptedData offset:position mdcLength:&mdcLength];
     
-    PGPModificationDetectionCodePacket *mdcPacket = (PGPModificationDetectionCodePacket *)[PGPPacketFactory packetWithData:decryptedData offset:position];
-    NSAssert([mdcPacket isKindOfClass:[PGPModificationDetectionCodePacket class]], @"Invalid packet, expected MDC");
+    PGPPacket* lastPacket = (PGPPacket*)[packets lastObject];
+    if (!lastPacket || lastPacket.tag != PGPModificationDetectionCodePacketTag)
+    {
+        // Not Integrity Protected, isIntegrityProtected will be reported to NO (see initialization)
+        return packets;
+    }
+    // indicate accordingly if packet was found (might still be invalid)
+    if (isIntegrityProtected) *isIntegrityProtected = YES;
     
-    // validation: calculate MDC hash to check if literal data is modified
+    PGPModificationDetectionCodePacket *mdcPacket = (PGPModificationDetectionCodePacket *)lastPacket;
+    
     NSMutableData *toMDCData = [[NSMutableData alloc] init];
     // preamble
     [toMDCData appendData:prefixRandomFullData];
-    // plaintext
-    [toMDCData appendData:plaintextPacketData];
+    // validation: calculate MDC hash to check if literal data is modified
+    [toMDCData appendData:[decryptedData subdataWithRange:(NSRange){position, mdcLength}]];
+    
     // and then also includes two octets of values 0xD3, 0x14 (sha length)
     UInt8 mdc_suffix[2] = {0xD3, 0x14};
     [toMDCData appendBytes:&mdc_suffix length:2];
@@ -187,10 +194,11 @@
         }
         return nil;
     }
-    return plaintextData;
+    
+    return [packets subarrayWithRange:(NSRange){0, packets.count - 1}];
 }
 
-- (void) encrypt:(NSData *)literalPacketData symmetricAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData error:(NSError * __autoreleasing *)error
+- (BOOL) encrypt:(NSData *)literalPacketData symmetricAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData error:(NSError * __autoreleasing *)error
 {
     // OpenPGP does symmetric encryption using a variant of Cipher Feedback mode (CFB mode).
     NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:sessionKeyAlgorithm];
@@ -201,12 +209,9 @@
     // Prepare preamble
     // Instead of using an IV, OpenPGP prefixes a string of length equal to the block size of the cipher plus two to the data before it is encrypted.
     // The first block-size octets (for example, 8 octets for a 64-bit block length) are random,
-    NSMutableData *prefixRandomData = [NSMutableData dataWithCapacity:blockSize];
-
-    for (int i = 0; i < blockSize; i++) {
-        UInt8 byte = arc4random_uniform(255);
-        [prefixRandomData appendBytes:&byte length:1];
-    }
+    uint8_t buf[blockSize];
+    SecRandomCopyBytes(kSecRandomDefault, blockSize, buf);
+    NSMutableData *prefixRandomData = [NSMutableData dataWithBytes:buf length:blockSize];
     
     // and the following two octets are copies of the last two octets of the IV.
     NSMutableData *prefixRandomFullData = [NSMutableData dataWithData:prefixRandomData];
@@ -225,7 +230,7 @@
     PGPModificationDetectionCodePacket *mdcPacket = [[PGPModificationDetectionCodePacket alloc] initWithData:toMDCData];
     NSData *mdcPacketData = [mdcPacket exportPacket:error];
     if (*error) {
-        return;
+        return NO;
     }
     
     // Finally build encrypted packet data
@@ -237,6 +242,7 @@
     NSData *encrypted = [PGPCryptoCFB encryptData:toEncrypt sessionKeyData:sessionKeyData symmetricAlgorithm:sessionKeyAlgorithm iv:ivData];
     
     self.encryptedData = encrypted;
+    return YES;
 }
 
 @end
