@@ -280,17 +280,14 @@ const UInt32 UnknownLength = UINT32_MAX;
         [data appendBytes:buf length:2];
     } else {
         // 5 octet
-        UInt8 buf[5] = {0,0,0,0,0};
-
         UInt64 fiveOctets = bodyLength;
-        UInt8 marker = 255;
-        [data appendBytes:&marker length:1];
 
-		buf[0] = (UInt8)(fiveOctets >> 24);
-		buf[1] = (UInt8)(fiveOctets >> 16);
-		buf[2] = (UInt8)(fiveOctets >> 8);
-		buf[3] = (UInt8)(fiveOctets);
-        [data appendBytes:buf length:4];
+        UInt8 buf[5] = {0xFF,0,0,0,0};
+        buf[1] = (UInt8)(fiveOctets >> 24);
+        buf[2] = (UInt8)(fiveOctets >> 16);
+        buf[3] = (UInt8)(fiveOctets >> 8);
+        buf[4] = (UInt8)(fiveOctets);
+        [data appendBytes:buf length:5];
     }
     return [data copy];
 
