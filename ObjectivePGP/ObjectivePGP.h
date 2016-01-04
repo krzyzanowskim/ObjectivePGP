@@ -24,8 +24,8 @@
 - (BOOL) importKey:(NSString *)shortKeyStringIdentifier fromFile:(NSString *)path;
 
 // Read keys
-- (NSArray *) keysFromData:(NSData *)fileData;
-- (NSArray *) keysFromFile:(NSString *)path;
+- (NSArray<PGPKey *> * __nullable) keysFromData:(NSData * __nonnull)fileData;
+- (NSArray<PGPKey *> * __nullable) keysFromFile:(NSString * __nonnull)path;
 
 // Export keys
 - (BOOL) exportKeysOfType:(PGPKeyType)type toFile:(NSString *)path error:(NSError * __autoreleasing *)error;

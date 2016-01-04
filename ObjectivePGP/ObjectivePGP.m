@@ -737,7 +737,7 @@
     return foundKey;
 }
 
-- (NSArray *) keysFromFile:(NSString *)path
+- (NSArray<PGPKey *> * __nullable) keysFromFile:(NSString * __nonnull)path
 {
     NSString *fullPath = [path stringByExpandingTildeInPath];
     
@@ -759,13 +759,10 @@
     return [self keysFromData:fileData];
 }
 
-- (NSArray *) keysFromData:(NSData *)fileData
+- (NSArray * __nullable) keysFromData:(NSData * __nonnull)fileData
 {
-    NSAssert(fileData, @"Missing data");
-    if (!fileData) {
-        return nil;
-    }
-    
+    NSAssert(fileData.length > 0, @"Empty data");
+
     NSData *binRingData = [self convertArmoredMessage2BinaryWhenNecessary:fileData];
     NSAssert(binRingData != nil, @"Invalid input data");
     if (!binRingData) {
