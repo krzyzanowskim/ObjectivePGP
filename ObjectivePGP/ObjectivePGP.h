@@ -16,7 +16,7 @@
 /**
  *  Array of PGPKey
  */
-@property (strong, nonatomic) NSArray *keys;
+@property (strong, nonatomic) NSArray<PGPKey *> *keys;
 
 // Import keys
 - (NSArray * __nullable) importKeysFromFile:(NSString * __nonnull)path allowDuplicates:(BOOL)duplicates;
@@ -34,8 +34,8 @@
 
 - (PGPKey *) getKeyForIdentifier:(NSString *)keyIdentifier type:(PGPKeyType)keyType;
 - (PGPKey *) getKeyForKeyID:(PGPKeyID *)searchKeyID type:(PGPKeyType)keyType;
-- (NSArray *) getKeysForUserID:(NSString *)userID;
-- (NSArray *) getKeysOfType:(PGPKeyType)keyType;
+- (NSArray<PGPKey *> * __nonnull) getKeysForUserID:(NSString * __nonnull)userID;
+- (NSArray<PGPKey *> * __nonnull) getKeysOfType:(PGPKeyType)keyType;
 
 - (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase  error:(NSError * __autoreleasing *)error;
 - (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase detached:(BOOL)detached  error:(NSError * __autoreleasing *)error;

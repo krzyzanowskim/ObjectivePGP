@@ -29,10 +29,10 @@
 
 @implementation ObjectivePGP
 
-- (NSArray *)keys
+- (NSArray<PGPKey *> *)keys
 {
     if (!_keys) {
-        _keys = [NSArray array];
+        _keys = [NSArray<PGPKey *> array];
     }
     return _keys;
 }
@@ -40,7 +40,7 @@
 #pragma mark - Search
 
 // full user identifier
-- (NSArray *) getKeysForUserID:(NSString *)userID
+- (NSArray<PGPKey *> * __nonnull) getKeysForUserID:(NSString * __nonnull)userID
 {
     NSMutableArray *foundKeysArray = [NSMutableArray array];
     [self.keys enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
@@ -119,7 +119,7 @@
     return foundKey;
 }
 
-- (NSArray *) getKeysOfType:(PGPKeyType)keyType
+- (NSArray<PGPKey *> * __nonnull) getKeysOfType:(PGPKeyType)keyType
 {
     NSMutableArray *keysArray = [NSMutableArray array];
     for (PGPKey *key in self.keys) {
