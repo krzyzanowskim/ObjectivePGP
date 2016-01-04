@@ -688,7 +688,7 @@
  *
  *  @return YES on success
  */
-- (NSArray *) importKeysFromFile:(NSString *)path allowDuplicates:(BOOL)allowDuplicates
+- (NSArray * __nullable) importKeysFromFile:(NSString * __nonnull)path allowDuplicates:(BOOL)allowDuplicates
 {
     if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
         return nil;
@@ -697,12 +697,8 @@
     return [self importKeysFromData:[NSData dataWithContentsOfFile:path] allowDuplicates:allowDuplicates];
 }
 
-- (NSArray *) importKeysFromData:(NSData *)data allowDuplicates:(BOOL)allowDuplicates
+- (NSArray * __nullable) importKeysFromData:(NSData * __nonnull)data allowDuplicates:(BOOL)allowDuplicates
 {
-    if (!data) {
-        return nil;
-    }
-    
     NSArray *loadedKeys = [self keysFromData:data];
     if (!allowDuplicates) {
         NSMutableSet *keysSet = [NSMutableSet setWithArray:self.keys];
