@@ -123,26 +123,31 @@
     stream.next_out = [buffer mutableBytes];
     stream.avail_out = buffer_size;
     
-    NSMutableData * decompressed = [NSMutableData data];
+    bzret = BZ2_bzDecompressInit(&stream, 0, NO);
+    if (bzret != BZ_OK) {
+        if (error) {
+            *error = [NSError errorWithDomain:@"BZIP2" code:bzret userInfo:@{ NSLocalizedDescriptionKey: NSLocalizedString(@"BZ2_bzDecompressInit failed", nil) }];
+        }
+        return nil;
+    }
     
-    BZ2_bzDecompressInit(&stream, 0, NO);
+    NSMutableData *decompressedData = [NSMutableData data];
     do {
         bzret = BZ2_bzDecompress(&stream);
-        if (bzret != BZ_OK && bzret != BZ_STREAM_END) {
+        if (bzret < BZ_OK) {
             if (error) {
-                *error = [NSError errorWithDomain:@"BZIP2" code:0 userInfo:@{NSLocalizedDescriptionKey: @"BZ2_bzDecompress failed"}];
+                *error = [NSError errorWithDomain:@"BZIP2" code:bzret userInfo:@{ NSLocalizedDescriptionKey: NSLocalizedString(@"BZ2_bzDecompress failed", nil) }];
             }
-            BZ2_bzCompressEnd(&stream);
             return nil;
         }
         
-        [decompressed appendBytes:[buffer bytes] length:(buffer_size - stream.avail_out)];
+        [decompressedData appendBytes:[buffer bytes] length:(buffer_size - stream.avail_out)];
         stream.next_out = [buffer mutableBytes];
         stream.avail_out = buffer_size;
-    } while(bzret != BZ_STREAM_END);
+    } while (bzret != BZ_STREAM_END);
     
     BZ2_bzDecompressEnd(&stream);
-    return decompressed;
+    return decompressedData;
 }
 
 - (NSData *)bzip2Compressed:(NSError * __autoreleasing *)error
@@ -158,26 +163,33 @@
     stream.next_out = [buffer mutableBytes];
     stream.avail_out = buffer_size;
     
-    NSMutableData * decompressed = [NSMutableData data];
+    bzret = BZ2_bzCompressInit(&stream, compression, 0, 0);
+    if (bzret != BZ_OK) {
+        if (error) {
+            *error = [NSError errorWithDomain:@"BZIP2" code:bzret userInfo:@{ NSLocalizedDescriptionKey: NSLocalizedString(@"BZ2_bzCompressInit failed", nil) }];
+        }
+        return nil;
+    }
     
-    BZ2_bzCompressInit(&stream, compression, 0, 0);
+    NSMutableData *compressedData = [NSMutableData data];
+    
     do {
         bzret = BZ2_bzCompress(&stream, (stream.avail_in) ? BZ_RUN : BZ_FINISH);
-        if (bzret != BZ_RUN_OK && bzret != BZ_STREAM_END) {
+        if (bzret < BZ_OK) {
             if (error) {
-                *error = [NSError errorWithDomain:@"BZIP2" code:0 userInfo:@{NSLocalizedDescriptionKey: @"BZ2_bzCompress failed"}];
+                *error = [NSError errorWithDomain:@"BZIP2" code:bzret userInfo:@{ NSLocalizedDescriptionKey: NSLocalizedString(@"BZ2_bzCompress failed", nil) }];
             }
-            BZ2_bzCompressEnd(&stream);
             return nil;
         }
-        
-        [decompressed appendBytes:[buffer bytes] length:(buffer_size - stream.avail_out)];
+        [compressedData appendBytes:[buffer bytes] length:(buffer_size - stream.avail_out)];
         stream.next_out = [buffer mutableBytes];
         stream.avail_out = buffer_size;
-    } while(bzret != BZ_STREAM_END);
+        
+    } while (bzret != BZ_STREAM_END);
     
     BZ2_bzCompressEnd(&stream);
-    return decompressed;
+    return compressedData;
+
 }
 
 
