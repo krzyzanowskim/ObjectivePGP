@@ -114,7 +114,7 @@
     position = position + 1;
 
     if (self.s2kUsage == PGPS2KUsageEncrypted || self.s2kUsage == PGPS2KUsageEncryptedAndHashed) {
-        // moved to readEncrypted:astartingAtPosition
+        // moved to parseEncryptedPart:error
     } else if (self.s2kUsage != PGPS2KUsageNone) {
         // this is version 3, looks just like a V4 simple hash
         self.symmetricAlgorithm = (PGPSymmetricAlgorithm)self.s2kUsage; // this is tricky, but this is right. V3 algorithm is in place of s2kUsage of V4
@@ -145,33 +145,31 @@
  */
 - (NSUInteger) parseEncryptedPart:(NSData *)data error:(NSError * __autoreleasing *)error
 {
-    __unused NSUInteger position = 0;
+    NSUInteger position = 0;
 
-    // If string-to-key usage octet was 255 or 254, a one-octet symmetric encryption algorithm
-    [data getBytes:&_symmetricAlgorithm range:(NSRange){position, 1}];
-    position = position + 1;
+    if (self.s2kUsage == PGPS2KUsageEncrypted || self.s2kUsage == PGPS2KUsageEncryptedAndHashed) {
+        // If string-to-key usage octet was 255 or 254, a one-octet symmetric encryption algorithm
+        [data getBytes:&_symmetricAlgorithm range:(NSRange){position, 1}];
+        position = position + 1;
 
-    // S2K
-    self.s2k = [PGPS2K string2KeyFromData:data atPosition:position];
-    position = position + self.s2k.length;
+        // S2K
+        self.s2k = [PGPS2K string2KeyFromData:data atPosition:position];
+        position = position + self.s2k.length;
+    }
 
-    // Initial Vector (IV) of the same length as the cipher's block size
-    NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:self.symmetricAlgorithm];
-    NSAssert(blockSize <= 16, @"invalid blockSize");
-
-    self.ivData = [data subdataWithRange:(NSRange) {position, blockSize}];
-    position = position + blockSize;
-
+    if (self.s2kUsage != PGPS2KUsageNone) {
+        // Initial Vector (IV) of the same length as the cipher's block size
+        NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:self.symmetricAlgorithm];
+        NSAssert(blockSize <= 16, @"invalid blockSize");
+        self.ivData = [data subdataWithRange:(NSRange) {position, blockSize}];
+        position = position + blockSize;
+    }
 
     // encrypted MPIs
     // checksum or hash is encrypted together with the algorithm-specific fields (mpis) (if string-to-key usage octet is not zero).
     self.encryptedMPIsPartData = [data subdataWithRange:(NSRange) {position, data.length - position}];
     position = position + self.encryptedMPIsPartData.length;
 
-#ifdef DEBUG
-    //[self decrypt:@"1234"];
-    //[self decrypt:@"1234" error:error];  // invalid password
-#endif
     return data.length;
 }
 
@@ -297,6 +295,9 @@
  */
 - (PGPSecretKeyPacket *) decryptedKeyPacket:(NSString *)passphrase error:(NSError *__autoreleasing *)error
 {
+    NSParameterAssert(passphrase);
+    NSParameterAssert(error);
+
     if (!self.isEncryptedWithPassword) {
         return self;
     }
@@ -365,47 +366,52 @@
 {
     NSAssert(forceV4 == YES,@"Only V4 is supported");
 
-
     NSMutableData *data = [NSMutableData data];
     [data appendBytes:&_s2kUsage length:1];
 
-    switch (self.s2kUsage) {
-        case PGPS2KUsageEncrypted:
-        case PGPS2KUsageEncryptedAndHashed:
-        {
-            // If string-to-key usage octet was 255 or 254, a one-octet symmetric encryption algorithm
-            [data appendBytes:&_symmetricAlgorithm length:1];
+    if (self.s2kUsage == PGPS2KUsageEncrypted || self.s2kUsage == PGPS2KUsageEncryptedAndHashed) {
+        // If string-to-key usage octet was 255 or 254, a one-octet symmetric encryption algorithm
+        [data appendBytes:&_symmetricAlgorithm length:1];
 
-            // S2K
-            NSError *exportError = nil;
-            [data appendData:[self.s2k export:&exportError]];
-            NSAssert(exportError, @"export failed");
-            if (exportError) {
-                return nil;
-            }
-
-            // Initial Vector (IV) of the same length as the cipher's block size
-            [data appendBytes:self.ivData.bytes length:self.ivData.length];
-
-            // encrypted MPIs
-            [data appendData:self.encryptedMPIsPartData];
-
-            // Hash
-            [data appendData:[data pgp_SHA1]];
-        }
-            break;
-        case PGPS2KUsageNone:
-            for (PGPMPI *mpi in self.secretMPIArray) {
-                [data appendData:[mpi exportMPI]];
-            }
-
-            // Checksum
-            UInt16 checksum = CFSwapInt16HostToBig([data pgp_Checksum]);
-            [data appendBytes:&checksum length:2];
-            break;
-        default:
-            break;
+        // If string-to-key usage octet was 255 or 254, a string-to-key specifier.
+        NSError *exportError = nil;
+        [data appendData:[self.s2k export:&exportError]];
+        NSAssert(exportError == nil, @"export failed");
     }
+
+    if (self.s2kUsage != PGPS2KUsageNone) {
+        // If secret data is encrypted (string-to-key usage octet not zero), an Initial Vector (IV) of the same length as the cipher's block size.
+        // Initial Vector (IV) of the same length as the cipher's block size
+        [data appendBytes:self.ivData.bytes length:self.ivData.length];
+    }
+
+    if (self.s2kUsage == PGPS2KUsageNone) {
+        for (PGPMPI *mpi in self.secretMPIArray) {
+            [data appendData:[mpi exportMPI]];
+        }
+
+        // append hash
+        UInt16 checksum = CFSwapInt16HostToBig([data pgp_Checksum]);
+        [data appendBytes:&checksum length:2];
+    } else {
+        // encrypted MPIs with encrypted hash
+        [data appendData:self.encryptedMPIsPartData];
+
+        // hash is part of encryptedMPIsPartData
+    }
+
+    // If the string-to-key usage octet is zero or 255, then a two-octet checksum of the plaintext of the algorithm-specific portion (sum of all octets, mod 65536).
+    // This checksum or hash is encrypted together with the algorithm-specific fields
+    // ---> is part of self.encryptedMPIsPartData
+    //if (self.s2kUsage == PGPS2KUsageNone || self.s2kUsage == PGPS2KUsageEncrypted) {
+    //    // Checksum
+    //    UInt16 checksum = CFSwapInt16HostToBig([data pgp_Checksum]);
+    //    [data appendBytes:&checksum length:2];
+    //} else if (self.s2kUsage == PGPS2KUsageEncryptedAndHashed) {
+    //    // If the string-to-key usage octet was 254, then a 20-octet SHA-1 hash of the plaintext of the algorithm-specific portion.
+    //    [data appendData:[data pgp_SHA1]];
+    //}
+
 
 //    } else if (self.s2kUsage != PGPS2KUsageNone) {
 //        // this is version 3, looks just like a V4 simple hash
