@@ -91,7 +91,14 @@ static const unsigned int PGP_SALT_SIZE = 8;
     }
 
     if (_specifier == PGPS2KSpecifierIteratedAndSalted) {
-        NSAssert(self.uncodedCount == 0, @"Count value is 0");
+        NSAssert(self.uncodedCount != 0, @"Count value is 0");
+        if (self.uncodedCount == 0) {
+            if (error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Unexpected count is 0"}];
+            }
+            return nil;
+        }
+
         [data appendBytes:&_uncodedCount length:1];
     }
 
