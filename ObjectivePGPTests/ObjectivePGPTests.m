@@ -69,6 +69,20 @@
     NSAssert(count1 == count2, @"Loaded keys should be equal");
 }
 
+// https://github.com/krzyzanowskim/ObjectivePGP/issues/22
+- (void) testIssue22 {
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSString *originalKeyFilePath = [bundle pathForResource:@"issue22-original" ofType:@"asc"];
+    [self.oPGP importKeysFromFile:originalKeyFilePath allowDuplicates:NO];
+    PGPKey *key = [self.oPGP.keys firstObject];
+    
+    NSError *err = nil;
+    XCTAssertTrue([key decrypt:@"weakpassphrase" error:&err]);
+    NSData *exportedKeyData = [key export:nil];
+    XCTAssert(exportedKeyData.length == 4869);
+    XCTAssert(self.oPGP.keys.count == 1, @"");
+}
+
 //- (void) testNewOpenKeyring
 //{
 //    BOOL openedPubKeyringNewFormat    = [self.keyring open:self.pubringNewFormatPath];

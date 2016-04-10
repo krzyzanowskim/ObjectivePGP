@@ -96,6 +96,7 @@
 		75AEC46B1930FD3000974CBE /* PGPUserAttributeSubpacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AEC46A1930FD3000974CBE /* PGPUserAttributeSubpacket.m */; };
 		75B2450F1933DB89003F24A0 /* PGPPublicKeyRSA.m in Sources */ = {isa = PBXBuildFile; fileRef = 75B2450E1933DB89003F24A0 /* PGPPublicKeyRSA.m */; };
 		75B3952A193C6FA100297C8D /* PGPCompressedPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75B39529193C6FA100297C8D /* PGPCompressedPacket.m */; };
+		75B9268B1CBA3A0200B3EF41 /* issue22-original.asc in Resources */ = {isa = PBXBuildFile; fileRef = 75B926891CBA3A0200B3EF41 /* issue22-original.asc */; };
 		75C4F0E31920FF5F005401A4 /* PGPCryptoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C4F0E21920FF5F005401A4 /* PGPCryptoUtils.m */; };
 		75C4F0E6192163A3005401A4 /* PGPModificationDetectionCodePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C4F0E5192163A3005401A4 /* PGPModificationDetectionCodePacket.m */; };
 		75D53ADF1A2FCDEE00ED9707 /* multiple-keys.asc in Resources */ = {isa = PBXBuildFile; fileRef = 75D53ADE1A2FCDEE00ED9707 /* multiple-keys.asc */; };
@@ -372,6 +373,7 @@
 		75B2450E1933DB89003F24A0 /* PGPPublicKeyRSA.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPublicKeyRSA.m; sourceTree = "<group>"; };
 		75B39528193C6FA100297C8D /* PGPCompressedPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPCompressedPacket.h; sourceTree = "<group>"; };
 		75B39529193C6FA100297C8D /* PGPCompressedPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPCompressedPacket.m; sourceTree = "<group>"; };
+		75B926891CBA3A0200B3EF41 /* issue22-original.asc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "issue22-original.asc"; sourceTree = "<group>"; };
 		75C4F0E11920FF5F005401A4 /* PGPCryptoUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = PGPCryptoUtils.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		75C4F0E21920FF5F005401A4 /* PGPCryptoUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPCryptoUtils.m; sourceTree = "<group>"; };
 		75C4F0E4192163A3005401A4 /* PGPModificationDetectionCodePacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPModificationDetectionCodePacket.h; sourceTree = "<group>"; };
@@ -565,6 +567,7 @@
 		7563357119258F1700414CCC /* TestingFiles */ = {
 			isa = PBXGroup;
 			children = (
+				75B926891CBA3A0200B3EF41 /* issue22-original.asc */,
 				75D53ADE1A2FCDEE00ED9707 /* multiple-keys.asc */,
 				750016A819C22E7100EAF308 /* secring-test-plaintext-encrypted-message.asc */,
 				7563357219258F1700414CCC /* pubring-test-encrypted.gpg */,
@@ -773,6 +776,7 @@
 				7563357619258F1700414CCC /* pubring-test-encrypted.gpg in Resources */,
 				7563357919258F1700414CCC /* secring-test-plaintext.gpg in Resources */,
 				7563357719258F1700414CCC /* pubring-test-plaintext.gpg in Resources */,
+				75B9268B1CBA3A0200B3EF41 /* issue22-original.asc in Resources */,
 				75D53ADF1A2FCDEE00ED9707 /* multiple-keys.asc in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
