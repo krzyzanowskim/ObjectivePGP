@@ -83,6 +83,15 @@
     XCTAssert(self.oPGP.keys.count == 1, @"");
 }
 
+- (void) testIssue35 {
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSString *messagePath = [bundle pathForResource:@"issue35-message" ofType:@"asc"];
+    NSString *keyPath = [bundle pathForResource:@"issue35-key" ofType:@"asc"];
+    NSError *error = nil;
+    [self.oPGP importKeysFromFile:keyPath allowDuplicates:NO];
+    [self.oPGP decryptData:[NSData dataWithContentsOfFile:messagePath] passphrase:nil error:&error];
+}
+
 //- (void) testNewOpenKeyring
 //{
 //    BOOL openedPubKeyringNewFormat    = [self.keyring open:self.pubringNewFormatPath];
