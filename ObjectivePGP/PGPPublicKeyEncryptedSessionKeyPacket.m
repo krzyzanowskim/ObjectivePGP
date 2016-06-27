@@ -97,7 +97,7 @@
 
 - (NSData *) decryptSessionKeyData:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm *)sessionKeyAlgorithm error:(NSError * __autoreleasing *)error
 {
-    NSAssert(!secretKeyPacket.isEncryptedWithPassword, @"Secret key can't be encrypted");
+    NSAssert(!secretKeyPacket.isEncryptedWithPassword, @"Secret key can't be decrypted");
     
     //FIXME: Key is read from the packet, so it shouldn't be passed as parameter to the method because
     //       key is unknown earlier
@@ -125,8 +125,14 @@
     NSAssert(sessionKeyAlgorithmRead < PGPSymmetricMax, @"Invalid algorithm");
     *sessionKeyAlgorithm = sessionKeyAlgorithmRead;
     position = position + 1;
-    
-    NSUInteger sessionKeySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:sessionKeyAlgorithmRead];
+
+    NSUInteger sessionKeySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:sessionKeyAlgorithmRead];
+    if (sessionKeySize == NSNotFound) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Invalid session key size"}];
+        }
+        return nil;
+    }
     NSData *sessionKeyData = [mData subdataWithRange:(NSRange){position, sessionKeySize}];
     position = position + sessionKeySize;
     
