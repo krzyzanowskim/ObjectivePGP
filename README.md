@@ -9,19 +9,20 @@ See [blog post](http://blog.krzyzanowskim.com/2014/07/31/short-story-about-openp
 
 ###CocoaPods
 
-	pod 'ObjectivePGP', :git => 'https://github.com/krzyzanowskim/ObjectivePGP.git', :branch => :master
+	pod 'ObjectivePGP'
 	
 ##Contribution
 
-You are welcome to contribute. Current version can be found on branch `master`. I started work on new version on branch `ObjectivePGP2` - however it is not finished, not even sure if it should be done this way. It is more Work In Progress with new approach.
-
-If you want fix the bug, please create Pull Request against `master` branch. If you want to work on future version, look at `ObjectivePGP2` branch.
+You are welcome to contribute. Current version can be found on branch `master`. 
+If you want fix the bug, please create Pull Request against `master` branch.
 
 ##The licence
 
-It is open source and covered by a standard 2-clause BSD license. That means you have to mention Marcin Krzyżanowski as the original author of this code and reproduce the LICENSE text inside your app.
+Free for non-commercial use, covered by a standard 2-clause BSD license. That means you have to mention Marcin Krzyżanowski as the original author of this code and reproduce the LICENSE text inside your app.
 
-You can purchase a Non-Attribution-License for 75 Euros for not having to include the LICENSE text. I also accept sponsorship for specific enhancements which you might need. Please contact me via email for inquiries.
+You can purchase commercial and non-attribution-license for not having to include the LICENSE text. 
+
+Please contact me via email for inquiries.
 
 ##Usage
 
@@ -125,6 +126,23 @@ You can purchase a Non-Attribution-License for 75 Euros for not having to includ
 
 ##Release notes
 
+Version 0.5
+
+- Improve BZip2 compression
+- Fix exporting keys
+- Fix decryption for some RSA keys
+- minor improvements and fixes
+
+Version 0.4.1
+
+- Extend library with One-Pass encryption
+- Removed newline transformation in PGPLiteralPacket
+- Partial Packet Length Support
+- ZIP compression support
+- Signature Verification: find the correct key by the issuerKeyID
+- Harden Signature verification
+- Support integrity protected status 
+
 Version 0.4.0
 - ObjectivePGP goes Open Source
 - Fix length header for some double-octet length
@@ -156,6 +174,7 @@ Version 0.3
 - FIX export multiple keys to single file
 - FIX reading user id packet
 - FIX other minor fixes
+
 
 Known limitations
 
