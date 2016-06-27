@@ -86,7 +86,8 @@ typedef NS_ENUM(UInt8, PGPSymmetricAlgorithm) {
     PGPSymmetricAES128     = 7, // 16 bytes (128 bit), key length 128 bit
     PGPSymmetricAES192     = 8, // 16 bytes (128 bit), key length 192 bit
     PGPSymmetricAES256     = 9, // 16 bytes (128 bit), key length 256 bit
-    PGPSymmetricTwofish256 = 10 // 16 bytes (128 bit)
+    PGPSymmetricTwofish256 = 10, // 16 bytes (128 bit)
+    PGPSymmetricMax
 };
 
 // 9.4.  Hash Algorithms

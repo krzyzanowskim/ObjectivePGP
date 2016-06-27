@@ -102,7 +102,7 @@
         return nil;
     }
 
-    UInt8 *outbuf = calloc(RSA_size(rsa), sizeof(UInt8));
+    UInt8 *outbuf = calloc(RSA_size(rsa), 1);
     int t = RSA_private_decrypt(toDecrypt.length, toDecrypt.bytes, outbuf, rsa, RSA_NO_PADDING);
     if (t < 0) {
         ERR_load_crypto_strings();
