@@ -43,7 +43,7 @@
     return NSNotFound;
 }
 
-+ (NSUInteger) keySizeOfSymmetricAlhorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm
++ (NSUInteger) keySizeOfSymmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm
 {
     switch (symmetricAlgorithm) {
         case PGPSymmetricIDEA:

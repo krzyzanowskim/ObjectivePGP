@@ -122,6 +122,7 @@
     NSUInteger position = 0;
     PGPSymmetricAlgorithm sessionKeyAlgorithmRead;
     [mData getBytes:&sessionKeyAlgorithmRead range:(NSRange){position, 1}];
+    NSAssert(sessionKeyAlgorithmRead < PGPSymmetricMax, @"Invalid algorithm");
     *sessionKeyAlgorithm = sessionKeyAlgorithmRead;
     position = position + 1;
     

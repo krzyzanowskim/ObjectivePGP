@@ -284,7 +284,7 @@
         return nil;
     }
     
-    NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:symmetricAlgorithm];
+    NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:symmetricAlgorithm];
 
     NSData *ret = nil;
     

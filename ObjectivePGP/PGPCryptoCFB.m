@@ -59,7 +59,7 @@
         return nil;
     }
     
-    NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:symmetricAlgorithm];
+    NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:symmetricAlgorithm];
     NSAssert(keySize <= 32, @"invalid keySize");
     
     unsigned char *iv = calloc(1, ivData.length);

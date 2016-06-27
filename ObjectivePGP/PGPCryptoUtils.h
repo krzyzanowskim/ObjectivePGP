@@ -12,7 +12,7 @@
 @interface PGPCryptoUtils : NSObject
 
 + (NSUInteger) blockSizeOfSymmetricAlhorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm;
-+ (NSUInteger) keySizeOfSymmetricAlhorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm;
++ (NSUInteger) keySizeOfSymmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm;
 + (NSUInteger) hashSizeOfHashAlhorithm:(PGPHashAlgorithm)hashAlgorithm;
 
 @end

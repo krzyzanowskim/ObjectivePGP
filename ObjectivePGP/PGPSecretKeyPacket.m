@@ -309,7 +309,7 @@
     PGPSecretKeyPacket *encryptedKey = [self copy];
 
     // Keysize
-    NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlhorithm:encryptedKey.symmetricAlgorithm];
+    NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:encryptedKey.symmetricAlgorithm];
     NSAssert(keySize <= 32, @"invalid keySize");
 
     // Session key for password
@@ -343,7 +343,7 @@
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly:
         {
-            // return ecnrypted m
+            // return decrypted m
             return [PGPPublicKeyRSA privateDecrypt:data withSecretKeyPacket:self];
         }
             break;
