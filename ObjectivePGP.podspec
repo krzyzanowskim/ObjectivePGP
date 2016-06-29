@@ -10,11 +10,9 @@ Pod::Spec.new do |s|
   s.authors      = {'Marcin Krzyżanowski' => 'marcin@krzyzanowskim.com'}
   s.social_media_url   = "https://twitter.com/krzyzanowskim"
   
-  s.ios.platform          = :ios, '6.0'
   s.ios.deployment_target = '6.0'
   s.ios.header_dir          = 'ObjectivePGP'
 
-  s.osx.platform          = :osx, '10.9'
   s.osx.deployment_target = '10.9'
   s.osx.header_dir          = 'ObjectivePGP'
 
