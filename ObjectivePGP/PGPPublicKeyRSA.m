@@ -172,8 +172,8 @@
     }
 
 
-    UInt8 *outbuf = calloc(RSA_size(rsa), sizeof(UInt8));
-    int t = RSA_private_encrypt((int)secretKeyPacket.keySize, (UInt8 *)toEncrypt.bytes, outbuf, rsa, RSA_NO_PADDING);
+    UInt8 *outbuf = calloc(RSA_size(rsa), 1);
+    int t = RSA_private_encrypt(toEncrypt.length & INT_MAX, (UInt8 *)toEncrypt.bytes, outbuf, rsa, RSA_NO_PADDING);
     if (t < 0) {
         ERR_load_crypto_strings();
         SSL_load_error_strings();
