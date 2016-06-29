@@ -40,7 +40,7 @@
 #pragma mark - Search
 
 // full user identifier
-- (NSArray<PGPKey *> * __nonnull) getKeysForUserID:(NSString * __nonnull)userID
+- (nullable NSArray<PGPKey *> *) getKeysForUserID:(nonnull NSString *)userID
 {
     NSMutableArray *foundKeysArray = [NSMutableArray array];
     [self.keys enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
@@ -54,7 +54,7 @@
     return foundKeysArray.count > 0 ? [foundKeysArray copy] : nil;
 }
 
-- (PGPKey *) getKeyForKeyID:(PGPKeyID *)searchKeyID type:(PGPKeyType)keyType
+- (nullable PGPKey *) getKeyForKeyID:(nonnull PGPKeyID *)searchKeyID type:(PGPKeyType)keyType
 {
     if (!searchKeyID) {
         return nil;
@@ -119,7 +119,7 @@
     return foundKey;
 }
 
-- (NSArray<PGPKey *> * __nonnull) getKeysOfType:(PGPKeyType)keyType
+- (nonnull NSArray<PGPKey *> *) getKeysOfType:(PGPKeyType)keyType
 {
     NSMutableArray *keysArray = [NSMutableArray array];
     for (PGPKey *key in self.keys) {

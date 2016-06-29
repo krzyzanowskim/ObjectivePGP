@@ -16,40 +16,41 @@
 /**
  *  Array of PGPKey
  */
-@property (strong, nonatomic) NSArray<PGPKey *> *keys;
+@property (strong, nonatomic, nonnull) NSArray<PGPKey *> *keys;
 
 // Import keys
 - (NSArray * __nullable) importKeysFromFile:(NSString * __nonnull)path allowDuplicates:(BOOL)duplicates;
 - (NSArray * __nullable) importKeysFromData:(NSData * __nonnull)data allowDuplicates:(BOOL)duplicates;
-- (BOOL) importKey:(NSString *)shortKeyStringIdentifier fromFile:(NSString *)path;
+- (BOOL) importKey:(nonnull NSString *)shortKeyStringIdentifier fromFile:(nonnull NSString *)path;
 
 // Read keys
-- (NSArray<PGPKey *> * __nullable) keysFromData:(NSData * __nonnull)fileData;
-- (NSArray<PGPKey *> * __nullable) keysFromFile:(NSString * __nonnull)path;
+- (nullable NSArray<PGPKey *> *) keysFromData:(nonnull NSData *)fileData;
+- (nullable NSArray<PGPKey *> *) keysFromFile:(nonnull NSString *)path;
 
 // Export keys
-- (BOOL) exportKeysOfType:(PGPKeyType)type toFile:(NSString *)path error:(NSError * __autoreleasing *)error;
-- (BOOL) exportKeys:(NSArray *)keys toFile:(NSString *)path error:(NSError * __autoreleasing *)error;
-- (NSData *) exportKey:(PGPKey *)key armored:(BOOL)armored;
+- (BOOL) exportKeysOfType:(PGPKeyType)type toFile:(nonnull NSString *)path error:(NSError * __autoreleasing __nullable * __nullable)error;
 
-- (PGPKey *) getKeyForIdentifier:(NSString *)keyIdentifier type:(PGPKeyType)keyType;
-- (PGPKey *) getKeyForKeyID:(PGPKeyID *)searchKeyID type:(PGPKeyType)keyType;
-- (NSArray<PGPKey *> * __nonnull) getKeysForUserID:(NSString * __nonnull)userID;
-- (NSArray<PGPKey *> * __nonnull) getKeysOfType:(PGPKeyType)keyType;
+- (BOOL) exportKeys:(nonnull NSArray<PGPKey *> *)keys toFile:(nonnull NSString *)path error:(NSError * __autoreleasing __nullable * __nullable)error;
+- (nullable NSData *) exportKey:(nonnull PGPKey *)key armored:(BOOL)armored;
 
-- (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase  error:(NSError * __autoreleasing *)error;
-- (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase detached:(BOOL)detached  error:(NSError * __autoreleasing *)error;
-- (NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID passphrase:(NSString *)passphrase error:(NSError * __autoreleasing *)error;
-- (NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID passphrase:(NSString *)passphrase detached:(BOOL)detached error:(NSError * __autoreleasing *)error;
+- (nullable PGPKey *) getKeyForIdentifier:(nonnull NSString *)keyIdentifier type:(PGPKeyType)keyType;
+- (nullable PGPKey *) getKeyForKeyID:(nonnull PGPKeyID *)searchKeyID type:(PGPKeyType)keyType;
+- (nullable NSArray<PGPKey *> *) getKeysForUserID:(nonnull NSString *)userID;
+- (nonnull NSArray<PGPKey *> *) getKeysOfType:(PGPKeyType)keyType;
 
-- (BOOL) verifyData:(NSData *)signedDataPackets error:(NSError * __autoreleasing *)error;
-- (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData error:(NSError * __autoreleasing *)error;
-- (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPKey *)publicKey error:(NSError * __autoreleasing *)error;
+- (nullable NSData *) signData:(nonnull NSData *)dataToSign usingSecretKey:(nonnull PGPKey *)secretKey passphrase:(nullable NSString *)passphrase  error:(NSError * __autoreleasing __nullable * __nullable)error;
+- (nullable NSData *) signData:(nonnull NSData *)dataToSign usingSecretKey:(nonnull PGPKey *)secretKey passphrase:(nullable NSString *)passphrase detached:(BOOL)detached  error:(NSError * __autoreleasing __nullable * __nullable)error;
+- (nullable NSData *) signData:(nonnull NSData *)dataToSign withKeyForUserID:(nonnull NSString *)userID passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing __nullable * __nullable)error;
+- (nullable NSData *) signData:(nonnull NSData *)dataToSign withKeyForUserID:(nonnull NSString *)userID passphrase:(nullable NSString *)passphrase detached:(BOOL)detached error:(NSError * __autoreleasing __nullable * __nullable)error;
 
-- (NSData *) encryptData:(NSData *)dataToEncrypt usingPublicKey:(PGPKey *)publicKey armored:(BOOL)armored error:(NSError * __autoreleasing *)error;
-- (NSData *) encryptData:(NSData *)dataToEncrypt usingPublicKeys:(NSArray *)publicKeys armored:(BOOL)armored error:(NSError * __autoreleasing *)error;
-- (NSData *) encryptData:(NSData *)dataToEncrypt usingPublicKeys:(NSArray *)publicKeys signWithSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase armored:(BOOL)armored error:(NSError * __autoreleasing *)error;
-- (NSData *) decryptData:(NSData *)messageDataToDecrypt passphrase:(NSString *)passphrase error:(NSError * __autoreleasing *)error;
-- (NSData *) decryptData:(NSData *)messageDataToDecrypt passphrase:(NSString *)passphrase verifyWithPublicKey:(PGPKey *)publicKey signed:(BOOL*)isSigned valid:(BOOL*)isValid integrityProtected:(BOOL*)isIntegrityProtected error:(NSError * __autoreleasing *)error;
+- (BOOL) verifyData:(nonnull NSData *)signedDataPackets error:(NSError * __autoreleasing __nullable * __nullable)error;
+- (BOOL) verifyData:(nonnull NSData *)signedData withSignature:(nonnull NSData *)signatureData error:(NSError * __autoreleasing __nullable * __nullable)error;
+- (BOOL) verifyData:(nonnull NSData *)signedData withSignature:(nonnull NSData *)signatureData usingKey:(nonnull PGPKey *)publicKey error:(NSError * __autoreleasing __nullable * __nullable)error;
+
+- (nullable NSData *) encryptData:(nonnull NSData *)dataToEncrypt usingPublicKey:(nonnull PGPKey *)publicKey armored:(BOOL)armored error:(NSError * __autoreleasing __nullable * __nullable)error;
+- (nullable NSData *) encryptData:(nonnull NSData *)dataToEncrypt usingPublicKeys:(nonnull NSArray *)publicKeys armored:(BOOL)armored error:(NSError * __autoreleasing __nullable * __nullable)error;
+- (nullable NSData *) encryptData:(nonnull NSData *)dataToEncrypt usingPublicKeys:(nonnull NSArray *)publicKeys signWithSecretKey:(nullable PGPKey *)secretKey passphrase:(nullable NSString *)passphrase armored:(BOOL)armored error:(NSError * __autoreleasing __nullable * __nullable)error;
+- (nullable NSData *) decryptData:(nonnull NSData *)messageDataToDecrypt passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing __nullable * __nullable)error;
+- (nullable NSData *) decryptData:(nonnull NSData *)messageDataToDecrypt passphrase:(nullable NSString *)passphrase verifyWithPublicKey:(nullable PGPKey *)publicKey signed:(nullable BOOL*)isSigned valid:(nullable BOOL*)isValid integrityProtected:(nullable BOOL*)isIntegrityProtected error:(NSError * __autoreleasing __nullable * __nullable)error;
 
 @end
