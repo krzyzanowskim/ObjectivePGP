@@ -37,8 +37,8 @@
         return nil;
     }
     
-    uint8_t *encrypted_em = calloc((size_t)BN_num_bytes(rsa->n), sizeof(UInt8));
-    int em_len = RSA_public_encrypt((int)toEncrypt.length, toEncrypt.bytes, encrypted_em, rsa, RSA_NO_PADDING);
+    uint8_t *encrypted_em = calloc(BN_num_bytes(rsa->n) & SIZE_T_MAX, 1);
+    int em_len = RSA_public_encrypt(toEncrypt.length & INT_MAX, toEncrypt.bytes, encrypted_em, rsa, RSA_NO_PADDING);
     
     if (em_len != publicKeyPacket.keySize) {
         ERR_load_crypto_strings();
@@ -103,7 +103,7 @@
     }
 
     UInt8 *outbuf = calloc(RSA_size(rsa), 1);
-    int t = RSA_private_decrypt(toDecrypt.length, toDecrypt.bytes, outbuf, rsa, RSA_NO_PADDING);
+    int t = RSA_private_decrypt(toDecrypt.length & INT_MAX , toDecrypt.bytes, outbuf, rsa, RSA_NO_PADDING);
     if (t < 0) {
         ERR_load_crypto_strings();
         SSL_load_error_strings();
@@ -216,8 +216,8 @@
         return nil;
     }
 
-    UInt8 *decrypted_em = calloc(RSA_size(rsa) - 11, sizeof(UInt8));
-    int em_len = RSA_public_decrypt((int)toDecrypt.length, toDecrypt.bytes, decrypted_em, rsa, RSA_NO_PADDING);
+    UInt8 *decrypted_em = calloc(RSA_size(rsa) - 11, 1);
+    int em_len = RSA_public_decrypt(toDecrypt.length & INT_MAX, toDecrypt.bytes, decrypted_em, rsa, RSA_NO_PADDING);
 
     if (em_len != publicKeyPacket.keySize) {
         free(decrypted_em);
