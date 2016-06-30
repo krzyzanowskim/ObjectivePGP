@@ -132,9 +132,6 @@ Version 0.5
 - Fix exporting keys
 - Fix decryption for some RSA keys
 - minor improvements and fixes
-
-Version 0.4.1
-
 - Extend library with One-Pass encryption
 - Removed newline transformation in PGPLiteralPacket
 - Partial Packet Length Support
@@ -143,9 +140,11 @@ Version 0.4.1
 - Harden Signature verification
 - Support integrity protected status 
 
+Version 0.4.2
+- Fix length header for some double-octet length
+
 Version 0.4.0
 - ObjectivePGP goes Open Source
-- Fix length header for some double-octet length
 
 Version 0.3.2
 - CHANGE error handling for sign/verify methods
