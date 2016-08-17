@@ -98,10 +98,12 @@
     NSData *encData = [self.oPGP encryptData:tmpdata usingPublicKey:encKey armored:NO error:&encError];
     XCTAssertNil(encError, @"Encryption failed");
 
-    NSError *decError;
-    NSData *decData = [self.oPGP decryptData:encData passphrase:@"1234" error:&decError];
-    XCTAssertNil(decError, @"Decryption failed");
-    NSAssert([tmpdata isEqualToData:decData], @"Data should be equal");
+    [self measureBlock:^{
+        NSError *decError;
+        NSData *decData = [self.oPGP decryptData:encData passphrase:@"1234" error:&decError];
+        XCTAssertNil(decError, @"Decryption failed");
+        NSAssert([tmpdata isEqualToData:decData], @"Data should be equal");
+    }];
     
 //    PGPKey *key = self.oPGP.keys[0];
 //    
