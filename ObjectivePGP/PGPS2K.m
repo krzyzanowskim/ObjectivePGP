@@ -145,36 +145,50 @@ static const unsigned int PGP_SALT_SIZE = 8;
         case PGPS2KSpecifierIteratedAndSalted:
         {
             // iterated (salt + passphrase)
-            @autoreleasepool {
-                // store all these as local vars to reduce the number of objc_msgSend calls that are made
-                NSUInteger saltLength = self.salt.length;
-                NSUInteger passphraseLength = passphraseData.length;
-                UInt32 codedCount = self.codedCount;
-                const void *saltAsBytes = self.salt.bytes;
-                const void *passphraseDataAsBytes = passphraseData.bytes;
-                
-                // This is an approximation of the amount of memory needed.
-                // It's mostly too small so a realloc is needed within the loop to compensate
-                NSUInteger dataLength = codedCount * keySize / (saltLength + passphraseLength);
-                // To keep track of how much data has been added to hashData
-                // Used to determin when to realloc and how much data should be copied into the NSData object
-                NSUInteger accumulatedDataLength = 0;
-                void *hashData = malloc(dataLength);
-                void *grownHashData = NULL;
-                
-                for (NSUInteger n = 0; n * hashSize < keySize; ++n)
+            // store all these as local vars to reduce the number of objc_msgSend calls that are made
+            NSUInteger saltLength = self.salt.length;
+            NSUInteger passphraseLength = passphraseData.length;
+            UInt32 codedCount = self.codedCount;
+            const void *saltAsBytes = self.salt.bytes;
+            const void *passphraseDataAsBytes = passphraseData.bytes;
+            
+            // This is an approximation of the amount of memory needed.
+            // It's mostly too small so a realloc is needed within the loop to compensate
+            NSUInteger dataLength = codedCount * keySize / (saltLength + passphraseLength);
+            // To keep track of how much data has been added to hashData
+            // Used to determin when to realloc and how much data should be copied into the NSData object
+            NSUInteger accumulatedDataLength = 0;
+            void *hashData = malloc(dataLength);
+            void *grownHashData = NULL;
+            
+            for (NSUInteger n = 0; n * hashSize < keySize; ++n)
+            {
+                for (NSUInteger i = 0; i < codedCount; i += saltLength + passphraseLength)
                 {
-                    for (NSUInteger i = 0; i < codedCount; i += saltLength + passphraseLength)
-                    {
-                        NSUInteger j = saltLength + passphraseLength;
-                        if (i + j > codedCount && i != 0) {
-                            j = codedCount - i;
+                    NSUInteger j = saltLength + passphraseLength;
+                    if (i + j > codedCount && i != 0) {
+                        j = codedCount - i;
+                    }
+                    
+                    // add salt
+                    NSUInteger saltlen = MIN(j, saltLength);
+                    NSUInteger oldSize = accumulatedDataLength;
+                    accumulatedDataLength = oldSize + saltlen;
+                    if (accumulatedDataLength >= dataLength) {
+                        dataLength = accumulatedDataLength * 2;
+                        grownHashData = realloc(hashData, dataLength);
+                        if (grownHashData != NULL) {
+                            hashData = grownHashData;
+                        } else {
+                            abort();
                         }
-                        
-                        // add salt
-                        NSUInteger saltlen = MIN(j, saltLength);
-                        NSUInteger oldSize = accumulatedDataLength;
-                        accumulatedDataLength = oldSize + saltlen;
+                    }
+                    memcpy(hashData + oldSize, saltAsBytes, saltlen);
+                    // add passphrase
+                    if (j > saltLength) {
+                        NSUInteger passlen = j - saltLength;
+                        NSUInteger passlenOldSize = accumulatedDataLength;
+                        accumulatedDataLength = passlenOldSize + passlen;
                         if (accumulatedDataLength >= dataLength) {
                             dataLength = accumulatedDataLength * 2;
                             grownHashData = realloc(hashData, dataLength);
@@ -184,28 +198,12 @@ static const unsigned int PGP_SALT_SIZE = 8;
                                 abort();
                             }
                         }
-                        memcpy(hashData + oldSize, saltAsBytes, saltlen);
-                        // add passphrase
-                        if (j > saltLength) {
-                            NSUInteger passlen = j - saltLength;
-                            NSUInteger passlenOldSize = accumulatedDataLength;
-                            accumulatedDataLength = passlenOldSize + passlen;
-                            if (accumulatedDataLength >= dataLength) {
-                                dataLength = accumulatedDataLength * 2;
-                                grownHashData = realloc(hashData, dataLength);
-                                if (grownHashData != NULL) {
-                                    hashData = grownHashData;
-                                } else {
-                                    abort();
-                                }
-                            }
-                            memcpy(hashData + passlenOldSize, passphraseDataAsBytes, passlen);
-                        }
+                        memcpy(hashData + passlenOldSize, passphraseDataAsBytes, passlen);
                     }
                 }
-                [toHashData appendBytes:hashData length:accumulatedDataLength];
-                free(hashData);
             }
+            [toHashData appendBytes:hashData length:accumulatedDataLength];
+            free(hashData);
         }
             break;
         default:
