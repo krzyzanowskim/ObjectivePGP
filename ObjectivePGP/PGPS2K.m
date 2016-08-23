@@ -145,34 +145,65 @@ static const unsigned int PGP_SALT_SIZE = 8;
         case PGPS2KSpecifierIteratedAndSalted:
         {
             // iterated (salt + passphrase)
-            @autoreleasepool {
-                // memory overhead with subdataWithRange is significant, this is why it's not used here
-                for (NSUInteger n = 0; n * hashSize < keySize; ++n)
+            // store all these as local vars to reduce the number of objc_msgSend calls that are made
+            NSUInteger saltLength = self.salt.length;
+            NSUInteger passphraseLength = passphraseData.length;
+            UInt32 codedCount = self.codedCount;
+            const void *saltAsBytes = self.salt.bytes;
+            const void *passphraseDataAsBytes = passphraseData.bytes;
+            
+            // This is an approximation of the amount of memory needed.
+            // It's mostly too small so a realloc is needed within the loop to compensate
+            NSUInteger dataLength = codedCount * keySize / (saltLength + passphraseLength);
+            // To keep track of how much data has been added to hashData
+            // Used to determin when to realloc and how much data should be copied into the NSData object
+            NSUInteger accumulatedDataLength = 0;
+            void *hashData = malloc(dataLength);
+            void *grownHashData = NULL;
+            
+            for (NSUInteger n = 0; n * hashSize < keySize; ++n)
+            {
+                for (NSUInteger i = 0; i < codedCount; i += saltLength + passphraseLength)
                 {
-                    for (NSUInteger i = 0; i < self.codedCount; i += self.salt.length + passphraseData.length)
-                    {
-                        NSUInteger j = self.salt.length + passphraseData.length;
-                        if (i + j > self.codedCount && i != 0) {
-                            j = self.codedCount - i;
+                    NSUInteger j = saltLength + passphraseLength;
+                    if (i + j > codedCount && i != 0) {
+                        j = codedCount - i;
+                    }
+                    
+                    // add salt
+                    NSUInteger saltlen = MIN(j, saltLength);
+                    NSUInteger oldSize = accumulatedDataLength;
+                    accumulatedDataLength = oldSize + saltlen;
+                    if (accumulatedDataLength >= dataLength) {
+                        dataLength = accumulatedDataLength * 2;
+                        grownHashData = realloc(hashData, dataLength);
+                        if (grownHashData != NULL) {
+                            hashData = grownHashData;
+                        } else {
+                            abort();
                         }
-
-                        // add salt
-                        NSUInteger saltlen = j > self.salt.length ? self.salt.length : j;
-                        UInt8 *saltbytes = calloc(saltlen, sizeof(UInt8));
-                        [self.salt getBytes:saltbytes range:(NSRange){0,saltlen}];
-                        [toHashData appendBytes:saltbytes length:saltlen];
-                        free(saltbytes);
-                        // add passphrase
-                        if (j > self.salt.length) {
-                            NSUInteger passlen = j - self.salt.length;
-                            UInt8 *passbytes = calloc(passlen, sizeof(UInt8));
-                            [passphraseData getBytes:passbytes range:(NSRange){0,passlen}];
-                            [toHashData appendBytes:passbytes length:passlen];
-                            free(passbytes);
+                    }
+                    memcpy(hashData + oldSize, saltAsBytes, saltlen);
+                    // add passphrase
+                    if (j > saltLength) {
+                        NSUInteger passlen = j - saltLength;
+                        NSUInteger passlenOldSize = accumulatedDataLength;
+                        accumulatedDataLength = passlenOldSize + passlen;
+                        if (accumulatedDataLength >= dataLength) {
+                            dataLength = accumulatedDataLength * 2;
+                            grownHashData = realloc(hashData, dataLength);
+                            if (grownHashData != NULL) {
+                                hashData = grownHashData;
+                            } else {
+                                abort();
+                            }
                         }
+                        memcpy(hashData + passlenOldSize, passphraseDataAsBytes, passlen);
                     }
                 }
             }
+            [toHashData appendBytes:hashData length:accumulatedDataLength];
+            free(hashData);
         }
             break;
         default:
