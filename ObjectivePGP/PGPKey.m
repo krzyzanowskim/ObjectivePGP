@@ -13,7 +13,7 @@
 #import "PGPSignaturePacket.h"
 #import "PGPSignatureSubpacket.h"
 #import "PGPPublicSubKeyPacket.h"
-#import "PGPSecretSubKeyPacket.m"
+#import "PGPSecretSubKeyPacket.h"
 #import "PGPUserAttributePacket.h"
 #import "PGPUserAttributeSubpacket.h"
 #import "PGPSubKey.h"
