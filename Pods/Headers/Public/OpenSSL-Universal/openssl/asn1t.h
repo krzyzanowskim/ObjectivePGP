@@ -1,1 +1,1 @@
-../../../../OpenSSL-Universal/include-osx/openssl/asn1t.h
+../../../../OpenSSL-Universal/include-macos/openssl/asn1t.h

@@ -1,1 +1,1 @@
-../../../../OpenSSL-Universal/include-osx/openssl/stack.h
+../../../../OpenSSL-Universal/include-macos/openssl/stack.h

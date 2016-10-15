@@ -1,1 +1,1 @@
-../../../../OpenSSL-Universal/include-osx/openssl/sha.h
+../../../../OpenSSL-Universal/include-macos/openssl/sha.h

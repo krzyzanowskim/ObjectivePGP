@@ -1,1 +1,1 @@
-../../../../OpenSSL-Universal/include-osx/openssl/cms.h
+../../../../OpenSSL-Universal/include-macos/openssl/cms.h

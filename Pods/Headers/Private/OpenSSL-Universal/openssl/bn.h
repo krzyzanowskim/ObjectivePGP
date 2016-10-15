@@ -1,1 +1,1 @@
-../../../../OpenSSL-Universal/include-osx/openssl/bn.h
+../../../../OpenSSL-Universal/include-macos/openssl/bn.h

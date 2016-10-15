@@ -1,1 +1,1 @@
-../../../../OpenSSL-Universal/include-osx/openssl/mdc2.h
+../../../../OpenSSL-Universal/include-macos/openssl/mdc2.h

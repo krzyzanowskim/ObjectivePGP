@@ -1,1 +1,1 @@
-../../../../OpenSSL-Universal/include-osx/openssl/x509.h
+../../../../OpenSSL-Universal/include-macos/openssl/x509.h

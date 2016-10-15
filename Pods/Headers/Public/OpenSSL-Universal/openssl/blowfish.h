@@ -1,1 +1,1 @@
-../../../../OpenSSL-Universal/include-osx/openssl/blowfish.h
+../../../../OpenSSL-Universal/include-macos/openssl/blowfish.h

@@ -1,1 +1,1 @@
-../../../../OpenSSL-Universal/include-osx/openssl/rc4.h
+../../../../OpenSSL-Universal/include-macos/openssl/rc4.h

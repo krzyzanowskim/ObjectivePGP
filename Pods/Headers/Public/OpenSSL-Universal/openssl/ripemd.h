@@ -1,1 +1,1 @@
-../../../../OpenSSL-Universal/include-osx/openssl/ripemd.h
+../../../../OpenSSL-Universal/include-macos/openssl/ripemd.h

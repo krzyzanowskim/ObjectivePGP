@@ -1,1 +1,1 @@
-../../../../OpenSSL-Universal/include-osx/openssl/ecdh.h
+../../../../OpenSSL-Universal/include-macos/openssl/ecdh.h

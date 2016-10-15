@@ -142,6 +142,8 @@
  */
 
 </string>
+			<key>License</key>
+			<string>OpenSSL (OpenSSL/SSLeay)</string>
 			<key>Title</key>
 			<string>OpenSSL-Universal</string>
 			<key>Type</key>

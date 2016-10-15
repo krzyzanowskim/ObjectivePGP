@@ -1,1 +1,1 @@
-../../../../OpenSSL-Universal/include-osx/openssl/dsa.h
+../../../../OpenSSL-Universal/include-macos/openssl/dsa.h

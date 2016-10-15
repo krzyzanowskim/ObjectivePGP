@@ -1,1 +1,1 @@
-../../../../OpenSSL-Universal/include-osx/openssl/idea.h
+../../../../OpenSSL-Universal/include-macos/openssl/idea.h

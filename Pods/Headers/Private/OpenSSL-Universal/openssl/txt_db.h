@@ -1,1 +1,1 @@
-../../../../OpenSSL-Universal/include-osx/openssl/txt_db.h
+../../../../OpenSSL-Universal/include-macos/openssl/txt_db.h

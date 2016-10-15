@@ -1,1 +1,1 @@
-../../../../OpenSSL-Universal/include-osx/openssl/buffer.h
+../../../../OpenSSL-Universal/include-macos/openssl/buffer.h
