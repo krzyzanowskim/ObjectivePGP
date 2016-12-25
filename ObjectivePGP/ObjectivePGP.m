@@ -765,18 +765,19 @@
 {
     NSAssert(fileData.length > 0, @"Empty data");
 
-    NSData *binRingData = [self convertArmoredMessage2BinaryWhenNecessary:fileData];
-    NSAssert(binRingData != nil, @"Invalid input data");
-    if (!binRingData) {
-        return nil;
+    NSArray *binRingData = [self convertArmoredMessage2BinaryBlocksWhenNecessary:fileData];
+    NSAssert(binRingData.count > 0, @"Invalid input data");
+    if (binRingData.count == 0) {
+        return @[];
     }
-    
-    NSArray *parsedKeys = [self readKeysFromData:binRingData];
-    if (parsedKeys.count == 0) {
-        return nil;
+
+    NSMutableSet *keys = [[NSMutableSet alloc] init];
+    for (NSData *data in binRingData) {
+        NSArray *parsedKeys = [self readKeysFromData:data];
+        [keys addObjectsFromArray:parsedKeys];
     }
-    
-    return parsedKeys;
+
+    return keys.allObjects;
 }
 
 #pragma mark - Private
@@ -878,5 +879,45 @@ found_key_label:
     return binRingData;
 }
 
+- (NSArray *)convertArmoredMessage2BinaryBlocksWhenNecessary:(NSData *)binOrArmorData {
+    NSData *binRingData = binOrArmorData;
+    // detect if armored, check for strin -----BEGIN PGP
+    if ([PGPArmor isArmoredData:binRingData]) {
+        NSError *deadmorError = nil;
+        NSString *armoredString = [[NSString alloc] initWithData:binRingData encoding:NSUTF8StringEncoding];
+
+        // replace \n to \r\n
+        // propably unecessary since armore code care about \r\n or \n as newline sentence
+        armoredString = [armoredString stringByReplacingOccurrencesOfString:@"\r\n" withString:@"\n"];
+        armoredString = [armoredString stringByReplacingOccurrencesOfString:@"\n" withString:@"\r\n"];
+
+        NSMutableArray *extractedStrings = [[NSMutableArray alloc] init];
+        NSRegularExpression *regex = [[NSRegularExpression alloc] initWithPattern:@"(-----)(BEGIN|END)[ ](PGP)[A-Z ]*(-----)" options:NSRegularExpressionDotMatchesLineSeparators error:nil];
+        __block NSInteger offset = 0;
+        [regex enumerateMatchesInString:armoredString options:0 range:NSMakeRange(0, armoredString.length) usingBlock:^(NSTextCheckingResult * _Nullable result, NSMatchingFlags flags, BOOL * _Nonnull stop) {
+            NSString *substring = [armoredString substringWithRange:result.range];
+            if ([substring containsString:@"END"]) {
+                NSInteger endIndex = result.range.location + result.range.length;
+                [extractedStrings addObject:[armoredString substringWithRange:NSMakeRange(offset, endIndex - offset)]];
+            } else if ([substring containsString:@"BEGIN"]) {
+                offset = result.range.location;
+            }
+        }];
+
+        NSMutableArray *extractedData = [[NSMutableArray alloc] init];
+
+        for (NSString *extractedString in extractedStrings) {
+            binRingData = [PGPArmor readArmoredData:extractedString error:&deadmorError];
+            if (deadmorError) {
+                return @[];
+            } else {
+                [extractedData addObject:binRingData];
+            }
+        }
+
+        return extractedData;
+    }
+    return @[binRingData];
+}
 
 @end
