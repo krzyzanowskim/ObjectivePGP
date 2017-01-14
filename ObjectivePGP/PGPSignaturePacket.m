@@ -110,6 +110,9 @@
 {
     PGPSignatureSubpacket *creationDateSubpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeSignatureCreationTime] firstObject];
     PGPSignatureSubpacket *validityPeriodSubpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeSignatureExpirationTime] firstObject];
+    if (validityPeriodSubpacket == nil ) {
+        validityPeriodSubpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeKeyExpirationTime] firstObject];
+    }
 
     NSDate *creationDate = creationDateSubpacket.value;
     NSNumber *validityPeriod = validityPeriodSubpacket.value;
@@ -129,7 +132,7 @@
         return NO;
     }
 
-    if ([expirationDate compare:[NSDate date]] == NSOrderedDescending) {
+    if ([expirationDate compare:[NSDate date]] == NSOrderedAscending) {
         return YES;
     }
     return NO;
