@@ -214,7 +214,8 @@
 
 - (NSData *) decryptData:(NSData *)messageDataToDecrypt passphrase:(NSString *)passphrase verifyWithPublicKey:(PGPKey *)publicKey signed:(BOOL*)isSigned valid:(BOOL*)isValid integrityProtected:(BOOL*)isIntegrityProtected error:(NSError * __autoreleasing *)error
 {
-    NSData *binaryMessageToDecrypt = [self convertArmoredMessage2BinaryWhenNecessary:messageDataToDecrypt];
+    NSArray *binaryMessages = [self convertArmoredMessage2BinaryBlocksWhenNecessary:messageDataToDecrypt];
+    NSData *binaryMessageToDecrypt = binaryMessages.count > 0 ? binaryMessages.firstObject : nil;
     NSAssert(binaryMessageToDecrypt != nil, @"Invalid input data");
     if (!binaryMessageToDecrypt) {
         if (error) {
@@ -856,27 +857,6 @@
 
 found_key_label:
     return foundKey;
-}
-
-- (NSData *) convertArmoredMessage2BinaryWhenNecessary:(NSData *)binOrArmorData
-{
-    NSData *binRingData = binOrArmorData;
-    // detect if armored, check for strin -----BEGIN PGP
-    if ([PGPArmor isArmoredData:binRingData]) {
-        NSError *deadmorError = nil;
-        NSString *armoredString = [[NSString alloc] initWithData:binRingData encoding:NSUTF8StringEncoding];
-        
-        // replace \n to \r\n
-        // propably unecessary since armore code care about \r\n or \n as newline sentence
-        armoredString = [armoredString stringByReplacingOccurrencesOfString:@"\r\n" withString:@"\n"];
-        armoredString = [armoredString stringByReplacingOccurrencesOfString:@"\n" withString:@"\r\n"];
-        
-        binRingData = [PGPArmor readArmoredData:armoredString error:&deadmorError];
-        if (deadmorError) {
-            return nil;
-        }
-    }
-    return binRingData;
 }
 
 - (NSArray *)convertArmoredMessage2BinaryBlocksWhenNecessary:(NSData *)binOrArmorData {
