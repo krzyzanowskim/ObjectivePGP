@@ -40,7 +40,7 @@
 
     PGPPacketTag packetTag = 0;
     NSData *data = [packetData subdataWithRange:(NSRange) {offset, packetData.length - offset}];
-    UInt32 headerLength;
+    UInt32 headerLength = 0;
     BOOL indeterminateLength;
     NSData *packetBodyData = [PGPPacket parsePacketHeader:data headerLength:&headerLength nextPacketOffset:nextPacketOffset packetTag:&packetTag indeterminateLength:&indeterminateLength];
     NSData *packetHeaderData = [packetData subdataWithRange:(NSRange) {offset, headerLength}];
