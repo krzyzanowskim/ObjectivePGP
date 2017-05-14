@@ -5,18 +5,18 @@ ObjectivePGP is OpenPGP implementation for iOS and OSX.
 
 See [blog post](http://blog.krzyzanowskim.com/2014/07/31/short-story-about-openpgp-for-ios-and-os-x-objectivepgp/) for full story.
 
-##Installation
+## Installation
 
-###CocoaPods
+### CocoaPods
 
 	pod 'ObjectivePGP'
 	
-##Contribution
+## Contribution
 
 You are welcome to contribute. Current version can be found on branch `master`. 
 If you want fix the bug, please create Pull Request against `master` branch.
 
-##The licence
+## The licence
 
 Free for non-commercial use, covered by a standard 2-clause BSD license. That means you have to mention Marcin Krzyżanowski as the original author of this code and reproduce the LICENSE text inside your app.
 
@@ -24,15 +24,15 @@ You can purchase commercial and non-attribution-license for not having to includ
 
 Please contact me via email for inquiries.
 
-##Usage
+## Usage
 
-#####Initialization
+##### Initialization
 
 	#include <ObjectivePGP.h>
 	
 	ObjectivePGP *pgp = [[ObjectivePGP alloc] init];
 	
-#####Load keys (private or public)
+##### Load keys (private or public)
 
 	/* From file */
 	[pgp importKeysFromFile:@"/path/to/secring.gpg" allowDuplicates:NO];
@@ -41,7 +41,7 @@ Please contact me via email for inquiries.
 	/* Load single key from keyring */
 	[pgp importKey:@"979E4B03DFFE30C6" fromFile:@"/path/to/secring.gpg"];
 	
-#####Search for keys
+##### Search for keys
 
 	/* long identifier 979E4B03DFFE30C6 */
 	PGPKey *key = [pgp getKeyForIdentifier:@"979E4B03DFFE30C6" type:PGPKeyPublic];
@@ -52,7 +52,7 @@ Please contact me via email for inquiries.
 	/* first key that match given user */
 	PGPKey *key = [pgp getKeysForUserID:@"Name <email@example.com>"];
 	
-#####Export keys (private or public)
+##### Export keys (private or public)
 
 	NSError *exportError = nil;
 	
@@ -68,7 +68,7 @@ Please contact me via email for inquiries.
 	NSData *armoredKeyData = [pgp exportKey:myPublicKey armored:YES];
 	[armoredKeyData writeToFile:@"pubkey.asc" atomically:YES];
 
-#####Sign data (or file)
+##### Sign data (or file)
 
 	NSData *fileContent = [NSData dataWithContentsOfFile:@"/path/file/to/data.txt"];
 
@@ -81,7 +81,7 @@ Please contact me via email for inquiries.
 	/* sign and return signed data (detached = NO) */
 	NSData *signedData = [pgp signData:fileContent usingSecretKey:keyToSign passphrase:nil detached:NO];
 	
-#####Verify signature from data (or file)
+##### Verify signature from data (or file)
 
 	/* embedded signature */
 	NSData *signedContent = [NSData dataWithContentsOfFile:@"/path/file/to/data.signed"];
@@ -96,7 +96,7 @@ Please contact me via email for inquiries.
 		NSLog(@"Verification success");
 	}
 	
-#####Encrypt data with previously loaded public key
+##### Encrypt data with previously loaded public key
 
     NSError *error = nil;
 
@@ -113,7 +113,7 @@ Please contact me via email for inquiries.
 	}
 
 
-#####Decrypt data with previously loaded private key
+##### Decrypt data with previously loaded private key
     
 	NSData *encryptedFileContent = [NSData dataWithContentsOfFile:@"/path/file/to/data.gpg"];
 	
@@ -124,56 +124,9 @@ Please contact me via email for inquiries.
 		NSLog(@"decryption success");
 	}
 
-##Release notes
+## Changelog
 
-Version 0.5
-
-- Improve BZip2 compression
-- Fix exporting keys
-- Fix decryption for some RSA keys
-- minor improvements and fixes
-- Extend library with One-Pass encryption
-- Removed newline transformation in PGPLiteralPacket
-- Partial Packet Length Support
-- ZIP compression support
-- Signature Verification: find the correct key by the issuerKeyID
-- Harden Signature verification
-- Support integrity protected status 
-
-Version 0.4.2
-- Fix length header for some double-octet length
-
-Version 0.4.0
-- ObjectivePGP goes Open Source
-
-Version 0.3.2
-- CHANGE error handling for sign/verify methods
-- FIX disable check for signing key while it can be public to verify.
-
-Version 0.3.1
-
-- NEW multiple keys for single encryption
-- NEW error codes PGPErrorPassphraseRequired, PGPErrorPassphraseInvalid
-- CHANGE export armored data with \n instead \r\n
-- FIX decrypt message using key encrypted with password
-- FIX handling armored data regarding newline
-
-Version 0.3
-
-- NEW encrypt for multiple recipients at once
-- NEW decrypt with multiple recipients
-- NEW read key from file without importing to keyring
-- NEW import keys with or without duplicates
-- NEW Support for V3 of signature packets
-- NEW armv7s binary added
-- IMPROVED overall error handling
-- IMPROVED preferred key algorithm chooser
-- FIX handle DSA keys for encryption
-- FIX self certificate validation check
-- FIX export multiple keys to single file
-- FIX reading user id packet
-- FIX other minor fixes
-
+See [CHANGELOG](./CHANGELOG) file.
 
 Known limitations
 
@@ -182,11 +135,11 @@ Known limitations
 - Blowfish and Twofish are not supported
 - No external configuration for defaults
 
-###Acknowledgment
+### Acknowledgment
 
 This product uses software developed by the OpenSSL Project for use in the OpenSSL Toolkit. (http://www.openssl.org/)
 
-###Author
+### Author
 
 Marcin Krzyżanowski
 
