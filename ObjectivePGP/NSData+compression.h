@@ -4,7 +4,6 @@
 // rfc1950 (zlib format)
 
 #import <Foundation/Foundation.h>
-#import <zlib.h>
 
 extern NSString* const ZlibErrorDomain;
 
