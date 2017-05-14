@@ -230,6 +230,7 @@
     RIPEMD160_Update(ctx, self.bytes, self.length);
     UInt8 *out = calloc(RIPEMD160_DIGEST_LENGTH, sizeof(UInt8));
     if (!out) {
+        free(ctx);
         return nil;
     }
     RIPEMD160_Final(out, ctx);

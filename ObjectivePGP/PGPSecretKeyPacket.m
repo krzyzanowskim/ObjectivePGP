@@ -168,7 +168,7 @@
     // encrypted MPIs
     // checksum or hash is encrypted together with the algorithm-specific fields (mpis) (if string-to-key usage octet is not zero).
     self.encryptedMPIsPartData = [data subdataWithRange:(NSRange) {position, data.length - position}];
-    position = position + self.encryptedMPIsPartData.length;
+    // position = position + self.encryptedMPIsPartData.length;
 
     return data.length;
 }
