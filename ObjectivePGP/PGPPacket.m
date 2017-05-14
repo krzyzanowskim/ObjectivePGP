@@ -146,7 +146,7 @@ const UInt32 UnknownLength = UINT32_MAX;
     UInt32 bodyLength        = 0;
     UInt32 headerLength   = 2;
 
-    UInt8 *lengthOctets = (UInt8 *)[headerData subdataWithRange:NSMakeRange(1, MIN(5, headerData.length))].bytes;
+    UInt8 *lengthOctets = (UInt8 *)[headerData subdataWithRange:NSMakeRange(1, fmin(5, headerData.length))].bytes;
     UInt8 firstOctet  = lengthOctets[0];
 
     if (lengthOctets[0] < 192) {

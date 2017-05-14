@@ -758,7 +758,7 @@
 // then subpacket can be parsed
 - (PGPSignatureSubpacket *) getSubpacketStartingAtPosition:(NSUInteger)subpacketsPosition fromData:(NSData *)subpacketsData
 {
-    NSRange headerRange = (NSRange) {subpacketsPosition, MIN(6,subpacketsData.length - subpacketsPosition) }; // up to 5+1 octets
+    NSRange headerRange = (NSRange) {subpacketsPosition, fmin(6,subpacketsData.length - subpacketsPosition) }; // up to 5+1 octets
     NSData *guessHeaderData = [subpacketsData subdataWithRange:headerRange]; // this is "may be" header to be parsed
     PGPSignatureSubpacketHeader *subpacketHeader = [PGPSignatureSubpacket subpacketHeaderFromData:guessHeaderData];
 

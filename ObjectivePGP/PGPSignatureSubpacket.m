@@ -128,7 +128,7 @@
             //  (N octets of flags) ???
             //  This implementation supports max 8 octets (64bit)
             UInt64 flagByte = 0;
-            [packetBody getBytes:&flagByte length:MIN(8,packetBody.length)];
+            [packetBody getBytes:&flagByte length:fmin(8,packetBody.length)];
             NSMutableArray *flagsArray = [NSMutableArray array];
 
             if (flagByte & PGPSignatureFlagAllowCertifyOtherKeys) {
@@ -209,7 +209,7 @@
         {
             // 5.2.3.17.  Key Server Preferences
             PGPKeyServerPreferenceFlags flag = 0;
-            [packetBody getBytes:&flag length:MIN(8,packetBody.length)];
+            [packetBody getBytes:&flag length:fmin(8,packetBody.length)];
 
             NSMutableArray *flagsArray = [NSMutableArray array];
             if (flag & PGPKeyServerPreferenceNoModify) {
@@ -398,7 +398,7 @@
 {
     NSUInteger position = 0;
 
-    UInt8 *lengthOctets = (UInt8 *)[headerData subdataWithRange:NSMakeRange(position, MIN(5,headerData.length))].bytes;
+    UInt8 *lengthOctets = (UInt8 *)[headerData subdataWithRange:NSMakeRange(position, fmin(5,headerData.length))].bytes;
     UInt32 headerLength = 0;
     UInt32 subpacketLength = 0;
 
