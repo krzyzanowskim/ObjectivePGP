@@ -39,7 +39,7 @@
 	while (deflate(&strm, Z_FINISH) != Z_STREAM_END)
 	{
 		// deflate should return Z_STREAM_END on the first call
-		[compressed setLength: [compressed length] * 1.5];
+		[compressed setLength: compressed.length * 1.5];
 		strm.next_out = [compressed mutableBytes] + strm.total_out;
 		strm.avail_out = (uInt)(compressed.length - strm.total_out);
 	}

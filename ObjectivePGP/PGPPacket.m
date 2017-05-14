@@ -72,7 +72,7 @@ const UInt32 UnknownLength = UINT32_MAX;
 /**
  *  Parse header
  *
- *  @param headerData header data
+ *  @param data header data
  *
  *  @return Body data, headerLength, packetTag, nextPacketOffset and if body has indeterminateLength
  */
@@ -126,7 +126,7 @@ const UInt32 UnknownLength = UINT32_MAX;
 /**
  *  4.2.  Packet Headers
  *
- *  @param packetData Packet header
+ *  @param headerData Packet header
  *
  *  @return Header length
  */

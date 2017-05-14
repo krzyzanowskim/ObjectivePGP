@@ -177,8 +177,8 @@
  *  Cleartext part, parse cleartext or unencrypted data
  *  Store decrypted values in secretMPI array
  *
- *  @param packetBody packet data
- *  @param position   position offset
+ *  @param data packet data
+ *  @param error error
  *
  *  @return length
  */

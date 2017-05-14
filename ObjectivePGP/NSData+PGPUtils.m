@@ -307,7 +307,7 @@
         case PGPSymmetricAES192:
         {
             AES_KEY *encrypt_key = calloc(1, sizeof(AES_KEY));
-            AES_set_encrypt_key(sessionKeyData.bytes, keySize * 8.0, encrypt_key);
+            AES_set_encrypt_key(sessionKeyData.bytes, (int)(keySize * 8), encrypt_key);
 
             UInt8 *outBuf = calloc(self.length, sizeof(UInt8));
             AES_encrypt(self.bytes, outBuf, encrypt_key);

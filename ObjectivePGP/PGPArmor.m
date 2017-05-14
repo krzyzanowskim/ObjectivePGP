@@ -88,9 +88,9 @@
     // - An Armor Checksum
     UInt32 checksum = [dataToArmor pgp_CRC24];
     UInt8  c[3]; // 24 bit
-    c[0] = checksum >> 16;
-	c[1] = checksum >> 8;
-	c[2] = checksum;
+    c[0] = (UInt8)(checksum >> 16);
+	c[1] = (UInt8)(checksum >> 8);
+	c[2] = (UInt8)checksum;
 
     NSData *checksumData = [NSData dataWithBytes:&c length:sizeof(c)];
     [armoredMessage appendString:@"="];

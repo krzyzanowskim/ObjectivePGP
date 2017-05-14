@@ -71,7 +71,7 @@
     NSMutableData *outData = [NSMutableData data];
 
     // length
-    UInt16 bits = BN_num_bits(self.bignumRef);
+    UInt16 bits = (UInt16)BN_num_bits(self.bignumRef);
     UInt16 bitsBE = CFSwapInt16HostToBig(bits);
     [outData appendBytes:&bitsBE length:2];
     

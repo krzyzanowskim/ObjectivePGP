@@ -248,7 +248,7 @@
     NSMutableData *data = [NSMutableData dataWithCapacity:128];
     [data appendBytes:&_version length:1];
 
-    UInt32 timestamp = [self.createDate timeIntervalSince1970];
+    UInt32 timestamp = (UInt32)[self.createDate timeIntervalSince1970];
     UInt32 timestampBE = CFSwapInt32HostToBig(timestamp);
     [data appendBytes:&timestampBE length:4];
 
