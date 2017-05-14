@@ -178,7 +178,7 @@
             NSMutableArray *algorithmsArray = [NSMutableArray array];
 
             for (NSUInteger i = 0; i < packetBody.length; i++) {
-                PGPHashAlgorithm algorithm = 0;
+                PGPHashAlgorithm algorithm = PGPHashUnknown;
                 [packetBody getBytes:&algorithm range:(NSRange){i,1}];
 
                 NSValue *val = [NSValue valueWithBytes:&algorithm objCType:@encode(PGPHashAlgorithm)];
@@ -415,7 +415,7 @@
     position = position + headerLength;
 
     //TODO: Bit 7 of the subpacket type is the "critical" bit.
-    PGPSignatureSubpacketType subpacketType = 0;
+    PGPSignatureSubpacketType subpacketType = PGPSignatureSubpacketTypeUnknown;
     [headerData getBytes:&subpacketType range:(NSRange){position, 1}];
     headerLength = headerLength + 1;
 

@@ -28,8 +28,8 @@
 /**
  *  Parse packet data and return packet object instance
  *cc
- *  @param packetsData Data with all packets. Packet sequence data. Keyring.
- *  @param offset      offset of current packet
+ *  @param packetData Data with all the packets. Packet sequence data. Keyring.
+ *  @param offset     offset of current packet
  *
  *  @return Packet instance object
  */

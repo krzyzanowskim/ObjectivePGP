@@ -138,8 +138,8 @@
 /**
  *  Encrypted algorithm-specific fields for secret keys
  *
- *  @param packetBody packet data
- *  @param position   position offset
+ *  @param data Encrypted data
+ *  @param error error
  *
  *  @return length
  */

@@ -114,7 +114,7 @@
 - (NSData *)bzip2Decompressed:(NSError * __autoreleasing *)error
 {
     int bzret = 0;
-    bz_stream stream = {0x00};
+    bz_stream stream = {.avail_in = 0x00};
     stream.next_in = (void *)[self bytes];
     stream.avail_in = (uInt)self.length;
     
@@ -153,7 +153,7 @@
 - (NSData *)bzip2Compressed:(NSError * __autoreleasing *)error
 {
     int bzret = 0;
-    bz_stream stream = {0x00};
+    bz_stream stream = {.avail_in = 0x00};
     stream.next_in = (void *)[self bytes];
     stream.avail_in = (uInt)self.length;
     unsigned int compression = 9; // should be a value between 1 and 9 inclusive

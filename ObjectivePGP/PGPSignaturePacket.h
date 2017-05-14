@@ -31,7 +31,6 @@
  *  Create signature packet for signing. This is convienience constructor.
  *
  *  @param type               example: PGPSignatureBinaryDocument
- *  @param publicKeyAlgorithm public key algorith to be used for signature
  *  @param hashAlgorithm      hash algorithm to be used for signature
  *
  *  @return Packet instance ready to call signData:secretKey
@@ -52,11 +51,11 @@
  *
  *  @param secretKey Secret key used to create signature
  *  @param inputData Data to sign
- *  @param userID    Optional. User ID
+ *  @param error     error
  *
  *  @return Signature packet data
  */
-- (BOOL) signData:(NSData *)inputData  secretKey:(PGPKey *)secretKey error:(NSError * __autoreleasing *)error;
+- (BOOL) signData:(NSData *)inputData secretKey:(PGPKey *)secretKey error:(NSError * __autoreleasing *)error;
 - (BOOL) signData:(NSData *)inputData secretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase userID:(NSString *)userID error:(NSError * __autoreleasing *)error;
 
 

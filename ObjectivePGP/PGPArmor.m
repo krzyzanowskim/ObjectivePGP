@@ -81,7 +81,7 @@
     [armoredMessage appendString:@"\n"];
 
     // - The ASCII-Armored data
-    NSString *radix64 = [dataToArmor base64EncodedStringWithOptions:(NSDataBase64Encoding76CharacterLineLength | NSDataBase64EncodingEndLineWithLineFeed)];
+    NSString *radix64 = [dataToArmor base64EncodedStringWithOptions:NSDataBase64Encoding76CharacterLineLength | NSDataBase64EncodingEndLineWithLineFeed];
     [armoredMessage appendString:radix64];
     [armoredMessage appendString:@"\n"];
 

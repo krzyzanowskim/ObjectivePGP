@@ -92,6 +92,7 @@ typedef NS_ENUM(UInt8, PGPSymmetricAlgorithm) {
 
 // 9.4.  Hash Algorithms
 typedef NS_ENUM(UInt8, PGPHashAlgorithm) {
+    PGPHashUnknown   = 0,
     PGPHashMD5       = 1, //MD5  - deprecated
     PGPHashSHA1      = 2, //SHA1 - required
     PGPHashRIPEMD160 = 3, //RIPEMD160
@@ -120,6 +121,7 @@ typedef NS_ENUM(UInt8, PGPSignatureType) {
 };
 
 typedef NS_ENUM(UInt8, PGPSignatureSubpacketType) {
+    PGPSignatureSubpacketTypeUnknown                       = 0, // Unknown
     PGPSignatureSubpacketTypeSignatureCreationTime         = 2,
     PGPSignatureSubpacketTypeSignatureExpirationTime       = 3,
     PGPSignatureSubpacketTypeExportableCertification       = 4,
