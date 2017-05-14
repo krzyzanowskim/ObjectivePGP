@@ -233,9 +233,7 @@
         }
             break;
         default:
-#ifdef DEBUG
-            NSLog(@"Unsuported subpacket type %d", self.type);
-#endif
+            PGPLogDebug(@"Unsuported subpacket type %d", self.type);
             break;
     }
 }
@@ -375,9 +373,7 @@
         }
             break;
         default:
-#ifdef DEBUG
-            NSLog(@"Unsuported subpacket type %d", self.type);
-#endif
+            PGPLogDebug(@"Unsuported subpacket type %d", self.type);
             break;
     }
 

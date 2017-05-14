@@ -193,7 +193,7 @@
     NSError *exportError = nil;
     NSData *keyData = [key export:&exportError];
     if (!keyData || exportError) {
-        NSLog(@"%@",exportError);
+        PGPLogDebug(@"%@",exportError);
         return nil;
     }
 

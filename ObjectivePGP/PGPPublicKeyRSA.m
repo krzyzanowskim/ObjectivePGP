@@ -47,9 +47,7 @@
         unsigned long err_code = ERR_get_error();
         char *errBuf = calloc(512, sizeof(char));
         ERR_error_string(err_code, errBuf);
-#ifdef DEBUG
-        NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
-#endif
+        PGPLogDebug(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
         free(errBuf);
 
         free(encrypted_em);
@@ -93,9 +91,7 @@
         unsigned long err_code = ERR_get_error();
         char *errBuf = calloc(512, sizeof(char));
         ERR_error_string(err_code, errBuf);
-#ifdef DEBUG
-        NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
-#endif
+        PGPLogDebug(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
         free(errBuf);
         
         ERR_free_strings();
@@ -111,9 +107,7 @@
         unsigned long err_code = ERR_get_error();
         char *errBuf = calloc(512, sizeof(char));
         ERR_error_string(err_code, errBuf);
-#ifdef DEBUG
-        NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
-#endif
+        PGPLogDebug(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
         free(errBuf);
         
         ERR_free_strings();
@@ -164,7 +158,7 @@
         unsigned long err_code = ERR_get_error();
         char *errBuf = calloc(512, sizeof(char));
         ERR_error_string(err_code, errBuf);
-        NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
+        PGPLogDebug(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
         free(errBuf);
 
         ERR_free_strings();
@@ -174,14 +168,14 @@
 
     UInt8 *outbuf = calloc(RSA_size(rsa), 1);
     int t = RSA_private_encrypt(toEncrypt.length & INT_MAX, (UInt8 *)toEncrypt.bytes, outbuf, rsa, RSA_NO_PADDING);
-    if (t < 0) {
+    if (t == -1) {
         ERR_load_crypto_strings();
         SSL_load_error_strings();
 
         unsigned long err_code = ERR_get_error();
         char *errBuf = calloc(512, sizeof(char));
         ERR_error_string(err_code, errBuf);
-        NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
+        PGPLogDebug(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
         free(errBuf);
 
         ERR_free_strings();
@@ -229,7 +223,7 @@
         unsigned long err_code = ERR_get_error();
         char *errBuf = calloc(512, sizeof(char));
         ERR_error_string(err_code, errBuf);
-        NSLog(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
+        PGPLogDebug(@"%@",[NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
         free(errBuf);
 
         return nil;
