@@ -79,17 +79,18 @@
 
     PGPKey *key = self.oPGP.keys[0];
 
-    NSError *decryptError = nil;
-    BOOL status = [key decrypt:@"1234" error:&decryptError];
-    XCTAssertTrue(status, @"Decryption failed");
-    XCTAssertNil(decryptError, @"Decryption failed");
+    [self measureBlock:^{
+        NSError *decryptError = nil;
+        BOOL status = [key decrypt:@"1234" error:&decryptError];
+        XCTAssertTrue(status, @"Decryption failed");
+        XCTAssertNil(decryptError, @"Decryption failed");
+    }];
 }
 
 - (void)testDataDecryption
 {
     [self.oPGP importKeysFromFile:self.secKeyringPath allowDuplicates:NO];
     [self.oPGP importKeysFromFile:self.pubKeyringPath allowDuplicates:NO];
-    
     
     PGPKey *encKey = [self.oPGP getKeyForIdentifier:@"9528AAA17A9BC007" type:PGPKeyPublic];
     // encrypt
@@ -102,9 +103,9 @@
         NSError *decError;
         NSData *decData = [self.oPGP decryptData:encData passphrase:@"1234" error:&decError];
         XCTAssertNil(decError, @"Decryption failed");
-        NSAssert([tmpdata isEqualToData:decData], @"Data should be equal");
+        XCTAssertEqualObjects(tmpdata, decData);
     }];
-    
+
 //    PGPKey *key = self.oPGP.keys[0];
 //    
 //    NSError *decryptError = nil;

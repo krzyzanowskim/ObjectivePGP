@@ -12,6 +12,10 @@
 #define NS_DESIGNATED_INITIALIZER
 #endif
 
+#define NOESCAPE __attribute__((noescape))
+#define let const __auto_type
+#define var __auto_type
+
 static NSString * const PGPErrorDomain = @"ObjectivePGP";
 
 typedef NS_ENUM(NSInteger, PGPErrorCode) {

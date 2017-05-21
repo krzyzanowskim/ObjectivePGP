@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "PGPTypes.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface NSData (PGPUtils)
 
 - (UInt16) pgp_Checksum;
@@ -25,3 +27,5 @@
 - (NSData *) pgp_encryptBlockWithSymmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm sessionKeyData:(NSData *)sessionKeyData;
 
 @end
+
+NS_ASSUME_NONNULL_END

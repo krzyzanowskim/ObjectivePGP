@@ -8,6 +8,7 @@
 
 #import "NSData+PGPUtils.h"
 #import "PGPCryptoUtils.h"
+#import "PGPCryptoHash.h"
 
 #import <CommonCrypto/CommonCrypto.h>
 
@@ -20,6 +21,7 @@
 #include <openssl/camellia.h>
 #include <openssl/blowfish.h>
 
+NS_ASSUME_NONNULL_BEGIN
 
 @implementation NSData (PGPUtils)
 
@@ -59,220 +61,53 @@
     return crc & 0xFFFFFFL;
 }
 
-- (NSData*) pgp_MD5
-{
-    if (!self)
-        return self;
-
-    CC_MD5_CTX *ctx = calloc(1, sizeof(CC_MD5_CTX));
-
-    CC_MD5_Init(ctx);
-    CC_MD5_Update(ctx, self.bytes, (CC_LONG)self.length);
-    UInt8 *out = calloc(CC_MD5_DIGEST_LENGTH, sizeof(UInt8));
-    if (!out) {
-        free(ctx);
-        return nil;
-    }
-    CC_MD5_Final(out, ctx);
-
-    NSData *outData = [NSData dataWithBytes:out length:CC_MD5_DIGEST_LENGTH];
-
-    free(out);
-    free(ctx);
-    return outData;
+- (NSData*) pgp_MD5 {
+    return PGPmd5(^(void (^update)(const void *, int)) {
+        update(self.bytes, (int)self.length);
+    });
 }
 
-- (NSData *) pgp_SHA1
-{
-    if (!self)
-        return self;
-    
-//    unsigned char digest[CC_SHA1_DIGEST_LENGTH];
-//    CC_SHA1(self.bytes, self.length, digest);
-//    NSData *outData = [NSData dataWithBytes:digest length:CC_SHA1_DIGEST_LENGTH];
-    
-    CC_SHA1_CTX *ctx = calloc(1, sizeof(CC_SHA1_CTX));
-    if (!ctx) {
-        return nil;
-    }
-
-    UInt8 *outBuf = calloc(CC_SHA1_DIGEST_LENGTH, 1);
-    if (!outBuf) {
-        free(ctx);
-        return nil;
-    }
-    CC_SHA1_Init(ctx);
-    CC_SHA1_Update(ctx, self.bytes, (CC_LONG)self.length);
-    CC_SHA1_Final(outBuf, ctx);
-
-    NSData *outData = [NSData dataWithBytes:outBuf length:CC_SHA1_DIGEST_LENGTH];
-
-    free(outBuf);
-    free(ctx);
-    return outData;
+- (NSData *) pgp_SHA1 {
+    return PGPsha1(^(void (^update)(const void *, int)) {
+        update(self.bytes, (int)self.length);
+    });
 }
 
-- (NSData*) pgp_SHA224
-{
-    if (!self)
-        return self;
-
-    CC_SHA256_CTX *ctx = calloc(1, sizeof(CC_SHA256_CTX));
-    if (!ctx) {
-        return nil;
-    }
-
-    CC_SHA224_Init(ctx);
-    CC_SHA224_Update(ctx, self.bytes, (CC_LONG)self.length);
-    UInt8 *out = calloc(CC_SHA224_DIGEST_LENGTH, sizeof(UInt8));
-    if (!out) {
-        free(ctx);
-        return nil;
-    }
-    CC_SHA224_Final(out, ctx);
-
-    NSData *outData = [NSData dataWithBytes:out length:CC_SHA224_DIGEST_LENGTH];
-
-    free(out);
-    free(ctx);
-    return outData;
+- (NSData*) pgp_SHA224 {
+    return PGPsha224(^(void (^update)(const void *, int)) {
+        update(self.bytes, (int)self.length);
+    });
 }
 
-- (NSData*) pgp_SHA256
-{
-    if (!self)
-        return self;
-
-    CC_SHA256_CTX *ctx = calloc(1, sizeof(CC_SHA256_CTX));
-    if (!ctx) {
-        return nil;
-    }
-
-    CC_SHA256_Init(ctx);
-    CC_SHA256_Update(ctx, self.bytes, (CC_LONG)self.length);
-    UInt8 *out = calloc(CC_SHA256_DIGEST_LENGTH, sizeof(UInt8));
-    if (!out) {
-        free(ctx);
-        return nil;
-    }
-    CC_SHA256_Final(out, ctx);
-
-    NSData *outData = [NSData dataWithBytes:out length:CC_SHA256_DIGEST_LENGTH];
-
-    free(out);
-    free(ctx);
-    return outData;
+- (NSData*) pgp_SHA256 {
+    return PGPsha256(^(void (^update)(const void *, int)) {
+        update(self.bytes, (int)self.length);
+    });
 }
 
-- (NSData*) pgp_SHA384
-{
-    if (!self)
-        return self;
-
-    CC_SHA512_CTX *ctx = calloc(1, sizeof(CC_SHA512_CTX));
-    if (!ctx) {
-        return nil;
-    }
-
-    CC_SHA384_Init(ctx);
-    CC_SHA384_Update(ctx, self.bytes, (CC_LONG)self.length);
-    UInt8 *out = calloc(CC_SHA384_DIGEST_LENGTH, sizeof(UInt8));
-    if (!out) {
-        free(ctx);
-        return nil;
-    }
-    CC_SHA384_Final(out, ctx);
-
-    NSData *outData = [NSData dataWithBytes:out length:CC_SHA384_DIGEST_LENGTH];
-
-    free(out);
-    free(ctx);
-    return outData;
+- (NSData*) pgp_SHA384 {
+    return PGPsha384(^(void (^update)(const void *, int)) {
+        update(self.bytes, (int)self.length);
+    });
 }
 
-- (NSData*) pgp_SHA512
-{
-    if (!self)
-        return self;
-
-    CC_SHA512_CTX *ctx = calloc(1, sizeof(CC_SHA512_CTX));
-    if (!ctx) {
-        return nil;
-    }
-
-    CC_SHA512_Init(ctx);
-    CC_SHA512_Update(ctx, self.bytes, (CC_LONG)self.length);
-    UInt8 *outBuf = calloc(CC_SHA512_DIGEST_LENGTH, sizeof(UInt8));
-    if (!outBuf) {
-        free(ctx);
-        return nil;
-    }
-    CC_SHA512_Final(outBuf, ctx);
-
-    NSData *outData = [NSData dataWithBytes:outBuf length:CC_SHA512_DIGEST_LENGTH];
-
-    free(outBuf);
-    free(ctx);
-    return outData;
+- (NSData*) pgp_SHA512 {
+    return PGPsha512(^(void (^update)(const void *, int)) {
+        update(self.bytes, (int)self.length);
+    });
 }
 
-- (NSData*) pgp_RIPEMD160
-{
-    if (!self)
-        return self;
-
-    RIPEMD160_CTX *ctx = calloc(1, sizeof(RIPEMD160_CTX));
-    if (!ctx) {
-        return nil;
-    }
-
-    RIPEMD160_Init(ctx);
-    RIPEMD160_Update(ctx, self.bytes, self.length);
-    UInt8 *out = calloc(RIPEMD160_DIGEST_LENGTH, sizeof(UInt8));
-    if (!out) {
-        free(ctx);
-        return nil;
-    }
-    RIPEMD160_Final(out, ctx);
-
-    NSData *outData = [NSData dataWithBytes:out length:RIPEMD160_DIGEST_LENGTH];
-
-    free(out);
-    free(ctx);
-    return outData;
+- (NSData*) pgp_RIPEMD160 {
+    return PGPripemd160(^(void (^update)(const void *, int)) {
+        update(self.bytes, (int)self.length);
+    });
 }
 
 - (NSData *) pgp_HashedWithAlgorithm:(PGPHashAlgorithm)hashAlgorithm
 {
-    NSData *hashData = nil;
-    switch (hashAlgorithm) {
-        case PGPHashMD5:
-            hashData = [self pgp_MD5];
-            break;
-        case PGPHashSHA1:
-            hashData = [self pgp_SHA1];
-            break;
-        case PGPHashSHA224:
-            hashData = [self pgp_SHA224];
-            break;
-        case PGPHashSHA256:
-            hashData = [self pgp_SHA256];
-            break;
-        case PGPHashSHA384:
-            hashData = [self pgp_SHA384];
-            break;
-        case PGPHashSHA512:
-            hashData = [self pgp_SHA512];
-            break;
-        case PGPHashRIPEMD160:
-            hashData = [self pgp_RIPEMD160];
-            break;
-
-        default:
-            NSAssert(false, @"hash algorithm not supported");
-            break;
-    }
-    return hashData;
+    return PGPCalculateHash(hashAlgorithm, ^(void (^update)(const void *, int)) {
+        update(self.bytes, (int)self.length);
+    });
 }
 
 #pragma mark - Encryption
@@ -355,5 +190,7 @@
     return ret;
 }
 
-
 @end
+
+NS_ASSUME_NONNULL_END
+
