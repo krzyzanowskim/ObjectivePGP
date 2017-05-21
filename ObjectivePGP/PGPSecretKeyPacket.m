@@ -19,18 +19,6 @@
 #import "PGPCryptoCFB.h"
 #import "PGPPublicKeyRSA.h"
 
-#import <CommonCrypto/CommonCrypto.h>
-#import <CommonCrypto/CommonDigest.h>
-#import <CommonCrypto/CommonCryptor.h>
-
-#include <openssl/cast.h>
-#include <openssl/idea.h>
-#include <openssl/aes.h>
-#include <openssl/sha.h>
-#include <openssl/des.h>
-#include <openssl/camellia.h>
-#include <openssl/blowfish.h>
-
 @interface PGPPacket ()
 @property (copy, readwrite) NSData *headerData;
 @property (copy, readwrite) NSData *bodyData;
