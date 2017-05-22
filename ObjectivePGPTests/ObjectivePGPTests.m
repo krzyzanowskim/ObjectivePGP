@@ -92,6 +92,15 @@
     [self.oPGP decryptData:[NSData dataWithContentsOfFile:messagePath] passphrase:nil error:&error];
 }
 
+// https://github.com/krzyzanowskim/ObjectivePGP/issues/53
+- (void) testIssue53GNUDummyS2K {
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSString *keyPathPrv = [bundle pathForResource:@"issue53-s2k-gnu-dummy.prv" ofType:@"asc"];
+    NSString *keyPathPub = [bundle pathForResource:@"issue53-s2k-gnu-dummy.pub" ofType:@"asc"];
+    XCTAssertTrue([self.oPGP importKeysFromFile:keyPathPrv allowDuplicates:NO]);
+    XCTAssertTrue([self.oPGP importKeysFromFile:keyPathPub allowDuplicates:NO]);
+}
+
 //- (void) testNewOpenKeyring
 //{
 //    BOOL openedPubKeyringNewFormat    = [self.keyring open:self.pubringNewFormatPath];

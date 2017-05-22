@@ -19,5 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
     #define PGPLogDebug(format, ...)
 #endif
 
+#define PGPLogWarning(format, ...) PGPLogMacro(1, "ObjectivePGP", (^{ return [NSString stringWithFormat:(@"" format), ##__VA_ARGS__]; }))
+
 
 NS_ASSUME_NONNULL_END

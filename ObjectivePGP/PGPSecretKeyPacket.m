@@ -95,7 +95,7 @@
     NSUInteger position = [super parsePacketBody:packetBody error:error];
     //  5.5.3.  Secret-Key Packet Formats
 
-    NSAssert(self.version == 0x04,@"Only Secret Key version 4 is supported. Found version %@", @(self.version));
+    NSAssert(self.version == 0x04 || self.version == 0x03, @"Only Secret Key version 3 and 4 is supported. Found version %@", @(self.version));
 
     // One octet indicating string-to-key usage conventions
     [packetBody getBytes:&_s2kUsage range:(NSRange){position, 1}];
@@ -145,7 +145,9 @@
         position = position + self.s2k.length;
     }
 
-    if (self.s2kUsage != PGPS2KUsageNone) {
+    if (self.s2k.specifier == PGPS2KSpecifierGnuDummy) {
+        self.ivData = [NSData data];
+    } else if (self.s2kUsage != PGPS2KUsageNone) {
         // Initial Vector (IV) of the same length as the cipher's block size
         NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:self.symmetricAlgorithm];
         NSAssert(blockSize <= 16, @"invalid blockSize");

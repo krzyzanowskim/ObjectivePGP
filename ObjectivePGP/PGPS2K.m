@@ -50,7 +50,10 @@ static const unsigned int PGP_SALT_SIZE = 8;
     [data getBytes:&_specifier range:(NSRange) {position, 1}];
     position = position + 1;
 
-    NSAssert(_specifier == PGPS2KSpecifierIteratedAndSalted || _specifier == PGPS2KSpecifierSalted || _specifier == PGPS2KSpecifierSimple, @"Bad s2k specifier");
+    NSAssert(_specifier == PGPS2KSpecifierIteratedAndSalted ||
+             _specifier == PGPS2KSpecifierSalted ||
+             _specifier == PGPS2KSpecifierSimple ||
+             _specifier == PGPS2KSpecifierGnuDummy, @"Bad s2k specifier");
 
     // this is not documented, but now I need to read S2K key specified by s2kSpecifier
     // 3.7.1.1.  Simple S2K
@@ -60,7 +63,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
     position = position + 1;
 
     // Octets 2-9:      8-octet salt value
-    if (_specifier != PGPS2KSpecifierSimple) {
+    if (_specifier == PGPS2KSpecifierSalted || _specifier == PGPS2KSpecifierIteratedAndSalted) {
         // read salt 8 bytes
         _salt = [data subdataWithRange:(NSRange) {position, PGP_SALT_SIZE}];
         position = position + _salt.length;
@@ -71,6 +74,18 @@ static const unsigned int PGP_SALT_SIZE = 8;
         [data getBytes:&_uncodedCount range:(NSRange) {position, 1}];
         position = position + 1;
     }
+
+    if (_specifier == PGPS2KSpecifierGnuDummy) {
+        // read 3 bytes, and check if it's "GNU" followed by 0x01 || 0x02
+        let gnuMarkerSize = 4;
+        let gnuString = [[NSString alloc] initWithData:[data subdataWithRange:(NSRange){position, gnuMarkerSize - 1}] encoding:NSASCIIStringEncoding];
+        if ([gnuString isEqual:@"GNU"]) {
+            position = position + gnuMarkerSize;
+        } else {
+            PGPLogWarning(@"Unknown S2K");
+        }
+    }
+
 
     return position;
 }
@@ -87,7 +102,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
     [data appendBytes:&_specifier length:1];
     [data appendBytes:&_hashAlgorithm length:1];
 
-    if (_specifier != PGPS2KSpecifierSimple) {
+    if (_specifier == PGPS2KSpecifierSalted || _specifier == PGPS2KSpecifierIteratedAndSalted) {
         [data appendData:self.salt];
     }
 

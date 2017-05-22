@@ -176,7 +176,8 @@ typedef NS_ENUM(UInt8, PGPFeature) {
 typedef NS_ENUM(UInt8, PGPS2KSpecifier) {
     PGPS2KSpecifierSimple            = 0,
     PGPS2KSpecifierSalted            = 1,
-    PGPS2KSpecifierIteratedAndSalted = 3
+    PGPS2KSpecifierIteratedAndSalted = 3,
+    PGPS2KSpecifierGnuDummy          = 101 // The "gnu-dummy S2K" is the marker which will tell that this file does *not* actually contain the secret key.
 };
 
 typedef NS_ENUM(UInt8, PGPS2KUsage) {
