@@ -12,6 +12,7 @@
 #import "PGPKey.h"
 #import "PGPMPI.h"
 #import "PGPPKCSEmsa.h"
+#import "PGPLogging.h"
 
 #import <openssl/err.h>
 #import <openssl/ssl.h>

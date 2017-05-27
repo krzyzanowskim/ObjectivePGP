@@ -15,6 +15,7 @@
 #import "PGPCryptoUtils.h"
 #import "NSData+PGPUtils.h"
 #import "PGPCryptoHash.h"
+#import "PGPLogging.h"
 
 static const unsigned int PGP_SALT_SIZE = 8;
 
