@@ -26,6 +26,7 @@
 #import "PGPPublicKeyEncryptedSessionKeyPacket.h"
 #import "PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h"
 #import "PGPMPI.h"
+#import "PGPLogging.h"
 
 @implementation ObjectivePGP
 

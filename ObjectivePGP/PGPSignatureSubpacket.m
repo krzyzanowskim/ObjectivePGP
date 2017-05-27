@@ -11,6 +11,7 @@
 #import "PGPPacket.h"
 #import "PGPCompressedPacket.h"
 #import "NSValue+PGPUtils.h"
+#import "PGPLogging.h"
 
 @implementation PGPSignatureSubpacketHeader
 @end
