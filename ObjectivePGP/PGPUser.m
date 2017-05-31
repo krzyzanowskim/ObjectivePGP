@@ -15,16 +15,16 @@
 
 @implementation PGPUser
 
-- (instancetype) initWithUserIDPacket:(PGPUserIDPacket *)userPacket
-{
-    if (self = [self init]) {
+- (instancetype) initWithUserIDPacket:(PGPUserIDPacket *)userPacket {
+    PGPAssertClass(userPacket, PGPUserIDPacket);
+
+    if (self = [super init]) {
         _userIDPacket = userPacket;
     }
     return self;
 }
 
-- (NSString *)userID
-{
+- (NSString *)userID {
     return self.userIDPacket.userID;
 }
 
@@ -81,9 +81,9 @@
     return [NSString stringWithFormat:@"%@ %@",[super description], self.userID];
 }
 
-- (NSArray *) allPackets
+- (NSArray<PGPPacket *> *) allPackets
 {
-    NSMutableArray *arr = [NSMutableArray array];
+    NSMutableArray *arr = [NSMutableArray<PGPPacket *> array];
 
     if (self.userIDPacket) {
         [arr addObject:self.userIDPacket]; //TODO: || [arr addObject:self.userAttribute]
@@ -101,7 +101,7 @@
         [arr addObject:packet];
     }
 
-    return [arr copy];
+    return arr;
 }
 
 //TODO:

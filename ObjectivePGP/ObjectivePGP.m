@@ -495,12 +495,16 @@ NS_ASSUME_NONNULL_BEGIN
     return [self signData:dataToSign usingSecretKey:secretKey passphrase:passphrase hashAlgorithm:PGPHashSHA512 detached:detached error:error];
 }
 
-- (NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase hashAlgorithm:(PGPHashAlgorithm)preferedHashAlgorithm detached:(BOOL)detached error:(NSError * __autoreleasing *)error
+- (nullable NSData *)signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase hashAlgorithm:(PGPHashAlgorithm)preferedHashAlgorithm detached:(BOOL)detached error:(NSError * __autoreleasing *)error
 {
     PGPSignaturePacket *signaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureBinaryDocument
                                                                 hashAlgorithm:preferedHashAlgorithm];
 
-    [signaturePacket signData:dataToSign secretKey:secretKey passphrase:passphrase userID:nil error:error];
+    if (![signaturePacket signData:dataToSign secretKey:secretKey passphrase:passphrase userID:nil error:error]) {
+        PGPLogWarning(@"Missing signature");
+        return nil;
+    }
+
     NSError *exportError = nil;
     NSData *signaturePacketData = [signaturePacket exportPacket:&exportError];
     NSAssert(!exportError,@"Error on export packet");

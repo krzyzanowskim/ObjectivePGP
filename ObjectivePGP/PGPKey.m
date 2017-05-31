@@ -101,33 +101,33 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (PGPKeyID *)keyID
 {
-    PGPPublicKeyPacket *primaryKeyPacket = (PGPPublicKeyPacket *)self.primaryKeyPacket;
-    PGPKeyID *keyID = [[PGPKeyID alloc] initWithFingerprint:primaryKeyPacket.fingerprint];
+    let primaryKeyPacket = PGPCast(self.primaryKeyPacket, PGPPublicKeyPacket);
+    let keyID = [[PGPKeyID alloc] initWithFingerprint:primaryKeyPacket.fingerprint];
     return keyID;
 }
 
-- (void) loadPackets:(NSArray *)packets
+- (void) loadPackets:(NSArray<PGPPacket *> *)packets
 {
     // based on packetlist2structure
-    PGPKeyID *primaryKeyID = nil;
-    PGPSubKey *subKey      = nil;
-    PGPUser *user          = nil;
+    PGPKeyID *primaryKeyID;
+    PGPSubKey *subKey;
+    PGPUser *user;
     
     for (PGPPacket *packet in packets) {
         switch (packet.tag) {
             case PGPPublicKeyPacketTag:
-                primaryKeyID = [(PGPPublicKeyPacket *)packet keyID];
+                primaryKeyID = PGPCast(packet, PGPPublicKeyPacket).keyID;
                 self.primaryKeyPacket = packet;
                 break;
             case PGPSecretKeyPacketTag:
-                primaryKeyID = [(PGPSecretKeyPacket *)packet keyID];
+                primaryKeyID = PGPCast(packet, PGPPublicKeyPacket).keyID;
                 self.primaryKeyPacket = packet;
                 break;
             case PGPUserAttributePacketTag:
                 if (!user) {
                     continue;
                 }
-                user.userAttribute = (PGPUserAttributePacket *)packet;
+                user.userAttribute = PGPCast(packet, PGPUserAttributePacket);
                 break;
             case PGPUserIDPacketTag:
             {
@@ -146,7 +146,7 @@ NS_ASSUME_NONNULL_BEGIN
                 break;
             case PGPSignaturePacketTag:
             {
-                PGPSignaturePacket *signaturePacket = (PGPSignaturePacket *)packet;
+                let signaturePacket = PGPCast(packet, PGPSignaturePacket);
                 switch (signaturePacket.type) {
                     case PGPSignatureGenericCertificationUserIDandPublicKey:
                     case PGPSignatureCasualCertificationUserIDandPublicKey:
@@ -156,20 +156,20 @@ NS_ASSUME_NONNULL_BEGIN
                             continue;
                         }
                         if ([signaturePacket.issuerKeyID isEqual:primaryKeyID]) {
-                            user.selfCertifications = [user.selfCertifications arrayByAddingObject:packet];
+                            user.selfCertifications = [user.selfCertifications arrayByAddingObject:signaturePacket];
                         } else {
-                            user.otherSignatures = [user.otherSignatures arrayByAddingObject:packet];
+                            user.otherSignatures = [user.otherSignatures arrayByAddingObject:signaturePacket];
                         }
                         break;
                     case PGPSignatureCertificationRevocation:
                         if (user) {
-                            user.revocationSignatures = [user.revocationSignatures arrayByAddingObject:packet];
+                            user.revocationSignatures = [user.revocationSignatures arrayByAddingObject:signaturePacket];
                         } else {
-                            self.directSignatures = [self.directSignatures arrayByAddingObject:packet];
+                            self.directSignatures = [self.directSignatures arrayByAddingObject:signaturePacket];
                         }
                         break;
                     case PGPSignatureDirectlyOnKey:
-                        self.directSignatures = [self.directSignatures arrayByAddingObject:packet];
+                        self.directSignatures = [self.directSignatures arrayByAddingObject:signaturePacket];
                         break;
                     case PGPSignatureSubkeyBinding:
                         if (!subKey) {
@@ -178,13 +178,13 @@ NS_ASSUME_NONNULL_BEGIN
                         subKey.bindingSignature = PGPCast(packet, PGPSignaturePacket);
                         break;
                     case PGPSignatureKeyRevocation:
-                        self.revocationSignature = (PGPSignaturePacket *)packet;
+                        self.revocationSignature = PGPCast(packet,PGPSignaturePacket);
                         break;
                     case PGPSignatureSubkeyRevocation:
                         if (!subKey) {
                             continue;
                         }
-                        subKey.revocationSignature = (PGPSignaturePacket *)packet;
+                        subKey.revocationSignature = PGPCast(packet,PGPSignaturePacket);
                         break;
                     default:
                         break;

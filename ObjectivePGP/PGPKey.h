@@ -30,7 +30,7 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
 @property (nonatomic, readonly) BOOL isEncrypted;
 @property (nonatomic, copy) NSArray *users; // PGPUser
 @property (nonatomic, copy) NSArray *subKeys;
-@property (nonatomic, copy) NSArray *directSignatures;
+@property (nonatomic, copy) NSArray<PGPSignaturePacket *> *directSignatures;
 @property (nonatomic, nullable) PGPPacket *revocationSignature;
 
 @property (nonatomic, readonly) PGPKeyID *keyID;

@@ -12,17 +12,19 @@
 @class PGPUserIDPacket, PGPUserAttributePacket, PGPSignaturePacket, PGPKey;
 
 @interface PGPUser : NSObject
-@property (strong, nonatomic) NSString *userID;
-@property (strong, nonatomic) PGPUserAttributePacket *userAttribute;
-@property (strong, nonatomic) NSArray *selfCertifications;
-@property (strong, nonatomic) NSArray *otherSignatures;
-@property (strong, nonatomic) NSArray *revocationSignatures;
+@property (nonatomic, copy) NSString *userID;
+@property (nonatomic) PGPUserAttributePacket *userAttribute;
+@property (nonatomic) NSArray<PGPSignaturePacket *> *selfCertifications;
+@property (nonatomic) NSArray<PGPSignaturePacket *> *otherSignatures;
+@property (nonatomic) NSArray<PGPSignaturePacket *> *revocationSignatures;
 
-@property (strong, nonatomic) PGPUserIDPacket *userIDPacket;
+@property (nonatomic) PGPUserIDPacket *userIDPacket;
+@property (nonatomic) NSArray<PGPPacket *> *allPackets;
 
-- (instancetype) initWithUserIDPacket:(PGPUserIDPacket *)userPacket;
-- (NSArray *) allPackets;
-- (PGPSignaturePacket *) validSelfCertificate:(PGPKey *)key;
+PGP_EMPTY_INIT_UNAVAILABLE
+
+- (instancetype)initWithUserIDPacket:(PGPUserIDPacket *)userPacket NS_DESIGNATED_INITIALIZER;
+- (PGPSignaturePacket *)validSelfCertificate:(PGPKey *)key;
 
 
 @end

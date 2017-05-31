@@ -336,17 +336,15 @@
     return [self signData:inputData secretKey:secretKey passphrase:nil userID:nil error:error];
 }
 
-- (BOOL) signData:(NSData *)inputData secretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase userID:(NSString *)userID error:(NSError * __autoreleasing *)error
+- (BOOL) signData:(NSData *)inputData secretKey:(PGPKey *)secretKey passphrase:(nullable NSString *)passphrase userID:(NSString *)userID error:(NSError * __autoreleasing *)error
 {
     NSAssert(secretKey.type == PGPKeySecret,@"Need secret key");
-    NSAssert([secretKey.primaryKeyPacket isKindOfClass:[PGPSecretKeyPacket class]], @"Signing key packet not found");
+    PGPAssertClass(secretKey.primaryKeyPacket, PGPSecretKeyPacket); // Signing key packet not found
 
-    PGPSecretKeyPacket *signingKeyPacket = (PGPSecretKeyPacket *)secretKey.signingKeyPacket;
-
-    // As of PGP Desktop. The signing signature may be missing.
-    NSAssert(signingKeyPacket, @"No signing signature found");
-
+    var signingKeyPacket = PGPCast(secretKey.signingKeyPacket, PGPSecretKeyPacket);
     if (!signingKeyPacket) {
+        // As of PGP Desktop. The signing signature may be missing.
+        PGPLogDebug(@"Missing signature for the secret key %@", secretKey.keyID);
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"No signing signature found"}];
         }

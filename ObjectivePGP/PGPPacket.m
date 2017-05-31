@@ -18,12 +18,8 @@ const UInt32 UnknownLength = UINT32_MAX;
 
 @implementation PGPPacket
 
-- (instancetype)init
-{
-    if (self = [super init]) {
-        
-    }
-    return self;
+- (instancetype)init {
+    return ((self = [super init]));
 }
 
 - (instancetype)initWithHeader:(NSData *)headerData body:(NSData *)bodyData

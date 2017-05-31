@@ -17,8 +17,8 @@ extern const UInt32 UnknownLength;
 @property (nonatomic, copy, readonly) NSData *bodyData;
 @property (nonatomic) BOOL indeterminateLength; // should not be used, but gpg use it
 
-@property (nonatomic, readonly)    PGPPacketTag tag;
-@property (nonatomic, readonly)    NSData *packetData;
+@property (nonatomic, readonly) PGPPacketTag tag;
+@property (nonatomic, readonly) NSData *packetData;
 
 - (instancetype) init NS_DESIGNATED_INITIALIZER;
 - (instancetype) initWithHeader:(NSData *)headerData body:(NSData *)bodyData;
