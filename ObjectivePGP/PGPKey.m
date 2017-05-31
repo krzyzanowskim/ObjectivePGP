@@ -317,25 +317,32 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // Note: After decryption encrypted packets are replaced with new decrypted instances on key.
-- (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error
-{
-    if ([self.primaryKeyPacket isKindOfClass:[PGPSecretKeyPacket class]]) {
-        let secretPacket = PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket);
-        self.primaryKeyPacket = [secretPacket decryptedKeyPacket:passphrase error:error];
-        if (*error) {
-            return NO;
+//TODO: return error
+- (BOOL)decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error {
+    let primarySecretPacket = PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket);
+    if (!primarySecretPacket) {
+        return NO;
+    }
+
+    // decrypt primary packet
+    var decryptedPrimaryPacket = [primarySecretPacket decryptedKeyPacket:passphrase error:error];
+    if (!decryptedPrimaryPacket) {
+        return NO;
+    }
+
+    // decrypt subkeys packets
+    for (PGPSubKey *subKey in self.subKeys) {
+        let subKeySecretPacket = PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket);
+        if (subKeySecretPacket) {
+            let subKeyDecryptedPacket = [subKeySecretPacket decryptedKeyPacket:passphrase error:error];
+            if (!subKeyDecryptedPacket) {
+                return NO;
+            }
+            subKey.primaryKeyPacket = subKeyDecryptedPacket;
         }
     }
 
-    for (PGPSubKey *subKey in self.subKeys) {
-        if ([subKey.primaryKeyPacket isKindOfClass:[PGPSecretKeyPacket class]]) {
-            let secretPacket = PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket);
-            self.primaryKeyPacket = [secretPacket decryptedKeyPacket:passphrase error:error];
-            if (*error) {
-                return NO;
-            }
-        }
-    }
+    self.primaryKeyPacket = decryptedPrimaryPacket;
     return YES;
 }
 
