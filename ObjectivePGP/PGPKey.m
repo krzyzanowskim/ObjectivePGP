@@ -99,8 +99,7 @@ NS_ASSUME_NONNULL_BEGIN
     return t;
 }
 
-- (PGPKeyID *)keyID
-{
+- (PGPKeyID *)keyID {
     let primaryKeyPacket = PGPCast(self.primaryKeyPacket, PGPPublicKeyPacket);
     let keyID = [[PGPKeyID alloc] initWithFingerprint:primaryKeyPacket.fingerprint];
     return keyID;
@@ -204,7 +203,7 @@ NS_ASSUME_NONNULL_BEGIN
     
     NSAssert(self.type == PGPKeySecret, @"Need secret key to sign");
     if (self.type == PGPKeyPublic) {
-        NSLog(@"Need secret key to sign\n %@",[NSThread callStackSymbols]);
+        PGPLogDebug(@"Need secret key to sign\n %@",[NSThread callStackSymbols]);
         return nil;
     }
 
@@ -258,14 +257,14 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // signature packet that is available for signing data
-- (PGPPacket *) encryptionKeyPacket:(NSError * __autoreleasing *)error
+- (nullable PGPPacket *)encryptionKeyPacket:(NSError * __autoreleasing *)error
 {
     NSAssert(self.type == PGPKeyPublic, @"Need public key to encrypt");
     if (self.type == PGPKeySecret) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Wrong key type, require public key"}];
         }
-        NSLog(@"Need public key to encrypt");
+        PGPLogWarning(@"Need public key to encrypt");
         return nil;
     }
     
@@ -279,8 +278,7 @@ NS_ASSUME_NONNULL_BEGIN
     // check primary user self certificates
     PGPSignaturePacket *primaryUserSelfCertificate = nil;
     [self primaryUserAndSelfCertificate:&primaryUserSelfCertificate];
-    if (primaryUserSelfCertificate)
-    {
+    if (primaryUserSelfCertificate) {
         if (primaryUserSelfCertificate.canBeUsedToEncrypt) {
             return self.primaryKeyPacket;
         }
@@ -293,28 +291,27 @@ NS_ASSUME_NONNULL_BEGIN
     return nil;
 }
 
-- (PGPSecretKeyPacket *) decryptionKeyPacketWithID:(PGPKeyID *)keyID error:(NSError * __autoreleasing *)error
+- (nullable PGPSecretKeyPacket *)decryptionKeyPacketWithID:(PGPKeyID *)keyID error:(NSError * __autoreleasing *)error
 {
     NSAssert(self.type == PGPKeySecret, @"Need secret key to encrypt");
     if (self.type == PGPKeyPublic) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Wrong key type, require secret key"}];
         }
-        NSLog(@"Need public key to encrypt");
+        PGPLogWarning(@"Need public key to encrypt");
         return nil;
     }
     
     for (PGPSubKey *subKey in self.subKeys) {
         PGPSignaturePacket *signaturePacket = subKey.bindingSignature;
         if (signaturePacket.canBeUsedToEncrypt && [((PGPSecretKeyPacket *)subKey.primaryKeyPacket).keyID isEqualToKeyID:keyID]) {
-            return (PGPSecretKeyPacket *)subKey.primaryKeyPacket;
+            return PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket);
         }
     }
     
-    if ([((PGPSecretKeyPacket *)self.primaryKeyPacket).keyID isEqualToKeyID:keyID])
-    {
-        // assume primary key is always cabable
-        return (PGPSecretKeyPacket *)self.primaryKeyPacket;
+    // assume primary key is always cabable
+    if ([PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket).keyID isEqualToKeyID:keyID]) {
+        return PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket);
     }
     return nil;
 }
@@ -342,11 +339,10 @@ NS_ASSUME_NONNULL_BEGIN
     return YES;
 }
 
-- (NSData *) export:(NSError *__autoreleasing *)error
-{
+- (NSData *)export:(NSError *__autoreleasing *)error {
     NSMutableData *result = [NSMutableData data];
 
-    for (PGPPacket * packet in [self allPacketsArray]) {
+    for (PGPPacket * packet in self.allPacketsArray) {
         [result appendData:[packet exportPacket:error]]; //TODO: decode secret key first
         if (error) {
             NSAssert(*error == nil,@"Error while export public key");
@@ -439,10 +435,10 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return array
  */
-- (NSArray *)allPacketsArray
+- (NSArray<PGPPacket *> *)allPacketsArray
 {
     //TODO: handle trust packet somehow. The Trust packet is used only within keyrings and is not normally exported.
-    NSMutableArray *arr = [NSMutableArray array];
+    let arr = [NSMutableArray<PGPPacket *> array];
 
     [arr addObject:self.primaryKeyPacket];
 
@@ -462,16 +458,16 @@ NS_ASSUME_NONNULL_BEGIN
         [arr addObjectsFromArray:[subKey allPackets]];
     }
 
-    return [arr copy];
+    return arr;
 }
 
 - (NSArray<PGPPacket *> *)allKeyPackets
 {
-    NSMutableArray *arr = [NSMutableArray arrayWithObject:self.primaryKeyPacket];
+    let arr = [NSMutableArray<PGPPacket *> arrayWithObject:self.primaryKeyPacket];
     for (PGPSubKey *subKey in self.subKeys) {
         [arr addObject:subKey.primaryKeyPacket];
     }
-    return [arr copy];
+    return arr;
 }
 
 @end

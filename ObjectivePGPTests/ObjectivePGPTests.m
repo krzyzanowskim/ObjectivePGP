@@ -105,17 +105,17 @@
 
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/44
 - (void) testIssue44 {
-    ObjectivePGP *pgp = self.oPGP;
-    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-    NSString *keysPath = [bundle pathForResource:@"issue44-keys" ofType:@"asc"];
-    NSArray<PGPKey *> *keys = [pgp importKeysFromFile:keysPath allowDuplicates:NO];
+    let pgp = self.oPGP;
+    let bundle = [NSBundle bundleForClass:[self class]];
+    let keysPath = [bundle pathForResource:@"issue44-keys" ofType:@"asc"];
+    let keys = [pgp importKeysFromFile:keysPath allowDuplicates:NO];
     XCTAssertTrue(keys.count == 2);
 
     // PGPKey *keyToSign = [pgp getKeyForIdentifier:@"FF95F0F0ADA10313" type:PGPKeySecret];
-    PGPKey *keyToSign = [pgp getKeyForIdentifier:@"71180E514EF122E5" type:PGPKeySecret];
+    let keyToSign = [pgp getKeyForIdentifier:@"71180E514EF122E5" type:PGPKeySecret];
     XCTAssertNotNil(keyToSign);
 
-    NSData *signature = [pgp signData:[NSData dataWithContentsOfFile:keysPath] usingSecretKey:keyToSign passphrase:@"passphrase" detached:YES error:nil];
+    let signature = [pgp signData:[NSData dataWithContentsOfFile:keysPath] usingSecretKey:keyToSign passphrase:@"passphrase" detached:YES error:nil];
     XCTAssertNotNil(signature);
 }
 

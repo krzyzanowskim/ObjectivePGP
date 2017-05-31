@@ -221,9 +221,7 @@ const UInt32 UnknownLength = UINT32_MAX;
             break;
         case 3:
         {
-#ifdef DEBUG
-            NSLog(@"(Old) The packet is of indeterminate length - partially supported");
-#endif
+            PGPLogWarning(@"(Old) The packet is of indeterminate length - partially supported");
             bodyLength = UnknownLength;
             headerLength = 1;
         }

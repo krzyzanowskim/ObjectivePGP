@@ -96,10 +96,7 @@
                 packet = [[PGPPublicKeyEncryptedSessionKeyPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
                 break;
             default:
-                #ifdef DEBUG
-                NSLog(@"Warning %s Packet tag %d is not supported", __PRETTY_FUNCTION__, packetTag);
-                #endif
-                
+                PGPLogWarning(@"Packet tag %@ is not supported",@(packetTag));
                 packet = [[PGPPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
                 break;
         }

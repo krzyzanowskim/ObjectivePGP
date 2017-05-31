@@ -34,18 +34,15 @@
 
 @implementation PGPSecretKeyPacket
 
-- (PGPPacketTag)tag
-{
+- (PGPPacketTag)tag {
     return PGPSecretKeyPacketTag;
 }
 
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"%@ isEncrypted: %@", [super description], @(self.isEncryptedWithPassword)];
+- (NSString *)description {
+    return [NSString stringWithFormat:@"%@ isEncrypted: %@", super.description, @(self.isEncryptedWithPassword)];
 }
 
-- (BOOL)isEncryptedWithPassword
-{
+- (BOOL)isEncryptedWithPassword {
     if (self.wasDecrypted) {
         return NO;
     }
@@ -53,27 +50,23 @@
     return (self.s2kUsage == PGPS2KUsageEncrypted || self.s2kUsage == PGPS2KUsageEncryptedAndHashed);
 }
 
-- (PGPMPI *) secretMPI:(NSString *)identifier
-{
+- (PGPMPI *)secretMPI:(NSString *)identifier {
     __block PGPMPI *returnMPI = nil;
-    [self.secretMPIArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        PGPMPI *mpi = obj;
-        if ([mpi.identifier isEqualToString:identifier]) {
+    [self.secretMPIArray enumerateObjectsUsingBlock:^(PGPMPI *mpi, NSUInteger idx, BOOL *stop) {
+        if ([mpi.identifier isEqual:identifier]) {
             returnMPI = mpi;
             *stop = YES;
         }
     }];
 
-    return returnMPI;
+    return PGPNN(returnMPI);
 }
 
-- (PGPFingerprint *)fingerprint
-{
+- (PGPFingerprint *)fingerprint {
     return [super fingerprint];
 }
 
-- (NSData *) exportPacket:(NSError *__autoreleasing *)error
-{
+- (NSData *) exportPacket:(NSError *__autoreleasing *)error {
     NSMutableData *data = [NSMutableData data];
     NSData *publicKeyData = [super buildPublicKeyBodyData:YES];
 
@@ -131,7 +124,7 @@
  *
  *  @return length
  */
-- (NSUInteger) parseEncryptedPart:(NSData *)data error:(NSError * __autoreleasing *)error
+- (NSUInteger)parseEncryptedPart:(NSData *)data error:(NSError * __autoreleasing *)error
 {
     NSUInteger position = 0;
 
@@ -283,9 +276,8 @@
  *  TODO: V3 support - partially supported, need testing.
  *  NOTE: Decrypted packet data should be released/forget after use
  */
-- (PGPSecretKeyPacket *) decryptedKeyPacket:(NSString *)passphrase error:(NSError *__autoreleasing *)error
-{
-    NSParameterAssert(passphrase);
+- (nullable PGPSecretKeyPacket *)decryptedKeyPacket:(NSString *)passphrase error:(NSError *__autoreleasing *)error {
+    PGPAssertClass(passphrase, NSString);
     NSParameterAssert(error);
 
     if (!self.isEncryptedWithPassword) {

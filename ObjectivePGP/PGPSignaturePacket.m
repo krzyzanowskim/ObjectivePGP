@@ -242,18 +242,18 @@
 
 #pragma mark - Verify
 
-- (BOOL) verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey error:(NSError * __autoreleasing *)error;
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey error:(NSError * __autoreleasing *)error;
 {
     return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:nil error:error];
 }
 
-- (BOOL) verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey userID:(NSString *)userID error:(NSError * __autoreleasing *)error;
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey userID:(NSString *)userID error:(NSError * __autoreleasing *)error;
 {
     return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:userID error:error];
 }
 
 // Opposite to sign, with readed data (not produced)
-- (BOOL) verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(NSString *)userID error:(NSError * __autoreleasing *)error
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(NSString *)userID error:(NSError * __autoreleasing *)error
 {
     if (!signingKeyPacket)
     {
@@ -331,19 +331,18 @@
 // 5.2.4.  Computing Signatures
 // http://tools.ietf.org/html/rfc4880#section-5.2.4
 // @see https://github.com/singpolyma/openpgp-spec/blob/master/key-signatures
-- (BOOL) signData:(NSData *)inputData  secretKey:(PGPKey *)secretKey error:(NSError * __autoreleasing *)error
-{
+- (BOOL)signData:(NSData *)inputData  secretKey:(PGPKey *)secretKey error:(NSError * __autoreleasing *)error {
     return [self signData:inputData secretKey:secretKey passphrase:nil userID:nil error:error];
 }
 
-- (BOOL) signData:(NSData *)inputData secretKey:(PGPKey *)secretKey passphrase:(nullable NSString *)passphrase userID:(NSString *)userID error:(NSError * __autoreleasing *)error
-{
+- (BOOL)signData:(NSData *)inputData secretKey:(PGPKey *)secretKey passphrase:(nullable NSString *)passphrase userID:(NSString *)userID error:(NSError * __autoreleasing *)error {
     NSAssert(secretKey.type == PGPKeySecret,@"Need secret key");
     PGPAssertClass(secretKey.primaryKeyPacket, PGPSecretKeyPacket); // Signing key packet not found
 
     var signingKeyPacket = PGPCast(secretKey.signingKeyPacket, PGPSecretKeyPacket);
     if (!signingKeyPacket) {
         // As of PGP Desktop. The signing signature may be missing.
+        //TODO: see if corresponding public key has the signing key packet and use it
         PGPLogDebug(@"Missing signature for the secret key %@", secretKey.keyID);
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"No signing signature found"}];

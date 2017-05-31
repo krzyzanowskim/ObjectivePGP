@@ -9,13 +9,15 @@
 #import "PGPPublicKeyPacket.h"
 #import "PGPS2K.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface PGPSecretKeyPacket : PGPPublicKeyPacket <NSCopying>
 
 @property (nonatomic, readonly) BOOL isEncryptedWithPassword;
 @property (nonatomic) PGPS2KUsage s2kUsage;
 @property (nonatomic) PGPS2K *s2k;
 @property (nonatomic) PGPSymmetricAlgorithm symmetricAlgorithm;
-@property (nonatomic, readonly) NSData *ivData;
+@property (nonatomic, copy, readonly) NSData *ivData;
 
 /**
  *  Decrypt packet
@@ -25,9 +27,11 @@
  *
  *  @return Decrypted key on success
  */
-- (PGPSecretKeyPacket *) decryptedKeyPacket:(NSString *)passphrase error:(NSError * __autoreleasing *)error;
+- (nullable PGPSecretKeyPacket *)decryptedKeyPacket:(NSString *)passphrase error:(NSError * __autoreleasing *)error;
 
-- (PGPMPI *) secretMPI:(NSString *)identifier;
-- (NSData *) decryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm;
+- (PGPMPI *)secretMPI:(NSString *)identifier;
+- (NSData *)decryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm;
 
 @end
+
+NS_ASSUME_NONNULL_END

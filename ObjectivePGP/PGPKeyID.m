@@ -13,8 +13,7 @@
 
 @implementation PGPKeyID
 
-- (instancetype) initWithFingerprint:(PGPFingerprint *)fingerprint
-{
+- (instancetype) initWithFingerprint:(PGPFingerprint *)fingerprint {
     if (!fingerprint)
         return nil;
 
@@ -61,13 +60,11 @@
     return [self.longKey isEqualToData:other.longKey];
 }
 
-- (BOOL) isEqualToKeyID:(PGPKeyID *)keyID
-{
+- (BOOL) isEqualToKeyID:(PGPKeyID *)keyID {
     return [self isEqual:keyID];
 }
 
-- (NSUInteger)hash
-{
+- (NSUInteger)hash {
     const NSUInteger prime = 31;
     NSUInteger result = 1;
     result = prime * result + [_longKey hash];
