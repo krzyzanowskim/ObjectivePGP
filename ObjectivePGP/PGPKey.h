@@ -20,6 +20,7 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
 
 @class PGPSecretKeyPacket;
 
+/// Single Private or Public key.
 @interface PGPKey : NSObject
 
 @property (assign, readonly ) PGPKeyType type;

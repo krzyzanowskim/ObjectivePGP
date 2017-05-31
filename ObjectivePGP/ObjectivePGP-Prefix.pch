@@ -6,5 +6,6 @@
 
 #ifdef __OBJC__
     #import <Foundation/Foundation.h>
+    #import "PGPFoundation.h"
     #import "PGPLogging.h"
 #endif

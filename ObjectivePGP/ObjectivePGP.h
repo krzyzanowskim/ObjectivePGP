@@ -21,8 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (strong, nonatomic, nonnull) NSArray<PGPKey *> *keys;
 
 // Import keys
-- (nullable NSArray *) importKeysFromFile:(NSString * )path allowDuplicates:(BOOL)duplicates;
-- (nullable NSArray *) importKeysFromData:(NSData * )data allowDuplicates:(BOOL)duplicates;
+- (nullable NSArray<PGPKey *> *) importKeysFromFile:(NSString * )path allowDuplicates:(BOOL)duplicates;
+- (nullable NSArray<PGPKey *> *) importKeysFromData:(NSData * )data allowDuplicates:(BOOL)duplicates;
 - (BOOL) importKey:(NSString *)shortKeyStringIdentifier fromFile:(NSString *)path;
 
 // Read keys

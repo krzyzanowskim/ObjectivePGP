@@ -86,7 +86,6 @@ static const unsigned int PGP_SALT_SIZE = 8;
         }
     }
 
-
     return position;
 }
 
@@ -145,6 +144,11 @@ static const unsigned int PGP_SALT_SIZE = 8;
 
     PGPUpdateBlock updateBlock;
     switch (self.specifier) {
+        case PGPS2KSpecifierGnuDummy:
+        {
+            // no secret key
+        }
+            break;
         case PGPS2KSpecifierSimple:
         {
             // passphrase

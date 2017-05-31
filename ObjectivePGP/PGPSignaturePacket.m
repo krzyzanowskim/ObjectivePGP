@@ -179,6 +179,10 @@
     return result;
 }
 
+- (NSString *)description {
+    return [NSString stringWithFormat:@"%@, sign: %@, encrypt: %@", super.description, @(self.canBeUsedToSign), @(self.canBeUsedToEncrypt)];
+}
+
 #pragma mark - Build packet
 
 - (NSData *) exportPacket:(NSError *__autoreleasing *)error
@@ -338,7 +342,10 @@
     NSAssert([secretKey.primaryKeyPacket isKindOfClass:[PGPSecretKeyPacket class]], @"Signing key packet not found");
 
     PGPSecretKeyPacket *signingKeyPacket = (PGPSecretKeyPacket *)secretKey.signingKeyPacket;
+
+    // As of PGP Desktop. The signing signature may be missing.
     NSAssert(signingKeyPacket, @"No signing signature found");
+
     if (!signingKeyPacket) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"No signing signature found"}];
