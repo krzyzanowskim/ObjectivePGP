@@ -24,9 +24,9 @@
 @end
 
 @interface PGPPublicKeyPacket ()
-@property (strong, nonatomic, readwrite) PGPFingerprint *fingerprint;
-@property (strong, nonatomic, readwrite) PGPKeyID *keyID;
-@property (assign, readwrite) UInt16 V3validityPeriod;
+@property (nonatomic, readwrite) PGPFingerprint *fingerprint;
+@property (nonatomic, readwrite) PGPKeyID *keyID;
+@property (nonatomic, readwrite) UInt16 V3validityPeriod;
 @end
 
 @implementation PGPPublicKeyPacket

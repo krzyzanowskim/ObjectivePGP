@@ -9,8 +9,8 @@
 #import <Foundation/Foundation.h>
 
 @interface PGPFingerprint : NSObject
-@property (copy) NSData *hashedData;
-@property (copy) NSData *keyData;
+@property (nonatomic, copy) NSData *hashedData;
+@property (nonatomic, copy) NSData *keyData;
 
 - (instancetype) initWithData:(NSData *)data;
 - (NSString *) description;

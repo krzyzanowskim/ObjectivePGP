@@ -25,12 +25,12 @@
 #import <openssl/ssl.h>
 
 @interface PGPSignatureSubpacket ()
-@property (strong, readwrite) id value;
+@property (nonatomic, readwrite) id value;
 @end
 
 @interface PGPSignaturePacket ()
-@property (strong, readwrite, nonatomic) NSArray *hashedSubpackets;
-@property (strong, readwrite, nonatomic) NSArray *unhashedSubpackets;
+@property (nonatomic, readwrite) NSArray *hashedSubpackets;
+@property (nonatomic, readwrite) NSArray *unhashedSubpackets;
 
 // A V4 signature hashes the packet body
 // starting from its first field, the version number, through the end
@@ -38,7 +38,7 @@
 // signature version, the signature type, the public-key algorithm, the
 // hash algorithm, the hashed subpacket length, and the hashed
 // subpacket body.
-@property (strong) NSData *rawReadedSignedPartData;
+@property (nonatomic) NSData *rawReadedSignedPartData;
 
 @end
 

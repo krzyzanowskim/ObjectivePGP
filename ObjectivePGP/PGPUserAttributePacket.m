@@ -74,7 +74,7 @@
     NSUInteger result = 1;
 
     result = prime * result + self.tag;
-    result = prime * result + [_subpackets hash];
+    result = prime * result + [self.subpackets hash];
 
     return result;
 }

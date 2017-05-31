@@ -13,10 +13,10 @@
 #import "PGPSignaturePacket.h"
 
 @interface ObjectivePGPTestKeyringSecurePlaintext : XCTestCase
-@property (strong) NSString *secKeyringPath;
-@property (strong) NSString *pubKeyringPath;
-@property (strong) NSString *workingDirectory;
-@property (strong) ObjectivePGP *oPGP;
+@property (nonatomic) NSString *secKeyringPath;
+@property (nonatomic) NSString *pubKeyringPath;
+@property (nonatomic) NSString *workingDirectory;
+@property (nonatomic) ObjectivePGP *oPGP;
 @end
 
 @implementation ObjectivePGPTestKeyringSecurePlaintext

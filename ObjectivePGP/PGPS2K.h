@@ -11,13 +11,13 @@
 
 @interface PGPS2K : NSObject
 
-@property (assign) PGPS2KSpecifier specifier;
-@property (assign) PGPHashAlgorithm hashAlgorithm;
-@property (retain, nonatomic) NSData *salt; // 8 bytes
-@property (assign) UInt32 uncodedCount;
-@property (assign, readonly) UInt32 codedCount;
+@property (nonatomic) PGPS2KSpecifier specifier;
+@property (nonatomic) PGPHashAlgorithm hashAlgorithm;
+@property (nonatomic) NSData *salt; // 8 bytes
+@property (nonatomic) UInt32 uncodedCount;
+@property (nonatomic, readonly) UInt32 codedCount;
 
-@property (assign) NSUInteger length;
+@property (nonatomic) NSUInteger length;
 
 + (PGPS2K *) string2KeyFromData:(NSData *)data atPosition:(NSUInteger)position;
 - (NSUInteger) parseS2K:(NSData *)data atPosition:(NSUInteger)position;

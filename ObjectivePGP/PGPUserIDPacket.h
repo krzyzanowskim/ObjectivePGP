@@ -12,6 +12,6 @@
 
 @interface PGPUserIDPacket : PGPPacket
 
-@property (retain, readonly) NSString *userID;
+@property (nonatomic, readonly) NSString *userID;
 
 @end

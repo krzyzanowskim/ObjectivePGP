@@ -694,7 +694,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return YES on success
  */
-- (NSArray<PGPKey *> * __nullable) importKeysFromFile:(NSString * __nonnull)path allowDuplicates:(BOOL)allowDuplicates
+- (nullable NSArray<PGPKey *> *) importKeysFromFile:(NSString *)path allowDuplicates:(BOOL)allowDuplicates
 {
     if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
         return nil;
@@ -703,7 +703,7 @@ NS_ASSUME_NONNULL_BEGIN
     return [self importKeysFromData:[NSData dataWithContentsOfFile:path] allowDuplicates:allowDuplicates];
 }
 
-- (NSArray<PGPKey *> * __nullable) importKeysFromData:(NSData * __nonnull)data allowDuplicates:(BOOL)allowDuplicates
+- (nullable NSArray<PGPKey *> *) importKeysFromData:(NSData *)data allowDuplicates:(BOOL)allowDuplicates
 {
     NSArray<PGPKey *> *loadedKeys = [self keysFromData:data];
     if (!allowDuplicates) {
@@ -744,7 +744,7 @@ NS_ASSUME_NONNULL_BEGIN
     return foundKey;
 }
 
-- (nullable NSArray<PGPKey *> *)keysFromFile:(NSString * __nonnull)path
+- (nullable NSArray<PGPKey *> *)keysFromFile:(NSString *)path
 {
     NSString *fullPath = [path stringByExpandingTildeInPath];
     
@@ -766,7 +766,7 @@ NS_ASSUME_NONNULL_BEGIN
     return [self keysFromData:fileData];
 }
 
-- (NSArray<PGPKey *> * __nullable) keysFromData:(NSData * __nonnull)fileData
+- (nullable NSArray<PGPKey *> *) keysFromData:(NSData *)fileData
 {
     NSAssert(fileData.length > 0, @"Empty data");
 
@@ -843,7 +843,7 @@ NS_ASSUME_NONNULL_BEGIN
     return [keys copy];
 }
 
-- (PGPKey *) findKeyForKeyID:(PGPKeyID *)keyID
+- (PGPKey *)findKeyForKeyID:(PGPKeyID *)keyID
 {
     PGPKey *foundKey = nil;
     for (PGPKey *key in self.keys) {
@@ -878,7 +878,7 @@ found_key_label:
         NSMutableArray *extractedBlocks = [[NSMutableArray alloc] init];
         NSRegularExpression *regex = [[NSRegularExpression alloc] initWithPattern:@"(-----)(BEGIN|END)[ ](PGP)[A-Z ]*(-----)" options:NSRegularExpressionDotMatchesLineSeparators error:nil];
         __block NSInteger offset = 0;
-        [regex enumerateMatchesInString:armoredString options:0 range:NSMakeRange(0, armoredString.length) usingBlock:^(NSTextCheckingResult * _Nullable result, NSMatchingFlags flags, BOOL * _Nonnull stop) {
+        [regex enumerateMatchesInString:armoredString options:0 range:NSMakeRange(0, armoredString.length) usingBlock:^(NSTextCheckingResult * _Nullable result, NSMatchingFlags flags, BOOL *stop) {
             NSString *substring = [armoredString substringWithRange:result.range];
             if ([substring containsString:@"END"]) {
                 NSInteger endIndex = result.range.location + result.range.length;

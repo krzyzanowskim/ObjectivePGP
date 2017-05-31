@@ -15,17 +15,17 @@
 
 @interface PGPSignaturePacket : PGPPacket <NSCopying>
 
-@property (assign) UInt8 version;
-@property (assign) PGPSignatureType type;
-@property (assign) PGPPublicKeyAlgorithm publicKeyAlgorithm;
-@property (assign) PGPHashAlgorithm hashAlgoritm;
-@property (strong, readonly, nonatomic) NSArray *hashedSubpackets;
-@property (strong, readonly, nonatomic) NSArray *unhashedSubpackets;
-@property (strong) NSData *signedHashValueData;
-@property (strong) NSArray *signatureMPIs;
+@property (nonatomic) UInt8 version;
+@property (nonatomic) PGPSignatureType type;
+@property (nonatomic) PGPPublicKeyAlgorithm publicKeyAlgorithm;
+@property (nonatomic) PGPHashAlgorithm hashAlgoritm;
+@property (nonatomic, readonly) NSArray *hashedSubpackets;
+@property (nonatomic, readonly) NSArray *unhashedSubpackets;
+@property (nonatomic) NSData *signedHashValueData;
+@property (nonatomic) NSArray *signatureMPIs;
 
-@property (assign, nonatomic, readonly) BOOL canBeUsedToSign;
-@property (assign, nonatomic, readonly) BOOL canBeUsedToEncrypt;
+@property (nonatomic, readonly) BOOL canBeUsedToSign;
+@property (nonatomic, readonly) BOOL canBeUsedToEncrypt;
 
 /**
  *  Create signature packet for signing. This is convienience constructor.

@@ -11,12 +11,12 @@
 
 @interface PGPMPI : NSObject
 
-@property (strong) NSString *identifier;
-@property (assign, readonly) BIGNUM *bignumRef;
+@property (nonatomic) NSString *identifier;
+@property (nonatomic, readonly) BIGNUM *bignumRef;
 /**
  *  Total bytes, header + body
  */
-@property (assign, readonly) NSUInteger packetLength;
+@property (nonatomic, readonly) NSUInteger packetLength;
 
 - (instancetype) initWithMPIData:(NSData *)mpiData atPosition:(NSUInteger)position;
 - (instancetype) initWithData:(NSData *)dataToMPI;

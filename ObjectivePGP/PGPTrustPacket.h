@@ -12,7 +12,7 @@
 
 @interface PGPTrustPacket : PGPPacket
 
-@property (strong, readonly) NSData *data;
+@property (nonatomic, readonly) NSData *data;
 
 
 @end

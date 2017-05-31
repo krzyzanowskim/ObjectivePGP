@@ -12,8 +12,8 @@
 @interface PGPUserAttributeSubpacket : NSObject
 
 // Subpacket types 100 through 110 are reserved for private or experimental use.
-@property (assign) UInt8 type;
+@property (nonatomic) UInt8 type;
 // Value
-@property (strong) NSData *valueData;
+@property (nonatomic) NSData *valueData;
 
 @end

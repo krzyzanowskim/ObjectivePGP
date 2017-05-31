@@ -12,6 +12,8 @@
 #import "PGPKeyID.h"
 #import "PGPSignaturePacket.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 typedef NS_ENUM(NSUInteger, PGPKeyType) {
     PGPKeyUnknown = 0,
     PGPKeySecret  = 1,
@@ -23,17 +25,17 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
 /// Single Private or Public key.
 @interface PGPKey : NSObject
 
-@property (assign, readonly ) PGPKeyType type;
-@property (strong, nonatomic) PGPPacket  *primaryKeyPacket;
-@property (assign, readonly ) BOOL       isEncrypted;
-@property (strong, nonatomic) NSMutableArray *users; // PGPUser
-@property (strong, nonatomic) NSMutableArray *subKeys;
-@property (strong, nonatomic) NSMutableArray *directSignatures;
-@property (strong, nonatomic) PGPPacket      *revocationSignature;
+@property (nonatomic, readonly) PGPKeyType type;
+@property (nonatomic) PGPPacket  *primaryKeyPacket;
+@property (nonatomic, readonly) BOOL isEncrypted;
+@property (nonatomic, copy) NSArray *users; // PGPUser
+@property (nonatomic, copy) NSArray *subKeys;
+@property (nonatomic, copy) NSArray *directSignatures;
+@property (nonatomic, nullable) PGPPacket *revocationSignature;
 
 @property (nonatomic, readonly) PGPKeyID *keyID;
 
-- (instancetype) initWithPackets:(NSArray *)packets;
+- (instancetype) initWithPackets:(NSArray<PGPPacket *> *)packets;
 
 /**
  *  Decrypts all secret key and subkey packets
@@ -58,7 +60,7 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
 - (PGPSecretKeyPacket *) decryptionKeyPacketWithID:(PGPKeyID *)keyID error:(NSError * __autoreleasing *)error;
 
 
-- (NSArray *) allKeyPackets;
+- (NSArray<PGPPacket *> *) allKeyPackets;
 - (PGPSymmetricAlgorithm) preferredSymmetricAlgorithm;
 + (PGPSymmetricAlgorithm) preferredSymmetricAlgorithmForKeys:(NSArray *)keys;
 
@@ -70,3 +72,5 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
 - (NSData *) export:(NSError *__autoreleasing *)error;
 
 @end
+
+NS_ASSUME_NONNULL_END

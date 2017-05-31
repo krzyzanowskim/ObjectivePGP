@@ -11,11 +11,11 @@
 
 @interface PGPSecretKeyPacket : PGPPublicKeyPacket <NSCopying>
 
-@property (assign, readonly, nonatomic) BOOL isEncryptedWithPassword;
-@property (assign) PGPS2KUsage s2kUsage;
-@property (strong) PGPS2K *s2k;
-@property (assign) PGPSymmetricAlgorithm symmetricAlgorithm;
-@property (strong, readonly) NSData *ivData;
+@property (nonatomic, readonly) BOOL isEncryptedWithPassword;
+@property (nonatomic) PGPS2KUsage s2kUsage;
+@property (nonatomic) PGPS2K *s2k;
+@property (nonatomic) PGPSymmetricAlgorithm symmetricAlgorithm;
+@property (nonatomic, readonly) NSData *ivData;
 
 /**
  *  Decrypt packet

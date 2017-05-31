@@ -7,10 +7,11 @@
 //
 
 #import "PGPPacket.h"
+#import "PGPUserAttributeSubpacket.h"
 
 @interface PGPUserAttributePacket : PGPPacket
 
 // array of PGPUserAttributeSubpacket
-@property (strong) NSArray *subpackets;
+@property (nonatomic) NSArray<PGPUserAttributeSubpacket *> *subpackets;
 
 @end

@@ -9,6 +9,8 @@
 #import "PGPSubKey.h"
 #import "PGPPublicKeyPacket.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @implementation PGPSubKey
 
 - (instancetype) initWithPacket:(PGPPacket *)packet
@@ -27,12 +29,12 @@
 - (PGPKeyID *)keyID
 {
     //note: public key packet because this is main class for public and secret class
-    PGPPublicKeyPacket *primaryKeyPacket = (PGPPublicKeyPacket *)self.primaryKeyPacket;
-    PGPKeyID *keyID = [[PGPKeyID alloc] initWithFingerprint:primaryKeyPacket.fingerprint];
-    return keyID;
+    let primaryKeyPacket = PGPCast(self.primaryKeyPacket, PGPPublicKeyPacket);
+    NSCAssert(primaryKeyPacket, @"Invalid packet");
+    return [[PGPKeyID alloc] initWithFingerprint:primaryKeyPacket.fingerprint];
 }
 
-- (NSArray *) allPackets
+- (NSArray<PGPPacket *> *) allPackets
 {
     NSMutableArray *arr = [NSMutableArray array];
 
@@ -49,3 +51,5 @@
     return [arr copy];
 }
 @end
+
+NS_ASSUME_NONNULL_END

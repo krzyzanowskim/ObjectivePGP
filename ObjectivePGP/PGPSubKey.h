@@ -12,12 +12,16 @@
 #import "PGPSignaturePacket.h"
 #import "PGPKeyID.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface PGPSubKey : PGPKey
 
-@property (strong) PGPSignaturePacket *bindingSignature;
+@property (nonatomic, nullable) PGPSignaturePacket *bindingSignature;
 @property (nonatomic, readonly) PGPKeyID *keyID;
 
 - (instancetype) initWithPacket:(PGPPacket *)packet;
-- (NSArray *) allPackets;
+- (NSArray<PGPPacket *> *) allPackets;
 
 @end
+
+NS_ASSUME_NONNULL_END

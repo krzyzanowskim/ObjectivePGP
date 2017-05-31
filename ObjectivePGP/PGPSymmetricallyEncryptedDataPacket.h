@@ -9,6 +9,6 @@
 #import "PGPPacket.h"
 
 @interface PGPSymmetricallyEncryptedDataPacket : PGPPacket
-@property (strong) NSData *encryptedData;
+@property (nonatomic) NSData *encryptedData;
 
 @end

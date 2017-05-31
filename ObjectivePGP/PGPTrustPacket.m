@@ -9,7 +9,7 @@
 #import "PGPTrustPacket.h"
 
 @interface PGPTrustPacket ()
-@property (strong, readwrite) NSData *data;
+@property (nonatomic, readwrite) NSData *data;
 @end
 
 @implementation PGPTrustPacket

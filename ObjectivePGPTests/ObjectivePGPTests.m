@@ -23,9 +23,11 @@
 
 
 @interface ObjectivePGPTests : XCTestCase
-@property (strong) ObjectivePGP *oPGP;
-@property (strong) NSString *secringPathPlaintext, *secringPathEncrypted;
-@property (strong) NSString *pubringPlaintext, *pubringEncrypted;
+
+@property (nonatomic) ObjectivePGP *oPGP;
+@property (nonatomic) NSString *secringPathPlaintext, *secringPathEncrypted;
+@property (nonatomic) NSString *pubringPlaintext, *pubringEncrypted;
+
 @end
 
 @implementation ObjectivePGPTests
@@ -99,6 +101,22 @@
     NSString *keyPathPub = [bundle pathForResource:@"issue53-s2k-gnu-dummy.pub" ofType:@"asc"];
     XCTAssertTrue([self.oPGP importKeysFromFile:keyPathPrv allowDuplicates:NO]);
     XCTAssertTrue([self.oPGP importKeysFromFile:keyPathPub allowDuplicates:NO]);
+}
+
+// https://github.com/krzyzanowskim/ObjectivePGP/issues/44
+- (void) testIssue44 {
+    ObjectivePGP *pgp = self.oPGP;
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSString *keysPath = [bundle pathForResource:@"issue44-keys" ofType:@"asc"];
+    NSArray<PGPKey *> *keys = [pgp importKeysFromFile:keysPath allowDuplicates:NO];
+    XCTAssertTrue(keys.count == 2);
+
+    // PGPKey *keyToSign = [pgp getKeyForIdentifier:@"FF95F0F0ADA10313" type:PGPKeySecret];
+    PGPKey *keyToSign = [pgp getKeyForIdentifier:@"71180E514EF122E5" type:PGPKeySecret];
+    XCTAssertNotNil(keyToSign);
+
+    NSData *signature = [pgp signData:[NSData dataWithContentsOfFile:keysPath] usingSecretKey:keyToSign passphrase:@"passphrase" detached:YES error:nil];
+    XCTAssertNotNil(signature);
 }
 
 //- (void) testNewOpenKeyring

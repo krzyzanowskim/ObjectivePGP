@@ -20,16 +20,16 @@
 #import "PGPPublicKeyRSA.h"
 
 @interface PGPPacket ()
-@property (copy, readwrite) NSData *headerData;
-@property (copy, readwrite) NSData *bodyData;
+@property (nonatomic, copy, readwrite) NSData *headerData;
+@property (nonatomic, copy, readwrite) NSData *bodyData;
 @end
 
 @interface PGPSecretKeyPacket ()
-@property (strong, readwrite) NSData *encryptedMPIsPartData; // after decrypt -> secretMPIArray
-@property (strong, readwrite) NSData *ivData;
-@property (strong, readwrite) NSArray *secretMPIArray; // decrypted MPI
+@property (nonatomic, readwrite) NSData *encryptedMPIsPartData; // after decrypt -> secretMPIArray
+@property (nonatomic, readwrite) NSData *ivData;
+@property (nonatomic, readwrite) NSArray *secretMPIArray; // decrypted MPI
 
-@property (assign, readwrite) BOOL wasDecrypted; // is decrypted
+@property (nonatomic, readwrite) BOOL wasDecrypted; // is decrypted
 @end
 
 @implementation PGPSecretKeyPacket

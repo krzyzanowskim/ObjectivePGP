@@ -19,11 +19,16 @@
 #import "PGPSubKey.h"
 #import "NSValue+PGPUtils.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @implementation PGPKey
 
-- (instancetype) initWithPackets:(NSArray *)packets
+- (instancetype) initWithPackets:(NSArray<PGPPacket *> *)packets
 {
     if (self = [self init]) {
+        _subKeys = [NSArray array];
+        _directSignatures = [NSArray array];
+        _users = [NSArray array];
         [self loadPackets:packets];
     }
     return self;
@@ -64,30 +69,6 @@
     hash = NSUINTROTATE(hash, NSUINT_BIT / 2) ^ [self.keyID hash];
     
     return hash;
-}
-
-- (NSMutableArray *)users
-{
-    if (!_users) {
-        _users = [NSMutableArray array];
-    }
-    return _users;
-}
-
-- (NSMutableArray *)subKeys
-{
-    if (!_subKeys) {
-        _subKeys = [NSMutableArray array];
-    }
-    return _subKeys;
-}
-
-- (NSMutableArray *)directSignatures
-{
-    if (!_directSignatures) {
-        _directSignatures = [NSMutableArray array];
-    }
-    return _directSignatures;
 }
 
 - (BOOL)isEncrypted
@@ -154,14 +135,14 @@
                 if (!user) {
                     user = parsedUser;
                 }
-                [self.users addObject:parsedUser];
+                self.users = [self.users arrayByAddingObject:parsedUser];
             }
                 break;
             case PGPPublicSubkeyPacketTag:
             case PGPSecretSubkeyPacketTag:
                 user = nil;
                 subKey = [[PGPSubKey alloc] initWithPacket:packet];
-                [self.subKeys addObject:subKey];
+                self.subKeys = [self.subKeys arrayByAddingObject:subKey];
                 break;
             case PGPSignaturePacketTag:
             {
@@ -184,17 +165,17 @@
                         if (user) {
                             user.revocationSignatures = [user.revocationSignatures arrayByAddingObject:packet];
                         } else {
-                            [self.directSignatures addObject:packet];
+                            self.directSignatures = [self.directSignatures arrayByAddingObject:packet];
                         }
                         break;
                     case PGPSignatureDirectlyOnKey:
-                        [self.directSignatures addObject:packet];
+                        self.directSignatures = [self.directSignatures arrayByAddingObject:packet];
                         break;
                     case PGPSignatureSubkeyBinding:
                         if (!subKey) {
                             continue;
                         }
-                        subKey.bindingSignature = (PGPSignaturePacket *)packet;
+                        subKey.bindingSignature = PGPCast(packet, PGPSignaturePacket);
                         break;
                     case PGPSignatureKeyRevocation:
                         self.revocationSignature = (PGPSignaturePacket *)packet;
@@ -342,7 +323,7 @@
 - (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error
 {
     if ([self.primaryKeyPacket isKindOfClass:[PGPSecretKeyPacket class]]) {
-        PGPSecretKeyPacket *secretPacket = (PGPSecretKeyPacket *)self.primaryKeyPacket;
+        let secretPacket = PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket);
         self.primaryKeyPacket = [secretPacket decryptedKeyPacket:passphrase error:error];
         if (*error) {
             return NO;
@@ -351,7 +332,7 @@
 
     for (PGPSubKey *subKey in self.subKeys) {
         if ([subKey.primaryKeyPacket isKindOfClass:[PGPSecretKeyPacket class]]) {
-            PGPSecretKeyPacket *secretPacket = (PGPSecretKeyPacket *)subKey.primaryKeyPacket;
+            let secretPacket = PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket);
             self.primaryKeyPacket = [secretPacket decryptedKeyPacket:passphrase error:error];
             if (*error) {
                 return NO;
@@ -484,7 +465,7 @@
     return [arr copy];
 }
 
-- (NSArray *)allKeyPackets
+- (NSArray<PGPPacket *> *)allKeyPackets
 {
     NSMutableArray *arr = [NSMutableArray arrayWithObject:self.primaryKeyPacket];
     for (PGPSubKey *subKey in self.subKeys) {
@@ -494,3 +475,5 @@
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

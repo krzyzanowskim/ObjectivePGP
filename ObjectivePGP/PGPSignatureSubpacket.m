@@ -16,7 +16,7 @@
 @end
 
 @interface PGPSignatureSubpacket ()
-@property (strong, readwrite) id value;
+@property (nonatomic, readwrite) id value;
 @end
 
 @implementation PGPSignatureSubpacket

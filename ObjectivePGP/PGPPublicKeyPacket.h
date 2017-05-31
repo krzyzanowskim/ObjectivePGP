@@ -17,16 +17,16 @@
 
 @interface PGPPublicKeyPacket : PGPPacket <NSCopying>
 
-@property (assign, readonly) UInt8 version;
-@property (strong, readonly) NSDate* createDate;
-@property (assign, readonly) UInt16 V3validityPeriod; // obsolete
-@property (assign, readonly) PGPPublicKeyAlgorithm publicKeyAlgorithm;
-@property (strong, readwrite) NSArray* publicMPIArray;
+@property (nonatomic, readonly) UInt8 version;
+@property (nonatomic, readonly) NSDate* createDate;
+@property (nonatomic, readonly) UInt16 V3validityPeriod; // obsolete
+@property (nonatomic, readonly) PGPPublicKeyAlgorithm publicKeyAlgorithm;
+@property (nonatomic, readwrite) NSArray* publicMPIArray;
 
-@property (assign, readonly) NSUInteger keySize;
+@property (nonatomic, readonly) NSUInteger keySize;
 
-@property (strong, nonatomic, readonly) PGPFingerprint* fingerprint;
-@property (strong, nonatomic, readonly) PGPKeyID* keyID;
+@property (nonatomic, readonly) PGPFingerprint* fingerprint;
+@property (nonatomic, readonly) PGPKeyID* keyID;
 
 - (NSData*)exportPacket:(NSError* __autoreleasing*)error;
 - (NSData*)exportPublicPacketOldStyle;

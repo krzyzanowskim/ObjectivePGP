@@ -9,7 +9,7 @@
 #import "PGPPacket.h"
 
 @interface PGPModificationDetectionCodePacket : PGPPacket
-@property (strong, readonly) NSData *hashData;
+@property (nonatomic, readonly) NSData *hashData;
 
 - (instancetype)initWithData:(NSData *)data;
 

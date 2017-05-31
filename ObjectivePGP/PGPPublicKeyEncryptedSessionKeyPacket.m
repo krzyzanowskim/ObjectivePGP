@@ -20,7 +20,9 @@
 #import "PGPCryptoUtils.h"
 
 @interface PGPPublicKeyEncryptedSessionKeyPacket ()
-@property (strong) PGPMPI *encryptedMPI_M;
+
+@property (nonatomic) PGPMPI *encryptedMPI_M;
+
 @end
 
 @implementation PGPPublicKeyEncryptedSessionKeyPacket

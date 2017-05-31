@@ -11,10 +11,10 @@
 @class PGPKeyID;
 
 @interface PGPOnePassSignaturePacket : PGPPacket
-@property (assign) UInt8 version; //  The current version is 3.
-@property (assign) PGPSignatureType signatureType;
-@property (assign) PGPHashAlgorithm hashAlgorith;
-@property (assign) PGPPublicKeyAlgorithm publicKeyAlgorithm;
-@property (assign) PGPKeyID *keyID; // 8
-@property (assign) BOOL notNested;
+@property (nonatomic) UInt8 version; //  The current version is 3.
+@property (nonatomic) PGPSignatureType signatureType;
+@property (nonatomic) PGPHashAlgorithm hashAlgorith;
+@property (nonatomic) PGPPublicKeyAlgorithm publicKeyAlgorithm;
+@property (nonatomic) PGPKeyID *keyID; // 8
+@property (nonatomic) BOOL notNested;
 @end

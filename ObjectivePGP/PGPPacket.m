@@ -12,8 +12,8 @@
 const UInt32 UnknownLength = UINT32_MAX;
 
 @interface PGPPacket ()
-@property (copy, readwrite) NSData *headerData;
-@property (copy, readwrite) NSData *bodyData;
+@property (nonatomic, copy, readwrite) NSData *headerData;
+@property (nonatomic, copy, readwrite) NSData *bodyData;
 @end
 
 @implementation PGPPacket

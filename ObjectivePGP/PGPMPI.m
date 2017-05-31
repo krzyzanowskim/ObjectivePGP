@@ -12,8 +12,8 @@
 #import "PGPMPI.h"
 
 @interface PGPMPI ()
-@property (assign, readwrite) BIGNUM *bignumRef;
-@property (assign, readwrite) NSUInteger packetLength;
+@property (nonatomic, readwrite) BIGNUM *bignumRef;
+@property (nonatomic, readwrite) NSUInteger packetLength;
 @end
 
 @implementation PGPMPI
