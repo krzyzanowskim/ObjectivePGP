@@ -41,15 +41,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)isEqual:(id)object
 {
-    if (self == object)
+    if (self == object) {
         return YES;
+    }
     
-    if (![object isKindOfClass:[PGPKey class]]) {
+    if (![object isKindOfClass:PGPKey.class]) {
         return NO;
     }
     
     //TODO: check all properties
-    PGPKey *objectKey = (PGPKey *)object;
+    let objectKey = PGPCast(object, PGPKey);
     return [self.keyID isEqual:objectKey.keyID] && (self.type == objectKey.type);
 }
 

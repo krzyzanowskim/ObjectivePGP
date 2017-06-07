@@ -829,7 +829,7 @@ NS_ASSUME_NONNULL_BEGIN
         [accumulatedPackets removeAllObjects];
     }
     
-    return [keys copy];
+    return keys;
 }
 
 - (PGPKey *)findKeyForKeyID:(PGPKeyID *)keyID

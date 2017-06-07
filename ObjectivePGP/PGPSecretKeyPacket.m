@@ -358,7 +358,7 @@
         // If string-to-key usage octet was 255 or 254, a string-to-key specifier.
         NSError *exportError = nil;
         [data appendData:[self.s2k export:&exportError]];
-        NSAssert(exportError == nil, @"export failed");
+        NSAssert(!exportError, @"export failed");
     }
 
     if (self.s2kUsage != PGPS2KUsageNone) {

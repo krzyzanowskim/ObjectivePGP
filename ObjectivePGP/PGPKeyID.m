@@ -13,27 +13,20 @@
 
 @implementation PGPKeyID
 
-- (instancetype) initWithFingerprint:(PGPFingerprint *)fingerprint {
-    if (!fingerprint)
-        return nil;
-
-    if (self = [self initWithLongKey:[fingerprint.hashedData subdataWithRange:(NSRange){fingerprint.hashLength - 8,8}]]) {
-        
-    }
-
-    return self;
-}
-
-- (instancetype) initWithLongKey:(NSData *)longKeyData
-{
+- (instancetype)initWithLongKey:(NSData *)longKeyData {
     if (longKeyData.length != 8) {
         return nil;
     }
 
-    if (self = [self init]) {
-        _longKey = longKeyData;
+    if (self = [super init]) {
+        _longKey = [longKeyData copy];
     }
     return self;
+}
+
+- (instancetype)initWithFingerprint:(PGPFingerprint *)fingerprint {
+    PGPAssertClass(fingerprint, PGPFingerprint);
+    return ((self = [self initWithLongKey:[fingerprint.hashedData subdataWithRange:(NSRange){fingerprint.hashLength - 8,8}]]));
 }
 
 - (NSString *)description
@@ -41,9 +34,8 @@
     return [self longKeyString];
 }
 
-- (NSData *)exportKeyData
-{
-    return [_longKey copy];
+- (NSData *)exportKeyData {
+    return self.longKey.copy;
 }
 
 - (BOOL)isEqual:(id)object
@@ -56,7 +48,11 @@
         return NO;
     }
 
-    PGPKeyID *other = object;
+    let other = PGPCast(object, PGPKeyID);
+    if (!other) {
+        return NO;
+    }
+
     return [self.longKey isEqualToData:other.longKey];
 }
 
@@ -67,12 +63,11 @@
 - (NSUInteger)hash {
     const NSUInteger prime = 31;
     NSUInteger result = 1;
-    result = prime * result + [_longKey hash];
+    result = prime * result + self.longKey.hash;
     return result;
 }
 
-- (NSData *)shortKey
-{
+- (NSData *)shortKey {
     return [self.longKey subdataWithRange:(NSRange){4,4}];
 }
 
@@ -84,7 +79,7 @@
     for (NSUInteger i = 0; i < sKey.length; ++i) {
         [sbuf appendFormat:@"%02X", (unsigned int)buf[i]];
     }
-    return [sbuf copy];
+    return sbuf.copy;
 }
 
 - (NSString *)longKeyString
@@ -95,7 +90,7 @@
     for (NSUInteger i = 0; i < lKey.length; ++i) {
         [sbuf appendFormat:@"%02X", (unsigned int)buf[i]];
     }
-    return [sbuf copy];
+    return sbuf.copy;
 }
 
 @end

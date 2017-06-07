@@ -30,7 +30,7 @@ NSData * _Nullable PGPCalculateHash(PGPHashAlgorithm algorithm, NOESCAPE PGPUpda
         case PGPHashRIPEMD160:
             return PGPripemd160(update);
         default:
-            assert(@"hash algorithm not supported");
+            PGPLogWarning(@"Hash algorithm code %@ is not supported.", @(algorithm));
     }
     return nil;
 }
