@@ -28,9 +28,9 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
 @property (nonatomic, readonly) PGPKeyType type;
 @property (nonatomic) PGPPacket  *primaryKeyPacket;
 @property (nonatomic, readonly) BOOL isEncrypted;
-@property (nonatomic, copy) NSArray *users; // PGPUser
-@property (nonatomic, copy) NSArray *subKeys;
-@property (nonatomic, copy) NSArray<PGPSignaturePacket *> *directSignatures;
+@property (nonatomic, copy) NSArray<PGPUser *> *users;
+@property (nonatomic, copy) NSArray *subKeys; // TODO: nullable
+@property (nonatomic, nullable, copy) NSArray<PGPSignaturePacket *> *directSignatures;
 @property (nonatomic, nullable) PGPPacket *revocationSignature;
 
 @property (nonatomic, readonly) PGPKeyID *keyID;
@@ -54,14 +54,15 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
  *
  *  @return PGPSecureKeyPacket that can be used to signing
  */
-- (PGPPacket *) signingKeyPacket;
-- (PGPPacket *) signingKeyPacketWithKeyID:(PGPKeyID *)keyID;
+@property (nonatomic, nullable, readonly) PGPPacket *signingKeyPacket;
+
+- (nullable PGPPacket *)signingKeyPacketWithKeyID:(PGPKeyID *)keyID;
 - (nullable PGPPacket *)encryptionKeyPacket:(NSError * __autoreleasing *)error;
 - (nullable PGPSecretKeyPacket *)decryptionKeyPacketWithID:(PGPKeyID *)keyID error:(NSError * __autoreleasing *)error;
 
 - (NSArray<PGPPacket *> *) allKeyPackets;
 - (PGPSymmetricAlgorithm) preferredSymmetricAlgorithm;
-+ (PGPSymmetricAlgorithm) preferredSymmetricAlgorithmForKeys:(NSArray *)keys;
++ (PGPSymmetricAlgorithm) preferredSymmetricAlgorithmForKeys:(NSArray<PGPKey *> *)keys;
 
 /**
  *  Export to transferable key packets sequence

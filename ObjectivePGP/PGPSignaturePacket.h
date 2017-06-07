@@ -11,7 +11,9 @@
 #import "PGPPacketFactory.h"
 #import "PGPKeyID.h"
 
-@class PGPKey, PGPUser, PGPUserIDPacket, PGPPublicKeyPacket;
+NS_ASSUME_NONNULL_BEGIN
+
+@class PGPKey, PGPUser, PGPUserIDPacket, PGPPublicKeyPacket, PGPCompoundKey;
 
 @interface PGPSignaturePacket : PGPPacket <NSCopying>
 
@@ -27,6 +29,13 @@
 @property (nonatomic, readonly) BOOL canBeUsedToSign;
 @property (nonatomic, readonly) BOOL canBeUsedToEncrypt;
 
+@property (nonatomic, readonly) PGPKeyID *issuerKeyID;
+@property (nonatomic, copy, readonly) NSArray<PGPPacket *> *subpackets;
+@property (nonatomic, nullable) NSDate *expirationDate;
+@property (nonatomic, readonly) BOOL isExpired;
+@property (nonatomic, nullable) NSDate *creationDate;
+@property (nonatomic, readonly) BOOL isPrimaryUserID;
+
 /**
  *  Create signature packet for signing. This is convienience constructor.
  *
@@ -35,33 +44,26 @@
  *
  *  @return Packet instance ready to call signData:secretKey
  */
-+ (PGPSignaturePacket *) signaturePacket:(PGPSignatureType)type hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm;
++ (PGPSignaturePacket *)signaturePacket:(PGPSignatureType)type hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm;
 
-- (PGPKeyID *) issuerKeyID;
-- (NSArray *) subpackets;
-- (NSArray *) subpacketsOfType:(PGPSignatureSubpacketType)type;
-- (NSDate *) expirationDate;
-- (BOOL) isExpired;
-- (NSDate *) creationDate;
-- (BOOL) isPrimaryUserID;
-
+- (NSArray *)subpacketsOfType:(PGPSignatureSubpacketType)type;
 
 /**
  *  Build signature data (signature packet with subpackets).
  *
- *  @param secretKey Secret key used to create signature
  *  @param inputData Data to sign
+ *  @param secretKey Secret key used to create signature
  *  @param error     error
  *
- *  @return Signature packet data
+ *  @return YES on success.
  */
-- (BOOL) signData:(NSData *)inputData secretKey:(PGPKey *)secretKey error:(NSError * __autoreleasing *)error;
-- (BOOL) signData:(NSData *)inputData secretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase userID:(NSString *)userID error:(NSError * __autoreleasing *)error;
+- (BOOL)signData:(NSData *)inputData secretKey:(PGPKey *)secretKey error:(NSError * __autoreleasing *)error DEPRECATED_ATTRIBUTE;
+- (BOOL)signData:(NSData *)inputData usingKey:(PGPCompoundKey *)key passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error;
 
-
-- (BOOL) verifyData:(NSData *)inputData  withKey:(PGPKey *)publicKey error:(NSError * __autoreleasing *)error;
-- (BOOL) verifyData:(NSData *)inputData  withKey:(PGPKey *)publicKey userID:(NSString *)userID error:(NSError * __autoreleasing *)error;
-- (BOOL) verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(NSString *)userID error:(NSError * __autoreleasing *)error;
-
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey error:(NSError * __autoreleasing *)error;
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error;
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -15,19 +15,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype) initWithPacket:(PGPPacket *)packet
 {
-    if (self = [self init]) {
+    if ((self = [super init])) {
         self.primaryKeyPacket = packet;
     }
     return self;
 }
 
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"%@ %@",[super description], [self.primaryKeyPacket description]];
+- (NSString *)description {
+    return [NSString stringWithFormat:@"%@ %@",super.description, self.primaryKeyPacket.description];
 }
 
-- (PGPKeyID *)keyID
-{
+- (PGPKeyID *)keyID {
     //note: public key packet because this is main class for public and secret class
     let primaryKeyPacket = PGPCast(self.primaryKeyPacket, PGPPublicKeyPacket);
     NSCAssert(primaryKeyPacket, @"Invalid packet");

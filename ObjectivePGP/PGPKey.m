@@ -26,9 +26,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype) initWithPackets:(NSArray<PGPPacket *> *)packets
 {
     if (self = [self init]) {
-        _subKeys = [NSArray array];
-        _directSignatures = [NSArray array];
-        _users = [NSArray array];
+        _subKeys = [NSArray<PGPSubKey *> array];
+        _directSignatures = [NSArray<PGPSignaturePacket *> array];
+        _users = [NSArray<PGPUser *> array];
         [self loadPackets:packets];
     }
     return self;
@@ -198,8 +198,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // signature packet that is available for signing data
-- (PGPPacket *) signingKeyPacket
-{
+- (nullable PGPPacket *)signingKeyPacket {
     //  It's private key for sign and public for verify as so thi can't be checked here
     
     NSAssert(self.type == PGPKeySecret, @"Need secret key to sign");
@@ -211,8 +210,7 @@ NS_ASSUME_NONNULL_BEGIN
     // check primary user self certificates
     PGPSignaturePacket *primaryUserSelfCertificate = nil;
     [self primaryUserAndSelfCertificate:&primaryUserSelfCertificate];
-    if (primaryUserSelfCertificate)
-    {
+    if (primaryUserSelfCertificate) {
         if (primaryUserSelfCertificate.canBeUsedToSign) {
             return self.primaryKeyPacket;
         }
@@ -229,7 +227,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // signature packet that is available for verifying signature with a keyID
-- (PGPPacket *) signingKeyPacketWithKeyID:(PGPKeyID *)keyID
+- (nullable PGPPacket *)signingKeyPacketWithKeyID:(PGPKeyID *)keyID
 {
     // check primary user self certificates
     PGPSignaturePacket *primaryUserSelfCertificate = nil;
@@ -365,7 +363,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Verification
 
 // Returns primary user with self certificate
-- (PGPUser *) primaryUserAndSelfCertificate:(PGPSignaturePacket * __autoreleasing *)selfCertificateOut
+- (PGPUser *)primaryUserAndSelfCertificate:(PGPSignaturePacket * __autoreleasing *)selfCertificateOut
 {
     PGPUser *foundUser = nil;
 
@@ -396,14 +394,14 @@ NS_ASSUME_NONNULL_BEGIN
     return [[self class] preferredSymmetricAlgorithmForKeys:@[self]];
 }
 
-+ (PGPSymmetricAlgorithm) preferredSymmetricAlgorithmForKeys:(NSArray *)keys
++ (PGPSymmetricAlgorithm) preferredSymmetricAlgorithmForKeys:(NSArray<PGPKey *> *)keys
 {
     // 13.2.  Symmetric Algorithm Preferences
     // Since TripleDES is the MUST-implement algorithm, if it is not explicitly in the list, it is tacitly at the end.
 
-    NSMutableArray *preferecesArray = [NSMutableArray array];
+    let preferecesArray = [NSMutableArray<NSArray<NSNumber *> *> array];
     for (PGPKey *key in keys) {
-        NSMutableArray *keyAlgorithms = [NSMutableArray array];
+        let keyAlgorithms = [NSMutableArray<NSNumber *> array];
         
         PGPSignaturePacket *selfCertificate = nil;
         PGPUser *primaryUser = [key primaryUserAndSelfCertificate:&selfCertificate];
@@ -426,7 +424,7 @@ NS_ASSUME_NONNULL_BEGIN
     
     // intersect
     if (preferecesArray.count > 0) {
-        NSMutableOrderedSet *set = [NSMutableOrderedSet orderedSetWithArray:preferecesArray[0]];
+        let set = [NSMutableOrderedSet<NSNumber *> orderedSetWithArray:preferecesArray[0]];
         for (NSArray *prefArray in preferecesArray) {
             [set intersectSet:[NSSet setWithArray:prefArray]];
         }

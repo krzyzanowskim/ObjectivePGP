@@ -9,6 +9,7 @@
 #import "ObjectivePGP.h"
 #import "PGPPacketFactory.h"
 #import "PGPKey.h"
+#import "PGPCompoundKey.h"
 #import "PGPSubKey.h"
 #import "PGPSignaturePacket.h"
 #import "PGPPacketFactory.h"
@@ -112,6 +113,14 @@ NS_ASSUME_NONNULL_BEGIN
     }];
     return foundKey;
 }
+
+- (nullable PGPCompoundKey *)getKeyForIdentifier:(NSString *)keyIdentifier {
+    let secretKey = [self getKeyForIdentifier:keyIdentifier type:PGPKeySecret];
+    let publicKey = [self getKeyForIdentifier:keyIdentifier type:PGPKeyPublic];
+
+    return [[PGPCompoundKey alloc] initWithSecretKey:secretKey publicKey:publicKey];
+}
+
 
 - (nonnull NSArray<PGPKey *> *) getKeysOfType:(PGPKeyType)keyType {
     NSMutableArray *keysArray = [NSMutableArray<PGPKey *> array];
@@ -449,13 +458,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Sign & Verify
 
-- (nullable NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing *)error
+- (nullable NSData *)signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing *)error
 {
     return [self signData:dataToSign withKeyForUserID:userID passphrase:passphrase detached:YES error:error];
 }
 
-- (nullable NSData *) signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID passphrase:(nullable NSString *)passphrase detached:(BOOL)detached error:(NSError * __autoreleasing *)error
-{
+- (nullable NSData *)signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID passphrase:(nullable NSString *)passphrase detached:(BOOL)detached error:(NSError * __autoreleasing *)error {
     PGPKey *key = [[self getKeysForUserID:userID] lastObject];
     NSAssert(key, @"Key is missing");
 
@@ -474,18 +482,23 @@ NS_ASSUME_NONNULL_BEGIN
     return [self signData:dataToSign usingSecretKey:secretKey passphrase:passphrase detached:YES error:error];
 }
 
-- (nullable NSData *) signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(nullable NSString *)passphrase detached:(BOOL)detached error:(NSError * __autoreleasing *)error
+- (nullable NSData *)signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(nullable NSString *)passphrase detached:(BOOL)detached error:(NSError * __autoreleasing *)error
 {
     //TODO: configurable defaults for prefered hash
     return [self signData:dataToSign usingSecretKey:secretKey passphrase:passphrase hashAlgorithm:PGPHashSHA512 detached:detached error:error];
 }
 
-- (nullable NSData *)signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase hashAlgorithm:(PGPHashAlgorithm)preferedHashAlgorithm detached:(BOOL)detached error:(NSError * __autoreleasing *)error
+- (nullable NSData *) signData:(NSData *)dataToSign usingKey:(PGPCompoundKey *)key passphrase:(nullable NSString *)passphrase detached:(BOOL)detached error:(NSError * __autoreleasing *)error
 {
+    //TODO: configurable defaults for prefered hash
+    return [self signData:dataToSign usingKey:key passphrase:passphrase hashAlgorithm:PGPHashSHA512 detached:detached error:error];
+}
+
+- (nullable NSData *)signData:(NSData *)dataToSign usingKey:(PGPCompoundKey *)key passphrase:(NSString *)passphrase hashAlgorithm:(PGPHashAlgorithm)preferedHashAlgorithm detached:(BOOL)detached error:(NSError * __autoreleasing *)error {
     PGPSignaturePacket *signaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureBinaryDocument
                                                                 hashAlgorithm:preferedHashAlgorithm];
 
-    if (![signaturePacket signData:dataToSign secretKey:secretKey passphrase:passphrase userID:nil error:error]) {
+    if (![signaturePacket signData:dataToSign usingKey:key passphrase:passphrase userID:nil error:error]) {
         PGPLogWarning(@"Missing signature");
         return nil;
     }
@@ -521,12 +534,12 @@ NS_ASSUME_NONNULL_BEGIN
             }
             return nil;
         }
-        
+
         // Literal
         PGPLiteralPacket *literalPacket = [PGPLiteralPacket literalPacket:PGPLiteralPacketBinary withData:dataToSign];
         literalPacket.filename = nil;
         literalPacket.timestamp = [NSDate date];
-        
+
         NSError *literalExportError = nil;
         [signedMessage appendData:[literalPacket exportPacket:&literalExportError]];
         NSAssert(!literalExportError, @"Missing literal data");
@@ -536,30 +549,36 @@ NS_ASSUME_NONNULL_BEGIN
             }
             return nil;
         }
-        
-//        // Compressed
-//        NSError *literalExportError = nil;
-//        PGPCompressedPacket *compressedPacket = [[PGPCompressedPacket alloc] initWithData:[literalPacket exportPacket:&literalExportError] type:PGPCompressionBZIP2];
-//        NSAssert(!literalExportError, @"Missing literal data");
-//        if (literalExportError) {
-//            if (error) {
-//                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Missing literal data"}];
-//            }
-//            return nil;
-//        }
-//
-//        NSError *compressedExportError = nil;
-//        [signedMessage appendData:[compressedPacket exportPacket:&compressedExportError]];
-//        NSAssert(!compressedExportError, @"Missing compressed data");
-//        if (compressedExportError) {
-//            if (error) {
-//                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Missing compressed data"}];
-//            }
-//            return nil;
-//        }
+
+        //        // Compressed
+        //        NSError *literalExportError = nil;
+        //        PGPCompressedPacket *compressedPacket = [[PGPCompressedPacket alloc] initWithData:[literalPacket exportPacket:&literalExportError] type:PGPCompressionBZIP2];
+        //        NSAssert(!literalExportError, @"Missing literal data");
+        //        if (literalExportError) {
+        //            if (error) {
+        //                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Missing literal data"}];
+        //            }
+        //            return nil;
+        //        }
+        //
+        //        NSError *compressedExportError = nil;
+        //        [signedMessage appendData:[compressedPacket exportPacket:&compressedExportError]];
+        //        NSAssert(!compressedExportError, @"Missing compressed data");
+        //        if (compressedExportError) {
+        //            if (error) {
+        //                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Missing compressed data"}];
+        //            }
+        //            return nil;
+        //        }
     }
     [signedMessage appendData:signaturePacketData];
     return [signedMessage copy];
+}
+
+- (nullable NSData *)signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(NSString *)passphrase hashAlgorithm:(PGPHashAlgorithm)preferedHashAlgorithm detached:(BOOL)detached error:(NSError * __autoreleasing *)error
+{
+    let compoundKey = [[PGPCompoundKey alloc] initWithSecretKey:secretKey publicKey:nil];
+    return [self signData:dataToSign usingKey:compoundKey passphrase:passphrase detached:detached error:error];
 }
 
 - (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData error:(NSError * __autoreleasing *)error
@@ -804,13 +823,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (NSArray<PGPKey *> *) readKeysFromData:(NSData *)messageData
 {
-    NSMutableArray *keys = [NSMutableArray array];
-    NSMutableArray *accumulatedPackets = [NSMutableArray array];
+    let keys = [NSMutableArray<PGPKey *> array];
+    let accumulatedPackets = [NSMutableArray<PGPPacket *> array];
     NSUInteger offset = 0;
 
     while (offset < messageData.length) {
-        
-        NSUInteger nextPacketOffset;
+        NSUInteger nextPacketOffset = 0;
         PGPPacket *packet = [PGPPacketFactory packetWithData:messageData offset:offset nextPacketOffset:&nextPacketOffset];
         if (packet) {
             if ((accumulatedPackets.count > 1) && ((packet.tag == PGPPublicKeyPacketTag) || (packet.tag == PGPSecretKeyPacketTag))) {

@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "PGPTypes.h"
 #import "PGPKey.h"
+#import "PGPCompoundKey.h"
 #import "PGPUser.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -37,11 +38,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable PGPKey *)getKeyForIdentifier:(NSString *)keyIdentifier type:(PGPKeyType)keyType;
 - (nullable PGPKey *)getKeyForKeyID:(PGPKeyID *)searchKeyID type:(PGPKeyType)keyType;
+- (nullable PGPCompoundKey *)getKeyForIdentifier:(NSString *)keyIdentifier;
 - (nullable NSArray<PGPKey *> *) getKeysForUserID:(NSString *)userID;
 - (NSArray<PGPKey *> *) getKeysOfType:(PGPKeyType)keyType;
 
-- (nullable NSData *)signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(nullable NSString *)passphrase  error:(NSError * __autoreleasing __nullable * __nullable)error;
-- (nullable NSData *)signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(nullable NSString *)passphrase detached:(BOOL)detached  error:(NSError * __autoreleasing __nullable * __nullable)error;
+- (nullable NSData *)signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(nullable NSString *)passphrase  error:(NSError * __autoreleasing __nullable * __nullable)error DEPRECATED_MSG_ATTRIBUTE("Use PGPCompoundKey version. ");
+- (nullable NSData *)signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(nullable NSString *)passphrase detached:(BOOL)detached  error:(NSError * __autoreleasing __nullable * __nullable)error DEPRECATED_MSG_ATTRIBUTE("Use PGPCompoundKey version.");
+
+- (nullable NSData *)signData:(NSData *)dataToSign usingKey:(PGPCompoundKey *)key passphrase:(nullable NSString *)passphrase detached:(BOOL)detached error:(NSError * __autoreleasing *)error;
+
 - (nullable NSData *)signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing __nullable * __nullable)error;
 - (nullable NSData *)signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID passphrase:(nullable NSString *)passphrase detached:(BOOL)detached error:(NSError * __autoreleasing __nullable * __nullable)error;
 

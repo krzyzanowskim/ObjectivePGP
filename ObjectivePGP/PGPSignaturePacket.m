@@ -11,6 +11,7 @@
 #import "PGPSignatureSubpacket.h"
 #import "PGPUserIDPacket.h"
 #import "PGPKey.h"
+#import "PGPCompoundKey.h"
 #import "PGPUser.h"
 #import "PGPSecretKeyPacket.h"
 #import "PGPPKCSEmsa.h"
@@ -23,6 +24,8 @@
 #import <openssl/bn.h>
 #import <openssl/err.h>
 #import <openssl/ssl.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface PGPSignatureSubpacket ()
 @property (nonatomic, readwrite) id value;
@@ -84,33 +87,29 @@
 
 #pragma mark - Helper properties
 
-- (PGPKeyID *)issuerKeyID
-{
+- (PGPKeyID *)issuerKeyID {
     PGPSignatureSubpacket *subpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeIssuerKeyID] firstObject];
     return subpacket.value;
 }
 
-- (NSArray *)subpackets
-{
+- (NSArray<PGPPacket *> *)subpackets {
     return [self.hashedSubpackets arrayByAddingObjectsFromArray:self.unhashedSubpackets];
 }
 
-- (NSArray *)subpacketsOfType:(PGPSignatureSubpacketType)type
-{
-    NSMutableArray *arr = [NSMutableArray array];
+- (NSArray<PGPPacket *> *)subpacketsOfType:(PGPSignatureSubpacketType)type {
+    NSMutableArray *arr = [NSMutableArray<PGPPacket *> array];
     for (PGPSignatureSubpacket *subPacket in self.subpackets) {
         if (subPacket.type == type) {
             [arr addObject:subPacket];
         }
     }
-    return [arr copy];
+    return arr;
 }
 
-- (NSDate *)expirationDate
-{
+- (nullable NSDate *)expirationDate {
     PGPSignatureSubpacket *creationDateSubpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeSignatureCreationTime] firstObject];
     PGPSignatureSubpacket *validityPeriodSubpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeSignatureExpirationTime] firstObject];
-    if (validityPeriodSubpacket == nil ) {
+    if (!validityPeriodSubpacket) {
         validityPeriodSubpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeKeyExpirationTime] firstObject];
     }
 
@@ -120,14 +119,12 @@
         return nil;
     }
 
-    NSDate *expirationDate = [creationDate dateByAddingTimeInterval:validityPeriod.unsignedIntegerValue];
-    return expirationDate;
+    return [creationDate dateByAddingTimeInterval:validityPeriod.unsignedIntegerValue];
 }
 
-- (BOOL) isExpired
-{
+- (BOOL) isExpired {
     // is no expiration date then signature never expires
-    NSDate *expirationDate = [self expirationDate];
+    let expirationDate = self.expirationDate;
     if (!expirationDate) {
         return NO;
     }
@@ -138,7 +135,7 @@
     return NO;
 }
 
-- (NSDate *) creationDate
+- (nullable NSDate *)creationDate
 {
     PGPSignatureSubpacket *creationDateSubpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeSignatureCreationTime] lastObject];
     return creationDateSubpacket.value;
@@ -164,8 +161,7 @@
     return NO;
 }
 
-- (BOOL)canBeUsedToEncrypt
-{
+- (BOOL)canBeUsedToEncrypt {
     BOOL result = NO;
     PGPSignatureSubpacket *subpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeKeyFlags] firstObject];
     NSArray *flags = subpacket.value;
@@ -242,21 +238,18 @@
 
 #pragma mark - Verify
 
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey error:(NSError * __autoreleasing *)error;
-{
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey error:(NSError * __autoreleasing *)error; {
     return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:nil error:error];
 }
 
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey userID:(NSString *)userID error:(NSError * __autoreleasing *)error;
-{
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error; {
     return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:userID error:error];
 }
 
 // Opposite to sign, with readed data (not produced)
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(NSString *)userID error:(NSError * __autoreleasing *)error
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error
 {
-    if (!signingKeyPacket)
-    {
+    if (!signingKeyPacket) {
         // no signing packet was found, this we have no valid signature
         return NO;
     }
@@ -331,18 +324,27 @@
 // 5.2.4.  Computing Signatures
 // http://tools.ietf.org/html/rfc4880#section-5.2.4
 // @see https://github.com/singpolyma/openpgp-spec/blob/master/key-signatures
-- (BOOL)signData:(NSData *)inputData  secretKey:(PGPKey *)secretKey error:(NSError * __autoreleasing *)error {
-    return [self signData:inputData secretKey:secretKey passphrase:nil userID:nil error:error];
+- (BOOL)signData:(NSData *)inputData secretKey:(PGPKey *)secretKey error:(NSError * __autoreleasing *)error {
+    let key = [[PGPCompoundKey alloc] initWithSecretKey:secretKey publicKey:nil];
+    return [self signData:inputData usingKey:key passphrase:nil userID:nil error:error];
 }
 
-- (BOOL)signData:(NSData *)inputData secretKey:(PGPKey *)secretKey passphrase:(nullable NSString *)passphrase userID:(NSString *)userID error:(NSError * __autoreleasing *)error {
-    NSAssert(secretKey.type == PGPKeySecret,@"Need secret key");
+- (BOOL)signData:(NSData *)inputData usingKey:(PGPCompoundKey *)key passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error {
+    PGPAssertClass(inputData, NSData);
+
+    let secretKey = key.secretKey;
+    let publicKey = key.publicKey;
+
+    if (!secretKey || !publicKey) {
+        PGPLogDebug(@"Missing valid key.");
+        return NO;
+    }
+
     PGPAssertClass(secretKey.primaryKeyPacket, PGPSecretKeyPacket); // Signing key packet not found
 
-    var signingKeyPacket = PGPCast(secretKey.signingKeyPacket, PGPSecretKeyPacket);
+    var signingKeyPacket = key.signingSecretKey; //PGPCast(secretKey.signingKeyPacket, PGPSecretKeyPacket);
     if (!signingKeyPacket) {
         // As of PGP Desktop. The signing signature may be missing.
-        //TODO: see if corresponding public key has the signing key packet and use it
         PGPLogDebug(@"Missing signature for the secret key %@", secretKey.keyID);
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"No signing signature found"}];
@@ -799,5 +801,6 @@
     return [data copy];
 }
 
-
 @end
+
+NS_ASSUME_NONNULL_END

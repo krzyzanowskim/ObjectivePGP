@@ -11,15 +11,17 @@
 
 @interface PGPKeyID : NSObject
 
-@property (readonly, nonatomic) NSData *longKey;
+@property (readonly, copy, nonatomic) NSData *longKey;
 @property (readonly, nonatomic) NSString *longKeyString;
 @property (readonly, nonatomic) NSData *shortKey;
 @property (readonly, nonatomic) NSString *shortKeyString;
 
-- (instancetype) initWithFingerprint:(PGPFingerprint *)fingerprint;
-- (instancetype) initWithLongKey:(NSData *)longKeyData;
+PGP_EMPTY_INIT_UNAVAILABLE
 
-- (BOOL) isEqualToKeyID:(PGPKeyID *)keyID;
+- (instancetype)initWithLongKey:(NSData *)longKeyData NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithFingerprint:(PGPFingerprint *)fingerprint;
+
+- (BOOL)isEqualToKeyID:(PGPKeyID *)keyID;
 
 - (NSData *)exportKeyData;
 
