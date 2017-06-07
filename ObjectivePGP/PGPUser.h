@@ -9,9 +9,12 @@
 #import <Foundation/Foundation.h>
 #import "PGPPacket.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class PGPUserIDPacket, PGPUserAttributePacket, PGPSignaturePacket, PGPKey;
 
 @interface PGPUser : NSObject
+
 @property (nonatomic, copy) NSString *userID;
 @property (nonatomic) PGPUserAttributePacket *userAttribute;
 @property (nonatomic) NSArray<PGPSignaturePacket *> *selfCertifications;
@@ -24,7 +27,8 @@
 PGP_EMPTY_INIT_UNAVAILABLE
 
 - (instancetype)initWithUserIDPacket:(PGPUserIDPacket *)userPacket NS_DESIGNATED_INITIALIZER;
-- (PGPSignaturePacket *)validSelfCertificate:(PGPKey *)key;
-
+- (nullable PGPSignaturePacket *)validSelfCertificate:(PGPKey *)key;
 
 @end
+
+NS_ASSUME_NONNULL_END

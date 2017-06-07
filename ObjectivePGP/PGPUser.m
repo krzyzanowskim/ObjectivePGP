@@ -13,6 +13,8 @@
 #import "PGPKey.h"
 #import "PGPUserAttributePacket.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @implementation PGPUser
 
 - (instancetype) initWithUserIDPacket:(PGPUserIDPacket *)userPacket {
@@ -130,7 +132,7 @@
 //};
 
 // Returns the most significant (latest valid) self signature of the user
-- (PGPSignaturePacket *) validSelfCertificate:(PGPKey *)key
+- (nullable PGPSignaturePacket *)validSelfCertificate:(PGPKey *)key
 {
     if (self.selfCertifications.count == 0) {
         return nil;
@@ -171,3 +173,6 @@
 }
 
 @end
+
+NS_ASSUME_NONNULL_END
+

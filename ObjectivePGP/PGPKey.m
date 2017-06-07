@@ -363,7 +363,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Verification
 
 // Returns primary user with self certificate
-- (PGPUser *)primaryUserAndSelfCertificate:(PGPSignaturePacket * __autoreleasing *)selfCertificateOut
+- (nullable PGPUser *)primaryUserAndSelfCertificate:(PGPSignaturePacket * __autoreleasing *)selfCertificateOut
 {
     PGPUser *foundUser = nil;
 
@@ -372,7 +372,7 @@ NS_ASSUME_NONNULL_BEGIN
             continue;
         }
 
-        PGPSignaturePacket *selfCertificate = [user validSelfCertificate:self];
+        let selfCertificate = [user validSelfCertificate:self];
         if (!selfCertificate) {
             continue;
         }
@@ -404,7 +404,7 @@ NS_ASSUME_NONNULL_BEGIN
         let keyAlgorithms = [NSMutableArray<NSNumber *> array];
         
         PGPSignaturePacket *selfCertificate = nil;
-        PGPUser *primaryUser = [key primaryUserAndSelfCertificate:&selfCertificate];
+        let primaryUser = [key primaryUserAndSelfCertificate:&selfCertificate];
         if (primaryUser && selfCertificate) {
             PGPSignatureSubpacket *subpacket = [[selfCertificate subpacketsOfType:PGPSignatureSubpacketTypePreferredSymetricAlgorithm] firstObject];
             NSArray *preferencesArray = subpacket.value;

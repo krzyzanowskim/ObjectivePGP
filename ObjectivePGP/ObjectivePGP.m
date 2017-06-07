@@ -603,7 +603,7 @@ NS_ASSUME_NONNULL_BEGIN
     PGPSignaturePacket *signaturePacket = packet;
     PGPKeyID *issuerKeyID = [signaturePacket issuerKeyID];
 
-    PGPKey *issuerKey = [self findKeyForKeyID:issuerKeyID];
+    let issuerKey = [self findKeyForKeyID:issuerKeyID];
     if (!issuerKey) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Missing issuer"}];
@@ -850,12 +850,11 @@ NS_ASSUME_NONNULL_BEGIN
     return keys;
 }
 
-- (PGPKey *)findKeyForKeyID:(PGPKeyID *)keyID
-{
+- (nullable PGPKey *)findKeyForKeyID:(PGPKeyID *)keyID {
     PGPKey *foundKey = nil;
     for (PGPKey *key in self.keys) {
         for (PGPPublicKeyPacket *keyPacket in key.allKeyPackets) {
-            if (![keyPacket isKindOfClass:[PGPPublicKeyPacket class]]) {
+            if (![keyPacket isKindOfClass:PGPPublicKeyPacket.class]) {
                 continue;
             }
 
