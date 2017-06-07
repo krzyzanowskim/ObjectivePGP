@@ -10,6 +10,7 @@
 #import <Foundation/Foundation.h>
 #import "PGPPacketFactory.h"
 #import "PGPKeyID.h"
+#import "PGPSignatureSubpacket.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -46,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (PGPSignaturePacket *)signaturePacket:(PGPSignatureType)type hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm;
 
-- (NSArray *)subpacketsOfType:(PGPSignatureSubpacketType)type;
+- (NSArray<PGPSignatureSubpacket *> *)subpacketsOfType:(PGPSignatureSubpacketType)type;
 
 /**
  *  Build signature data (signature packet with subpackets).

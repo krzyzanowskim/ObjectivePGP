@@ -96,8 +96,8 @@ NS_ASSUME_NONNULL_BEGIN
     return [self.hashedSubpackets arrayByAddingObjectsFromArray:self.unhashedSubpackets];
 }
 
-- (NSArray<PGPPacket *> *)subpacketsOfType:(PGPSignatureSubpacketType)type {
-    NSMutableArray *arr = [NSMutableArray<PGPPacket *> array];
+- (NSArray<PGPSignatureSubpacket *> *)subpacketsOfType:(PGPSignatureSubpacketType)type {
+    NSMutableArray *arr = [NSMutableArray<PGPSignatureSubpacket *> array];
     for (PGPSignatureSubpacket *subPacket in self.subpackets) {
         if (subPacket.type == type) {
             [arr addObject:subPacket];
