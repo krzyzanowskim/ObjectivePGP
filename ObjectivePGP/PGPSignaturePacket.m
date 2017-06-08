@@ -55,10 +55,8 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
-+ (PGPSignaturePacket *) signaturePacket:(PGPSignatureType)type hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm
-{
-    PGPSignaturePacket *signaturePacket = [[PGPSignaturePacket alloc] init];
-
++ (PGPSignaturePacket *) signaturePacket:(PGPSignatureType)type hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm {
+    let signaturePacket = [[PGPSignaturePacket alloc] init];
     signaturePacket.hashAlgoritm = hashAlgorithm;
     return signaturePacket;
 }
@@ -113,8 +111,8 @@ NS_ASSUME_NONNULL_BEGIN
         validityPeriodSubpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeKeyExpirationTime] firstObject];
     }
 
-    NSDate *creationDate = creationDateSubpacket.value;
-    NSNumber *validityPeriod = validityPeriodSubpacket.value;
+    let creationDate = PGPCast(creationDateSubpacket.value, NSDate);
+    let validityPeriod = PGPCast(validityPeriodSubpacket.value, NSNumber);
     if (!validityPeriod || validityPeriod.unsignedIntegerValue == 0) {
         return nil;
     }
@@ -122,21 +120,20 @@ NS_ASSUME_NONNULL_BEGIN
     return [creationDate dateByAddingTimeInterval:validityPeriod.unsignedIntegerValue];
 }
 
-- (BOOL) isExpired {
+- (BOOL)isExpired {
     // is no expiration date then signature never expires
     let expirationDate = self.expirationDate;
     if (!expirationDate) {
         return NO;
     }
 
-    if ([expirationDate compare:[NSDate date]] == NSOrderedAscending) {
+    if ([expirationDate compare:NSDate.date] == NSOrderedAscending) {
         return YES;
     }
     return NO;
 }
 
-- (nullable NSDate *)creationDate
-{
+- (nullable NSDate *)creationDate {
     PGPSignatureSubpacket *creationDateSubpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeSignatureCreationTime] lastObject];
     return creationDateSubpacket.value;
 }
@@ -335,7 +332,7 @@ NS_ASSUME_NONNULL_BEGIN
     let secretKey = key.secretKey;
     let publicKey = key.publicKey;
 
-    if (!secretKey || !publicKey) {
+    if (!secretKey && !publicKey) {
         PGPLogDebug(@"Missing valid key.");
         return NO;
     }

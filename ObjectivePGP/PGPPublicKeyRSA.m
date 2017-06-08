@@ -57,8 +57,8 @@
     // decrypted encoded EME
     NSData *encryptedEm = [NSData dataWithBytes:encrypted_em length:em_len];
     
-    RSA_free(rsa);
     rsa->n = rsa->e = NULL;
+    RSA_free(rsa);
     free(encrypted_em);
     
     return encryptedEm;
@@ -119,16 +119,15 @@
     
     
     free(outbuf);
-    RSA_free(rsa);
     rsa->n = rsa->d = rsa->p = rsa->q = rsa->e = NULL;
-    
+    RSA_free(rsa);
+
     return decryptedData;
 }
 
 // sign
-+ (NSData *) privateEncrypt:(NSData *)toEncrypt withSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket
-{
-    RSA *rsa = RSA_new();
++ (NSData *) privateEncrypt:(NSData *)toEncrypt withSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket {
+    let rsa = RSA_new();
     if (!rsa) {
         return nil;
     }
