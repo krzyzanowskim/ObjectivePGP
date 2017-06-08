@@ -495,11 +495,11 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (nullable NSData *)signData:(NSData *)dataToSign usingKey:(PGPCompoundKey *)key passphrase:(NSString *)passphrase hashAlgorithm:(PGPHashAlgorithm)preferedHashAlgorithm detached:(BOOL)detached error:(NSError * __autoreleasing *)error {
-    PGPSignaturePacket *signaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureBinaryDocument
+    let signaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureBinaryDocument
                                                                 hashAlgorithm:preferedHashAlgorithm];
 
     if (![signaturePacket signData:dataToSign usingKey:key passphrase:passphrase userID:nil error:error]) {
-        PGPLogWarning(@"Missing signature");
+        PGPLogDebug(@"Can't sign data");
         return nil;
     }
 
