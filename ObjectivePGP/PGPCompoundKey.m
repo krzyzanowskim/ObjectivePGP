@@ -8,6 +8,7 @@
 
 #import "PGPCompoundKey.h"
 #import "PGPSubKey.h"
+#import "PGPSecretKeyPacket.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -29,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     // find secret key based on the public key signature (unless self signed secret key)
     if (self.secretKey.signingKeyPacket) {
-        return self.signingSecretKey;
+        return PGPCast(self.secretKey.signingKeyPacket, PGPSecretKeyPacket);
     }
 
     for (PGPSubKey *subKey in self.publicKey.subKeys) {
