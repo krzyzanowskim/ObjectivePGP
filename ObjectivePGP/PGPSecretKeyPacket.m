@@ -176,7 +176,10 @@
         {
             // a 20-octet SHA-1 hash of the plaintext of the algorithm-specific portion.
             NSUInteger hashSize = [PGPCryptoUtils hashSizeOfHashAlhorithm:PGPHashSHA1];
-            NSAssert(hashSize <= 20, @"invalid hashSize");
+            if (hashSize == NSNotFound) {
+                PGPLogWarning(@"Invalid hash size");
+                return 0;
+            }
 
             NSData *clearTextData = [data subdataWithRange:(NSRange) {0, data.length - hashSize}];
             NSData *hashData = [data subdataWithRange:(NSRange){data.length - hashSize, hashSize}];

@@ -60,8 +60,9 @@
     }
     
     NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:symmetricAlgorithm];
-    NSAssert(keySize <= 32, @"invalid keySize");
-    
+    NSAssert(keySize <= 32, @"Invalid key size");
+    NSAssert(sessionKeyData.length >= keySize, @"Invalid session key.");
+
     unsigned char *iv = calloc(1, ivData.length);
     if (!iv) {
         return nil;
