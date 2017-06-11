@@ -52,6 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
         }
     }
 
+    PGPLogDebug(@"Need secret key to sign");
     return nil;
 }
 

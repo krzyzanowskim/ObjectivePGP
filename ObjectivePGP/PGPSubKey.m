@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPSubKey
 
-- (instancetype) initWithPacket:(PGPPacket *)packet
+- (instancetype)initWithPacket:(PGPPacket *)packet
 {
     if ((self = [super init])) {
         self.primaryKeyPacket = packet;
@@ -32,11 +32,8 @@ NS_ASSUME_NONNULL_BEGIN
     return [[PGPKeyID alloc] initWithFingerprint:primaryKeyPacket.fingerprint];
 }
 
-- (NSArray<PGPPacket *> *) allPackets
-{
-    NSMutableArray *arr = [NSMutableArray array];
-
-    [arr addObject:self.primaryKeyPacket];
+- (NSArray<PGPPacket *> *)allPackets {
+    let arr = [NSMutableArray<PGPPacket *> arrayWithObject:self.primaryKeyPacket];
 
     if (self.revocationSignature) {
         [arr addObject:self.revocationSignature];
@@ -46,8 +43,9 @@ NS_ASSUME_NONNULL_BEGIN
         [arr addObject:self.bindingSignature];
     }
 
-    return [arr copy];
+    return arr;
 }
+
 @end
 
 NS_ASSUME_NONNULL_END

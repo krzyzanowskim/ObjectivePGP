@@ -10,16 +10,20 @@
 #import "PGPTypes.h"
 #import "PGPS2K.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface PGPCryptoCFB : NSObject
 
-+ (NSData *) decryptData:(NSData *)encryptedData
++ (nullable NSData *)decryptData:(NSData *)encryptedData
           sessionKeyData:(NSData *)sessionKeyData // s2k produceSessionKeyWithPassphrase
       symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm
                       iv:(NSData *)ivData;
 
-+ (NSData *) encryptData:(NSData *)encryptedData
++ (nullable NSData *)encryptData:(NSData *)encryptedData
           sessionKeyData:(NSData *)sessionKeyData // s2k produceSessionKeyWithPassphrase
       symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm
                       iv:(NSData *)ivData;
 
 @end
+
+NS_ASSUME_NONNULL_END

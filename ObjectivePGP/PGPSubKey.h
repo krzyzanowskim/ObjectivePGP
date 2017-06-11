@@ -24,7 +24,7 @@ PGP_EMPTY_INIT_UNAVAILABLE
 
 - (instancetype)initWithPacket:(PGPPacket *)packet NS_DESIGNATED_INITIALIZER;
 
-- (NSArray<PGPPacket *> *) allPackets;
+- (NSArray<PGPPacket *> *)allPackets;
 
 @end
 

@@ -328,7 +328,7 @@ NS_ASSUME_NONNULL_BEGIN
                 plaintextData = literalPacket.literalRawData;
                 break;
             case PGPSignaturePacketTag:
-                signaturePacket = (PGPSignaturePacket *)packet;
+                signaturePacket = PGPCast(packet,PGPSignaturePacket);
                 break;
             default:
                 if (error) {
@@ -600,8 +600,12 @@ NS_ASSUME_NONNULL_BEGIN
         return NO;
     }
 
-    PGPSignaturePacket *signaturePacket = packet;
-    PGPKeyID *issuerKeyID = [signaturePacket issuerKeyID];
+    let signaturePacket = PGPCast(packet, PGPSignaturePacket);
+    if (!signaturePacket) {
+        return NO;
+    }
+
+    let issuerKeyID = [signaturePacket issuerKeyID];
 
     let issuerKey = [self findKeyForKeyID:issuerKeyID];
     if (!issuerKey) {
@@ -632,7 +636,10 @@ NS_ASSUME_NONNULL_BEGIN
         return NO;
     }
 
-    PGPSignaturePacket *signaturePacket = packet;
+    let signaturePacket = PGPCast(packet, PGPSignaturePacket);
+    if (!signaturePacket) {
+        return NO;
+    }
     BOOL verified = [signaturePacket verifyData:signedData withKey:publicKey userID:nil error:error];
 
     return verified;
@@ -666,10 +673,10 @@ NS_ASSUME_NONNULL_BEGIN
 
         for (PGPPacket *packet in accumulatedPackets) {
             if (packet.tag == PGPSignaturePacketTag) {
-                signaturePacket = (PGPSignaturePacket *)packet;
+                signaturePacket = PGPCast(packet, PGPSignaturePacket);
             }
             if (packet.tag == PGPLiteralDataPacketTag) {
-                literalDataPacket = (PGPLiteralPacket *)packet;
+                literalDataPacket = PGPCast(packet, PGPLiteralPacket);
             }
         }
 

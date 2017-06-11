@@ -80,7 +80,7 @@
 
     // header not allways match because export new format while input can be old format
     NSAssert([secretKeyPacketData isEqualToData:self.bodyData], @"Secret key not match");
-    return [data copy];
+    return data;
 }
 
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
@@ -106,7 +106,7 @@
         self.s2k.hashAlgorithm = PGPHashMD5;
     }
 
-    NSData *encryptedData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
+    let encryptedData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
     if (self.isEncryptedWithPassword) {
         position = position + [self parseEncryptedPart:encryptedData error:error];
     } else {
@@ -165,9 +165,9 @@
  *
  *  @return length
  */
-- (NSUInteger) parseUnencryptedPart:(NSData *)data error:(NSError * __autoreleasing *)error
+- (NSUInteger)parseUnencryptedPart:(NSData *)data error:(NSError * __autoreleasing *)error
 {
-    __unused NSUInteger position = 0;
+    NSUInteger position = 0;
 
     // check hash before read actual data
     // hash is physically located at the end of dataBody
@@ -181,9 +181,9 @@
                 return 0;
             }
 
-            NSData *clearTextData = [data subdataWithRange:(NSRange) {0, data.length - hashSize}];
-            NSData *hashData = [data subdataWithRange:(NSRange){data.length - hashSize, hashSize}];
-            NSData *calculatedHashData = [clearTextData pgp_SHA1];
+            let clearTextData = [data subdataWithRange:(NSRange) {0, data.length - hashSize}];
+            let hashData = [data subdataWithRange:(NSRange){data.length - hashSize, hashSize}];
+            let calculatedHashData = [clearTextData pgp_SHA1];
 
             if (![hashData isEqualToData:calculatedHashData]) {
                 if (error) {
@@ -291,20 +291,21 @@
         return nil;
     }
 
-    PGPSecretKeyPacket *encryptedKey = [self copy];
+    PGPSecretKeyPacket *encryptedKey = self.copy;
+    let encryptionSymmetricAlgorithm = encryptedKey.symmetricAlgorithm;
 
     // Keysize
-    NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:encryptedKey.symmetricAlgorithm];
+    NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:encryptionSymmetricAlgorithm];
     NSAssert(keySize <= 32, @"invalid keySize");
 
     // Session key for password
     // producing a key to be used with a symmetric block cipher from a string of octets
-    NSData *sessionKeyData = [encryptedKey.s2k produceSessionKeyWithPassphrase:passphrase keySize:keySize];
+    let sessionKeyData = [encryptedKey.s2k produceSessionKeyWithPassphrase:passphrase keySize:keySize];
 
     // Decrypted MPIs
     NSData *decryptedData = [PGPCryptoCFB decryptData:encryptedKey.encryptedMPIsPartData
                                        sessionKeyData:sessionKeyData
-                                   symmetricAlgorithm:self.symmetricAlgorithm
+                                   symmetricAlgorithm:encryptionSymmetricAlgorithm
                                                    iv:encryptedKey.ivData];
 
 

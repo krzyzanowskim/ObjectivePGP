@@ -208,7 +208,7 @@
     XCTAssertTrue(status);
 
     // decrypt + validate decrypted message
-    NSData *decryptedData = [self.oPGP decryptData:encryptedData passphrase:@"1234" error:nil];
+    NSData *decryptedData = [self.oPGP decryptData:encryptedData passphrase:nil error:nil];
     XCTAssertNotNil(decryptedData);
     NSString *decryptedString = [[NSString alloc] initWithData:decryptedData encoding:NSASCIIStringEncoding];
     XCTAssertNotNil(decryptedString);
@@ -260,12 +260,11 @@
     
     // file encrypted
     NSString *fileEncrypted = [self.workingDirectory stringByAppendingPathComponent:@"plaintext.multiple.encrypted"];
-    NSLog(@"%@",fileEncrypted);
     BOOL status = [encryptedData writeToFile:fileEncrypted atomically:YES];
     XCTAssertTrue(status);
     
     // decrypt + validate decrypted message
-    NSData *decryptedData = [self.oPGP decryptData:encryptedData passphrase:@"1234" error:&encryptError];
+    NSData *decryptedData = [self.oPGP decryptData:encryptedData passphrase:nil error:&encryptError];
     XCTAssertNil(encryptError);
     XCTAssertNotNil(decryptedData);
     NSString *decryptedString = [[NSString alloc] initWithData:decryptedData encoding:NSASCIIStringEncoding];

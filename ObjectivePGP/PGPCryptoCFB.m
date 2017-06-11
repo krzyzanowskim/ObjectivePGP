@@ -24,28 +24,30 @@
 #include <openssl/camellia.h>
 #include <openssl/blowfish.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @implementation PGPCryptoCFB
 
-+ (NSData *) decryptData:(NSData *)encryptedData
++ (nullable NSData *)decryptData:(NSData *)encryptedData
           sessionKeyData:(NSData *)sessionKeyData // s2k produceSessionKeyWithPassphrase
       symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm
                       iv:(NSData *)ivData
 {
-    return [[self class] manipulateData:encryptedData sessionKeyData:sessionKeyData symmetricAlgorithm:symmetricAlgorithm iv:ivData decrypt:YES];
+    return [self manipulateData:encryptedData sessionKeyData:sessionKeyData symmetricAlgorithm:symmetricAlgorithm iv:ivData decrypt:YES];
 }
 
-+ (NSData *) encryptData:(NSData *)encryptedData
++ (nullable NSData *)encryptData:(NSData *)encryptedData
           sessionKeyData:(NSData *)sessionKeyData // s2k produceSessionKeyWithPassphrase
       symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm
                       iv:(NSData *)ivData
 {
-    return [[self class] manipulateData:encryptedData sessionKeyData:sessionKeyData symmetricAlgorithm:symmetricAlgorithm iv:ivData decrypt:NO];
+    return [self manipulateData:encryptedData sessionKeyData:sessionKeyData symmetricAlgorithm:symmetricAlgorithm iv:ivData decrypt:NO];
 }
 
 #pragma mark - Private
 
 // key binary string representation of key to be used to decrypt the ciphertext.
-+ (NSData *) manipulateData:(NSData *)encryptedData
++ (nullable NSData *)manipulateData:(NSData *)encryptedData
           sessionKeyData:(NSData *)sessionKeyData // s2k produceSessionKeyWithPassphrase
       symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm
                       iv:(NSData *)ivData
@@ -164,3 +166,5 @@
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

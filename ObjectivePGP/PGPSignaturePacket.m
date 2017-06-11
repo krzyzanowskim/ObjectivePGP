@@ -339,7 +339,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     PGPAssertClass(secretKey.primaryKeyPacket, PGPSecretKeyPacket); // Signing key packet not found
 
-    var signingKeyPacket = key.signingSecretKey; //PGPCast(secretKey.signingKeyPacket, PGPSecretKeyPacket);
+    var signingKeyPacket = key.signingSecretKey;
     if (!signingKeyPacket) {
         // As of PGP Desktop. The signing signature may be missing.
         PGPLogDebug(@"Missing signature for the secret key %@", secretKey.keyID);
@@ -375,7 +375,7 @@ NS_ASSUME_NONNULL_BEGIN
     [toHashData appendData:trailerData];
 
     // Calculate hash value
-    NSData *hashData = [toHashData pgp_HashedWithAlgorithm:self.hashAlgoritm];
+    let hashData = [toHashData pgp_HashedWithAlgorithm:self.hashAlgoritm];
 
     // == Computing Signatures ==
     // Encrypt hash data Packet signature MPIs

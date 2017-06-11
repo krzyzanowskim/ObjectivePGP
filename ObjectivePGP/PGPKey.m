@@ -34,13 +34,11 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
-- (NSString *)description
-{
+- (NSString *)description {
     return [NSString stringWithFormat:@"Type %@, %@ primary key: %@",self.type == PGPKeyPublic ? @"public" : @"secret", [super description], self.primaryKeyPacket];
 }
 
-- (BOOL)isEqual:(id)object
-{
+- (BOOL)isEqual:(id)object {
     if (self == object) {
         return YES;
     }
@@ -54,20 +52,19 @@ NS_ASSUME_NONNULL_BEGIN
     return [self.keyID isEqual:objectKey.keyID] && (self.type == objectKey.type);
 }
 
-- (NSUInteger)hash
-{
-#ifndef NSUINTROTATE
-#define NSUINT_BIT (CHAR_BIT * sizeof(NSUInteger))
-#define NSUINTROTATE(val, howmuch) ((((NSUInteger)val) << howmuch) | (((NSUInteger)val) >> (NSUINT_BIT - howmuch)))
+- (NSUInteger)hash {
+#ifndef PGPUINTROTATE
+#define PGPUINT_BIT (CHAR_BIT * sizeof(NSUInteger))
+#define PGPUINTROTATE(val, howmuch) ((((NSUInteger)val) << howmuch) | (((NSUInteger)val) >> (PGPUINT_BIT - howmuch)))
 #endif
     
     NSUInteger hash = [self.primaryKeyPacket hash];
-    hash = NSUINTROTATE(hash, NSUINT_BIT / 2) ^ self.type;
-    hash = NSUINTROTATE(hash, NSUINT_BIT / 2) ^ [self.users hash];
-    hash = NSUINTROTATE(hash, NSUINT_BIT / 2) ^ [self.subKeys hash];
-    hash = NSUINTROTATE(hash, NSUINT_BIT / 2) ^ [self.directSignatures hash];
-    hash = NSUINTROTATE(hash, NSUINT_BIT / 2) ^ [self.revocationSignature hash];
-    hash = NSUINTROTATE(hash, NSUINT_BIT / 2) ^ [self.keyID hash];
+    hash = PGPUINTROTATE(hash, PGPUINT_BIT / 2) ^ self.type;
+    hash = PGPUINTROTATE(hash, PGPUINT_BIT / 2) ^ [self.users hash];
+    hash = PGPUINTROTATE(hash, PGPUINT_BIT / 2) ^ [self.subKeys hash];
+    hash = PGPUINTROTATE(hash, PGPUINT_BIT / 2) ^ [self.directSignatures hash];
+    hash = PGPUINTROTATE(hash, PGPUINT_BIT / 2) ^ [self.revocationSignature hash];
+    hash = PGPUINTROTATE(hash, PGPUINT_BIT / 2) ^ [self.keyID hash];
     
     return hash;
 }
@@ -232,10 +229,8 @@ NS_ASSUME_NONNULL_BEGIN
     // check primary user self certificates
     PGPSignaturePacket *primaryUserSelfCertificate = nil;
     [self primaryUserAndSelfCertificate:&primaryUserSelfCertificate];
-    if (primaryUserSelfCertificate)
-    {
-        if ([self.keyID isEqualToKeyID:keyID])
-        {
+    if (primaryUserSelfCertificate) {
+        if ([self.keyID isEqualToKeyID:keyID]) {
             if (primaryUserSelfCertificate.canBeUsedToSign) {
                 return self.primaryKeyPacket;
             }
@@ -268,7 +263,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
     
     for (PGPSubKey *subKey in self.subKeys) {
-        PGPSignaturePacket *signaturePacket = subKey.bindingSignature;
+        let signaturePacket = subKey.bindingSignature;
         if (signaturePacket.canBeUsedToEncrypt) {
             return subKey.primaryKeyPacket;
         }
@@ -302,7 +297,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
     
     for (PGPSubKey *subKey in self.subKeys) {
-        PGPSignaturePacket *signaturePacket = subKey.bindingSignature;
+        let signaturePacket = subKey.bindingSignature;
         if (signaturePacket.canBeUsedToEncrypt && [((PGPSecretKeyPacket *)subKey.primaryKeyPacket).keyID isEqualToKeyID:keyID]) {
             return PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket);
         }
