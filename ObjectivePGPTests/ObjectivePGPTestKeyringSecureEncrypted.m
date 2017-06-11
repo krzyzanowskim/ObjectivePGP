@@ -123,7 +123,7 @@
     // detached signature
     NSError *signatureError = nil;
     let data = [NSData dataWithContentsOfFile:fileToSignPath];
-    let signatureData = [self.oPGP signData:data usingSecretKey:keyToSign passphrase:@"1234" detached:YES error:&signatureError];
+    let signatureData = [self.oPGP signData:data usingKey:keyToSign passphrase:@"1234" detached:YES error:&signatureError];
     XCTAssertNotNil(signatureData);
     XCTAssertNil(signatureError);
 
