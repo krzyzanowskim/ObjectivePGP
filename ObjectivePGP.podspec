@@ -16,8 +16,8 @@ Pod::Spec.new do |s|
   s.osx.deployment_target = '10.9'
   s.osx.header_dir          = 'ObjectivePGP'
 
-  s.source_files = 'ObjectivePGP/*.{h,m}'
-  s.public_header_files = 'ObjectivePGP/*.h'
+  s.source_files = 'ObjectivePGP/*.{h,m}', 'ObjectivePGP/CryptoBox/*.{h,m}'
+  s.public_header_files = 'ObjectivePGP/*.h', 'ObjectivePGP/CryptoBox/*.h'
 
   s.dependency 'OpenSSL-Universal'
   s.requires_arc = true
