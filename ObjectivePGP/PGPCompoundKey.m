@@ -29,31 +29,12 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // find secret key based on the public key signature (unless self signed secret key)
-    if (self.secretKey.signingKeyPacket) {
-        return PGPCast(self.secretKey.signingKeyPacket, PGPSecretKeyPacket);
+    let signingPacket = PGPCast(self.secretKey.signingKeyPacket,PGPSecretKeyPacket);
+    if (!signingPacket) {
+        PGPLogWarning(@"Need secret key to sign");
     }
 
-    for (PGPSubKey *subKey in self.publicKey.subKeys) {
-        let signaturePacket = subKey.bindingSignature;
-        if (signaturePacket && signaturePacket.canBeUsedToSign) {
-            let keyIdx = [self.secretKey.subKeys indexOfObject:subKey];
-            if (keyIdx == NSNotFound) {
-                continue;
-            }
-
-            PGPSubKey *secretSubKey = self.secretKey.subKeys[keyIdx];
-            if (!secretSubKey) {
-                continue;
-            }
-
-
-            // get the corresponding secret key packet
-            // subKey.primaryKeyPacket;
-        }
-    }
-
-    PGPLogDebug(@"Need secret key to sign");
-    return nil;
+    return signingPacket;
 }
 
 @end

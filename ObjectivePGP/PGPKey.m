@@ -219,8 +219,9 @@ NS_ASSUME_NONNULL_BEGIN
             return subKey.primaryKeyPacket;
         }
     }
-    
-    return nil;
+
+    // By convention, the top-level key provides signature services
+    return PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket);
 }
 
 // signature packet that is available for verifying signature with a keyID
@@ -238,16 +239,16 @@ NS_ASSUME_NONNULL_BEGIN
     }
     
     for (PGPSubKey *subKey in self.subKeys) {
-        if ([subKey.keyID isEqualToKeyID:keyID])
-        {
+        if ([subKey.keyID isEqualToKeyID:keyID]) {
             PGPSignaturePacket *signaturePacket = subKey.bindingSignature;
             if (signaturePacket.canBeUsedToSign) {
                 return subKey.primaryKeyPacket;
             }
         }
     }
-    
-    return nil;
+
+    // By convention, the top-level key provides signature services
+    return PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket);
 }
 
 // signature packet that is available for signing data
