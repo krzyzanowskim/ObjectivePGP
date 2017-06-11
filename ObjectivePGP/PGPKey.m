@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype) initWithPackets:(NSArray<PGPPacket *> *)packets
 {
-    if (self = [self init]) {
+    if ((self = [self init])) {
         _subKeys = [NSArray<PGPSubKey *> array];
         _directSignatures = [NSArray<PGPSignaturePacket *> array];
         _users = [NSArray<PGPUser *> array];
@@ -42,35 +42,33 @@ NS_ASSUME_NONNULL_BEGIN
     if (self == object) {
         return YES;
     }
-    
-    if (![object isKindOfClass:PGPKey.class]) {
+
+    //TODO: check all properties
+    let other = PGPCast(object, PGPKey);
+    if (!other) {
+        return NO;
+    }
+
+    if (self.type != other.type) {
         return NO;
     }
     
-    //TODO: check all properties
-    let objectKey = PGPCast(object, PGPKey);
-    return [self.keyID isEqual:objectKey.keyID] && (self.type == objectKey.type);
+    return [self.keyID isEqual:other.keyID] && (self.type == other.type);
 }
 
 - (NSUInteger)hash {
-#ifndef PGPUINTROTATE
-#define PGPUINT_BIT (CHAR_BIT * sizeof(NSUInteger))
-#define PGPUINTROTATE(val, howmuch) ((((NSUInteger)val) << howmuch) | (((NSUInteger)val) >> (PGPUINT_BIT - howmuch)))
-#endif
-    
-    NSUInteger hash = [self.primaryKeyPacket hash];
-    hash = PGPUINTROTATE(hash, PGPUINT_BIT / 2) ^ self.type;
-    hash = PGPUINTROTATE(hash, PGPUINT_BIT / 2) ^ [self.users hash];
-    hash = PGPUINTROTATE(hash, PGPUINT_BIT / 2) ^ [self.subKeys hash];
-    hash = PGPUINTROTATE(hash, PGPUINT_BIT / 2) ^ [self.directSignatures hash];
-    hash = PGPUINTROTATE(hash, PGPUINT_BIT / 2) ^ [self.revocationSignature hash];
-    hash = PGPUINTROTATE(hash, PGPUINT_BIT / 2) ^ [self.keyID hash];
-    
-    return hash;
+    NSUInteger prime = 31;
+    NSUInteger result = 1;
+    result = prime * result + self.type;
+    result = prime * result + self.keyID.hash;
+    result = prime * result + self.users.hash;
+    result = prime * result + self.subKeys.hash;
+    result = prime * result + self.directSignatures.hash;
+    result = prime * result + self.revocationSignature.hash;
+    return result;
 }
 
-- (BOOL)isEncrypted
-{
+- (BOOL)isEncrypted {
     if (self.type == PGPKeySecret) {
         PGPSecretKeyPacket *secretPacket = (PGPSecretKeyPacket *)self.primaryKeyPacket;
         return secretPacket.isEncryptedWithPassword;

@@ -6,8 +6,16 @@
 //  Copyright © 2017 Marcin Krzyżanowski. All rights reserved.
 //
 
-#ifndef PGPCompoundKey_Private_h
-#define PGPCompoundKey_Private_h
+#import "PGPCompoundKey.h"
+#import "PGPKey.h"
 
+NS_ASSUME_NONNULL_BEGIN
 
-#endif /* PGPCompoundKey_Private_h */
+@interface PGPCompoundKey ()
+
+@property (nonatomic, nullable, readwrite) PGPKey *secretKey;
+@property (nonatomic, nullable, readwrite) PGPKey *publicKey;
+
+@end
+
+NS_ASSUME_NONNULL_END

@@ -35,8 +35,8 @@ Please contact me via email for inquiries.
 ##### Load keys (private or public)
 
 	/* From file */
-	[pgp importKeysFromFile:@"/path/to/secring.gpg" allowDuplicates:NO];
-	[pgp importKeysFromFile:@"/path/to/key.asc" allowDuplicates:NO];
+	[pgp importKeysFromFile:@"/path/to/secring.gpg"];
+	[pgp importKeysFromFile:@"/path/to/key.asc"];
 	
 	/* Load single key from keyring */
 	[pgp importKey:@"979E4B03DFFE30C6" fromFile:@"/path/to/secring.gpg"];

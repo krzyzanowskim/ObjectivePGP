@@ -51,38 +51,28 @@
     self.oPGP = nil;
 }
 
-- (void) testDuplicates
-{
-    [self.oPGP importKeysFromFile:self.pubringPlaintext allowDuplicates:YES];
-    NSUInteger count1 = self.oPGP.keys.count;
-    [self.oPGP importKeysFromFile:self.pubringPlaintext allowDuplicates:YES];
-    NSUInteger count2 = self.oPGP.keys.count;
-    
-    NSAssert((count1 * 2) == count2, @"Loaded keys should be duplicated in count");
-}
-
 - (void) testNotDuplicates
 {
-    [self.oPGP importKeysFromFile:self.pubringPlaintext allowDuplicates:NO];
-    NSUInteger count1 = self.oPGP.keys.count;
-    [self.oPGP importKeysFromFile:self.pubringPlaintext allowDuplicates:NO];
-    NSUInteger count2 = self.oPGP.keys.count;
-    
-    NSAssert(count1 == count2, @"Loaded keys should be equal");
+    [self.oPGP importKeysFromFile:self.pubringPlaintext];
+    NSUInteger count1 = self.oPGP.compoundKeys.count;
+    [self.oPGP importKeysFromFile:self.pubringPlaintext];
+    NSUInteger count2 = self.oPGP.compoundKeys.count;
+
+    XCTAssertEqual(count1, count2);
 }
 
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/22
 - (void) testIssue22 {
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *originalKeyFilePath = [bundle pathForResource:@"issue22-original" ofType:@"asc"];
-    [self.oPGP importKeysFromFile:originalKeyFilePath allowDuplicates:NO];
-    PGPKey *key = [self.oPGP.keys firstObject];
+    [self.oPGP importKeysFromFile:originalKeyFilePath];
+    let key = [self.oPGP.compoundKeys anyObject];
     
     NSError *err = nil;
-    XCTAssertTrue([key decrypt:@"weakpassphrase" error:&err]);
-    NSData *exportedKeyData = [key export:nil];
+    XCTAssertTrue([key.secretKey decrypt:@"weakpassphrase" error:&err]);
+    NSData *exportedKeyData = [key.secretKey export:nil];
     XCTAssert(exportedKeyData.length == 4869);
-    XCTAssert(self.oPGP.keys.count == 1, @"");
+    XCTAssert(self.oPGP.compoundKeys.count == 1, @"");
 }
 
 - (void) testIssue35 {
@@ -90,7 +80,7 @@
     NSString *messagePath = [bundle pathForResource:@"issue35-message" ofType:@"asc"];
     NSString *keyPath = [bundle pathForResource:@"issue35-key" ofType:@"asc"];
     NSError *error = nil;
-    [self.oPGP importKeysFromFile:keyPath allowDuplicates:NO];
+    [self.oPGP importKeysFromFile:keyPath];
     [self.oPGP decryptData:[NSData dataWithContentsOfFile:messagePath] passphrase:nil error:&error];
 }
 
@@ -99,8 +89,8 @@
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *keyPathPrv = [bundle pathForResource:@"issue53-s2k-gnu-dummy.prv" ofType:@"asc"];
     NSString *keyPathPub = [bundle pathForResource:@"issue53-s2k-gnu-dummy.pub" ofType:@"asc"];
-    XCTAssertTrue([self.oPGP importKeysFromFile:keyPathPrv allowDuplicates:NO]);
-    XCTAssertTrue([self.oPGP importKeysFromFile:keyPathPub allowDuplicates:NO]);
+    XCTAssertTrue([self.oPGP importKeysFromFile:keyPathPrv]);
+    XCTAssertTrue([self.oPGP importKeysFromFile:keyPathPub]);
 }
 
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/44
@@ -108,7 +98,7 @@
     let pgp = self.oPGP;
     let bundle = [NSBundle bundleForClass:[self class]];
     let keysPath = [bundle pathForResource:@"issue44-keys" ofType:@"asc"];
-    let keys = [pgp importKeysFromFile:keysPath allowDuplicates:NO];
+    let keys = [pgp importKeysFromFile:keysPath];
     XCTAssertTrue(keys.count == 2);
 
     // PGPKey *keyToSign = [pgp getKeyForIdentifier:@"FF95F0F0ADA10313" type:PGPKeySecret];

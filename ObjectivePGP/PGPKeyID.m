@@ -44,16 +44,12 @@
         return YES;
     }
 
-    if ([self class] != [object class]) {
-        return NO;
-    }
-
     let other = PGPCast(object, PGPKeyID);
     if (!other) {
         return NO;
     }
 
-    return [self.longKey isEqualToData:other.longKey];
+    return [self.longKey isEqual:other.longKey];
 }
 
 - (BOOL) isEqualToKeyID:(PGPKeyID *)keyID {

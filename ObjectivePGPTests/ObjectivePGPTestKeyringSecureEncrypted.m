@@ -49,39 +49,37 @@
 
 - (void)testLoadKeyring
 {
-    XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath allowDuplicates:NO]);
-    XCTAssert(self.oPGP.keys.count == 1, @"Should load 1 key");
+    XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
+    XCTAssert(self.oPGP.compoundKeys.count == 1, @"Should load 1 key");
 }
 
 - (void) testUsers
 {
-    [self.oPGP importKeysFromFile:self.secKeyringPath allowDuplicates:NO];
+    [self.oPGP importKeysFromFile:self.secKeyringPath];
 
-    PGPKey *key = self.oPGP.keys[0];
-    XCTAssert(key.users.count == 1, @"Invalid users count");
+    let key = self.oPGP.compoundKeys.anyObject;
+    XCTAssert(key.secretKey.users.count == 1, @"Invalid users count");
 }
 
-- (void) testPrimaryKey
-{
-    [self.oPGP importKeysFromFile:self.secKeyringPath allowDuplicates:NO];
+- (void) testPrimaryKey {
+    [self.oPGP importKeysFromFile:self.secKeyringPath];
 
-    PGPKey *key = self.oPGP.keys[0];
+    let key = self.oPGP.compoundKeys.anyObject;
 
-    PGPSecretKeyPacket *secretKey = (PGPSecretKeyPacket *)key.primaryKeyPacket;
-    XCTAssert([key.primaryKeyPacket class] == [PGPSecretKeyPacket class],@"Key Should be PGPSecretKeyPacket");
-    XCTAssertTrue(key.isEncrypted, @"Should be encrypted");
-    XCTAssertEqualObjects([secretKey.keyID longKeyString], @"9528AAA17A9BC007", @"Invalid key identifier");
+    let secretKeyPacket = PGPCast(key.secretKey.primaryKeyPacket,PGPSecretKeyPacket);
+    XCTAssertTrue(key.secretKey.isEncrypted, @"Should be encrypted");
+    XCTAssertEqualObjects([secretKeyPacket.keyID longKeyString], @"9528AAA17A9BC007", @"Invalid key identifier");
 }
 
 - (void)testKeyDecryption
 {
-    [self.oPGP importKeysFromFile:self.secKeyringPath allowDuplicates:NO];
+    [self.oPGP importKeysFromFile:self.secKeyringPath];
 
-    PGPKey *key = self.oPGP.keys[0];
+    let key = self.oPGP.compoundKeys.anyObject;
 
     [self measureBlock:^{
         NSError *decryptError = nil;
-        BOOL status = [key decrypt:@"1234" error:&decryptError];
+        BOOL status = [key.secretKey decrypt:@"1234" error:&decryptError];
         XCTAssertTrue(status, @"Decryption failed");
         XCTAssertNil(decryptError, @"Decryption failed");
     }];
@@ -89,36 +87,30 @@
 
 - (void)testDataDecryption
 {
-    [self.oPGP importKeysFromFile:self.secKeyringPath allowDuplicates:NO];
-    [self.oPGP importKeysFromFile:self.pubKeyringPath allowDuplicates:NO];
+    [self.oPGP importKeysFromFile:self.secKeyringPath];
+    [self.oPGP importKeysFromFile:self.pubKeyringPath];
     
-    PGPKey *encKey = [self.oPGP getKeyForIdentifier:@"9528AAA17A9BC007" type:PGPKeyPublic];
+    let encKey = [self.oPGP getKeyForIdentifier:@"9528AAA17A9BC007"];
     // encrypt
     NSData *tmpdata = [@"this is test" dataUsingEncoding:NSUTF8StringEncoding];
     NSError *encError;
-    NSData *encData = [self.oPGP encryptData:tmpdata usingPublicKey:encKey armored:NO error:&encError];
+    NSData *encData = [self.oPGP encryptData:tmpdata usingPublicKey:encKey.publicKey armored:NO error:&encError];
     XCTAssertNil(encError, @"Encryption failed");
 
     [self measureBlock:^{
         NSError *decError;
         NSData *decData = [self.oPGP decryptData:encData passphrase:@"1234" error:&decError];
         XCTAssertNil(decError, @"Decryption failed");
+        XCTAssertNotNil(decData);
         XCTAssertEqualObjects(tmpdata, decData);
     }];
-
-//    PGPKey *key = self.oPGP.keys[0];
-//    
-//    NSError *decryptError = nil;
-//    BOOL status = [key decrypt:@"1234" error:&decryptError];
-//    XCTAssertTrue(status, @"Decryption failed");
-//    XCTAssertNil(decryptError, @"Decryption failed");
 }
 
 - (void) testEncryptedSignature
 {
     BOOL status;
 
-    [self.oPGP importKeysFromFile:self.secKeyringPath allowDuplicates:NO];
+    [self.oPGP importKeysFromFile:self.secKeyringPath];
 
     // file to sign
     NSString *fileToSignPath = [self.workingDirectory stringByAppendingPathComponent:@"signed_file.bin"];

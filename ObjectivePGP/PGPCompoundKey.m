@@ -7,6 +7,7 @@
 //
 
 #import "PGPCompoundKey.h"
+#import "PGPCompoundKey+Private.h"
 #import "PGPSubKey.h"
 #import "PGPSecretKeyPacket.h"
 
@@ -35,6 +36,27 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     return signingPacket;
+}
+
+- (BOOL)isEqual:(id)object {
+    if (object == self) {
+        return YES;
+    }
+
+    let other = PGPCast(object, PGPCompoundKey);
+    if (!other) {
+        return NO;
+    }
+
+    return [self.secretKey isEqual:other.secretKey] && [self.publicKey isEqual:other.publicKey];
+}
+
+- (NSUInteger)hash {
+    NSUInteger prime = 31;
+    NSUInteger result = 1;
+    result = prime * result + self.secretKey.hash;
+    result = prime * result + self.publicKey.hash;
+    return result;
 }
 
 @end

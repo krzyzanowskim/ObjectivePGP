@@ -33,7 +33,7 @@
  *
  *  @return Packet instance object
  */
-+ (PGPPacket * ) packetWithData:(NSData *)packetData offset:(NSUInteger)offset nextPacketOffset:(NSUInteger *)nextPacketOffset
++ (PGPPacket *)packetWithData:(NSData *)packetData offset:(NSUInteger)offset nextPacketOffset:(NSUInteger *)nextPacketOffset
 {
 
     // parse header and get actual header data

@@ -446,7 +446,7 @@ NS_ASSUME_NONNULL_BEGIN
             NSData *keyData = [keyPacket exportPublicPacketOldStyle];
             [toSignData appendData:keyData];
 
-            NSAssert(key.users > 0, @"Key need at least one user");
+            NSAssert(key.users.count > 0, @"Need at least one user for the key.");
 
             BOOL userIsValid = NO;
             for (PGPUser *user in key.users) {

@@ -54,19 +54,19 @@
 {
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *path = [bundle pathForResource:@"multiple-keys" ofType:@"asc"];
-    NSArray *keys = [self.oPGP importKeysFromFile:path allowDuplicates:NO];
+    let keys = [self.oPGP importKeysFromFile:path];
     NSAssert(keys.count == 3, @"Keys not imported properly");
 }
 
 
 - (void) testArmorPublicKey
 {
-    [self.oPGP importKeysFromFile:self.pubKeyringPath allowDuplicates:NO];
+    [self.oPGP importKeysFromFile:self.pubKeyringPath];
 
-    PGPKey *key = self.oPGP.keys[0];
+    let key = self.oPGP.compoundKeys.anyObject;
 
     NSError *exportError = nil;
-    NSData *keyData = [key export:&exportError];
+    NSData *keyData = [key.publicKey export:&exportError];
     XCTAssertNil(exportError);
     XCTAssertNotNil(keyData);
 
