@@ -172,29 +172,28 @@ static const unsigned int PGP_SALT_SIZE = 8;
         case PGPS2KSpecifierIteratedAndSalted:
         {
             // iterated (salt + passphrase)
-            let codedCount = self.codedCount;
-            let totalLength = saltLength + passphraseLength;
-
+            //TODO: if the octet count is less than the size of the salt plus passphrase, the full salt plus passphrase will be hashed even though that is greater than the octet count.
             updateBlock = ^(NOESCAPE void(^update)(const void *data, int length)) {
-                for (int n = 0; n * hashSize < keySize; ++n) {
-                    for (NSUInteger i = 0; i < codedCount; i += totalLength) {
-                        NSUInteger j = totalLength;
-                        if (i != 0 && i + j > codedCount) {
-                            j = codedCount - i;
-                        }
+                let data = [NSMutableData dataWithData:salt];
+                [data appendData:passphrase];
 
-                        if (j > saltLength) {
-                            update(saltBytes, (int)saltLength);
-                            update(passphraseDataBytes, (int)(j - saltLength));
-                        } else {
-                            update(saltBytes, (int)j);
-                        }
+                int iterations = 0;
+                while(iterations * data.length < codedCount) {
+                    let nextTotalLength = (iterations + 1) * data.length;
+                    if (nextTotalLength > codedCount) {
+                        let totalLength = iterations * data.length;
+                        let remainder = [data subdataWithRange:(NSRange){0,codedCount - totalLength}];
+                        update(remainder.bytes, (int)remainder.length);
+                    } else {
+                        update(data.bytes, (int)data.length);
                     }
+                    iterations++;
                 }
             };
         }
             break;
         default:
+            // unknown or unsupported
             break;
     }
     
