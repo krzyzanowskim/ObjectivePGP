@@ -20,11 +20,17 @@
 #import "PGPPublicKeyRSA.h"
 
 @interface PGPPacket ()
+
 @property (nonatomic, copy, readwrite) NSData *headerData;
 @property (nonatomic, copy, readwrite) NSData *bodyData;
+
 @end
 
 @interface PGPSecretKeyPacket ()
+
+@property (nonatomic, readwrite) PGPS2KUsage s2kUsage;
+@property (nonatomic, readwrite) PGPS2K *s2k;
+@property (nonatomic, readwrite) PGPSymmetricAlgorithm symmetricAlgorithm;
 @property (nonatomic, readwrite) NSData *encryptedMPIsPartData; // after decrypt -> secretMPIArray
 @property (nonatomic, readwrite) NSData *ivData;
 @property (nonatomic, readwrite) NSArray *secretMPIArray; // decrypted MPI
@@ -101,9 +107,7 @@
         self.symmetricAlgorithm = (PGPSymmetricAlgorithm)self.s2kUsage; // this is tricky, but this is right. V3 algorithm is in place of s2kUsage of V4
         self.s2kUsage = PGPS2KUsageEncrypted;
         
-        self.s2k = [[PGPS2K alloc] init]; // not really parsed s2k
-        self.s2k.specifier = PGPS2KSpecifierSimple;
-        self.s2k.hashAlgorithm = PGPHashMD5;
+        self.s2k = [[PGPS2K alloc] initWithSpecifier:PGPS2KSpecifierSimple hashAlgorithm:PGPHashMD5]; // not really parsed s2k
     }
 
     let encryptedData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
@@ -134,7 +138,7 @@
         position = position + 1;
 
         // S2K
-        self.s2k = [PGPS2K string2KeyFromData:data atPosition:position];
+        self.s2k = [PGPS2K S2KFromData:data atPosition:position];
         position = position + self.s2k.length;
     }
 

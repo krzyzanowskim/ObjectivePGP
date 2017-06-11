@@ -9,20 +9,27 @@
 #import <Foundation/Foundation.h>
 #import "PGPTypes.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface PGPS2K : NSObject
 
-@property (nonatomic) PGPS2KSpecifier specifier;
-@property (nonatomic) PGPHashAlgorithm hashAlgorithm;
-@property (nonatomic) NSData *salt; // 8 bytes
-@property (nonatomic) UInt32 uncodedCount;
+@property (nonatomic, readonly) PGPS2KSpecifier specifier;
+@property (nonatomic, readonly) PGPHashAlgorithm hashAlgorithm;
+@property (nonatomic, readonly) NSData *salt; // random 8 bytes.
+@property (nonatomic, readonly) UInt32 uncodedCount;
 @property (nonatomic, readonly) UInt32 codedCount;
 
 @property (nonatomic) NSUInteger length;
 
-+ (PGPS2K *) string2KeyFromData:(NSData *)data atPosition:(NSUInteger)position;
-- (NSUInteger) parseS2K:(NSData *)data atPosition:(NSUInteger)position;
+PGP_EMPTY_INIT_UNAVAILABLE
 
-- (NSData *) produceSessionKeyWithPassphrase:(NSString *)passphrase keySize:(NSUInteger)keySize;
-- (NSData *) export:(NSError *__autoreleasing*)error;
+- (instancetype)initWithSpecifier:(PGPS2KSpecifier)specifier hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm NS_DESIGNATED_INITIALIZER;
+
++ (PGPS2K *)S2KFromData:(NSData *)data atPosition:(NSUInteger)position;
+
+- (nullable NSData *)produceSessionKeyWithPassphrase:(NSString *)passphrase keySize:(NSUInteger)keySize;
+- (nullable NSData *)export:(NSError * __autoreleasing *)error;
 
 @end
+
+NS_ASSUME_NONNULL_END
