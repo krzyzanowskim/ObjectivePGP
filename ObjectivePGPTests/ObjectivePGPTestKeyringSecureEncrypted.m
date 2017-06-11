@@ -50,21 +50,21 @@
 - (void)testLoadKeyring
 {
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
-    XCTAssert(self.oPGP.compoundKeys.count == 1, @"Should load 1 key");
+    XCTAssert(self.oPGP.keys.count == 1, @"Should load 1 key");
 }
 
 - (void) testUsers
 {
     [self.oPGP importKeysFromFile:self.secKeyringPath];
 
-    let key = self.oPGP.compoundKeys.anyObject;
+    let key = self.oPGP.keys.anyObject;
     XCTAssert(key.secretKey.users.count == 1, @"Invalid users count");
 }
 
 - (void) testPrimaryKey {
     [self.oPGP importKeysFromFile:self.secKeyringPath];
 
-    let key = self.oPGP.compoundKeys.anyObject;
+    let key = self.oPGP.keys.anyObject;
 
     let secretKeyPacket = PGPCast(key.secretKey.primaryKeyPacket,PGPSecretKeyPacket);
     XCTAssertTrue(key.secretKey.isEncrypted, @"Should be encrypted");
@@ -75,7 +75,7 @@
 {
     [self.oPGP importKeysFromFile:self.secKeyringPath];
 
-    let key = self.oPGP.compoundKeys.anyObject;
+    let key = self.oPGP.keys.anyObject;
 
     [self measureBlock:^{
         NSError *decryptError = nil;
@@ -117,7 +117,7 @@
     status = [[NSFileManager defaultManager] copyItemAtPath:self.secKeyringPath toPath:fileToSignPath error:nil];
     XCTAssertTrue(status);
 
-    PGPKey *keyToSign = [self.oPGP getKeyForIdentifier:@"9528AAA17A9BC007" type:PGPKeySecret];
+    let keyToSign = [self.oPGP getKeyForIdentifier:@"9528AAA17A9BC007"];
     XCTAssertNotNil(keyToSign);
 
     // detached signature

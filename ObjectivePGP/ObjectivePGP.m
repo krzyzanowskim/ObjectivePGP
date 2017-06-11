@@ -33,8 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ObjectivePGP ()
 
-@property (strong, nonatomic, readwrite) NSArray<PGPKey *> *keys DEPRECATED_MSG_ATTRIBUTE("Use compound keys.");
-@property (strong, nonatomic, readwrite) NSMutableSet<PGPCompoundKey *> *compoundKeys;
+@property (strong, nonatomic, readwrite) NSMutableSet<PGPCompoundKey *> *keys;
 
 @end
 
@@ -42,8 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)init {
     if ((self = [super init])) {
-        _keys = [NSArray<PGPKey *> array];
-        _compoundKeys = [NSMutableSet<PGPCompoundKey *> set];
+        _keys = [NSMutableSet<PGPCompoundKey *> set];
     }
     return self;
 }
@@ -51,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Search
 
 - (NSArray<PGPCompoundKey *> *)getKeysForUserID:(nonnull NSString *)userID {
-    return [[self.compoundKeys objectsPassingTest:^BOOL(PGPCompoundKey *key, BOOL *stop1) {
+    return [[self.keys objectsPassingTest:^BOOL(PGPCompoundKey *key, BOOL *stop1) {
         let a = key.publicKey ? [key.publicKey.users indexOfObjectPassingTest:^BOOL(PGPUser *user, NSUInteger idx, BOOL *stop2) {
             return [userID isEqual:user.userID];
         }] : NSNotFound;
@@ -131,7 +129,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSArray<PGPKey *> *)getKeysOfType:(PGPKeyType)keyType {
     let keys = [NSMutableArray<PGPKey *> array];
-    for (PGPCompoundKey *key in self.compoundKeys) {
+    for (PGPCompoundKey *key in self.keys) {
         if (keyType == PGPKeyPublic && key.publicKey) {
             [keys addObject:key.publicKey];
         }
@@ -727,8 +725,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<PGPCompoundKey *> *)importKeysFromData:(NSData *)data {
     let loadedKeys = [self keysFromData:data];
     for (PGPCompoundKey *key in loadedKeys) {
-        [self addOrUpdateCompoundKeyForKey:key.publicKey toContainer:self.compoundKeys];
-        [self addOrUpdateCompoundKeyForKey:key.secretKey toContainer:self.compoundKeys];
+        [self addOrUpdateCompoundKeyForKey:key.publicKey toContainer:self.keys];
+        [self addOrUpdateCompoundKeyForKey:key.secretKey toContainer:self.keys];
     }
     return loadedKeys;
 }
@@ -750,7 +748,7 @@ NS_ASSUME_NONNULL_BEGIN
         return NO;
     }
 
-    [self.compoundKeys addObject:loadedKeys[keyIdx]];
+    [self.keys addObject:loadedKeys[keyIdx]];
     return YES;
 }
 
@@ -877,7 +875,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 - (nullable PGPCompoundKey *)findKeyForKeyID:(PGPKeyID *)keyID {
-    return [[self.compoundKeys objectsPassingTest:^BOOL(PGPCompoundKey *key, BOOL *stop) {
+    return [[self.keys objectsPassingTest:^BOOL(PGPCompoundKey *key, BOOL *stop) {
         return [key.publicKey.keyID isEqual:keyID] || [key.secretKey.keyID isEqual:keyID];
     }] anyObject];
 }

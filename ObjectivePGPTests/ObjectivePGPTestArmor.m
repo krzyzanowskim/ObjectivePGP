@@ -63,7 +63,7 @@
 {
     [self.oPGP importKeysFromFile:self.pubKeyringPath];
 
-    let key = self.oPGP.compoundKeys.anyObject;
+    let key = self.oPGP.keys.anyObject;
 
     NSError *exportError = nil;
     NSData *keyData = [key.publicKey export:&exportError];

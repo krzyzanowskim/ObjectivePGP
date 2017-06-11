@@ -57,7 +57,7 @@
     NSLog(@"%s doing work...", __PRETTY_FUNCTION__);
 
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath], @"Unable to load keyring");
-    XCTAssert(self.oPGP.compoundKeys.count == 1, @"Should load 1 key");
+    XCTAssert(self.oPGP.keys.count == 1, @"Should load 1 key");
 
     let foundKeys1 = [self.oPGP getKeysForUserID:@"Marcin (test) <marcink@up-next.com>"];
     XCTAssertTrue(foundKeys1.count == 1);
@@ -88,9 +88,9 @@
     // Check if can be load
     ObjectivePGP *checkPGP = [[ObjectivePGP alloc] init];
     XCTAssertNotNil([checkPGP importKeysFromFile:exportSecretKeyringPath]);
-    XCTAssert(self.oPGP.compoundKeys.count > 0, @"Keys not loaded");
+    XCTAssert(self.oPGP.keys.count > 0, @"Keys not loaded");
 
-    let key = checkPGP.compoundKeys.anyObject;
+    let key = checkPGP.keys.anyObject;
     let secretKeyPacket = PGPCast(key.secretKey.primaryKeyPacket, PGPSecretKeyPacket);
     XCTAssertFalse(key.secretKey.isEncrypted, @"Should not be encrypted");
     XCTAssertEqualObjects([secretKeyPacket.keyID longKeyString], @"25A233C2952E4E8B", @"Invalid key identifier");
@@ -119,9 +119,9 @@
     NSLog(@"%s doing work...", __PRETTY_FUNCTION__);
 
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
-    XCTAssert(self.oPGP.compoundKeys.count > 0, @"Keys not loaded");
+    XCTAssert(self.oPGP.keys.count > 0, @"Keys not loaded");
 
-    let key = self.oPGP.compoundKeys.anyObject;
+    let key = self.oPGP.keys.anyObject;
 
     let secretKeyPacket = PGPCast(key.secretKey.primaryKeyPacket, PGPSecretKeyPacket);
     XCTAssertFalse(key.secretKey.isEncrypted, @"Should not be encrypted");

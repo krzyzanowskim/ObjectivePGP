@@ -54,9 +54,9 @@
 - (void) testNotDuplicates
 {
     [self.oPGP importKeysFromFile:self.pubringPlaintext];
-    NSUInteger count1 = self.oPGP.compoundKeys.count;
+    NSUInteger count1 = self.oPGP.keys.count;
     [self.oPGP importKeysFromFile:self.pubringPlaintext];
-    NSUInteger count2 = self.oPGP.compoundKeys.count;
+    NSUInteger count2 = self.oPGP.keys.count;
 
     XCTAssertEqual(count1, count2);
 }
@@ -66,13 +66,13 @@
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *originalKeyFilePath = [bundle pathForResource:@"issue22-original" ofType:@"asc"];
     [self.oPGP importKeysFromFile:originalKeyFilePath];
-    let key = [self.oPGP.compoundKeys anyObject];
+    let key = [self.oPGP.keys anyObject];
     
     NSError *err = nil;
     XCTAssertTrue([key.secretKey decrypt:@"weakpassphrase" error:&err]);
     NSData *exportedKeyData = [key.secretKey export:nil];
     XCTAssert(exportedKeyData.length == 4869);
-    XCTAssert(self.oPGP.compoundKeys.count == 1, @"");
+    XCTAssert(self.oPGP.keys.count == 1, @"");
 }
 
 - (void) testIssue35 {

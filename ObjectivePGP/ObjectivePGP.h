@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ObjectivePGP : NSObject
 
 // Keys. Updated on import.
-@property (strong, nonatomic, readonly) NSMutableSet<PGPCompoundKey *> *compoundKeys;
+@property (strong, nonatomic, readonly) NSMutableSet<PGPCompoundKey *> *keys;
 
 // Import keys
 - (NSArray<PGPCompoundKey *> *)importKeysFromFile:(NSString *)path;
@@ -34,12 +34,12 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)exportKeys:(NSArray<PGPKey *> *)keys toFile:(NSString *)path error:(NSError * __autoreleasing __nullable * __nullable)error;
 - (nullable NSData *)exportKey:(PGPKey *)key armored:(BOOL)armored;
 
-- (nullable PGPKey *)getKeyForIdentifier:(NSString *)keyIdentifier type:(PGPKeyType)keyType;
-- (nullable PGPKey *)getKeyForKeyID:(PGPKeyID *)searchKeyID type:(PGPKeyType)keyType;
+- (nullable PGPKey *)getKeyForIdentifier:(NSString *)keyIdentifier type:(PGPKeyType)keyType DEPRECATED_ATTRIBUTE;
+- (nullable PGPKey *)getKeyForKeyID:(PGPKeyID *)searchKeyID type:(PGPKeyType)keyType DEPRECATED_ATTRIBUTE;
 - (nullable PGPCompoundKey *)getKeyForIdentifier:(NSString *)keyIdentifier;
 /// Returns keys for the full user identifier.
 - (NSArray<PGPCompoundKey *> *)getKeysForUserID:(NSString *)userID;
-- (NSArray<PGPKey *> *)getKeysOfType:(PGPKeyType)keyType;
+- (NSArray<PGPKey *> *)getKeysOfType:(PGPKeyType)keyType DEPRECATED_ATTRIBUTE;
 
 - (nullable NSData *)signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(nullable NSString *)passphrase  error:(NSError * __autoreleasing __nullable * __nullable)error DEPRECATED_MSG_ATTRIBUTE("Use PGPCompoundKey version. ");
 - (nullable NSData *)signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(nullable NSString *)passphrase detached:(BOOL)detached  error:(NSError * __autoreleasing __nullable * __nullable)error DEPRECATED_MSG_ATTRIBUTE("Use PGPCompoundKey version.");
@@ -53,11 +53,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)verifyData:(NSData *)signedData withSignature:(NSData *)signatureData error:(NSError * __autoreleasing __nullable * __nullable)error;
 - (BOOL)verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPKey *)publicKey error:(NSError * __autoreleasing __nullable * __nullable)error;
 
-- (nullable NSData *)encryptData:(NSData *)dataToEncrypt usingPublicKey:(PGPKey *)publicKey armored:(BOOL)armored error:(NSError * __autoreleasing __nullable * __nullable)error;
+- (nullable NSData *)encryptData:(NSData *)dataToEncrypt usingPublicKey:(PGPKey *)publicKey armored:(BOOL)armored error:(NSError * __autoreleasing __nullable * __nullable)error DEPRECATED_ATTRIBUTE;
 - (nullable NSData *)encryptData:(NSData *)dataToEncrypt usingPublicKeys:(NSArray *)publicKeys armored:(BOOL)armored error:(NSError * __autoreleasing __nullable * __nullable)error;
-- (nullable NSData *)encryptData:(NSData *)dataToEncrypt usingPublicKeys:(NSArray *)publicKeys signWithSecretKey:(nullable PGPKey *)secretKey passphrase:(nullable NSString *)passphrase armored:(BOOL)armored error:(NSError * __autoreleasing __nullable * __nullable)error;
+- (nullable NSData *)encryptData:(NSData *)dataToEncrypt usingPublicKeys:(NSArray *)publicKeys signWithSecretKey:(nullable PGPKey *)secretKey passphrase:(nullable NSString *)passphrase armored:(BOOL)armored error:(NSError * __autoreleasing __nullable * __nullable)error DEPRECATED_ATTRIBUTE;
 - (nullable NSData *)decryptData:(NSData *)messageDataToDecrypt passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing __nullable * __nullable)error;
-- (nullable NSData *)decryptData:(NSData *)messageDataToDecrypt passphrase:(nullable NSString *)passphrase verifyWithPublicKey:(nullable PGPKey *)publicKey signed:(nullable BOOL*)isSigned valid:(nullable BOOL*)isValid integrityProtected:(nullable BOOL*)isIntegrityProtected error:(NSError * __autoreleasing __nullable * __nullable)error;
+- (nullable NSData *)decryptData:(NSData *)messageDataToDecrypt passphrase:(nullable NSString *)passphrase verifyWithPublicKey:(nullable PGPKey *)publicKey signed:(nullable BOOL*)isSigned valid:(nullable BOOL*)isValid integrityProtected:(nullable BOOL*)isIntegrityProtected error:(NSError * __autoreleasing __nullable * __nullable)error DEPRECATED_ATTRIBUTE;
 
 @end
 
