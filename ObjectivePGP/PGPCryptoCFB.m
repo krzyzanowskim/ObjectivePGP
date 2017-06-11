@@ -84,8 +84,8 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPSymmetricAES256:
         {
             AES_KEY aes_key;
-            AES_set_encrypt_key(sessionKeyData.bytes, (unsigned int)keySize * 8, &aes_key);
-            
+            AES_set_encrypt_key(sessionKeyData.bytes, MIN((unsigned int)keySize * 8,(unsigned int)sessionKeyData.length * 8), &aes_key);
+
             int num = 0;
             AES_cfb128_encrypt(encryptedBytes, outBuffer, outBufferLength, &aes_key, iv, &num, decrypt ? AES_DECRYPT : AES_ENCRYPT);
             decryptedData = [NSData dataWithBytes:outBuffer length:outBufferLength];
@@ -131,7 +131,7 @@ NS_ASSUME_NONNULL_BEGIN
         {
             // initialize
             CAST_KEY encrypt_key;
-            CAST_set_key(&encrypt_key, (unsigned int)keySize, sessionKeyData.bytes);
+            CAST_set_key(&encrypt_key, MIN((unsigned int)keySize, (unsigned int)sessionKeyData.length), sessionKeyData.bytes);
             
             // see __ops_decrypt_init block_encrypt siv,civ,iv comments. siv is needed for weird v3 resync,
             // wtf civ ???
