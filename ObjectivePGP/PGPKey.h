@@ -11,6 +11,7 @@
 #import "PGPPacket.h"
 #import "PGPKeyID.h"
 #import "PGPSignaturePacket.h"
+#import "PGPExportableProtocol.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -23,7 +24,7 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
 @class PGPSecretKeyPacket;
 
 /// Single Private or Public key.
-@interface PGPKey : NSObject
+@interface PGPKey : NSObject <PGPExportable>
 
 @property (nonatomic, readonly) PGPKeyType type;
 @property (nonatomic) PGPPacket  *primaryKeyPacket;
@@ -63,13 +64,6 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
 - (NSArray<PGPPacket *> *) allKeyPackets;
 - (PGPSymmetricAlgorithm) preferredSymmetricAlgorithm;
 + (PGPSymmetricAlgorithm) preferredSymmetricAlgorithmForKeys:(NSArray<PGPKey *> *)keys;
-
-/**
- *  Export to transferable key packets sequence
- *
- *  @return Data
- */
-- (NSData *) export:(NSError *__autoreleasing *)error;
 
 @end
 

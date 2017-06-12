@@ -65,7 +65,7 @@
     let foundKeys2 = [self.oPGP getKeysForUserID:@"ERR Marcin (test) <marcink@up-next.com>"];
     XCTAssertTrue(foundKeys2.count == 0);
 
-    PGPKey *key = [self.oPGP getKeyForIdentifier:@"952E4E8B" type:PGPKeySecret];
+    let key = [self.oPGP getKeyForIdentifier:@"952E4E8B"];
     XCTAssertNotNil(key, @"Key 952E4E8B not found");
 }
 
@@ -77,11 +77,9 @@
 
     NSString *exportSecretKeyringPath = [self.workingDirectory stringByAppendingPathComponent:@"export-secring-test-plaintext.gpg"];
 
-    NSArray *secretKeys = [self.oPGP getKeysOfType:PGPKeySecret];
     NSError *ssaveError = nil;
-    BOOL sstatus = [self.oPGP exportKeys:secretKeys toFile:exportSecretKeyringPath error:&ssaveError];
-    XCTAssertNil(ssaveError, @"");
-    XCTAssertTrue(sstatus, @"");
+    XCTAssertTrue([self.oPGP exportKeysOfType:PGPKeySecret toFile:exportSecretKeyringPath error:&ssaveError]);
+    XCTAssertNil(ssaveError);
 
     NSLog(@"Created file %@", exportSecretKeyringPath);
 
@@ -104,11 +102,9 @@
 
     NSString *exportPublicKeyringPath = [self.workingDirectory stringByAppendingPathComponent:@"export-pubring-test-plaintext.gpg"];
 
-    NSArray *publicKeys = [self.oPGP getKeysOfType:PGPKeyPublic];
     NSError *psaveError = nil;
-    BOOL pstatus = [self.oPGP exportKeys:publicKeys toFile:exportPublicKeyringPath error:&psaveError];
+    XCTAssertTrue([self.oPGP exportKeysOfType:PGPKeyPublic toFile:exportPublicKeyringPath error:&psaveError]);
     XCTAssertNil(psaveError);
-    XCTAssertTrue(pstatus);
 
     NSLog(@"Created file %@", exportPublicKeyringPath);
 }
@@ -151,9 +147,9 @@
     XCTAssertTrue(status);
 
     // Verify
-    PGPKey *keyToValidateSign = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B" type:PGPKeySecret];
+    let keyToValidateSign = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B"];
     NSError *verifyError = nil;
-    status = [self.oPGP verifyData:[NSData dataWithContentsOfFile:fileToSignPath] withSignature:signatureData usingKey:keyToValidateSign error:&verifyError];
+    status = [self.oPGP verifyData:[NSData dataWithContentsOfFile:fileToSignPath] withSignature:signatureData usingKey:keyToValidateSign.publicKey error:&verifyError];
     XCTAssertTrue(status);
     XCTAssertNil(verifyError);
 
@@ -180,7 +176,7 @@
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
 
     // Public key
-    PGPKey *keyToEncrypt = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B" type:PGPKeyPublic];
+    let keyToEncrypt = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B"];
     
     XCTAssertNotNil(keyToEncrypt);
 
@@ -189,13 +185,12 @@
 
     // encrypt PLAINTEXT
     NSError *encryptError = nil;
-    NSData *encryptedData = [self.oPGP encryptData:plainData usingPublicKey:keyToEncrypt armored:NO error:&encryptError];
+    NSData *encryptedData = [self.oPGP encryptData:plainData usingKey:keyToEncrypt armored:NO error:&encryptError];
     XCTAssertNil(encryptError);
     XCTAssertNotNil(encryptedData);
     
     // file encrypted
     NSString *fileEncrypted = [self.workingDirectory stringByAppendingPathComponent:@"plaintext.encrypted"];
-    NSLog(@"%@",fileEncrypted);
     BOOL status = [encryptedData writeToFile:fileEncrypted atomically:YES];
     XCTAssertTrue(status);
 
@@ -207,7 +202,7 @@
     XCTAssertEqualObjects(decryptedString, PLAINTEXT, @"Decrypted data mismatch");
     
     // ARMORED
-    NSData *encryptedDataArmored = [self.oPGP encryptData:plainData usingPublicKey:keyToEncrypt armored:YES error:&encryptError];
+    NSData *encryptedDataArmored = [self.oPGP encryptData:plainData usingKey:keyToEncrypt armored:YES error:&encryptError];
     XCTAssertNil(encryptError);
     XCTAssertNotNil(encryptedDataArmored);
 
@@ -235,8 +230,8 @@
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
     
     // Public key
-    PGPKey *keyToEncrypt1 = [self.oPGP getKeyForIdentifier:@"952E4E8B" type:PGPKeyPublic];
-    PGPKey *keyToEncrypt2 = [self.oPGP getKeyForIdentifier:@"66753341" type:PGPKeyPublic];
+    let keyToEncrypt1 = [self.oPGP getKeyForIdentifier:@"952E4E8B"];
+    let keyToEncrypt2 = [self.oPGP getKeyForIdentifier:@"66753341"];
     
     XCTAssertNotNil(keyToEncrypt1);
     XCTAssertNotNil(keyToEncrypt2);
@@ -246,7 +241,7 @@
     
     // encrypt PLAINTEXT
     NSError *encryptError = nil;
-    NSData *encryptedData = [self.oPGP encryptData:plainData usingPublicKeys:@[keyToEncrypt1, keyToEncrypt2] armored:NO error:&encryptError];
+    NSData *encryptedData = [self.oPGP encryptData:plainData usingPublicKeys:@[keyToEncrypt1.publicKey, keyToEncrypt2.publicKey] armored:NO error:&encryptError];
     XCTAssertNil(encryptError);
     XCTAssertNotNil(encryptedData);
     

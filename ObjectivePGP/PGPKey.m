@@ -339,7 +339,9 @@ NS_ASSUME_NONNULL_BEGIN
     return YES;
 }
 
-- (NSData *)export:(NSError *__autoreleasing *)error {
+#pragma mark - PGPExportable
+
+- (nullable NSData *)export:(NSError * _Nullable __autoreleasing *)error {
     NSMutableData *result = [NSMutableData data];
 
     for (PGPPacket * packet in self.allPacketsArray) {

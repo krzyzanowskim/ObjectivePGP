@@ -94,7 +94,7 @@
     // encrypt
     NSData *tmpdata = [@"this is test" dataUsingEncoding:NSUTF8StringEncoding];
     NSError *encError;
-    NSData *encData = [self.oPGP encryptData:tmpdata usingPublicKey:encKey.publicKey armored:NO error:&encError];
+    NSData *encData = [self.oPGP encryptData:tmpdata usingKey:encKey armored:NO error:&encError];
     XCTAssertNil(encError, @"Encryption failed");
 
     [self measureBlock:^{

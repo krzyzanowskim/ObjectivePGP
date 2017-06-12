@@ -10,12 +10,13 @@
 #import "PGPPacket.h"
 #import "PGPKey.h"
 #import "PGPFoundation.h"
+#import "PGPExportableProtocol.h"
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 /// Single Public + Private key with the same ID.
-@interface PGPCompoundKey : NSObject
+@interface PGPCompoundKey : NSObject <PGPExportable>
 
 PGP_EMPTY_INIT_UNAVAILABLE;
 

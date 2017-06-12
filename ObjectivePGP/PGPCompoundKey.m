@@ -59,6 +59,20 @@ NS_ASSUME_NONNULL_BEGIN
     return result;
 }
 
+#pragma mark - PGPExportable
+
+- (nullable NSData *)export:(NSError *__autoreleasing  _Nullable *)error {
+    NSMutableData *exportData = [NSMutableData data];
+    if (self.publicKey) {
+        [exportData appendData:[self.publicKey export:error]];
+    }
+    
+    if (self.secretKey) {
+        [exportData appendData:[self.secretKey export:error]];
+    }
+    return exportData;
+}
+
 @end
 
 NS_ASSUME_NONNULL_END

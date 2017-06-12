@@ -20,6 +20,8 @@
 		750EE3C41922C185009E818E /* PGPKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 750EE3C31922C185009E818E /* PGPKey.m */; };
 		751056131940A76F00653C0B /* PGPCryptoCFB.m in Sources */ = {isa = PBXBuildFile; fileRef = 751056121940A76F00653C0B /* PGPCryptoCFB.m */; };
 		751E07361937D53900CA7946 /* PGPOnePassSignaturePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 751E07351937D53900CA7946 /* PGPOnePassSignaturePacket.m */; };
+		752DE5BB1EEE26C200637E38 /* PGPExportableProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 752DE5BA1EEE26C200637E38 /* PGPExportableProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		752DE5BC1EEE26C200637E38 /* PGPExportableProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 752DE5BA1EEE26C200637E38 /* PGPExportableProtocol.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7538C0DE1CDCF47B00A8F136 /* issue35-message.asc in Resources */ = {isa = PBXBuildFile; fileRef = 7538C0DD1CDCF47B00A8F136 /* issue35-message.asc */; };
 		753A65EF19487E3D0011A729 /* PGPSymmetricallyEncryptedDataPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 753A65EE19487E3D0011A729 /* PGPSymmetricallyEncryptedDataPacket.m */; };
 		754351871ED268B400896236 /* PGPCryptoHash.m in Sources */ = {isa = PBXBuildFile; fileRef = 754351861ED268B400896236 /* PGPCryptoHash.m */; };
@@ -257,6 +259,7 @@
 		751E07341937D53900CA7946 /* PGPOnePassSignaturePacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPOnePassSignaturePacket.h; sourceTree = "<group>"; };
 		751E07351937D53900CA7946 /* PGPOnePassSignaturePacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPOnePassSignaturePacket.m; sourceTree = "<group>"; };
 		752B3A791EC8EB9A003F6C22 /* PGPLogging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPLogging.h; sourceTree = "<group>"; };
+		752DE5BA1EEE26C200637E38 /* PGPExportableProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPExportableProtocol.h; sourceTree = "<group>"; };
 		7538C0DD1CDCF47B00A8F136 /* issue35-message.asc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "issue35-message.asc"; sourceTree = "<group>"; };
 		753A65ED19487E3D0011A729 /* PGPSymmetricallyEncryptedDataPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSymmetricallyEncryptedDataPacket.h; sourceTree = "<group>"; };
 		753A65EE19487E3D0011A729 /* PGPSymmetricallyEncryptedDataPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSymmetricallyEncryptedDataPacket.m; sourceTree = "<group>"; };
@@ -500,6 +503,7 @@
 				758514EE1EDF3D7100CB313F /* PGPCompoundKey.h */,
 				758514EF1EDF3D7100CB313F /* PGPCompoundKey.m */,
 				75804A241EED159300AC97BF /* PGPCompoundKey+Private.h */,
+				752DE5BA1EEE26C200637E38 /* PGPExportableProtocol.h */,
 				755456BE192843E700E5526B /* PGPArmor.h */,
 				755456BF192843E700E5526B /* PGPArmor.m */,
 				7597B79A192E9C7F003ABC65 /* PGPPKCSEmsa.h */,
@@ -676,6 +680,7 @@
 				75804A2F1EED16F700AC97BF /* NSData+PGPUtils.h in Headers */,
 				75804A6D1EED172E00AC97BF /* PGPLogging.h in Headers */,
 				75804A671EED172E00AC97BF /* PGPCompoundKey+Private.h in Headers */,
+				752DE5BB1EEE26C200637E38 /* PGPExportableProtocol.h in Headers */,
 				75804A311EED16FA00AC97BF /* PGPCryptoUtils.h in Headers */,
 				75804A4F1EED172400AC97BF /* PGPPublicKeyEncryptedSessionKeyPacket.h in Headers */,
 				75804A5F1EED172E00AC97BF /* PGPMPI.h in Headers */,
@@ -725,6 +730,7 @@
 				75804A301EED16F700AC97BF /* NSData+PGPUtils.h in Headers */,
 				75804A7C1EED172E00AC97BF /* PGPLogging.h in Headers */,
 				75804A761EED172E00AC97BF /* PGPCompoundKey+Private.h in Headers */,
+				752DE5BC1EEE26C200637E38 /* PGPExportableProtocol.h in Headers */,
 				75804A321EED16FA00AC97BF /* PGPCryptoUtils.h in Headers */,
 				75804A5E1EED172400AC97BF /* PGPPublicKeyEncryptedSessionKeyPacket.h in Headers */,
 				75804A6E1EED172E00AC97BF /* PGPMPI.h in Headers */,
