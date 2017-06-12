@@ -102,7 +102,7 @@
     XCTAssertTrue(keys.count == 2);
 
     // PGPKey *keyToSign = [pgp getKeyForIdentifier:@"FF95F0F0ADA10313" type:PGPKeySecret];
-    let keyToSign = [pgp getKeyForIdentifier:@"71180E514EF122E5"];
+    let keyToSign = [pgp findKeyForIdentifier:@"71180E514EF122E5"];
     XCTAssertNotNil(keyToSign);
 
     let data = [NSData dataWithContentsOfFile:keysPath];

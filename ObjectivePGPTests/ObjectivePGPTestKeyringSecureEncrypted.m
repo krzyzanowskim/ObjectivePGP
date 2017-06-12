@@ -90,7 +90,7 @@
     [self.oPGP importKeysFromFile:self.secKeyringPath];
     [self.oPGP importKeysFromFile:self.pubKeyringPath];
     
-    let encKey = [self.oPGP getKeyForIdentifier:@"9528AAA17A9BC007"];
+    let encKey = [self.oPGP findKeyForIdentifier:@"9528AAA17A9BC007"];
     // encrypt
     NSData *tmpdata = [@"this is test" dataUsingEncoding:NSUTF8StringEncoding];
     NSError *encError;
@@ -117,7 +117,7 @@
     status = [[NSFileManager defaultManager] copyItemAtPath:self.secKeyringPath toPath:fileToSignPath error:nil];
     XCTAssertTrue(status);
 
-    let keyToSign = [self.oPGP getKeyForIdentifier:@"9528AAA17A9BC007"];
+    let keyToSign = [self.oPGP findKeyForIdentifier:@"9528AAA17A9BC007"];
     XCTAssertNotNil(keyToSign);
 
     // detached signature

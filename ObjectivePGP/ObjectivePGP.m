@@ -95,7 +95,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 //TODO: rename to getKeyForFingerprint or something
-- (nullable PGPCompoundKey *)getKeyForIdentifier:(NSString *)keyIdentifier {
+- (nullable PGPCompoundKey *)findKeyForIdentifier:(NSString *)keyIdentifier {
     PGPAssertClass(keyIdentifier, NSString);
 
     if (keyIdentifier.length != 8 && keyIdentifier.length != 16) {

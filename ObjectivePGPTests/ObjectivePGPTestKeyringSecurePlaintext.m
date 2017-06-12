@@ -65,7 +65,7 @@
     let foundKeys2 = [self.oPGP getKeysForUserID:@"ERR Marcin (test) <marcink@up-next.com>"];
     XCTAssertTrue(foundKeys2.count == 0);
 
-    let key = [self.oPGP getKeyForIdentifier:@"952E4E8B"];
+    let key = [self.oPGP findKeyForIdentifier:@"952E4E8B"];
     XCTAssertNotNil(key, @"Key 952E4E8B not found");
 }
 
@@ -133,7 +133,7 @@
     BOOL status = [[NSFileManager defaultManager] copyItemAtPath:self.secKeyringPath toPath:fileToSignPath error:nil];
     XCTAssertTrue(status);
 
-    let keyToSign = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B"];
+    let keyToSign = [self.oPGP findKeyForIdentifier:@"25A233C2952E4E8B"];
     XCTAssertNotNil(keyToSign);
 
     // detached signature
@@ -147,7 +147,7 @@
     XCTAssertTrue(status);
 
     // Verify
-    let keyToValidateSign = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B"];
+    let keyToValidateSign = [self.oPGP findKeyForIdentifier:@"25A233C2952E4E8B"];
     NSError *verifyError = nil;
     status = [self.oPGP verifyData:[NSData dataWithContentsOfFile:fileToSignPath] withSignature:signatureData usingKey:keyToValidateSign error:&verifyError];
     XCTAssertTrue(status);
@@ -176,7 +176,7 @@
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
 
     // Public key
-    let keyToEncrypt = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B"];
+    let keyToEncrypt = [self.oPGP findKeyForIdentifier:@"25A233C2952E4E8B"];
     
     XCTAssertNotNil(keyToEncrypt);
 
@@ -230,8 +230,8 @@
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
     
     // Public key
-    let keyToEncrypt1 = [self.oPGP getKeyForIdentifier:@"952E4E8B"];
-    let keyToEncrypt2 = [self.oPGP getKeyForIdentifier:@"66753341"];
+    let keyToEncrypt1 = [self.oPGP findKeyForIdentifier:@"952E4E8B"];
+    let keyToEncrypt2 = [self.oPGP findKeyForIdentifier:@"66753341"];
     
     XCTAssertNotNil(keyToEncrypt1);
     XCTAssertNotNil(keyToEncrypt2);

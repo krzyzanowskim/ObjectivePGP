@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSData *)exportKey:(PGPCompoundKey *)key armored:(BOOL)armored;
 
 /// 16 or 8 characters long identifier.
-- (nullable PGPCompoundKey *)getKeyForIdentifier:(NSString *)keyIdentifier;
+- (nullable PGPCompoundKey *)findKeyForIdentifier:(NSString *)keyIdentifier;
 - (nullable PGPCompoundKey *)getKeyForKeyID:(PGPKeyID *)searchKeyID;
 /// Returns keys for the full user identifier.
 - (NSArray<PGPCompoundKey *> *)getKeysForUserID:(NSString *)userID;
