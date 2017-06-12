@@ -263,7 +263,13 @@ NS_ASSUME_NONNULL_BEGIN
     // 5.2.4.  Computing Signatures
     
     // build toSignData, toSign
-    NSData *toSignData = [self toSignDataForType:self.type inputData:inputData key:publicKey keyPacket:signingKeyPacket userID:userID error:error];
+    let toSignData = [self toSignDataForType:self.type inputData:inputData key:publicKey keyPacket:signingKeyPacket userID:userID error:error];
+    if (!toSignData) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Invalid signature."}];
+        }
+        return NO;
+    }
 
     // signedPartData
     NSData *signedPartData = [self buildSignedPart:self.hashedSubpackets];
@@ -420,7 +426,7 @@ NS_ASSUME_NONNULL_BEGIN
     return YES;
 }
 
-- (NSData *) toSignDataForType:(PGPSignatureType)type inputData:(NSData *)inputData key:(PGPKey *)key keyPacket:(PGPPublicKeyPacket *)keyPacket userID:(NSString *)userID error:(NSError * __autoreleasing *)error
+- (nullable NSData *) toSignDataForType:(PGPSignatureType)type inputData:(NSData *)inputData key:(PGPKey *)key keyPacket:(PGPPublicKeyPacket *)keyPacket userID:(NSString *)userID error:(NSError * __autoreleasing *)error
 {
     NSMutableData *toSignData = [NSMutableData data];
     switch (type) {

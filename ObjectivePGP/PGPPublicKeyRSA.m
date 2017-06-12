@@ -100,7 +100,7 @@
         return nil;
     }
 
-    UInt8 *outbuf = calloc(RSA_size(rsa), 1);
+    uint8_t *outbuf = calloc(RSA_size(rsa) & SIZE_T_MAX, 1);
     int t = RSA_private_decrypt(toDecrypt.length & INT_MAX , toDecrypt.bytes, outbuf, rsa, RSA_NO_PADDING);
     if (t == -1) {
         ERR_load_crypto_strings();
@@ -167,7 +167,7 @@
     }
 
 
-    UInt8 *outbuf = calloc(RSA_size(rsa), 1);
+    uint8_t *outbuf = calloc(RSA_size(rsa) & SIZE_T_MAX, 1);
     int t = RSA_private_encrypt(toEncrypt.length & INT_MAX, (UInt8 *)toEncrypt.bytes, outbuf, rsa, RSA_NO_PADDING);
     if (t == -1) {
         ERR_load_crypto_strings();
@@ -189,8 +189,8 @@
 
 
     free(outbuf);
-    RSA_free(rsa);
     rsa->n = rsa->d = rsa->p = rsa->q = rsa->e = NULL;
+    RSA_free(rsa);
 
     return encryptedData;
 }
@@ -211,7 +211,7 @@
         return nil;
     }
 
-    UInt8 *decrypted_em = calloc(RSA_size(rsa) - 11, 1);
+    uint8_t *decrypted_em = calloc(RSA_size(rsa) & SIZE_T_MAX, 1); // RSA_size(rsa) - 11
     int em_len = RSA_public_decrypt(toDecrypt.length & INT_MAX, toDecrypt.bytes, decrypted_em, rsa, RSA_NO_PADDING);
     if (em_len == -1 || em_len != (publicKeyPacket.keySize & INT_MAX)) {
         free(decrypted_em);
@@ -232,8 +232,8 @@
     // decrypted PKCS emsa
     NSData *decryptedEm = [NSData dataWithBytes:decrypted_em length:em_len];
 
-    RSA_free(rsa);
     rsa->n = rsa->e = NULL;
+    RSA_free(rsa);
     free(decrypted_em);
 
     return decryptedEm;
