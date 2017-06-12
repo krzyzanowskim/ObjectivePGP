@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ObjectivePGP ()
 
-@property (strong, nonatomic, readwrite) NSMutableSet<PGPCompoundKey *> *keys;
+@property (strong, nonatomic, readwrite) NSSet<PGPCompoundKey *> *keys;
 
 @end
 
@@ -112,7 +112,6 @@ NS_ASSUME_NONNULL_BEGIN
 
     // public
     for (PGPCompoundKey *key in self.keys) {
-
         if (key.publicKey) {
             let identifier = useShortIdentifier ? key.publicKey.keyID.shortKeyString : key.publicKey.keyID.longKeyString;
             if ([identifier.uppercaseString isEqual:keyIdentifier.uppercaseString]) {
@@ -733,8 +732,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<PGPCompoundKey *> *)importKeysFromData:(NSData *)data {
     let loadedKeys = [self keysFromData:data];
     for (PGPCompoundKey *key in loadedKeys) {
-        [self addOrUpdateCompoundKeyForKey:key.publicKey toContainer:self.keys];
-        [self addOrUpdateCompoundKeyForKey:key.secretKey toContainer:self.keys];
+        self.keys = [self addOrUpdateCompoundKeyForKey:key.publicKey inContainer:self.keys];
+        self.keys = [self addOrUpdateCompoundKeyForKey:key.secretKey inContainer:self.keys];
     }
     return loadedKeys;
 }
@@ -756,7 +755,8 @@ NS_ASSUME_NONNULL_BEGIN
         return NO;
     }
 
-    [self.keys addObject:loadedKeys[keyIdx]];
+    self.keys = [self.keys setByAddingObject:loadedKeys[keyIdx]];
+
     return YES;
 }
 
@@ -822,11 +822,13 @@ NS_ASSUME_NONNULL_BEGIN
     return accumulatedPackets;
 }
 
-// add or update compound key
-- (void)addOrUpdateCompoundKeyForKey:(nullable PGPKey *)key toContainer:(NSMutableSet<PGPCompoundKey *> *)compoundKeys {
+// Add or update compound key. Returns updated set.
+- (NSSet *)addOrUpdateCompoundKeyForKey:(nullable PGPKey *)key inContainer:(NSSet<PGPCompoundKey *> *)compoundKeys {
     if (!key) {
-        return;
+        return compoundKeys;
     }
+
+    NSMutableSet *updatedContainer = [NSMutableSet<PGPCompoundKey *> setWithSet:compoundKeys];
     
     let foundCompoundKey = [[compoundKeys objectsPassingTest:^BOOL(PGPCompoundKey *obj, BOOL *stop) {
         return [obj.publicKey.keyID isEqual:key.keyID] || [obj.secretKey.keyID isEqual:key.keyID];
@@ -834,7 +836,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (!foundCompoundKey) {
         let compoundKey = [[PGPCompoundKey alloc] initWithSecretKey:(key.type == PGPKeySecret ? key : nil) publicKey:(key.type == PGPKeyPublic ? key : nil)];
-        [compoundKeys addObject:compoundKey];
+        [updatedContainer addObject:compoundKey];
     } else {
         if (key.type == PGPKeyPublic) {
             foundCompoundKey.publicKey = key;
@@ -843,6 +845,8 @@ NS_ASSUME_NONNULL_BEGIN
             foundCompoundKey.secretKey = key;
         }
     }
+
+    return updatedContainer;
 }
 
 /**
@@ -853,7 +857,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @return Array of PGPKey
  */
 - (NSArray<PGPCompoundKey *> *)readKeysFromData:(NSData *)messageData {
-    let compoundKeys = [NSMutableSet<PGPCompoundKey *> set];
+    var compoundKeys = [NSSet<PGPCompoundKey *> set];
     let accumulatedPackets = [NSMutableArray<PGPPacket *> array];
     NSUInteger offset = 0;
 
@@ -864,7 +868,7 @@ NS_ASSUME_NONNULL_BEGIN
             if ((accumulatedPackets.count > 1) && ((packet.tag == PGPPublicKeyPacketTag) || (packet.tag == PGPSecretKeyPacketTag))) {
                 PGPKey *key = [[PGPKey alloc] initWithPackets:accumulatedPackets];
                 // find or create compound key
-                [self addOrUpdateCompoundKeyForKey:key toContainer:compoundKeys];
+                compoundKeys = [self addOrUpdateCompoundKeyForKey:key inContainer:compoundKeys];
                 [accumulatedPackets removeAllObjects];
             }
             [accumulatedPackets addObject:packet];
@@ -874,7 +878,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (accumulatedPackets.count > 1) {
         PGPKey *key = [[PGPKey alloc] initWithPackets:accumulatedPackets];
-        [self addOrUpdateCompoundKeyForKey:key toContainer:compoundKeys];
+        compoundKeys = [self addOrUpdateCompoundKeyForKey:key inContainer:compoundKeys];
         [accumulatedPackets removeAllObjects];
     }
 

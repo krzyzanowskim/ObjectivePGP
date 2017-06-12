@@ -16,12 +16,12 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ObjectivePGP : NSObject
 
 // Keys. Updated on import.
-@property (strong, nonatomic, readonly) NSMutableSet<PGPCompoundKey *> *keys;
+@property (strong, nonatomic, readonly) NSSet<PGPCompoundKey *> *keys;
 
 // Import keys
 - (NSArray<PGPCompoundKey *> *)importKeysFromFile:(NSString *)path;
 - (NSArray<PGPCompoundKey *> *)importKeysFromData:(NSData *)data;
-- (BOOL) importKey:(NSString *)shortKeyStringIdentifier fromFile:(NSString *)path;
+- (BOOL)importKey:(NSString *)shortKeyStringIdentifier fromFile:(NSString *)path;
 
 // Read keys
 - (NSArray<PGPCompoundKey *> *)keysFromData:(NSData *)fileData;
