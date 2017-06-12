@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "ObjectivePGP.h"
+#import "PGPMacros.h"
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
@@ -124,7 +125,7 @@ Use within the scope of this License is free of charge and no royalty or licensi
         }
         
         // load key
-        PGPKey *operationKey = nil;
+        PGPCompoundKey *operationKey = nil;
         if (keyFile) {
             NSData *fetchedKeyData = nil;
             NSURL *keyURL = [NSURL URLWithString:keyFile];
@@ -139,20 +140,16 @@ Use within the scope of this License is free of charge and no royalty or licensi
                 fetchedKeyData = [NSData dataWithContentsOfMappedFile:[keyFile stringByExpandingTildeInPath]];
             }
 
-            NSArray *loadedKeys = [pgp importKeysFromData:fetchedKeyData];
+            let loadedKeys = [pgp importKeysFromData:fetchedKeyData];
             if (!keyIdentifier) {
-                PGPKey *key = loadedKeys[0];
+                let key = loadedKeys[0];
                 operationKey = key;
             }
         }
 
         if (keyIdentifier) {
-            if (encrypt) {
-                operationKey = [pgp getKeyForIdentifier:keyIdentifier type:PGPKeyPublic];
-            } else {
-                operationKey = [pgp getKeyForIdentifier:keyIdentifier type:PGPKeySecret];
-            }
-            
+            operationKey = [pgp findKeyForIdentifier:keyIdentifier];
+
             if (!operationKey) {
                 fprintf(stderr, "ERROR: Can't use key %s\n", keyIdentifier.UTF8String);
                 return 1;
@@ -167,7 +164,7 @@ Use within the scope of this License is free of charge and no royalty or licensi
         NSData *outputData = nil;
         NSError *operationError = nil;
         if (encrypt) {
-            outputData = [pgp encryptData:inputData usingPublicKey:operationKey armored:armor error:&operationError];
+            outputData = [pgp encryptData:inputData usingKeys:@[operationKey] armored:armor error:&operationError];
         } else {
             outputData = [pgp decryptData:inputData passphrase:passprase error:&operationError];
         }
