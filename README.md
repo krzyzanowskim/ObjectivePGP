@@ -1,7 +1,7 @@
 ObjectivePGP
 ============
 
-ObjectivePGP is OpenPGP implementation for iOS and OSX.
+ObjectivePGP is [OpenPGP](https://en.wikipedia.org/wiki/Pretty_Good_Privacy#OpenPGP) implementation for iOS, tvOS and macOS.
 
 See [blog post](http://blog.krzyzanowskim.com/2014/07/31/short-story-about-openpgp-for-ios-and-os-x-objectivepgp/) for full story.
 
@@ -14,7 +14,7 @@ See [blog post](http://blog.krzyzanowskim.com/2014/07/31/short-story-about-openp
 ## Contribution
 
 You are welcome to contribute. Current version can be found on branch `master`. 
-If you want fix the bug, please create Pull Request against `master` branch.
+If you want fix the bug, please create Pull Request against `develop` branch.
 
 ## The licence
 

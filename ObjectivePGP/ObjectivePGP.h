@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)importKey:(NSString *)shortKeyStringIdentifier fromFile:(NSString *)path;
 
 /**
- Read keys from the data.
+ Read keys from the data. Does not import the keys.
 
  @param fileData Keys data.
  @return Array of parsed keys.
@@ -53,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<PGPCompoundKey *> *)keysFromData:(NSData *)fileData;
 
 /**
- Read keys from the file.
+ Read keys from the file. Does not import the keys.
 
  @param path Path to the keys file.
  @return Array of parsed keys.
