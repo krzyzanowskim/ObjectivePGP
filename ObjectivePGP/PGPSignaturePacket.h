@@ -10,6 +10,7 @@
 #import <Foundation/Foundation.h>
 #import "PGPPacketFactory.h"
 #import "PGPKeyID.h"
+#import "PGPMPI.h"
 #import "PGPSignatureSubpacket.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -22,16 +23,16 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) PGPSignatureType type;
 @property (nonatomic) PGPPublicKeyAlgorithm publicKeyAlgorithm;
 @property (nonatomic) PGPHashAlgorithm hashAlgoritm;
-@property (nonatomic, readonly) NSArray *hashedSubpackets;
-@property (nonatomic, readonly) NSArray *unhashedSubpackets;
+@property (nonatomic, readonly) NSArray<PGPSignatureSubpacket *> *hashedSubpackets;
+@property (nonatomic, readonly) NSArray<PGPSignatureSubpacket *> *unhashedSubpackets;
 @property (nonatomic) NSData *signedHashValueData;
-@property (nonatomic) NSArray *signatureMPIs;
+@property (nonatomic) NSArray<PGPMPI *> *signatureMPIs;
 
 @property (nonatomic, readonly) BOOL canBeUsedToSign;
 @property (nonatomic, readonly) BOOL canBeUsedToEncrypt;
 
-@property (nonatomic, readonly) PGPKeyID *issuerKeyID;
-@property (nonatomic, copy, readonly) NSArray<PGPPacket *> *subpackets;
+@property (nonatomic, nullable, readonly) PGPKeyID *issuerKeyID;
+@property (nonatomic, copy, readonly) NSArray<PGPSignatureSubpacket *> *subpackets;
 @property (nonatomic, nullable) NSDate *expirationDate;
 @property (nonatomic, readonly) BOOL isExpired;
 @property (nonatomic, nullable) NSDate *creationDate;

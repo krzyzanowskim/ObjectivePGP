@@ -85,12 +85,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Helper properties
 
-- (PGPKeyID *)issuerKeyID {
-    PGPSignatureSubpacket *subpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeIssuerKeyID] firstObject];
+- (nullable PGPKeyID *)issuerKeyID {
+    let subpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeIssuerKeyID] firstObject];
     return subpacket.value;
 }
 
-- (NSArray<PGPPacket *> *)subpackets {
+- (NSArray<PGPSignatureSubpacket *> *)subpackets {
     return [self.hashedSubpackets arrayByAddingObjectsFromArray:self.unhashedSubpackets];
 }
 
@@ -213,11 +213,10 @@ NS_ASSUME_NONNULL_BEGIN
     return [data copy];
 }
 
-- (NSData *) buildFullSignatureBodyData:(NSError *__autoreleasing *)error
-{
+- (NSData *)buildFullSignatureBodyData:(NSError *__autoreleasing *)error {
     NSMutableData *data = [NSMutableData data];
 
-    NSData *signedPartData = [self buildSignedPart:self.hashedSubpackets];
+    let signedPartData = [self buildSignedPart:self.hashedSubpackets];
     [data appendData:signedPartData];
 
     // unhashed Subpackets
@@ -230,7 +229,7 @@ NS_ASSUME_NONNULL_BEGIN
         [data appendData:[mpi exportMPI]];
     }
 
-    return [data copy];
+    return data;
 }
 
 #pragma mark - Verify
@@ -291,7 +290,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         {
             // convert mpi data to binary signature_bn_bin
-            PGPMPI *signatureMPI = self.signatureMPIs[0];
+            let signatureMPI = self.signatureMPIs[0];
 
             // encoded m value
             NSData *encryptedEmData = [signatureMPI bodyData];

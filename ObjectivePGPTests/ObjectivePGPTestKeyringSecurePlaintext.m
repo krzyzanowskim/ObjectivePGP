@@ -149,7 +149,7 @@
     // Verify
     let keyToValidateSign = [self.oPGP getKeyForIdentifier:@"25A233C2952E4E8B"];
     NSError *verifyError = nil;
-    status = [self.oPGP verifyData:[NSData dataWithContentsOfFile:fileToSignPath] withSignature:signatureData usingKey:keyToValidateSign.publicKey error:&verifyError];
+    status = [self.oPGP verifyData:[NSData dataWithContentsOfFile:fileToSignPath] withSignature:signatureData usingKey:keyToValidateSign error:&verifyError];
     XCTAssertTrue(status);
     XCTAssertNil(verifyError);
 

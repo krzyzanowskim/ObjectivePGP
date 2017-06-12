@@ -48,8 +48,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSData *)signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID passphrase:(nullable NSString *)passphrase detached:(BOOL)detached error:(NSError * __autoreleasing __nullable * __nullable)error;
 
 - (BOOL)verifyData:(NSData *)signedDataPackets error:(NSError * __autoreleasing __nullable * __nullable)error;
-- (BOOL)verifyData:(NSData *)signedData withSignature:(NSData *)signatureData error:(NSError * __autoreleasing __nullable * __nullable)error DEPRECATED_ATTRIBUTE;
-- (BOOL)verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPKey *)publicKey error:(NSError * __autoreleasing __nullable * __nullable)error DEPRECATED_ATTRIBUTE;
+- (BOOL)verifyData:(NSData *)signedData withSignature:(NSData *)signatureData error:(NSError * __autoreleasing __nullable * __nullable)error;
+- (BOOL)verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPCompoundKey *)key error:(NSError * __autoreleasing __nullable * __nullable)error;
 
 - (nullable NSData *)encryptData:(NSData *)dataToEncrypt usingKey:(PGPCompoundKey *)key armored:(BOOL)armored error:(NSError * __autoreleasing __nullable * __nullable)error;
 - (nullable NSData *)encryptData:(NSData *)dataToEncrypt usingPublicKeys:(NSArray *)publicKeys armored:(BOOL)armored error:(NSError * __autoreleasing __nullable * __nullable)error DEPRECATED_ATTRIBUTE;

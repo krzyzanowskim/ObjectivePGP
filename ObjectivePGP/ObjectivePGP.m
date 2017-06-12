@@ -362,7 +362,7 @@ NS_ASSUME_NONNULL_BEGIN
     BOOL _signed = signaturePacket != nil;
     BOOL _valid = NO;
     if (signaturePacket && key.publicKey) {
-        _valid = [self verifyData:plaintextData withSignature:signaturePacket.packetData usingKey:key.publicKey error:nil];
+        _valid = [self verifyData:plaintextData withSignature:signaturePacket.packetData usingKey:key error:nil];
     }
 
     if (isSigned) {
@@ -601,17 +601,13 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL)verifyData:(NSData *)signedData withSignature:(NSData *)signatureData error:(NSError * __autoreleasing *)error {
-    if (!signedData || !signatureData) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Missing input data"}];
-        }
-        return NO;
-    }
+    PGPAssertClass(signedData, NSData);
+    PGPAssertClass(signatureData, NSData);
 
     // search for key in keys
     let packet = [PGPPacketFactory packetWithData:signatureData offset:0 nextPacketOffset:NULL];
     if (![packet isKindOfClass:[PGPSignaturePacket class]]) {
-        NSAssert(false, @"need signature");
+        PGPLogWarning(@"Missing key signature");
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Missing signature packet"}];
         }
@@ -633,16 +629,13 @@ NS_ASSUME_NONNULL_BEGIN
         return NO;
     }
 
-    return [self verifyData:signedData withSignature:signatureData usingKey:issuerKey.publicKey error:error];
+    return [self verifyData:signedData withSignature:signatureData usingKey:issuerKey error:error];
 }
 
-- (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPKey *)publicKey error:(NSError * __autoreleasing *)error {
-    if (!publicKey || !signatureData || !signatureData) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Invalid input data"}];
-        }
-        return NO;
-    }
+- (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPCompoundKey *)key error:(NSError * __autoreleasing *)error {
+    PGPAssertClass(signedData, NSData);
+    PGPAssertClass(signedData, NSData);
+    PGPAssertClass(key, PGPCompoundKey);
 
     let packet = [PGPPacketFactory packetWithData:signatureData offset:0 nextPacketOffset:NULL];
     if (![packet isKindOfClass:[PGPSignaturePacket class]]) {
@@ -657,7 +650,7 @@ NS_ASSUME_NONNULL_BEGIN
     if (!signaturePacket) {
         return NO;
     }
-    BOOL verified = [signaturePacket verifyData:signedData withKey:publicKey userID:nil error:error];
+    BOOL verified = [signaturePacket verifyData:signedData withKey:key.publicKey userID:nil error:error];
 
     return verified;
 }
