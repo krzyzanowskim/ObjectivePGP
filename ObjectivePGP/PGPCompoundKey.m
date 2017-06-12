@@ -7,9 +7,13 @@
 //
 
 #import "PGPCompoundKey.h"
+#import "PGPMacros.h"
+#import "PGPLogging.h"
 #import "PGPCompoundKey+Private.h"
 #import "PGPSubKey.h"
 #import "PGPSecretKeyPacket.h"
+
+#import "PGPMacros.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

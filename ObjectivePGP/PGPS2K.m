@@ -9,6 +9,10 @@
 //
 
 #import "PGPS2K.h"
+
+#import "PGPMacros.h"
+#import "PGPLogging.h"
+
 #import <CommonCrypto/CommonCrypto.h>
 #import <CommonCrypto/CommonDigest.h>
 

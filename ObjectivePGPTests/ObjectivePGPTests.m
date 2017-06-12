@@ -8,6 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import "ObjectivePGP.h"
+#import "PGPMacros.h"
 
 
 //sec   2048R/AEEF64C8 2014-05-03

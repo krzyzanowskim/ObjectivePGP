@@ -8,6 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import "ObjectivePGP.h"
+#import "PGPMacros.h"
 #import "PGPSecretKeyPacket.h"
 #import "PGPUser.h"
 #import "PGPSignaturePacket.h"

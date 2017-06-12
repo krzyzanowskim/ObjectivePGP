@@ -14,10 +14,16 @@
 #import "PGPMPI.h"
 #import "PGPTypes.h"
 
+#import "PGPMacros.h"
+#import "PGPLogging.h"
+
 #import "PGPCryptoUtils.h"
 #import "NSData+PGPUtils.h"
 #import "PGPCryptoCFB.h"
 #import "PGPPublicKeyRSA.h"
+
+
+
 
 @interface PGPPacket ()
 

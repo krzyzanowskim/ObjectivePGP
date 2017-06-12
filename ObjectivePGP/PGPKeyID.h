@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "PGPFingerprint.h"
+#import "PGPFoundation.h"
 
 @interface PGPKeyID : NSObject
 

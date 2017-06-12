@@ -12,6 +12,9 @@
 #import "PGPCompressedPacket.h"
 #import "NSValue+PGPUtils.h"
 
+#import "PGPMacros.h"
+#import "PGPLogging.h"
+
 @implementation PGPSignatureSubpacketHeader
 @end
 

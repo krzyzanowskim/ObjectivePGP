@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "PGPPacket.h"
+#import "PGPFoundation.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

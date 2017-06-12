@@ -29,6 +29,11 @@
 #import "PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h"
 #import "PGPMPI.h"
 
+#import "PGPFoundation.h"
+#import "PGPMacros.h"
+#import "PGPLogging.h"
+
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface ObjectivePGP ()

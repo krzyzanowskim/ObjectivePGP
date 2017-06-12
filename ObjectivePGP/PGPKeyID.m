@@ -10,6 +10,8 @@
 // Short Key ID:                                             E810 38C6
 
 #import "PGPKeyID.h"
+#import "ObjectivePGP.h"
+#import "PGPMacros.h"
 
 @implementation PGPKeyID
 

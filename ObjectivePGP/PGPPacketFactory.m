@@ -23,6 +23,9 @@
 #import "PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h"
 #import "PGPPublicKeyEncryptedSessionKeyPacket.h"
 
+#import "PGPMacros.h"
+#import "PGPLogging.h"
+
 @implementation PGPPacketFactory
 
 /**

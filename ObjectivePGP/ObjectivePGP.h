@@ -6,11 +6,10 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import "PGPTypes.h"
-#import "PGPKey.h"
+#import "PGPFoundation.h"
 #import "PGPCompoundKey.h"
-#import "PGPUser.h"
+
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

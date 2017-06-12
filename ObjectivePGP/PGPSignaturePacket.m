@@ -19,6 +19,9 @@
 #import "PGPPublicKeyRSA.h"
 #import "NSData+PGPUtils.h"
 
+#import "PGPMacros.h"
+#import "PGPLogging.h"
+
 #import <openssl/rsa.h>
 #import <openssl/dsa.h>
 #import <openssl/bn.h>

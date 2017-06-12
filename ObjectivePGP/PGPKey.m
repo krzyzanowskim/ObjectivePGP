@@ -7,6 +7,8 @@
 //
 
 #import "PGPKey.h"
+#import "PGPLogging.h"
+#import "PGPMacros.h"
 #import "PGPPublicKeyPacket.h"
 #import "PGPSecretKeyPacket.h"
 #import "PGPUser.h"
@@ -18,6 +20,7 @@
 #import "PGPUserAttributeSubpacket.h"
 #import "PGPSubKey.h"
 #import "NSValue+PGPUtils.h"
+#import "PGPMacros.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

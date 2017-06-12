@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import "PGPTypes.h"
+#import "ObjectivePGP.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -9,7 +9,7 @@
 #import "PGPTypes.h"
 #import "PGPPacket.h"
 #import "PGPKey.h"
-#import "PGPFoundation.h"
+
 #import "PGPExportableProtocol.h"
 #import <Foundation/Foundation.h>
 

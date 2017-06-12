@@ -9,6 +9,9 @@
 #import "PGPPacket.h"
 #import "NSData+PGPUtils.h"
 
+#import "PGPMacros.h"
+#import "PGPLogging.h"
+
 const UInt32 UnknownLength = UINT32_MAX;
 
 @interface PGPPacket ()

@@ -8,10 +8,10 @@
 
 #import <XCTest/XCTest.h>
 #import "ObjectivePGP.h"
+#import "PGPMacros.h"
 #import "PGPSecretKeyPacket.h"
 #import "PGPPublicKeyPacket.h"
 #import "PGPArmor.h"
-
 
 @interface ObjectivePGPTestArmor : XCTestCase
 @property (nonatomic) NSString *secKeyringPath;

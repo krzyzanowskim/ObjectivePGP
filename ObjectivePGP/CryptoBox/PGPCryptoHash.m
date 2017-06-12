@@ -7,6 +7,10 @@
 //
 
 #import "PGPCryptoHash.h"
+
+#import "PGPMacros.h"
+#import "PGPLogging.h"
+
 #import <openssl/ripemd.h>
 #import <CommonCrypto/CommonCrypto.h>
 #import <Foundation/Foundation.h>
