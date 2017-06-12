@@ -186,7 +186,7 @@
 
     // encrypt PLAINTEXT
     NSError *encryptError = nil;
-    NSData *encryptedData = [self.oPGP encryptData:plainData usingKey:keyToEncrypt armored:NO error:&encryptError];
+    NSData *encryptedData = [self.oPGP encryptData:plainData usingKeys:@[keyToEncrypt] armored:NO error:&encryptError];
     XCTAssertNil(encryptError);
     XCTAssertNotNil(encryptedData);
     
@@ -203,7 +203,7 @@
     XCTAssertEqualObjects(decryptedString, PLAINTEXT, @"Decrypted data mismatch");
     
     // ARMORED
-    NSData *encryptedDataArmored = [self.oPGP encryptData:plainData usingKey:keyToEncrypt armored:YES error:&encryptError];
+    NSData *encryptedDataArmored = [self.oPGP encryptData:plainData usingKeys:@[keyToEncrypt] armored:YES error:&encryptError];
     XCTAssertNil(encryptError);
     XCTAssertNotNil(encryptedDataArmored);
 
@@ -242,7 +242,7 @@
     
     // encrypt PLAINTEXT
     NSError *encryptError = nil;
-    NSData *encryptedData = [self.oPGP encryptData:plainData usingPublicKeys:@[keyToEncrypt1.publicKey, keyToEncrypt2.publicKey] armored:NO error:&encryptError];
+    NSData *encryptedData = [self.oPGP encryptData:plainData usingKeys:@[keyToEncrypt1, keyToEncrypt2] armored:NO error:&encryptError];
     XCTAssertNil(encryptError);
     XCTAssertNotNil(encryptedData);
     

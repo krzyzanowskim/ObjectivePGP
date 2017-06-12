@@ -9,12 +9,14 @@
 #import "PGPLiteralPacket.h"
 #import "PGPTypes.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface PGPLiteralPacket ()
 @end
 
 @implementation PGPLiteralPacket
 
-- (id)init
+- (instancetype)init
 {
     if (self = [super init]) {
         _format = PGPLiteralPacketBinary;
@@ -92,7 +94,7 @@
     return position;
 }
 
-- (NSData *) exportPacket:(NSError *__autoreleasing *)error
+- (nullable NSData *)exportPacket:(NSError * _Nullable __autoreleasing *)error
 {
     NSAssert(self.literalRawData, @"Missing literal data");
     if (!self.literalRawData) {
@@ -138,8 +140,14 @@
     [data appendData: headerData];
     [data appendData: bodyData];
 
-    return [data copy];
+    return data;
 }
 
+- (nullable NSData *)export:(NSError *__autoreleasing  _Nullable *)error {
+    return [self exportPacket:error];
+}
 
 @end
+
+NS_ASSUME_NONNULL_END
+
