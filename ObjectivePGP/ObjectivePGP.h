@@ -35,9 +35,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// 16 or 8 characters long identifier.
 - (nullable PGPCompoundKey *)findKeyForIdentifier:(NSString *)keyIdentifier;
-- (nullable PGPCompoundKey *)getKeyForKeyID:(PGPKeyID *)searchKeyID;
+- (nullable PGPCompoundKey *)findKeyForKeyID:(PGPKeyID *)searchKeyID;
 /// Returns keys for the full user identifier.
-- (NSArray<PGPCompoundKey *> *)getKeysForUserID:(NSString *)userID;
+- (NSArray<PGPCompoundKey *> *)findKeysForUserID:(NSString *)userID;
 
 - (nullable NSData *)signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(nullable NSString *)passphrase  error:(NSError * __autoreleasing __nullable * __nullable)error DEPRECATED_MSG_ATTRIBUTE("Use PGPCompoundKey version. ");
 - (nullable NSData *)signData:(NSData *)dataToSign usingSecretKey:(PGPKey *)secretKey passphrase:(nullable NSString *)passphrase detached:(BOOL)detached  error:(NSError * __autoreleasing __nullable * __nullable)error DEPRECATED_MSG_ATTRIBUTE("Use PGPCompoundKey version.");

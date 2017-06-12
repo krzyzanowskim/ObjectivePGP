@@ -59,10 +59,10 @@
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath], @"Unable to load keyring");
     XCTAssert(self.oPGP.keys.count == 1, @"Should load 1 key");
 
-    let foundKeys1 = [self.oPGP getKeysForUserID:@"Marcin (test) <marcink@up-next.com>"];
+    let foundKeys1 = [self.oPGP findKeysForUserID:@"Marcin (test) <marcink@up-next.com>"];
     XCTAssertTrue(foundKeys1.count == 1);
 
-    let foundKeys2 = [self.oPGP getKeysForUserID:@"ERR Marcin (test) <marcink@up-next.com>"];
+    let foundKeys2 = [self.oPGP findKeysForUserID:@"ERR Marcin (test) <marcink@up-next.com>"];
     XCTAssertTrue(foundKeys2.count == 0);
 
     let key = [self.oPGP findKeyForIdentifier:@"952E4E8B"];

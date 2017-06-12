@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Search
 
-- (NSArray<PGPCompoundKey *> *)getKeysForUserID:(nonnull NSString *)userID {
+- (NSArray<PGPCompoundKey *> *)findKeysForUserID:(nonnull NSString *)userID {
     return [[self.keys objectsPassingTest:^BOOL(PGPCompoundKey *key, BOOL *stop1) {
         let a = key.publicKey ? [key.publicKey.users indexOfObjectPassingTest:^BOOL(PGPUser *user, NSUInteger idx, BOOL *stop2) {
             return [userID isEqual:user.userID];
@@ -62,7 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
     }] allObjects];
 }
 
-- (nullable PGPCompoundKey *)getKeyForKeyID:(PGPKeyID *)searchKeyID {
+- (nullable PGPCompoundKey *)findKeyForKeyID:(PGPKeyID *)searchKeyID {
     PGPAssertClass(searchKeyID, PGPKeyID);
 
     return [[self.keys objectsPassingTest:^BOOL(PGPCompoundKey *key, BOOL *stop) {
@@ -257,7 +257,7 @@ NS_ASSUME_NONNULL_BEGIN
     for (PGPPacket *packet in packets) {
         if (packet.tag == PGPPublicKeyEncryptedSessionKeyPacketTag) {
             let pkESKPacket = PGPCast(packet, PGPPublicKeyEncryptedSessionKeyPacket);
-            let decryptionKey = [self getKeyForKeyID:pkESKPacket.keyID];
+            let decryptionKey = [self findKeyForKeyID:pkESKPacket.keyID];
             if (!decryptionKey.secretKey) {
                 continue;
             }
@@ -484,7 +484,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (nullable NSData *)signData:(NSData *)dataToSign withKeyForUserID:(NSString *)userID passphrase:(nullable NSString *)passphrase detached:(BOOL)detached error:(NSError * __autoreleasing *)error {
-    let key = [[self getKeysForUserID:userID] lastObject];
+    let key = [[self findKeysForUserID:userID] lastObject];
     NSAssert(key, @"Key is missing");
 
     if (!key) {
@@ -874,13 +874,6 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     return compoundKeys.allObjects;
-}
-
-
-- (nullable PGPCompoundKey *)findKeyForKeyID:(PGPKeyID *)keyID {
-    return [[self.keys objectsPassingTest:^BOOL(PGPCompoundKey *key, BOOL *stop) {
-        return [key.publicKey.keyID isEqual:keyID] || [key.secretKey.keyID isEqual:keyID];
-    }] anyObject];
 }
 
 - (NSArray *)convertArmoredMessage2BinaryBlocksWhenNecessary:(NSData *)binOrArmorData {
