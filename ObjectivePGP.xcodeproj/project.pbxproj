@@ -26,6 +26,7 @@
 		752DE5C11EEE3C1B00637E38 /* PGPMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 752DE5BD1EEE3BE800637E38 /* PGPMacros.h */; };
 		7538C0DE1CDCF47B00A8F136 /* issue35-message.asc in Resources */ = {isa = PBXBuildFile; fileRef = 7538C0DD1CDCF47B00A8F136 /* issue35-message.asc */; };
 		753A65EF19487E3D0011A729 /* PGPSymmetricallyEncryptedDataPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 753A65EE19487E3D0011A729 /* PGPSymmetricallyEncryptedDataPacket.m */; };
+		753B05431EF3E05200785EBC /* issue62-message.asc in Resources */ = {isa = PBXBuildFile; fileRef = 753B05421EF3E03800785EBC /* issue62-message.asc */; };
 		754351871ED268B400896236 /* PGPCryptoHash.m in Sources */ = {isa = PBXBuildFile; fileRef = 754351861ED268B400896236 /* PGPCryptoHash.m */; };
 		754351881ED268B400896236 /* PGPCryptoHash.m in Sources */ = {isa = PBXBuildFile; fileRef = 754351861ED268B400896236 /* PGPCryptoHash.m */; };
 		755456C0192843E700E5526B /* PGPArmor.m in Sources */ = {isa = PBXBuildFile; fileRef = 755456BF192843E700E5526B /* PGPArmor.m */; };
@@ -51,6 +52,7 @@
 		75734BD81918462900A54D6E /* PGPTrustPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75734BD71918462900A54D6E /* PGPTrustPacket.m */; };
 		75734BDB191853DF00A54D6E /* PGPKeyID.m in Sources */ = {isa = PBXBuildFile; fileRef = 75734BDA191853DF00A54D6E /* PGPKeyID.m */; };
 		757DDE7C1919371600A30F84 /* PGPPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 757DDE7B1919371600A30F84 /* PGPPacket.m */; };
+		758042721EF3CC9C001ECAC6 /* issue62-keys.asc in Resources */ = {isa = PBXBuildFile; fileRef = 758042711EF3CC95001ECAC6 /* issue62-keys.asc */; };
 		75804A281EED169E00AC97BF /* ObjectivePGP.h in Headers */ = {isa = PBXBuildFile; fileRef = 756299BD1914DE1A00C5AD3B /* ObjectivePGP.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		75804A2A1EED16C700AC97BF /* ObjectivePGP.h in Headers */ = {isa = PBXBuildFile; fileRef = 756299BD1914DE1A00C5AD3B /* ObjectivePGP.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		75804A2B1EED16D600AC97BF /* PGPCryptoHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 75572E281ED2193C00205871 /* PGPCryptoHash.h */; };
@@ -266,6 +268,7 @@
 		7538C0DD1CDCF47B00A8F136 /* issue35-message.asc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "issue35-message.asc"; sourceTree = "<group>"; };
 		753A65ED19487E3D0011A729 /* PGPSymmetricallyEncryptedDataPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSymmetricallyEncryptedDataPacket.h; sourceTree = "<group>"; };
 		753A65EE19487E3D0011A729 /* PGPSymmetricallyEncryptedDataPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSymmetricallyEncryptedDataPacket.m; sourceTree = "<group>"; };
+		753B05421EF3E03800785EBC /* issue62-message.asc */ = {isa = PBXFileReference; lastKnownFileType = text; path = "issue62-message.asc"; sourceTree = "<group>"; };
 		754351861ED268B400896236 /* PGPCryptoHash.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPCryptoHash.m; sourceTree = "<group>"; };
 		755456BE192843E700E5526B /* PGPArmor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPArmor.h; sourceTree = "<group>"; };
 		755456BF192843E700E5526B /* PGPArmor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPArmor.m; sourceTree = "<group>"; };
@@ -303,6 +306,7 @@
 		75734BDA191853DF00A54D6E /* PGPKeyID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPKeyID.m; sourceTree = "<group>"; };
 		757DDE7A1919338700A30F84 /* PGPPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPacket.h; sourceTree = "<group>"; };
 		757DDE7B1919371600A30F84 /* PGPPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPacket.m; sourceTree = "<group>"; };
+		758042711EF3CC95001ECAC6 /* issue62-keys.asc */ = {isa = PBXFileReference; lastKnownFileType = text; path = "issue62-keys.asc"; sourceTree = "<group>"; };
 		75804A241EED159300AC97BF /* PGPCompoundKey+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PGPCompoundKey+Private.h"; sourceTree = "<group>"; };
 		758475E1195AF866003953B2 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		758514EA1EDF09C400CB313F /* PGPFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPFoundation.h; sourceTree = "<group>"; };
@@ -569,6 +573,8 @@
 				750B43B71ED356D70064BA05 /* issue53-s2k-gnu-dummy.prv.asc */,
 				750B43B81ED356D70064BA05 /* issue53-s2k-gnu-dummy.pub.asc */,
 				7590B7AB1ED9BFF7009A0E92 /* issue44-keys.asc */,
+				758042711EF3CC95001ECAC6 /* issue62-keys.asc */,
+				753B05421EF3E03800785EBC /* issue62-message.asc */,
 			);
 			path = TestingFiles;
 			sourceTree = "<group>";
@@ -885,12 +891,14 @@
 				750016A919C22E7100EAF308 /* secring-test-plaintext-encrypted-message.asc in Resources */,
 				75CA419C1CDF775900887C62 /* issue35-key.asc in Resources */,
 				7563357619258F1700414CCC /* pubring-test-encrypted.gpg in Resources */,
+				758042721EF3CC9C001ECAC6 /* issue62-keys.asc in Resources */,
 				7590B7AC1ED9BFF7009A0E92 /* issue44-keys.asc in Resources */,
 				7538C0DE1CDCF47B00A8F136 /* issue35-message.asc in Resources */,
 				7563357919258F1700414CCC /* secring-test-plaintext.gpg in Resources */,
 				7563357719258F1700414CCC /* pubring-test-plaintext.gpg in Resources */,
 				75B9268B1CBA3A0200B3EF41 /* issue22-original.asc in Resources */,
 				75D53ADF1A2FCDEE00ED9707 /* multiple-keys.asc in Resources */,
+				753B05431EF3E05200785EBC /* issue62-message.asc in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

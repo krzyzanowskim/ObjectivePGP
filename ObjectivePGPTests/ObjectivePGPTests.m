@@ -112,27 +112,19 @@
     XCTAssertNotNil(signature);
 }
 
-//- (void) testNewOpenKeyring
-//{
-//    BOOL openedPubKeyringNewFormat    = [self.keyring open:self.pubringNewFormatPath];
-//    XCTAssert(openedPubKeyringNewFormat, @"Unable to read file");
-//}
+// https://github.com/krzyzanowskim/ObjectivePGP/issues/62
+- (void)testIssue62 {
+    let pgp = self.oPGP;
+    let bundle = [NSBundle bundleForClass:[self class]];
+    let keysPath = [bundle pathForResource:@"issue62-keys" ofType:@"asc"];
+    let keys = [pgp importKeysFromFile:keysPath];
+    XCTAssertEqual(keys.count, (NSUInteger)1);
 
-//- (void) testOldOpenKeyring
-//{
-//    BOOL openedPubKeyringOldFormat    = [self.keyring open:self.pubringOldFormatPath];
-//    XCTAssert(openedPubKeyringOldFormat, @"Unable to read file");
-//}
-
-- (void) testSecretKeyring
-{
-//    BOOL openedSecring    = [self.keyring open:self.secringPathPlaintext];
-//    XCTAssert(openedSecring, @"Unable to read file");
+    NSError *error;
+    let data = [NSData dataWithContentsOfFile:[bundle pathForResource:@"issue62-message" ofType:@"asc"]];
+    let decryptedData = [pgp decryptData:data passphrase:nil error:&error];
+    XCTAssertNil(error);
+    XCTAssertNotNil(decryptedData);
 }
-
-//- (void)testExample
-//{
-//    XCTFail(@"No implementation for \"%s\"", __PRETTY_FUNCTION__);
-//}
 
 @end
