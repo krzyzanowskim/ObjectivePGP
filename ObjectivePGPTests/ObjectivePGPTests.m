@@ -100,7 +100,7 @@
     let bundle = [NSBundle bundleForClass:[self class]];
     let keysPath = [bundle pathForResource:@"issue44-keys" ofType:@"asc"];
     let keys = [pgp importKeysFromFile:keysPath];
-    XCTAssertTrue(keys.count == 2);
+    XCTAssertEqual(keys.count,(NSUInteger)1);
 
     // PGPKey *keyToSign = [pgp getKeyForIdentifier:@"FF95F0F0ADA10313" type:PGPKeySecret];
     let keyToSign = [pgp findKeyForIdentifier:@"71180E514EF122E5"];

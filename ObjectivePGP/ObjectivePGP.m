@@ -754,11 +754,12 @@ NS_ASSUME_NONNULL_BEGIN
         return @[];
     }
 
-    let keys = [[NSMutableSet<PGPCompoundKey *> alloc] init];
+    var keys = [[NSSet<PGPCompoundKey *> alloc] init];
     for (NSData *data in binRingData) {
-        let parsedKeys = [self readKeysFromData:data];
-        for (PGPCompoundKey *key in parsedKeys) {
-            [keys addObject:key];
+        let readKeys = [self readKeysFromData:data];
+        for (PGPCompoundKey *key in readKeys) {
+            keys = [self addOrUpdateCompoundKeyForKey:key.publicKey inContainer:keys];
+            keys = [self addOrUpdateCompoundKeyForKey:key.secretKey inContainer:keys];
         }
     }
 
@@ -813,14 +814,8 @@ NS_ASSUME_NONNULL_BEGIN
     return updatedContainer;
 }
 
-/**
- *  Parse PGP packets data
- *
- *  @param messageData PGP Message data with packets
- *
- *  @return Array of PGPKey
- */
-- (NSArray<PGPCompoundKey *> *)readKeysFromData:(NSData *)messageData {
+- (NSSet<PGPCompoundKey *> *)readKeysFromData:(NSData *)messageData {
+    //FIXME: should return correctly compiled compound keys
     var compoundKeys = [NSSet<PGPCompoundKey *> set];
     let accumulatedPackets = [NSMutableArray<PGPPacket *> array];
     NSUInteger offset = 0;
@@ -846,7 +841,7 @@ NS_ASSUME_NONNULL_BEGIN
         [accumulatedPackets removeAllObjects];
     }
 
-    return compoundKeys.allObjects;
+    return compoundKeys;
 }
 
 - (NSArray *)convertArmoredMessage2BinaryBlocksWhenNecessary:(NSData *)binOrArmorData {
