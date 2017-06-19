@@ -348,7 +348,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSMutableData *result = [NSMutableData data];
 
     for (PGPPacket * packet in self.allPacketsArray) {
-        [result appendData:[packet exportPacket:error]]; //TODO: decode secret key first
+        [result appendData:[packet export:error]]; //TODO: decode secret key first
         if (error) {
             NSAssert(*error == nil,@"Error while export public key");
             if (*error) {

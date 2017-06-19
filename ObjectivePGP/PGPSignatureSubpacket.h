@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import "PGPTypes.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface PGPSignatureSubpacketHeader : NSObject
 @property (nonatomic) PGPSignatureSubpacketType type;
 @property (nonatomic) NSUInteger headerLength;
@@ -28,6 +30,8 @@
 + (PGPSignatureSubpacket *) subpacketWithType:(PGPSignatureSubpacketType)type andValue:(id)value;
 
 - (void) parseSubpacketBody:(NSData *)packetBody;
-- (NSData *) exportSubpacket:(NSError *__autoreleasing *)error;
+- (nullable NSData *) exportSubpacket:(NSError *__autoreleasing *)error;
 
 @end
+
+NS_ASSUME_NONNULL_END

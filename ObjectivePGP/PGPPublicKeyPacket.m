@@ -220,7 +220,7 @@
  *
  *  @return data
  */
-- (NSData *) exportPacket:(NSError *__autoreleasing *)error
+- (nullable NSData *) export:(NSError *__autoreleasing *)error
 {
     NSMutableData *data = [NSMutableData data];
 
@@ -270,7 +270,7 @@
 
 // Old-style packet header for a key packet with two-octet length.
 // Old but used by fingerprint and with signing
-- (NSData *) exportPublicPacketOldStyle
+- (nullable NSData *) exportPublicPacketOldStyle
 {
     NSMutableData *data = [NSMutableData data];
 

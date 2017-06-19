@@ -181,7 +181,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Build packet
 
-- (NSData *) exportPacket:(NSError *__autoreleasing *)error
+- (nullable NSData *) export:(NSError *__autoreleasing *)error
 {
     NSMutableData *data = [NSMutableData data];
 
@@ -426,7 +426,7 @@ NS_ASSUME_NONNULL_BEGIN
     return YES;
 }
 
-- (nullable NSData *) toSignDataForType:(PGPSignatureType)type inputData:(NSData *)inputData key:(PGPKey *)key keyPacket:(PGPPublicKeyPacket *)keyPacket userID:(NSString *)userID error:(NSError * __autoreleasing *)error
+- (nullable NSData *) toSignDataForType:(PGPSignatureType)type inputData:(NSData *)inputData key:(PGPKey *)key keyPacket:(PGPPublicKeyPacket *)keyPacket userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error
 {
     NSMutableData *toSignData = [NSMutableData data];
     switch (type) {

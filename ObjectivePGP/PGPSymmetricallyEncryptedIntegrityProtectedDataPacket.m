@@ -62,7 +62,7 @@
     return position;
 }
 
-- (NSData *)exportPacket:(NSError *__autoreleasing *)error
+- (NSData *)export:(NSError *__autoreleasing *)error
 {
     NSAssert(self.encryptedData, @"No encrypted data?");
     NSAssert(self.version == 1, @"Require version == 1");
@@ -230,7 +230,7 @@
     [toMDCData appendBytes:&mdc_suffix length:2];
     
     PGPModificationDetectionCodePacket *mdcPacket = [[PGPModificationDetectionCodePacket alloc] initWithData:toMDCData];
-    NSData *mdcPacketData = [mdcPacket exportPacket:error];
+    NSData *mdcPacketData = [mdcPacket export:error];
     if (*error) {
         return NO;
     }

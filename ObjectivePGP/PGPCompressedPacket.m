@@ -59,7 +59,7 @@
     return position;
 }
 
-- (NSData *)exportPacket:(NSError *__autoreleasing *)error
+- (NSData *)export:(NSError *__autoreleasing *)error
 {
     NSMutableData *bodyData = [NSMutableData data];
     

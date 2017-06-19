@@ -14,6 +14,8 @@
 
 const UInt32 UnknownLength = UINT32_MAX;
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface PGPPacket ()
 @property (nonatomic, copy, readwrite) NSData *headerData;
 @property (nonatomic, copy, readwrite) NSData *bodyData;
@@ -59,7 +61,7 @@ const UInt32 UnknownLength = UINT32_MAX;
     return 0;
 }
 
-- (NSData *) exportPacket:(NSError *__autoreleasing *)error
+- (nullable NSData *)export:(NSError *__autoreleasing *)error
 {
     [NSException raise:@"MissingExportMethod" format:@"export: selector not overriden"];
     return nil;
@@ -75,7 +77,7 @@ const UInt32 UnknownLength = UINT32_MAX;
  *
  *  @return Body data, headerLength, packetTag, nextPacketOffset and if body has indeterminateLength
  */
-+ (NSData *) parsePacketHeader:(NSData*)data headerLength:(UInt32 *)headerLength nextPacketOffset:(NSUInteger *)nextPacketOffset packetTag:(PGPPacketTag *)tag indeterminateLength:(BOOL*)indeterminateLength
++ (nullable NSData *) parsePacketHeader:(NSData*)data headerLength:(UInt32 *)headerLength nextPacketOffset:(nullable NSUInteger *)nextPacketOffset packetTag:(PGPPacketTag *)tag indeterminateLength:(BOOL*)indeterminateLength
 {
     UInt8 headerByte = 0;
     [data getBytes:&headerByte range:(NSRange){0,1}];
@@ -292,7 +294,7 @@ const UInt32 UnknownLength = UINT32_MAX;
 
 #pragma mark - NSCopying
 
-- (id)copyWithZone:(NSZone *)zone
+- (id)copyWithZone:(nullable NSZone *)zone
 {
     PGPPacket *copy = [[[self class] allocWithZone:zone] init];
     copy->_bodyData = self.bodyData;
@@ -311,3 +313,5 @@ const UInt32 UnknownLength = UINT32_MAX;
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

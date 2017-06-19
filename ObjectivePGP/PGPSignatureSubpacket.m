@@ -15,6 +15,8 @@
 #import "PGPMacros.h"
 #import "PGPLogging.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @implementation PGPSignatureSubpacketHeader
 @end
 
@@ -241,7 +243,7 @@
     }
 }
 
-- (NSData *) exportSubpacket:(NSError *__autoreleasing *)error
+- (nullable NSData *) exportSubpacket:(NSError *__autoreleasing *)error
 {
     NSMutableData *data = [NSMutableData data];
 
@@ -440,5 +442,6 @@
     return subpacketHeader;
 }
 
-
 @end
+
+NS_ASSUME_NONNULL_END

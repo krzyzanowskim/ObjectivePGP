@@ -26,6 +26,8 @@
 #import "PGPMacros.h"
 #import "PGPLogging.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @implementation PGPPacketFactory
 
 /**
@@ -36,7 +38,7 @@
  *
  *  @return Packet instance object
  */
-+ (PGPPacket *)packetWithData:(NSData *)packetData offset:(NSUInteger)offset nextPacketOffset:(NSUInteger *)nextPacketOffset
++ (nullable PGPPacket *)packetWithData:(NSData *)packetData offset:(NSUInteger)offset nextPacketOffset:(nullable NSUInteger *)nextPacketOffset
 {
 
     // parse header and get actual header data
@@ -113,3 +115,5 @@
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

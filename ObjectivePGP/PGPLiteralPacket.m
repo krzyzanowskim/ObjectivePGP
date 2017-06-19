@@ -94,7 +94,7 @@ NS_ASSUME_NONNULL_BEGIN
     return position;
 }
 
-- (nullable NSData *)exportPacket:(NSError * _Nullable __autoreleasing *)error
+- (nullable NSData *)export:(NSError * _Nullable __autoreleasing *)error
 {
     NSAssert(self.literalRawData, @"Missing literal data");
     if (!self.literalRawData) {
@@ -141,10 +141,6 @@ NS_ASSUME_NONNULL_BEGIN
     [data appendData: bodyData];
 
     return data;
-}
-
-- (nullable NSData *)export:(NSError *__autoreleasing  _Nullable *)error {
-    return [self exportPacket:error];
 }
 
 @end

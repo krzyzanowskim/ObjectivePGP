@@ -9,6 +9,8 @@
 #import <Foundation/Foundation.h>
 #import <openssl/bn.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface PGPMPI : NSObject
 
 @property (nonatomic) NSString *identifier;
@@ -20,7 +22,9 @@
 
 - (instancetype) initWithMPIData:(NSData *)mpiData atPosition:(NSUInteger)position;
 - (instancetype) initWithData:(NSData *)dataToMPI;
-- (NSData *) exportMPI;
+- (nullable NSData *) exportMPI;
 - (NSData *) bodyData;
 
 @end
+
+NS_ASSUME_NONNULL_END

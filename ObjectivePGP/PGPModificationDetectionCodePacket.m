@@ -40,7 +40,7 @@
     return position;
 }
 
-- (NSData *)exportPacket:(NSError *__autoreleasing *)error
+- (NSData *)export:(NSError *__autoreleasing *)error
 {
     NSData *bodyData = [self.hashData subdataWithRange:(NSRange) {0,CC_SHA1_DIGEST_LENGTH}]; // force limit to 20 octets
 

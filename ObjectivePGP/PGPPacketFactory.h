@@ -10,8 +10,12 @@
 #import "PGPTypes.h"
 #import "PGPPacket.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface PGPPacketFactory : NSObject
 
-+ (PGPPacket *) packetWithData:(NSData *)packetsData offset:(NSUInteger)offset nextPacketOffset:(NSUInteger *)nextPacketOffset;
++ (nullable PGPPacket *) packetWithData:(NSData *)packetsData offset:(NSUInteger)offset nextPacketOffset:(nullable NSUInteger *)nextPacketOffset;
 
 @end
+
+NS_ASSUME_NONNULL_END

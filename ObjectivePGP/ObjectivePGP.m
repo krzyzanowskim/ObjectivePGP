@@ -422,7 +422,7 @@ NS_ASSUME_NONNULL_BEGIN
         if (*error) {
             return nil;
         }
-        [encryptedMessage appendData:[eskKeyPacket exportPacket:error]];
+        [encryptedMessage appendData:[eskKeyPacket export:error]];
         if (*error) {
             return nil;
         }
@@ -445,13 +445,13 @@ NS_ASSUME_NONNULL_BEGIN
         if (*error) {
             return nil;
         }
-        let literalPacketData = [literalPacket exportPacket:error];
+        let literalPacketData = [literalPacket export:error];
         if (*error) {
             return nil;
         }
         
         let compressedPacket = [[PGPCompressedPacket alloc] initWithData:literalPacketData type:PGPCompressionBZIP2];
-        content = [compressedPacket exportPacket:error];
+        content = [compressedPacket export:error];
         if (*error) {
             return nil;
         }
@@ -467,7 +467,7 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    [encryptedMessage appendData:[symEncryptedDataPacket exportPacket:error]];
+    [encryptedMessage appendData:[symEncryptedDataPacket export:error]];
     if (*error) {
         return nil;
     }
@@ -497,7 +497,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     NSError *exportError = nil;
-    NSData *signaturePacketData = [signaturePacket exportPacket:&exportError];
+    NSData *signaturePacketData = [signaturePacket export:&exportError];
     NSAssert(!exportError,@"Error on export packet");
     if (exportError) {
         if (error) {
@@ -519,7 +519,7 @@ NS_ASSUME_NONNULL_BEGIN
 
         onePassPacket.notNested = YES;
         NSError *onePassExportError = nil;
-        [signedMessage appendData:[onePassPacket exportPacket:&onePassExportError]];
+        [signedMessage appendData:[onePassPacket export:&onePassExportError]];
         NSAssert(!onePassExportError, @"Missing one password data");
         if (onePassExportError) {
             if (error) {
@@ -534,7 +534,7 @@ NS_ASSUME_NONNULL_BEGIN
         literalPacket.timestamp = [NSDate date];
 
         NSError *literalExportError = nil;
-        [signedMessage appendData:[literalPacket exportPacket:&literalExportError]];
+        [signedMessage appendData:[literalPacket export:&literalExportError]];
         NSAssert(!literalExportError, @"Missing literal data");
         if (literalExportError) {
             if (error) {
@@ -822,10 +822,10 @@ NS_ASSUME_NONNULL_BEGIN
 
     while (offset < messageData.length) {
         NSUInteger nextPacketOffset = 0;
-        PGPPacket *packet = [PGPPacketFactory packetWithData:messageData offset:offset nextPacketOffset:&nextPacketOffset];
+        let packet = [PGPPacketFactory packetWithData:messageData offset:offset nextPacketOffset:&nextPacketOffset];
         if (packet) {
             if ((accumulatedPackets.count > 1) && ((packet.tag == PGPPublicKeyPacketTag) || (packet.tag == PGPSecretKeyPacketTag))) {
-                PGPKey *key = [[PGPKey alloc] initWithPackets:accumulatedPackets];
+                let key = [[PGPKey alloc] initWithPackets:accumulatedPackets];
                 // find or create compound key
                 compoundKeys = [self addOrUpdateCompoundKeyForKey:key inContainer:compoundKeys];
                 [accumulatedPackets removeAllObjects];
