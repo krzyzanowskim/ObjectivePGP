@@ -1,0 +1,247 @@
+//
+//  Defaults.xcconfig
+//
+//  Common customizations/sanitizations of the platform defaults for our projects.
+//
+//  For compatibility reasons, the iOS platform has a couple of not–so–sensible defaults.
+//  This file collects, and annotates the deviations from these defaults.
+//
+// :NOTE: Some of the settings herein may be redundant for newly created projects/targets:
+//  Xcode’s project/target templates take several (but not all!) of these issues into account.
+//  However, for uniformity it is probably more useful to simply delete the entire warning section in the Xcode project, and then set them up using the standard warning flags.
+// https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/XcodeBuildSettingRef/1-Build_Setting_Reference/build_setting_ref.html
+
+// We support macOS, iOS, watchOS and tvOS by default.
+SUPPORTED_PLATFORMS = macosx iphoneos appletvos watchos appletvsimulator iphonesimulator watchsimulator
+
+// http://promisekit.org/news/2016/08/Multiplatform-Single-Scheme-Xcode-Projects/
+// watchOS build fails if we do not set it exactly like that
+TARGETED_DEVICE_FAMILY = 1,2,3,4
+
+// Deployment targets
+MACOSX_DEPLOYMENT_TARGET = 10.9
+IPHONEOS_DEPLOYMENT_TARGET = 8.0
+TVOS_DEPLOYMENT_TARGET = 9.0
+WATCHOS_DEPLOYMENT_TARGET = 3.0
+
+PRODUCT_NAME = ObjectivePGP
+
+HEADER_SEARCH_PATHS[sdk=iphoneos*] = libs/ios
+HEADER_SEARCH_PATHS[sdk=iphonesimulator*] = libs/ios
+HEADER_SEARCH_PATHS[sdk=macosx*] = libs/macosx
+
+LIBRARY_SEARCH_PATHS[sdk=iphoneos*] = libs/ios
+LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*] = libs/ios
+LIBRARY_SEARCH_PATHS[sdk=macosx*] = libs/macosx
+
+// We do not need to codesign tests for the simulator - disabling speeds up test compile (sign) time.
+CODE_SIGN_IDENTITY = iOS Developer
+CODE_SIGN_IDENTITY[sdk=iphoneos*] =
+CODE_SIGN_IDENTITY[sdk=iphonesimulator*] =
+CODE_SIGN_IDENTITY[sdk=macosx*] = 
+
+// Generating dSYM files is super slow, so skip during debug builds.
+DEBUG_INFORMATION_FORMAT = dwarf;
+//DEBUG_INFORMATION_FORMAT = dwarf-with-dsym;
+
+// :MARK: General Project Setup:
+// :MARK: -Toolchain
+// Universal Objective-C iOS Project
+SDKROOT = iphoneos
+// GCC_C_LANGUAGE_STANDARD = gnu11
+
+// Xcode 8
+// CLANG_CXX_LANGUAGE_STANDARD = gnu++1z
+
+// Compatibility with Xcode 9
+//CLANG_CXX_LANGUAGE_STANDARD_XCODE9 = gnu++14
+//CLANG_CXX_LANGUAGE_STANDARD[sdk=macosx10.13*] = $(CLANG_CXX_LANGUAGE_STANDARD_XCODE9)
+//CLANG_CXX_LANGUAGE_STANDARD[sdk=iphoneos11*] = $(CLANG_CXX_LANGUAGE_STANDARD_XCODE9)
+//CLANG_CXX_LANGUAGE_STANDARD[sdk=iphonesimulator11*] = $(CLANG_CXX_LANGUAGE_STANDARD_XCODE9)
+
+//CLANG_CXX_LIBRARY = libc++
+OTHER_LDFLAGS = -ObjC -lcrypto -lz -lbz2
+ONLY_ACTIVE_ARCH = YES
+
+// Boolean value. Specifies whether the generated object code is nonrelocatable (external references remain relocatable). Making code nonrelocatable results in faster function calls. This feature is appropriate in applications but not dynamic libraries.
+GCC_DYNAMIC_NO_PIC = NO
+
+// PGP_CFLAGS_COMMON should be used in config files that want to redefine OTHER_CFLAGS.
+// Make symbols private by default. There is also GCC_SYMBOLS_PRIVATE_EXTERN, which emits -fvisibility=hidden in release builds only. We want this in debug builds too.
+// http://stackoverflow.com/questions/35861502/fvisibility-hidden-not-passed-by-compiler-for-debug-builds
+// http://prod.lists.apple.com/archives/xcode-users/2016/Nov/msg00090.html
+// -fvisibility-inlines-hidden (GCC_INLINES_ARE_PRIVATE_EXTERN) would be redundant because we have -fvisibility=hidden.
+// https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/CppRuntimeEnv/Articles/S`ymbolVisibility.html#//apple_ref/doc/uid/TP40001670-98807-CJBDHDIC
+// -fmodules -fcxx-modules Would enable modules but this is incompatible with ccache (https://bugzilla.samba.org/show_bug.cgi?id=11048)
+PGP_CFLAGS_COMMON = $(inherited) -fmodules -fvisibility=hidden
+GCC_SYMBOLS_PRIVATE_EXTERN = YES
+
+// watchOS requires special inline assembly flag
+// https://forums.developer.apple.com/thread/48686
+PGP_CFLAGS_COMMON[sdk=watchos*] = $(inherited) -fvisibility=hidden -fgnu-inline-asm
+PGP_CFLAGS_COMMON[sdk=watchsimulator*] = $(inherited) -fvisibility=hidden -fgnu-inline-asm
+
+// Config files that include this one and want to change this setting should override and that override should have $(PGP_CFLAGS_COMMON) but not $(inherited) because that refers to the higher level in the hierarchy, not earlier in the xcconfig file.
+OTHER_CFLAGS = $(PGP_CFLAGS_COMMON)
+
+LLVM_LTO = NO
+
+// fast-math is enabled for better floating point performance.
+// GCC_FAST_MATH = YES
+
+// Performance
+ENABLE_TESTABILITY = YES
+VALIDATE_PRODUCT = NO
+COPY_PHASE_STRIP = NO
+DEPLOYMENT_POSTPROCESSING = NO
+STRIP_INSTALLED_PRODUCT = NO
+SEPARATE_STRIP = NO
+DEAD_CODE_STRIPPING = NO
+STRIP_STYLE = debugging
+
+// ccache tweaks
+CLANG_ENABLE_MODULES = NO
+GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES
+GCC_PRECOMPILE_PREFIX_HEADER = NO
+//CC=/cc/variable/is/not/set/in/your/xcodeproj
+// CC is set in each .xcodeproj because the path is relative to something else all the time.
+// So we set it to something that will fail here.
+
+// ARC is default
+CLANG_ENABLE_OBJC_ARC = YES
+
+// Limit API to what is safe for extensions.
+APPLICATION_EXTENSION_API_ONLY = YES
+
+// Slightly faster compile times.
+DLLVM_OPTIMIZED_TABLEGEN=ON
+
+// Everything else kills debugging and performance.
+GCC_OPTIMIZATION_LEVEL = 0
+
+// Generate mapping file to understand binary size (Enable only when you use it)
+//LD_GENERATE_MAP_FILE = YES
+
+// Disable Code Coverage by default - this is slow
+GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=NO
+GCC_GENERATE_TEST_COVERAGE_FILES=NO
+
+ENABLE_NS_ASSERTIONS = YES
+
+// Reuse strings (default)
+GCC_REUSE_STRINGS = YES
+
+// Default as of Xcode 8
+// In C, allocate even uninitialized global variables in the data section of the object file, rather than generating them as common blocks. This has the effect that if the same variable is declared (without extern ) in two different compilations, you will get an error when you link them. The only reason this might be useful is if you wish to verify that the program will work on other systems which always work this way.
+GCC_NO_COMMON_BLOCKS = YES
+
+// Xcode complains if we don't set this to yes - doesn't do much for us. (Mac only)
+COMBINE_HIDPI_IMAGES = YES
+
+// :MARK: -Swift
+SWIFT_VERSION = 3.0
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG
+
+// Xcode 8.3+
+OTHER_SWIFT_FLAGS[sdk=iphonesimulator10.3*] = -enable-bridging-pch
+OTHER_SWIFT_FLAGS[sdk=iphoneos10.3*] = -enable-bridging-pch
+
+// Only embed Swift where needed. (New in Xcode 8)
+ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO
+
+// Same reason as GCC_OPTIMIZATION_LEVEL
+SWIFT_OPTIMIZATION_LEVEL = -Onone
+
+// :MARK: -Locations
+ALWAYS_SEARCH_USER_PATHS = NO
+SKIP_INSTALL = YES
+EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES =  *.bundle $(inherited)
+
+// :MARK: -Custom Definitions/Macros
+// Always export symbols so PSPDF Instant can be used with normal releases of PSPDFKit.
+PGP_PREPROCESSOR_DEFINITIONS_COMMON = $(inherited) PGP_APP_EXPORT_SYMBOLS=1
+// Config files that include this one and want to change this setting should override and that override should have $(PGP_PREPROCESSOR_DEFINITIONS_COMMON) but not $(inherited) because that refers to the higher level in the hierarchy, not earlier in the xcconfig file.
+GCC_PREPROCESSOR_DEFINITIONS = $(PGP_PREPROCESSOR_DEFINITIONS_COMMON)
+
+// :MARK: - Reset Diagnostics:
+ENABLE_STRICT_OBJC_MSGSEND = YES
+// :MARK: -Warnings
+// The iOS platform defaults **explicitly** disable several warnings.
+// This defeats the purpose of Clangs `-Weverything`, which we want to use!
+// Therefore, we explicitly enable all those warnings here.
+// Disabling those we do **not** want then happens elsewhere — always in combination with a reason _why_ we don’t want/need it.
+// CLANG_WARN_DOCUMENTATION_COMMENTS = YES
+CLANG_WARN_EMPTY_BODY = YES
+GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES
+GCC_WARN_SHADOW = YES
+CLANG_WARN_CONSTANT_CONVERSION = YES
+CLANG_WARN_BOOL_CONVERSION = YES
+GCC_WARN_64_TO_32_BIT_CONVERSION = YES
+CLANG_WARN_ENUM_CONVERSION = YES
+CLANG_WARN_INT_CONVERSION = YES
+// CLANG_WARN_IMPLICIT_SIGN_CONVERSION = YES
+GCC_WARN_INITIALIZER_NOT_FULLY_BRACKETED = YES
+GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR
+GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES
+GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES
+GCC_WARN_ABOUT_MISSING_NEWLINE = YES
+CLANG_WARN_ASSIGN_ENUM = YES
+GCC_WARN_SIGN_COMPARE = YES
+CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES
+GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES
+GCC_TREAT_IMPLICIT_FUNCTION_DECLARATIONS_AS_ERRORS = YES
+GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE
+GCC_WARN_UNKNOWN_PRAGMAS = YES
+CLANG_WARN_UNREACHABLE_CODE = YES
+GCC_WARN_UNUSED_FUNCTION = YES
+GCC_WARN_UNUSED_LABEL = YES
+GCC_WARN_UNUSED_PARAMETER = YES
+GCC_WARN_UNUSED_VARIABLE = YES
+CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES
+GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES
+GCC_WARN_HIDDEN_VIRTUAL_FUNCTIONS = YES
+CLANG_WARN_CXX0X_EXTENSIONS = YES
+CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR
+CLANG_WARN__DUPLICATE_METHOD_MATCH = YES
+CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = YES
+// CLANG_WARN_OBJC_MISSING_PROPERTY_SYNTHESIS = YES
+GCC_WARN_UNDECLARED_SELECTOR = YES
+GCC_WARN_MULTIPLE_DEFINITION_TYPES_FOR_SELECTOR = YES
+CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES
+GCC_WARN_STRICT_SELECTOR_MATCH = YES
+GCC_WARN_UNDECLARED_SELECTOR = YES
+CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR
+CLANG_WARN_OBJC_EXPLICIT_OWNERSHIP_TYPE = YES
+CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES
+CLANG_WARN_OBJC_REPEATED_USE_OF_WEAK = YES
+CLANG_WARN_OBJC_RECEIVER_WEAK = YES
+// CLANG_WARN_NULLABLE_TO_NONNULL_CONVERSION = YES
+CLANG_WARN_INFINITE_RECURSION = YES
+CLANG_WARN_SUSPICIOUS_MOVE = YES
+CLANG_WARN_SUSPICIOUS_MOVES = YES
+
+// Added in Xcode 9
+//CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES
+//CLANG_WARN_COMMA = YES
+//CLANG_WARN_RANGE_LOOP_ANALYSIS = YES
+//CLANG_WARN_STRICT_PROTOTYPES = YES
+//CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES
+//CLANG_WARN_OBJC_LITERAL_CONVERSION = YES
+
+// :MARK: -Static Analysis
+// As with the warnings, reset all options that are explicitly disabled by the iOS platform defaults
+CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES
+CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES
+CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES
+
+// New in Xcode 8
+// http://www.miqu.me/blog/2016/07/31/xcode-8-new-build-settings-and-analyzer-improvements/
+CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES
+CLANG_ANALYZER_NONNULL = YES
+CLANG_ANALYZER_OBJC_DEALLOC = YES
+
+// Enable aggressive checking of availability
+// New in Xcode 9
+// TODO SET TO YES_AGGRESSIVE
+CLANG_WARN_UNGUARDED_AVAILABILITY = NO
+

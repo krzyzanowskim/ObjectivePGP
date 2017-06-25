@@ -1,0 +1,86 @@
+//
+//  Defaults-Testing.xcconfig
+//
+//  Additional defaults that are used for testing.
+//
+
+#include "Defaults.xcconfig"
+
+PRODUCT_NAME = ObjectivePGPTests
+
+// LTO takes longer, but detects mis-linked files.
+// LTO fails because our binary is too large for 32-bit tests.
+// Incremental LTO has been added in Xcode 8.
+LLVM_LTO[arch=arm64] = YES_THIN
+
+// Test and fast math don't play well (especially with LTO enabled)
+//GCC_FAST_MATH[arch=arm64] = NO
+
+
+//
+// Clang Sanitizers. Only one can be selected at once!
+// See https://github.com/PSPDFKit/PSPDFKit/wiki/Address-Sanitizer-(ASAN)
+//
+
+// AddressSanitizer is a fast memory error detector. It consists of a compiler instrumentation module and a run-time library.
+// Typical slowdown introduced by AddressSanitizer is 2x.
+// http://clang.llvm.org/docs/AddressSanitizer.html
+
+// We only enable ASAN for 64-bit as the Simulator has troubles running that in 32 bit; we eventually run out of memory while the tests work.
+CLANG_ADDRESS_SANITIZER[arch=arm64] = YES
+
+// Check for C++ container overflow when Address Sanitizer is enabled.
+// New in Xcode 9
+CLANG_ADDRESS_SANITIZER_CONTAINER_OVERFLOW = YES;
+
+// Enable undefined behavior checker.
+// New in Xcode 9
+CLANG_UNDEFINED_BEHAVIOR_SANITIZER = YES
+CLANG_UNDEFINED_BEHAVIOR_SANITIZER_INTEGER = YES;
+CLANG_UNDEFINED_BEHAVIOR_SANITIZER_NULLABILITY = YES;
+
+// ThreadSanitizer is a tool that detects data races. It consists of a compiler instrumentation module and a run-time library.
+// Typical slowdown introduced by ThreadSanitizer is about 5x-15x. Typical memory overhead introduced by ThreadSanitizer is about 5x-10x.
+// http://clang.llvm.org/docs/ThreadSanitizer.html
+ENABLE_THREAD_SANITIZER = NO
+
+// MemorySanitizer is a detector of uninitialized reads. It consists of a compiler instrumentation module and a run-time library.
+// Typical slowdown introduced by MemorySanitizer is 3x.
+// http://clang.llvm.org/docs/MemorySanitizer.html
+CLANG_MEMORY_SANITIZER = NO
+
+//
+// Swift
+//
+
+//
+// Misc settings
+//
+
+// Define the TESTING macro in all debug builds
+GCC_PREPROCESSOR_DEFINITIONS = $(PGP_PREPROCESSOR_DEFINITIONS_COMMON) CI=$(CI) DEBUG=1 TESTING=1
+
+// Warning are errors!
+// GCC_TREAT_WARNINGS_AS_ERRORS = YES
+
+// Tests often fail with invalid precompiled headers.
+// We use it to speed up builds, but they are not be necessary to build the framework.
+GCC_PRECOMPILE_PREFIX_HEADER = NO
+
+// Explicitely enable assertions, just to be sure.
+ENABLE_NS_ASSERTIONS = YES
+
+// Enable extra validation
+// https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/XcodeBuildSettingRef/1-Build_Setting_Reference/build_setting_ref.html
+VALIDATE_PRODUCT = YES
+
+// Default value for CI
+CI = 0
+
+// from https://github.com/WebKit/webkit/blob/master/Tools/asan/asan.xcconfig
+// This should allow us to get better stack traces on errors
+OTHER_CFLAGS = $(PGP_CFLAGS_COMMON) -fno-omit-frame-pointer -g
+
+// Disable pinging Apple's server for exact time stamps.
+// https://stackoverflow.com/questions/11712322/error-the-timestamp-service-is-not-available-when-using-codesign-on-mac-os-x
+//OTHER_CODE_SIGN_FLAGS = "$(inherited) --timestamp=none"
