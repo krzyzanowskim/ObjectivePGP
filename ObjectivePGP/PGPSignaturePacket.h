@@ -15,7 +15,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class PGPKey, PGPUser, PGPUserIDPacket, PGPPublicKeyPacket, PGPCompoundKey;
+@class PGPPartialKey, PGPUser, PGPUserIDPacket, PGPPublicKeyPacket, PGPKey;
 
 @interface PGPSignaturePacket : PGPPacket <NSCopying>
 
@@ -59,12 +59,12 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return YES on success.
  */
-- (BOOL)signData:(NSData *)inputData secretKey:(PGPKey *)secretKey error:(NSError * __autoreleasing *)error DEPRECATED_ATTRIBUTE;
-- (BOOL)signData:(NSData *)inputData usingKey:(PGPCompoundKey *)key passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error;
+- (BOOL)signData:(NSData *)inputData secretKey:(PGPPartialKey *)secretKey error:(NSError * __autoreleasing *)error DEPRECATED_ATTRIBUTE;
+- (BOOL)signData:(NSData *)inputData usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error;
 
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey error:(NSError * __autoreleasing *)error;
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error;
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error;
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey error:(NSError * __autoreleasing *)error;
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error;
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error;
 
 @end
 

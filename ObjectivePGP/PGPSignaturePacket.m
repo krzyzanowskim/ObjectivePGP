@@ -10,8 +10,8 @@
 #import "PGPMPI.h"
 #import "PGPSignatureSubpacket.h"
 #import "PGPUserIDPacket.h"
+#import "PGPPartialKey.h"
 #import "PGPKey.h"
-#import "PGPCompoundKey.h"
 #import "PGPUser.h"
 #import "PGPSecretKeyPacket.h"
 #import "PGPPKCSEmsa.h"
@@ -237,16 +237,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Verify
 
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey error:(NSError * __autoreleasing *)error; {
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey error:(NSError * __autoreleasing *)error; {
     return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:nil error:error];
 }
 
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error; {
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error; {
     return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:userID error:error];
 }
 
 // Opposite to sign, with readed data (not produced)
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error
 {
     // no signing packet was found, this we have no valid signature
     PGPAssertClass(signingKeyPacket, PGPPublicKeyPacket);
@@ -327,12 +327,12 @@ NS_ASSUME_NONNULL_BEGIN
 // 5.2.4.  Computing Signatures
 // http://tools.ietf.org/html/rfc4880#section-5.2.4
 // @see https://github.com/singpolyma/openpgp-spec/blob/master/key-signatures
-- (BOOL)signData:(NSData *)inputData secretKey:(PGPKey *)secretKey error:(NSError * __autoreleasing *)error {
-    let key = [[PGPCompoundKey alloc] initWithSecretKey:secretKey publicKey:nil];
+- (BOOL)signData:(NSData *)inputData secretKey:(PGPPartialKey *)secretKey error:(NSError * __autoreleasing *)error {
+    let key = [[PGPKey alloc] initWithSecretKey:secretKey publicKey:nil];
     return [self signData:inputData usingKey:key passphrase:nil userID:nil error:error];
 }
 
-- (BOOL)signData:(NSData *)inputData usingKey:(PGPCompoundKey *)key passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error {
+- (BOOL)signData:(NSData *)inputData usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error {
     PGPAssertClass(inputData, NSData);
 
     let secretKey = key.secretKey;
@@ -426,7 +426,7 @@ NS_ASSUME_NONNULL_BEGIN
     return YES;
 }
 
-- (nullable NSData *) toSignDataForType:(PGPSignatureType)type inputData:(NSData *)inputData key:(PGPKey *)key keyPacket:(PGPPublicKeyPacket *)keyPacket userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error
+- (nullable NSData *) toSignDataForType:(PGPSignatureType)type inputData:(NSData *)inputData key:(PGPPartialKey *)key keyPacket:(PGPPublicKeyPacket *)keyPacket userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error
 {
     NSMutableData *toSignData = [NSMutableData data];
     switch (type) {

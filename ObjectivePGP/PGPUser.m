@@ -12,7 +12,7 @@
 #import "PGPSignaturePacket.h"
 #import "PGPPublicKeyPacket.h"
 #import "PGPUserIDPacket.h"
-#import "PGPKey.h"
+#import "PGPPartialKey.h"
 #import "PGPUserAttributePacket.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -134,7 +134,7 @@ NS_ASSUME_NONNULL_BEGIN
 //};
 
 // Returns the most significant (latest valid) self signature of the user
-- (nullable PGPSignaturePacket *)validSelfCertificate:(PGPKey *)key
+- (nullable PGPSignaturePacket *)validSelfCertificate:(PGPPartialKey *)key
 {
     if (self.selfCertifications.count == 0) {
         return nil;

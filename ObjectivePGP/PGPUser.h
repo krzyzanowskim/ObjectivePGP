@@ -12,7 +12,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class PGPUserIDPacket, PGPUserAttributePacket, PGPSignaturePacket, PGPKey;
+@class PGPUserIDPacket, PGPUserAttributePacket, PGPSignaturePacket, PGPPartialKey;
 
 @interface PGPUser : NSObject
 
@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 PGP_EMPTY_INIT_UNAVAILABLE
 
 - (instancetype)initWithUserIDPacket:(PGPUserIDPacket *)userPacket NS_DESIGNATED_INITIALIZER;
-- (nullable PGPSignaturePacket *)validSelfCertificate:(PGPKey *)key;
+- (nullable PGPSignaturePacket *)validSelfCertificate:(PGPPartialKey *)key;
 
 @end
 

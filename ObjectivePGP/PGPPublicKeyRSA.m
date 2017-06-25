@@ -9,7 +9,7 @@
 #import "PGPPublicKeyRSA.h"
 #import "PGPPublicKeyPacket.h"
 #import "PGPSecretKeyPacket.h"
-#import "PGPKey.h"
+#import "PGPPartialKey.h"
 #import "PGPMPI.h"
 #import "PGPPKCSEmsa.h"
 

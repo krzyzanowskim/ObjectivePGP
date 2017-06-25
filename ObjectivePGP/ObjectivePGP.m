@@ -8,9 +8,9 @@
 
 #import "ObjectivePGP.h"
 #import "PGPPacketFactory.h"
+#import "PGPPartialKey.h"
 #import "PGPKey.h"
-#import "PGPCompoundKey.h"
-#import "PGPCompoundKey+Private.h"
+#import "PGPKey+Private.h"
 #import "PGPSubKey.h"
 #import "PGPSignaturePacket.h"
 #import "PGPPacketFactory.h"
@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ObjectivePGP ()
 
-@property (strong, nonatomic, readwrite) NSSet<PGPCompoundKey *> *keys;
+@property (strong, nonatomic, readwrite) NSSet<PGPKey *> *keys;
 
 @end
 
@@ -45,15 +45,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)init {
     if ((self = [super init])) {
-        _keys = [NSMutableSet<PGPCompoundKey *> set];
+        _keys = [NSMutableSet<PGPKey *> set];
     }
     return self;
 }
 
 #pragma mark - Search
 
-- (NSArray<PGPCompoundKey *> *)findKeysForUserID:(nonnull NSString *)userID {
-    return [[self.keys objectsPassingTest:^BOOL(PGPCompoundKey *key, BOOL *stop1) {
+- (NSArray<PGPKey *> *)findKeysForUserID:(nonnull NSString *)userID {
+    return [[self.keys objectsPassingTest:^BOOL(PGPKey *key, BOOL *stop1) {
         let a = key.publicKey ? [key.publicKey.users indexOfObjectPassingTest:^BOOL(PGPUser *user, NSUInteger idx, BOOL *stop2) {
             return [userID isEqual:user.userID];
         }] : NSNotFound;
@@ -66,10 +66,10 @@ NS_ASSUME_NONNULL_BEGIN
     }] allObjects];
 }
 
-- (nullable PGPCompoundKey *)findKeyForKeyID:(PGPKeyID *)searchKeyID {
+- (nullable PGPKey *)findKeyForKeyID:(PGPKeyID *)searchKeyID {
     PGPAssertClass(searchKeyID, PGPKeyID);
 
-    return [[self.keys objectsPassingTest:^BOOL(PGPCompoundKey *key, BOOL *stop) {
+    return [[self.keys objectsPassingTest:^BOOL(PGPKey *key, BOOL *stop) {
         // top-level keys
         __block BOOL found = (key.publicKey && [key.publicKey.keyID isEqual:searchKeyID]);
         if (!found) {
@@ -99,7 +99,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 //TODO: rename to getKeyForFingerprint or something
-- (nullable PGPCompoundKey *)findKeyForIdentifier:(NSString *)keyIdentifier {
+- (nullable PGPKey *)findKeyForIdentifier:(NSString *)keyIdentifier {
     PGPAssertClass(keyIdentifier, NSString);
 
     if (keyIdentifier.length != 8 && keyIdentifier.length != 16) {
@@ -110,7 +110,7 @@ NS_ASSUME_NONNULL_BEGIN
     BOOL useShortIdentifier = keyIdentifier.length == 8;
 
     // public
-    for (PGPCompoundKey *key in self.keys) {
+    for (PGPKey *key in self.keys) {
         if (key.publicKey) {
             let identifier = useShortIdentifier ? key.publicKey.keyID.shortKeyString : key.publicKey.keyID.longKeyString;
             if ([identifier.uppercaseString isEqual:keyIdentifier.uppercaseString]) {
@@ -146,8 +146,8 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Save
 
 - (BOOL)exportKeysOfType:(PGPKeyType)type toFile:(NSString *)path error:(NSError * __autoreleasing *)error {
-    let exportKeys = [NSMutableArray<PGPKey *> array];
-    for (PGPCompoundKey *key in self.keys) {
+    let exportKeys = [NSMutableArray<PGPPartialKey *> array];
+    for (PGPKey *key in self.keys) {
         if (type == PGPKeyPublic && key.publicKey) {
             [exportKeys addObject:key.publicKey];
         }
@@ -158,7 +158,7 @@ NS_ASSUME_NONNULL_BEGIN
     return [self exportKeys:exportKeys toFile:path error:error];
 }
 
-- (BOOL)exportKeys:(NSArray<PGPKey *> *)keys toFile:(NSString *)path error:(NSError * __autoreleasing *)error {
+- (BOOL)exportKeys:(NSArray<PGPPartialKey *> *)keys toFile:(NSString *)path error:(NSError * __autoreleasing *)error {
     NSParameterAssert(keys);
     PGPAssertClass(path, NSString);
 
@@ -166,7 +166,7 @@ NS_ASSUME_NONNULL_BEGIN
         return NO;
     }
 
-    for (PGPKey *key in keys) {
+    for (PGPPartialKey *key in keys) {
         if (![self appendKey:key toKeyring:path error:error]) {
             return NO;
         }
@@ -175,7 +175,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 
-- (BOOL) appendKey:(PGPKey *)key toKeyring:(NSString *)path error:(NSError * __autoreleasing *)error
+- (BOOL) appendKey:(PGPPartialKey *)key toKeyring:(NSString *)path error:(NSError * __autoreleasing *)error
 {
     NSFileManager *fm = [NSFileManager defaultManager];
 
@@ -212,8 +212,8 @@ NS_ASSUME_NONNULL_BEGIN
     return result;
 }
 
-- (nullable NSData *)exportKey:(PGPCompoundKey *)key armored:(BOOL)armored {
-    PGPAssertClass(key, PGPCompoundKey);
+- (nullable NSData *)exportKey:(PGPKey *)key armored:(BOOL)armored {
+    PGPAssertClass(key, PGPKey);
 
     NSError *exportError = nil;
     NSData *keyData = [key export:&exportError];
@@ -236,7 +236,7 @@ NS_ASSUME_NONNULL_BEGIN
     return [self decryptData:messageDataToDecrypt passphrase:passphrase verifyWithKey:nil signed:nil valid:nil integrityProtected:nil error:error];
 }
 
-- (nullable NSData *)decryptData:(NSData *)messageDataToDecrypt passphrase:(nullable NSString *)passphrase verifyWithKey:(nullable PGPCompoundKey *)key signed:(nullable BOOL *)isSigned valid:(nullable BOOL *)isValid integrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError * __autoreleasing _Nullable *)error {
+- (nullable NSData *)decryptData:(NSData *)messageDataToDecrypt passphrase:(nullable NSString *)passphrase verifyWithKey:(nullable PGPKey *)key signed:(nullable BOOL *)isSigned valid:(nullable BOOL *)isValid integrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(messageDataToDecrypt, NSData);
     let binaryMessages = [self convertArmoredMessage2BinaryBlocksWhenNecessary:messageDataToDecrypt];
 
@@ -377,20 +377,20 @@ NS_ASSUME_NONNULL_BEGIN
     return plaintextData;
 }
 
-- (nullable NSData *)encryptData:(NSData *)dataToEncrypt usingKeys:(NSArray<PGPCompoundKey *> *)keys armored:(BOOL)armored error:(NSError * __autoreleasing _Nullable *)error; {
+- (nullable NSData *)encryptData:(NSData *)dataToEncrypt usingKeys:(NSArray<PGPKey *> *)keys armored:(BOOL)armored error:(NSError * __autoreleasing _Nullable *)error; {
     return [self encryptData:dataToEncrypt usingKeys:keys signWithKey:nil passphrase:nil armored:armored error:error];
 }
 
-- (nullable NSData *)encryptData:(NSData *)dataToEncrypt usingKeys:(NSArray<PGPCompoundKey *> *)keys signWithKey:(nullable PGPCompoundKey *)signKey passphrase:(nullable NSString *)passphrase armored:(BOOL)armored error:(NSError * __autoreleasing _Nullable *)error {
-    let publicKeys = [NSMutableArray<PGPKey *> array];
-    for (PGPCompoundKey *key in keys) {
+- (nullable NSData *)encryptData:(NSData *)dataToEncrypt usingKeys:(NSArray<PGPKey *> *)keys signWithKey:(nullable PGPKey *)signKey passphrase:(nullable NSString *)passphrase armored:(BOOL)armored error:(NSError * __autoreleasing _Nullable *)error {
+    let publicKeys = [NSMutableArray<PGPPartialKey *> array];
+    for (PGPKey *key in keys) {
         [publicKeys addObject:key.publicKey];
     }
 
     let encryptedMessage = [NSMutableData data];
     
     //PGPPublicKeyEncryptedSessionKeyPacket goes here
-    let preferredSymmeticAlgorithm = [PGPKey preferredSymmetricAlgorithmForKeys:publicKeys];
+    let preferredSymmeticAlgorithm = [PGPPartialKey preferredSymmetricAlgorithmForKeys:publicKeys];
     
     // Random bytes as a string to be used as a key
     NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:preferredSymmeticAlgorithm];
@@ -401,7 +401,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     let sessionKeyData = [NSMutableData dataWithBytes:buf length:keySize];
     
-    for (PGPKey *publicKey in publicKeys) {
+    for (PGPPartialKey *publicKey in publicKeys) {
         // Encrypted Message :- Encrypted Data | ESK Sequence, Encrypted Data.
         // Encrypted Data :- Symmetrically Encrypted Data Packet | Symmetrically Encrypted Integrity Protected Data Packet
         // ESK :- Public-Key Encrypted Session Key Packet | Symmetric-Key Encrypted Session Key Packet.
@@ -480,14 +480,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Sign & Verify
 
-- (nullable NSData *)signData:(NSData *)dataToSign usingKey:(PGPCompoundKey *)key passphrase:(nullable NSString *)passphrase detached:(BOOL)detached error:(NSError * __autoreleasing *)error {
+- (nullable NSData *)signData:(NSData *)dataToSign usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase detached:(BOOL)detached error:(NSError * __autoreleasing *)error {
     //TODO: configurable defaults for prefered hash
     return [self signData:dataToSign usingKey:key passphrase:passphrase hashAlgorithm:PGPHashSHA512 detached:detached error:error];
 }
 
-- (nullable NSData *)signData:(NSData *)dataToSign usingKey:(PGPCompoundKey *)key passphrase:(nullable NSString *)passphrase hashAlgorithm:(PGPHashAlgorithm)preferedHashAlgorithm detached:(BOOL)detached error:(NSError * __autoreleasing *)error {
+- (nullable NSData *)signData:(NSData *)dataToSign usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase hashAlgorithm:(PGPHashAlgorithm)preferedHashAlgorithm detached:(BOOL)detached error:(NSError * __autoreleasing *)error {
     PGPAssertClass(dataToSign, NSData);
-    PGPAssertClass(key, PGPCompoundKey);
+    PGPAssertClass(key, PGPKey);
 
     let signaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureBinaryDocument hashAlgorithm:preferedHashAlgorithm];
     if (![signaturePacket signData:dataToSign usingKey:key passphrase:passphrase userID:nil error:error]) {
@@ -599,10 +599,10 @@ NS_ASSUME_NONNULL_BEGIN
     return [self verifyData:signedData withSignature:signatureData usingKey:issuerKey error:error];
 }
 
-- (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPCompoundKey *)key error:(NSError * __autoreleasing _Nullable *)error {
+- (BOOL) verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPKey *)key error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(signedData, NSData);
     PGPAssertClass(signedData, NSData);
-    PGPAssertClass(key, PGPCompoundKey);
+    PGPAssertClass(key, PGPKey);
 
     let packet = [PGPPacketFactory packetWithData:signatureData offset:0 nextPacketOffset:NULL];
     if (![packet isKindOfClass:[PGPSignaturePacket class]]) {
@@ -683,17 +683,17 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return YES on success
  */
-- (NSSet<PGPCompoundKey *> *)importKeysFromFile:(NSString *)path {
+- (NSSet<PGPKey *> *)importKeysFromFile:(NSString *)path {
     if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
-        return [NSSet<PGPCompoundKey *> set];
+        return [NSSet<PGPKey *> set];
     }
     
     return [self importKeysFromData:[NSData dataWithContentsOfFile:path]];
 }
 
-- (NSSet<PGPCompoundKey *> *)importKeysFromData:(NSData *)data {
+- (NSSet<PGPKey *> *)importKeysFromData:(NSData *)data {
     let loadedKeys = [self keysFromData:data];
-    for (PGPCompoundKey *key in loadedKeys) {
+    for (PGPKey *key in loadedKeys) {
         self.keys = [self addOrUpdateCompoundKeyForKey:key.secretKey inContainer:self.keys];
         self.keys = [self addOrUpdateCompoundKeyForKey:key.publicKey inContainer:self.keys];
     }
@@ -708,7 +708,7 @@ NS_ASSUME_NONNULL_BEGIN
         return NO;
     }
 
-    let foundKey = [[loadedKeys objectsPassingTest:^BOOL(PGPCompoundKey *key, BOOL *stop) {
+    let foundKey = [[loadedKeys objectsPassingTest:^BOOL(PGPKey *key, BOOL *stop) {
         let condition = [key.publicKey.keyID.shortKeyString.uppercaseString isEqualToString:shortKeyStringIdentifier.uppercaseString] ||
                         [key.secretKey.keyID.shortKeyString.uppercaseString isEqualToString:shortKeyStringIdentifier.uppercaseString];
 
@@ -728,36 +728,36 @@ NS_ASSUME_NONNULL_BEGIN
     return YES;
 }
 
-- (NSSet<PGPCompoundKey *> *)keysFromFile:(NSString *)path {
+- (NSSet<PGPKey *> *)keysFromFile:(NSString *)path {
     NSString *fullPath = [path stringByExpandingTildeInPath];
     
     BOOL isDirectory = NO;
     if (![[NSFileManager defaultManager] fileExistsAtPath:fullPath isDirectory:&isDirectory] || isDirectory) {
-        return [NSSet<PGPCompoundKey *> set];
+        return [NSSet<PGPKey *> set];
     }
 
     NSError *error = nil;
     NSData *fileData = [NSData dataWithContentsOfFile:fullPath options:NSDataReadingMappedIfSafe | NSDataReadingUncached error:&error];
     if (!fileData || error) {
-        return [NSSet<PGPCompoundKey *> set];
+        return [NSSet<PGPKey *> set];
     }
     
     return [self keysFromData:fileData];
 }
 
-- (NSSet<PGPCompoundKey *> *)keysFromData:(NSData *)fileData {
+- (NSSet<PGPKey *> *)keysFromData:(NSData *)fileData {
     NSAssert(fileData.length > 0, @"Empty data");
 
     let binRingData = [self convertArmoredMessage2BinaryBlocksWhenNecessary:fileData];
     if (!binRingData || binRingData.count == 0) {
         PGPLogError(@"Invalid input data");
-        return [NSSet<PGPCompoundKey *> set];
+        return [NSSet<PGPKey *> set];
     }
 
-    var keys = [[NSSet<PGPCompoundKey *> alloc] init];
+    var keys = [[NSSet<PGPKey *> alloc] init];
     for (NSData *data in binRingData) {
         let readPartialKeys = [self readPartialKeysFromData:data];
-        for (PGPKey *key in readPartialKeys) {
+        for (PGPPartialKey *key in readPartialKeys) {
             keys = [self addOrUpdateCompoundKeyForKey:key inContainer:keys];
         }
     }
@@ -787,19 +787,19 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // Add or update compound key. Returns updated set.
-- (NSSet<PGPCompoundKey *> *)addOrUpdateCompoundKeyForKey:(nullable PGPKey *)key inContainer:(NSSet<PGPCompoundKey *> *)compoundKeys {
+- (NSSet<PGPKey *> *)addOrUpdateCompoundKeyForKey:(nullable PGPPartialKey *)key inContainer:(NSSet<PGPKey *> *)compoundKeys {
     if (!key) {
         return compoundKeys;
     }
 
-    NSMutableSet *updatedContainer = [NSMutableSet<PGPCompoundKey *> setWithSet:compoundKeys];
+    NSMutableSet *updatedContainer = [NSMutableSet<PGPKey *> setWithSet:compoundKeys];
     
-    let foundCompoundKey = [[compoundKeys objectsPassingTest:^BOOL(PGPCompoundKey *obj, BOOL *stop) {
+    let foundCompoundKey = [[compoundKeys objectsPassingTest:^BOOL(PGPKey *obj, BOOL *stop) {
         return [obj.publicKey.keyID isEqual:key.keyID] || [obj.secretKey.keyID isEqual:key.keyID];
     }] anyObject];
 
     if (!foundCompoundKey) {
-        let compoundKey = [[PGPCompoundKey alloc] initWithSecretKey:(key.type == PGPKeySecret ? key : nil) publicKey:(key.type == PGPKeyPublic ? key : nil)];
+        let compoundKey = [[PGPKey alloc] initWithSecretKey:(key.type == PGPKeySecret ? key : nil) publicKey:(key.type == PGPKeyPublic ? key : nil)];
         [updatedContainer addObject:compoundKey];
     } else {
         if (key.type == PGPKeyPublic) {
@@ -813,8 +813,8 @@ NS_ASSUME_NONNULL_BEGIN
     return updatedContainer;
 }
 
-- (NSSet<PGPKey *> *)readPartialKeysFromData:(NSData *)messageData {
-    let keys = [NSMutableSet<PGPKey *> set];
+- (NSSet<PGPPartialKey *> *)readPartialKeysFromData:(NSData *)messageData {
+    let keys = [NSMutableSet<PGPPartialKey *> set];
     let accumulatedPackets = [NSMutableArray<PGPPacket *> array];
     NSUInteger position = 0;
     NSUInteger nextPacketPosition = 0;
@@ -827,7 +827,7 @@ NS_ASSUME_NONNULL_BEGIN
         }
 
         if ((accumulatedPackets.count > 1) && ((packet.tag == PGPPublicKeyPacketTag) || (packet.tag == PGPSecretKeyPacketTag))) {
-            let key = [[PGPKey alloc] initWithPackets:accumulatedPackets];
+            let key = [[PGPPartialKey alloc] initWithPackets:accumulatedPackets];
             [keys addObject:key];
             [accumulatedPackets removeAllObjects];
         }
@@ -837,7 +837,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     if (accumulatedPackets.count > 1) {
-        PGPKey *key = [[PGPKey alloc] initWithPackets:accumulatedPackets];
+        PGPPartialKey *key = [[PGPPartialKey alloc] initWithPackets:accumulatedPackets];
         [keys addObject:key];
         [accumulatedPackets removeAllObjects];
     }

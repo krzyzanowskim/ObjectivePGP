@@ -6,14 +6,14 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import "PGPKey.h"
+#import "PGPPartialKey.h"
 #import "PGPPacket.h"
 #import "PGPSignaturePacket.h"
 #import "PGPKeyID.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PGPSubKey : PGPKey
+@interface PGPSubKey : PGPPartialKey
 
 PGP_EMPTY_INIT_UNAVAILABLE
 

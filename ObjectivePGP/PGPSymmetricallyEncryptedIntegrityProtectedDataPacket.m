@@ -8,7 +8,7 @@
 
 #import "PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h"
 #import "PGPSecretKeyPacket.h"
-#import "PGPKey.h"
+#import "PGPPartialKey.h"
 #import "PGPPublicKeyRSA.h"
 #import "PGPCryptoCFB.h"
 #import "PGPCryptoUtils.h"

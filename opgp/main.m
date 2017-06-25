@@ -125,7 +125,7 @@ Use within the scope of this License is free of charge and no royalty or licensi
         }
         
         // load key
-        PGPCompoundKey *operationKey = nil;
+        PGPKey *operationKey = nil;
         if (keyFile) {
             NSData *fetchedKeyData = nil;
             NSURL *keyURL = [NSURL URLWithString:keyFile];
