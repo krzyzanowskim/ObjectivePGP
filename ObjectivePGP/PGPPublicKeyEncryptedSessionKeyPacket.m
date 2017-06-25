@@ -71,7 +71,7 @@
     return position;
 }
 
-- (NSData *) export:(NSError *__autoreleasing *)error {
+- (NSData *)export:(NSError *__autoreleasing *)error {
     NSAssert(self.encryptedMPI_M, @"Missing encrypted mpi m");
     if (!self.encryptedMPI_M) {
         return nil;

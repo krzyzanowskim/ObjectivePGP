@@ -58,7 +58,7 @@
     return position;
 }
 
-- (NSData *) export:(NSError *__autoreleasing *)error {
+- (NSData *)export:(NSError *__autoreleasing *)error {
     NSAssert(self.encryptedData, @"No encrypted data?");
     NSAssert(self.version == 1, @"Require version == 1");
 

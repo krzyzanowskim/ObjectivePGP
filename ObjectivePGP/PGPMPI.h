@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithMPIData:(NSData *)mpiData atPosition:(NSUInteger)position;
 - (instancetype)initWithData:(NSData *)dataToMPI;
 - (nullable NSData *)exportMPI;
-- (NSData *)bodyData;
+- (nullable NSData *)bodyData;
 
 @end
 

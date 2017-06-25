@@ -34,7 +34,7 @@
     return position;
 }
 
-- (NSData *) export:(NSError *__autoreleasing *)error {
+- (NSData *)export:(NSError *__autoreleasing *)error {
     NSAssert(self.encryptedData, @"Need encrypted data, use PGPSymmetricallyEncryptedIntegrityProtectedDataPacket instead");
     if (!self.encryptedData) return nil;
 

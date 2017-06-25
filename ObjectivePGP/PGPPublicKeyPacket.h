@@ -28,7 +28,7 @@
 @property (nonatomic, readonly) PGPFingerprint *fingerprint;
 @property (nonatomic, readonly) PGPKeyID *keyID;
 
-- (NSData *) export:(NSError *__autoreleasing *)error;
+- (NSData *)export:(NSError *__autoreleasing *)error;
 - (NSData *)exportPublicPacketOldStyle;
 
 - (NSData *)buildPublicKeyBodyData:(BOOL)forceV4;

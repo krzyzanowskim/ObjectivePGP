@@ -56,7 +56,7 @@
     return position;
 }
 
-- (NSData *) export:(NSError *__autoreleasing *)error {
+- (NSData *)export:(NSError *__autoreleasing *)error {
     NSMutableData *bodyData = [NSMutableData data];
 
     // - One octet that gives the algorithm used to compress the packet.

@@ -174,7 +174,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Build packet
 
-- (nullable NSData *) export:(NSError *__autoreleasing *)error {
+- (nullable NSData *)export:(NSError *__autoreleasing *)error {
     NSMutableData *data = [NSMutableData data];
 
     NSData *bodyData = [self buildFullSignatureBodyData:error];

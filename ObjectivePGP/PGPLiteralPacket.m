@@ -88,7 +88,7 @@ NS_ASSUME_NONNULL_BEGIN
     return position;
 }
 
-- (nullable NSData *) export:(NSError *_Nullable __autoreleasing *)error {
+- (nullable NSData *)export:(NSError *_Nullable __autoreleasing *)error {
     NSAssert(self.literalRawData, @"Missing literal data");
     if (!self.literalRawData) {
         if (error) {

@@ -56,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
     return 0;
 }
 
-- (nullable NSData *) export:(NSError *__autoreleasing *)error {
+- (nullable NSData *)export:(NSError *__autoreleasing *)error {
     [NSException raise:@"MissingExportMethod" format:@"export: selector not overriden"];
     return nil;
 }

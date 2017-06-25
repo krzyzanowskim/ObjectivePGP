@@ -47,7 +47,7 @@
     return position;
 }
 
-- (NSData *) export:(NSError *__autoreleasing *)error {
+- (NSData *)export:(NSError *__autoreleasing *)error {
     NSAssert(self.keyID, @"Missing keyID");
 
     NSMutableData *bodyData = [NSMutableData data];

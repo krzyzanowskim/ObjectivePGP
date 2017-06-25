@@ -46,10 +46,12 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
-- (NSData *)bodyData {
+- (nullable NSData *)bodyData {
     NSAssert(self.bignumRef, @"Missing bignumRef");
 
-    if (!self.bignumRef) return nil;
+    if (!self.bignumRef) {
+        return nil;
+    }
 
     BIGNUM *mpi_BN = BN_dup(self.bignumRef);
     NSInteger mpi_BN_length = (BN_num_bits(mpi_BN) + 7) / 8;
@@ -89,9 +91,8 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)dealloc {
-    if (self.bignumRef != NULL) {
+    if (self.bignumRef) {
         BN_clear_free(self.bignumRef);
-        _bignumRef = nil;
     }
 }
 

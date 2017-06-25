@@ -108,7 +108,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
     return ((UInt32)16 + (self.uncodedCount & 15)) << ((self.uncodedCount >> 4) + expbias);
 }
 
-- (nullable NSData *) export:(NSError *__autoreleasing *)error {
+- (nullable NSData *)export:(NSError *__autoreleasing *)error {
     NSMutableData *data = [NSMutableData data];
     [data appendBytes:&_specifier length:1];
     [data appendBytes:&_hashAlgorithm length:1];

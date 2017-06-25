@@ -207,7 +207,7 @@
  *
  *  @return data
  */
-- (nullable NSData *) export:(NSError *__autoreleasing *)error {
+- (nullable NSData *)export:(NSError *__autoreleasing *)error {
     NSMutableData *data = [NSMutableData data];
 
     NSData *bodyData = [self buildPublicKeyBodyData:NO];

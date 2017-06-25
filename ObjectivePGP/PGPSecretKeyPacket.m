@@ -75,7 +75,7 @@
     return [super fingerprint];
 }
 
-- (nullable NSData *) export:(NSError *__autoreleasing *)error {
+- (nullable NSData *)export:(NSError *__autoreleasing *)error {
     NSMutableData *data = [NSMutableData data];
     NSData *publicKeyData = [super buildPublicKeyBodyData:YES];
 
