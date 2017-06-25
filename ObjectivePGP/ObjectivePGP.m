@@ -676,7 +676,7 @@ NS_ASSUME_NONNULL_BEGIN
         return [NSSet<PGPKey *> set];
     }
 
-    return [self importKeysFromData:[NSData dataWithContentsOfFile:path]];
+    return [self importKeysFromData:[NSData dataWithContentsOfFile:path options:NSDataReadingMappedIfSafe error:nil]];
 }
 
 - (NSSet<PGPKey *> *)importKeysFromData:(NSData *)data {
