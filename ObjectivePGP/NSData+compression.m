@@ -36,7 +36,7 @@
 
     while (deflate(&strm, Z_FINISH) != Z_STREAM_END) {
         // deflate should return Z_STREAM_END on the first call
-        [compressed setLength:compressed.length * 1.5];
+        [compressed setLength:(NSUInteger)(compressed.length * 1.5f)];
         strm.next_out = [compressed mutableBytes] + strm.total_out;
         strm.avail_out = (uInt)(compressed.length - strm.total_out);
     }
@@ -72,7 +72,7 @@
         return nil;
     }
 
-    NSMutableData *decompressed = [NSMutableData dataWithLength:[self length] * 2.5];
+    NSMutableData *decompressed = [NSMutableData dataWithLength:(NSUInteger)(self.length * 2.5f)];
     strm.next_out = [decompressed mutableBytes];
     strm.avail_out = (uInt)[decompressed length];
     strm.next_in = (void *)[self bytes];
@@ -85,7 +85,7 @@
 
     while (inflate(&strm, Z_FINISH) != Z_STREAM_END) {
         // inflate should return Z_STREAM_END on the first call
-        [decompressed setLength:[decompressed length] * 1.5];
+        [decompressed setLength:(NSUInteger)(decompressed.length * 1.5f)];
         strm.next_out = [decompressed mutableBytes] + strm.total_out;
         strm.avail_out = (uInt)([decompressed length] - strm.total_out);
     }
