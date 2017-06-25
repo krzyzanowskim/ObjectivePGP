@@ -343,8 +343,8 @@ NS_ASSUME_NONNULL_BEGIN
         }
 
         [result appendData:exported]; // TODO: decode secret key first
-        NSAssert(*error == nil, @"Error while export public key");
         if (error) {
+            NSAssert(*error == nil, @"Error while export public key");
             if (*error) {
                 return nil;
             }

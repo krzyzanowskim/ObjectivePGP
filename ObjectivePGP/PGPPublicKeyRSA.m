@@ -43,7 +43,6 @@
     int em_len = RSA_public_encrypt(toEncrypt.length & INT_MAX, toEncrypt.bytes, encrypted_em, rsa, RSA_NO_PADDING);
     if (em_len == -1 || em_len != (publicKeyPacket.keySize & INT_MAX)) {
         ERR_load_crypto_strings();
-        SSL_load_error_strings();
 
         unsigned long err_code = ERR_get_error();
         char *errBuf = calloc(512, sizeof(char));
@@ -86,7 +85,6 @@
 
     if (RSA_check_key(rsa) != 1) {
         ERR_load_crypto_strings();
-        SSL_load_error_strings();
 
         unsigned long err_code = ERR_get_error();
         char *errBuf = calloc(512, sizeof(char));
@@ -102,7 +100,6 @@
     int t = RSA_private_decrypt(toDecrypt.length & INT_MAX, toDecrypt.bytes, outbuf, rsa, RSA_NO_PADDING);
     if (t == -1) {
         ERR_load_crypto_strings();
-        SSL_load_error_strings();
 
         unsigned long err_code = ERR_get_error();
         char *errBuf = calloc(512, sizeof(char));
@@ -150,7 +147,6 @@
 
     if (RSA_check_key(rsa) != 1) {
         ERR_load_crypto_strings();
-        SSL_load_error_strings();
 
         unsigned long err_code = ERR_get_error();
         char *errBuf = calloc(512, sizeof(char));
@@ -166,7 +162,6 @@
     int t = RSA_private_encrypt(toEncrypt.length & INT_MAX, (UInt8 *)toEncrypt.bytes, outbuf, rsa, RSA_NO_PADDING);
     if (t == -1) {
         ERR_load_crypto_strings();
-        SSL_load_error_strings();
 
         unsigned long err_code = ERR_get_error();
         char *errBuf = calloc(512, sizeof(char));
@@ -211,7 +206,6 @@
         RSA_free(rsa);
 
         ERR_load_crypto_strings();
-        SSL_load_error_strings();
 
         unsigned long err_code = ERR_get_error();
         char *errBuf = calloc(512, sizeof(char));
