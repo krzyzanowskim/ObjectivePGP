@@ -6,21 +6,21 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
+#import "PGPBigNum.h"
 #import <Foundation/Foundation.h>
-#import <openssl/bn.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface PGPMPI : NSObject
 
-@property (nonatomic) NSString *identifier;
-@property (nonatomic, readonly) BIGNUM *bignumRef;
+@property (nonatomic, readonly, nullable) NSString *identifier;
+@property (nonatomic, readonly) PGPBigNum *bigNum;
 /**
  *  Total bytes, header + body
  */
 @property (nonatomic, readonly) NSUInteger packetLength;
 
-- (instancetype)initWithMPIData:(NSData *)mpiData atPosition:(NSUInteger)position;
+- (instancetype)initWithMPIData:(NSData *)mpiData identifier:(nullable NSString *)identifier atPosition:(NSUInteger)position;
 - (instancetype)initWithData:(NSData *)dataToMPI;
 - (nullable NSData *)exportMPI;
 - (nullable NSData *)bodyData;

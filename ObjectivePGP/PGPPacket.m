@@ -12,7 +12,7 @@
 #import "PGPLogging.h"
 #import "PGPMacros.h"
 
-const UInt32 UnknownLength = UINT32_MAX;
+const UInt32 PGPUnknownLength = UINT32_MAX;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -93,7 +93,7 @@ NS_ASSUME_NONNULL_BEGIN
         *headerLength = [self parseOldFormatHeaderPacket:data bodyLength:&bodyLength packetTag:tag];
     }
     if (indeterminateLength) *indeterminateLength = NO;
-    if (bodyLength == UnknownLength) {
+    if (bodyLength == PGPUnknownLength) {
         bodyLength = (UInt32)data.length - *headerLength;
         if (indeterminateLength) *indeterminateLength = YES;
     }
@@ -213,7 +213,7 @@ NS_ASSUME_NONNULL_BEGIN
         } break;
         case 3: {
             PGPLogWarning(@"(Old) The packet is of indeterminate length - partially supported");
-            bodyLength = UnknownLength;
+            bodyLength = PGPUnknownLength;
             headerLength = 1;
         } break;
 

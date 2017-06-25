@@ -10,7 +10,7 @@
 #import "PGPTypes.h"
 #import <Foundation/Foundation.h>
 
-extern const UInt32 UnknownLength;
+extern const UInt32 PGPUnknownLength;
 
 NS_ASSUME_NONNULL_BEGIN
 

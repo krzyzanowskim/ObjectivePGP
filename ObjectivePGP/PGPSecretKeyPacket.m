@@ -220,31 +220,26 @@
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly: {
             // multiprecision integer (MPI) of RSA secret exponent d.
-            PGPMPI *mpiD = [[PGPMPI alloc] initWithMPIData:data atPosition:position];
-            mpiD.identifier = @"D";
+            PGPMPI *mpiD = [[PGPMPI alloc] initWithMPIData:data identifier:@"D" atPosition:position];
             position = position + mpiD.packetLength;
 
             // MPI of RSA secret prime value p.
-            PGPMPI *mpiP = [[PGPMPI alloc] initWithMPIData:data atPosition:position];
-            mpiP.identifier = @"P";
+            PGPMPI *mpiP = [[PGPMPI alloc] initWithMPIData:data identifier:@"P" atPosition:position];
             position = position + mpiP.packetLength;
 
             // MPI of RSA secret prime value q (p < q).
-            PGPMPI *mpiQ = [[PGPMPI alloc] initWithMPIData:data atPosition:position];
-            mpiQ.identifier = @"Q";
+            PGPMPI *mpiQ = [[PGPMPI alloc] initWithMPIData:data identifier:@"Q" atPosition:position];
             position = position + mpiQ.packetLength;
 
             // MPI of u, the multiplicative inverse of p, mod q.
-            PGPMPI *mpiU = [[PGPMPI alloc] initWithMPIData:data atPosition:position];
-            mpiU.identifier = @"U";
+            PGPMPI *mpiU = [[PGPMPI alloc] initWithMPIData:data identifier:@"U" atPosition:position];
             position = position + mpiU.packetLength;
 
             self.secretMPIArray = @[mpiD, mpiP, mpiQ, mpiU];
         } break;
         case PGPPublicKeyAlgorithmDSA: {
             // MPI of DSA secret exponent x.
-            PGPMPI *mpiX = [[PGPMPI alloc] initWithMPIData:data atPosition:position];
-            mpiX.identifier = @"X";
+            PGPMPI *mpiX = [[PGPMPI alloc] initWithMPIData:data identifier:@"X" atPosition:position];
             position = position + mpiX.packetLength;
 
             self.secretMPIArray = @[mpiX];
@@ -252,8 +247,7 @@
         case PGPPublicKeyAlgorithmElgamal:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign: {
             // MPI of Elgamal secret exponent x.
-            PGPMPI *mpiX = [[PGPMPI alloc] initWithMPIData:data atPosition:position];
-            mpiX.identifier = @"X";
+            PGPMPI *mpiX = [[PGPMPI alloc] initWithMPIData:data identifier:@"X" atPosition:position];
             position = position + mpiX.packetLength;
 
             self.secretMPIArray = @[mpiX];

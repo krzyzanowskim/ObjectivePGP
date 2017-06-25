@@ -10,6 +10,7 @@
 //  calculations.
 
 #import "PGPMPI.h"
+#import <openssl/bn.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -31,8 +32,10 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // parse mpi "packet"
-- (instancetype)initWithMPIData:(NSData *)mpiData atPosition:(NSUInteger)position {
+- (instancetype)initWithMPIData:(NSData *)mpiData identifier:(nullable NSString *)identifier  atPosition:(NSUInteger)position {
     if (self = [self init]) {
+        _identifier = identifier;
+
         UInt16 bitsBE = 0;
         [mpiData getBytes:&bitsBE range:(NSRange){position, 2}];
         UInt16 bits = CFSwapInt16BigToHost(bitsBE);

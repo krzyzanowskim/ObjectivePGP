@@ -11,6 +11,8 @@
 
 #define PGP_NOESCAPE __attribute__((noescape))
 
+#define PGP_CLASS_EXPORT __attribute__((visibility("default")))
+
 #define PGP_EMPTY_INIT_UNAVAILABLE                                                      \
     -(instancetype)init __attribute__((unavailable("Not the designated initializer"))); \
     +(instancetype) new __attribute__((unavailable("Not the designated initializer")));

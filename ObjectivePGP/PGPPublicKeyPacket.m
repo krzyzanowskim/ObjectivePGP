@@ -44,7 +44,7 @@
     [self.publicMPIArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         PGPMPI *mpi = obj;
         if ([mpi.identifier isEqualToString:@"N"]) {
-            ks = (BN_num_bits(mpi.bignumRef) + 7) / 8;
+            ks = (mpi.bigNum.bitsCount + 7) / 8;
             // BN_num_bytes(rsa->n)
             *stop = YES;
         }
@@ -136,13 +136,11 @@
         case PGPPublicKeyAlgorithmRSASignOnly: {
             // Algorithm-Specific Fields for RSA public keys:
             // MPI of RSA public modulus n;
-            PGPMPI *mpiN = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
-            mpiN.identifier = @"N";
+            PGPMPI *mpiN = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"N" atPosition:position];
             position = position + mpiN.packetLength;
 
             // MPI of RSA public encryption exponent e.
-            PGPMPI *mpiE = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
-            mpiE.identifier = @"E";
+            PGPMPI *mpiE = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"E" atPosition:position];
             position = position + mpiE.packetLength;
 
             self.publicMPIArray = @[mpiN, mpiE];
@@ -150,23 +148,19 @@
         case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmECDSA: {
             // - MPI of DSA prime p;
-            PGPMPI *mpiP = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
-            mpiP.identifier = @"P";
+            PGPMPI *mpiP = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"P" atPosition:position];
             position = position + mpiP.packetLength;
 
             // - MPI of DSA group order q (q is a prime divisor of p-1);
-            PGPMPI *mpiQ = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
-            mpiQ.identifier = @"Q";
+            PGPMPI *mpiQ = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"Q" atPosition:position];
             position = position + mpiQ.packetLength;
 
             // - MPI of DSA group generator g;
-            PGPMPI *mpiG = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
-            mpiG.identifier = @"G";
+            PGPMPI *mpiG = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"G" atPosition:position];
             position = position + mpiG.packetLength;
 
             // - MPI of DSA public-key value y (= g**x mod p where x is secret).
-            PGPMPI *mpiY = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
-            mpiY.identifier = @"Y";
+            PGPMPI *mpiY = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"Y" atPosition:position];
             position = position + mpiY.packetLength;
 
             self.publicMPIArray = @[mpiP, mpiQ, mpiG, mpiY];
@@ -174,18 +168,15 @@
         case PGPPublicKeyAlgorithmElgamal:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign: {
             // - MPI of Elgamal prime p;
-            PGPMPI *mpiP = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
-            mpiP.identifier = @"P";
+            PGPMPI *mpiP = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"P" atPosition:position];
             position = position + mpiP.packetLength;
 
             // - MPI of Elgamal group generator g;
-            PGPMPI *mpiG = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
-            mpiG.identifier = @"G";
+            PGPMPI *mpiG = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"G" atPosition:position];
             position = position + mpiG.packetLength;
 
             // - MPI of Elgamal public key value y (= g**x mod p where x is secret).
-            PGPMPI *mpiY = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
-            mpiY.identifier = @"Y";
+            PGPMPI *mpiY = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"Y" atPosition:position];
             position = position + mpiY.packetLength;
 
             self.publicMPIArray = @[mpiP, mpiG, mpiY];

@@ -12,7 +12,7 @@
 // https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/XcodeBuildSettingRef/1-Build_Setting_Reference/build_setting_ref.html
 
 // We support macOS, iOS, watchOS and tvOS by default.
-SUPPORTED_PLATFORMS = macosx iphoneos appletvos watchos appletvsimulator iphonesimulator watchsimulator
+SUPPORTED_PLATFORMS = macosx iphoneos iphonesimulator
 
 // http://promisekit.org/news/2016/08/Multiplatform-Single-Scheme-Xcode-Projects/
 // watchOS build fails if we do not set it exactly like that
@@ -26,13 +26,19 @@ WATCHOS_DEPLOYMENT_TARGET = 3.0
 
 PRODUCT_NAME = ObjectivePGP
 
-HEADER_SEARCH_PATHS[sdk=iphoneos*] = libs/ios
-HEADER_SEARCH_PATHS[sdk=iphonesimulator*] = libs/ios
-HEADER_SEARCH_PATHS[sdk=macosx*] = libs/macosx
+HEADER_SEARCH_PATHS[sdk=iphoneos*] = $(SRCROOT)/libs/ios
+HEADER_SEARCH_PATHS[sdk=iphonesimulator*] = $(SRCROOT)/libs/ios
+HEADER_SEARCH_PATHS[sdk=macosx*] = $(SRCROOT)/libs/macosx
 
-LIBRARY_SEARCH_PATHS[sdk=iphoneos*] = libs/ios
-LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*] = libs/ios
-LIBRARY_SEARCH_PATHS[sdk=macosx*] = libs/macosx
+LIBRARY_SEARCH_PATHS[sdk=iphoneos*] = $(SRCROOT)/libs/ios
+LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*] = $(SRCROOT)/libs/ios
+LIBRARY_SEARCH_PATHS[sdk=macosx*] = $(SRCROOT)/libs/macosx
+
+PRELINK_LIBS[sdk=iphoneos*] = $(SRCROOT)/libs/ios/libcrypto.a
+PRELINK_LIBS[sdk=iphonesimulator*] = $(SRCROOT)/libs/ios/libcrypto.a
+PRELINK_LIBS[sdk=macosx*] = $(SRCROOT)/libs/macosx/libcrypto.a
+
+GENERATE_MASTER_OBJECT_FILE = YES
 
 // We do not need to codesign tests for the simulator - disabling speeds up test compile (sign) time.
 CODE_SIGN_IDENTITY = iOS Developer
@@ -60,7 +66,7 @@ SDKROOT = iphoneos
 //CLANG_CXX_LANGUAGE_STANDARD[sdk=iphonesimulator11*] = $(CLANG_CXX_LANGUAGE_STANDARD_XCODE9)
 
 //CLANG_CXX_LIBRARY = libc++
-OTHER_LDFLAGS = -ObjC -lcrypto -lz -lbz2
+OTHER_LDFLAGS = -ObjC -all_load -lbz2 -lz -lcrypto 
 ONLY_ACTIVE_ARCH = YES
 
 // Boolean value. Specifies whether the generated object code is nonrelocatable (external references remain relocatable). Making code nonrelocatable results in faster function calls. This feature is appropriate in applications but not dynamic libraries.
@@ -71,15 +77,12 @@ GCC_DYNAMIC_NO_PIC = NO
 // http://stackoverflow.com/questions/35861502/fvisibility-hidden-not-passed-by-compiler-for-debug-builds
 // http://prod.lists.apple.com/archives/xcode-users/2016/Nov/msg00090.html
 // -fvisibility-inlines-hidden (GCC_INLINES_ARE_PRIVATE_EXTERN) would be redundant because we have -fvisibility=hidden.
-// https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/CppRuntimeEnv/Articles/S`ymbolVisibility.html#//apple_ref/doc/uid/TP40001670-98807-CJBDHDIC
+// https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/CppRuntimeEnv/Articles/SymbolVisibility.html#//apple_ref/doc/uid/TP40001670-98807-CJBDHDIC
 // -fmodules -fcxx-modules Would enable modules but this is incompatible with ccache (https://bugzilla.samba.org/show_bug.cgi?id=11048)
-PGP_CFLAGS_COMMON = $(inherited) -fmodules -fvisibility=hidden
+PGP_CFLAGS_COMMON = $(inherited) -fvisibility=default // -fmodules
 GCC_SYMBOLS_PRIVATE_EXTERN = YES
 
-// watchOS requires special inline assembly flag
-// https://forums.developer.apple.com/thread/48686
-PGP_CFLAGS_COMMON[sdk=watchos*] = $(inherited) -fvisibility=hidden -fgnu-inline-asm
-PGP_CFLAGS_COMMON[sdk=watchsimulator*] = $(inherited) -fvisibility=hidden -fgnu-inline-asm
+//EXPORTED_SYMBOLS_FILE = $(SRCROOT)/objectivepgp.symbols
 
 // Config files that include this one and want to change this setting should override and that override should have $(PGP_CFLAGS_COMMON) but not $(inherited) because that refers to the higher level in the hierarchy, not earlier in the xcconfig file.
 OTHER_CFLAGS = $(PGP_CFLAGS_COMMON)
@@ -87,10 +90,10 @@ OTHER_CFLAGS = $(PGP_CFLAGS_COMMON)
 LLVM_LTO = NO
 
 // fast-math is enabled for better floating point performance.
-// GCC_FAST_MATH = YES
+GCC_FAST_MATH = YES
 
 // Performance
-ENABLE_TESTABILITY = YES
+//ENABLE_TESTABILITY = YES
 VALIDATE_PRODUCT = NO
 COPY_PHASE_STRIP = NO
 DEPLOYMENT_POSTPROCESSING = NO
