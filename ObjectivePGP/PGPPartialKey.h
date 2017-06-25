@@ -15,10 +15,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSUInteger, PGPKeyType) {
-    PGPKeyUnknown = 0,
-    PGPKeySecret  = 1,
-    PGPKeyPublic  = 2
+typedef NS_ENUM(NSUInteger, PGPPartialKeyType) {
+    PGPPartialKeyUnknown = 0,
+    PGPPartialKeySecret  = 1,
+    PGPPartialKeyPublic  = 2
 };
 
 @class PGPSecretKeyPacket;
@@ -26,7 +26,7 @@ typedef NS_ENUM(NSUInteger, PGPKeyType) {
 /// Single Private or Public key.
 @interface PGPPartialKey : NSObject <PGPExportable>
 
-@property (nonatomic, readonly) PGPKeyType type;
+@property (nonatomic, readonly) PGPPartialKeyType type;
 @property (nonatomic) PGPPacket  *primaryKeyPacket;
 @property (nonatomic, readonly) BOOL isEncrypted;
 @property (nonatomic, copy) NSArray<PGPUser *> *users;

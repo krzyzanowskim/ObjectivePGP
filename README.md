@@ -44,10 +44,10 @@ Please contact me via email for inquiries.
 ##### Search for keys
 
 	/* long identifier 979E4B03DFFE30C6 */
-	PGPKey *key = [pgp getKeyForIdentifier:@"979E4B03DFFE30C6" type:PGPKeyPublic];
+	PGPKey *key = [pgp getKeyForIdentifier:@"979E4B03DFFE30C6" type:PGPPartialKeyPublic];
 	
 	/* short identifier 979E4B03 (the same result as previous) */
-	PGPKey *key = [pgp getKeyForIdentifier:@"979E4B03" type:PGPKeyPublic];
+	PGPKey *key = [pgp getKeyForIdentifier:@"979E4B03" type:PGPPartialKeyPublic];
 	
 	/* first key that match given user */
 	PGPKey *key = [pgp getKeysForUserID:@"Name <email@example.com>"];
@@ -57,12 +57,12 @@ Please contact me via email for inquiries.
 	NSError *exportError = nil;
 	
 	/* export all public keys to file */
-	BOOL result = [pgp exportKeysOfType:PGPKeyPublic toFile:@"pubring.gpg" error:&exportError];
+	BOOL result = [pgp exportKeysOfType:PGPPartialKeyPublic toFile:@"pubring.gpg" error:&exportError];
 	if (result) {
 		NSLog(@"success");
 	}
 	
-	PGPKey *myPublicKey = [self.oPGP getKeyForIdentifier:@"979E4B03DFFE30C6" type:PGPKeyPublic];
+	PGPKey *myPublicKey = [self.oPGP getKeyForIdentifier:@"979E4B03DFFE30C6" type:PGPPartialKeyPublic];
 	
 	/* export public key and save as armored (ASCII) file */
 	NSData *armoredKeyData = [pgp exportKey:myPublicKey armored:YES];
@@ -73,7 +73,7 @@ Please contact me via email for inquiries.
 	NSData *fileContent = [NSData dataWithContentsOfFile:@"/path/file/to/data.txt"];
 
 	/* choose key to sign */
-	PGPKey *keyToSign = [self.oPGP getKeyForIdentifier:@"979E4B03DFFE30C6" type:PGPKeySecret];
+	PGPKey *keyToSign = [self.oPGP getKeyForIdentifier:@"979E4B03DFFE30C6" type:PGPPartialKeySecret];
 
 	/* sign and return signature (detached = YES) */
 	NSData *signature = [pgp signData:fileContent usingSecretKey:keyToSign passphrase:nil detached:YES];
@@ -103,7 +103,7 @@ Please contact me via email for inquiries.
 	NSData *fileContent = [NSData dataWithContentsOfFile:@"/path/file/to/data.txt"];
     
 	/* public key to encrypt data, must be loaded previously */
-	PGPKey *keyToEncrypt = [self.oPGP getKeyForIdentifier:@"979E4B03DFFE30C6" type:PGPKeyPublic];
+	PGPKey *keyToEncrypt = [self.oPGP getKeyForIdentifier:@"979E4B03DFFE30C6" type:PGPPartialKeyPublic];
 
 	/* encrypt data, armor output (ASCII file)  */
 	NSData *encryptedData = [pgp encryptData:fileContent usingPublicKey:keyToEncrypt armored:YES error:&error];

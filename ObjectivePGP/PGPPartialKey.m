@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"Type %@, %@ primary key: %@",self.type == PGPKeyPublic ? @"public" : @"secret", [super description], self.primaryKeyPacket];
+    return [NSString stringWithFormat:@"Type %@, %@ primary key: %@",self.type == PGPPartialKeyPublic ? @"public" : @"secret", [super description], self.primaryKeyPacket];
 }
 
 - (BOOL)isEqual:(id)object {
@@ -72,25 +72,25 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL)isEncrypted {
-    if (self.type == PGPKeySecret) {
+    if (self.type == PGPPartialKeySecret) {
         PGPSecretKeyPacket *secretPacket = (PGPSecretKeyPacket *)self.primaryKeyPacket;
         return secretPacket.isEncryptedWithPassword;
     }
     return NO;
 }
 
-- (PGPKeyType)type
+- (PGPPartialKeyType)type
 {
-    PGPKeyType t = PGPKeyUnknown;
+    PGPPartialKeyType t = PGPPartialKeyUnknown;
     
     switch (self.primaryKeyPacket.tag) {
         case PGPPublicKeyPacketTag:
         case PGPPublicSubkeyPacketTag:
-            t = PGPKeyPublic;
+            t = PGPPartialKeyPublic;
             break;
         case PGPSecretKeyPacketTag:
         case PGPSecretSubkeyPacketTag:
-            t = PGPKeySecret;
+            t = PGPPartialKeySecret;
         default:
             break;
     }
@@ -198,8 +198,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable PGPPacket *)signingKeyPacket {
     //  It's private key for sign and public for verify as so thi can't be checked here
     
-    NSAssert(self.type == PGPKeySecret, @"Need secret key to sign");
-    if (self.type == PGPKeyPublic) {
+    NSAssert(self.type == PGPPartialKeySecret, @"Need secret key to sign");
+    if (self.type == PGPPartialKeyPublic) {
         PGPLogDebug(@"Need secret key to sign\n %@",[NSThread callStackSymbols]);
         return nil;
     }
@@ -254,8 +254,8 @@ NS_ASSUME_NONNULL_BEGIN
 // signature packet that is available for signing data
 - (nullable PGPPacket *)encryptionKeyPacket:(NSError * __autoreleasing *)error
 {
-    NSAssert(self.type == PGPKeyPublic, @"Need public key to encrypt");
-    if (self.type == PGPKeySecret) {
+    NSAssert(self.type == PGPPartialKeyPublic, @"Need public key to encrypt");
+    if (self.type == PGPPartialKeySecret) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Wrong key type, require public key"}];
         }
@@ -288,8 +288,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable PGPSecretKeyPacket *)decryptionKeyPacketWithID:(PGPKeyID *)keyID error:(NSError * __autoreleasing *)error
 {
-    NSAssert(self.type == PGPKeySecret, @"Need secret key to encrypt");
-    if (self.type == PGPKeyPublic) {
+    NSAssert(self.type == PGPPartialKeySecret, @"Need secret key to encrypt");
+    if (self.type == PGPPartialKeyPublic) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Wrong key type, require secret key"}];
         }

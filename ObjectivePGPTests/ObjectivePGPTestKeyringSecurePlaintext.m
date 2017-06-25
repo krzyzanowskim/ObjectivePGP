@@ -79,7 +79,7 @@
     NSString *exportSecretKeyringPath = [self.workingDirectory stringByAppendingPathComponent:@"export-secring-test-plaintext.gpg"];
 
     NSError *ssaveError = nil;
-    XCTAssertTrue([self.oPGP exportKeysOfType:PGPKeySecret toFile:exportSecretKeyringPath error:&ssaveError]);
+    XCTAssertTrue([self.oPGP exportKeysOfType:PGPPartialKeySecret toFile:exportSecretKeyringPath error:&ssaveError]);
     XCTAssertNil(ssaveError);
 
     NSLog(@"Created file %@", exportSecretKeyringPath);
@@ -104,7 +104,7 @@
     NSString *exportPublicKeyringPath = [self.workingDirectory stringByAppendingPathComponent:@"export-pubring-test-plaintext.gpg"];
 
     NSError *psaveError = nil;
-    XCTAssertTrue([self.oPGP exportKeysOfType:PGPKeyPublic toFile:exportPublicKeyringPath error:&psaveError]);
+    XCTAssertTrue([self.oPGP exportKeysOfType:PGPPartialKeyPublic toFile:exportPublicKeyringPath error:&psaveError]);
     XCTAssertNil(psaveError);
 
     NSLog(@"Created file %@", exportPublicKeyringPath);
