@@ -187,6 +187,8 @@
 		759FF498195982A6005B240C /* PGPFingerprint.m in Sources */ = {isa = PBXBuildFile; fileRef = 7562858D19239F1B00127E24 /* PGPFingerprint.m */; };
 		759FF499195982A6005B240C /* PGPPKCSEme.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AE7E28194224CD004DD6A5 /* PGPPKCSEme.m */; };
 		759FF49B195982A6005B240C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B81914DE1A00C5AD3B /* Foundation.framework */; };
+		75A2F7EA1EF84FC400C14BEB /* ObjectivePGP+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 75A2F7E91EF84FC400C14BEB /* ObjectivePGP+Private.h */; };
+		75A2F7EB1EF84FC400C14BEB /* ObjectivePGP+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 75A2F7E91EF84FC400C14BEB /* ObjectivePGP+Private.h */; };
 		75A5C154193CE3F6008A2543 /* NSData+compression.m in Sources */ = {isa = PBXBuildFile; fileRef = 75A5C153193CE3F6008A2543 /* NSData+compression.m */; };
 		75A5D20F195983430074A124 /* libObjectivePGP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 759FF4A3195982A6005B240C /* libObjectivePGP.a */; };
 		75AE7E261941C567004DD6A5 /* PGPPublicKeyEncryptedSessionKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AE7E251941C567004DD6A5 /* PGPPublicKeyEncryptedSessionKeyPacket.m */; };
@@ -328,6 +330,7 @@
 		759FF46E19598248005B240C /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/usr/lib/libz.dylib; sourceTree = DEVELOPER_DIR; };
 		759FF4701959824E005B240C /* libbz2.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libbz2.dylib; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/usr/lib/libbz2.dylib; sourceTree = DEVELOPER_DIR; };
 		759FF4A3195982A6005B240C /* libObjectivePGP.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libObjectivePGP.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		75A2F7E91EF84FC400C14BEB /* ObjectivePGP+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ObjectivePGP+Private.h"; sourceTree = "<group>"; };
 		75A5C152193CE3F6008A2543 /* NSData+compression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+compression.h"; sourceTree = "<group>"; };
 		75A5C153193CE3F6008A2543 /* NSData+compression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+compression.m"; sourceTree = "<group>"; };
 		75AE7E241941C567004DD6A5 /* PGPPublicKeyEncryptedSessionKeyPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPublicKeyEncryptedSessionKeyPacket.h; sourceTree = "<group>"; };
@@ -487,6 +490,7 @@
 			children = (
 				75572E231ED2186300205871 /* CryptoBox */,
 				75E7B6B41916478000C96BAB /* Utility */,
+				75A2F7E91EF84FC400C14BEB /* ObjectivePGP+Private.h */,
 				756299BD1914DE1A00C5AD3B /* ObjectivePGP.h */,
 				756299BF1914DE1A00C5AD3B /* ObjectivePGP.m */,
 				752DE5BD1EEE3BE800637E38 /* PGPMacros.h */,
@@ -705,6 +709,7 @@
 				75804A2B1EED16D600AC97BF /* PGPCryptoHash.h in Headers */,
 				75804A3B1EED171C00AC97BF /* PGPSignaturePacket.h in Headers */,
 				75804A4E1EED172400AC97BF /* PGPSymmetricallyEncryptedDataPacket.h in Headers */,
+				75A2F7EA1EF84FC400C14BEB /* ObjectivePGP+Private.h in Headers */,
 				752DE5C01EEE3C1A00637E38 /* PGPMacros.h in Headers */,
 				75804A421EED172400AC97BF /* PGPPublicKeyPacket.h in Headers */,
 				75804A4C1EED172400AC97BF /* PGPCompressedPacket.h in Headers */,
@@ -756,6 +761,7 @@
 				75804A2C1EED16D600AC97BF /* PGPCryptoHash.h in Headers */,
 				75804A3E1EED171C00AC97BF /* PGPSignaturePacket.h in Headers */,
 				75804A5D1EED172400AC97BF /* PGPSymmetricallyEncryptedDataPacket.h in Headers */,
+				75A2F7EB1EF84FC400C14BEB /* ObjectivePGP+Private.h in Headers */,
 				752DE5C11EEE3C1B00637E38 /* PGPMacros.h in Headers */,
 				75804A511EED172400AC97BF /* PGPPublicKeyPacket.h in Headers */,
 				75804A5B1EED172400AC97BF /* PGPCompressedPacket.h in Headers */,

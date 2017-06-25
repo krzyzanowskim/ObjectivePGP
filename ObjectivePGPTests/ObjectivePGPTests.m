@@ -8,6 +8,7 @@
 
 #import <XCTest/XCTest.h>
 #import "ObjectivePGP.h"
+#import "ObjectivePGP+Private.h"
 #import "PGPMacros.h"
 
 
@@ -99,16 +100,15 @@
     let pgp = self.oPGP;
     let bundle = [NSBundle bundleForClass:[self class]];
     let keysPath = [bundle pathForResource:@"issue44-keys" ofType:@"asc"];
+
     let keys = [pgp importKeysFromFile:keysPath];
     XCTAssertEqual(keys.count,(NSUInteger)1);
 
-    // PGPKey *keyToSign = [pgp getKeyForIdentifier:@"FF95F0F0ADA10313" type:PGPKeySecret];
     let keyToSign = [pgp findKeyForIdentifier:@"71180E514EF122E5"];
     XCTAssertNotNil(keyToSign);
 
-    let data = [NSData dataWithContentsOfFile:keysPath];
-
-    let signature = [pgp signData:data usingKey:keyToSign passphrase:@"passphrase" detached:YES error:nil];
+    let signatureData = [NSData dataWithContentsOfFile:keysPath];
+    let signature = [pgp signData:signatureData usingKey:keyToSign passphrase:@"passphrase" detached:YES error:nil];
     XCTAssertNotNil(signature);
 }
 

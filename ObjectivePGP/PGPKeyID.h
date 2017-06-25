@@ -22,8 +22,6 @@ PGP_EMPTY_INIT_UNAVAILABLE
 - (instancetype)initWithLongKey:(NSData *)longKeyData NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithFingerprint:(PGPFingerprint *)fingerprint;
 
-- (BOOL)isEqualToKeyID:(PGPKeyID *)keyID;
-
 - (NSData *)exportKeyData;
 
 @end

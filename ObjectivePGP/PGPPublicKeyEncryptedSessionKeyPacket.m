@@ -104,7 +104,7 @@
     //FIXME: Key is read from the packet, so it shouldn't be passed as parameter to the method because
     //       key is unknown earlier
     PGPKeyID *secretKeyKeyID = [[PGPKeyID alloc] initWithFingerprint:secretKeyPacket.fingerprint];
-    if (![self.keyID isEqualToKeyID:secretKeyKeyID]) {
+    if (![self.keyID isEqual:secretKeyKeyID]) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Invalid secret key used to decrypt session key, expected %@, got %@",self.keyID, secretKeyKeyID] }];
         }

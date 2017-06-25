@@ -56,12 +56,21 @@ NS_ASSUME_NONNULL_BEGIN
         return NO;
     }
 
-    return [self.secretKey isEqual:other.secretKey] && [self.publicKey isEqual:other.publicKey];
+    BOOL result = YES;
+    if (self.secretKey) {
+        result = [self.secretKey isEqual:other.secretKey];
+    }
+
+    if (result && self.publicKey) {
+        result = [self.publicKey isEqual:other.publicKey];
+    }
+
+    return result;
 }
 
 - (NSUInteger)hash {
     NSUInteger prime = 31;
-    NSUInteger result = 1;
+    NSUInteger result = 7;
     result = prime * result + self.secretKey.hash;
     result = prime * result + self.publicKey.hash;
     return result;

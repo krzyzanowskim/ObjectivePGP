@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param path Path to the file with the keys.
  @return Array of loaded keys.
  */
-- (NSArray<PGPCompoundKey *> *)importKeysFromFile:(NSString *)path;
+- (NSSet<PGPCompoundKey *> *)importKeysFromFile:(NSString *)path;
 
 /**
  Import keys from the data. `keys` property is updated after successfull import.
@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param data Keys data.
  @return Array of loaded keys.
  */
-- (NSArray<PGPCompoundKey *> *)importKeysFromData:(NSData *)data;
+- (NSSet<PGPCompoundKey *> *)importKeysFromData:(NSData *)data;
 
 /**
  Import key with given identifier
@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param fileData Keys data.
  @return Array of parsed keys.
  */
-- (NSArray<PGPCompoundKey *> *)keysFromData:(NSData *)fileData;
+- (NSSet<PGPCompoundKey *> *)keysFromData:(NSData *)fileData;
 
 /**
  Read keys from the file. Does not import the keys.
@@ -58,7 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param path Path to the keys file.
  @return Array of parsed keys.
  */
-- (NSArray<PGPCompoundKey *> *)keysFromFile:(NSString *)path;
+- (NSSet<PGPCompoundKey *> *)keysFromFile:(NSString *)path;
 
 /**
  Save keys of given type (public or private) to the file.

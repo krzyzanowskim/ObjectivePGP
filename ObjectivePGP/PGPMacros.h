@@ -21,3 +21,13 @@
         return thang;                                               \
     }()
 
+// Similar to defer in Swift
+#define pgp_defer_block_name_with_prefix(prefix, suffix) prefix ## suffix
+#define pgp_defer_block_name(suffix) pgp_defer_block_name_with_prefix(pgp_defer_, suffix)
+#define pgp_defer __strong void(^pgp_defer_block_name(__LINE__))(void) __attribute__((cleanup(pgp_defer_cleanup_block), unused)) = ^
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-function"
+static void pgp_defer_cleanup_block(__strong void(^*block)(void)) {
+    (*block)();
+}
+#pragma clang diagnostic pop
