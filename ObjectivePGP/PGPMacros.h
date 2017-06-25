@@ -9,12 +9,19 @@
 #define let const __auto_type
 #define var __auto_type
 
+#define PGP_NOESCAPE __attribute__((noescape))
+
+#define PGP_EMPTY_INIT_UNAVAILABLE \
+    -(instancetype)init __attribute__((unavailable("Not the designated initializer"))); \
+    +(instancetype)new __attribute__((unavailable("Not the designated initializer")));
+
+
 #define PGPAssertClass(object, allowedClass)                                                                                                                                                                                \
     do {                                                                                                                                                                                                                      \
         NSAssert([object isKindOfClass:[allowedClass class]], @"Object type not satisfying: '%@' must be of type '%s' but is '%@'.", object, #allowedClass, (object ? NSStringFromClass((Class)[object class]) : @"(null)")); \
     } while (0);
 
-#define PGPNN(thing)                                              \
+#define PGPNN(thing) \
     ^{                                                              \
         __auto_type _Nonnull thang = thing;                         \
         NSCAssert(thang != nil, @"'" #thing "' Object must exist"); \

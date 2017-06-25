@@ -148,7 +148,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
             [data appendData:passphrase];
 
             // passphrase
-            updateBlock = ^(NOESCAPE void(^update)(const void *data, int length)) {
+            updateBlock = ^(PGP_NOESCAPE void(^update)(const void *data, int length)) {
                 update(data.bytes, (int)data.length);
             };
         }
@@ -163,7 +163,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
             [data appendData:salt];
             [data appendData:passphrase];
 
-            updateBlock = ^(NOESCAPE void(^update)(const void *data, int length)) {
+            updateBlock = ^(PGP_NOESCAPE void(^update)(const void *data, int length)) {
                 update(data.bytes, (int)data.length);
             };
         }
@@ -174,7 +174,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
             let data = [NSMutableData dataWithData:salt];
             [data appendData:passphrase];
 
-            updateBlock = ^(NOESCAPE void(^update)(const void *data, int length)) {
+            updateBlock = ^(PGP_NOESCAPE void(^update)(const void *data, int length)) {
                 // prefix first
                 update(prefix.bytes, (int)prefix.length);
 

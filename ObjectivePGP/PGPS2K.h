@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 #import "PGPTypes.h"
 #import "PGPFoundation.h"
+#import "PGPMacros.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
