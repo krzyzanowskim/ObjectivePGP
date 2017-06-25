@@ -38,20 +38,16 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return Packet instance object
  */
-+ (nullable PGPPacket *)packetWithData:(NSData *)packetData offset:(NSUInteger)offset nextPacketOffset:(nullable NSUInteger *)nextPacketOffset
-{
-
++ (nullable PGPPacket *)packetWithData:(NSData *)packetData offset:(NSUInteger)offset nextPacketOffset:(nullable NSUInteger *)nextPacketOffset {
     // parse header and get actual header data
-
     PGPPacketTag packetTag = 0;
-    NSData *data = [packetData subdataWithRange:(NSRange) {offset, packetData.length - offset}];
     UInt32 headerLength = 0;
-    BOOL indeterminateLength;
-    NSData *packetBodyData = [PGPPacket parsePacketHeader:data headerLength:&headerLength nextPacketOffset:nextPacketOffset packetTag:&packetTag indeterminateLength:&indeterminateLength];
-    NSData *packetHeaderData = [packetData subdataWithRange:(NSRange) {offset, headerLength}];
+    BOOL indeterminateLength = NO;
+    let data = [packetData subdataWithRange:(NSRange) {offset, packetData.length - offset}];
+    let packetBodyData = [PGPPacket parsePacketHeader:data headerLength:&headerLength nextPacketOffset:nextPacketOffset packetTag:&packetTag indeterminateLength:&indeterminateLength];
+    let packetHeaderData = [packetData subdataWithRange:(NSRange) {offset, headerLength}];
 
     if (packetHeaderData.length > 0) {
-        
         // Analyze body0
         PGPPacket * packet = nil;
         switch (packetTag) {

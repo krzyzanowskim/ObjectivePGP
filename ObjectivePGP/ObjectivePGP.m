@@ -239,10 +239,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable NSData *)decryptData:(NSData *)messageDataToDecrypt passphrase:(nullable NSString *)passphrase verifyWithKey:(nullable PGPCompoundKey *)key signed:(nullable BOOL *)isSigned valid:(nullable BOOL *)isValid integrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(messageDataToDecrypt, NSData);
+    let binaryMessages = [self convertArmoredMessage2BinaryBlocksWhenNecessary:messageDataToDecrypt];
 
-    NSArray *binaryMessages = [self convertArmoredMessage2BinaryBlocksWhenNecessary:messageDataToDecrypt];
-    NSData *binaryMessageToDecrypt = binaryMessages.count > 0 ? binaryMessages.firstObject : nil;
-    NSAssert(binaryMessageToDecrypt, @"Invalid input data");
+    //decrypt first message only
+    let binaryMessageToDecrypt = binaryMessages.count > 0 ? binaryMessages.firstObject : nil;
     if (!binaryMessageToDecrypt) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Invalid input data"}];
@@ -748,9 +748,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<PGPCompoundKey *> *)keysFromData:(NSData *)fileData {
     NSAssert(fileData.length > 0, @"Empty data");
 
-    NSArray *binRingData = [self convertArmoredMessage2BinaryBlocksWhenNecessary:fileData];
-    NSAssert(binRingData.count > 0, @"Invalid input data");
-    if (binRingData.count == 0) {
+    let binRingData = [self convertArmoredMessage2BinaryBlocksWhenNecessary:fileData];
+    if (!binRingData || binRingData.count == 0) {
+        PGPLogError(@"Invalid input data");
         return @[];
     }
 
@@ -844,7 +844,7 @@ NS_ASSUME_NONNULL_BEGIN
     return compoundKeys;
 }
 
-- (NSArray *)convertArmoredMessage2BinaryBlocksWhenNecessary:(NSData *)binOrArmorData {
+- (NSArray<NSData *> *)convertArmoredMessage2BinaryBlocksWhenNecessary:(NSData *)binOrArmorData {
     NSData *binRingData = binOrArmorData;
     // detect if armored, check for strin -----BEGIN PGP
     if ([PGPArmor isArmoredData:binRingData]) {
@@ -869,8 +869,7 @@ NS_ASSUME_NONNULL_BEGIN
             }
         }];
 
-        NSMutableArray *extractedData = [[NSMutableArray alloc] init];
-
+        let extractedData = [[NSMutableArray<NSData *> alloc] init];
         for (NSString *extractedString in extractedBlocks) {
             binRingData = [PGPArmor readArmoredData:extractedString error:&deadmorError];
             if (deadmorError) {

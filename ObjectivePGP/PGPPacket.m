@@ -87,6 +87,10 @@ NS_ASSUME_NONNULL_BEGIN
     BOOL isPartialBodyLength = NO;
     
     if (!isPGPHeader) {
+        // not a valida data, skip the whole data.
+        if (nextPacketOffset) {
+            *nextPacketOffset = data.length;
+        }
         return nil;
     }
     UInt32 bodyLength;
@@ -101,7 +105,9 @@ NS_ASSUME_NONNULL_BEGIN
         bodyLength = (UInt32)data.length - *headerLength;
         if (indeterminateLength) *indeterminateLength = YES;
     }
-    if (nextPacketOffset != NULL) *nextPacketOffset = bodyLength + *headerLength;
+    if (nextPacketOffset) {
+        *nextPacketOffset = bodyLength + *headerLength;
+    };
     if (isPartialBodyLength)
     {
         UInt32 offset = *headerLength;
