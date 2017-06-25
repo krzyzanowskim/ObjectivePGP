@@ -158,9 +158,12 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     [certs sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-        PGPSignaturePacket *sig1 = obj1;
-        PGPSignaturePacket *sig2 = obj2;
-        return [sig1.creationDate compare:sig2.creationDate];
+        let sig1 = PGPCast(obj1, PGPSignaturePacket);
+        let sig2 = PGPCast(obj2, PGPSignaturePacket);
+        if (sig1.creationDate && sig2.creationDate) {
+            return [PGPNN(sig1.creationDate) compare:PGPNN(sig2.creationDate)];
+        }
+        return NSOrderedSame;
     }];
 
     return [certs firstObject];

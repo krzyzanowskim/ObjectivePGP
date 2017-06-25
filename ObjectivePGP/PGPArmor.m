@@ -89,7 +89,7 @@
 
     NSData *checksumData = [NSData dataWithBytes:&c length:sizeof(c)];
     [armoredMessage appendString:@"="];
-    [armoredMessage appendString:[checksumData base64EncodedStringWithOptions:(NSDataBase64Encoding76CharacterLineLength | NSDataBase64EncodingEndLineWithLineFeed)]];
+    [armoredMessage appendString:[checksumData base64EncodedStringWithOptions:NSDataBase64Encoding76CharacterLineLength | NSDataBase64EncodingEndLineWithLineFeed]];
     [armoredMessage appendString:@"\n"];
 
     // - The Armor Tail, which depends on the Armor Header Line

@@ -37,11 +37,11 @@ NS_ASSUME_NONNULL_BEGIN
     let arr = [NSMutableArray<PGPPacket *> arrayWithObject:self.primaryKeyPacket];
 
     if (self.revocationSignature) {
-        [arr addObject:self.revocationSignature];
+        [arr addObject:PGPNN(self.revocationSignature)];
     }
 
     if (self.bindingSignature) {
-        [arr addObject:self.bindingSignature];
+        [arr addObject:PGPNN(self.bindingSignature)];
     }
 
     return arr;

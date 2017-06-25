@@ -60,15 +60,13 @@
 }
 
 - (PGPMPI *)secretMPI:(NSString *)identifier {
-    __block PGPMPI *returnMPI = nil;
-    [self.secretMPIArray enumerateObjectsUsingBlock:^(PGPMPI *mpi, NSUInteger idx, BOOL *stop) {
+    for (PGPMPI *mpi in self.secretMPIArray) {
         if ([mpi.identifier isEqual:identifier]) {
-            returnMPI = mpi;
-            *stop = YES;
+            return mpi;
         }
-    }];
+    }
 
-    return PGPNN(returnMPI);
+    return nil;
 }
 
 - (PGPFingerprint *)fingerprint {
@@ -347,7 +345,10 @@
 
         // If string-to-key usage octet was 255 or 254, a string-to-key specifier.
         NSError *exportError = nil;
-        [data appendData:[self.s2k export:&exportError]];
+        let exportS2K = [self.s2k export:&exportError];
+        if (exportS2K) {
+            [data appendData:exportS2K];
+        }
         NSAssert(!exportError, @"export failed");
     }
 
@@ -359,7 +360,10 @@
 
     if (self.s2kUsage == PGPS2KUsageNone) {
         for (PGPMPI *mpi in self.secretMPIArray) {
-            [data appendData:[mpi exportMPI]];
+            let exportMPI = [mpi exportMPI];
+            if (exportMPI) {
+                [data appendData:exportMPI];
+            }
         }
 
         // append hash

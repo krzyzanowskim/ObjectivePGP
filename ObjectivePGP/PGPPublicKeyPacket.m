@@ -248,7 +248,10 @@
 
     // publicMPI is allways available, no need to decrypt
     for (PGPMPI *mpi in self.publicMPIArray) {
-        [data appendData:[mpi exportMPI]];
+        let exportMPI = [mpi exportMPI];
+        if (exportMPI) {
+            [data appendData:exportMPI];
+        }
     }
     return [data copy];
 }
@@ -261,7 +264,7 @@
     NSData *publicKeyData = [self buildPublicKeyBodyData:NO];
 
     NSUInteger length = publicKeyData.length;
-    UInt8 upper = length >> 8;
+    UInt8 upper = (UInt8)(length >> 8);
     UInt8 lower = length & 0xff;
     UInt8 headWithLength[3] = {0x99, upper, lower};
     [data appendBytes:&headWithLength length:3];

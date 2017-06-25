@@ -337,9 +337,14 @@ NS_ASSUME_NONNULL_BEGIN
     NSMutableData *result = [NSMutableData data];
 
     for (PGPPacket *packet in self.allPacketsArray) {
-        [result appendData:[packet export:error]]; // TODO: decode secret key first
+        let exported = [packet export:error];
+        if (!exported) {
+            continue;
+        }
+
+        [result appendData:exported]; // TODO: decode secret key first
+        NSAssert(*error == nil, @"Error while export public key");
         if (error) {
-            NSAssert(*error == nil, @"Error while export public key");
             if (*error) {
                 return nil;
             }
@@ -413,7 +418,7 @@ NS_ASSUME_NONNULL_BEGIN
         for (NSArray *prefArray in preferecesArray) {
             [set intersectSet:[NSSet setWithArray:prefArray]];
         }
-        return [set[0] unsignedIntValue];
+        return (PGPSymmetricAlgorithm)[set[0] unsignedIntValue];
     }
 
     return PGPSymmetricTripleDES;
@@ -433,7 +438,7 @@ NS_ASSUME_NONNULL_BEGIN
     [arr addObject:self.primaryKeyPacket];
 
     if (self.revocationSignature) {
-        [arr addObject:self.revocationSignature];
+        [arr addObject:PGPNN(self.revocationSignature)];
     }
 
     for (id packet in self.directSignatures) {

@@ -7,10 +7,13 @@
 //
 
 #import "PGPPacket.h"
+#import "PGPExportableProtocol.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 @class PGPKeyID, PGPPublicKeyPacket, PGPSecretKeyPacket;
 
-@interface PGPPublicKeyEncryptedSessionKeyPacket : PGPPacket <NSCopying>
+@interface PGPPublicKeyEncryptedSessionKeyPacket : PGPPacket <NSCopying, PGPExportable>
 @property (nonatomic) UInt8 version;
 @property (nonatomic) PGPKeyID *keyID;
 @property (nonatomic) PGPPublicKeyAlgorithm publicKeyAlgorithm;
@@ -20,3 +23,5 @@
 - (NSData *)decryptSessionKeyData:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm *)sessionKeyAlgorithm error:(NSError *__autoreleasing *)error;
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -81,11 +81,17 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSData *)export:(NSError *__autoreleasing _Nullable *)error {
     NSMutableData *exportData = [NSMutableData data];
     if (self.publicKey) {
-        [exportData appendData:[self.publicKey export:error]];
+        let exported = [self.publicKey export:error];
+        if (exported) {
+            [exportData appendData:exported];
+        }
     }
 
     if (self.secretKey) {
-        [exportData appendData:[self.secretKey export:error]];
+        let exported = [self.secretKey export:error];
+        if (exported) {
+            [exportData appendData:exported];
+        }
     }
     return exportData;
 }

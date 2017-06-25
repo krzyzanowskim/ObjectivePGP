@@ -18,6 +18,8 @@
 #import "PGPPublicKeyRSA.h"
 #import "PGPSecretKeyPacket.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface PGPPublicKeyEncryptedSessionKeyPacket ()
 
 @property (nonatomic) PGPMPI *encryptedMPI_M;
@@ -69,27 +71,6 @@
     self.encrypted = YES;
 
     return position;
-}
-
-- (NSData *)export:(NSError *__autoreleasing *)error {
-    NSAssert(self.encryptedMPI_M, @"Missing encrypted mpi m");
-    if (!self.encryptedMPI_M) {
-        return nil;
-    }
-
-    NSMutableData *bodyData = [NSMutableData data];
-
-    [bodyData appendBytes:&_version length:1]; // 1
-    [bodyData appendData:[self.keyID exportKeyData]]; // 8
-    [bodyData appendBytes:&_publicKeyAlgorithm length:1]; // 1
-    [bodyData appendData:[self.encryptedMPI_M exportMPI]]; // m
-
-    NSMutableData *data = [NSMutableData data];
-    NSData *headerData = [self buildHeaderData:bodyData];
-    [data appendData:headerData];
-    [data appendData:bodyData];
-
-    return [data copy];
 }
 
 - (NSData *)decryptSessionKeyData:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm *)sessionKeyAlgorithm error:(NSError *__autoreleasing *)error {
@@ -184,9 +165,37 @@
     return error == nil;
 }
 
+#pragma mark - PGPExportable
+
+- (nullable NSData *)export:(NSError *__autoreleasing  _Nullable *)error {
+    NSAssert(self.encryptedMPI_M, @"Missing encrypted mpi m");
+    if (!self.encryptedMPI_M) {
+        return nil;
+    }
+
+    let bodyData = [NSMutableData data];
+
+    [bodyData appendBytes:&_version length:1]; // 1
+    [bodyData appendData:[self.keyID exportKeyData]]; // 8
+    [bodyData appendBytes:&_publicKeyAlgorithm length:1]; // 1
+    let exportedMPI = [self.encryptedMPI_M exportMPI];
+    if (!exportedMPI) {
+        return nil;
+    }
+    [bodyData appendData:exportedMPI]; // m
+
+    let data = [NSMutableData data];
+    let headerData = [self buildHeaderData:bodyData];
+    [data appendData:headerData];
+    [data appendData:bodyData];
+
+    return [data copy];
+}
+
+
 #pragma mark - NSCopying
 
-- (instancetype)copyWithZone:(NSZone *)zone {
+- (instancetype)copyWithZone:(nullable NSZone *)zone {
     PGPPublicKeyEncryptedSessionKeyPacket *copy = [super copyWithZone:zone];
     copy->_version = self.version;
     copy->_keyID = self.keyID;
@@ -196,3 +205,5 @@
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

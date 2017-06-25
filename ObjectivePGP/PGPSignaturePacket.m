@@ -208,7 +208,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (NSData *)buildFullSignatureBodyData:(NSError *__autoreleasing *)error {
-    NSMutableData *data = [NSMutableData data];
+    let data = [NSMutableData data];
 
     let signedPartData = [self buildSignedPart:self.hashedSubpackets];
     [data appendData:signedPartData];
@@ -220,7 +220,10 @@ NS_ASSUME_NONNULL_BEGIN
     [data appendData:self.signedHashValueData];
 
     for (PGPMPI *mpi in self.signatureMPIs) {
-        [data appendData:[mpi exportMPI]];
+        let exportMPI = [mpi exportMPI];
+        if (exportMPI) {
+            [data appendData:exportMPI];
+        }
     }
 
     return data;
@@ -755,7 +758,7 @@ NS_ASSUME_NONNULL_BEGIN
             }
         }
         // Two-octet scalar octet count for following hashed subpacket data.
-        UInt16 countBE = CFSwapInt16HostToBig(subpackets.length);
+        UInt16 countBE = CFSwapInt16HostToBig((UInt16)subpackets.length);
         [data appendBytes:&countBE length:2];
         // subackets data
         [data appendData:subpackets];
