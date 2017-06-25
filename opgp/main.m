@@ -142,7 +142,7 @@ Use within the scope of this License is free of charge and no royalty or licensi
 
             let loadedKeys = [pgp importKeysFromData:fetchedKeyData];
             if (!keyIdentifier) {
-                let key = loadedKeys[0];
+                let key = loadedKeys.allObjects[0];
                 operationKey = key;
             }
         }
