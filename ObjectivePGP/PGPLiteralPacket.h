@@ -6,16 +6,12 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import "PGPPacket.h"
 #import "PGPExportableProtocol.h"
+#import "PGPPacket.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(UInt8, PGPLiteralPacketFormat) {
-    PGPLiteralPacketBinary   = 'b',
-    PGPLiteralPacketText     = 't',
-    PGPLiteralPacketTextUTF8 = 'u'
-};
+typedef NS_ENUM(UInt8, PGPLiteralPacketFormat) { PGPLiteralPacketBinary = 'b', PGPLiteralPacketText = 't', PGPLiteralPacketTextUTF8 = 'u' };
 
 @interface PGPLiteralPacket : PGPPacket <PGPExportable>
 
@@ -25,8 +21,8 @@ typedef NS_ENUM(UInt8, PGPLiteralPacketFormat) {
 
 @property (nonatomic) NSData *literalRawData;
 
-- (instancetype) initWithData:(NSData *)rawData;
-+ (PGPLiteralPacket *) literalPacket:(PGPLiteralPacketFormat)format withData:(NSData *)rawData;
+- (instancetype)initWithData:(NSData *)rawData;
++ (PGPLiteralPacket *)literalPacket:(PGPLiteralPacketFormat)format withData:(NSData *)rawData;
 
 @end
 

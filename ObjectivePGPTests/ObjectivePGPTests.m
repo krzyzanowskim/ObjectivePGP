@@ -6,23 +6,21 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import <XCTest/XCTest.h>
-#import "ObjectivePGP.h"
 #import "ObjectivePGP+Private.h"
+#import "ObjectivePGP.h"
 #import "PGPMacros.h"
+#import <XCTest/XCTest.h>
 
+// sec   2048R/AEEF64C8 2014-05-03
+// uid                  Marcin Krzyzanowski (Test keys) <test+marcin.krzyzanowski@gmail.com>
+// ssb   2048R/7D4FCA45 2014-05-03
 
-//sec   2048R/AEEF64C8 2014-05-03
-//uid                  Marcin Krzyzanowski (Test keys) <test+marcin.krzyzanowski@gmail.com>
-//ssb   2048R/7D4FCA45 2014-05-03
+// pub   2048R/AEEF64C8 2014-05-03
+// Key fingerprint = 816E 6A80 8067 D41E 4CB0  3FCC 9469 0093 AEEF 64C8
+// uid                  Marcin Krzyzanowski (Test keys) <test+marcin.krzyzanowski@gmail.com>
+// sub   2048R/7D4FCA45 2014-05-03
 
-//pub   2048R/AEEF64C8 2014-05-03
-//Key fingerprint = 816E 6A80 8067 D41E 4CB0  3FCC 9469 0093 AEEF 64C8
-//uid                  Marcin Krzyzanowski (Test keys) <test+marcin.krzyzanowski@gmail.com>
-//sub   2048R/7D4FCA45 2014-05-03
-
-//pass ObjectivePGP
-
+// pass ObjectivePGP
 
 @interface ObjectivePGPTests : XCTestCase
 
@@ -34,8 +32,7 @@
 
 @implementation ObjectivePGPTests
 
-- (void)setUp
-{
+- (void)setUp {
     [super setUp];
 
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
@@ -47,14 +44,12 @@
     self.oPGP = [[ObjectivePGP alloc] init];
 }
 
-- (void)tearDown
-{
+- (void)tearDown {
     [super tearDown];
     self.oPGP = nil;
 }
 
-- (void) testNotDuplicates
-{
+- (void)testNotDuplicates {
     [self.oPGP importKeysFromFile:self.pubringPlaintext];
     NSUInteger count1 = self.oPGP.keys.count;
     [self.oPGP importKeysFromFile:self.pubringPlaintext];
@@ -64,12 +59,12 @@
 }
 
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/22
-- (void) testIssue22 {
+- (void)testIssue22 {
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *originalKeyFilePath = [bundle pathForResource:@"issue22-original" ofType:@"asc"];
     [self.oPGP importKeysFromFile:originalKeyFilePath];
     let key = [self.oPGP.keys anyObject];
-    
+
     NSError *err = nil;
     XCTAssertTrue([key.secretKey decrypt:@"weakpassphrase" error:&err]);
     NSData *exportedKeyData = [key.secretKey export:nil];
@@ -77,7 +72,7 @@
     XCTAssert(self.oPGP.keys.count == 1, @"");
 }
 
-- (void) testIssue35 {
+- (void)testIssue35 {
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *messagePath = [bundle pathForResource:@"issue35-message" ofType:@"asc"];
     NSString *keyPath = [bundle pathForResource:@"issue35-key" ofType:@"asc"];
@@ -87,7 +82,7 @@
 }
 
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/53
-- (void) testIssue53GNUDummyS2K {
+- (void)testIssue53GNUDummyS2K {
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *keyPathPrv = [bundle pathForResource:@"issue53-s2k-gnu-dummy.prv" ofType:@"asc"];
     NSString *keyPathPub = [bundle pathForResource:@"issue53-s2k-gnu-dummy.pub" ofType:@"asc"];
@@ -96,13 +91,13 @@
 }
 
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/44
-- (void) testIssue44 {
+- (void)testIssue44 {
     let pgp = self.oPGP;
     let bundle = [NSBundle bundleForClass:[self class]];
     let keysPath = [bundle pathForResource:@"issue44-keys" ofType:@"asc"];
 
     let keys = [pgp importKeysFromFile:keysPath];
-    XCTAssertEqual(keys.count,(NSUInteger)1);
+    XCTAssertEqual(keys.count, (NSUInteger)1);
 
     let keyToSign = [pgp findKeyForIdentifier:@"71180E514EF122E5"];
     XCTAssertNotNil(keyToSign);

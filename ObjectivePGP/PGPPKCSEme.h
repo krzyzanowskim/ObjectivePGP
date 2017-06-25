@@ -10,7 +10,7 @@
 
 @interface PGPPKCSEme : NSObject
 
-+ (NSData *) encodeMessage:(NSData *)m keyModulusLength:(NSUInteger)k error:(NSError * __autoreleasing *)error;
-+ (NSData *) decodeMessage:(NSData *)m error:(NSError * __autoreleasing *)error;
++ (NSData *)encodeMessage:(NSData *)m keyModulusLength:(NSUInteger)k error:(NSError *__autoreleasing *)error;
++ (NSData *)decodeMessage:(NSData *)m error:(NSError *__autoreleasing *)error;
 
 @end

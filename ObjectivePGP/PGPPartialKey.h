@@ -6,20 +6,16 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import "PGPTypes.h"
-#import "PGPPacket.h"
-#import "PGPKeyID.h"
-#import "PGPSignaturePacket.h"
 #import "PGPExportableProtocol.h"
+#import "PGPKeyID.h"
+#import "PGPPacket.h"
+#import "PGPSignaturePacket.h"
+#import "PGPTypes.h"
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSUInteger, PGPPartialKeyType) {
-    PGPPartialKeyUnknown = 0,
-    PGPPartialKeySecret  = 1,
-    PGPPartialKeyPublic  = 2
-};
+typedef NS_ENUM(NSUInteger, PGPPartialKeyType) { PGPPartialKeyUnknown = 0, PGPPartialKeySecret = 1, PGPPartialKeyPublic = 2 };
 
 @class PGPSecretKeyPacket;
 
@@ -27,7 +23,7 @@ typedef NS_ENUM(NSUInteger, PGPPartialKeyType) {
 @interface PGPPartialKey : NSObject <PGPExportable>
 
 @property (nonatomic, readonly) PGPPartialKeyType type;
-@property (nonatomic) PGPPacket  *primaryKeyPacket;
+@property (nonatomic) PGPPacket *primaryKeyPacket;
 @property (nonatomic, readonly) BOOL isEncrypted;
 @property (nonatomic, copy) NSArray<PGPUser *> *users;
 @property (nonatomic, copy) NSArray *subKeys; // TODO: nullable
@@ -36,7 +32,7 @@ typedef NS_ENUM(NSUInteger, PGPPartialKeyType) {
 
 @property (nonatomic, readonly) PGPKeyID *keyID;
 
-- (instancetype) initWithPackets:(NSArray<PGPPacket *> *)packets;
+- (instancetype)initWithPackets:(NSArray<PGPPacket *> *)packets;
 
 /**
  *  Decrypts all secret key and subkey packets
@@ -48,7 +44,7 @@ typedef NS_ENUM(NSUInteger, PGPPartialKeyType) {
  *
  *  @return YES on success.
  */
-- (BOOL) decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error;
+- (BOOL)decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error;
 
 /**
  *  Signing key packet
@@ -58,12 +54,12 @@ typedef NS_ENUM(NSUInteger, PGPPartialKeyType) {
 @property (nonatomic, nullable, readonly) PGPPacket *signingKeyPacket;
 
 - (nullable PGPPacket *)signingKeyPacketWithKeyID:(PGPKeyID *)keyID;
-- (nullable PGPPacket *)encryptionKeyPacket:(NSError * __autoreleasing *)error;
-- (nullable PGPSecretKeyPacket *)decryptionKeyPacketWithID:(PGPKeyID *)keyID error:(NSError * __autoreleasing *)error;
+- (nullable PGPPacket *)encryptionKeyPacket:(NSError *__autoreleasing *)error;
+- (nullable PGPSecretKeyPacket *)decryptionKeyPacketWithID:(PGPKeyID *)keyID error:(NSError *__autoreleasing *)error;
 
-- (NSArray<PGPPacket *> *) allKeyPackets;
-- (PGPSymmetricAlgorithm) preferredSymmetricAlgorithm;
-+ (PGPSymmetricAlgorithm) preferredSymmetricAlgorithmForKeys:(NSArray<PGPPartialKey *> *)keys;
+- (NSArray<PGPPacket *> *)allKeyPackets;
+- (PGPSymmetricAlgorithm)preferredSymmetricAlgorithm;
++ (PGPSymmetricAlgorithm)preferredSymmetricAlgorithmForKeys:(NSArray<PGPPartialKey *> *)keys;
 
 @end
 

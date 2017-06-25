@@ -7,33 +7,33 @@
 //
 //  Tag 6
 
-#import <Foundation/Foundation.h>
-#import "PGPTypes.h"
-#import "PGPPacketFactory.h"
-#import "PGPKeyID.h"
 #import "PGPFingerprint.h"
+#import "PGPKeyID.h"
+#import "PGPPacketFactory.h"
+#import "PGPTypes.h"
+#import <Foundation/Foundation.h>
 
 @class PGPMPI;
 
 @interface PGPPublicKeyPacket : PGPPacket <NSCopying>
 
 @property (nonatomic, readonly) UInt8 version;
-@property (nonatomic, readonly) NSDate* createDate;
+@property (nonatomic, readonly) NSDate *createDate;
 @property (nonatomic, readonly) UInt16 V3validityPeriod; // obsolete
 @property (nonatomic, readonly) PGPPublicKeyAlgorithm publicKeyAlgorithm;
-@property (nonatomic, readwrite) NSArray* publicMPIArray;
+@property (nonatomic, readwrite) NSArray *publicMPIArray;
 
 @property (nonatomic, readonly) NSUInteger keySize;
 
-@property (nonatomic, readonly) PGPFingerprint* fingerprint;
-@property (nonatomic, readonly) PGPKeyID* keyID;
+@property (nonatomic, readonly) PGPFingerprint *fingerprint;
+@property (nonatomic, readonly) PGPKeyID *keyID;
 
-- (NSData*)export:(NSError* __autoreleasing*)error;
-- (NSData*)exportPublicPacketOldStyle;
+- (NSData *) export:(NSError *__autoreleasing *)error;
+- (NSData *)exportPublicPacketOldStyle;
 
-- (NSData*)buildPublicKeyBodyData:(BOOL)forceV4;
+- (NSData *)buildPublicKeyBodyData:(BOOL)forceV4;
 
-- (PGPMPI*)publicMPI:(NSString*)identifier;
-- (NSData*)encryptData:(NSData*)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm;
+- (PGPMPI *)publicMPI:(NSString *)identifier;
+- (NSData *)encryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm;
 
 @end

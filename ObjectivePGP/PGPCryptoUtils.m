@@ -10,18 +10,17 @@
 
 #import <CommonCrypto/CommonCrypto.h>
 
-#include <openssl/cast.h>
-#include <openssl/idea.h>
 #include <openssl/aes.h>
-#include <openssl/des.h>
-#include <openssl/camellia.h>
 #include <openssl/blowfish.h>
+#include <openssl/camellia.h>
+#include <openssl/cast.h>
+#include <openssl/des.h>
+#include <openssl/idea.h>
 #include <openssl/ripemd.h>
 
 @implementation PGPCryptoUtils
 
-+ (NSUInteger) blockSizeOfSymmetricAlhorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm
-{
++ (NSUInteger)blockSizeOfSymmetricAlhorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm {
     switch (symmetricAlgorithm) {
         case PGPSymmetricIDEA:
             return IDEA_BLOCK;
@@ -43,13 +42,12 @@
     return NSNotFound;
 }
 
-+ (NSUInteger) keySizeOfSymmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm
-{
++ (NSUInteger)keySizeOfSymmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm {
     switch (symmetricAlgorithm) {
         case PGPSymmetricIDEA:
             return IDEA_KEY_LENGTH;
         case PGPSymmetricTripleDES:
-            return kCCKeySize3DES; //24 or 8 ?
+            return kCCKeySize3DES; // 24 or 8 ?
         case PGPSymmetricCAST5:
             return kCCKeySizeMaxCAST;
         case PGPSymmetricBlowfish:
@@ -68,8 +66,7 @@
     return NSNotFound;
 }
 
-+ (NSUInteger) hashSizeOfHashAlhorithm:(PGPHashAlgorithm)hashAlgorithm
-{
++ (NSUInteger)hashSizeOfHashAlhorithm:(PGPHashAlgorithm)hashAlgorithm {
     switch (hashAlgorithm) {
         case PGPHashMD5:
             return CC_MD5_DIGEST_LENGTH;

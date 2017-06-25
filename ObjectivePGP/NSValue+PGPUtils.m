@@ -10,10 +10,8 @@
 
 @implementation NSValue (PGPUtils)
 
-- (BOOL) pgp_objCTypeIsEqualTo:(const char *)type
-{
-    if (!type || strlen(type) == 0)
-        return NO;
+- (BOOL)pgp_objCTypeIsEqualTo:(const char *)type {
+    if (!type || strlen(type) == 0) return NO;
 
     if (strcmp([self objCType], type) == 0) {
         return YES;

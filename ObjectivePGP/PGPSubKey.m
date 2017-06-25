@@ -6,17 +6,16 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
+#import "PGPSubKey.h"
 #import "ObjectivePGP.h"
 #import "PGPMacros.h"
-#import "PGPSubKey.h"
 #import "PGPPublicKeyPacket.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPSubKey
 
-- (instancetype)initWithPacket:(PGPPacket *)packet
-{
+- (instancetype)initWithPacket:(PGPPacket *)packet {
     if ((self = [super init])) {
         self.primaryKeyPacket = packet;
     }
@@ -24,11 +23,11 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"%@ %@",super.description, self.primaryKeyPacket.description];
+    return [NSString stringWithFormat:@"%@ %@", super.description, self.primaryKeyPacket.description];
 }
 
 - (PGPKeyID *)keyID {
-    //note: public key packet because this is main class for public and secret class
+    // note: public key packet because this is main class for public and secret class
     let primaryKeyPacket = PGPCast(self.primaryKeyPacket, PGPPublicKeyPacket);
     NSCAssert(primaryKeyPacket, @"Invalid packet");
     return [[PGPKeyID alloc] initWithFingerprint:primaryKeyPacket.fingerprint];

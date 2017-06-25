@@ -11,21 +11,18 @@
 
 @implementation PGPOnePassSignaturePacket
 
-- (id)init
-{
+- (id)init {
     if (self = [super init]) {
         _version = 0x03;
     }
     return self;
 }
 
-- (PGPPacketTag)tag
-{
+- (PGPPacketTag)tag {
     return PGPOnePassSignaturePacketTag;
 }
 
-- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
-{
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
 
     [packetBody getBytes:&_version range:(NSRange){position, 1}];
@@ -50,8 +47,7 @@
     return position;
 }
 
-- (NSData *)export:(NSError *__autoreleasing *)error
-{
+- (NSData *) export:(NSError *__autoreleasing *)error {
     NSAssert(self.keyID, @"Missing keyID");
 
     NSMutableData *bodyData = [NSMutableData data];
@@ -66,8 +62,8 @@
 
     NSMutableData *data = [NSMutableData data];
     NSData *headerData = [self buildHeaderData:bodyData];
-    [data appendData: headerData];
-    [data appendData: bodyData];
+    [data appendData:headerData];
+    [data appendData:bodyData];
 
     return [data copy];
 }

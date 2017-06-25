@@ -7,27 +7,25 @@
 //
 
 #import "PGPPartialKey.h"
+#import "NSValue+PGPUtils.h"
 #import "PGPLogging.h"
 #import "PGPMacros.h"
 #import "PGPPublicKeyPacket.h"
+#import "PGPPublicSubKeyPacket.h"
 #import "PGPSecretKeyPacket.h"
-#import "PGPUser.h"
+#import "PGPSecretSubKeyPacket.h"
 #import "PGPSignaturePacket.h"
 #import "PGPSignatureSubpacket.h"
-#import "PGPPublicSubKeyPacket.h"
-#import "PGPSecretSubKeyPacket.h"
+#import "PGPSubKey.h"
+#import "PGPUser.h"
 #import "PGPUserAttributePacket.h"
 #import "PGPUserAttributeSubpacket.h"
-#import "PGPSubKey.h"
-#import "NSValue+PGPUtils.h"
-#import "PGPMacros.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPPartialKey
 
-- (instancetype) initWithPackets:(NSArray<PGPPacket *> *)packets
-{
+- (instancetype)initWithPackets:(NSArray<PGPPacket *> *)packets {
     if ((self = [self init])) {
         _subKeys = [NSArray<PGPSubKey *> array];
         _directSignatures = [NSArray<PGPSignaturePacket *> array];
@@ -38,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"Type %@, %@ primary key: %@",self.type == PGPPartialKeyPublic ? @"public" : @"secret", [super description], self.primaryKeyPacket];
+    return [NSString stringWithFormat:@"Type %@, %@ primary key: %@", self.type == PGPPartialKeyPublic ? @"public" : @"secret", [super description], self.primaryKeyPacket];
 }
 
 - (BOOL)isEqual:(id)object {
@@ -54,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
     if (self.type != other.type) {
         return NO;
     }
-    
+
     return [self.keyID isEqual:other.keyID];
 }
 
@@ -63,7 +61,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSUInteger result = 7;
     result = prime * result + self.type;
     result = prime * result + self.keyID.hash;
-    //TODO: check all properties
+    // TODO: check all properties
     //    result = prime * result + self.users.hash;
     //    result = prime * result + self.subKeys.hash;
     //    result = prime * result + self.directSignatures.hash;
@@ -79,10 +77,9 @@ NS_ASSUME_NONNULL_BEGIN
     return NO;
 }
 
-- (PGPPartialKeyType)type
-{
+- (PGPPartialKeyType)type {
     PGPPartialKeyType t = PGPPartialKeyUnknown;
-    
+
     switch (self.primaryKeyPacket.tag) {
         case PGPPublicKeyPacketTag:
         case PGPPublicSubkeyPacketTag:
@@ -94,7 +91,7 @@ NS_ASSUME_NONNULL_BEGIN
         default:
             break;
     }
-    
+
     return t;
 }
 
@@ -109,7 +106,7 @@ NS_ASSUME_NONNULL_BEGIN
     PGPKeyID *primaryKeyID;
     PGPSubKey *subKey;
     PGPUser *user;
-    
+
     for (PGPPacket *packet in packets) {
         switch (packet.tag) {
             case PGPPublicKeyPacketTag:
@@ -126,23 +123,20 @@ NS_ASSUME_NONNULL_BEGIN
                 }
                 user.userAttribute = PGPCast(packet, PGPUserAttributePacket);
                 break;
-            case PGPUserIDPacketTag:
-            {
+            case PGPUserIDPacketTag: {
                 PGPUser *parsedUser = [[PGPUser alloc] initWithUserIDPacket:(PGPUserIDPacket *)packet];
                 if (!user) {
                     user = parsedUser;
                 }
                 self.users = [self.users arrayByAddingObject:parsedUser];
-            }
-                break;
+            } break;
             case PGPPublicSubkeyPacketTag:
             case PGPSecretSubkeyPacketTag:
                 user = nil;
                 subKey = [[PGPSubKey alloc] initWithPacket:packet];
                 self.subKeys = [self.subKeys arrayByAddingObject:subKey];
                 break;
-            case PGPSignaturePacketTag:
-            {
+            case PGPSignaturePacketTag: {
                 let signaturePacket = PGPCast(packet, PGPSignaturePacket);
                 switch (signaturePacket.type) {
                     case PGPSignatureGenericCertificationUserIDandPublicKey:
@@ -175,19 +169,18 @@ NS_ASSUME_NONNULL_BEGIN
                         subKey.bindingSignature = PGPCast(packet, PGPSignaturePacket);
                         break;
                     case PGPSignatureKeyRevocation:
-                        self.revocationSignature = PGPCast(packet,PGPSignaturePacket);
+                        self.revocationSignature = PGPCast(packet, PGPSignaturePacket);
                         break;
                     case PGPSignatureSubkeyRevocation:
                         if (!subKey) {
                             continue;
                         }
-                        subKey.revocationSignature = PGPCast(packet,PGPSignaturePacket);
+                        subKey.revocationSignature = PGPCast(packet, PGPSignaturePacket);
                         break;
                     default:
                         break;
                 }
-            }
-                break;
+            } break;
             default:
                 break;
         }
@@ -197,10 +190,10 @@ NS_ASSUME_NONNULL_BEGIN
 // signature packet that is available for signing data
 - (nullable PGPPacket *)signingKeyPacket {
     //  It's private key for sign and public for verify as so thi can't be checked here
-    
+
     NSAssert(self.type == PGPPartialKeySecret, @"Need secret key to sign");
     if (self.type == PGPPartialKeyPublic) {
-        PGPLogDebug(@"Need secret key to sign\n %@",[NSThread callStackSymbols]);
+        PGPLogDebug(@"Need secret key to sign\n %@", [NSThread callStackSymbols]);
         return nil;
     }
 
@@ -225,8 +218,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // signature packet that is available for verifying signature with a keyID
-- (nullable PGPPacket *)signingKeyPacketWithKeyID:(PGPKeyID *)keyID
-{
+- (nullable PGPPacket *)signingKeyPacketWithKeyID:(PGPKeyID *)keyID {
     // check primary user self certificates
     PGPSignaturePacket *primaryUserSelfCertificate = nil;
     [self primaryUserAndSelfCertificate:&primaryUserSelfCertificate];
@@ -237,7 +229,7 @@ NS_ASSUME_NONNULL_BEGIN
             }
         }
     }
-    
+
     for (PGPSubKey *subKey in self.subKeys) {
         if ([subKey.keyID isEqual:keyID]) {
             PGPSignaturePacket *signaturePacket = subKey.bindingSignature;
@@ -252,17 +244,16 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // signature packet that is available for signing data
-- (nullable PGPPacket *)encryptionKeyPacket:(NSError * __autoreleasing *)error
-{
+- (nullable PGPPacket *)encryptionKeyPacket:(NSError *__autoreleasing *)error {
     NSAssert(self.type == PGPPartialKeyPublic, @"Need public key to encrypt");
     if (self.type == PGPPartialKeySecret) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Wrong key type, require public key"}];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Wrong key type, require public key" }];
         }
         PGPLogWarning(@"Need public key to encrypt");
         return nil;
     }
-    
+
     for (PGPSubKey *subKey in self.subKeys) {
         let signaturePacket = subKey.bindingSignature;
         if (signaturePacket.canBeUsedToEncrypt) {
@@ -280,30 +271,29 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     if (error) {
-        *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Encryption key not found"}];
+        *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Encryption key not found" }];
     }
 
     return nil;
 }
 
-- (nullable PGPSecretKeyPacket *)decryptionKeyPacketWithID:(PGPKeyID *)keyID error:(NSError * __autoreleasing *)error
-{
+- (nullable PGPSecretKeyPacket *)decryptionKeyPacketWithID:(PGPKeyID *)keyID error:(NSError *__autoreleasing *)error {
     NSAssert(self.type == PGPPartialKeySecret, @"Need secret key to encrypt");
     if (self.type == PGPPartialKeyPublic) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Wrong key type, require secret key"}];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Wrong key type, require secret key" }];
         }
         PGPLogWarning(@"Need public key to encrypt");
         return nil;
     }
-    
+
     for (PGPSubKey *subKey in self.subKeys) {
         let signaturePacket = subKey.bindingSignature;
         if (signaturePacket.canBeUsedToEncrypt && [((PGPSecretKeyPacket *)subKey.primaryKeyPacket).keyID isEqual:keyID]) {
             return PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket);
         }
     }
-    
+
     // assume primary key is always cabable
     if ([PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket).keyID isEqual:keyID]) {
         return PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket);
@@ -312,7 +302,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // Note: After decryption encrypted packets are replaced with new decrypted instances on key.
-//TODO: return error
+// TODO: return error
 - (BOOL)decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error {
     let primarySecretPacket = PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket);
     if (!primarySecretPacket) {
@@ -343,13 +333,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - PGPExportable
 
-- (nullable NSData *)export:(NSError * _Nullable __autoreleasing *)error {
+- (nullable NSData *) export:(NSError *_Nullable __autoreleasing *)error {
     NSMutableData *result = [NSMutableData data];
 
-    for (PGPPacket * packet in self.allPacketsArray) {
-        [result appendData:[packet export:error]]; //TODO: decode secret key first
+    for (PGPPacket *packet in self.allPacketsArray) {
+        [result appendData:[packet export:error]]; // TODO: decode secret key first
         if (error) {
-            NSAssert(*error == nil,@"Error while export public key");
+            NSAssert(*error == nil, @"Error while export public key");
             if (*error) {
                 return nil;
             }
@@ -361,8 +351,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Verification
 
 // Returns primary user with self certificate
-- (nullable PGPUser *)primaryUserAndSelfCertificate:(PGPSignaturePacket * __autoreleasing *)selfCertificateOut
-{
+- (nullable PGPUser *)primaryUserAndSelfCertificate:(PGPSignaturePacket *__autoreleasing *)selfCertificateOut {
     PGPUser *foundUser = nil;
 
     for (PGPUser *user in self.users) {
@@ -387,20 +376,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Preferences
 
-- (PGPSymmetricAlgorithm) preferredSymmetricAlgorithm
-{
+- (PGPSymmetricAlgorithm)preferredSymmetricAlgorithm {
     return [[self class] preferredSymmetricAlgorithmForKeys:@[self]];
 }
 
-+ (PGPSymmetricAlgorithm) preferredSymmetricAlgorithmForKeys:(NSArray<PGPPartialKey *> *)keys
-{
++ (PGPSymmetricAlgorithm)preferredSymmetricAlgorithmForKeys:(NSArray<PGPPartialKey *> *)keys {
     // 13.2.  Symmetric Algorithm Preferences
     // Since TripleDES is the MUST-implement algorithm, if it is not explicitly in the list, it is tacitly at the end.
 
     let preferecesArray = [NSMutableArray<NSArray<NSNumber *> *> array];
     for (PGPPartialKey *key in keys) {
         let keyAlgorithms = [NSMutableArray<NSNumber *> array];
-        
+
         PGPSignaturePacket *selfCertificate = nil;
         let primaryUser = [key primaryUserAndSelfCertificate:&selfCertificate];
         if (primaryUser && selfCertificate) {
@@ -414,12 +401,12 @@ NS_ASSUME_NONNULL_BEGIN
                 }
             }
         }
-        
+
         if (keyAlgorithms.count > 0) {
             [preferecesArray addObject:keyAlgorithms];
         }
     }
-    
+
     // intersect
     if (preferecesArray.count > 0) {
         let set = [NSMutableOrderedSet<NSNumber *> orderedSetWithArray:preferecesArray[0]];
@@ -428,7 +415,7 @@ NS_ASSUME_NONNULL_BEGIN
         }
         return [set[0] unsignedIntValue];
     }
-    
+
     return PGPSymmetricTripleDES;
 }
 
@@ -439,9 +426,8 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return array
  */
-- (NSArray<PGPPacket *> *)allPacketsArray
-{
-    //TODO: handle trust packet somehow. The Trust packet is used only within keyrings and is not normally exported.
+- (NSArray<PGPPacket *> *)allPacketsArray {
+    // TODO: handle trust packet somehow. The Trust packet is used only within keyrings and is not normally exported.
     let arr = [NSMutableArray<PGPPacket *> array];
 
     [arr addObject:self.primaryKeyPacket];
@@ -465,8 +451,7 @@ NS_ASSUME_NONNULL_BEGIN
     return arr;
 }
 
-- (NSArray<PGPPacket *> *)allKeyPackets
-{
+- (NSArray<PGPPacket *> *)allKeyPackets {
     let arr = [NSMutableArray<PGPPacket *> arrayWithObject:self.primaryKeyPacket];
     for (PGPSubKey *subKey in self.subKeys) {
         [arr addObject:subKey.primaryKeyPacket];

@@ -8,18 +8,15 @@
 //  A Secret-Subkey packet (tag 7) is the subkey analog of the Secret
 //  Key packet and has exactly the same format.
 
-
 #import "PGPSecretSubKeyPacket.h"
 
 @implementation PGPSecretSubKeyPacket
 
-- (PGPPacketTag)tag
-{
+- (PGPPacketTag)tag {
     return PGPSecretSubkeyPacketTag;
 }
 
-- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
-{
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
     return [super parsePacketBody:packetBody error:error];
 }
 

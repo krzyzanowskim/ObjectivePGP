@@ -14,13 +14,11 @@
 
 @implementation PGPTrustPacket
 
-- (PGPPacketTag)tag
-{
+- (PGPPacketTag)tag {
     return PGPTrustPacketTag;
 }
 
-- (NSUInteger) parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
-{
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
 
     // 5.10.  Trust Packet (Tag 12)
@@ -30,10 +28,8 @@
     return position;
 }
 
-
-- (nullable NSData *) export:(NSError *__autoreleasing *)error
-{
-    //TODO: export trust packet
+- (nullable NSData *) export:(NSError *__autoreleasing *)error {
+    // TODO: export trust packet
     //  (1 octet "level" (depth), 1 octet of trust amount)
     return [self.data copy];
 }

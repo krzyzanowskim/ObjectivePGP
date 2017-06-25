@@ -6,12 +6,12 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import <XCTest/XCTest.h>
 #import "ObjectivePGP.h"
 #import "PGPMacros.h"
 #import "PGPSecretKeyPacket.h"
-#import "PGPUser.h"
 #import "PGPSignaturePacket.h"
+#import "PGPUser.h"
+#import <XCTest/XCTest.h>
 
 @interface ObjectivePGPTestKeyringSecurePlaintext : XCTestCase
 @property (nonatomic) NSString *secKeyringPath;
@@ -22,8 +22,7 @@
 
 @implementation ObjectivePGPTestKeyringSecurePlaintext
 
-- (void)setUp
-{
+- (void)setUp {
     [super setUp];
     NSLog(@"%s", __PRETTY_FUNCTION__);
 
@@ -40,14 +39,13 @@
         XCTFail(@"couldn't create tmpDirectoryPath");
     }
     self.workingDirectory = tmpDirectoryPath;
-    
+
     // copy keyring to verify
     [[NSFileManager defaultManager] copyItemAtPath:self.secKeyringPath toPath:[self.workingDirectory stringByAppendingPathComponent:[self.secKeyringPath lastPathComponent]] error:nil];
     [[NSFileManager defaultManager] copyItemAtPath:self.pubKeyringPath toPath:[self.workingDirectory stringByAppendingPathComponent:[self.pubKeyringPath lastPathComponent]] error:nil];
 }
 
-- (void)tearDown
-{
+- (void)tearDown {
     NSLog(@"%s", __PRETTY_FUNCTION__);
     [super tearDown];
     [[NSFileManager defaultManager] removeItemAtPath:self.workingDirectory error:nil];
@@ -70,8 +68,7 @@
     XCTAssertNotNil(key, @"Key 952E4E8B not found");
 }
 
-- (void) testSaveSecretKeys
-{
+- (void)testSaveSecretKeys {
     NSLog(@"%s doing work...", __PRETTY_FUNCTION__);
 
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
@@ -95,8 +92,7 @@
     XCTAssertEqualObjects([secretKeyPacket.keyID longKeyString], @"25A233C2952E4E8B", @"Invalid key identifier");
 }
 
-- (void) testSavePublicKeys
-{
+- (void)testSavePublicKeys {
     NSLog(@"%s doing work...", __PRETTY_FUNCTION__);
 
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.pubKeyringPath]);
@@ -110,9 +106,7 @@
     NSLog(@"Created file %@", exportPublicKeyringPath);
 }
 
-
-- (void) testPrimaryKey
-{
+- (void)testPrimaryKey {
     NSLog(@"%s doing work...", __PRETTY_FUNCTION__);
 
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
@@ -125,7 +119,7 @@
     XCTAssertEqualObjects([secretKeyPacket.keyID longKeyString], @"25A233C2952E4E8B", @"Invalid key identifier");
 }
 
-- (void) testSigning {
+- (void)testSigning {
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.pubKeyringPath]);
 
@@ -171,17 +165,16 @@
 
 #define PLAINTEXT @"Plaintext: Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse blandit justo eros.\n"
 
-- (void) testEncryption
-{
+- (void)testEncryption {
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.pubKeyringPath]);
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
 
     // Public key
     let keyToEncrypt = [self.oPGP findKeyForIdentifier:@"25A233C2952E4E8B"];
-    
+
     XCTAssertNotNil(keyToEncrypt);
 
-    NSData* plainData = [PLAINTEXT dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *plainData = [PLAINTEXT dataUsingEncoding:NSUTF8StringEncoding];
     [plainData writeToFile:[self.workingDirectory stringByAppendingPathComponent:@"plaintext.txt"] atomically:YES];
 
     // encrypt PLAINTEXT
@@ -189,7 +182,7 @@
     NSData *encryptedData = [self.oPGP encryptData:plainData usingKeys:@[keyToEncrypt] armored:NO error:&encryptError];
     XCTAssertNil(encryptError);
     XCTAssertNotNil(encryptedData);
-    
+
     // file encrypted
     NSString *fileEncrypted = [self.workingDirectory stringByAppendingPathComponent:@"plaintext.encrypted"];
     BOOL status = [encryptedData writeToFile:fileEncrypted atomically:YES];
@@ -201,20 +194,19 @@
     NSString *decryptedString = [[NSString alloc] initWithData:decryptedData encoding:NSASCIIStringEncoding];
     XCTAssertNotNil(decryptedString);
     XCTAssertEqualObjects(decryptedString, PLAINTEXT, @"Decrypted data mismatch");
-    
+
     // ARMORED
     NSData *encryptedDataArmored = [self.oPGP encryptData:plainData usingKeys:@[keyToEncrypt] armored:YES error:&encryptError];
     XCTAssertNil(encryptError);
     XCTAssertNotNil(encryptedDataArmored);
 
     NSString *fileEncryptedArmored = [self.workingDirectory stringByAppendingPathComponent:@"plaintext.encrypted.armored"];
-    NSLog(@"%@",fileEncryptedArmored);
+    NSLog(@"%@", fileEncryptedArmored);
     status = [encryptedDataArmored writeToFile:fileEncryptedArmored atomically:YES];
     XCTAssertTrue(status);
 }
 
-- (void) testGPGEncryptedMessage
-{
+- (void)testGPGEncryptedMessage {
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.pubKeyringPath]);
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
 
@@ -225,32 +217,31 @@
     [self.oPGP decryptData:[NSData dataWithContentsOfFile:encryptedPath] passphrase:nil error:&error];
 }
 
-- (void) testEcnryptWithMultipleRecipients
-{
+- (void)testEcnryptWithMultipleRecipients {
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.pubKeyringPath]);
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
-    
+
     // Public key
     let keyToEncrypt1 = [self.oPGP findKeyForIdentifier:@"952E4E8B"];
     let keyToEncrypt2 = [self.oPGP findKeyForIdentifier:@"66753341"];
-    
+
     XCTAssertNotNil(keyToEncrypt1);
     XCTAssertNotNil(keyToEncrypt2);
-    
-    NSData* plainData = [PLAINTEXT dataUsingEncoding:NSUTF8StringEncoding];
+
+    NSData *plainData = [PLAINTEXT dataUsingEncoding:NSUTF8StringEncoding];
     [plainData writeToFile:[self.workingDirectory stringByAppendingPathComponent:@"plaintext.txt"] atomically:YES];
-    
+
     // encrypt PLAINTEXT
     NSError *encryptError = nil;
     NSData *encryptedData = [self.oPGP encryptData:plainData usingKeys:@[keyToEncrypt1, keyToEncrypt2] armored:NO error:&encryptError];
     XCTAssertNil(encryptError);
     XCTAssertNotNil(encryptedData);
-    
+
     // file encrypted
     NSString *fileEncrypted = [self.workingDirectory stringByAppendingPathComponent:@"plaintext.multiple.encrypted"];
     BOOL status = [encryptedData writeToFile:fileEncrypted atomically:YES];
     XCTAssertTrue(status);
-    
+
     // decrypt + validate decrypted message
     NSData *decryptedData = [self.oPGP decryptData:encryptedData passphrase:nil error:&encryptError];
     XCTAssertNil(encryptError);

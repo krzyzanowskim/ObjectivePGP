@@ -10,8 +10,7 @@
 
 @implementation PGPPublicSubKeyPacket
 
-- (PGPPacketTag)tag
-{
+- (PGPPacketTag)tag {
     return PGPPublicSubkeyPacketTag;
 }
 

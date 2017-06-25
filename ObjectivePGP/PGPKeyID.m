@@ -28,11 +28,10 @@
 
 - (instancetype)initWithFingerprint:(PGPFingerprint *)fingerprint {
     PGPAssertClass(fingerprint, PGPFingerprint);
-    return ((self = [self initWithLongKey:[fingerprint.hashedData subdataWithRange:(NSRange){fingerprint.hashLength - 8,8}]]));
+    return ((self = [self initWithLongKey:[fingerprint.hashedData subdataWithRange:(NSRange){fingerprint.hashLength - 8, 8}]]));
 }
 
-- (NSString *)description
-{
+- (NSString *)description {
     return [self longKeyString];
 }
 
@@ -40,8 +39,7 @@
     return self.longKey.copy;
 }
 
-- (BOOL)isEqual:(id)object
-{
+- (BOOL)isEqual:(id)object {
     if (self == object) {
         return YES;
     }
@@ -62,11 +60,10 @@
 }
 
 - (NSData *)shortKey {
-    return [self.longKey subdataWithRange:(NSRange){4,4}];
+    return [self.longKey subdataWithRange:(NSRange){4, 4}];
 }
 
-- (NSString *)shortKeyString
-{
+- (NSString *)shortKeyString {
     NSData *sKey = self.shortKey;
     NSMutableString *sbuf = [NSMutableString stringWithCapacity:sKey.length * 2];
     const unsigned char *buf = sKey.bytes;
@@ -76,8 +73,7 @@
     return sbuf.copy;
 }
 
-- (NSString *)longKeyString
-{
+- (NSString *)longKeyString {
     NSData *lKey = self.longKey;
     NSMutableString *sbuf = [NSMutableString stringWithCapacity:lKey.length * 2];
     const unsigned char *buf = lKey.bytes;

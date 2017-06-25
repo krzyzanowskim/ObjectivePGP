@@ -7,8 +7,8 @@
 //
 //  Tag 13
 
-#import <Foundation/Foundation.h>
 #import "PGPPacketFactory.h"
+#import <Foundation/Foundation.h>
 
 @interface PGPUserIDPacket : PGPPacket
 

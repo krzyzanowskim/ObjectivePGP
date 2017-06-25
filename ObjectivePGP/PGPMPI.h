@@ -20,10 +20,10 @@ NS_ASSUME_NONNULL_BEGIN
  */
 @property (nonatomic, readonly) NSUInteger packetLength;
 
-- (instancetype) initWithMPIData:(NSData *)mpiData atPosition:(NSUInteger)position;
-- (instancetype) initWithData:(NSData *)dataToMPI;
-- (nullable NSData *) exportMPI;
-- (NSData *) bodyData;
+- (instancetype)initWithMPIData:(NSData *)mpiData atPosition:(NSUInteger)position;
+- (instancetype)initWithData:(NSData *)dataToMPI;
+- (nullable NSData *)exportMPI;
+- (NSData *)bodyData;
 
 @end
 

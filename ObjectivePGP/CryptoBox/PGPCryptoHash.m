@@ -8,16 +8,16 @@
 
 #import "PGPCryptoHash.h"
 
-#import "PGPMacros.h"
 #import "PGPLogging.h"
+#import "PGPMacros.h"
 
-#import <openssl/ripemd.h>
 #import <CommonCrypto/CommonCrypto.h>
 #import <Foundation/Foundation.h>
+#import <openssl/ripemd.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-NSData * _Nullable PGPCalculateHash(PGPHashAlgorithm algorithm, PGP_NOESCAPE PGPUpdateBlock update) {
+NSData *_Nullable PGPCalculateHash(PGPHashAlgorithm algorithm, PGP_NOESCAPE PGPUpdateBlock update) {
     switch (algorithm) {
         case PGPHashMD5:
             return PGPmd5(update);
@@ -39,43 +39,37 @@ NSData * _Nullable PGPCalculateHash(PGPHashAlgorithm algorithm, PGP_NOESCAPE PGP
     return nil;
 }
 
-#define commonHashImpl(name,INITfn,UPDATEfn,FINALfn,CTX,DIGEST_LENGTH) \
-NSData * _Nullable PGP##name(PGP_NOESCAPE PGPUpdateBlock update) \
-{ \
-    let ctx = calloc(1, sizeof(CTX)); \
-    if (!ctx) { \
-        return nil; \
-    } \
-\
-    INITfn(ctx); \
-\
-    if (update) { \
-        update(^(const void *data, int lenght) { \
-            UPDATEfn(ctx, data, (CC_LONG)lenght); \
-        }); \
-    } \
-\
-    UInt8 *outbuf = calloc(DIGEST_LENGTH, sizeof(UInt8)); \
-    if (!outbuf) { \
-        free(ctx); \
-        return nil; \
-    } \
-    FINALfn(outbuf, ctx); \
-\
-    let outData = [NSData dataWithBytes:outbuf length:DIGEST_LENGTH]; \
-\
-    free(outbuf); \
-    free(ctx); \
-\
-    return outData; \
-}
+#define commonHashImpl(name, INITfn, UPDATEfn, FINALfn, CTX, DIGEST_LENGTH) \
+    NSData *_Nullable PGP##name(PGP_NOESCAPE PGPUpdateBlock update) {       \
+        let ctx = calloc(1, sizeof(CTX));                                   \
+        if (!ctx) {                                                         \
+            return nil;                                                     \
+        }                                                                   \
+                                                                            \
+        INITfn(ctx);                                                        \
+                                                                            \
+        if (update) {                                                       \
+            update(^(const void *data, int lenght) {                        \
+                UPDATEfn(ctx, data, (CC_LONG)lenght);                       \
+            });                                                             \
+        }                                                                   \
+                                                                            \
+        UInt8 *outbuf = calloc(DIGEST_LENGTH, sizeof(UInt8));               \
+        if (!outbuf) {                                                      \
+            free(ctx);                                                      \
+            return nil;                                                     \
+        }                                                                   \
+        FINALfn(outbuf, ctx);                                               \
+                                                                            \
+        let outData = [NSData dataWithBytes:outbuf length:DIGEST_LENGTH];   \
+                                                                            \
+        free(outbuf);                                                       \
+        free(ctx);                                                          \
+                                                                            \
+        return outData;                                                     \
+    }
 
-commonHashImpl(md5,CC_MD5_Init,CC_MD5_Update,CC_MD5_Final,CC_MD5_CTX,CC_MD5_DIGEST_LENGTH)
-commonHashImpl(sha1,CC_SHA1_Init,CC_SHA1_Update,CC_SHA1_Final,CC_SHA1_CTX,CC_SHA1_DIGEST_LENGTH)
-commonHashImpl(sha224,CC_SHA224_Init,CC_SHA224_Update,CC_SHA224_Final,CC_SHA256_CTX,CC_SHA224_DIGEST_LENGTH)
-commonHashImpl(sha256,CC_SHA256_Init,CC_SHA256_Update,CC_SHA256_Final,CC_SHA256_CTX,CC_SHA256_DIGEST_LENGTH)
-commonHashImpl(sha384,CC_SHA384_Init,CC_SHA384_Update,CC_SHA384_Final,CC_SHA512_CTX,CC_SHA384_DIGEST_LENGTH)
-commonHashImpl(sha512,CC_SHA512_Init,CC_SHA512_Update,CC_SHA512_Final,CC_SHA512_CTX,CC_SHA512_DIGEST_LENGTH)
-commonHashImpl(ripemd160,RIPEMD160_Init,RIPEMD160_Update,RIPEMD160_Final,RIPEMD160_CTX,RIPEMD160_DIGEST_LENGTH)
+commonHashImpl(md5, CC_MD5_Init, CC_MD5_Update, CC_MD5_Final, CC_MD5_CTX, CC_MD5_DIGEST_LENGTH) commonHashImpl(sha1, CC_SHA1_Init, CC_SHA1_Update, CC_SHA1_Final, CC_SHA1_CTX, CC_SHA1_DIGEST_LENGTH) commonHashImpl(sha224, CC_SHA224_Init, CC_SHA224_Update, CC_SHA224_Final, CC_SHA256_CTX, CC_SHA224_DIGEST_LENGTH) commonHashImpl(sha256, CC_SHA256_Init, CC_SHA256_Update, CC_SHA256_Final, CC_SHA256_CTX, CC_SHA256_DIGEST_LENGTH)
+    commonHashImpl(sha384, CC_SHA384_Init, CC_SHA384_Update, CC_SHA384_Final, CC_SHA512_CTX, CC_SHA384_DIGEST_LENGTH) commonHashImpl(sha512, CC_SHA512_Init, CC_SHA512_Update, CC_SHA512_Final, CC_SHA512_CTX, CC_SHA512_DIGEST_LENGTH) commonHashImpl(ripemd160, RIPEMD160_Init, RIPEMD160_Update, RIPEMD160_Final, RIPEMD160_CTX, RIPEMD160_DIGEST_LENGTH)
 
-NS_ASSUME_NONNULL_END
+        NS_ASSUME_NONNULL_END

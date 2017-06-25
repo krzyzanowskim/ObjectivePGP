@@ -12,10 +12,10 @@
 @property (nonatomic, copy) NSData *hashedData;
 @property (nonatomic, copy) NSData *keyData;
 
-- (instancetype) initWithData:(NSData *)data;
-- (NSString *) description;
-- (NSUInteger) hashLength;
+- (instancetype)initWithData:(NSData *)data;
+- (NSString *)description;
+- (NSUInteger)hashLength;
 
-- (BOOL) isEqualToFingerprint:(PGPFingerprint *)fingerprint;
+- (BOOL)isEqualToFingerprint:(PGPFingerprint *)fingerprint;
 
 @end

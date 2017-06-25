@@ -7,14 +7,12 @@
 //
 
 #import "PGPArmor.h"
-#import "PGPPacket.h"
 #import "NSData+PGPUtils.h"
-
+#import "PGPPacket.h"
 
 @implementation PGPArmor
 
-+ (BOOL) isArmoredData:(NSData *)data
-{
++ (BOOL)isArmoredData:(NSData *)data {
     // detect if armored, check for string -----BEGIN PGP
     NSString *str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     if (str && [str hasPrefix:@"-----BEGIN PGP"]) {
@@ -23,15 +21,12 @@
     return NO;
 }
 
-+ (NSData *) armoredData:(NSData *)dataToArmor as:(PGPArmorType)armorType
-{
++ (NSData *)armoredData:(NSData *)dataToArmor as:(PGPArmorType)armorType {
     return [[self class] armoredData:dataToArmor as:armorType part:NSUIntegerMax of:NSUIntegerMax];
 }
 
-+ (NSData *) armoredData:(NSData *)dataToArmor as:(PGPArmorType)armorType part:(NSUInteger)part of:(NSUInteger)ofParts
-{
-    NSMutableDictionary *headers = [@{@"Comment": @"Created with ObjectivePGP",
-                                      @"Charset": @"UTF-8"} mutableCopy];
++ (NSData *)armoredData:(NSData *)dataToArmor as:(PGPArmorType)armorType part:(NSUInteger)part of:(NSUInteger)ofParts {
+    NSMutableDictionary *headers = [@{ @"Comment": @"Created with ObjectivePGP", @"Charset": @"UTF-8" } mutableCopy];
 
     NSMutableString *headerString = [NSMutableString stringWithString:@"-----"];
     NSMutableString *footerString = [NSMutableString stringWithString:@"-----"];
@@ -87,10 +82,10 @@
 
     // - An Armor Checksum
     UInt32 checksum = [dataToArmor pgp_CRC24];
-    UInt8  c[3]; // 24 bit
+    UInt8 c[3]; // 24 bit
     c[0] = (UInt8)(checksum >> 16);
-	c[1] = (UInt8)(checksum >> 8);
-	c[2] = (UInt8)checksum;
+    c[1] = (UInt8)(checksum >> 8);
+    c[2] = (UInt8)checksum;
 
     NSData *checksumData = [NSData dataWithBytes:&c length:sizeof(c)];
     [armoredMessage appendString:@"="];
@@ -103,45 +98,38 @@
     return [armoredMessage dataUsingEncoding:NSASCIIStringEncoding];
 };
 
-+ (NSData *) readArmoredData:(NSString *)armoredString error:(NSError * __autoreleasing *)error
-{
++ (NSData *)readArmoredData:(NSString *)armoredString error:(NSError *__autoreleasing *)error {
     NSScanner *scanner = [[NSScanner alloc] initWithString:armoredString];
     scanner.charactersToBeSkipped = nil;
 
     // check header line
     NSString *headerLine = nil;
     [scanner scanUpToCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:&headerLine];
-    if (![headerLine isEqualToString:@"-----BEGIN PGP MESSAGE-----"] &&
-        ![headerLine isEqualToString:@"-----BEGIN PGP PUBLIC KEY BLOCK-----"] &&
-        ![headerLine isEqualToString:@"-----BEGIN PGP PRIVATE KEY BLOCK-----"] &&
-        ![headerLine isEqualToString:@"-----BEGIN PGP SECRET KEY BLOCK-----"] && // PGP 2.x generates the header "BEGIN PGP SECRET KEY BLOCK" instead of "BEGIN PGP PRIVATE KEY BLOCK"
-        ![headerLine isEqualToString:@"-----BEGIN PGP SIGNATURE-----"] &&
-        ![headerLine hasPrefix:@"-----BEGIN PGP MESSAGE, PART"])
-    {
+    if (![headerLine isEqualToString:@"-----BEGIN PGP MESSAGE-----"] && ![headerLine isEqualToString:@"-----BEGIN PGP PUBLIC KEY BLOCK-----"] && ![headerLine isEqualToString:@"-----BEGIN PGP PRIVATE KEY BLOCK-----"] && ![headerLine isEqualToString:@"-----BEGIN PGP SECRET KEY BLOCK-----"] && // PGP 2.x generates the header "BEGIN PGP SECRET KEY BLOCK" instead of "BEGIN PGP PRIVATE KEY BLOCK"
+        ![headerLine isEqualToString:@"-----BEGIN PGP SIGNATURE-----"] && ![headerLine hasPrefix:@"-----BEGIN PGP MESSAGE, PART"]) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Invalid header"}];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Invalid header" }];
         }
         return nil;
     }
-    
+
     // consume newline
     [scanner scanString:@"\r" intoString:nil];
     [scanner scanString:@"\n" intoString:nil];
 
     NSString *line = nil;
-    
+
     if (![scanner scanCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:nil]) {
         // Scan headers (Optional)
         [scanner scanUpToCharactersFromSet:[[NSCharacterSet newlineCharacterSet] invertedSet] intoString:nil];
 
-        while ([scanner scanCharactersFromSet:[[NSCharacterSet newlineCharacterSet] invertedSet] intoString:&line])
-        {
+        while ([scanner scanCharactersFromSet:[[NSCharacterSet newlineCharacterSet] invertedSet] intoString:&line]) {
             // consume newline
             [scanner scanString:@"\r" intoString:nil];
             [scanner scanString:@"\n" intoString:nil];
         }
     }
-    
+
     // skip blank line
     [scanner scanCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:nil];
 
@@ -152,7 +140,7 @@
         // consume newline
         [scanner scanString:@"\r" intoString:nil];
         [scanner scanString:@"\n" intoString:nil];
-        
+
         if ([line hasPrefix:@"="]) {
             scanner.scanLocation = scanner.scanLocation - (line.length + 2);
             base64Section = NO;
@@ -167,7 +155,7 @@
     // consume newline
     [scanner scanString:@"\r" intoString:nil];
     [scanner scanString:@"\n" intoString:nil];
-    
+
     if ([scanner scanString:@"=" intoString:nil]) {
         [scanner scanUpToCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:&checksumString];
         // consume newline
@@ -177,29 +165,28 @@
 
     if (!checksumString) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Missing checksum"}];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Missing checksum" }];
         }
         return nil;
     }
 
-    //read footer
+    // read footer
     BOOL footerMatchHeader = NO;
     [scanner scanUpToCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:&line];
     // consume newline
     [scanner scanString:@"\r" intoString:nil];
     [scanner scanString:@"\n" intoString:nil];
-    
+
     if ([line hasSuffix:[headerLine substringFromIndex:12]]) {
         footerMatchHeader = YES;
     }
 
     if (!footerMatchHeader) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Footer don't match to header"}];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Footer don't match to header" }];
         }
         return nil;
     }
-
 
     // binary data from base64 part
     NSData *binaryData = [[NSData alloc] initWithBase64EncodedString:base64String options:NSDataBase64DecodingIgnoreUnknownCharacters];
@@ -213,7 +200,7 @@
     NSData *calculatedCRC24Data = [NSData dataWithBytes:&calculatedCRC24 length:3];
     if (![calculatedCRC24Data isEqualToData:readChecksumData]) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Checksum mismatch"}];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Checksum mismatch" }];
         }
         return nil;
     }

@@ -22,8 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPMPI
 
-- (instancetype) initWithData:(NSData *)dataToMPI
-{
+- (instancetype)initWithData:(NSData *)dataToMPI {
     if (self = [self init]) {
         _bignumRef = BN_bin2bn(dataToMPI.bytes, dataToMPI.length & INT_MAX, NULL);
         _packetLength = dataToMPI.length + 2;
@@ -32,11 +31,10 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // parse mpi "packet"
-- (instancetype) initWithMPIData:(NSData *)mpiData atPosition:(NSUInteger)position
-{
+- (instancetype)initWithMPIData:(NSData *)mpiData atPosition:(NSUInteger)position {
     if (self = [self init]) {
         UInt16 bitsBE = 0;
-        [mpiData getBytes:&bitsBE range:(NSRange){position,2}];
+        [mpiData getBytes:&bitsBE range:(NSRange){position, 2}];
         UInt16 bits = CFSwapInt16BigToHost(bitsBE);
         NSUInteger mpiBytesLength = (bits + 7) / 8;
 
@@ -48,12 +46,10 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
-- (NSData *)bodyData
-{
+- (NSData *)bodyData {
     NSAssert(self.bignumRef, @"Missing bignumRef");
-    
-    if (!self.bignumRef)
-        return nil;
+
+    if (!self.bignumRef) return nil;
 
     BIGNUM *mpi_BN = BN_dup(self.bignumRef);
     NSInteger mpi_BN_length = (BN_num_bits(mpi_BN) + 7) / 8;
@@ -66,8 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
     return data;
 }
 
-- (nullable NSData *) exportMPI
-{
+- (nullable NSData *)exportMPI {
     if (!self.bignumRef) {
         return nil;
     }
@@ -78,7 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
     UInt16 bits = (UInt16)BN_num_bits(self.bignumRef);
     UInt16 bitsBE = CFSwapInt16HostToBig(bits);
     [outData appendBytes:&bitsBE length:2];
-    
+
     // mpi
     UInt8 *buf = calloc(BN_num_bytes(self.bignumRef), sizeof(UInt8));
     UInt16 bytes = (bits + 7) / 8;
@@ -89,13 +84,11 @@ NS_ASSUME_NONNULL_BEGIN
     return [outData copy];
 }
 
-- (NSString *)description
-{
+- (NSString *)description {
     return [NSString stringWithFormat:@"%@, \"%@\", %@ bytes, total: %@ bytes", [super description], self.identifier, @(BN_num_bytes(self.bignumRef)), @(_packetLength)];
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     if (self.bignumRef != NULL) {
         BN_clear_free(self.bignumRef);
         _bignumRef = nil;

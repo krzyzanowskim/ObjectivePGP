@@ -6,20 +6,20 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
+#import "PGPUser.h"
 #import "ObjectivePGP.h"
 #import "PGPMacros.h"
-#import "PGPUser.h"
-#import "PGPSignaturePacket.h"
-#import "PGPPublicKeyPacket.h"
-#import "PGPUserIDPacket.h"
 #import "PGPPartialKey.h"
+#import "PGPPublicKeyPacket.h"
+#import "PGPSignaturePacket.h"
 #import "PGPUserAttributePacket.h"
+#import "PGPUserIDPacket.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPUser
 
-- (instancetype) initWithUserIDPacket:(PGPUserIDPacket *)userPacket {
+- (instancetype)initWithUserIDPacket:(PGPUserIDPacket *)userPacket {
     PGPAssertClass(userPacket, PGPUserIDPacket);
 
     if (self = [super init]) {
@@ -32,8 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
     return self.userIDPacket.userID;
 }
 
-- (NSUInteger)hash
-{
+- (NSUInteger)hash {
     NSUInteger prime = 31;
     NSUInteger result = 1;
 
@@ -47,32 +46,28 @@ NS_ASSUME_NONNULL_BEGIN
     return result;
 }
 
-- (NSArray *)otherSignatures
-{
+- (NSArray *)otherSignatures {
     if (!_otherSignatures) {
         _otherSignatures = [NSArray array];
     }
     return _otherSignatures;
 }
 
-- (NSArray *)revocationSignatures
-{
+- (NSArray *)revocationSignatures {
     if (!_revocationSignatures) {
         _revocationSignatures = [NSArray array];
     }
     return _revocationSignatures;
 }
 
-- (NSArray *)selfCertifications
-{
+- (NSArray *)selfCertifications {
     if (!_selfCertifications) {
         _selfCertifications = [NSArray array];
     }
     return _selfCertifications;
 }
 
-- (PGPUserIDPacket *)userIDPacket
-{
+- (PGPUserIDPacket *)userIDPacket {
     if (!_userIDPacket) {
         NSAssert(false, @"wat?");
         // build userIDPacket
@@ -80,17 +75,15 @@ NS_ASSUME_NONNULL_BEGIN
     return _userIDPacket;
 }
 
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"%@ %@",[super description], self.userID];
+- (NSString *)description {
+    return [NSString stringWithFormat:@"%@ %@", [super description], self.userID];
 }
 
-- (NSArray<PGPPacket *> *) allPackets
-{
+- (NSArray<PGPPacket *> *)allPackets {
     NSMutableArray *arr = [NSMutableArray<PGPPacket *> array];
 
     if (self.userIDPacket) {
-        [arr addObject:self.userIDPacket]; //TODO: || [arr addObject:self.userAttribute]
+        [arr addObject:self.userIDPacket]; // TODO: || [arr addObject:self.userAttribute]
     }
 
     for (id packet in self.revocationSignatures) {
@@ -108,8 +101,8 @@ NS_ASSUME_NONNULL_BEGIN
     return arr;
 }
 
-//TODO:
-//User.prototype.getValidSelfCertificate = function(primaryKey) {
+// TODO:
+// User.prototype.getValidSelfCertificate = function(primaryKey) {
 //    if (!this.selfCertifications) {
 //        return null;
 //    }
@@ -134,15 +127,14 @@ NS_ASSUME_NONNULL_BEGIN
 //};
 
 // Returns the most significant (latest valid) self signature of the user
-- (nullable PGPSignaturePacket *)validSelfCertificate:(PGPPartialKey *)key
-{
+- (nullable PGPSignaturePacket *)validSelfCertificate:(PGPPartialKey *)key {
     if (self.selfCertifications.count == 0) {
         return nil;
     }
 
     NSMutableArray *certs = [NSMutableArray array];
     for (PGPSignaturePacket *signature in self.selfCertifications) {
-        //TODO: check for revocation
+        // TODO: check for revocation
 
         if (signature.isExpired) {
             continue;
@@ -177,4 +169,3 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
-

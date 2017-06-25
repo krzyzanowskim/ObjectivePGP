@@ -7,24 +7,24 @@
 //
 
 #import "PGPPacketFactory.h"
-#import "PGPPublicKeyPacket.h"
-#import "PGPPublicSubKeyPacket.h"
-#import "PGPSignaturePacket.h"
-#import "PGPUserIDPacket.h"
-#import "PGPTrustPacket.h"
-#import "PGPSecretKeyPacket.h"
-#import "PGPSecretSubKeyPacket.h"
+#import "PGPCompressedPacket.h"
 #import "PGPLiteralPacket.h"
 #import "PGPModificationDetectionCodePacket.h"
-#import "PGPUserAttributePacket.h"
 #import "PGPOnePassSignaturePacket.h"
-#import "PGPCompressedPacket.h"
+#import "PGPPublicKeyEncryptedSessionKeyPacket.h"
+#import "PGPPublicKeyPacket.h"
+#import "PGPPublicSubKeyPacket.h"
+#import "PGPSecretKeyPacket.h"
+#import "PGPSecretSubKeyPacket.h"
+#import "PGPSignaturePacket.h"
 #import "PGPSymmetricallyEncryptedDataPacket.h"
 #import "PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h"
-#import "PGPPublicKeyEncryptedSessionKeyPacket.h"
+#import "PGPTrustPacket.h"
+#import "PGPUserAttributePacket.h"
+#import "PGPUserIDPacket.h"
 
-#import "PGPMacros.h"
 #import "PGPLogging.h"
+#import "PGPMacros.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -43,13 +43,13 @@ NS_ASSUME_NONNULL_BEGIN
     PGPPacketTag packetTag = 0;
     UInt32 headerLength = 0;
     BOOL indeterminateLength = NO;
-    let data = [packetData subdataWithRange:(NSRange) {offset, packetData.length - offset}];
+    let data = [packetData subdataWithRange:(NSRange){offset, packetData.length - offset}];
     let packetBodyData = [PGPPacket parsePacketHeader:data headerLength:&headerLength nextPacketOffset:nextPacketOffset packetTag:&packetTag indeterminateLength:&indeterminateLength];
-    let packetHeaderData = [packetData subdataWithRange:(NSRange) {offset, headerLength}];
+    let packetHeaderData = [packetData subdataWithRange:(NSRange){offset, headerLength}];
 
     if (packetHeaderData.length > 0) {
         // Analyze body0
-        PGPPacket * packet = nil;
+        PGPPacket *packet = nil;
         switch (packetTag) {
             case PGPPublicKeyPacketTag:
                 packet = [[PGPPublicKeyPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
@@ -87,9 +87,9 @@ NS_ASSUME_NONNULL_BEGIN
             case PGPCompressedDataPacketTag:
                 packet = [[PGPCompressedPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
                 break;
-//            case PGPSymmetricallyEncryptedDataPacketTag:
-//                packet = [[PGPSymmetricallyEncryptedDataPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
-//                break;
+            //            case PGPSymmetricallyEncryptedDataPacketTag:
+            //                packet = [[PGPSymmetricallyEncryptedDataPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+            //                break;
             case PGPSymmetricallyEncryptedIntegrityProtectedDataPacketTag:
                 packet = [[PGPSymmetricallyEncryptedIntegrityProtectedDataPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
                 break;
@@ -97,11 +97,11 @@ NS_ASSUME_NONNULL_BEGIN
                 packet = [[PGPPublicKeyEncryptedSessionKeyPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
                 break;
             default:
-                PGPLogWarning(@"Packet tag %@ is not supported",@(packetTag));
+                PGPLogWarning(@"Packet tag %@ is not supported", @(packetTag));
                 packet = [[PGPPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
                 break;
         }
-        
+
         if (indeterminateLength) {
             packet.indeterminateLength = YES;
         }

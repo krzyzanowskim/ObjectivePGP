@@ -6,12 +6,12 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import <XCTest/XCTest.h>
 #import "ObjectivePGP.h"
-#import "PGPMacros.h"
-#import "PGPSecretKeyPacket.h"
-#import "PGPPublicKeyPacket.h"
 #import "PGPArmor.h"
+#import "PGPMacros.h"
+#import "PGPPublicKeyPacket.h"
+#import "PGPSecretKeyPacket.h"
+#import <XCTest/XCTest.h>
 
 @interface ObjectivePGPTestArmor : XCTestCase
 @property (nonatomic) NSString *secKeyringPath;
@@ -22,8 +22,7 @@
 
 @implementation ObjectivePGPTestArmor
 
-- (void)setUp
-{
+- (void)setUp {
     [super setUp];
     NSLog(@"%s", __PRETTY_FUNCTION__);
 
@@ -42,25 +41,21 @@
     self.workingDirectory = tmpDirectoryPath;
 }
 
-- (void)tearDown
-{
+- (void)tearDown {
     NSLog(@"%s", __PRETTY_FUNCTION__);
     [super tearDown];
     [[NSFileManager defaultManager] removeItemAtPath:self.workingDirectory error:nil];
     self.oPGP = nil;
 }
 
-- (void) testMultipleKeys
-{
+- (void)testMultipleKeys {
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *path = [bundle pathForResource:@"multiple-keys" ofType:@"asc"];
     let keys = [self.oPGP importKeysFromFile:path];
     NSAssert(keys.count == 3, @"Keys not imported properly");
 }
 
-
-- (void) testArmorPublicKey
-{
+- (void)testArmorPublicKey {
     [self.oPGP importKeysFromFile:self.pubKeyringPath];
 
     let key = self.oPGP.keys.anyObject;
@@ -99,7 +94,7 @@
 //    NSData *keyData = [key export:&exportError];
 //    XCTAssertNil(exportError);
 //    XCTAssertNotNil(keyData);
-//    
+//
 //    NSData *armoredData = [PGPArmor armoredData:keyData as:PGPArmorTypePublicKey];
 //    XCTAssertNotNil(armoredData);
 //

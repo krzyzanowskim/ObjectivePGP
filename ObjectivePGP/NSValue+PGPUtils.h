@@ -10,6 +10,6 @@
 
 @interface NSValue (PGPUtils)
 
-- (BOOL) pgp_objCTypeIsEqualTo:(const char *)type;
+- (BOOL)pgp_objCTypeIsEqualTo:(const char *)type;
 
 @end

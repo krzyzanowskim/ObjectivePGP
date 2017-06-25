@@ -7,11 +7,11 @@
 //
 
 #import "PGPKey.h"
-#import "PGPMacros.h"
-#import "PGPLogging.h"
 #import "PGPKey+Private.h"
-#import "PGPSubKey.h"
+#import "PGPLogging.h"
+#import "PGPMacros.h"
 #import "PGPSecretKeyPacket.h"
+#import "PGPSubKey.h"
 
 #import "PGPMacros.h"
 
@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // find secret key based on the public key signature (unless self signed secret key)
-    let signingPacket = PGPCast(self.secretKey.signingKeyPacket,PGPSecretKeyPacket);
+    let signingPacket = PGPCast(self.secretKey.signingKeyPacket, PGPSecretKeyPacket);
     if (!signingPacket) {
         PGPLogWarning(@"Need secret key to sign");
     }
@@ -78,12 +78,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - PGPExportable
 
-- (nullable NSData *)export:(NSError *__autoreleasing  _Nullable *)error {
+- (nullable NSData *) export:(NSError *__autoreleasing _Nullable *)error {
     NSMutableData *exportData = [NSMutableData data];
     if (self.publicKey) {
         [exportData appendData:[self.publicKey export:error]];
     }
-    
+
     if (self.secretKey) {
         [exportData appendData:[self.secretKey export:error]];
     }

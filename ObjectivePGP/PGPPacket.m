@@ -9,8 +9,8 @@
 #import "PGPPacket.h"
 #import "NSData+PGPUtils.h"
 
-#import "PGPMacros.h"
 #import "PGPLogging.h"
+#import "PGPMacros.h"
 
 const UInt32 UnknownLength = UINT32_MAX;
 
@@ -27,8 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
     return ((self = [super init]));
 }
 
-- (instancetype)initWithHeader:(NSData *)headerData body:(NSData *)bodyData
-{
+- (instancetype)initWithHeader:(NSData *)headerData body:(NSData *)bodyData {
     if (self = [self init]) {
         NSError *error = nil;
         _headerData = headerData;
@@ -41,12 +40,10 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
-
-- (NSUInteger)hash
-{
+- (NSUInteger)hash {
 #ifndef NSUINTROTATE
-    #define NSUINT_BIT (CHAR_BIT * sizeof(NSUInteger))
-    #define NSUINTROTATE(val, howmuch) ((((NSUInteger)val) << howmuch) | (((NSUInteger)val) >> (NSUINT_BIT - howmuch)))
+#define NSUINT_BIT (CHAR_BIT * sizeof(NSUInteger))
+#define NSUINTROTATE(val, howmuch) ((((NSUInteger)val) << howmuch) | (((NSUInteger)val) >> (NSUINT_BIT - howmuch)))
 #endif
 
     NSUInteger hash = [self.headerData hash];
@@ -54,15 +51,12 @@ NS_ASSUME_NONNULL_BEGIN
     return hash;
 }
 
-
-- (NSUInteger) parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
-{
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
     NSAssert(packetBody.length == self.bodyData.length, @"length mismach");
     return 0;
 }
 
-- (nullable NSData *)export:(NSError *__autoreleasing *)error
-{
+- (nullable NSData *) export:(NSError *__autoreleasing *)error {
     [NSException raise:@"MissingExportMethod" format:@"export: selector not overriden"];
     return nil;
 }
@@ -77,15 +71,14 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return Body data, headerLength, packetTag, nextPacketOffset and if body has indeterminateLength
  */
-+ (nullable NSData *) parsePacketHeader:(NSData*)data headerLength:(UInt32 *)headerLength nextPacketOffset:(nullable NSUInteger *)nextPacketOffset packetTag:(PGPPacketTag *)tag indeterminateLength:(BOOL*)indeterminateLength
-{
++ (nullable NSData *)parsePacketHeader:(NSData *)data headerLength:(UInt32 *)headerLength nextPacketOffset:(nullable NSUInteger *)nextPacketOffset packetTag:(PGPPacketTag *)tag indeterminateLength:(BOOL *)indeterminateLength {
     UInt8 headerByte = 0;
-    [data getBytes:&headerByte range:(NSRange){0,1}];
-    
+    [data getBytes:&headerByte range:(NSRange){0, 1}];
+
     BOOL isPGPHeader = !!(headerByte & PGPHeaderPacketTagAllwaysSet);
     BOOL isNewFormat = !!(headerByte & PGPHeaderPacketTagNewFormat);
     BOOL isPartialBodyLength = NO;
-    
+
     if (!isPGPHeader) {
         // not a valida data, skip the whole data.
         if (nextPacketOffset) {
@@ -100,31 +93,27 @@ NS_ASSUME_NONNULL_BEGIN
         *headerLength = [self parseOldFormatHeaderPacket:data bodyLength:&bodyLength packetTag:tag];
     }
     if (indeterminateLength) *indeterminateLength = NO;
-    if (bodyLength == UnknownLength)
-    {
+    if (bodyLength == UnknownLength) {
         bodyLength = (UInt32)data.length - *headerLength;
         if (indeterminateLength) *indeterminateLength = YES;
     }
     if (nextPacketOffset) {
         *nextPacketOffset = bodyLength + *headerLength;
     };
-    if (isPartialBodyLength)
-    {
+    if (isPartialBodyLength) {
         UInt32 offset = *headerLength;
         NSMutableData *resultData = [NSMutableData dataWithData:[data subdataWithRange:(NSRange){offset, bodyLength}]];
         offset += bodyLength;
-        do
-        {
+        do {
             // assume new header format
             PGPPacketTag nextTag;
             UInt32 packetBodyLength;
-            UInt32 packetHeaderLength = [self parseNewFormatHeaderPacket:[data subdataWithRange:(NSRange){offset-1, data.length - (offset-1)}] bodyLength:&packetBodyLength packetTag:&nextTag partialBodyLength:&isPartialBodyLength] - 1;
+            UInt32 packetHeaderLength = [self parseNewFormatHeaderPacket:[data subdataWithRange:(NSRange){offset - 1, data.length - (offset - 1)}] bodyLength:&packetBodyLength packetTag:&nextTag partialBodyLength:&isPartialBodyLength] - 1;
             offset += packetHeaderLength;
             if (nextPacketOffset != NULL) *nextPacketOffset += packetHeaderLength + packetBodyLength;
-            [resultData appendData:[data subdataWithRange:(NSRange){offset, MIN(packetBodyLength, data.length-offset)}]];
+            [resultData appendData:[data subdataWithRange:(NSRange){offset, MIN(packetBodyLength, data.length - offset)}]];
             offset += packetBodyLength;
-        }
-        while (isPartialBodyLength);
+        } while (isPartialBodyLength);
         return resultData;
     }
     return [data subdataWithRange:(NSRange){*headerLength, bodyLength}];
@@ -137,8 +126,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return Header length
  */
-+ (UInt32) parseNewFormatHeaderPacket:(NSData *)headerData bodyLength:(UInt32 *)length packetTag:(PGPPacketTag *)tag partialBodyLength:(BOOL *)isPartialBodyLength
-{
++ (UInt32)parseNewFormatHeaderPacket:(NSData *)headerData bodyLength:(UInt32 *)length packetTag:(PGPPacketTag *)tag partialBodyLength:(BOOL *)isPartialBodyLength {
     NSParameterAssert(headerData);
 
     UInt8 headerByte = 0;
@@ -150,34 +138,34 @@ NS_ASSUME_NONNULL_BEGIN
 
     // body length
     *isPartialBodyLength = NO;
-    UInt32 bodyLength        = 0;
-    UInt32 headerLength   = 2;
+    UInt32 bodyLength = 0;
+    UInt32 headerLength = 2;
 
     UInt8 *lengthOctets = (UInt8 *)[headerData subdataWithRange:NSMakeRange(1, fmin(5, headerData.length))].bytes;
-    UInt8 firstOctet  = lengthOctets[0];
+    UInt8 firstOctet = lengthOctets[0];
 
     if (lengthOctets[0] < 192) {
         // 4.2.2.1.  One-Octet Length
         // bodyLen = 1st_octet;
-        bodyLength   = lengthOctets[0];
+        bodyLength = lengthOctets[0];
         headerLength = 1 + 1;
     } else if (lengthOctets[0] >= 192 && lengthOctets[0] < 224) {
         // 4.2.2.2.  Two-Octet Lengths
         // bodyLen = ((1st_octet - 192) << 8) + (2nd_octet) + 192
-        bodyLength   = ((lengthOctets[0] - 192) << 8) + (lengthOctets[1]) + 192;
+        bodyLength = ((lengthOctets[0] - 192) << 8) + (lengthOctets[1]) + 192;
         headerLength = 1 + 2;
     } else if (lengthOctets[0] >= 224 && lengthOctets[0] < 255) {
         // 4.2.2.4.  Partial Body Length
         // partialBodyLen = 1 << (1st_octet & 0x1F);
         UInt32 partianBodyLength = 1 << (lengthOctets[0] & 0x1F);
-        bodyLength               = partianBodyLength;
-        headerLength             = 1 + 1;
-        *isPartialBodyLength      = YES;
+        bodyLength = partianBodyLength;
+        headerLength = 1 + 1;
+        *isPartialBodyLength = YES;
     } else if (firstOctet == 255) {
         // 4.2.2.3.  Five-Octet Length
         // bodyLen = (2nd_octet << 24) | (3rd_octet << 16) |
         //           (4th_octet << 8)  | 5th_octet
-        bodyLength   = (lengthOctets[1] << 24) | (lengthOctets[2] << 16) | (lengthOctets[3] << 8)  | lengthOctets[4];
+        bodyLength = (lengthOctets[1] << 24) | (lengthOctets[2] << 16) | (lengthOctets[3] << 8) | lengthOctets[4];
         headerLength = 1 + 5;
     }
     *length = bodyLength;
@@ -188,8 +176,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // 4.2.  Packet Headers
-+ (UInt32) parseOldFormatHeaderPacket:(NSData *)headerData bodyLength:(UInt32 *)length packetTag:(PGPPacketTag *)tag
-{
++ (UInt32)parseOldFormatHeaderPacket:(NSData *)headerData bodyLength:(UInt32 *)length packetTag:(PGPPacketTag *)tag {
     NSParameterAssert(headerData);
 
     UInt8 headerByte = 0;
@@ -203,40 +190,32 @@ NS_ASSUME_NONNULL_BEGIN
     bodyLengthType = bodyLengthType >> 6;
 
     UInt32 headerLength = 1;
-    UInt32 bodyLength       = 0;
+    UInt32 bodyLength = 0;
     switch (bodyLengthType) {
-        case 0:
-        {
-            NSRange range = (NSRange) {1,1};
+        case 0: {
+            NSRange range = (NSRange){1, 1};
             [headerData getBytes:&bodyLength range:range];
             headerLength = (UInt32)(1 + range.length);
-        }
-            break;
-        case 1:
-        {
+        } break;
+        case 1: {
             UInt16 bLen = 0;
-            NSRange range = (NSRange) {1,2};
+            NSRange range = (NSRange){1, 2};
             [headerData getBytes:&bLen range:range];
             // value of a two-octet scalar is ((n[0] << 8) + n[1]).
             bodyLength = CFSwapInt16BigToHost(bLen);
             headerLength = (UInt32)(1 + range.length);
-        }
-            break;
-        case 2:
-        {
-            NSRange range = (NSRange) {1,4};
+        } break;
+        case 2: {
+            NSRange range = (NSRange){1, 4};
             [headerData getBytes:&bodyLength range:range];
             bodyLength = CFSwapInt32BigToHost(bodyLength);
             headerLength = (UInt32)(1 + range.length);
-        }
-            break;
-        case 3:
-        {
+        } break;
+        case 3: {
             PGPLogWarning(@"(Old) The packet is of indeterminate length - partially supported");
             bodyLength = UnknownLength;
             headerLength = 1;
-        }
-            break;
+        } break;
 
         default:
             break;
@@ -244,14 +223,13 @@ NS_ASSUME_NONNULL_BEGIN
 
     NSAssert(bodyLength > 0, @"Invalid packet length");
     *length = bodyLength;
-    
+
     return headerLength;
 }
 
-- (NSData *) buildHeaderData:(NSData *)bodyData
-{
-    //TODO: check all formats, untested
-    //4.2.2.  New Format Packet Lengths
+- (NSData *)buildHeaderData:(NSData *)bodyData {
+    // TODO: check all formats, untested
+    // 4.2.2.  New Format Packet Lengths
     NSMutableData *data = [NSMutableData data];
 
     // Bit 7 -- Always one
@@ -268,8 +246,7 @@ NS_ASSUME_NONNULL_BEGIN
     return [data copy];
 }
 
-+ (NSData *)buildNewFormatLengthDataForData:(NSData *)bodyData
-{
++ (NSData *)buildNewFormatLengthDataForData:(NSData *)bodyData {
     NSMutableData *data = [NSMutableData data];
     // write length octets
     UInt64 bodyLength = bodyData.length;
@@ -278,7 +255,7 @@ NS_ASSUME_NONNULL_BEGIN
         [data appendBytes:&bodyLength length:1];
     } else if (bodyLength >= 192 && bodyLength <= 8383) {
         // 2 octet
-        UInt8 buf[2] = {0,0};
+        UInt8 buf[2] = {0, 0};
         UInt16 twoOctets = bodyLength;
         buf[0] = (UInt8)((twoOctets - 192) >> 8) + 192;
         buf[1] = (UInt8)(twoOctets - 192);
@@ -287,7 +264,7 @@ NS_ASSUME_NONNULL_BEGIN
         // 5 octet
         UInt64 fiveOctets = bodyLength;
 
-        UInt8 buf[5] = {0xFF,0,0,0,0};
+        UInt8 buf[5] = {0xFF, 0, 0, 0, 0};
         buf[1] = (UInt8)(fiveOctets >> 24);
         buf[2] = (UInt8)(fiveOctets >> 16);
         buf[3] = (UInt8)(fiveOctets >> 8);
@@ -295,13 +272,11 @@ NS_ASSUME_NONNULL_BEGIN
         [data appendBytes:buf length:5];
     }
     return [data copy];
-
 }
 
 #pragma mark - NSCopying
 
-- (id)copyWithZone:(nullable NSZone *)zone
-{
+- (id)copyWithZone:(nullable NSZone *)zone {
     PGPPacket *copy = [[[self class] allocWithZone:zone] init];
     copy->_bodyData = self.bodyData;
     copy->_headerData = self.headerData;
@@ -310,8 +285,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - conversion
 
-- (NSData *)packetData
-{
+- (NSData *)packetData {
     NSMutableData *result = [NSMutableData data];
     [result appendData:self.headerData];
     [result appendData:self.bodyData];

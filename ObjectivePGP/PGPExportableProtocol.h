@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol PGPExportable <NSObject>
 
-- (nullable NSData *)export:(NSError * _Nullable __autoreleasing *)error;
+- (nullable NSData *) export:(NSError *_Nullable __autoreleasing *)error;
 
 @end
 

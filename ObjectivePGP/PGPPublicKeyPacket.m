@@ -7,14 +7,14 @@
 //
 
 #import "PGPPublicKeyPacket.h"
-#import "PGPTypes.h"
-#import "PGPMPI.h"
 #import "NSData+PGPUtils.h"
+#import "PGPMPI.h"
 #import "PGPPublicKeyRSA.h"
+#import "PGPTypes.h"
 
 #import <CommonCrypto/CommonCrypto.h>
-#import <CommonCrypto/CommonDigest.h>
 #import <CommonCrypto/CommonCryptor.h>
+#import <CommonCrypto/CommonDigest.h>
 
 #import <objc/runtime.h>
 
@@ -31,18 +31,15 @@
 
 @implementation PGPPublicKeyPacket
 
-- (PGPPacketTag)tag
-{
+- (PGPPacketTag)tag {
     return PGPPublicKeyPacketTag;
 }
 
-- (NSString *)description
-{
+- (NSString *)description {
     return [NSString stringWithFormat:@"%@ %@", [super description], self.keyID];
 }
 
-- (NSUInteger) keySize
-{
+- (NSUInteger)keySize {
     __block NSUInteger ks = 0;
     [self.publicMPIArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         PGPMPI *mpi = obj;
@@ -55,8 +52,7 @@
     return ks;
 }
 
-- (PGPMPI *) publicMPI:(NSString *)identifier
-{
+- (PGPMPI *)publicMPI:(NSString *)identifier {
     __block PGPMPI *returnMPI = nil;
     [self.publicMPIArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
         PGPMPI *mpi = obj;
@@ -76,8 +72,7 @@
  *
  *  @return keyID
  */
-- (PGPKeyID *)keyID
-{
+- (PGPKeyID *)keyID {
     if (!_keyID) {
         _keyID = [[PGPKeyID alloc] initWithFingerprint:self.fingerprint];
     }
@@ -91,8 +86,7 @@
  *
  *  @return Fingerprint data
  */
-- (PGPFingerprint *)fingerprint
-{
+- (PGPFingerprint *)fingerprint {
     if (!_fingerprint) {
         _fingerprint = [[PGPFingerprint alloc] initWithData:[self exportPublicPacketOldStyle]];
     }
@@ -106,42 +100,40 @@
  *
  *  @param packetBody Packet body
  */
-- (NSUInteger) parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
-{
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
 
     // A one-octet version number (2,3,4).
-    [packetBody getBytes:&_version range:(NSRange){position,1}];
+    [packetBody getBytes:&_version range:(NSRange){position, 1}];
     position = position + 1;
 
     NSAssert(self.version >= 3, @"To old packet version");
 
     // A four-octet number denoting the time that the key was created.
     UInt32 timestamp = 0;
-    [packetBody getBytes:&timestamp range:(NSRange){position,4}];
+    [packetBody getBytes:&timestamp range:(NSRange){position, 4}];
     timestamp = CFSwapInt32BigToHost(timestamp);
     _createDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
     position = position + 4;
 
-    //V3 keys are deprecated; an implementation MUST NOT generate a V3 key, but MAY accept it.
+    // V3 keys are deprecated; an implementation MUST NOT generate a V3 key, but MAY accept it.
     if (_version == 0x03) {
         //  A two-octet number denoting the time in days that this key is
         //  valid.  If this number is zero, then it does not expire.
-        [packetBody getBytes:&_V3validityPeriod range:(NSRange){position,2}];
+        [packetBody getBytes:&_V3validityPeriod range:(NSRange){position, 2}];
         _V3validityPeriod = CFSwapInt16BigToHost(_V3validityPeriod);
         position = position + 2;
     }
 
     // A one-octet number denoting the public-key algorithm of this key.
-    [packetBody getBytes:&_publicKeyAlgorithm range:(NSRange){position,1}];
+    [packetBody getBytes:&_publicKeyAlgorithm range:(NSRange){position, 1}];
     position = position + 1;
 
     // A series of multiprecision integers comprising the key material.
     switch (self.publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
-        case PGPPublicKeyAlgorithmRSASignOnly:
-        {
+        case PGPPublicKeyAlgorithmRSASignOnly: {
             // Algorithm-Specific Fields for RSA public keys:
             // MPI of RSA public modulus n;
             PGPMPI *mpiN = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
@@ -154,11 +146,9 @@
             position = position + mpiE.packetLength;
 
             self.publicMPIArray = @[mpiN, mpiE];
-        }
-            break;
+        } break;
         case PGPPublicKeyAlgorithmDSA:
-        case PGPPublicKeyAlgorithmECDSA:
-        {
+        case PGPPublicKeyAlgorithmECDSA: {
             // - MPI of DSA prime p;
             PGPMPI *mpiP = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
             mpiP.identifier = @"P";
@@ -180,11 +170,9 @@
             position = position + mpiY.packetLength;
 
             self.publicMPIArray = @[mpiP, mpiQ, mpiG, mpiY];
-        }
-            break;
+        } break;
         case PGPPublicKeyAlgorithmElgamal:
-        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
-        {
+        case PGPPublicKeyAlgorithmElgamalEncryptorSign: {
             // - MPI of Elgamal prime p;
             PGPMPI *mpiP = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
             mpiP.identifier = @"P";
@@ -201,13 +189,12 @@
             position = position + mpiY.packetLength;
 
             self.publicMPIArray = @[mpiP, mpiG, mpiY];
-        }
-            break;
+        } break;
         default:
             @throw [NSException exceptionWithName:@"Unknown Algorithm" reason:@"Given algorithm is not supported" userInfo:nil];
             break;
     }
-    
+
     return position;
 }
 
@@ -220,14 +207,13 @@
  *
  *  @return data
  */
-- (nullable NSData *) export:(NSError *__autoreleasing *)error
-{
+- (nullable NSData *) export:(NSError *__autoreleasing *)error {
     NSMutableData *data = [NSMutableData data];
 
     NSData *bodyData = [self buildPublicKeyBodyData:NO];
     NSData *headerData = [self buildHeaderData:bodyData];
-    [data appendData: headerData];
-    [data appendData: bodyData];
+    [data appendData:headerData];
+    [data appendData:bodyData];
 
     // it wont match, because input data is OLD world, and we export in NEW world format
     // NSAssert([headerData isEqualToData:self.headerData], @"Header not match");
@@ -243,8 +229,7 @@
  *
  *  @return public key data starting with version octet
  */
-- (NSData *) buildPublicKeyBodyData:(BOOL)forceV4
-{
+- (NSData *)buildPublicKeyBodyData:(BOOL)forceV4 {
     NSMutableData *data = [NSMutableData dataWithCapacity:128];
     [data appendBytes:&_version length:1];
 
@@ -270,8 +255,7 @@
 
 // Old-style packet header for a key packet with two-octet length.
 // Old but used by fingerprint and with signing
-- (nullable NSData *) exportPublicPacketOldStyle
-{
+- (nullable NSData *)exportPublicPacketOldStyle {
     NSMutableData *data = [NSMutableData data];
 
     NSData *publicKeyData = [self buildPublicKeyBodyData:NO];
@@ -287,19 +271,16 @@
 
 #pragma mark - Encrypt & Decrypt
 
-- (NSData *) encryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm
-{
+- (NSData *)encryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm {
     switch (publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
-        case PGPPublicKeyAlgorithmRSASignOnly:
-        {
+        case PGPPublicKeyAlgorithmRSASignOnly: {
             // return ecnrypted m
             return [PGPPublicKeyRSA publicEncrypt:data withPublicKeyPacket:self];
-        }
-            break;
+        } break;
         default:
-            //TODO: add algorithms
+            // TODO: add algorithms
             [NSException raise:@"PGPNotSupported" format:@"Algorith not supported"];
             break;
     }
@@ -308,8 +289,7 @@
 
 #pragma mark - NSCopying
 
-- (id)copyWithZone:(NSZone *)zone
-{
+- (id)copyWithZone:(NSZone *)zone {
     PGPPublicKeyPacket *copy = (PGPPublicKeyPacket *)[super copyWithZone:zone];
     copy->_version = self.version;
     copy->_createDate = self.createDate;

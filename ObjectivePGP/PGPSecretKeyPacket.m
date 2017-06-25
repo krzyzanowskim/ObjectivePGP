@@ -10,20 +10,17 @@
 //  includes the secret-key material after all the public-key fields.
 
 #import "PGPSecretKeyPacket.h"
-#import "PGPS2K.h"
 #import "PGPMPI.h"
+#import "PGPS2K.h"
 #import "PGPTypes.h"
 
-#import "PGPMacros.h"
 #import "PGPLogging.h"
+#import "PGPMacros.h"
 
-#import "PGPCryptoUtils.h"
 #import "NSData+PGPUtils.h"
 #import "PGPCryptoCFB.h"
+#import "PGPCryptoUtils.h"
 #import "PGPPublicKeyRSA.h"
-
-
-
 
 @interface PGPPacket ()
 
@@ -58,7 +55,7 @@
     if (self.wasDecrypted) {
         return NO;
     }
-    
+
     return (self.s2kUsage == PGPS2KUsageEncrypted || self.s2kUsage == PGPS2KUsageEncryptedAndHashed);
 }
 
@@ -87,16 +84,15 @@
     [secretKeyPacketData appendData:[self buildSecretKeyDataAndForceV4:YES]];
 
     NSData *headerData = [self buildHeaderData:secretKeyPacketData];
-    [data appendData: headerData];
-    [data appendData: secretKeyPacketData];
+    [data appendData:headerData];
+    [data appendData:secretKeyPacketData];
 
     // header not allways match because export new format while input can be old format
     NSAssert([secretKeyPacketData isEqualToData:self.bodyData], @"Secret key not match");
     return data;
 }
 
-- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
-{
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
     //  5.5.3.  Secret-Key Packet Formats
 
@@ -112,7 +108,7 @@
         // this is version 3, looks just like a V4 simple hash
         self.symmetricAlgorithm = (PGPSymmetricAlgorithm)self.s2kUsage; // this is tricky, but this is right. V3 algorithm is in place of s2kUsage of V4
         self.s2kUsage = PGPS2KUsageEncrypted;
-        
+
         self.s2k = [[PGPS2K alloc] initWithSpecifier:PGPS2KSpecifierSimple hashAlgorithm:PGPHashMD5]; // not really parsed s2k
     }
 
@@ -134,8 +130,7 @@
  *
  *  @return length
  */
-- (NSUInteger)parseEncryptedPart:(NSData *)data error:(NSError * __autoreleasing *)error
-{
+- (NSUInteger)parseEncryptedPart:(NSData *)data error:(NSError *__autoreleasing *)error {
     NSUInteger position = 0;
 
     if (self.s2kUsage == PGPS2KUsageEncrypted || self.s2kUsage == PGPS2KUsageEncryptedAndHashed) {
@@ -154,13 +149,13 @@
         // Initial Vector (IV) of the same length as the cipher's block size
         NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:self.symmetricAlgorithm];
         NSAssert(blockSize <= 16, @"invalid blockSize");
-        self.ivData = [data subdataWithRange:(NSRange) {position, blockSize}];
+        self.ivData = [data subdataWithRange:(NSRange){position, blockSize}];
         position = position + blockSize;
     }
 
     // encrypted MPIs
     // checksum or hash is encrypted together with the algorithm-specific fields (mpis) (if string-to-key usage octet is not zero).
-    self.encryptedMPIsPartData = [data subdataWithRange:(NSRange) {position, data.length - position}];
+    self.encryptedMPIsPartData = [data subdataWithRange:(NSRange){position, data.length - position}];
     // position = position + self.encryptedMPIsPartData.length;
 
     return data.length;
@@ -175,15 +170,13 @@
  *
  *  @return length
  */
-- (NSUInteger)parseUnencryptedPart:(NSData *)data error:(NSError * __autoreleasing *)error
-{
+- (NSUInteger)parseUnencryptedPart:(NSData *)data error:(NSError *__autoreleasing *)error {
     NSUInteger position = 0;
 
     // check hash before read actual data
     // hash is physically located at the end of dataBody
     switch (self.s2kUsage) {
-        case PGPS2KUsageEncryptedAndHashed:
-        {
+        case PGPS2KUsageEncryptedAndHashed: {
             // a 20-octet SHA-1 hash of the plaintext of the algorithm-specific portion.
             NSUInteger hashSize = [PGPCryptoUtils hashSizeOfHashAlhorithm:PGPHashSHA1];
             if (hashSize == NSNotFound) {
@@ -191,24 +184,22 @@
                 return 0;
             }
 
-            let clearTextData = [data subdataWithRange:(NSRange) {0, data.length - hashSize}];
+            let clearTextData = [data subdataWithRange:(NSRange){0, data.length - hashSize}];
             let hashData = [data subdataWithRange:(NSRange){data.length - hashSize, hashSize}];
             let calculatedHashData = [clearTextData pgp_SHA1];
 
             if (![hashData isEqualToData:calculatedHashData]) {
                 if (error) {
-                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorPassphraseInvalid userInfo:@{NSLocalizedDescriptionKey: @"Decrypted hash mismatch, invalid password."}];
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorPassphraseInvalid userInfo:@{ NSLocalizedDescriptionKey: @"Decrypted hash mismatch, invalid password." }];
                     return data.length;
                 }
             }
 
-        }
-            break;
-        default:
-        {
+        } break;
+        default: {
             // a two-octet checksum of the plaintext of the algorithm-specific portion
             NSUInteger checksumLength = 2;
-            NSData *clearTextData = [data subdataWithRange:(NSRange) {0, data.length - checksumLength}];
+            NSData *clearTextData = [data subdataWithRange:(NSRange){0, data.length - checksumLength}];
             NSData *checksumData = [data subdataWithRange:(NSRange){data.length - checksumLength, checksumLength}];
             NSUInteger calculatedChecksum = [clearTextData pgp_Checksum];
 
@@ -218,20 +209,18 @@
 
             if (checksum != calculatedChecksum) {
                 if (error) {
-                    *error = [NSError errorWithDomain:PGPErrorDomain code:-1 userInfo:@{NSLocalizedDescriptionKey: @"Decrypted hash mismatch, check password."}];
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:-1 userInfo:@{ NSLocalizedDescriptionKey: @"Decrypted hash mismatch, check password." }];
                     return data.length;
                 }
             }
-        }
-            break;
+        } break;
     }
 
     // now read the actual data
     switch (self.publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
-        case PGPPublicKeyAlgorithmRSASignOnly:
-        {
+        case PGPPublicKeyAlgorithmRSASignOnly: {
             // multiprecision integer (MPI) of RSA secret exponent d.
             PGPMPI *mpiD = [[PGPMPI alloc] initWithMPIData:data atPosition:position];
             mpiD.identifier = @"D";
@@ -253,29 +242,24 @@
             position = position + mpiU.packetLength;
 
             self.secretMPIArray = @[mpiD, mpiP, mpiQ, mpiU];
-        }
-            break;
-        case PGPPublicKeyAlgorithmDSA:
-        {
+        } break;
+        case PGPPublicKeyAlgorithmDSA: {
             // MPI of DSA secret exponent x.
             PGPMPI *mpiX = [[PGPMPI alloc] initWithMPIData:data atPosition:position];
             mpiX.identifier = @"X";
             position = position + mpiX.packetLength;
 
             self.secretMPIArray = @[mpiX];
-        }
-            break;
+        } break;
         case PGPPublicKeyAlgorithmElgamal:
-        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
-        {
+        case PGPPublicKeyAlgorithmElgamalEncryptorSign: {
             // MPI of Elgamal secret exponent x.
             PGPMPI *mpiX = [[PGPMPI alloc] initWithMPIData:data atPosition:position];
             mpiX.identifier = @"X";
             position = position + mpiX.packetLength;
 
             self.secretMPIArray = @[mpiX];
-        }
-            break;
+        } break;
         default:
             break;
     }
@@ -313,11 +297,7 @@
     let sessionKeyData = [encryptedKey.s2k produceSessionKeyWithPassphrase:passphrase keySize:keySize];
 
     // Decrypted MPIs
-    NSData *decryptedData = [PGPCryptoCFB decryptData:encryptedKey.encryptedMPIsPartData
-                                       sessionKeyData:sessionKeyData
-                                   symmetricAlgorithm:encryptionSymmetricAlgorithm
-                                                   iv:encryptedKey.ivData];
-
+    NSData *decryptedData = [PGPCryptoCFB decryptData:encryptedKey.encryptedMPIsPartData sessionKeyData:sessionKeyData symmetricAlgorithm:encryptionSymmetricAlgorithm iv:encryptedKey.ivData];
 
     // now read mpis
     if (decryptedData) {
@@ -332,19 +312,16 @@
 
 #pragma mark - Decrypt
 
-- (NSData *) decryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm
-{
+- (NSData *)decryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm {
     switch (publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
-        case PGPPublicKeyAlgorithmRSASignOnly:
-        {
+        case PGPPublicKeyAlgorithmRSASignOnly: {
             // return decrypted m
             return [PGPPublicKeyRSA privateDecrypt:data withSecretKeyPacket:self];
-        }
-            break;
+        } break;
         default:
-            //TODO: add algorithms
+            // TODO: add algorithms
             [NSException raise:@"PGPNotSupported" format:@"Algorith not supported"];
             break;
     }
@@ -358,9 +335,8 @@
  *
  *  @return public key data starting with version octet
  */
-- (NSData *) buildSecretKeyDataAndForceV4:(BOOL)forceV4
-{
-    NSAssert(forceV4 == YES,@"Only V4 is supported");
+- (NSData *)buildSecretKeyDataAndForceV4:(BOOL)forceV4 {
+    NSAssert(forceV4 == YES, @"Only V4 is supported");
 
     NSMutableData *data = [NSMutableData data];
     [data appendBytes:&_s2kUsage length:1];
@@ -399,7 +375,7 @@
     // If the string-to-key usage octet is zero or 255, then a two-octet checksum of the plaintext of the algorithm-specific portion (sum of all octets, mod 65536).
     // This checksum or hash is encrypted together with the algorithm-specific fields
     // ---> is part of self.encryptedMPIsPartData
-    //if (self.s2kUsage == PGPS2KUsageNone || self.s2kUsage == PGPS2KUsageEncrypted) {
+    // if (self.s2kUsage == PGPS2KUsageNone || self.s2kUsage == PGPS2KUsageEncrypted) {
     //    // Checksum
     //    UInt16 checksum = CFSwapInt16HostToBig([data pgp_Checksum]);
     //    [data appendBytes:&checksum length:2];
@@ -408,25 +384,21 @@
     //    [data appendData:[data pgp_SHA1]];
     //}
 
-
-//    } else if (self.s2kUsage != PGPS2KUsageNone) {
-//        // this is version 3, looks just like a V4 simple hash
-//        self.symmetricAlgorithm = (PGPSymmetricAlgorithm)self.s2kUsage; // this is tricky, but this is right. V3 algorithm is in place of s2kUsage of V4
-//        self.s2kUsage = PGPS2KUsageEncrypted;
-//
-//        self.s2k = [[PGPS2K alloc] init]; // not really parsed s2k
-//        self.s2k.specifier = PGPS2KSpecifierSimple;
-//        self.s2k.algorithm = PGPHashMD5;
-
-
+    //    } else if (self.s2kUsage != PGPS2KUsageNone) {
+    //        // this is version 3, looks just like a V4 simple hash
+    //        self.symmetricAlgorithm = (PGPSymmetricAlgorithm)self.s2kUsage; // this is tricky, but this is right. V3 algorithm is in place of s2kUsage of V4
+    //        self.s2kUsage = PGPS2KUsageEncrypted;
+    //
+    //        self.s2k = [[PGPS2K alloc] init]; // not really parsed s2k
+    //        self.s2k.specifier = PGPS2KSpecifierSimple;
+    //        self.s2k.algorithm = PGPHashMD5;
 
     return [data copy];
 }
 
 #pragma mark - NSCopying
 
-- (id)copyWithZone:(NSZone *)zone
-{
+- (id)copyWithZone:(NSZone *)zone {
     PGPSecretKeyPacket *copy = [super copyWithZone:zone];
     copy->_s2kUsage = self.s2kUsage;
     copy->_s2k = self.s2k;

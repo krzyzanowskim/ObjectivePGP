@@ -7,25 +7,25 @@
 //
 
 #import "PGPSignaturePacket.h"
-#import "PGPMPI.h"
-#import "PGPSignatureSubpacket.h"
-#import "PGPUserIDPacket.h"
-#import "PGPPartialKey.h"
-#import "PGPKey.h"
-#import "PGPUser.h"
-#import "PGPSecretKeyPacket.h"
-#import "PGPPKCSEmsa.h"
-#import "PGPLiteralPacket.h"
-#import "PGPPublicKeyRSA.h"
 #import "NSData+PGPUtils.h"
+#import "PGPKey.h"
+#import "PGPLiteralPacket.h"
+#import "PGPMPI.h"
+#import "PGPPKCSEmsa.h"
+#import "PGPPartialKey.h"
+#import "PGPPublicKeyRSA.h"
+#import "PGPSecretKeyPacket.h"
+#import "PGPSignatureSubpacket.h"
+#import "PGPUser.h"
+#import "PGPUserIDPacket.h"
 
-#import "PGPMacros.h"
 #import "PGPLogging.h"
+#import "PGPMacros.h"
 
-#import <openssl/rsa.h>
-#import <openssl/dsa.h>
 #import <openssl/bn.h>
+#import <openssl/dsa.h>
 #import <openssl/err.h>
+#import <openssl/rsa.h>
 #import <openssl/ssl.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -50,39 +50,34 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPSignaturePacket
 
-- (instancetype)init
-{
+- (instancetype)init {
     if (self = [super init]) {
         _version = 4;
     }
     return self;
 }
 
-+ (PGPSignaturePacket *) signaturePacket:(PGPSignatureType)type hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm {
++ (PGPSignaturePacket *)signaturePacket:(PGPSignatureType)type hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm {
     let signaturePacket = [[PGPSignaturePacket alloc] init];
     signaturePacket.hashAlgoritm = hashAlgorithm;
     return signaturePacket;
 }
 
-- (NSArray *)hashedSubpackets
-{
+- (NSArray *)hashedSubpackets {
     if (!_hashedSubpackets) {
         _hashedSubpackets = [NSArray array];
     }
     return _hashedSubpackets;
 }
 
-- (NSArray *)unhashedSubpackets
-{
+- (NSArray *)unhashedSubpackets {
     if (!_unhashedSubpackets) {
         _unhashedSubpackets = [NSArray array];
     }
     return _unhashedSubpackets;
-
 }
 
-- (PGPPacketTag)tag
-{
+- (PGPPacketTag)tag {
     return PGPSignaturePacketTag;
 }
 
@@ -141,14 +136,12 @@ NS_ASSUME_NONNULL_BEGIN
     return creationDateSubpacket.value;
 }
 
-- (BOOL) isPrimaryUserID
-{
-    PGPSignatureSubpacket *primaryUserIDSubpacket =  [[self subpacketsOfType:PGPSignatureSubpacketTypePrimaryUserID] firstObject];
+- (BOOL)isPrimaryUserID {
+    PGPSignatureSubpacket *primaryUserIDSubpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypePrimaryUserID] firstObject];
     return [(NSNumber *)primaryUserIDSubpacket.value boolValue];
 }
 
-- (BOOL)canBeUsedToSign
-{
+- (BOOL)canBeUsedToSign {
     BOOL result = self.publicKeyAlgorithm == PGPPublicKeyAlgorithmDSA || self.publicKeyAlgorithm == PGPPublicKeyAlgorithmRSA || self.publicKeyAlgorithm == PGPPublicKeyAlgorithmRSASignOnly;
 
     if (result) {
@@ -168,10 +161,10 @@ NS_ASSUME_NONNULL_BEGIN
     if ([flags containsObject:@(PGPSignatureFlagAllowEncryptStorage)] || [flags containsObject:@(PGPSignatureFlagAllowEncryptCommunications)]) {
         result = YES;
     }
-    
+
     // I'm not convinced if DSA is allowed here self.publicKeyAlgorithm != PGPPublicKeyAlgorithmDSA
     result = result && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmRSASignOnly && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmElgamalEncryptorSign;
-    
+
     return result;
 }
 
@@ -181,20 +174,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Build packet
 
-- (nullable NSData *) export:(NSError *__autoreleasing *)error
-{
+- (nullable NSData *) export:(NSError *__autoreleasing *)error {
     NSMutableData *data = [NSMutableData data];
 
     NSData *bodyData = [self buildFullSignatureBodyData:error];
     NSData *headerData = [self buildHeaderData:bodyData];
-    [data appendData: headerData];
-    [data appendData: bodyData];
+    [data appendData:headerData];
+    [data appendData:bodyData];
 
     return [data copy];
 }
 
-- (NSData *) buildSignedPart:(NSArray *)hashedSubpackets
-{
+- (NSData *)buildSignedPart:(NSArray *)hashedSubpackets {
     NSMutableData *data = [NSMutableData data];
 
     // One-octet version number (4).
@@ -237,36 +228,33 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Verify
 
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey error:(NSError * __autoreleasing *)error; {
-    return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:nil error:error];
-}
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey error:(NSError *__autoreleasing *)error;
+{ return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:nil error:error]; }
 
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error; {
-    return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:userID error:error];
-}
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error;
+{ return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:userID error:error]; }
 
 // Opposite to sign, with readed data (not produced)
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error
-{
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error {
     // no signing packet was found, this we have no valid signature
     PGPAssertClass(signingKeyPacket, PGPPublicKeyPacket);
 
-    //FIXME: publicKey is actually secret key sometimes?
+    // FIXME: publicKey is actually secret key sometimes?
 
     if (self.type == PGPSignatureBinaryDocument && inputData.length == 0) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Invalid signature packet type"}];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Invalid signature packet type" }];
         }
         return NO;
     }
 
     // 5.2.4.  Computing Signatures
-    
+
     // build toSignData, toSign
     let toSignData = [self toSignDataForType:self.type inputData:inputData key:publicKey keyPacket:signingKeyPacket userID:userID error:error];
     if (!toSignData) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Invalid signature."}];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Invalid signature." }];
         }
         return NO;
     }
@@ -276,7 +264,7 @@ NS_ASSUME_NONNULL_BEGIN
     // calculate trailer
     NSData *trailerData = [self calculateTrailerFor:signedPartData];
 
-    //toHash = toSignData + signedPartData + trailerData;
+    // toHash = toSignData + signedPartData + trailerData;
     NSMutableData *toHashData = [NSMutableData data];
     [toHashData appendData:toSignData];
     [toHashData appendData:self.rawReadedSignedPartData ?: signedPartData];
@@ -287,15 +275,14 @@ NS_ASSUME_NONNULL_BEGIN
 
     // check signed hash value, should match
     // FIXME: propably will fail on V3 signature, need investigate how to handle V3 scenario here
-    if (![self.signedHashValueData isEqualToData:[hashData subdataWithRange:(NSRange){0,2}]]) {
+    if (![self.signedHashValueData isEqualToData:[hashData subdataWithRange:(NSRange){0, 2}]]) {
         return NO;
     }
 
     switch (signingKeyPacket.publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSASignOnly:
-        case PGPPublicKeyAlgorithmRSAEncryptOnly:
-        {
+        case PGPPublicKeyAlgorithmRSAEncryptOnly: {
             // convert mpi data to binary signature_bn_bin
             let signatureMPI = self.signatureMPIs[0];
 
@@ -309,13 +296,12 @@ NS_ASSUME_NONNULL_BEGIN
             NSData *emData = [PGPPKCSEmsa encode:self.hashAlgoritm message:toHashData encodedMessageLength:signingKeyPacket.keySize error:error];
             if (![emData isEqualToData:decryptedEmData]) {
                 if (error) {
-                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"em hash dont match"}];
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"em hash dont match" }];
                 }
                 return NO;
             }
             return YES;
-        }
-            break;
+        } break;
         default:
             break;
     }
@@ -327,12 +313,12 @@ NS_ASSUME_NONNULL_BEGIN
 // 5.2.4.  Computing Signatures
 // http://tools.ietf.org/html/rfc4880#section-5.2.4
 // @see https://github.com/singpolyma/openpgp-spec/blob/master/key-signatures
-- (BOOL)signData:(NSData *)inputData secretKey:(PGPPartialKey *)secretKey error:(NSError * __autoreleasing *)error {
+- (BOOL)signData:(NSData *)inputData secretKey:(PGPPartialKey *)secretKey error:(NSError *__autoreleasing *)error {
     let key = [[PGPKey alloc] initWithSecretKey:secretKey publicKey:nil];
     return [self signData:inputData usingKey:key passphrase:nil userID:nil error:error];
 }
 
-- (BOOL)signData:(NSData *)inputData usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error {
+- (BOOL)signData:(NSData *)inputData usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error {
     PGPAssertClass(inputData, NSData);
 
     let secretKey = key.secretKey;
@@ -350,17 +336,17 @@ NS_ASSUME_NONNULL_BEGIN
         // As of PGP Desktop. The signing signature may be missing.
         PGPLogDebug(@"Missing signature for the secret key %@", secretKey.keyID);
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"No signing signature found"}];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"No signing signature found" }];
         }
         return NO;
     }
 
-    //TODO: check it this is right ? setup public key algorithm from secret key packet
+    // TODO: check it this is right ? setup public key algorithm from secret key packet
     self.publicKeyAlgorithm = signingKeyPacket.publicKeyAlgorithm;
 
     if (signingKeyPacket.isEncryptedWithPassword && passphrase.length > 0) {
         NSError *decryptError;
-        //Copy secret key instance, then decrypt on copy, not on the original (do not leave unencrypted instance around)
+        // Copy secret key instance, then decrypt on copy, not on the original (do not leave unencrypted instance around)
         signingKeyPacket = [signingKeyPacket decryptedKeyPacket:passphrase error:&decryptError];
         NSAssert(signingKeyPacket && !decryptError, @"decrypt error %@", decryptError);
     }
@@ -375,7 +361,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     // build toSignData, toSign
     NSData *toSignData = [self toSignDataForType:self.type inputData:inputData key:secretKey keyPacket:signingKeyPacket userID:userID error:error];
-    //toHash = toSignData + signedPartData + trailerData;
+    // toHash = toSignData + signedPartData + trailerData;
     NSMutableData *toHashData = [NSMutableData dataWithData:toSignData];
     [toHashData appendData:signedPartData];
     [toHashData appendData:trailerData];
@@ -392,22 +378,19 @@ NS_ASSUME_NONNULL_BEGIN
     switch (self.publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
-        case PGPPublicKeyAlgorithmRSASignOnly:
-        {
+        case PGPPublicKeyAlgorithmRSASignOnly: {
             encryptedEmData = [PGPPublicKeyRSA privateEncrypt:em withSecretKeyPacket:signingKeyPacket];
-        }
-            break;
+        } break;
 
         default:
             [NSException raise:@"PGPNotSupported" format:@"Algorith not supported"];
             break;
     }
 
-
     NSAssert(encryptedEmData, @"Encryption failed");
     if (!encryptedEmData) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Sign Encryption failed"}];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Sign Encryption failed" }];
         }
         return NO;
     }
@@ -421,26 +404,23 @@ NS_ASSUME_NONNULL_BEGIN
 
     // Checksum
     // Two-octet field holding the left 16 bits of the signed hash value.
-    NSData *signedHashValue = [hashData subdataWithRange:(NSRange){0,2}];
+    NSData *signedHashValue = [hashData subdataWithRange:(NSRange){0, 2}];
     self.signedHashValueData = signedHashValue;
     return YES;
 }
 
-- (nullable NSData *) toSignDataForType:(PGPSignatureType)type inputData:(NSData *)inputData key:(PGPPartialKey *)key keyPacket:(PGPPublicKeyPacket *)keyPacket userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error
-{
+- (nullable NSData *)toSignDataForType:(PGPSignatureType)type inputData:(NSData *)inputData key:(PGPPartialKey *)key keyPacket:(PGPPublicKeyPacket *)keyPacket userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error {
     NSMutableData *toSignData = [NSMutableData data];
     switch (type) {
         case PGPSignatureBinaryDocument:
-        case PGPSignatureCanonicalTextDocument:
-        {
+        case PGPSignatureCanonicalTextDocument: {
             [toSignData appendData:inputData];
-        }
-            break;
+        } break;
         case PGPSignatureGenericCertificationUserIDandPublicKey: // 0x10
-        case PGPSignaturePersonalCertificationUserIDandPublicKey:// 0x11
-        case PGPSignatureCasualCertificationUserIDandPublicKey:  // 0x12
-        case PGPSignaturePositiveCertificationUserIDandPublicKey:// 0x13
-        case PGPSignatureCertificationRevocation:                // 0x28
+        case PGPSignaturePersonalCertificationUserIDandPublicKey: // 0x11
+        case PGPSignatureCasualCertificationUserIDandPublicKey: // 0x12
+        case PGPSignaturePositiveCertificationUserIDandPublicKey: // 0x13
+        case PGPSignatureCertificationRevocation: // 0x28
         {
             // A certification signature (type 0x10 through 0x13)
 
@@ -480,13 +460,12 @@ NS_ASSUME_NONNULL_BEGIN
                 // data
                 [toSignData appendData:userIDData];
             }
-            //TODO user attributes alternative
-            //UInt8 userAttributeConstant = 0xD1;
+            // TODO user attributes alternative
+            // UInt8 userAttributeConstant = 0xD1;
             //[data appendBytes:&userAttributeConstant length:sizeof(userAttributeConstant)];
-            
-        }
-            break;
-            
+
+        } break;
+
         default:
             [toSignData appendData:inputData];
             break;
@@ -494,16 +473,14 @@ NS_ASSUME_NONNULL_BEGIN
     return [toSignData copy];
 }
 
-- (NSData *) calculateTrailerFor:(NSData *)signedPartData
-{
+- (NSData *)calculateTrailerFor:(NSData *)signedPartData {
     NSAssert(self.version == 4, @"Not supported signature version");
-    if (self.version < 4)
-        return nil;
+    if (self.version < 4) return nil;
 
     NSMutableData *trailerData = [NSMutableData data];
     UInt8 prefix[2] = {self.version, 0xFF};
     [trailerData appendBytes:&prefix length:2];
-    
+
     UInt32 signatureLength = (UInt32)signedPartData.length; // + 6; // ??? (note that this number does not include these final six octets)
     signatureLength = CFSwapInt32HostToBig(signatureLength);
     [trailerData appendBytes:&signatureLength length:4];
@@ -519,16 +496,15 @@ NS_ASSUME_NONNULL_BEGIN
  *  @param packetBody Packet body
  */
 
-- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
-{
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
     __unused NSUInteger position = [super parsePacketBody:packetBody error:error];
     NSUInteger startPosition = position;
 
     UInt8 parsedVersion = 0;
     // One-octet version number.
-    [packetBody getBytes:&parsedVersion range:(NSRange){position,1}];
+    [packetBody getBytes:&parsedVersion range:(NSRange){position, 1}];
     position = position + 1;
-    
+
     switch (parsedVersion) {
         case 0x04:
             position = [self parseV4PacketBody:packetBody error:error];
@@ -538,9 +514,8 @@ NS_ASSUME_NONNULL_BEGIN
             break;
         default:
             NSAssert(true, @"Unsupported signature packet version");
-            if (error)
-            {
-                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Signature version %@ is supported at the moment", @(parsedVersion)]}];
+            if (error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Signature version %@ is supported at the moment", @(parsedVersion)] }];
             }
             return startPosition + packetBody.length;
             break;
@@ -550,84 +525,79 @@ NS_ASSUME_NONNULL_BEGIN
 
 // FIXME: V3 signatures fail somewehere (I don't know where yet) because everything is designed
 // for V4 and uses V4 specific data to (for example) validate signature
-- (NSUInteger)parseV3PacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
-{
+- (NSUInteger)parseV3PacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
-    
+
     // V3
     // One-octet version number (3).
     UInt8 parsedVersion = 0;
-    [packetBody getBytes:&parsedVersion range:(NSRange){position,1}];
+    [packetBody getBytes:&parsedVersion range:(NSRange){position, 1}];
     position = position + 1;
 
     // One-octet length of following hashed material.  MUST be 5.
     UInt8 parsedLength = 0;
-    [packetBody getBytes:&parsedLength range:(NSRange){position,1}];
+    [packetBody getBytes:&parsedLength range:(NSRange){position, 1}];
     position = position + 1;
     NSAssert(parsedLength == 5, @"Invalid signature data");
-    
+
     // One-octet signature type.
-    [packetBody getBytes:&_type range:(NSRange){position,1}];
+    [packetBody getBytes:&_type range:(NSRange){position, 1}];
     position = position + 1;
-    
+
     // Four-octet creation time
     UInt32 parsedCreationTimestamp = 0;
-    [packetBody getBytes:&parsedCreationTimestamp range:(NSRange){position,4}];
+    [packetBody getBytes:&parsedCreationTimestamp range:(NSRange){position, 4}];
     parsedCreationTimestamp = CFSwapInt32BigToHost(parsedCreationTimestamp);
     position = position + 4;
-    
+
     // Eight-octet Key ID of signer
     PGPKeyID *parsedkeyID = [[PGPKeyID alloc] initWithLongKey:[packetBody subdataWithRange:(NSRange){position, 8}]];
     position = position + 8;
-    
+
     // One-octet public-key algorithm.
-    [packetBody getBytes:&_publicKeyAlgorithm range:(NSRange){position,1}];
+    [packetBody getBytes:&_publicKeyAlgorithm range:(NSRange){position, 1}];
     position = position + 1;
 
     // One-octet hash algorithm.
-    [packetBody getBytes:&_hashAlgoritm range:(NSRange){position,1}];
+    [packetBody getBytes:&_hashAlgoritm range:(NSRange){position, 1}];
     position = position + 1;
-    
+
     // Two-octet field holding the left 16 bits of the signed hash value.
     self.signedHashValueData = [packetBody subdataWithRange:(NSRange){position, 2}];
     position = position + 2;
-    
+
     // 5.2.2. One or more multiprecision integers comprising the signature. This portion is algorithm specific
     // Signature
     switch (_publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
-        case PGPPublicKeyAlgorithmRSASignOnly:
-        {
+        case PGPPublicKeyAlgorithmRSASignOnly: {
             // multiprecision integer (MPI) of RSA signature value m**d mod n.
             // MPI of RSA public modulus n;
             PGPMPI *mpiN = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
             mpiN.identifier = @"N";
             position = position + mpiN.packetLength;
-            
+
             self.signatureMPIs = @[mpiN];
-        }
-            break;
+        } break;
         case PGPPublicKeyAlgorithmDSA:
-        case PGPPublicKeyAlgorithmECDSA:
-        {
+        case PGPPublicKeyAlgorithmECDSA: {
             // MPI of DSA value r.
             PGPMPI *mpiR = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
             mpiR.identifier = @"R";
             position = position + mpiR.packetLength;
-            
+
             // MPI of DSA value s.
             PGPMPI *mpiS = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
             mpiS.identifier = @"S";
             position = position + mpiS.packetLength;
-            
+
             self.signatureMPIs = @[mpiR, mpiS];
-        }
-            break;
+        } break;
         default:
             break;
     }
-    
+
     // convert V3 values to V4 subpackets
     PGPSignatureSubpacket *keyIDSubpacket = [[PGPSignatureSubpacket alloc] init];
     keyIDSubpacket.type = PGPSignatureSubpacketTypeIssuerKeyID;
@@ -642,27 +612,26 @@ NS_ASSUME_NONNULL_BEGIN
     return position;
 }
 
-- (NSUInteger)parseV4PacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
-{
+- (NSUInteger)parseV4PacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
     NSUInteger startPosition = position;
 
     UInt8 parsedVersion = 0;
     // V4
     // One-octet version number (4).
-    [packetBody getBytes:&parsedVersion range:(NSRange){position,1}];
+    [packetBody getBytes:&parsedVersion range:(NSRange){position, 1}];
     position = position + 1;
-    
+
     // One-octet signature type.
-    [packetBody getBytes:&_type range:(NSRange){position,1}];
+    [packetBody getBytes:&_type range:(NSRange){position, 1}];
     position = position + 1;
 
     // One-octet public-key algorithm.
-    [packetBody getBytes:&_publicKeyAlgorithm range:(NSRange){position,1}];
+    [packetBody getBytes:&_publicKeyAlgorithm range:(NSRange){position, 1}];
     position = position + 1;
 
     // One-octet hash algorithm.
-    [packetBody getBytes:&_hashAlgoritm range:(NSRange){position,1}];
+    [packetBody getBytes:&_hashAlgoritm range:(NSRange){position, 1}];
     position = position + 1;
 
     // Two-octet scalar octet count for following hashed subpacket data.
@@ -674,7 +643,7 @@ NS_ASSUME_NONNULL_BEGIN
     // Hashed subpacket data set (zero or more subpackets)
     NSData *hashedSubpacketsData = nil;
     if (hashedOctetCount > 0) {
-        hashedSubpacketsData = [packetBody subdataWithRange:(NSRange){position,hashedOctetCount}];
+        hashedSubpacketsData = [packetBody subdataWithRange:(NSRange){position, hashedOctetCount}];
         position = position + hashedOctetCount;
 
         NSMutableArray *hashedSubpackets = [NSMutableArray arrayWithCapacity:hashedOctetCount];
@@ -701,7 +670,7 @@ NS_ASSUME_NONNULL_BEGIN
     // Unhashed subpacket data set (zero or more subpackets)
     NSData *unhashedSubpacketsData = nil;
     if (unhashedOctetCount > 0) {
-        unhashedSubpacketsData = [packetBody subdataWithRange:(NSRange){position,unhashedOctetCount}];
+        unhashedSubpacketsData = [packetBody subdataWithRange:(NSRange){position, unhashedOctetCount}];
         position = position + unhashedOctetCount;
 
         NSMutableArray *unhashedSubpackets = [NSMutableArray arrayWithCapacity:unhashedOctetCount];
@@ -726,8 +695,7 @@ NS_ASSUME_NONNULL_BEGIN
     switch (_publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
-        case PGPPublicKeyAlgorithmRSASignOnly:
-        {
+        case PGPPublicKeyAlgorithmRSASignOnly: {
             // multiprecision integer (MPI) of RSA signature value m**d mod n.
             // MPI of RSA public modulus n;
             PGPMPI *mpiN = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
@@ -735,11 +703,9 @@ NS_ASSUME_NONNULL_BEGIN
             position = position + mpiN.packetLength;
 
             self.signatureMPIs = @[mpiN];
-        }
-            break;
+        } break;
         case PGPPublicKeyAlgorithmDSA:
-        case PGPPublicKeyAlgorithmECDSA:
-        {
+        case PGPPublicKeyAlgorithmECDSA: {
             // MPI of DSA value r.
             PGPMPI *mpiR = [[PGPMPI alloc] initWithMPIData:packetBody atPosition:position];
             mpiR.identifier = @"R";
@@ -751,8 +717,7 @@ NS_ASSUME_NONNULL_BEGIN
             position = position + mpiS.packetLength;
 
             self.signatureMPIs = @[mpiR, mpiS];
-        }
-            break;
+        } break;
         default:
             break;
     }
@@ -765,21 +730,19 @@ NS_ASSUME_NONNULL_BEGIN
 // I don't like this part, really ugly
 // This is because subpacket length is unknow and header need to be found first
 // then subpacket can be parsed
-- (PGPSignatureSubpacket *) getSubpacketStartingAtPosition:(NSUInteger)subpacketsPosition fromData:(NSData *)subpacketsData
-{
-    NSRange headerRange = (NSRange) {subpacketsPosition, fmin(6,subpacketsData.length - subpacketsPosition) }; // up to 5+1 octets
+- (PGPSignatureSubpacket *)getSubpacketStartingAtPosition:(NSUInteger)subpacketsPosition fromData:(NSData *)subpacketsData {
+    NSRange headerRange = (NSRange){subpacketsPosition, fmin(6, subpacketsData.length - subpacketsPosition)}; // up to 5+1 octets
     NSData *guessHeaderData = [subpacketsData subdataWithRange:headerRange]; // this is "may be" header to be parsed
     PGPSignatureSubpacketHeader *subpacketHeader = [PGPSignatureSubpacket subpacketHeaderFromData:guessHeaderData];
 
-    NSRange subPacketBodyRange = (NSRange){subpacketsPosition + subpacketHeader.headerLength,subpacketHeader.bodyLength};
+    NSRange subPacketBodyRange = (NSRange){subpacketsPosition + subpacketHeader.headerLength, subpacketHeader.bodyLength};
     NSData *subPacketBody = [subpacketsData subdataWithRange:subPacketBodyRange];
     PGPSignatureSubpacket *subpacket = [[PGPSignatureSubpacket alloc] initWithHeader:subpacketHeader body:subPacketBody bodyRange:subPacketBodyRange];
 
     return subpacket;
 }
 
-- (NSData *) buildSubpacketsCollectionData:(NSArray *)subpacketsCollection
-{
+- (NSData *)buildSubpacketsCollectionData:(NSArray *)subpacketsCollection {
     NSMutableData *data = [NSMutableData data];
     if (subpacketsCollection.count > 0) {
         NSMutableData *subpackets = [NSMutableData data];

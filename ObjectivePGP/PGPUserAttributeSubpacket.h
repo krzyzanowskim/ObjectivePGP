@@ -8,7 +8,6 @@
 
 #import <Foundation/Foundation.h>
 
-
 @interface PGPUserAttributeSubpacket : NSObject
 
 // Subpacket types 100 through 110 are reserved for private or experimental use.

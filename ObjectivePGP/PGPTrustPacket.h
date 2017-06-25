@@ -7,12 +7,11 @@
 //
 //  Tag 12
 
-#import <Foundation/Foundation.h>
 #import "PGPPacketFactory.h"
+#import <Foundation/Foundation.h>
 
 @interface PGPTrustPacket : PGPPacket
 
 @property (nonatomic, readonly) NSData *data;
-
 
 @end

@@ -6,10 +6,10 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import "PGPTypes.h"
 #import "PGPFoundation.h"
 #import "PGPMacros.h"
+#import "PGPTypes.h"
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -30,7 +30,7 @@ PGP_EMPTY_INIT_UNAVAILABLE
 + (PGPS2K *)S2KFromData:(NSData *)data atPosition:(NSUInteger)position;
 
 - (nullable NSData *)produceSessionKeyWithPassphrase:(NSString *)passphrase keySize:(NSUInteger)keySize;
-- (nullable NSData *)export:(NSError * __autoreleasing *)error;
+- (nullable NSData *) export:(NSError *__autoreleasing *)error;
 
 @end
 

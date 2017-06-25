@@ -6,15 +6,15 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
-#import "PGPTypes.h"
 #import "PGPPacket.h"
+#import "PGPTypes.h"
+#import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @interface PGPPacketFactory : NSObject
 
-+ (nullable PGPPacket *) packetWithData:(NSData *)packetsData offset:(NSUInteger)offset nextPacketOffset:(nullable NSUInteger *)nextPacketOffset;
++ (nullable PGPPacket *)packetWithData:(NSData *)packetsData offset:(NSUInteger)offset nextPacketOffset:(nullable NSUInteger *)nextPacketOffset;
 
 @end
 
