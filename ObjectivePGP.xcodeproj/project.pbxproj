@@ -30,6 +30,7 @@
 		7547A6CB1F0080D4002C2145 /* PGPBigNum+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 7547A6CA1F0080CF002C2145 /* PGPBigNum+Private.h */; };
 		7547A6CD1F00842A002C2145 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7547A6CC1F00842A002C2145 /* libbz2.tbd */; };
 		7547A6CF1F008437002C2145 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7547A6CE1F008437002C2145 /* libz.tbd */; };
+		7547A6D11F0085E8002C2145 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7547A6D01F0085E8002C2145 /* Security.framework */; };
 		755456C0192843E700E5526B /* PGPArmor.m in Sources */ = {isa = PBXBuildFile; fileRef = 755456BF192843E700E5526B /* PGPArmor.m */; };
 		7562858E19239F1B00127E24 /* PGPFingerprint.m in Sources */ = {isa = PBXBuildFile; fileRef = 7562858D19239F1B00127E24 /* PGPFingerprint.m */; };
 		756299B91914DE1A00C5AD3B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B81914DE1A00C5AD3B /* Foundation.framework */; };
@@ -183,6 +184,7 @@
 		7547A6CA1F0080CF002C2145 /* PGPBigNum+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PGPBigNum+Private.h"; sourceTree = "<group>"; };
 		7547A6CC1F00842A002C2145 /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
 		7547A6CE1F008437002C2145 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+		7547A6D01F0085E8002C2145 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.0.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		755456BE192843E700E5526B /* PGPArmor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPArmor.h; sourceTree = "<group>"; };
 		755456BF192843E700E5526B /* PGPArmor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPArmor.m; sourceTree = "<group>"; };
 		75572E281ED2193C00205871 /* PGPCryptoHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPCryptoHash.h; sourceTree = "<group>"; };
@@ -291,6 +293,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7547A6D11F0085E8002C2145 /* Security.framework in Frameworks */,
 				756299C81914DE1A00C5AD3B /* Foundation.framework in Frameworks */,
 				7580828A1986AFA200348D0D /* libObjectivePGP.a in Frameworks */,
 			);
@@ -358,6 +361,7 @@
 		756299B71914DE1A00C5AD3B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7547A6D01F0085E8002C2145 /* Security.framework */,
 				7547A6CE1F008437002C2145 /* libz.tbd */,
 				7547A6CC1F00842A002C2145 /* libbz2.tbd */,
 				7547A6BF1F0068FB002C2145 /* Security.framework */,
@@ -850,6 +854,12 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "ObjectivePGPTests/ObjectivePGPTests-Info.plist";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+					"-lbz2",
+					"-lz",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.hakore.${PRODUCT_NAME:rfc1034identifier}";
 				WRAPPER_EXTENSION = xctest;
 			};
@@ -862,6 +872,12 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ObjectivePGP/ObjectivePGP-Prefix.pch";
 				INFOPLIST_FILE = "ObjectivePGPTests/ObjectivePGPTests-Info.plist";
+				OTHER_LDFLAGS = (
+					"-ObjC",
+					"-all_load",
+					"-lbz2",
+					"-lz",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.hakore.${PRODUCT_NAME:rfc1034identifier}";
 				WRAPPER_EXTENSION = xctest;
 			};

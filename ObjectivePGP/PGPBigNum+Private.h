@@ -14,5 +14,7 @@
 
 @property (nonatomic, readonly) BIGNUM *bignumRef;
 
+- (instancetype)initWithBIGNUM:(BIGNUM *)bignumRef;
+
 @end
 
