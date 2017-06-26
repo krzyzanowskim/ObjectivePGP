@@ -1,30 +1,16 @@
 //
 //  Defaults.xcconfig
 //
-//  Common customizations/sanitizations of the platform defaults for our projects.
-//
-//  For compatibility reasons, the iOS platform has a couple of not–so–sensible defaults.
-//  This file collects, and annotates the deviations from these defaults.
-//
-// :NOTE: Some of the settings herein may be redundant for newly created projects/targets:
-//  Xcode’s project/target templates take several (but not all!) of these issues into account.
-//  However, for uniformity it is probably more useful to simply delete the entire warning section in the Xcode project, and then set them up using the standard warning flags.
 // https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/XcodeBuildSettingRef/1-Build_Setting_Reference/build_setting_ref.html
-
-// We support macOS, iOS, watchOS and tvOS by default.
-SUPPORTED_PLATFORMS = macosx iphoneos iphonesimulator
-
 // http://promisekit.org/news/2016/08/Multiplatform-Single-Scheme-Xcode-Projects/
-// watchOS build fails if we do not set it exactly like that
+
+// We support iOS and macOS
+SUPPORTED_PLATFORMS = macosx iphoneos iphonesimulator
 TARGETED_DEVICE_FAMILY = 1,2,3,4
 
 // Deployment targets
 MACOSX_DEPLOYMENT_TARGET = 10.9
 IPHONEOS_DEPLOYMENT_TARGET = 8.0
-TVOS_DEPLOYMENT_TARGET = 9.0
-WATCHOS_DEPLOYMENT_TARGET = 3.0
-
-PRODUCT_NAME = ObjectivePGP
 
 HEADER_SEARCH_PATHS[sdk=iphoneos*] = $(SRCROOT)/libs/ios
 HEADER_SEARCH_PATHS[sdk=iphonesimulator*] = $(SRCROOT)/libs/ios
@@ -34,6 +20,7 @@ LIBRARY_SEARCH_PATHS[sdk=iphoneos*] = $(SRCROOT)/libs/ios
 LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*] = $(SRCROOT)/libs/ios
 LIBRARY_SEARCH_PATHS[sdk=macosx*] = $(SRCROOT)/libs/macosx
 
+// Prelink OpenSSL crypto library
 PRELINK_LIBS[sdk=iphoneos*] = $(SRCROOT)/libs/ios/libcrypto.a
 PRELINK_LIBS[sdk=iphonesimulator*] = $(SRCROOT)/libs/ios/libcrypto.a
 PRELINK_LIBS[sdk=macosx*] = $(SRCROOT)/libs/macosx/libcrypto.a
@@ -56,29 +43,13 @@ DEBUG_INFORMATION_FORMAT = dwarf;
 SDKROOT = iphoneos
 // GCC_C_LANGUAGE_STANDARD = gnu11
 
-// Xcode 8
-// CLANG_CXX_LANGUAGE_STANDARD = gnu++1z
-
-// Compatibility with Xcode 9
-//CLANG_CXX_LANGUAGE_STANDARD_XCODE9 = gnu++14
-//CLANG_CXX_LANGUAGE_STANDARD[sdk=macosx10.13*] = $(CLANG_CXX_LANGUAGE_STANDARD_XCODE9)
-//CLANG_CXX_LANGUAGE_STANDARD[sdk=iphoneos11*] = $(CLANG_CXX_LANGUAGE_STANDARD_XCODE9)
-//CLANG_CXX_LANGUAGE_STANDARD[sdk=iphonesimulator11*] = $(CLANG_CXX_LANGUAGE_STANDARD_XCODE9)
-
 //CLANG_CXX_LIBRARY = libc++
-OTHER_LDFLAGS = -ObjC -all_load -lbz2 -lz -lcrypto 
+OTHER_LDFLAGS = -ObjC -all_load -lbz2 -lz
 ONLY_ACTIVE_ARCH = YES
 
 // Boolean value. Specifies whether the generated object code is nonrelocatable (external references remain relocatable). Making code nonrelocatable results in faster function calls. This feature is appropriate in applications but not dynamic libraries.
 GCC_DYNAMIC_NO_PIC = NO
 
-// PGP_CFLAGS_COMMON should be used in config files that want to redefine OTHER_CFLAGS.
-// Make symbols private by default. There is also GCC_SYMBOLS_PRIVATE_EXTERN, which emits -fvisibility=hidden in release builds only. We want this in debug builds too.
-// http://stackoverflow.com/questions/35861502/fvisibility-hidden-not-passed-by-compiler-for-debug-builds
-// http://prod.lists.apple.com/archives/xcode-users/2016/Nov/msg00090.html
-// -fvisibility-inlines-hidden (GCC_INLINES_ARE_PRIVATE_EXTERN) would be redundant because we have -fvisibility=hidden.
-// https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/CppRuntimeEnv/Articles/SymbolVisibility.html#//apple_ref/doc/uid/TP40001670-98807-CJBDHDIC
-// -fmodules -fcxx-modules Would enable modules but this is incompatible with ccache (https://bugzilla.samba.org/show_bug.cgi?id=11048)
 PGP_CFLAGS_COMMON = $(inherited) -fvisibility=default // -fmodules
 GCC_SYMBOLS_PRIVATE_EXTERN = YES
 
@@ -116,9 +87,6 @@ CLANG_ENABLE_OBJC_ARC = YES
 // Limit API to what is safe for extensions.
 APPLICATION_EXTENSION_API_ONLY = YES
 
-// Slightly faster compile times.
-DLLVM_OPTIMIZED_TABLEGEN=ON
-
 // Everything else kills debugging and performance.
 GCC_OPTIMIZATION_LEVEL = 0
 
@@ -129,13 +97,16 @@ GCC_OPTIMIZATION_LEVEL = 0
 GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=NO
 GCC_GENERATE_TEST_COVERAGE_FILES=NO
 
+// Enable assertions by default
 ENABLE_NS_ASSERTIONS = YES
 
 // Reuse strings (default)
 GCC_REUSE_STRINGS = YES
 
 // Default as of Xcode 8
-// In C, allocate even uninitialized global variables in the data section of the object file, rather than generating them as common blocks. This has the effect that if the same variable is declared (without extern ) in two different compilations, you will get an error when you link them. The only reason this might be useful is if you wish to verify that the program will work on other systems which always work this way.
+// In C, allocate even uninitialized global variables in the data section of the object file, rather than generating them as common blocks.
+// This has the effect that if the same variable is declared (without extern ) in two different compilations, you will get an error when you link them.
+// The only reason this might be useful is if you wish to verify that the program will work on other systems which always work this way.
 GCC_NO_COMMON_BLOCKS = YES
 
 // Xcode complains if we don't set this to yes - doesn't do much for us. (Mac only)
@@ -168,11 +139,6 @@ GCC_PREPROCESSOR_DEFINITIONS = $(PGP_PREPROCESSOR_DEFINITIONS_COMMON)
 
 // :MARK: - Reset Diagnostics:
 ENABLE_STRICT_OBJC_MSGSEND = YES
-// :MARK: -Warnings
-// The iOS platform defaults **explicitly** disable several warnings.
-// This defeats the purpose of Clangs `-Weverything`, which we want to use!
-// Therefore, we explicitly enable all those warnings here.
-// Disabling those we do **not** want then happens elsewhere — always in combination with a reason _why_ we don’t want/need it.
 // CLANG_WARN_DOCUMENTATION_COMMENTS = YES
 CLANG_WARN_EMPTY_BODY = YES
 GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES
@@ -188,7 +154,7 @@ GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR
 GCC_WARN_ABOUT_MISSING_FIELD_INITIALIZERS = YES
 GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES
 GCC_WARN_ABOUT_MISSING_NEWLINE = YES
-CLANG_WARN_ASSIGN_ENUM = YES
+// CLANG_WARN_ASSIGN_ENUM = YES
 GCC_WARN_SIGN_COMPARE = YES
 CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION = YES
 GCC_TREAT_INCOMPATIBLE_POINTER_TYPE_WARNINGS_AS_ERRORS = YES
@@ -198,7 +164,7 @@ GCC_WARN_UNKNOWN_PRAGMAS = YES
 CLANG_WARN_UNREACHABLE_CODE = YES
 GCC_WARN_UNUSED_FUNCTION = YES
 GCC_WARN_UNUSED_LABEL = YES
-GCC_WARN_UNUSED_PARAMETER = YES
+// GCC_WARN_UNUSED_PARAMETER = YES
 GCC_WARN_UNUSED_VARIABLE = YES
 CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES
 GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES
@@ -237,14 +203,11 @@ CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES
 CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES
 CLANG_ANALYZER_SECURITY_INSECUREAPI_STRCPY = YES
 
-// New in Xcode 8
 // http://www.miqu.me/blog/2016/07/31/xcode-8-new-build-settings-and-analyzer-improvements/
 CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES
 CLANG_ANALYZER_NONNULL = YES
 CLANG_ANALYZER_OBJC_DEALLOC = YES
 
 // Enable aggressive checking of availability
-// New in Xcode 9
-// TODO SET TO YES_AGGRESSIVE
-CLANG_WARN_UNGUARDED_AVAILABILITY = NO
+CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESIVE
 

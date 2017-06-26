@@ -34,7 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSData *)buildPublicKeyBodyData:(BOOL)forceV4;
 
 - (nullable PGPMPI *)publicMPI:(NSString *)identifier;
-- (NSData *)encryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm;
+- (nullable NSData *)encryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm;
 
 @end
 

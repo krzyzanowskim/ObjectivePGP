@@ -6,15 +6,10 @@
 
 #include "Defaults.xcconfig"
 
-PRODUCT_NAME = ObjectivePGPTests
-
 // LTO takes longer, but detects mis-linked files.
 // LTO fails because our binary is too large for 32-bit tests.
 // Incremental LTO has been added in Xcode 8.
 LLVM_LTO[arch=arm64] = YES_THIN
-
-// Test and fast math don't play well (especially with LTO enabled)
-//GCC_FAST_MATH[arch=arm64] = NO
 
 
 //

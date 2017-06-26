@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @param packetBody A single subpacket body data.
  */
 - (void)parseSubpacketBody:(NSData *)packetBody {
-    // NSLog(@"parseSubpacket %@, body %@",@(self.type), packetBody);
+    PGPLogDebug(@"parseSubpacketBody %@, body %@",@(self.type), packetBody);
     switch (self.type) {
         case PGPSignatureSubpacketTypeSignatureCreationTime: // NSDate
         {
@@ -233,38 +233,42 @@ NS_ASSUME_NONNULL_BEGIN
     switch (self.type) {
         case PGPSignatureSubpacketTypeSignatureCreationTime: // NSDate
         {
-            NSDate *date = (NSDate *)self.value;
-            UInt32 signatureCreationTimestamp = CFSwapInt32HostToBig((UInt32)[date timeIntervalSince1970]);
+            let date = PGPCast(self.value, NSDate);
+            let signatureCreationTimestamp = CFSwapInt32HostToBig((UInt32)[date timeIntervalSince1970]);
             [data appendBytes:&signatureCreationTimestamp length:4];
         } break;
         case PGPSignatureSubpacketTypeSignatureExpirationTime: // NSNumber
         case PGPSignatureSubpacketTypeKeyExpirationTime: {
-            NSNumber *validityPeriod = (NSNumber *)self.value;
-            UInt32 validityPeriodInt = CFSwapInt32HostToBig((UInt32)validityPeriod.unsignedIntegerValue);
+            let validityPeriod = PGPCast(self.value, NSNumber);
+            let validityPeriodInt = CFSwapInt32HostToBig((UInt32)validityPeriod.unsignedIntegerValue);
             [data appendBytes:&validityPeriodInt length:4];
         } break;
         case PGPSignatureSubpacketTypeIssuerKeyID: // PGPKeyID
         {
-            PGPKeyID *keyID = self.value;
-            [data appendData:[keyID exportKeyData]];
+            let keyID = PGPCast(self.value, PGPKeyID);
+            if (keyID) {
+                [data appendData:[keyID exportKeyData]];
+            }
         } break;
         case PGPSignatureSubpacketTypeExportableCertification: // NSNumber BOOL
         case PGPSignatureSubpacketTypePrimaryUserID: // NSNumber BOOL
         {
-            NSNumber *boolNumber = self.value;
-            BOOL boolValue = [boolNumber boolValue];
+            var boolValue = PGPCast(self.value, NSNumber).boolValue;
             [data appendBytes:&boolValue length:1];
         } break;
         case PGPSignatureSubpacketTypeSignerUserID: // NSString
         case PGPSignatureSubpacketTypePreferredKeyServer: // NSString
         case PGPSignatureSubpacketTypePolicyURI: // NSString
         {
-            NSString *stringValue = self.value;
-            [data appendData:[stringValue dataUsingEncoding:NSUTF8StringEncoding]];
+            let stringValue = PGPCast(self.value, NSString);
+            let stringData = [stringValue dataUsingEncoding:NSUTF8StringEncoding];
+            if (stringData) {
+                [data appendData:stringData];
+            }
         } break;
         case PGPSignatureSubpacketTypeReasonForRevocation: {
             // 5.2.3.23.  Reason for Revocation
-            NSNumber *revocationCode = self.value;
+            let revocationCode = PGPCast(self.value, NSNumber);
             UInt8 revocationCodeByte = [revocationCode unsignedCharValue];
             [data appendBytes:&revocationCodeByte length:1];
         } break;

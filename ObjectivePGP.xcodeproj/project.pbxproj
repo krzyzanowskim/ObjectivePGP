@@ -838,6 +838,7 @@
 				DSTROOT = /tmp/ObjectivePGP.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ObjectivePGP/ObjectivePGP-Prefix.pch";
+				PRODUCT_NAME = ObjectivePGP;
 			};
 			name = Debug;
 		};
@@ -848,6 +849,7 @@
 				DSTROOT = /tmp/ObjectivePGP.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ObjectivePGP/ObjectivePGP-Prefix.pch";
+				PRODUCT_NAME = ObjectivePGP;
 			};
 			name = Release;
 		};
@@ -867,6 +869,7 @@
 					"-all_load",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.hakore.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = ObjectivePGPTests;
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Debug;
@@ -883,6 +886,7 @@
 					"-all_load",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.hakore.${PRODUCT_NAME:rfc1034identifier}";
+				PRODUCT_NAME = ObjectivePGPTests;
 				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;

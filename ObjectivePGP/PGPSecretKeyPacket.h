@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable PGPSecretKeyPacket *)decryptedKeyPacket:(NSString *)passphrase error:(NSError *__autoreleasing *)error;
 
 - (nullable PGPMPI *)secretMPI:(NSString *)identifier;
-- (NSData *)decryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm;
+- (nullable NSData *)decryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm;
 
 @end
 

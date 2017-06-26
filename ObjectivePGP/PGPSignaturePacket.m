@@ -348,10 +348,10 @@ NS_ASSUME_NONNULL_BEGIN
     // TODO: check it this is right ? setup public key algorithm from secret key packet
     self.publicKeyAlgorithm = signingKeyPacket.publicKeyAlgorithm;
 
-    if (signingKeyPacket.isEncryptedWithPassword && passphrase.length > 0) {
+    if (signingKeyPacket.isEncryptedWithPassword && passphrase && passphrase.length > 0) {
         NSError *decryptError;
         // Copy secret key instance, then decrypt on copy, not on the original (do not leave unencrypted instance around)
-        signingKeyPacket = [signingKeyPacket decryptedKeyPacket:passphrase error:&decryptError];
+        signingKeyPacket = [signingKeyPacket decryptedKeyPacket:PGPNN(passphrase) error:&decryptError];
         NSAssert(signingKeyPacket && !decryptError, @"decrypt error %@", decryptError);
     }
 
