@@ -73,7 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
     return position;
 }
 
-- (NSData *)decryptSessionKeyData:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm *)sessionKeyAlgorithm error:(NSError *__autoreleasing *)error {
+- (nullable NSData *)decryptSessionKeyData:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm *)sessionKeyAlgorithm error:(NSError *__autoreleasing *)error {
     NSAssert(!secretKeyPacket.isEncryptedWithPassword, @"Secret key can't be decrypted");
 
     // FIXME: Key is read from the packet, so it shouldn't be passed as parameter to the method because

@@ -119,7 +119,7 @@ NS_ASSUME_NONNULL_BEGIN
             //  (N octets of flags) ???
             //  This implementation supports max 8 octets (64bit)
             UInt64 flagByte = 0;
-            [packetBody getBytes:&flagByte length:fmin(8, packetBody.length)];
+            [packetBody getBytes:&flagByte length:MIN((NSUInteger)8, packetBody.length)];
             NSMutableArray *flagsArray = [NSMutableArray array];
 
             if (flagByte & PGPSignatureFlagAllowCertifyOtherKeys) {
@@ -152,7 +152,7 @@ NS_ASSUME_NONNULL_BEGIN
             NSMutableArray *algorithmsArray = [NSMutableArray array];
 
             for (NSUInteger i = 0; i < packetBody.length; i++) {
-                PGPSymmetricAlgorithm algorithm = 0;
+                PGPSymmetricAlgorithm algorithm = PGPSymmetricPlaintext;
                 [packetBody getBytes:&algorithm range:(NSRange){i, 1}];
 
                 NSValue *val = [NSValue valueWithBytes:&algorithm objCType:@encode(PGPSymmetricAlgorithm)];
@@ -183,7 +183,7 @@ NS_ASSUME_NONNULL_BEGIN
             NSMutableArray *algorithmsArray = [NSMutableArray array];
 
             for (UInt8 i = 0; i < packetBody.length; i++) {
-                PGPCompressionAlgorithm algorithm = 0;
+                PGPCompressionAlgorithm algorithm = PGPCompressionUncompressed;
                 [packetBody getBytes:&algorithm range:(NSRange){i, 1}];
 
                 NSValue *val = [NSValue valueWithBytes:&algorithm objCType:@encode(PGPCompressionAlgorithm)];
@@ -195,8 +195,8 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPSignatureSubpacketTypeKeyServerPreference: // NSArray of NSNumber PGPKeyServerPreferenceFlags
         {
             // 5.2.3.17.  Key Server Preferences
-            PGPKeyServerPreferenceFlags flag = 0;
-            [packetBody getBytes:&flag length:fmin(8, packetBody.length)];
+            PGPKeyServerPreferenceFlags flag = PGPKeyServerPreferenceUnknown;
+            [packetBody getBytes:&flag length:MIN((NSUInteger)8, packetBody.length)];
 
             NSMutableArray *flagsArray = [NSMutableArray array];
             if (flag & PGPKeyServerPreferenceNoModify) {
@@ -210,7 +210,7 @@ NS_ASSUME_NONNULL_BEGIN
             NSMutableArray *featuresArray = [NSMutableArray array];
 
             for (NSUInteger i = 0; i < packetBody.length; i++) {
-                PGPFeature feature = 0;
+                PGPFeature feature = PGPFeatureModificationUnknown;
                 [packetBody getBytes:&feature range:(NSRange){i, 1}];
                 [featuresArray addObject:@(feature)];
             }
@@ -265,7 +265,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPSignatureSubpacketTypeReasonForRevocation: {
             // 5.2.3.23.  Reason for Revocation
             NSNumber *revocationCode = self.value;
-            UInt8 revocationCodeByte = [revocationCode unsignedIntValue];
+            UInt8 revocationCodeByte = [revocationCode unsignedCharValue];
             [data appendBytes:&revocationCodeByte length:1];
         } break;
         case PGPSignatureSubpacketTypeKeyFlags: // NSArray of NSNumber PGPSignatureFlags
@@ -273,7 +273,7 @@ NS_ASSUME_NONNULL_BEGIN
             // TODO: actually it can be more than one byte (documented)
             //      so I should calculate how many bytes do I need here
             NSArray *flagsArray = self.value;
-            PGPSignatureFlags flagByte = 0;
+            PGPSignatureFlags flagByte = PGPSignatureFlagUnknown;
             for (NSNumber *flagByteNumber in flagsArray) {
                 flagByte = flagByte | ((UInt8)[flagByteNumber unsignedIntValue]);
             }
@@ -287,7 +287,7 @@ NS_ASSUME_NONNULL_BEGIN
                     continue;
                 }
 
-                PGPSymmetricAlgorithm symmetricAlgorithm = 0;
+                PGPSymmetricAlgorithm symmetricAlgorithm = PGPSymmetricPlaintext;
                 [val getValue:&symmetricAlgorithm];
 
                 [data appendBytes:&symmetricAlgorithm length:sizeof(PGPSymmetricAlgorithm)];
@@ -301,7 +301,7 @@ NS_ASSUME_NONNULL_BEGIN
                     continue;
                 }
 
-                PGPHashAlgorithm hashAlgorithm = 0;
+                PGPHashAlgorithm hashAlgorithm = PGPHashUnknown;
                 [val getValue:&hashAlgorithm];
                 [data appendBytes:&hashAlgorithm length:sizeof(PGPHashAlgorithm)];
             }
@@ -314,7 +314,7 @@ NS_ASSUME_NONNULL_BEGIN
                     continue;
                 }
 
-                PGPCompressionAlgorithm hashAlgorithm = 0;
+                PGPCompressionAlgorithm hashAlgorithm = PGPCompressionUncompressed;
                 [val getValue:&hashAlgorithm];
                 [data appendBytes:&hashAlgorithm length:sizeof(PGPCompressionAlgorithm)];
             }
@@ -323,8 +323,8 @@ NS_ASSUME_NONNULL_BEGIN
         {
             // TODO: actually it can be more than one byte (documented)
             //      so I should calculate how many bytes do I need here
-            PGPKeyServerPreferenceFlags allFlags = 0;
-            NSArray *flagsArray = (NSArray *)self.value;
+            PGPKeyServerPreferenceFlags allFlags = PGPKeyServerPreferenceUnknown;
+            let flagsArray = (NSArray<NSNumber *> *)self.value;
             for (NSNumber *flagNumber in flagsArray) {
                 PGPKeyServerPreferenceFlags flag = (PGPKeyServerPreferenceFlags)flagNumber.unsignedIntValue;
                 allFlags = allFlags | flag;
@@ -336,7 +336,7 @@ NS_ASSUME_NONNULL_BEGIN
             // TODO: actually it can be more than one byte (documented)
             //      so I should calculate how many bytes do I need here
             NSArray *flagsArray = self.value;
-            PGPFeature flagByte = 0;
+            PGPFeature flagByte = PGPFeatureModificationUnknown;
             for (NSNumber *flagByteNumber in flagsArray) {
                 flagByte = flagByte | ((UInt8)[flagByteNumber unsignedIntValue]);
             }
@@ -363,7 +363,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (PGPSignatureSubpacketHeader *)subpacketHeaderFromData:(NSData *)headerData {
     NSUInteger position = 0;
 
-    UInt8 *lengthOctets = (UInt8 *)[headerData subdataWithRange:NSMakeRange(position, fmin(5, headerData.length))].bytes;
+    const UInt8 *lengthOctets = [headerData subdataWithRange:NSMakeRange(position, MIN((NSUInteger)5, headerData.length))].bytes;
     UInt32 headerLength = 0;
     UInt32 subpacketLength = 0;
 

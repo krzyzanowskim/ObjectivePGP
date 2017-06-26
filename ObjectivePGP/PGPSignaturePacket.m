@@ -60,6 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (PGPSignaturePacket *)signaturePacket:(PGPSignatureType)type hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm {
     let signaturePacket = [[PGPSignaturePacket alloc] init];
     signaturePacket.hashAlgoritm = hashAlgorithm;
+    signaturePacket.type = type;
     return signaturePacket;
 }
 
@@ -728,7 +729,7 @@ NS_ASSUME_NONNULL_BEGIN
 // This is because subpacket length is unknow and header need to be found first
 // then subpacket can be parsed
 - (PGPSignatureSubpacket *)getSubpacketStartingAtPosition:(NSUInteger)subpacketsPosition fromData:(NSData *)subpacketsData {
-    NSRange headerRange = (NSRange){subpacketsPosition, fmin(6, subpacketsData.length - subpacketsPosition)}; // up to 5+1 octets
+    NSRange headerRange = (NSRange){subpacketsPosition, MIN((NSUInteger)6, subpacketsData.length - subpacketsPosition)}; // up to 5+1 octets
     NSData *guessHeaderData = [subpacketsData subdataWithRange:headerRange]; // this is "may be" header to be parsed
     PGPSignatureSubpacketHeader *subpacketHeader = [PGPSignatureSubpacket subpacketHeaderFromData:guessHeaderData];
 

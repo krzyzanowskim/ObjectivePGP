@@ -143,7 +143,7 @@ NS_ASSUME_NONNULL_BEGIN
         // This only worked as verify wasn't implemented correctly
         // TODO: find a better solution
         //
-        //        // (this is craziest think I ever seen today)
+        //        // (this is the craziest thing I ever seen today)
         //        NSError *error;
         //        [signature verifyData:nil withKey:key signingKeyPacket:(PGPPublicKeyPacket *)key.primaryKeyPacket userID:self.userID error:&error];
         //        //BOOL status = [signature verifyData:nil withKey:key signingKeyPacket:(PGPPublicKeyPacket *)key.primaryKeyPacket userID:self.userID error:&error];

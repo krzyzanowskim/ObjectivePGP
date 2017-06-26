@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, getter=isEncrypted) BOOL encrypted;
 
 - (BOOL)encrypt:(PGPPublicKeyPacket *)publicKeyPacket sessionKeyData:(NSData *)sessionKeyData sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm error:(NSError *__autoreleasing *)error;
-- (NSData *)decryptSessionKeyData:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm *)sessionKeyAlgorithm error:(NSError *__autoreleasing *)error;
+- (nullable NSData *)decryptSessionKeyData:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm *)sessionKeyAlgorithm error:(NSError *__autoreleasing *)error;
 
 @end
 

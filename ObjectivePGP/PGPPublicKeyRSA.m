@@ -23,10 +23,12 @@
 #import <openssl/bn.h>
 #import <openssl/rsa.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @implementation PGPPublicKeyRSA
 
 // encrypts the bytes
-+ (NSData *)publicEncrypt:(NSData *)toEncrypt withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket {
++ (nullable NSData *)publicEncrypt:(NSData *)toEncrypt withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket {
     RSA *rsa = RSA_new();
     if (!rsa) {
         return nil;
@@ -67,7 +69,7 @@
 }
 
 // decrypt bytes
-+ (NSData *)privateDecrypt:(NSData *)toDecrypt withSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket {
++ (nullable NSData *)privateDecrypt:(NSData *)toDecrypt withSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket {
     RSA *rsa = RSA_new();
     if (!rsa) {
         return nil;
@@ -124,7 +126,7 @@
 }
 
 // sign
-+ (NSData *)privateEncrypt:(NSData *)toEncrypt withSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket {
++ (nullable NSData *)privateEncrypt:(NSData *)toEncrypt withSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket {
     let rsa = RSA_new();
     if (!rsa) {
         return nil;
@@ -186,7 +188,7 @@
 }
 
 // recovers the message digest
-+ (NSData *)publicDecrypt:(NSData *)toDecrypt withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket {
++ (nullable NSData *)publicDecrypt:(NSData *)toDecrypt withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket {
     RSA *rsa = RSA_new();
     if (!rsa) {
         return nil;
@@ -228,3 +230,5 @@
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

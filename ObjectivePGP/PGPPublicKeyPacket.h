@@ -13,9 +13,11 @@
 #import "PGPTypes.h"
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class PGPMPI;
 
-@interface PGPPublicKeyPacket : PGPPacket <NSCopying>
+@interface PGPPublicKeyPacket : PGPPacket <NSCopying, PGPExportable>
 
 @property (nonatomic, readonly) UInt8 version;
 @property (nonatomic, readonly) NSDate *createDate;
@@ -28,12 +30,12 @@
 @property (nonatomic, readonly) PGPFingerprint *fingerprint;
 @property (nonatomic, readonly) PGPKeyID *keyID;
 
-- (NSData *)export:(NSError *__autoreleasing *)error;
 - (NSData *)exportPublicPacketOldStyle;
-
 - (NSData *)buildPublicKeyBodyData:(BOOL)forceV4;
 
-- (PGPMPI *)publicMPI:(NSString *)identifier;
+- (nullable PGPMPI *)publicMPI:(NSString *)identifier;
 - (NSData *)encryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm;
 
 @end
+
+NS_ASSUME_NONNULL_END

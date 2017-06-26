@@ -59,7 +59,7 @@
     return (self.s2kUsage == PGPS2KUsageEncrypted || self.s2kUsage == PGPS2KUsageEncryptedAndHashed);
 }
 
-- (PGPMPI *)secretMPI:(NSString *)identifier {
+- (nullable PGPMPI *)secretMPI:(NSString *)identifier {
     for (PGPMPI *mpi in self.secretMPIArray) {
         if ([mpi.identifier isEqual:identifier]) {
             return mpi;
@@ -73,7 +73,7 @@
     return [super fingerprint];
 }
 
-- (nullable NSData *)export:(NSError *__autoreleasing *)error {
+- (nullable NSData *)export:(NSError *__autoreleasing _Nullable *)error {
     NSMutableData *data = [NSMutableData data];
     NSData *publicKeyData = [super buildPublicKeyBodyData:YES];
 

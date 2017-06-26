@@ -51,12 +51,12 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Search
 
 - (NSArray<PGPKey *> *)findKeysForUserID:(nonnull NSString *)userID {
-    return [[self.keys objectsPassingTest:^BOOL(PGPKey *key, BOOL *stop1) {
-        let a = key.publicKey ? [key.publicKey.users indexOfObjectPassingTest:^BOOL(PGPUser *user, NSUInteger idx, BOOL *stop2) {
+    return [[self.keys objectsPassingTest:^BOOL(PGPKey *key, __unused BOOL *stop1) {
+        let a = key.publicKey ? [key.publicKey.users indexOfObjectPassingTest:^BOOL(PGPUser *user, __unused NSUInteger idx, __unused BOOL *stop2) {
             return [userID isEqual:user.userID];
         }] : NSNotFound;
 
-        let b = key.secretKey ? [key.secretKey.users indexOfObjectPassingTest:^BOOL(PGPUser *user, NSUInteger idx, BOOL *stop3) {
+        let b = key.secretKey ? [key.secretKey.users indexOfObjectPassingTest:^BOOL(PGPUser *user, __unused NSUInteger idx, __unused BOOL *stop2) {
             return [userID isEqual:user.userID];
         }] : NSNotFound;
 
@@ -76,18 +76,16 @@ NS_ASSUME_NONNULL_BEGIN
 
         // subkeys
         if (!found && key.publicKey.subKeys.count > 0) {
-            found = [key.publicKey.subKeys indexOfObjectPassingTest:^BOOL(PGPSubKey *subkey, NSUInteger idx, BOOL *stop2) {
-                        let subFound = [subkey.keyID isEqual:searchKeyID];
-                        *stop2 = subFound;
-                        return subFound;
+            found = [key.publicKey.subKeys indexOfObjectPassingTest:^BOOL(PGPSubKey *subkey, __unused NSUInteger idx, BOOL *stop2) {
+                        *stop2 = [subkey.keyID isEqual:searchKeyID];
+                        return *stop2;
                     }] != NSNotFound;
         }
 
         if (!found && key.secretKey.subKeys.count > 0) {
-            found = [key.secretKey.subKeys indexOfObjectPassingTest:^BOOL(PGPSubKey *subkey, NSUInteger idx, BOOL *stop2) {
-                        let subFound = [subkey.keyID isEqual:searchKeyID];
-                        *stop2 = subFound;
-                        return subFound;
+            found = [key.secretKey.subKeys indexOfObjectPassingTest:^BOOL(PGPSubKey *subkey, __unused NSUInteger idx, BOOL *stop2) {
+                        *stop2 = [subkey.keyID isEqual:searchKeyID];
+                        return *stop2;
                     }] != NSNotFound;
         }
 
@@ -697,12 +695,8 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     let foundKey = [[loadedKeys objectsPassingTest:^BOOL(PGPKey *key, BOOL *stop) {
-        let condition = [key.publicKey.keyID.shortKeyString.uppercaseString isEqualToString:shortKeyStringIdentifier.uppercaseString] || [key.secretKey.keyID.shortKeyString.uppercaseString isEqualToString:shortKeyStringIdentifier.uppercaseString];
-
-        if (condition) {
-            *stop = YES;
-        }
-        return condition;
+        *stop = [key.publicKey.keyID.shortKeyString.uppercaseString isEqualToString:shortKeyStringIdentifier.uppercaseString] || [key.secretKey.keyID.shortKeyString.uppercaseString isEqualToString:shortKeyStringIdentifier.uppercaseString];
+        return *stop;
 
     }] anyObject];
 
@@ -782,7 +776,8 @@ NS_ASSUME_NONNULL_BEGIN
     NSMutableSet *updatedContainer = [NSMutableSet<PGPKey *> setWithSet:compoundKeys];
 
     let foundCompoundKey = [[compoundKeys objectsPassingTest:^BOOL(PGPKey *obj, BOOL *stop) {
-        return [obj.publicKey.keyID isEqual:key.keyID] || [obj.secretKey.keyID isEqual:key.keyID];
+        *stop = [obj.publicKey.keyID isEqual:key.keyID] || [obj.secretKey.keyID isEqual:key.keyID];
+        return *stop;
     }] anyObject];
 
     if (!foundCompoundKey) {
@@ -847,7 +842,7 @@ NS_ASSUME_NONNULL_BEGIN
         NSMutableArray *extractedBlocks = [[NSMutableArray alloc] init];
         NSRegularExpression *regex = [[NSRegularExpression alloc] initWithPattern:@"(-----)(BEGIN|END)[ ](PGP)[A-Z ]*(-----)" options:NSRegularExpressionDotMatchesLineSeparators error:nil];
         __block NSInteger offset = 0;
-        [regex enumerateMatchesInString:armoredString options:0 range:NSMakeRange(0, armoredString.length) usingBlock:^(NSTextCheckingResult *_Nullable result, NSMatchingFlags flags, BOOL *stop) {
+        [regex enumerateMatchesInString:armoredString options:NSMatchingReportCompletion range:NSMakeRange(0, armoredString.length) usingBlock:^(NSTextCheckingResult *_Nullable result, __unused NSMatchingFlags flags, __unused BOOL *stop) {
             NSString *substring = [armoredString substringWithRange:result.range];
             if ([substring containsString:@"END"]) {
                 NSInteger endIndex = result.range.location + result.range.length;

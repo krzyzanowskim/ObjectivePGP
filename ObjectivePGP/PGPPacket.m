@@ -132,7 +132,7 @@ NS_ASSUME_NONNULL_BEGIN
     UInt8 headerByte = 0;
     [headerData getBytes:&headerByte length:1];
     // Bits 5-0 -- packet tag
-    UInt8 packetTag = (headerByte << 2);
+    UInt8 packetTag = (UInt8)(headerByte << 2);
     packetTag = (packetTag >> 2);
     *tag = packetTag;
 
@@ -141,7 +141,7 @@ NS_ASSUME_NONNULL_BEGIN
     UInt32 bodyLength = 0;
     UInt32 headerLength = 2;
 
-    UInt8 *lengthOctets = (UInt8 *)[headerData subdataWithRange:NSMakeRange(1, fmin(5, headerData.length))].bytes;
+    const UInt8 *lengthOctets = [headerData subdataWithRange:(NSRange){1, MIN((NSUInteger)5, headerData.length)}].bytes;
     UInt8 firstOctet = lengthOctets[0];
 
     if (lengthOctets[0] < 192) {
@@ -182,11 +182,11 @@ NS_ASSUME_NONNULL_BEGIN
     UInt8 headerByte = 0;
     [headerData getBytes:&headerByte length:1];
     //  Bits 5-2 -- packet tag
-    UInt8 packetTag = (headerByte << 2);
+    UInt8 packetTag = (UInt8)(headerByte << 2);
     packetTag = (packetTag >> 4);
     *tag = packetTag;
     //  Bits 1-0 -- length-type
-    UInt8 bodyLengthType = (headerByte << 6);
+    UInt8 bodyLengthType = (UInt8)(headerByte << 6);
     bodyLengthType = bodyLengthType >> 6;
 
     UInt32 headerLength = 1;
@@ -247,7 +247,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 + (NSData *)buildNewFormatLengthDataForData:(NSData *)bodyData {
-    NSMutableData *data = [NSMutableData data];
+    let data = [NSMutableData data];
     // write length octets
     UInt64 bodyLength = bodyData.length;
     if (bodyLength < 192) {
@@ -256,7 +256,7 @@ NS_ASSUME_NONNULL_BEGIN
     } else if (bodyLength >= 192 && bodyLength <= 8383) {
         // 2 octet
         UInt8 buf[2] = {0, 0};
-        UInt16 twoOctets = bodyLength;
+        UInt16 twoOctets = (UInt16)bodyLength;
         buf[0] = (UInt8)((twoOctets - 192) >> 8) + 192;
         buf[1] = (UInt8)(twoOctets - 192);
         [data appendBytes:buf length:2];
@@ -271,7 +271,7 @@ NS_ASSUME_NONNULL_BEGIN
         buf[4] = (UInt8)(fiveOctets);
         [data appendBytes:buf length:5];
     }
-    return [data copy];
+    return data;
 }
 
 #pragma mark - NSCopying

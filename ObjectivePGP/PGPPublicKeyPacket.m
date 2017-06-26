@@ -18,6 +18,8 @@
 
 #import <objc/runtime.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface PGPPacket ()
 @property (copy, readwrite) NSData *headerData;
 @property (copy, readwrite) NSData *bodyData;
@@ -40,29 +42,22 @@
 }
 
 - (NSUInteger)keySize {
-    __block NSUInteger ks = 0;
-    [self.publicMPIArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        PGPMPI *mpi = obj;
+    for (PGPMPI *mpi in self.publicMPIArray) {
         if ([mpi.identifier isEqualToString:@"N"]) {
-            ks = (mpi.bigNum.bitsCount + 7) / 8;
-            // BN_num_bytes(rsa->n)
-            *stop = YES;
+            return (mpi.bigNum.bitsCount + 7) / 8; // ks
         }
-    }];
-    return ks;
+    }
+    return 0;
 }
 
-- (PGPMPI *)publicMPI:(NSString *)identifier {
-    __block PGPMPI *returnMPI = nil;
-    [self.publicMPIArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
-        PGPMPI *mpi = obj;
+- (nullable PGPMPI *)publicMPI:(NSString *)identifier {
+    for (PGPMPI *mpi in self.publicMPIArray) {
         if ([mpi.identifier isEqualToString:identifier]) {
-            returnMPI = mpi;
-            *stop = YES;
+            return mpi;
         }
-    }];
+    }
 
-    return returnMPI;
+    return nil;
 }
 
 #pragma mark - KeyID and Fingerprint
@@ -189,32 +184,6 @@
     return position;
 }
 
-#pragma mark - Export data
-
-/**
- *  Packet data. Header with body data.
- *
- *  @param error error
- *
- *  @return data
- */
-- (nullable NSData *)export:(NSError *__autoreleasing *)error {
-    NSMutableData *data = [NSMutableData data];
-
-    NSData *bodyData = [self buildPublicKeyBodyData:NO];
-    NSData *headerData = [self buildHeaderData:bodyData];
-    [data appendData:headerData];
-    [data appendData:bodyData];
-
-    // it wont match, because input data is OLD world, and we export in NEW world format
-    // NSAssert([headerData isEqualToData:self.headerData], @"Header not match");
-    if ([self class] == [PGPPublicKeyPacket class]) {
-        NSAssert([bodyData isEqualToData:self.bodyData], @"Body not match");
-    }
-
-    return [data copy];
-}
-
 /**
  *  Build new style public key data
  *
@@ -249,10 +218,10 @@
 
 // Old-style packet header for a key packet with two-octet length.
 // Old but used by fingerprint and with signing
-- (nullable NSData *)exportPublicPacketOldStyle {
-    NSMutableData *data = [NSMutableData data];
+- (NSData *)exportPublicPacketOldStyle {
+    let data = [NSMutableData data];
 
-    NSData *publicKeyData = [self buildPublicKeyBodyData:NO];
+    let publicKeyData = [self buildPublicKeyBodyData:NO];
 
     NSUInteger length = publicKeyData.length;
     UInt8 upper = (UInt8)(length >> 8);
@@ -260,7 +229,33 @@
     UInt8 headWithLength[3] = {0x99, upper, lower};
     [data appendBytes:&headWithLength length:3];
     [data appendData:publicKeyData];
-    return [data copy];
+    return data;
+}
+
+#pragma mark - PGPExportable
+
+/**
+ *  Packet data. Header with body data.
+ *
+ *  @param error error
+ *
+ *  @return data
+ */
+- (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
+    let data = [NSMutableData data];
+
+    NSData *bodyData = [self buildPublicKeyBodyData:NO];
+    NSData *headerData = [self buildHeaderData:bodyData];
+    [data appendData:headerData];
+    [data appendData:bodyData];
+
+    // it wont match, because input data is OLD world, and we export in NEW world format
+    // NSAssert([headerData isEqualToData:self.headerData], @"Header not match");
+    if ([self class] == [PGPPublicKeyPacket class]) {
+        NSAssert([bodyData isEqualToData:self.bodyData], @"Body not match");
+    }
+
+    return data;
 }
 
 #pragma mark - Encrypt & Decrypt
@@ -283,7 +278,7 @@
 
 #pragma mark - NSCopying
 
-- (id)copyWithZone:(NSZone *)zone {
+- (id)copyWithZone:(nullable NSZone *)zone {
     PGPPublicKeyPacket *copy = (PGPPublicKeyPacket *)[super copyWithZone:zone];
     copy->_version = self.version;
     copy->_createDate = self.createDate;
@@ -296,3 +291,5 @@
 }
 
 @end
+
+NS_ASSUME_NONNULL_END
