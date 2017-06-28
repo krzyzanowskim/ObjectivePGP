@@ -1,0 +1,4 @@
+framework module ObjectivePGP {
+  header "ObjectivePGP.h"
+  export *
+}

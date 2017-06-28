@@ -1,7 +1,0 @@
-framework module ObjectivePGP {
-  header "ObjectivePGP.h"
-  header "PGPFoundation.h"
-  header "PGPKey.h"
-  header "PGPTypes.h"
-  export *
-}
