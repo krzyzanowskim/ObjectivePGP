@@ -23,13 +23,9 @@
 		753B05431EF3E05200785EBC /* issue62-message.asc in Resources */ = {isa = PBXBuildFile; fileRef = 753B05421EF3E03800785EBC /* issue62-message.asc */; };
 		754351871ED268B400896236 /* PGPCryptoHash.m in Sources */ = {isa = PBXBuildFile; fileRef = 754351861ED268B400896236 /* PGPCryptoHash.m */; };
 		7547A6C01F006907002C2145 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7547A6BF1F0068FB002C2145 /* Security.framework */; };
-		7547A6C41F0075B2002C2145 /* libObjectivePGP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B51914DE1A00C5AD3B /* libObjectivePGP.a */; };
-		7547A6C51F0078C5002C2145 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7547A6BF1F0068FB002C2145 /* Security.framework */; };
 		7547A6C81F007EF6002C2145 /* PGPBigNum.h in Headers */ = {isa = PBXBuildFile; fileRef = 7547A6C61F007EF6002C2145 /* PGPBigNum.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7547A6C91F007EF6002C2145 /* PGPBigNum.m in Sources */ = {isa = PBXBuildFile; fileRef = 7547A6C71F007EF6002C2145 /* PGPBigNum.m */; };
 		7547A6CB1F0080D4002C2145 /* PGPBigNum+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 7547A6CA1F0080CF002C2145 /* PGPBigNum+Private.h */; };
-		7547A6CD1F00842A002C2145 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7547A6CC1F00842A002C2145 /* libbz2.tbd */; };
-		7547A6CF1F008437002C2145 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7547A6CE1F008437002C2145 /* libz.tbd */; };
 		7547A6D11F0085E8002C2145 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7547A6D01F0085E8002C2145 /* Security.framework */; };
 		755456C0192843E700E5526B /* PGPArmor.m in Sources */ = {isa = PBXBuildFile; fileRef = 755456BF192843E700E5526B /* PGPArmor.m */; };
 		7562858E19239F1B00127E24 /* PGPFingerprint.m in Sources */ = {isa = PBXBuildFile; fileRef = 7562858D19239F1B00127E24 /* PGPFingerprint.m */; };
@@ -104,7 +100,6 @@
 		7597B79C192E9C7F003ABC65 /* PGPPKCSEmsa.m in Sources */ = {isa = PBXBuildFile; fileRef = 7597B79B192E9C7F003ABC65 /* PGPPKCSEmsa.m */; };
 		759DBA141915B5BD00305549 /* NSData+PGPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 759DBA131915B5BD00305549 /* NSData+PGPUtils.m */; };
 		759DBA181915CBDF00305549 /* PGPMPI.m in Sources */ = {isa = PBXBuildFile; fileRef = 759DBA171915CBDF00305549 /* PGPMPI.m */; };
-		759FF46919598227005B240C /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 759FF46819598227005B240C /* main.m */; };
 		75A2F7EA1EF84FC400C14BEB /* ObjectivePGP+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 75A2F7E91EF84FC400C14BEB /* ObjectivePGP+Private.h */; };
 		75A5C154193CE3F6008A2543 /* NSData+compression.m in Sources */ = {isa = PBXBuildFile; fileRef = 75A5C153193CE3F6008A2543 /* NSData+compression.m */; };
 		75AE7E261941C567004DD6A5 /* PGPPublicKeyEncryptedSessionKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AE7E251941C567004DD6A5 /* PGPPublicKeyEncryptedSessionKeyPacket.m */; };
@@ -128,13 +123,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		7547A6C21F0073B2002C2145 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 756299AD1914DE1A00C5AD3B /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 756299B41914DE1A00C5AD3B;
-			remoteInfo = ObjectivePGP;
-		};
 		756299CB1914DE1A00C5AD3B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 756299AD1914DE1A00C5AD3B /* Project object */;
@@ -143,18 +131,6 @@
 			remoteInfo = ObjectivePGP;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		759FF46419598227005B240C /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		750016A819C22E7100EAF308 /* secring-test-plaintext-encrypted-message.asc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "secring-test-plaintext-encrypted-message.asc"; sourceTree = "<group>"; };
@@ -239,8 +215,6 @@
 		759DBA151915BC0400305549 /* PGPTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPTypes.h; sourceTree = "<group>"; };
 		759DBA161915CBDF00305549 /* PGPMPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPMPI.h; sourceTree = "<group>"; };
 		759DBA171915CBDF00305549 /* PGPMPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPMPI.m; sourceTree = "<group>"; };
-		759FF46619598227005B240C /* opgp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = opgp; sourceTree = BUILT_PRODUCTS_DIR; };
-		759FF46819598227005B240C /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		75A2F7E91EF84FC400C14BEB /* ObjectivePGP+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ObjectivePGP+Private.h"; sourceTree = "<group>"; };
 		75A5C152193CE3F6008A2543 /* NSData+compression.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+compression.h"; sourceTree = "<group>"; };
 		75A5C153193CE3F6008A2543 /* NSData+compression.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+compression.m"; sourceTree = "<group>"; };
@@ -305,17 +279,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		759FF46319598227005B240C /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				7547A6CF1F008437002C2145 /* libz.tbd in Frameworks */,
-				7547A6CD1F00842A002C2145 /* libbz2.tbd in Frameworks */,
-				7547A6C51F0078C5002C2145 /* Security.framework in Frameworks */,
-				7547A6C41F0075B2002C2145 /* libObjectivePGP.a in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -348,7 +311,6 @@
 				75BAFAC31F004E6000A956FC /* Config */,
 				756299BA1914DE1A00C5AD3B /* ObjectivePGP */,
 				756299CE1914DE1A00C5AD3B /* ObjectivePGPTests */,
-				759FF46719598227005B240C /* opgp */,
 				756299B71914DE1A00C5AD3B /* Frameworks */,
 				756299B61914DE1A00C5AD3B /* Products */,
 			);
@@ -359,7 +321,6 @@
 			children = (
 				756299B51914DE1A00C5AD3B /* libObjectivePGP.a */,
 				756299C51914DE1A00C5AD3B /* ObjectivePGPTests.xctest */,
-				759FF46619598227005B240C /* opgp */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -477,14 +438,6 @@
 				753B05421EF3E03800785EBC /* issue62-message.asc */,
 			);
 			path = TestingFiles;
-			sourceTree = "<group>";
-		};
-		759FF46719598227005B240C /* opgp */ = {
-			isa = PBXGroup;
-			children = (
-				759FF46819598227005B240C /* main.m */,
-			);
-			path = opgp;
 			sourceTree = "<group>";
 		};
 		75BAFAC31F004E6000A956FC /* Config */ = {
@@ -648,24 +601,6 @@
 			productReference = 756299C51914DE1A00C5AD3B /* ObjectivePGPTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		759FF46519598227005B240C /* opgp */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 759FF46A19598227005B240C /* Build configuration list for PBXNativeTarget "opgp" */;
-			buildPhases = (
-				759FF46219598227005B240C /* Sources */,
-				759FF46319598227005B240C /* Frameworks */,
-				759FF46419598227005B240C /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				7547A6C31F0073B2002C2145 /* PBXTargetDependency */,
-			);
-			name = opgp;
-			productName = opgp;
-			productReference = 759FF46619598227005B240C /* opgp */;
-			productType = "com.apple.product-type.tool";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -675,11 +610,6 @@
 				CLASSPREFIX = PGP;
 				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = "Marcin Krzyżanowski";
-				TargetAttributes = {
-					759FF46519598227005B240C = {
-						CreatedOnToolsVersion = 6.0;
-					};
-				};
 			};
 			buildConfigurationList = 756299B01914DE1A00C5AD3B /* Build configuration list for PBXProject "ObjectivePGP" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -695,7 +625,6 @@
 			targets = (
 				756299B41914DE1A00C5AD3B /* ObjectivePGP */,
 				756299C41914DE1A00C5AD3B /* ObjectivePGPTests */,
-				759FF46519598227005B240C /* opgp */,
 			);
 		};
 /* End PBXProject section */
@@ -784,22 +713,9 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		759FF46219598227005B240C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				759FF46919598227005B240C /* main.m in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		7547A6C31F0073B2002C2145 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 756299B41914DE1A00C5AD3B /* ObjectivePGP */;
-			targetProxy = 7547A6C21F0073B2002C2145 /* PBXContainerItemProxy */;
-		};
 		756299CC1914DE1A00C5AD3B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 756299B41914DE1A00C5AD3B /* ObjectivePGP */;
@@ -891,32 +807,6 @@
 			};
 			name = Release;
 		};
-		759FF46B19598227005B240C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				METAL_ENABLE_DEBUG_INFO = YES;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Debug;
-		};
-		759FF46C19598227005B240C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				METAL_ENABLE_DEBUG_INFO = NO;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -943,15 +833,6 @@
 			buildConfigurations = (
 				756299DC1914DE1A00C5AD3B /* Debug */,
 				756299DD1914DE1A00C5AD3B /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		759FF46A19598227005B240C /* Build configuration list for PBXNativeTarget "opgp" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				759FF46B19598227005B240C /* Debug */,
-				759FF46C19598227005B240C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
