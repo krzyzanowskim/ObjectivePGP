@@ -29,6 +29,7 @@
       enableAddressSanitizer = "YES"
       enableASanStackUseAfterReturn = "YES"
       enableUBSanitizer = "YES"
+      disableMainThreadChecker = "YES"
       language = ""
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>

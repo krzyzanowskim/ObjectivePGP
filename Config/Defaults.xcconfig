@@ -20,13 +20,6 @@ LIBRARY_SEARCH_PATHS[sdk=iphoneos*] = $(SRCROOT)/libs/ios
 LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*] = $(SRCROOT)/libs/ios
 LIBRARY_SEARCH_PATHS[sdk=macosx*] = $(SRCROOT)/libs/macosx
 
-// Prelink OpenSSL crypto library
-PRELINK_LIBS[sdk=iphoneos*] = $(SRCROOT)/libs/ios/libcrypto.a
-PRELINK_LIBS[sdk=iphonesimulator*] = $(SRCROOT)/libs/ios/libcrypto.a
-PRELINK_LIBS[sdk=macosx*] = $(SRCROOT)/libs/macosx/libcrypto.a
-
-GENERATE_MASTER_OBJECT_FILE = YES
-
 // We do not need to codesign tests for the simulator - disabling speeds up test compile (sign) time.
 CODE_SIGN_IDENTITY = iOS Developer
 CODE_SIGN_IDENTITY[sdk=iphoneos*] =
@@ -37,13 +30,27 @@ CODE_SIGN_IDENTITY[sdk=macosx*] =
 DEBUG_INFORMATION_FORMAT = dwarf;
 //DEBUG_INFORMATION_FORMAT = dwarf-with-dsym;
 
+// :MARK: Linking
+// :MARK: -Prelink
+// Prelink OpenSSL crypto library
+PRELINK_LIBS[sdk=iphoneos*] = $(SRCROOT)/libs/ios/libcrypto.a
+PRELINK_LIBS[sdk=iphonesimulator*] = $(SRCROOT)/libs/ios/libcrypto.a
+PRELINK_LIBS[sdk=macosx*] = $(SRCROOT)/libs/macosx/libcrypto.a
+
+// Single-Object Prelink. This causes ld to be run with the "-r" flag.
+GENERATE_MASTER_OBJECT_FILE = YES
+
+// :MARK: -Hide symbols
+// Do not export linked symbols
+UNEXPORTED_SYMBOLS_FILE[sdk=iphoneos*] = $(SRCROOT)/libs/ios/symbols
+UNEXPORTED_SYMBOLS_FILE[sdk=iphonesimulator*] = $(SRCROOT)/libs/ios/symbols
+UNEXPORTED_SYMBOLS_FILE[sdk=macosx*] = $(SRCROOT)/libs/macosx/symbols
+
 // :MARK: General Project Setup:
 // :MARK: -Toolchain
 // Universal Objective-C iOS Project
 SDKROOT = iphoneos
-// GCC_C_LANGUAGE_STANDARD = gnu11
 
-//CLANG_CXX_LIBRARY = libc++
 OTHER_LDFLAGS = -ObjC -all_load -lbz2 -lz
 ONLY_ACTIVE_ARCH = YES
 
@@ -73,13 +80,12 @@ SEPARATE_STRIP = NO
 DEAD_CODE_STRIPPING = NO
 STRIP_STYLE = debugging
 
-// ccache tweaks
-CLANG_ENABLE_MODULES = NO
+CLANG_ENABLE_MODULES = YES
+MODULEMAP_FILE = $(SRCROOT)/objectivepgp.modulemap
+
+
 GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES
 GCC_PRECOMPILE_PREFIX_HEADER = NO
-//CC=/cc/variable/is/not/set/in/your/xcodeproj
-// CC is set in each .xcodeproj because the path is relative to something else all the time.
-// So we set it to something that will fail here.
 
 // ARC is default
 CLANG_ENABLE_OBJC_ARC = YES
