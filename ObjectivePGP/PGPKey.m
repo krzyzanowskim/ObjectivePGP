@@ -27,6 +27,14 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
+- (BOOL)isSecret {
+    return self.secretKey != nil;
+}
+
+- (BOOL)isPublic {
+    return self.publicKey != nil;
+}
+
 - (NSString *)description {
     return [NSString stringWithFormat:@"%@, publicKey: %@, secretKey: %@", super.description, self.publicKey.keyID, self.secretKey.keyID];
 }

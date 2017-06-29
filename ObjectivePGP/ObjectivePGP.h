@@ -101,7 +101,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param userID A string based identifier (usually name with the e-mail address).
  @return Array of found keys, or empty array if not found.
  */
-- (NSArray<PGPKey *> *)findKeysForUserID:(NSString *)userID;
+- (NSSet<PGPKey *> *)findKeysForUserID:(NSString *)userID;
 
 /**
  Sign data using a key.
@@ -133,6 +133,7 @@ NS_ASSUME_NONNULL_BEGIN
  @return YES on success.
  */
 - (BOOL)verifyData:(NSData *)signedData withSignature:(NSData *)signatureData error:(NSError *__autoreleasing _Nullable *)error;
+
 /**
  Verify signed data using given key.
 

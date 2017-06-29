@@ -19,7 +19,7 @@ pod 'ObjectivePGP'
 
 ## Contribution
 
-You are welcome to contribute. Please create Pull Request against `develop` branch.
+You are welcome to contribute. Please create [Pull Request](https://github.com/krzyzanowskim/ObjectivePGP/pulls) against `develop` branch.
 
 ## The license
 

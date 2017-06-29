@@ -50,8 +50,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Search
 
-- (NSArray<PGPKey *> *)findKeysForUserID:(nonnull NSString *)userID {
-    return [[self.keys objectsPassingTest:^BOOL(PGPKey *key, __unused BOOL *stop1) {
+- (NSSet<PGPKey *> *)findKeysForUserID:(nonnull NSString *)userID {
+    return [self.keys objectsPassingTest:^BOOL(PGPKey *key, __unused BOOL *stop1) {
         let a = key.publicKey ? [key.publicKey.users indexOfObjectPassingTest:^BOOL(PGPUser *user, __unused NSUInteger idx, __unused BOOL *stop2) {
             return [userID isEqual:user.userID];
         }] : NSNotFound;
@@ -61,7 +61,7 @@ NS_ASSUME_NONNULL_BEGIN
         }] : NSNotFound;
 
         return (a != NSNotFound) || (b != NSNotFound);
-    }] allObjects];
+    }];
 }
 
 - (nullable PGPKey *)findKeyForKeyID:(PGPKeyID *)searchKeyID {
