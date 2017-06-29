@@ -89,4 +89,4 @@ create_framework "${IPHONE_UNIVERSAL_FRAMEWORK_DIR}" \
 rm "${IPHONE_UNIVERSAL_LIB_DIR}/${EXECUTABLE_NAME}"
 
 # copy macos framework
-ditto "${BUILD_DIR}/${CONFIGURATION}/${TARGET_NAME}.framework" "${PGP_FRAMEWORKS_DIR}/macOS/${TARGET_NAME}.framework"
+ditto "${BUILD_DIR}/${CONFIGURATION}/${TARGET_NAME}.framework" "${PGP_FRAMEWORKS_DIR}/macosx/${TARGET_NAME}.framework"
