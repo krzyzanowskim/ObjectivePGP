@@ -1,13 +1,13 @@
-![objectivepgp](https://user-images.githubusercontent.com/758033/27696426-dd30e98a-5cf1-11e7-9533-bc2ecc7b8e9b.png)
+![objectivepgp](https://user-images.githubusercontent.com/758033/27697465-a355ca34-5cf4-11e7-9470-ee1ee98eedd9.png)
 
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/ObjectivePGP.svg)](https://cocoapods.org/pods/ObjectivePGP)
 [![Platform](https://img.shields.io/cocoapods/p/ObjectivePGP.svg?style=flat)](http://cocoadocs.org/docsets/ObjectivePGP)
 [![Twitter](https://img.shields.io/badge/twitter-@krzyzanowskim-blue.svg?style=flat)](http://twitter.com/krzyzanowskim)
 
 
-Objective PGP is an [OpenPGP](https://en.wikipedia.org/wiki/Pretty_Good_Privacy#OpenPGP) implementation for iOS and macOS.
+**ObjectivePGP** is an implementation of [OpenPGP](https://en.wikipedia.org/wiki/Pretty_Good_Privacy#OpenPGP) protocol for iOS and macOS. OpenPGP is the most widely used email encryption standard. It is defined by the OpenPGP Working Group of the Internet Engineering Task Force (IETF).
 
-See [blog post](http://blog.krzyzanowskim.com/2014/07/31/short-story-about-openpgp-for-ios-and-os-x-objectivepgp/) for full story.
+Here is the [blog post](http://blog.krzyzanowskim.com/2014/07/31/short-story-about-openpgp-for-ios-and-os-x-objectivepgp/) story.
 
 ## Installation
 
@@ -18,15 +18,15 @@ See [blog post](http://blog.krzyzanowskim.com/2014/07/31/short-story-about-openp
 ## Contribution
 
 You are welcome to contribute. Current version can be found on branch `master`. 
-If you want fix the bug, please create Pull Request against `develop` branch.
+If you want to fix the bug, please create Pull Request against `develop` branch.
 
-## The licence
+## The license
 
-Free for non-commercial use, covered by a standard 2-clause BSD license. That means you have to mention Marcin Krzyżanowski as the original author of this code and reproduce the LICENSE text inside your app.
+The ObjectivePGP stays under a dual license:
 
-You can purchase commercial and non-attribution-license for not having to include the LICENSE text. 
+- Free for non-commercial use, covered by the standard 2-clause BSD license. That means you have to mention Marcin Krzyżanowski as the original author of this code and reproduce the [LICENSE](./LICENSE.txt) text inside your app.
 
-Please contact me via email for inquiries.
+- Commercial-use license to use in commercial products. Please bear in mind that some free products remain commercial products. Please contact me via [email](http://www.krzyzanowskim.com) for details. 
 
 ## Usage
 
@@ -59,18 +59,18 @@ Please contact me via email for inquiries.
 ##### Export keys (private or public)
 
 	/* export all public keys to file */
-      NSError *error;
+    NSError *error;
 	BOOL result = [pgp exportKeysOfType:PGPPartialKeyPublic toFile:@"pubring.gpg" error:&error];
 	if (result) {
 		// success
 	}
 	
 	PGPKey *myPublicKey = [self.oPGP getKeyForIdentifier:@"979E4B03DFFE30C6"];
-      if (myPublicKey.publicKey) {
-    	  /* export public key and save as armored (ASCII) file */
-    	  NSData *armoredKeyData = [pgp exportKey:myPublicKey armored:YES];
-    	  [armoredKeyData writeToFile:@"pubkey.asc" atomically:YES];
-      }
+    if (myPublicKey.publicKey) {
+    	/* export public key and save as armored (ASCII) file */
+  		NSData *armoredKeyData = [pgp exportKey:myPublicKey armored:YES];
+    	[armoredKeyData writeToFile:@"pubkey.asc" atomically:YES];
+    }
 
 ##### Sign data (or file)
 
@@ -127,21 +127,19 @@ Please contact me via email for inquiries.
 
 ## Changelog
 
-See [CHANGELOG](./CHANGELOG) file.
+See [CHANGELOG](./CHANGELOG)
 
-Known limitations
+Known limitations:
 
 - Embedded signatures are not supported.
 - ZIP compression not fully supported.
 - Blowfish, Twofish and Elgamal are not supported.
-- No external configuration for default values.
+- Missing external configuration for default values.
 
 ### Acknowledgment
 
-This product uses software developed by the OpenSSL Project for use in the OpenSSL Toolkit. (http://www.openssl.org/)
+This product uses software developed by the [OpenSSL](http://www.openssl.org/) Project for use in the OpenSSL Toolkit. (http://www.openssl.org/)
 
 ### Author
 
-Marcin Krzyżanowski
-
-Follow me on Twitter [@krzyzanowskim](http://twitter.com/krzyzanowskim)
+[Marcin Krzyżanowski](http://krzyzanowskim.com)
