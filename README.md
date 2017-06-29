@@ -1,7 +1,11 @@
-ObjectivePGP
-============
+![objectivepgp](https://user-images.githubusercontent.com/758033/27696426-dd30e98a-5cf1-11e7-9533-bc2ecc7b8e9b.png)
 
-ObjectivePGP is [OpenPGP](https://en.wikipedia.org/wiki/Pretty_Good_Privacy#OpenPGP) implementation for iOS, tvOS and macOS.
+[![CocoaPods Compatible](https://img.shields.io/cocoapods/v/ObjectivePGP.svg)](https://cocoapods.org/pods/ObjectivePGP)
+[![Platform](https://img.shields.io/cocoapods/p/ObjectivePGP.svg?style=flat)](http://cocoadocs.org/docsets/ObjectivePGP)
+[![Twitter](https://img.shields.io/badge/twitter-@krzyzanowskim-blue.svg?style=flat)](http://twitter.com/krzyzanowskim)
+
+
+Objective PGP is an [OpenPGP](https://en.wikipedia.org/wiki/Pretty_Good_Privacy#OpenPGP) implementation for iOS and macOS.
 
 See [blog post](http://blog.krzyzanowskim.com/2014/07/31/short-story-about-openpgp-for-ios-and-os-x-objectivepgp/) for full story.
 
