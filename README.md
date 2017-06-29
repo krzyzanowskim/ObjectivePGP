@@ -11,6 +11,7 @@ Here is the [blog post](http://blog.krzyzanowskim.com/2014/07/31/short-story-abo
 
 ## Installation
 
+
 ### CocoaPods
 
 ```ruby

@@ -119,8 +119,6 @@
 		75DA135E191AE1D6004C9C76 /* PGPS2K.m in Sources */ = {isa = PBXBuildFile; fileRef = 75DA135D191AE1D6004C9C76 /* PGPS2K.m */; };
 		75E7B6B81916493600C96BAB /* PGPPublicSubKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75E7B6B71916493600C96BAB /* PGPPublicSubKeyPacket.m */; };
 		75E7B6BB19167EFF00C96BAB /* PGPSignaturePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75E7B6BA19167EFF00C96BAB /* PGPSignaturePacket.m */; };
-		75FA5C3E1F0459AA00E3E781 /* module.modulemap in CopyFiles */ = {isa = PBXBuildFile; fileRef = 75FA5C3D1F0459A000E3E781 /* module.modulemap */; };
-		75FA5C3F1F045A8800E3E781 /* ObjectivePGP.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 756299BD1914DE1A00C5AD3B /* ObjectivePGP.h */; };
 		75FE9808193FB46200613549 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75FE9807193FB46200613549 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.m */; };
 /* End PBXBuildFile section */
 
@@ -133,20 +131,6 @@
 			remoteInfo = ObjectivePGP;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		75FA5C3C1F04597D00E3E781 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = include/ObjectivePGP;
-			dstSubfolderSpec = 16;
-			files = (
-				75FA5C3E1F0459AA00E3E781 /* module.modulemap in CopyFiles */,
-				75FA5C3F1F045A8800E3E781 /* ObjectivePGP.h in CopyFiles */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		750016A819C22E7100EAF308 /* secring-test-plaintext-encrypted-message.asc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "secring-test-plaintext-encrypted-message.asc"; sourceTree = "<group>"; };
@@ -592,7 +576,6 @@
 				75804A251EED161800AC97BF /* Headers */,
 				756299B21914DE1A00C5AD3B /* Frameworks */,
 				75FA5C2D1F044F8900E3E781 /* Build Framework */,
-				75FA5C3C1F04597D00E3E781 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -792,7 +775,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ObjectivePGP/ObjectivePGP-Prefix.pch";
 				PRODUCT_NAME = ObjectivePGP;
-				PUBLIC_HEADERS_FOLDER_PATH = "include/$(PROJECT_NAME)";
 			};
 			name = Debug;
 		};
@@ -804,7 +786,6 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ObjectivePGP/ObjectivePGP-Prefix.pch";
 				PRODUCT_NAME = ObjectivePGP;
-				PUBLIC_HEADERS_FOLDER_PATH = "include/$(PROJECT_NAME)";
 			};
 			name = Release;
 		};

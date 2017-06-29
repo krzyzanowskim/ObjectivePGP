@@ -60,7 +60,7 @@ GCC_DYNAMIC_NO_PIC = NO
 PGP_CFLAGS_COMMON = $(inherited) -fvisibility=default // -fmodules
 GCC_SYMBOLS_PRIVATE_EXTERN = YES
 
-//EXPORTED_SYMBOLS_FILE = $(SRCROOT)/objectivepgp.symbols
+PUBLIC_HEADERS_FOLDER_PATH = include/$(PROJECT_NAME)
 
 // Config files that include this one and want to change this setting should override and that override should have $(PGP_CFLAGS_COMMON) but not $(inherited) because that refers to the higher level in the hierarchy, not earlier in the xcconfig file.
 OTHER_CFLAGS = $(PGP_CFLAGS_COMMON)
