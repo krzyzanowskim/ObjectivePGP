@@ -13,12 +13,13 @@ Here is the [blog post](http://blog.krzyzanowskim.com/2014/07/31/short-story-abo
 
 ### CocoaPods
 
-	pod 'ObjectivePGP'
-	
+```ruby
+pod 'ObjectivePGP'
+```
+
 ## Contribution
 
-You are welcome to contribute. Current version can be found on branch `master`. 
-If you want to fix the bug, please create Pull Request against `develop` branch.
+You are welcome to contribute. Please create Pull Request against `develop` branch.
 
 ## The license
 
@@ -37,47 +38,46 @@ The ObjectivePGP stays under a dual license:
 
 ObjectivePGP *pgp = [[ObjectivePGP alloc] init];
 ```
-	
+
 ##### Load keys (private or public)
 
 ```objective-c
-/* From file */
+/* Import keys from a keyring file */
 [pgp importKeysFromFile:@"/path/to/secring.gpg"];
+
+/* Import keys from a keys file */
 [pgp importKeysFromFile:@"/path/to/key.asc"];
 
-/* Load single key from keyring */
+/* Import selected key from a keyring */
 [pgp importKey:@"979E4B03DFFE30C6" fromFile:@"/path/to/secring.gpg"];
 ```
-	
+
 ##### Search for keys
 
 ```objective-c
 /* long identifier 979E4B03DFFE30C6 */
-PGPKey *key = [pgp getKeyForIdentifier:@"979E4B03DFFE30C6"];
+PGPKey *key = [pgp findKeyForIdentifier:@"979E4B03DFFE30C6"];
 
-/* short identifier 979E4B03 (the same result as previous) */
-PGPKey *key = [pgp getKeyForIdentifier:@"979E4B03"];
+/* Short identifier 979E4B03 (the same result as previous) */
+PGPKey *key = [pgp findKeyForIdentifier:@"979E4B03"];
 
-/* first key that match given user */
-PGPKey *key = [pgp getKeysForUserID:@"Name <email@example.com>"];
+/* First key that match given user identifier string. */
+PGPKey *key = [pgp findKeysForUserID:@"Name <email@example.com>"];
 ```
 
 ##### Export keys (private or public)
 
 ```objective-c
-/* export all public keys to file */
-NSError *error;
-BOOL result = [pgp exportKeysOfType:PGPPartialKeyPublic toFile:@"pubring.gpg" error:&error];
-if (result) {
-	// success
+/* Export all public keys to file */
+if ([pgp exportKeysOfType:PGPPartialKeyPublic toFile:@"pubring.gpg" error:nil]) {
+    // success
 }
 
-PGPKey *myPublicKey = [self.oPGP getKeyForIdentifier:@"979E4B03DFFE30C6"];
-if (myPublicKey.publicKey) {
-    /* export public key and save as armored (ASCII) file */
-    NSData *armoredKeyData = [pgp exportKey:myPublicKey armored:YES];
-    [armoredKeyData writeToFile:@"pubkey.asc" atomically:YES];
-}
+/* Export single key */
+/* export key and save as armored (ASCII) file */
+PGPKey *key = [self.oPGP findKeyForIdentifier:@"979E4B03DFFE30C6"];
+NSData *armoredKeyData = [pgp exportKey:key armored:YES];
+[armoredKeyData writeToFile:@"pubkey.asc" atomically:YES];
 ```
 
 ##### Sign data (or file)
@@ -85,59 +85,57 @@ if (myPublicKey.publicKey) {
 ```objective-c
 NSData *fileContent = [NSData dataWithContentsOfFile:@"/path/file/to/data.txt"];
 
-/* find key to sign */
-PGPKey *keyToSign = [self.oPGP getKeyForIdentifier:@"979E4B03DFFE30C6"];
+/* Choose a key to use to sign the data */
+PGPKey *key = [self.oPGP findKeyForIdentifier:@"979E4B03DFFE30C6"];
 
-/* sign and return only a signature (detached = YES) */
-NSData *signature = [pgp signData:fileContent usingSecretKey:keyToSign passphrase:nil detached:YES];
+/* Sign and return only a signature data (detached = YES) */
+NSData *signature = [pgp signData:fileContent usingKey:key passphrase:nil detached:YES error:nil];
 
-/* sign and return signed data (detached = NO) */
-NSData *signedData = [pgp signData:fileContent usingSecretKey:keyToSign passphrase:nil detached:NO];
+/* Sign and return a data with the signature (detached = NO) */
+NSData *signedData = [pgp signData:fileContent usingSecretKey:key passphrase:nil detached:NO error:nil];
 ```
-	
+
 ##### Verify signature from data (or file)
 
 ```objective-c
 /* embedded signature */
 NSData *signedContent = [NSData dataWithContentsOfFile:@"/path/file/to/data.signed"];
 if ([pgp verifyData:signedContent]) {
-	// Success
+    // Success
 }
 
 /* detached signature */
 NSData *signatureContent = [NSData dataWithContentsOfFile:@"/path/file/to/signature"];
 NSData *dataContent = [NSData dataWithContentsOfFile:@"/path/file/to/data.txt"];
 if ([pgp verifyData:dataContent withSignature:signatureContent]) {
-// Success
+    // Success
 }
 ```
-	
+
 ##### Encrypt data with previously loaded public key
 
 ```
-NSData *fileContent = [NSData dataWithContentsOfFile:@"/path/file/to/data.txt"];
+NSData *fileContent = [NSData dataWithContentsOfFile:@"/path/plaintext.txt"];
 
-/* public key to encrypt data, must be loaded previously */
-PGPKey *keyToEncrypt = [self.oPGP getKeyForIdentifier:@"979E4B03DFFE30C6"];
+/* Choose the public key to use to encrypt data. Must be imported previously */
+PGPKey *key = [self.oPGP findKeyForIdentifier:@"979E4B03DFFE30C6"];
 
-/* encrypt data, armor output (ASCII file)  */
-NSError *error;
-NSData *encryptedData = [pgp encryptData:fileContent usingPublicKey:keyToEncrypt armored:YES error:&error];
-if (encryptedData && !error) {
-	// Success
+/* Encrypt data. Armor output (ASCII file)  */
+NSData *encryptedData = [pgp encryptData:fileContent usingKeys:@[key] armored:YES error:nil];
+if (encryptedData) {
+    // Success
 }
 ```
 
 ##### Decrypt data with previously loaded private key
     
 ```objective-c
-NSData *encryptedFileContent = [NSData dataWithContentsOfFile:@"/path/file/to/data.gpg"];
+NSData *encryptedFileContent = [NSData dataWithContentsOfFile:@"/path/data.enc"];
 
-/* need provide passphrase if required */
-NSError *error;
-NSData *decryptedData = [pgp decryptData:encryptedFileContent passphrase:nil error:&error];
-if (decryptedData && !error) {
-	// Success
+/* If key is encrypted with the password, you can provide a password key here. */
+NSData *decryptedData = [pgp decryptData:encryptedFileContent passphrase:nil error:nil];
+if (decryptedData) {
+    // Success
 }
 ```
 
