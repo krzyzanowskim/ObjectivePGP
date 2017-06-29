@@ -28,7 +28,7 @@ Please contact me via email for inquiries.
 
 ##### Initialization
 
-	#include <ObjectivePGP.h>
+	#include <ObjectivePGP/ObjectivePGP.h>
 	
 	ObjectivePGP *pgp = [[ObjectivePGP alloc] init];
 	

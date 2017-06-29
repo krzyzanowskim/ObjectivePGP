@@ -96,7 +96,7 @@ Use within the scope of this License is free of charge and no royalty or licensi
                     return 1;
                 }
             } else {
-                inputData = [NSData dataWithContentsOfMappedFile:inputPath];
+                inputData = [NSData dataWithContentsOfFile:inputPath options:NSDataReadingMappedIfSafe error:nil];
             }
         }
         
@@ -136,7 +136,8 @@ Use within the scope of this License is free of charge and no royalty or licensi
                     return 1;
                 }
             } else {
-                fetchedKeyData = [NSData dataWithContentsOfMappedFile:[keyFile stringByExpandingTildeInPath]];
+                NSString *filePath = [keyFile stringByExpandingTildeInPath];
+                fetchedKeyData = [NSData dataWithContentsOfFile:filePath options:NSDataReadingMappedIfSafe error:nil];
             }
 
             let loadedKeys = [pgp importKeysFromData:fetchedKeyData];
