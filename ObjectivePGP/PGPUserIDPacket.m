@@ -7,6 +7,7 @@
 //
 
 #import "PGPUserIDPacket.h"
+#import "PGPMacros.h"
 
 @interface PGPPacket ()
 @property (nonatomic, copy, readwrite) NSData *headerData;
@@ -33,12 +34,12 @@
 }
 
 - (nullable NSData *)export:(NSError *__autoreleasing *)error {
-    NSMutableData *data = [NSMutableData data];
-    NSData *bodyData = [self.userID dataUsingEncoding:NSUTF8StringEncoding];
-    NSData *headerData = [self buildHeaderData:bodyData];
+    let data = [NSMutableData data];
+    let bodyData = [self.userID dataUsingEncoding:NSUTF8StringEncoding];
+    let headerData = [self buildHeaderData:bodyData];
     [data appendData:headerData];
     [data appendData:bodyData];
-    return [data copy];
+    return data;
 }
 
 @end

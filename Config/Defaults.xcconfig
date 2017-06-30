@@ -26,9 +26,8 @@ CODE_SIGN_IDENTITY[sdk=iphoneos*] =
 CODE_SIGN_IDENTITY[sdk=iphonesimulator*] =
 CODE_SIGN_IDENTITY[sdk=macosx*] = 
 
-// Generating dSYM files is super slow, so skip during debug builds.
-DEBUG_INFORMATION_FORMAT = dwarf;
-//DEBUG_INFORMATION_FORMAT = dwarf-with-dsym;
+// Generating dSYM files is slow ;-(
+DEBUG_INFORMATION_FORMAT = dwarf-with-dsym;
 
 // :MARK: Linking
 // :MARK: -Prelink

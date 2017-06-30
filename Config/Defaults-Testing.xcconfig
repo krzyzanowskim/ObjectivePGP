@@ -9,6 +9,9 @@
 // Link-Time optimization reduces file size by quite a bit.
 LLVM_LTO = YES
 
+// Enable testability
+ENABLE_TESTABILITY = YES
+
 // Define the TESTING macro in all debug builds
 GCC_PREPROCESSOR_DEFINITIONS = $(PGP_PREPROCESSOR_DEFINITIONS_COMMON) CI=$(CI) DEBUG=1 TESTING=1
 

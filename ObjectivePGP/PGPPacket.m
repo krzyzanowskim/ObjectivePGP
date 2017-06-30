@@ -28,10 +28,11 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (instancetype)initWithHeader:(NSData *)headerData body:(NSData *)bodyData {
-    if (self = [self init]) {
-        NSError *error = nil;
+    if ((self = [self init])) {
         _headerData = headerData;
         _bodyData = bodyData;
+
+        NSError *error = nil;
         [self parsePacketBody:self.bodyData error:&error];
         if (error) {
             return nil;
@@ -86,7 +87,7 @@ NS_ASSUME_NONNULL_BEGIN
         }
         return nil;
     }
-    UInt32 bodyLength;
+    UInt32 bodyLength = 0;
     if (isNewFormat) {
         *headerLength = [self parseNewFormatHeaderPacket:data bodyLength:&bodyLength packetTag:tag partialBodyLength:&isPartialBodyLength];
     } else {
@@ -102,18 +103,22 @@ NS_ASSUME_NONNULL_BEGIN
     };
     if (isPartialBodyLength) {
         UInt32 offset = *headerLength;
-        NSMutableData *resultData = [NSMutableData dataWithData:[data subdataWithRange:(NSRange){offset, bodyLength}]];
+        let resultData = [NSMutableData dataWithData:[data subdataWithRange:(NSRange){offset, bodyLength}]];
         offset += bodyLength;
+
         do {
             // assume new header format
-            PGPPacketTag nextTag;
-            UInt32 packetBodyLength;
+            PGPPacketTag nextTag = PGPInvalidPacketTag;
+            UInt32 packetBodyLength = 0;
             UInt32 packetHeaderLength = [self parseNewFormatHeaderPacket:[data subdataWithRange:(NSRange){offset - 1, data.length - (offset - 1)}] bodyLength:&packetBodyLength packetTag:&nextTag partialBodyLength:&isPartialBodyLength] - 1;
             offset += packetHeaderLength;
-            if (nextPacketOffset != NULL) *nextPacketOffset += packetHeaderLength + packetBodyLength;
+            if (nextPacketOffset != NULL) {
+                *nextPacketOffset += packetHeaderLength + packetBodyLength;
+            }
             [resultData appendData:[data subdataWithRange:(NSRange){offset, MIN(packetBodyLength, data.length - offset)}]];
             offset += packetBodyLength;
         } while (isPartialBodyLength);
+
         return resultData;
     }
     return [data subdataWithRange:(NSRange){*headerLength, bodyLength}];
@@ -230,7 +235,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSData *)buildHeaderData:(NSData *)bodyData {
     // TODO: check all formats, untested
     // 4.2.2.  New Format Packet Lengths
-    NSMutableData *data = [NSMutableData data];
+    let data = [NSMutableData data];
 
     // Bit 7 -- Always one
     // Bit 6 -- New packet format if set
@@ -243,7 +248,7 @@ NS_ASSUME_NONNULL_BEGIN
     [data appendBytes:&packetTag length:1];
     [data appendData:[PGPPacket buildNewFormatLengthDataForData:bodyData]];
 
-    return [data copy];
+    return data;
 }
 
 + (NSData *)buildNewFormatLengthDataForData:(NSData *)bodyData {

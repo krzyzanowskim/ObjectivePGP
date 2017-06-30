@@ -64,7 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
     //   RSA 1 MPI
     //   Elgamal 2 MPI
 
-    NSData *encryptedMPI_MData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
+    let encryptedMPI_MData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
     self.encryptedMPI_M = [[PGPMPI alloc] initWithMPIData:encryptedMPI_MData identifier:nil atPosition:0];
     position = position + encryptedMPI_MData.length;
 
@@ -78,8 +78,8 @@ NS_ASSUME_NONNULL_BEGIN
 
     // FIXME: Key is read from the packet, so it shouldn't be passed as parameter to the method because
     //       key is unknown earlier
-    PGPKeyID *secretKeyKeyID = [[PGPKeyID alloc] initWithFingerprint:secretKeyPacket.fingerprint];
-    if (![self.keyID isEqual:secretKeyKeyID]) {
+    let secretKeyKeyID = [[PGPKeyID alloc] initWithFingerprint:secretKeyPacket.fingerprint];
+    if (!secretKeyKeyID || ![self.keyID isEqual:secretKeyKeyID]) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Invalid secret key used to decrypt session key, expected %@, got %@", self.keyID, secretKeyKeyID] }];
         }
@@ -87,17 +87,17 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // encrypted m value
-    NSData *encryptedM = [self.encryptedMPI_M bodyData];
+    let encryptedM = [self.encryptedMPI_M bodyData];
 
     // decrypted m value
-    NSData *mEMEEncoded = [secretKeyPacket decryptData:encryptedM withPublicKeyAlgorithm:self.publicKeyAlgorithm];
-    NSData *mData = [PGPPKCSEme decodeMessage:mEMEEncoded error:error];
+    let mEMEEncoded = [secretKeyPacket decryptData:encryptedM withPublicKeyAlgorithm:self.publicKeyAlgorithm];
+    let mData = [PGPPKCSEme decodeMessage:mEMEEncoded error:error];
     if (error && *error) {
         return nil;
     }
 
     NSUInteger position = 0;
-    PGPSymmetricAlgorithm sessionKeyAlgorithmRead;
+    PGPSymmetricAlgorithm sessionKeyAlgorithmRead = PGPSymmetricPlaintext;
     [mData getBytes:&sessionKeyAlgorithmRead range:(NSRange){position, 1}];
     NSAssert(sessionKeyAlgorithmRead < PGPSymmetricMax, @"Invalid algorithm");
     *sessionKeyAlgorithm = sessionKeyAlgorithmRead;
@@ -110,7 +110,7 @@ NS_ASSUME_NONNULL_BEGIN
         }
         return nil;
     }
-    NSData *sessionKeyData = [mData subdataWithRange:(NSRange){position, sessionKeySize}];
+    let sessionKeyData = [mData subdataWithRange:(NSRange){position, sessionKeySize}];
     position = position + sessionKeySize;
 
     UInt16 checksum = 0;
@@ -131,7 +131,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // encryption update self.encryptedMPIsPartData
 - (BOOL)encrypt:(PGPPublicKeyPacket *)publicKeyPacket sessionKeyData:(NSData *)sessionKeyData sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm error:(NSError *__autoreleasing *)error {
-    NSMutableData *mData = [NSMutableData data];
+    let mData = [NSMutableData data];
 
     //    The value "m" in the above formulas is derived from the session key
     //    as follows.  First, the session key is prefixed with a one-octet
@@ -152,14 +152,16 @@ NS_ASSUME_NONNULL_BEGIN
     checksum = CFSwapInt16HostToBig(checksum);
     [mData appendBytes:&checksum length:2];
 
-    PGPMPI *modulusMPI = [publicKeyPacket publicMPI:@"N"];
-    if (!modulusMPI) return error == nil;
+    let modulusMPI = [publicKeyPacket publicMPI:@"N"];
+    if (!modulusMPI) {
+        return error == nil;
+    }
 
     unsigned int k = (unsigned int)modulusMPI.bigNum.bytesCount;
 
-    NSData *mEMEEncoded = [PGPPKCSEme encodeMessage:mData keyModulusLength:k error:error];
-    NSData *encryptedData = [publicKeyPacket encryptData:mEMEEncoded withPublicKeyAlgorithm:self.publicKeyAlgorithm];
-    PGPMPI *mpiEncoded = [[PGPMPI alloc] initWithData:encryptedData];
+    let mEMEEncoded = [PGPPKCSEme encodeMessage:mData keyModulusLength:k error:error];
+    let encryptedData = [publicKeyPacket encryptData:mEMEEncoded withPublicKeyAlgorithm:self.publicKeyAlgorithm];
+    let mpiEncoded = [[PGPMPI alloc] initWithData:encryptedData];
     self.encryptedMPI_M = mpiEncoded;
     return error == nil;
 }

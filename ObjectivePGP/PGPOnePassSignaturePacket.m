@@ -50,7 +50,7 @@
 - (NSData *)export:(NSError *__autoreleasing *)error {
     NSAssert(self.keyID, @"Missing keyID");
 
-    NSMutableData *bodyData = [NSMutableData data];
+    let bodyData = [NSMutableData data];
 
     [bodyData appendBytes:&_version length:1];
     [bodyData appendBytes:&_signatureType length:1];
@@ -60,12 +60,12 @@
 
     [bodyData appendBytes:&_notNested length:1];
 
-    NSMutableData *data = [NSMutableData data];
-    NSData *headerData = [self buildHeaderData:bodyData];
+    let data = [NSMutableData data];
+    let headerData = [self buildHeaderData:bodyData];
     [data appendData:headerData];
     [data appendData:bodyData];
 
-    return [data copy];
+    return data;
 }
 
 @end

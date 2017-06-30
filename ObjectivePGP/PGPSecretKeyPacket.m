@@ -74,14 +74,14 @@
 }
 
 - (nullable NSData *)export:(NSError *__autoreleasing _Nullable *)error {
-    NSMutableData *data = [NSMutableData data];
-    NSData *publicKeyData = [super buildPublicKeyBodyData:YES];
+    let data = [NSMutableData data];
+    let publicKeyData = [super buildPublicKeyBodyData:YES];
 
-    NSMutableData *secretKeyPacketData = [NSMutableData data];
+    let secretKeyPacketData = [NSMutableData data];
     [secretKeyPacketData appendData:publicKeyData];
     [secretKeyPacketData appendData:[self buildSecretKeyDataAndForceV4:YES]];
 
-    NSData *headerData = [self buildHeaderData:secretKeyPacketData];
+    let headerData = [self buildHeaderData:secretKeyPacketData];
     [data appendData:headerData];
     [data appendData:secretKeyPacketData];
 
@@ -197,8 +197,8 @@
         default: {
             // a two-octet checksum of the plaintext of the algorithm-specific portion
             NSUInteger checksumLength = 2;
-            NSData *clearTextData = [data subdataWithRange:(NSRange){0, data.length - checksumLength}];
-            NSData *checksumData = [data subdataWithRange:(NSRange){data.length - checksumLength, checksumLength}];
+            let clearTextData = [data subdataWithRange:(NSRange){0, data.length - checksumLength}];
+            let checksumData = [data subdataWithRange:(NSRange){data.length - checksumLength, checksumLength}];
             NSUInteger calculatedChecksum = [clearTextData pgp_Checksum];
 
             UInt16 checksum = 0;
@@ -220,26 +220,26 @@
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly: {
             // multiprecision integer (MPI) of RSA secret exponent d.
-            PGPMPI *mpiD = [[PGPMPI alloc] initWithMPIData:data identifier:@"D" atPosition:position];
+            let mpiD = [[PGPMPI alloc] initWithMPIData:data identifier:@"D" atPosition:position];
             position = position + mpiD.packetLength;
 
             // MPI of RSA secret prime value p.
-            PGPMPI *mpiP = [[PGPMPI alloc] initWithMPIData:data identifier:@"P" atPosition:position];
+            let mpiP = [[PGPMPI alloc] initWithMPIData:data identifier:@"P" atPosition:position];
             position = position + mpiP.packetLength;
 
             // MPI of RSA secret prime value q (p < q).
-            PGPMPI *mpiQ = [[PGPMPI alloc] initWithMPIData:data identifier:@"Q" atPosition:position];
+            let mpiQ = [[PGPMPI alloc] initWithMPIData:data identifier:@"Q" atPosition:position];
             position = position + mpiQ.packetLength;
 
             // MPI of u, the multiplicative inverse of p, mod q.
-            PGPMPI *mpiU = [[PGPMPI alloc] initWithMPIData:data identifier:@"U" atPosition:position];
+            let mpiU = [[PGPMPI alloc] initWithMPIData:data identifier:@"U" atPosition:position];
             position = position + mpiU.packetLength;
 
             self.secretMPIArray = @[mpiD, mpiP, mpiQ, mpiU];
         } break;
         case PGPPublicKeyAlgorithmDSA: {
             // MPI of DSA secret exponent x.
-            PGPMPI *mpiX = [[PGPMPI alloc] initWithMPIData:data identifier:@"X" atPosition:position];
+            let mpiX = [[PGPMPI alloc] initWithMPIData:data identifier:@"X" atPosition:position];
             position = position + mpiX.packetLength;
 
             self.secretMPIArray = @[mpiX];
@@ -247,7 +247,7 @@
         case PGPPublicKeyAlgorithmElgamal:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign: {
             // MPI of Elgamal secret exponent x.
-            PGPMPI *mpiX = [[PGPMPI alloc] initWithMPIData:data identifier:@"X" atPosition:position];
+            let mpiX = [[PGPMPI alloc] initWithMPIData:data identifier:@"X" atPosition:position];
             position = position + mpiX.packetLength;
 
             self.secretMPIArray = @[mpiX];
@@ -289,7 +289,7 @@
     let sessionKeyData = [encryptedKey.s2k produceSessionKeyWithPassphrase:passphrase keySize:keySize];
 
     // Decrypted MPIs
-    NSData *decryptedData = [PGPCryptoCFB decryptData:encryptedKey.encryptedMPIsPartData sessionKeyData:sessionKeyData symmetricAlgorithm:encryptionSymmetricAlgorithm iv:encryptedKey.ivData];
+    let decryptedData = [PGPCryptoCFB decryptData:encryptedKey.encryptedMPIsPartData sessionKeyData:sessionKeyData symmetricAlgorithm:encryptionSymmetricAlgorithm iv:encryptedKey.ivData];
 
     // now read mpis
     if (decryptedData) {
@@ -330,7 +330,7 @@
 - (NSData *)buildSecretKeyDataAndForceV4:(BOOL)forceV4 {
     NSAssert(forceV4 == YES, @"Only V4 is supported");
 
-    NSMutableData *data = [NSMutableData data];
+    let data = [NSMutableData data];
     [data appendBytes:&_s2kUsage length:1];
 
     if (self.s2kUsage == PGPS2KUsageEncrypted || self.s2kUsage == PGPS2KUsageEncryptedAndHashed) {

@@ -131,11 +131,11 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmRSASignOnly: {
             // Algorithm-Specific Fields for RSA public keys:
             // MPI of RSA public modulus n;
-            PGPMPI *mpiN = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"N" atPosition:position];
+            let mpiN = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"N" atPosition:position];
             position = position + mpiN.packetLength;
 
             // MPI of RSA public encryption exponent e.
-            PGPMPI *mpiE = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"E" atPosition:position];
+            let mpiE = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"E" atPosition:position];
             position = position + mpiE.packetLength;
 
             self.publicMPIArray = @[mpiN, mpiE];
@@ -143,19 +143,19 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmECDSA: {
             // - MPI of DSA prime p;
-            PGPMPI *mpiP = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"P" atPosition:position];
+            let mpiP = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"P" atPosition:position];
             position = position + mpiP.packetLength;
 
             // - MPI of DSA group order q (q is a prime divisor of p-1);
-            PGPMPI *mpiQ = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"Q" atPosition:position];
+            let mpiQ = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"Q" atPosition:position];
             position = position + mpiQ.packetLength;
 
             // - MPI of DSA group generator g;
-            PGPMPI *mpiG = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"G" atPosition:position];
+            let mpiG = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"G" atPosition:position];
             position = position + mpiG.packetLength;
 
             // - MPI of DSA public-key value y (= g**x mod p where x is secret).
-            PGPMPI *mpiY = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"Y" atPosition:position];
+            let mpiY = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"Y" atPosition:position];
             position = position + mpiY.packetLength;
 
             self.publicMPIArray = @[mpiP, mpiQ, mpiG, mpiY];
@@ -163,15 +163,15 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmElgamal:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign: {
             // - MPI of Elgamal prime p;
-            PGPMPI *mpiP = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"P" atPosition:position];
+            let mpiP = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"P" atPosition:position];
             position = position + mpiP.packetLength;
 
             // - MPI of Elgamal group generator g;
-            PGPMPI *mpiG = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"G" atPosition:position];
+            let mpiG = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"G" atPosition:position];
             position = position + mpiG.packetLength;
 
             // - MPI of Elgamal public key value y (= g**x mod p where x is secret).
-            PGPMPI *mpiY = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"Y" atPosition:position];
+            let mpiY = [[PGPMPI alloc] initWithMPIData:packetBody identifier:@"Y" atPosition:position];
             position = position + mpiY.packetLength;
 
             self.publicMPIArray = @[mpiP, mpiG, mpiY];
@@ -190,7 +190,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @return public key data starting with version octet
  */
 - (NSData *)buildPublicKeyBodyData:(BOOL)forceV4 {
-    NSMutableData *data = [NSMutableData dataWithCapacity:128];
+    let data = [NSMutableData dataWithCapacity:128];
     [data appendBytes:&_version length:1];
 
     UInt32 timestamp = (UInt32)[self.createDate timeIntervalSince1970];
@@ -213,7 +213,7 @@ NS_ASSUME_NONNULL_BEGIN
             [data appendData:exportMPI];
         }
     }
-    return [data copy];
+    return data;
 }
 
 // Old-style packet header for a key packet with two-octet length.
@@ -244,15 +244,15 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
     let data = [NSMutableData data];
 
-    NSData *bodyData = [self buildPublicKeyBodyData:NO];
-    NSData *headerData = [self buildHeaderData:bodyData];
+    let bodyData = [self buildPublicKeyBodyData:NO];
+    let headerData = [self buildHeaderData:bodyData];
     [data appendData:headerData];
     [data appendData:bodyData];
 
     // it wont match, because input data is OLD world, and we export in NEW world format
     // NSAssert([headerData isEqualToData:self.headerData], @"Header not match");
     if ([self class] == [PGPPublicKeyPacket class]) {
-        NSAssert([bodyData isEqualToData:self.bodyData], @"Body not match");
+        NSAssert([bodyData isEqualToData:self.bodyData], @"Body doesn't match");
     }
 
     return data;

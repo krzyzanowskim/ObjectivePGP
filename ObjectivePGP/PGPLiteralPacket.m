@@ -9,6 +9,8 @@
 #import "PGPLiteralPacket.h"
 #import "PGPTypes.h"
 
+#import "PGPMacros.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface PGPLiteralPacket ()
@@ -31,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 + (PGPLiteralPacket *)literalPacket:(PGPLiteralPacketFormat)format withData:(NSData *)rawData {
-    PGPLiteralPacket *literalPacket = [[PGPLiteralPacket alloc] init];
+    let literalPacket = [[PGPLiteralPacket alloc] init];
     literalPacket.format = format;
     literalPacket.literalRawData = rawData;
     return literalPacket;
@@ -72,7 +74,7 @@ NS_ASSUME_NONNULL_BEGIN
     creationTimestamp = CFSwapInt32BigToHost(creationTimestamp);
     self.timestamp = [NSDate dateWithTimeIntervalSince1970:creationTimestamp];
     position = position + 4;
-    NSData *data = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
+    let data = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
 
     switch (self.format) {
         case PGPLiteralPacketBinary:
@@ -97,7 +99,7 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    NSMutableData *bodyData = [NSMutableData data];
+    let bodyData = [NSMutableData data];
     [bodyData appendBytes:&_format length:1];
 
     if (self.filename) {
@@ -128,8 +130,8 @@ NS_ASSUME_NONNULL_BEGIN
             break;
     }
 
-    NSMutableData *data = [NSMutableData data];
-    NSData *headerData = [self buildHeaderData:bodyData];
+    let data = [NSMutableData data];
+    let headerData = [self buildHeaderData:bodyData];
     [data appendData:headerData];
     [data appendData:bodyData];
 

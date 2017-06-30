@@ -368,8 +368,9 @@ NS_ASSUME_NONNULL_BEGIN
     return plaintextData;
 }
 
-- (nullable NSData *)encryptData:(NSData *)dataToEncrypt usingKeys:(NSArray<PGPKey *> *)keys armored:(BOOL)armored error:(NSError *__autoreleasing _Nullable *)error;
-{ return [self encryptData:dataToEncrypt usingKeys:keys signWithKey:nil passphrase:nil armored:armored error:error]; }
+- (nullable NSData *)encryptData:(NSData *)dataToEncrypt usingKeys:(NSArray<PGPKey *> *)keys armored:(BOOL)armored error:(NSError *__autoreleasing _Nullable *)error {
+    return [self encryptData:dataToEncrypt usingKeys:keys signWithKey:nil passphrase:nil armored:armored error:error];
+}
 
 - (nullable NSData *)encryptData:(NSData *)dataToEncrypt usingKeys:(NSArray<PGPKey *> *)keys signWithKey:(nullable PGPKey *)signKey passphrase:(nullable NSString *)passphrase armored:(BOOL)armored error:(NSError *__autoreleasing _Nullable *)error {
     let publicKeys = [NSMutableArray<PGPPartialKey *> array];
@@ -386,6 +387,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:preferredSymmeticAlgorithm];
     uint8_t buf[keySize];
     if (SecRandomCopyBytes(kSecRandomDefault, keySize, buf) == -1) {
+        //TODO: error
         return nil;
     }
 
@@ -408,11 +410,11 @@ NS_ASSUME_NONNULL_BEGIN
         eskKeyPacket.publicKeyAlgorithm = encryptionKeyPacket.publicKeyAlgorithm;
         [eskKeyPacket encrypt:encryptionKeyPacket sessionKeyData:sessionKeyData sessionKeyAlgorithm:preferredSymmeticAlgorithm error:error];
         PGPLogWarning(@"Missing literal data");
-        if (*error) {
+        if (error && *error) {
             return nil;
         }
         [encryptedMessage appendData:[eskKeyPacket export:error]];
-        if (*error) {
+        if (error && *error) {
             return nil;
         }
     }
@@ -421,7 +423,7 @@ NS_ASSUME_NONNULL_BEGIN
     // sign data if requested
     if (signKey) {
         content = [self signData:dataToEncrypt usingKey:signKey passphrase:passphrase hashAlgorithm:PGPHashSHA512 detached:NO error:error];
-        if (*error) {
+        if (error && *error) {
             return nil;
         }
 
@@ -431,30 +433,30 @@ NS_ASSUME_NONNULL_BEGIN
         literalPacket.filename = nil;
         literalPacket.timestamp = [NSDate date];
         PGPLogWarning(@"Missing literal data");
-        if (*error) {
+        if (error && *error) {
             return nil;
         }
         let literalPacketData = [literalPacket export:error];
-        if (*error) {
+        if (error && *error) {
             return nil;
         }
 
         let compressedPacket = [[PGPCompressedPacket alloc] initWithData:literalPacketData type:PGPCompressionBZIP2];
         content = [compressedPacket export:error];
-        if (*error) {
+        if (error && *error) {
             return nil;
         }
     }
 
-    PGPSymmetricallyEncryptedIntegrityProtectedDataPacket *symEncryptedDataPacket = [[PGPSymmetricallyEncryptedIntegrityProtectedDataPacket alloc] init];
+    let symEncryptedDataPacket = [[PGPSymmetricallyEncryptedIntegrityProtectedDataPacket alloc] init];
     [symEncryptedDataPacket encrypt:content symmetricAlgorithm:preferredSymmeticAlgorithm sessionKeyData:sessionKeyData error:error];
 
-    if (*error) {
+    if (error && *error) {
         return nil;
     }
 
     [encryptedMessage appendData:[symEncryptedDataPacket export:error]];
-    if (*error) {
+    if (error && *error) {
         return nil;
     }
 
@@ -462,7 +464,7 @@ NS_ASSUME_NONNULL_BEGIN
         return [PGPArmor armoredData:encryptedMessage as:PGPArmorTypeMessage];
     }
 
-    return [encryptedMessage copy];
+    return encryptedMessage;
 }
 
 #pragma mark - Sign & Verify
