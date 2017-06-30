@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
   s.version      = "0.6"
   s.summary      = "OpenPGP for iOS and macOS"
   s.description  = "Native OpenPGP (RFC 4880) implementation for iOS and macOS."
-  s.homepage     = "https://krzyzanowskim@bitbucket.org/krzyzanowskim/objectivepgp.git"
+  s.homepage     = "https://github.com/krzyzanowskim/ObjectivePGP"
   s.license	     = { :type => 'BSD', :file => 'LICENSE.txt' }
   s.source       = { :git => "https://github.com/krzyzanowskim/ObjectivePGP.git", :tag => "#{s.version}" }
 
@@ -11,19 +11,15 @@ Pod::Spec.new do |s|
   s.social_media_url   = "https://twitter.com/krzyzanowskim"
   
   s.ios.deployment_target = '8.0'
-  s.ios.header_dir          = 'ObjectivePGP'
-
   s.osx.deployment_target = '10.9'
-  s.osx.header_dir          = 'ObjectivePGP'
-
-  s.source_files = 'ObjectivePGP/**/*.{h,m}'
-  s.public_header_files = 'ObjectivePGP/**/*.h'
-    
-  s.module_name  = "ObjectivePGP"
-
-  s.framework    = 'Security'
+  
+  s.ios.vendored_frameworks = 'Frameworks/ios/ObjectivePGP.framework'
+  s.osx.vendored_frameworks = 'Frameworks/macosx/ObjectivePGP.framework'  
+  
+  s.weak_frameworks = 'Security'
   s.requires_arc = true
 
+  s.pod_target_xcconfig = { 'OTHER_LDFLAGS' => '-lObjC' }
+
   s.libraries =  'z', 'bz2'
-  s.dependency 'OpenSSL-Universal'
 end
