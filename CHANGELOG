@@ -1,5 +1,18 @@
-Version 0.5
+Version 0.6
+- Update public API
+- Update documentation
+- Use modern Objective-C
+- Annotate nullability
+- Improve PGPKey in the way that the single key consists of two partial keys. (#44)
+- Improve support for private and public key in the single file (#44, #49)
+- Calculate incremental S2K hash to reduce memory overhead (#49)
+- Support for gnu-dummy S2K (#53)
+- Fixes buffer overrun in RSA
+- Build Static Frameworks for iOS and macOS
+- Assume that by convention, the top-level key provides signature services
+- Drop external openssl dependency.
 
+Version 0.5
 - Improve BZip2 compression
 - Fix exporting keys
 - Fix decryption for some RSA keys
