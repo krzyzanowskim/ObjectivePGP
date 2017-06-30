@@ -11,13 +11,23 @@ Here is the [blog post](http://blog.krzyzanowskim.com/2014/07/31/short-story-abo
 
 ## Installation
 
+### CocoaPods
+
+```ruby
+pod 'ObjectivePGP'
+```
+
 ### Framework
 
-ObjectivePGP comes with the prebuild [Static Frameworks](./Frameworks)
+ObjectivePGP comes with the prebuild [Static Frameworks](./Frameworks) for the latest release.
 
-1. Download appropriate ObjectivePGP.framework
+1. Download [ObjectivePGP.framework](./Frameworks) or build a framework with the [build-frameworks.sh](./build-frameworks.sh) script.
 1. Link framework with the target
     - Add `ObjectivePGP.framework` to "**Link Binary With Libraries**" list for the target.
+    ![screen shot 2017-06-30 at 02 20 47](https://user-images.githubusercontent.com/758033/27715926-d79a4e3c-5d3a-11e7-8b1b-d8b5ddb8182e.png)
+    - Add `libz` and `libbz2` to "**Link Binary With Libraries**" list for the target. These are system libraries.
+
+
 
 ### Subproject
 
@@ -30,23 +40,9 @@ You can add ObjectivePGP project as a subproject to your application project:
 
 ![screen shot 2017-06-30 at 02 07 42](https://user-images.githubusercontent.com/758033/27715699-3a0dec74-5d39-11e7-8c6c-8b97fb70b33e.png)
 
-### CocoaPods
-
-```ruby
-pod 'ObjectivePGP'
-```
-
 ## Contribution
 
 You are welcome to contribute. Please create [Pull Request](https://github.com/krzyzanowskim/ObjectivePGP/pulls) against `develop` branch.
-
-## The license
-
-The ObjectivePGP stays under a dual license:
-
-- Free for non-commercial use, covered by the standard 2-clause BSD license. That means you have to mention Marcin Krzyżanowski as the original author of this code and reproduce the [LICENSE](./LICENSE.txt) text inside your app.
-
-- Commercial-use license to use in commercial products. Please bear in mind that some free products remain commercial products. Please contact me via [email](http://www.krzyzanowskim.com) for details. 
 
 ## Usage
 
@@ -168,6 +164,14 @@ Known limitations:
 - ZIP compression not fully supported.
 - Blowfish, Twofish and Elgamal are not supported.
 - Missing external configuration for default values.
+
+## The license
+
+The ObjectivePGP stays under a dual license:
+
+- Free for non-commercial use, covered by the standard 2-clause BSD license. That means you have to mention Marcin Krzyżanowski as the original author of this code and reproduce the [LICENSE](./LICENSE.txt) text inside your app.
+
+- Commercial-use license to use in commercial products. Please bear in mind that some free products remain commercial products. Please contact me via [email](http://www.krzyzanowskim.com) for details.
 
 ### Acknowledgment
 
