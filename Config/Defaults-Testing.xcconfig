@@ -1,0 +1,26 @@
+//
+//  Defaults-Testing.xcconfig
+//
+//  Additional defaults that are used for testing.
+//
+
+#include "Defaults.xcconfig"
+
+// Link-Time optimization reduces file size by quite a bit.
+LLVM_LTO = YES
+
+// Enable testability
+ENABLE_TESTABILITY = YES
+
+// Define the TESTING macro in all debug builds
+GCC_PREPROCESSOR_DEFINITIONS = $(PGP_PREPROCESSOR_DEFINITIONS_COMMON) CI=$(CI) DEBUG=1 TESTING=1
+
+// Don't precompile headers for test
+GCC_PRECOMPILE_PREFIX_HEADER = NO
+
+// Enable extra validation
+VALIDATE_PRODUCT = YES
+
+// from https://github.com/WebKit/webkit/blob/master/Tools/asan/asan.xcconfig
+// This should allow us to get better stack traces on errors
+OTHER_CFLAGS = $(PGP_CFLAGS_COMMON) -fno-omit-frame-pointer -g

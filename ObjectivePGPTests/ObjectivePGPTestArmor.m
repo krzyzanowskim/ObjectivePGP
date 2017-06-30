@@ -6,24 +6,23 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import <XCTest/XCTest.h>
 #import "ObjectivePGP.h"
-#import "PGPSecretKeyPacket.h"
-#import "PGPPublicKeyPacket.h"
 #import "PGPArmor.h"
-
+#import "PGPMacros.h"
+#import "PGPPublicKeyPacket.h"
+#import "PGPSecretKeyPacket.h"
+#import <XCTest/XCTest.h>
 
 @interface ObjectivePGPTestArmor : XCTestCase
-@property (strong) NSString *secKeyringPath;
-@property (strong) NSString *pubKeyringPath;
-@property (strong) NSString *workingDirectory;
-@property (strong) ObjectivePGP *oPGP;
+@property (nonatomic) NSString *secKeyringPath;
+@property (nonatomic) NSString *pubKeyringPath;
+@property (nonatomic) NSString *workingDirectory;
+@property (nonatomic) ObjectivePGP *oPGP;
 @end
 
 @implementation ObjectivePGPTestArmor
 
-- (void)setUp
-{
+- (void)setUp {
     [super setUp];
     NSLog(@"%s", __PRETTY_FUNCTION__);
 
@@ -42,31 +41,27 @@
     self.workingDirectory = tmpDirectoryPath;
 }
 
-- (void)tearDown
-{
+- (void)tearDown {
     NSLog(@"%s", __PRETTY_FUNCTION__);
     [super tearDown];
     [[NSFileManager defaultManager] removeItemAtPath:self.workingDirectory error:nil];
     self.oPGP = nil;
 }
 
-- (void) testMultipleKeys
-{
+- (void)testMultipleKeys {
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *path = [bundle pathForResource:@"multiple-keys" ofType:@"asc"];
-    NSArray *keys = [self.oPGP importKeysFromFile:path allowDuplicates:NO];
+    let keys = [self.oPGP importKeysFromFile:path];
     NSAssert(keys.count == 3, @"Keys not imported properly");
 }
 
+- (void)testArmorPublicKey {
+    [self.oPGP importKeysFromFile:self.pubKeyringPath];
 
-- (void) testArmorPublicKey
-{
-    [self.oPGP importKeysFromFile:self.pubKeyringPath allowDuplicates:NO];
-
-    PGPKey *key = self.oPGP.keys[0];
+    let key = self.oPGP.keys.anyObject;
 
     NSError *exportError = nil;
-    NSData *keyData = [key export:&exportError];
+    NSData *keyData = [key.publicKey export:&exportError];
     XCTAssertNil(exportError);
     XCTAssertNotNil(keyData);
 
@@ -99,7 +94,7 @@
 //    NSData *keyData = [key export:&exportError];
 //    XCTAssertNil(exportError);
 //    XCTAssertNotNil(keyData);
-//    
+//
 //    NSData *armoredData = [PGPArmor armoredData:keyData as:PGPArmorTypePublicKey];
 //    XCTAssertNotNil(armoredData);
 //

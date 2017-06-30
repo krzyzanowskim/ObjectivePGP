@@ -7,45 +7,46 @@
 //
 
 #import "PGPSubKey.h"
+#import "ObjectivePGP.h"
+#import "PGPMacros.h"
 #import "PGPPublicKeyPacket.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPSubKey
 
-- (instancetype) initWithPacket:(PGPPacket *)packet
-{
-    if (self = [self init]) {
+- (instancetype)initWithPacket:(PGPPacket *)packet {
+    if ((self = [super init])) {
         self.primaryKeyPacket = packet;
     }
     return self;
 }
 
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"%@ %@",[super description], [self.primaryKeyPacket description]];
+- (NSString *)description {
+    return [NSString stringWithFormat:@"%@ %@", super.description, self.primaryKeyPacket.description];
 }
 
-- (PGPKeyID *)keyID
-{
-    //note: public key packet because this is main class for public and secret class
-    PGPPublicKeyPacket *primaryKeyPacket = (PGPPublicKeyPacket *)self.primaryKeyPacket;
-    PGPKeyID *keyID = [[PGPKeyID alloc] initWithFingerprint:primaryKeyPacket.fingerprint];
-    return keyID;
+- (PGPKeyID *)keyID {
+    // note: public key packet because this is main class for public and secret class
+    let primaryKeyPacket = PGPCast(self.primaryKeyPacket, PGPPublicKeyPacket);
+    NSCAssert(primaryKeyPacket, @"Invalid packet");
+    return [[PGPKeyID alloc] initWithFingerprint:primaryKeyPacket.fingerprint];
 }
 
-- (NSArray *) allPackets
-{
-    NSMutableArray *arr = [NSMutableArray array];
-
-    [arr addObject:self.primaryKeyPacket];
+- (NSArray<PGPPacket *> *)allPackets {
+    let arr = [NSMutableArray<PGPPacket *> arrayWithObject:self.primaryKeyPacket];
 
     if (self.revocationSignature) {
-        [arr addObject:self.revocationSignature];
+        [arr addObject:PGPNN(self.revocationSignature)];
     }
 
     if (self.bindingSignature) {
-        [arr addObject:self.bindingSignature];
+        [arr addObject:PGPNN(self.bindingSignature)];
     }
 
-    return [arr copy];
+    return arr;
 }
+
 @end
+
+NS_ASSUME_NONNULL_END

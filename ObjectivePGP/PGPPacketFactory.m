@@ -7,21 +7,26 @@
 //
 
 #import "PGPPacketFactory.h"
-#import "PGPPublicKeyPacket.h"
-#import "PGPPublicSubKeyPacket.h"
-#import "PGPSignaturePacket.h"
-#import "PGPUserIDPacket.h"
-#import "PGPTrustPacket.h"
-#import "PGPSecretKeyPacket.h"
-#import "PGPSecretSubKeyPacket.h"
+#import "PGPCompressedPacket.h"
 #import "PGPLiteralPacket.h"
 #import "PGPModificationDetectionCodePacket.h"
-#import "PGPUserAttributePacket.h"
 #import "PGPOnePassSignaturePacket.h"
-#import "PGPCompressedPacket.h"
+#import "PGPPublicKeyEncryptedSessionKeyPacket.h"
+#import "PGPPublicKeyPacket.h"
+#import "PGPPublicSubKeyPacket.h"
+#import "PGPSecretKeyPacket.h"
+#import "PGPSecretSubKeyPacket.h"
+#import "PGPSignaturePacket.h"
 #import "PGPSymmetricallyEncryptedDataPacket.h"
 #import "PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h"
-#import "PGPPublicKeyEncryptedSessionKeyPacket.h"
+#import "PGPTrustPacket.h"
+#import "PGPUserAttributePacket.h"
+#import "PGPUserIDPacket.h"
+
+#import "PGPLogging.h"
+#import "PGPMacros.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPPacketFactory
 
@@ -33,22 +38,18 @@
  *
  *  @return Packet instance object
  */
-+ (PGPPacket * ) packetWithData:(NSData *)packetData offset:(NSUInteger)offset nextPacketOffset:(NSUInteger *)nextPacketOffset
-{
-
++ (nullable PGPPacket *)packetWithData:(NSData *)packetData offset:(NSUInteger)offset nextPacketOffset:(nullable NSUInteger *)nextPacketOffset {
     // parse header and get actual header data
-
     PGPPacketTag packetTag = 0;
-    NSData *data = [packetData subdataWithRange:(NSRange) {offset, packetData.length - offset}];
     UInt32 headerLength = 0;
-    BOOL indeterminateLength;
-    NSData *packetBodyData = [PGPPacket parsePacketHeader:data headerLength:&headerLength nextPacketOffset:nextPacketOffset packetTag:&packetTag indeterminateLength:&indeterminateLength];
-    NSData *packetHeaderData = [packetData subdataWithRange:(NSRange) {offset, headerLength}];
+    BOOL indeterminateLength = NO;
+    let data = [packetData subdataWithRange:(NSRange){offset, packetData.length - offset}];
+    let packetBodyData = [PGPPacket parsePacketHeader:data headerLength:&headerLength nextPacketOffset:nextPacketOffset packetTag:&packetTag indeterminateLength:&indeterminateLength];
+    let packetHeaderData = [packetData subdataWithRange:(NSRange){offset, headerLength}];
 
     if (packetHeaderData.length > 0) {
-        
         // Analyze body0
-        PGPPacket * packet = nil;
+        PGPPacket *packet = nil;
         switch (packetTag) {
             case PGPPublicKeyPacketTag:
                 packet = [[PGPPublicKeyPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
@@ -86,9 +87,9 @@
             case PGPCompressedDataPacketTag:
                 packet = [[PGPCompressedPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
                 break;
-//            case PGPSymmetricallyEncryptedDataPacketTag:
-//                packet = [[PGPSymmetricallyEncryptedDataPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
-//                break;
+            //            case PGPSymmetricallyEncryptedDataPacketTag:
+            //                packet = [[PGPSymmetricallyEncryptedDataPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+            //                break;
             case PGPSymmetricallyEncryptedIntegrityProtectedDataPacketTag:
                 packet = [[PGPSymmetricallyEncryptedIntegrityProtectedDataPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
                 break;
@@ -96,14 +97,11 @@
                 packet = [[PGPPublicKeyEncryptedSessionKeyPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
                 break;
             default:
-                #ifdef DEBUG
-                NSLog(@"Warning %s Packet tag %d is not supported", __PRETTY_FUNCTION__, packetTag);
-                #endif
-                
+                PGPLogWarning(@"Packet tag %@ is not supported", @(packetTag));
                 packet = [[PGPPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
                 break;
         }
-        
+
         if (indeterminateLength) {
             packet.indeterminateLength = YES;
         }
@@ -113,3 +111,5 @@
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

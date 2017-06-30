@@ -7,29 +7,32 @@
 //
 
 #import "PGPUser.h"
-#import "PGPSignaturePacket.h"
+#import "ObjectivePGP.h"
+#import "PGPMacros.h"
+#import "PGPPartialKey.h"
 #import "PGPPublicKeyPacket.h"
-#import "PGPUserIDPacket.h"
-#import "PGPKey.h"
+#import "PGPSignaturePacket.h"
 #import "PGPUserAttributePacket.h"
+#import "PGPUserIDPacket.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPUser
 
-- (instancetype) initWithUserIDPacket:(PGPUserIDPacket *)userPacket
-{
-    if (self = [self init]) {
+- (instancetype)initWithUserIDPacket:(PGPUserIDPacket *)userPacket {
+    PGPAssertClass(userPacket, PGPUserIDPacket);
+
+    if (self = [super init]) {
         _userIDPacket = userPacket;
     }
     return self;
 }
 
-- (NSString *)userID
-{
+- (NSString *)userID {
     return self.userIDPacket.userID;
 }
 
-- (NSUInteger)hash
-{
+- (NSUInteger)hash {
     NSUInteger prime = 31;
     NSUInteger result = 1;
 
@@ -43,32 +46,28 @@
     return result;
 }
 
-- (NSArray *)otherSignatures
-{
+- (NSArray *)otherSignatures {
     if (!_otherSignatures) {
         _otherSignatures = [NSArray array];
     }
     return _otherSignatures;
 }
 
-- (NSArray *)revocationSignatures
-{
+- (NSArray *)revocationSignatures {
     if (!_revocationSignatures) {
         _revocationSignatures = [NSArray array];
     }
     return _revocationSignatures;
 }
 
-- (NSArray *)selfCertifications
-{
+- (NSArray *)selfCertifications {
     if (!_selfCertifications) {
         _selfCertifications = [NSArray array];
     }
     return _selfCertifications;
 }
 
-- (PGPUserIDPacket *)userIDPacket
-{
+- (PGPUserIDPacket *)userIDPacket {
     if (!_userIDPacket) {
         NSAssert(false, @"wat?");
         // build userIDPacket
@@ -76,17 +75,15 @@
     return _userIDPacket;
 }
 
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"%@ %@",[super description], self.userID];
+- (NSString *)description {
+    return [NSString stringWithFormat:@"%@ %@", [super description], self.userID];
 }
 
-- (NSArray *) allPackets
-{
-    NSMutableArray *arr = [NSMutableArray array];
+- (NSArray<PGPPacket *> *)allPackets {
+    NSMutableArray *arr = [NSMutableArray<PGPPacket *> array];
 
     if (self.userIDPacket) {
-        [arr addObject:self.userIDPacket]; //TODO: || [arr addObject:self.userAttribute]
+        [arr addObject:self.userIDPacket]; // TODO: || [arr addObject:self.userAttribute]
     }
 
     for (id packet in self.revocationSignatures) {
@@ -101,11 +98,11 @@
         [arr addObject:packet];
     }
 
-    return [arr copy];
+    return arr;
 }
 
-//TODO:
-//User.prototype.getValidSelfCertificate = function(primaryKey) {
+// TODO:
+// User.prototype.getValidSelfCertificate = function(primaryKey) {
 //    if (!this.selfCertifications) {
 //        return null;
 //    }
@@ -130,15 +127,14 @@
 //};
 
 // Returns the most significant (latest valid) self signature of the user
-- (PGPSignaturePacket *) validSelfCertificate:(PGPKey *)key
-{
+- (nullable PGPSignaturePacket *)validSelfCertificate:(PGPPartialKey *)key {
     if (self.selfCertifications.count == 0) {
         return nil;
     }
 
     NSMutableArray *certs = [NSMutableArray array];
     for (PGPSignaturePacket *signature in self.selfCertifications) {
-        //TODO: check for revocation
+        // TODO: check for revocation
 
         if (signature.isExpired) {
             continue;
@@ -147,7 +143,7 @@
         // This only worked as verify wasn't implemented correctly
         // TODO: find a better solution
         //
-        //        // (this is craziest think I ever seen today)
+        //        // (this is the craziest thing I ever seen today)
         //        NSError *error;
         //        [signature verifyData:nil withKey:key signingKeyPacket:(PGPPublicKeyPacket *)key.primaryKeyPacket userID:self.userID error:&error];
         //        //BOOL status = [signature verifyData:nil withKey:key signingKeyPacket:(PGPPublicKeyPacket *)key.primaryKeyPacket userID:self.userID error:&error];
@@ -162,12 +158,17 @@
     }
 
     [certs sortUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-        PGPSignaturePacket *sig1 = obj1;
-        PGPSignaturePacket *sig2 = obj2;
-        return [sig1.creationDate compare:sig2.creationDate];
+        let sig1 = PGPCast(obj1, PGPSignaturePacket);
+        let sig2 = PGPCast(obj2, PGPSignaturePacket);
+        if (sig1.creationDate && sig2.creationDate) {
+            return [PGPNN(sig1.creationDate) compare:PGPNN(sig2.creationDate)];
+        }
+        return NSOrderedSame;
     }];
 
     return [certs firstObject];
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

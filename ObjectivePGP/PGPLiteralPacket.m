@@ -9,42 +9,41 @@
 #import "PGPLiteralPacket.h"
 #import "PGPTypes.h"
 
+#import "PGPMacros.h"
+
+NS_ASSUME_NONNULL_BEGIN
+
 @interface PGPLiteralPacket ()
 @end
 
 @implementation PGPLiteralPacket
 
-- (id)init
-{
+- (instancetype)init {
     if (self = [super init]) {
         _format = PGPLiteralPacketBinary;
     }
     return self;
 }
 
-- (instancetype) initWithData:(NSData *)rawData
-{
+- (instancetype)initWithData:(NSData *)rawData {
     if (self = [self init]) {
         _literalRawData = rawData;
     }
     return self;
 }
 
-+ (PGPLiteralPacket *) literalPacket:(PGPLiteralPacketFormat)format withData:(NSData *)rawData
-{
-    PGPLiteralPacket *literalPacket = [[PGPLiteralPacket alloc] init];
++ (PGPLiteralPacket *)literalPacket:(PGPLiteralPacketFormat)format withData:(NSData *)rawData {
+    let literalPacket = [[PGPLiteralPacket alloc] init];
     literalPacket.format = format;
     literalPacket.literalRawData = rawData;
     return literalPacket;
 }
 
-- (PGPPacketTag)tag
-{
+- (PGPPacketTag)tag {
     return PGPLiteralDataPacketTag;
 }
 
-- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
-{
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
 
     // A one-octet field that describes how the data is formatted.
@@ -52,8 +51,7 @@
     position = position + 1;
 
     NSAssert(self.format == PGPLiteralPacketBinary || self.format == PGPLiteralPacketText || self.format == PGPLiteralPacketTextUTF8, @"Unkown data format");
-    if (self.format != PGPLiteralPacketBinary && self.format != PGPLiteralPacketText && self.format != PGPLiteralPacketTextUTF8)
-    {
+    if (self.format != PGPLiteralPacketBinary && self.format != PGPLiteralPacketText && self.format != PGPLiteralPacketTextUTF8) {
         // skip
         return 1 + packetBody.length;
     }
@@ -76,7 +74,7 @@
     creationTimestamp = CFSwapInt32BigToHost(creationTimestamp);
     self.timestamp = [NSDate dateWithTimeIntervalSince1970:creationTimestamp];
     position = position + 4;
-    NSData *data = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
+    let data = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
 
     switch (self.format) {
         case PGPLiteralPacketBinary:
@@ -92,17 +90,16 @@
     return position;
 }
 
-- (NSData *) exportPacket:(NSError *__autoreleasing *)error
-{
+- (nullable NSData *)export:(NSError *_Nullable __autoreleasing *)error {
     NSAssert(self.literalRawData, @"Missing literal data");
     if (!self.literalRawData) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Missing literal data"}];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Missing literal data" }];
         }
         return nil;
     }
 
-    NSMutableData *bodyData = [NSMutableData data];
+    let bodyData = [NSMutableData data];
     [bodyData appendBytes:&_format length:1];
 
     if (self.filename) {
@@ -119,7 +116,7 @@
         timestampBytes = CFSwapInt32HostToBig(timestampBytes);
         [bodyData appendBytes:&timestampBytes length:4];
     } else {
-        UInt8 zero4[] = {0,0,0,0};
+        UInt8 zero4[] = {0, 0, 0, 0};
         [bodyData appendBytes:&zero4 length:4];
     }
 
@@ -133,13 +130,14 @@
             break;
     }
 
-    NSMutableData *data = [NSMutableData data];
-    NSData *headerData = [self buildHeaderData:bodyData];
-    [data appendData: headerData];
-    [data appendData: bodyData];
+    let data = [NSMutableData data];
+    let headerData = [self buildHeaderData:bodyData];
+    [data appendData:headerData];
+    [data appendData:bodyData];
 
-    return [data copy];
+    return data;
 }
 
-
 @end
+
+NS_ASSUME_NONNULL_END

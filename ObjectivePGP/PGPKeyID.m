@@ -10,95 +10,77 @@
 // Short Key ID:                                             E810 38C6
 
 #import "PGPKeyID.h"
+#import "ObjectivePGP.h"
+#import "PGPMacros.h"
 
 @implementation PGPKeyID
 
-- (instancetype) initWithFingerprint:(PGPFingerprint *)fingerprint
-{
-    if (!fingerprint)
-        return nil;
-
-    if (self = [self initWithLongKey:[fingerprint.hashedData subdataWithRange:(NSRange){fingerprint.hashLength - 8,8}]]) {
-        
-    }
-
-    return self;
-}
-
-- (instancetype) initWithLongKey:(NSData *)longKeyData
-{
+- (instancetype)initWithLongKey:(NSData *)longKeyData {
     if (longKeyData.length != 8) {
         return nil;
     }
 
-    if (self = [self init]) {
-        _longKey = longKeyData;
+    if (self = [super init]) {
+        _longKey = [longKeyData copy];
     }
     return self;
 }
 
-- (NSString *)description
-{
+- (instancetype)initWithFingerprint:(PGPFingerprint *)fingerprint {
+    PGPAssertClass(fingerprint, PGPFingerprint);
+    return ((self = [self initWithLongKey:[fingerprint.hashedData subdataWithRange:(NSRange){fingerprint.hashLength - 8, 8}]]));
+}
+
+- (NSString *)description {
     return [self longKeyString];
 }
 
-- (NSData *)exportKeyData
-{
-    return [_longKey copy];
+- (NSData *)exportKeyData {
+    return self.longKey.copy;
 }
 
-- (BOOL)isEqual:(id)object
-{
+- (BOOL)isEqual:(id)object {
     if (self == object) {
         return YES;
     }
 
-    if ([self class] != [object class]) {
+    let other = PGPCast(object, PGPKeyID);
+    if (!other) {
         return NO;
     }
 
-    PGPKeyID *other = object;
-    return [self.longKey isEqualToData:other.longKey];
+    return [self.longKey isEqual:other.longKey];
 }
 
-- (BOOL) isEqualToKeyID:(PGPKeyID *)keyID
-{
-    return [self isEqual:keyID];
-}
-
-- (NSUInteger)hash
-{
+- (NSUInteger)hash {
     const NSUInteger prime = 31;
-    NSUInteger result = 1;
-    result = prime * result + [_longKey hash];
+    NSUInteger result = 7;
+    result = prime * result + self.longKey.hash;
     return result;
 }
 
-- (NSData *)shortKey
-{
-    return [self.longKey subdataWithRange:(NSRange){4,4}];
+- (NSData *)shortKey {
+    return [self.longKey subdataWithRange:(NSRange){4, 4}];
 }
 
-- (NSString *)shortKeyString
-{
+- (NSString *)shortKeyString {
     NSData *sKey = self.shortKey;
     NSMutableString *sbuf = [NSMutableString stringWithCapacity:sKey.length * 2];
     const unsigned char *buf = sKey.bytes;
     for (NSUInteger i = 0; i < sKey.length; ++i) {
         [sbuf appendFormat:@"%02X", (unsigned int)buf[i]];
     }
-    return [sbuf copy];
+    return sbuf.copy;
 }
 
-- (NSString *)longKeyString
-{
+- (NSString *)longKeyString {
     NSData *lKey = self.longKey;
     NSMutableString *sbuf = [NSMutableString stringWithCapacity:lKey.length * 2];
     const unsigned char *buf = lKey.bytes;
     for (NSUInteger i = 0; i < lKey.length; ++i) {
         [sbuf appendFormat:@"%02X", (unsigned int)buf[i]];
     }
-    return [sbuf copy];
+    return sbuf.copy;
 }
 
 @end

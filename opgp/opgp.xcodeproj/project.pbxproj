@@ -1,0 +1,356 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 48;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		753B0E0D1F05CC390095895D /* libObjectivePGP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 753B0E081F05CC240095895D /* libObjectivePGP.a */; };
+		759CBAA11F044CCB00FAC7C8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 759CBAA01F044CCB00FAC7C8 /* main.m */; };
+		75FA5C371F04550500E3E781 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 75FA5C351F0454EA00E3E781 /* libbz2.tbd */; };
+		75FA5C381F04551000E3E781 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 75FA5C361F0454F100E3E781 /* libz.tbd */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		753B0E071F05CC240095895D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 753B0E021F05CC240095895D /* ObjectivePGP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 756299B51914DE1A00C5AD3B;
+			remoteInfo = ObjectivePGP;
+		};
+		753B0E091F05CC240095895D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 753B0E021F05CC240095895D /* ObjectivePGP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 756299C51914DE1A00C5AD3B;
+			remoteInfo = ObjectivePGPTests;
+		};
+		753B0E0B1F05CC340095895D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 753B0E021F05CC240095895D /* ObjectivePGP.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 756299B41914DE1A00C5AD3B;
+			remoteInfo = ObjectivePGP;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		759CBA9B1F044CCB00FAC7C8 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		7526E6B71F045BFB00243E13 /* ObjectivePGP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ObjectivePGP.framework; sourceTree = "<group>"; };
+		752A0AB61F05C67A0052C450 /* ObjectivePGP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ObjectivePGP.framework; path = ../Frameworks/macOS/ObjectivePGP.framework; sourceTree = "<group>"; };
+		752A0AB81F05CBAB0052C450 /* libObjectivePGP.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libObjectivePGP.a; path = ../DerivedData/ObjectivePGP/Build/Products/Debug/libObjectivePGP.a; sourceTree = "<group>"; };
+		753B0E021F05CC240095895D /* ObjectivePGP.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ObjectivePGP.xcodeproj; path = ../ObjectivePGP.xcodeproj; sourceTree = "<group>"; };
+		759CBA9D1F044CCB00FAC7C8 /* opgp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = opgp; sourceTree = BUILT_PRODUCTS_DIR; };
+		759CBAA01F044CCB00FAC7C8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		75FA5C351F0454EA00E3E781 /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
+		75FA5C361F0454F100E3E781 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		759CBA9A1F044CCB00FAC7C8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				753B0E0D1F05CC390095895D /* libObjectivePGP.a in Frameworks */,
+				75FA5C381F04551000E3E781 /* libz.tbd in Frameworks */,
+				75FA5C371F04550500E3E781 /* libbz2.tbd in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		753B0E031F05CC240095895D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				753B0E081F05CC240095895D /* libObjectivePGP.a */,
+				753B0E0A1F05CC240095895D /* ObjectivePGPTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		759CBA941F044CCB00FAC7C8 = {
+			isa = PBXGroup;
+			children = (
+				753B0E021F05CC240095895D /* ObjectivePGP.xcodeproj */,
+				759CBA9F1F044CCB00FAC7C8 /* opgp */,
+				759CBA9E1F044CCB00FAC7C8 /* Products */,
+				75FA5C271F044D7200E3E781 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		759CBA9E1F044CCB00FAC7C8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				759CBA9D1F044CCB00FAC7C8 /* opgp */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		759CBA9F1F044CCB00FAC7C8 /* opgp */ = {
+			isa = PBXGroup;
+			children = (
+				759CBAA01F044CCB00FAC7C8 /* main.m */,
+			);
+			path = opgp;
+			sourceTree = "<group>";
+		};
+		75FA5C271F044D7200E3E781 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				752A0AB81F05CBAB0052C450 /* libObjectivePGP.a */,
+				7526E6B71F045BFB00243E13 /* ObjectivePGP.framework */,
+				752A0AB61F05C67A0052C450 /* ObjectivePGP.framework */,
+				75FA5C361F0454F100E3E781 /* libz.tbd */,
+				75FA5C351F0454EA00E3E781 /* libbz2.tbd */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		759CBA9C1F044CCB00FAC7C8 /* opgp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 759CBAA41F044CCB00FAC7C8 /* Build configuration list for PBXNativeTarget "opgp" */;
+			buildPhases = (
+				759CBA991F044CCB00FAC7C8 /* Sources */,
+				759CBA9A1F044CCB00FAC7C8 /* Frameworks */,
+				759CBA9B1F044CCB00FAC7C8 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				753B0E0C1F05CC340095895D /* PBXTargetDependency */,
+			);
+			name = opgp;
+			productName = opgp;
+			productReference = 759CBA9D1F044CCB00FAC7C8 /* opgp */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		759CBA951F044CCB00FAC7C8 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0900;
+				ORGANIZATIONNAME = "Marcin Krzyzanowski";
+				TargetAttributes = {
+					759CBA9C1F044CCB00FAC7C8 = {
+						CreatedOnToolsVersion = 9.0;
+					};
+				};
+			};
+			buildConfigurationList = 759CBA981F044CCB00FAC7C8 /* Build configuration list for PBXProject "opgp" */;
+			compatibilityVersion = "Xcode 8.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 759CBA941F044CCB00FAC7C8;
+			productRefGroup = 759CBA9E1F044CCB00FAC7C8 /* Products */;
+			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 753B0E031F05CC240095895D /* Products */;
+					ProjectRef = 753B0E021F05CC240095895D /* ObjectivePGP.xcodeproj */;
+				},
+			);
+			projectRoot = "";
+			targets = (
+				759CBA9C1F044CCB00FAC7C8 /* opgp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		753B0E081F05CC240095895D /* libObjectivePGP.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libObjectivePGP.a;
+			remoteRef = 753B0E071F05CC240095895D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		753B0E0A1F05CC240095895D /* ObjectivePGPTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ObjectivePGPTests.xctest;
+			remoteRef = 753B0E091F05CC240095895D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
+
+/* Begin PBXSourcesBuildPhase section */
+		759CBA991F044CCB00FAC7C8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				759CBAA11F044CCB00FAC7C8 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		753B0E0C1F05CC340095895D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ObjectivePGP;
+			targetProxy = 753B0E0B1F05CC340095895D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		759CBAA21F044CCB00FAC7C8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		759CBAA31F044CCB00FAC7C8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		759CBAA51F044CCB00FAC7C8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		759CBAA61F044CCB00FAC7C8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		759CBA981F044CCB00FAC7C8 /* Build configuration list for PBXProject "opgp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				759CBAA21F044CCB00FAC7C8 /* Debug */,
+				759CBAA31F044CCB00FAC7C8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		759CBAA41F044CCB00FAC7C8 /* Build configuration list for PBXNativeTarget "opgp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				759CBAA51F044CCB00FAC7C8 /* Debug */,
+				759CBAA61F044CCB00FAC7C8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 759CBA951F044CCB00FAC7C8 /* Project object */;
+}

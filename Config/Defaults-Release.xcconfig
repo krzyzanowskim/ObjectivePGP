@@ -1,0 +1,38 @@
+//
+//  Defaults-Release.xcconfig
+//
+//  Additional defaults to have a unified set of optimization settings
+//
+
+#include "Defaults.xcconfig"
+
+// Performance
+GCC_UNROLL_LOOPS = YES
+GCC_OPTIMIZATION_LEVEL = s
+
+// Without this set to yes, xcode only passes -fembed-bitcode-marker, not -fembed-bitcode to the compiler, when ENABLE_BITCODE is Yes
+DEPLOYMENT_POSTPROCESSING = YES
+
+ENABLE_BITCODE[sdk=iphoneos*] = YES
+
+// Link-Time optimization reduces file size by quite a bit.
+LLVM_LTO = YES
+
+// Code protection
+STRIP_INSTALLED_PRODUCT = YES
+SEPARATE_STRIP = YES
+COPY_PHASE_STRIP = YES
+DEAD_CODE_STRIPPING = YES
+STRIP_STYLE = non-global
+
+// build all the architectures
+ONLY_ACTIVE_ARCH = NO
+ENABLE_TESTABILITY = NO
+VALIDATE_PRODUCT = YES
+
+// Generating dSYM files is super slow but necessary for release builds.
+// This simply restores the default that we override in Defaults.xcconfig.
+DEBUG_INFORMATION_FORMAT = dwarf-with-dsym;
+
+// Warning are errors!
+GCC_TREAT_WARNINGS_AS_ERRORS = YES

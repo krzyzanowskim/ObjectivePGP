@@ -11,8 +11,7 @@
 
 @implementation PGPFingerprint
 
-- (instancetype) initWithData:(NSData *)keyData
-{
+- (instancetype)initWithData:(NSData *)keyData {
     if (self = [self init]) {
         _keyData = keyData;
         _hashedData = [keyData pgp_SHA1];
@@ -20,8 +19,7 @@
     return self;
 }
 
-- (NSString *)description
-{
+- (NSString *)description {
     NSMutableString *sbuf = [NSMutableString stringWithCapacity:self.hashedData.length * 2];
     const unsigned char *buf = self.hashedData.bytes;
     for (NSUInteger i = 0; i < self.hashedData.length; ++i) {
@@ -30,13 +28,11 @@
     return [sbuf copy];
 }
 
-- (NSUInteger) hashLength
-{
+- (NSUInteger)hashLength {
     return self.hashedData.length;
 }
 
-- (NSUInteger)hash
-{
+- (NSUInteger)hash {
     const NSUInteger prime = 31;
     NSUInteger result = 1;
     result = prime * result + [_hashedData hash];
@@ -44,22 +40,20 @@
     return result;
 }
 
-- (BOOL)isEqual:(id)object
-{
+- (BOOL)isEqual:(id)object {
     if (self == object) {
         return YES;
     }
-    
+
     if ([self class] != [object class]) {
         return NO;
     }
-    
+
     PGPFingerprint *other = object;
     return [self.keyData isEqualToData:other.keyData] && [self.hashedData isEqualToData:other.hashedData];
 }
 
-- (BOOL) isEqualToFingerprint:(PGPFingerprint *)fingerprint
-{
+- (BOOL)isEqualToFingerprint:(PGPFingerprint *)fingerprint {
     return [self isEqual:fingerprint];
 }
 

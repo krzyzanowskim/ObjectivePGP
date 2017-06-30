@@ -7,26 +7,24 @@
 //
 
 #import "PGPUserIDPacket.h"
+#import "PGPMacros.h"
 
 @interface PGPPacket ()
-@property (copy, readwrite) NSData *headerData;
-@property (copy, readwrite) NSData *bodyData;
+@property (nonatomic, copy, readwrite) NSData *headerData;
+@property (nonatomic, copy, readwrite) NSData *bodyData;
 @end
 
 @implementation PGPUserIDPacket
 
-- (PGPPacketTag)tag
-{
+- (PGPPacketTag)tag {
     return PGPUserIDPacketTag;
 }
 
-- (NSString *)description
-{
-    return [NSString stringWithFormat:@"%@ %@",[super description], self.userID];
+- (NSString *)description {
+    return [NSString stringWithFormat:@"%@ %@", [super description], self.userID];
 }
 
-- (NSUInteger) parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error
-{
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
 
     _userID = [[NSString alloc] initWithData:packetBody encoding:NSUTF8StringEncoding];
@@ -35,15 +33,13 @@
     return position;
 }
 
-- (NSData *) exportPacket:(NSError *__autoreleasing *)error
-{
-    NSMutableData *data = [NSMutableData data];
-    NSData *bodyData = [self.userID dataUsingEncoding:NSUTF8StringEncoding];
-    NSData *headerData = [self buildHeaderData:bodyData];
-    [data appendData: headerData];
-    [data appendData: bodyData];
-    return [data copy];
+- (nullable NSData *)export:(NSError *__autoreleasing *)error {
+    let data = [NSMutableData data];
+    let bodyData = [self.userID dataUsingEncoding:NSUTF8StringEncoding];
+    let headerData = [self buildHeaderData:bodyData];
+    [data appendData:headerData];
+    [data appendData:bodyData];
+    return data;
 }
-
 
 @end
