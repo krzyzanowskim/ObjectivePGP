@@ -7,11 +7,35 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		752A0AB71F05C6A20052C450 /* ObjectivePGP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 752A0AB61F05C67A0052C450 /* ObjectivePGP.framework */; };
+		753B0E0D1F05CC390095895D /* libObjectivePGP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 753B0E081F05CC240095895D /* libObjectivePGP.a */; };
 		759CBAA11F044CCB00FAC7C8 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 759CBAA01F044CCB00FAC7C8 /* main.m */; };
 		75FA5C371F04550500E3E781 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 75FA5C351F0454EA00E3E781 /* libbz2.tbd */; };
 		75FA5C381F04551000E3E781 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 75FA5C361F0454F100E3E781 /* libz.tbd */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		753B0E071F05CC240095895D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 753B0E021F05CC240095895D /* ObjectivePGP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 756299B51914DE1A00C5AD3B;
+			remoteInfo = ObjectivePGP;
+		};
+		753B0E091F05CC240095895D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 753B0E021F05CC240095895D /* ObjectivePGP.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 756299C51914DE1A00C5AD3B;
+			remoteInfo = ObjectivePGPTests;
+		};
+		753B0E0B1F05CC340095895D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 753B0E021F05CC240095895D /* ObjectivePGP.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 756299B41914DE1A00C5AD3B;
+			remoteInfo = ObjectivePGP;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		759CBA9B1F044CCB00FAC7C8 /* CopyFiles */ = {
@@ -28,6 +52,8 @@
 /* Begin PBXFileReference section */
 		7526E6B71F045BFB00243E13 /* ObjectivePGP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ObjectivePGP.framework; sourceTree = "<group>"; };
 		752A0AB61F05C67A0052C450 /* ObjectivePGP.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ObjectivePGP.framework; path = ../Frameworks/macOS/ObjectivePGP.framework; sourceTree = "<group>"; };
+		752A0AB81F05CBAB0052C450 /* libObjectivePGP.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libObjectivePGP.a; path = ../DerivedData/ObjectivePGP/Build/Products/Debug/libObjectivePGP.a; sourceTree = "<group>"; };
+		753B0E021F05CC240095895D /* ObjectivePGP.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ObjectivePGP.xcodeproj; path = ../ObjectivePGP.xcodeproj; sourceTree = "<group>"; };
 		759CBA9D1F044CCB00FAC7C8 /* opgp */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = opgp; sourceTree = BUILT_PRODUCTS_DIR; };
 		759CBAA01F044CCB00FAC7C8 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		75FA5C351F0454EA00E3E781 /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = usr/lib/libbz2.tbd; sourceTree = SDKROOT; };
@@ -39,7 +65,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				752A0AB71F05C6A20052C450 /* ObjectivePGP.framework in Frameworks */,
+				753B0E0D1F05CC390095895D /* libObjectivePGP.a in Frameworks */,
 				75FA5C381F04551000E3E781 /* libz.tbd in Frameworks */,
 				75FA5C371F04550500E3E781 /* libbz2.tbd in Frameworks */,
 			);
@@ -48,9 +74,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		753B0E031F05CC240095895D /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				753B0E081F05CC240095895D /* libObjectivePGP.a */,
+				753B0E0A1F05CC240095895D /* ObjectivePGPTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
 		759CBA941F044CCB00FAC7C8 = {
 			isa = PBXGroup;
 			children = (
+				753B0E021F05CC240095895D /* ObjectivePGP.xcodeproj */,
 				759CBA9F1F044CCB00FAC7C8 /* opgp */,
 				759CBA9E1F044CCB00FAC7C8 /* Products */,
 				75FA5C271F044D7200E3E781 /* Frameworks */,
@@ -76,6 +112,7 @@
 		75FA5C271F044D7200E3E781 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				752A0AB81F05CBAB0052C450 /* libObjectivePGP.a */,
 				7526E6B71F045BFB00243E13 /* ObjectivePGP.framework */,
 				752A0AB61F05C67A0052C450 /* ObjectivePGP.framework */,
 				75FA5C361F0454F100E3E781 /* libz.tbd */,
@@ -98,6 +135,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				753B0E0C1F05CC340095895D /* PBXTargetDependency */,
 			);
 			name = opgp;
 			productName = opgp;
@@ -128,12 +166,35 @@
 			mainGroup = 759CBA941F044CCB00FAC7C8;
 			productRefGroup = 759CBA9E1F044CCB00FAC7C8 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 753B0E031F05CC240095895D /* Products */;
+					ProjectRef = 753B0E021F05CC240095895D /* ObjectivePGP.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				759CBA9C1F044CCB00FAC7C8 /* opgp */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		753B0E081F05CC240095895D /* libObjectivePGP.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libObjectivePGP.a;
+			remoteRef = 753B0E071F05CC240095895D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		753B0E0A1F05CC240095895D /* ObjectivePGPTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = ObjectivePGPTests.xctest;
+			remoteRef = 753B0E091F05CC240095895D /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXSourcesBuildPhase section */
 		759CBA991F044CCB00FAC7C8 /* Sources */ = {
@@ -145,6 +206,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		753B0E0C1F05CC340095895D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = ObjectivePGP;
+			targetProxy = 753B0E0B1F05CC340095895D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		759CBAA21F044CCB00FAC7C8 /* Debug */ = {
@@ -249,10 +318,6 @@
 		759CBAA51F044CCB00FAC7C8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/../Frameworks/$(PLATFORM_NAME)/**",
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -260,10 +325,6 @@
 		759CBAA61F044CCB00FAC7C8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PROJECT_DIR)/../Frameworks/$(PLATFORM_NAME)/**",
-				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

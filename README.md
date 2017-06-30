@@ -11,6 +11,24 @@ Here is the [blog post](http://blog.krzyzanowskim.com/2014/07/31/short-story-abo
 
 ## Installation
 
+### Framework
+
+ObjectivePGP comes with the prebuild [Static Frameworks](./Frameworks)
+
+1. Download appropriate ObjectivePGP.framework
+1. Link framework with the target
+    - Add `ObjectivePGP.framework` to "**Link Binary With Libraries**" list for the target.
+
+### Subproject
+
+You can add ObjectivePGP project as a subproject to your application project:
+
+1. Add `ObjectivePGP.xcodeproj` to the project.
+1. Add `ObjectivePGP` to "**Target Dependencies**" list for the target.
+1. Add `ObjectivePGP` to "**Link Binary With Libraries**" list for the target.
+1. Add `libz` and `libbz2` to "**Link Binary With Libraries**" list for the target. These are system libraries.
+
+![screen shot 2017-06-30 at 02 07 42](https://user-images.githubusercontent.com/758033/27715699-3a0dec74-5d39-11e7-8c6c-8b97fb70b33e.png)
 
 ### CocoaPods
 
