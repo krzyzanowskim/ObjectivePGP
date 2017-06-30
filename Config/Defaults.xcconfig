@@ -136,7 +136,7 @@ SKIP_INSTALL = YES
 EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES =  *.bundle $(inherited)
 
 // :MARK: -Custom Definitions/Macros
-// Always export symbols so PSPDF Instant can be used with normal releases of PSPDFKit.
+// Always export symbols.
 PGP_PREPROCESSOR_DEFINITIONS_COMMON = $(inherited) PGP_APP_EXPORT_SYMBOLS=1
 // Config files that include this one and want to change this setting should override and that override should have $(PGP_PREPROCESSOR_DEFINITIONS_COMMON) but not $(inherited) because that refers to the higher level in the hierarchy, not earlier in the xcconfig file.
 GCC_PREPROCESSOR_DEFINITIONS = $(PGP_PREPROCESSOR_DEFINITIONS_COMMON)
