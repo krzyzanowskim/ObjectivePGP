@@ -25,7 +25,9 @@ ObjectivePGP comes with the prebuild [Static Frameworks](./Frameworks) for the l
 1. Link framework with the target
     - Add `ObjectivePGP.framework` to "**Link Binary With Libraries**" list for the target.
     ![screen shot 2017-06-30 at 02 20 47](https://user-images.githubusercontent.com/758033/27715926-d79a4e3c-5d3a-11e7-8b1b-d8b5ddb8182e.png)
-    - Add `libz` and `libbz2` to "**Link Binary With Libraries**" list for the target. These are system libraries.
+1. Link libraries and frameworks
+    1. Add `Security.framework` to "**Link Binary With Libraries**" list for the target. These are system libraries.
+    1. Add `libz` and `libbz2` to "**Link Binary With Libraries**" list for the target. These are system libraries.
 
 
 
@@ -35,8 +37,10 @@ You can add ObjectivePGP project as a subproject to your application project:
 
 1. Add `ObjectivePGP.xcodeproj` to the project.
 1. Add `ObjectivePGP` to "**Target Dependencies**" list for the target.
-1. Add `ObjectivePGP` to "**Link Binary With Libraries**" list for the target.
-1. Add `libz` and `libbz2` to "**Link Binary With Libraries**" list for the target. These are system libraries.
+1. Link libraries and frameworks
+    1. Add `Security.framework` to "**Link Binary With Libraries**" list for the target. These are system libraries.
+    1. Add `libObjectivePGP.a` to "**Link Binary With Libraries**" list for the target.
+    1. Add `libz` and `libbz2` to "**Link Binary With Libraries**" list for the target. These are system libraries.
 
 ![screen shot 2017-06-30 at 02 07 42](https://user-images.githubusercontent.com/758033/27715699-3a0dec74-5d39-11e7-8c6c-8b97fb70b33e.png)
 
