@@ -92,7 +92,7 @@
 		75804A6B1EED172E00AC97BF /* PGPPublicKeyRSA.h in Headers */ = {isa = PBXBuildFile; fileRef = 75B2450D1933DB89003F24A0 /* PGPPublicKeyRSA.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		75804A6C1EED172E00AC97BF /* PGPCryptoCFB.h in Headers */ = {isa = PBXBuildFile; fileRef = 751056111940A76F00653C0B /* PGPCryptoCFB.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		75804A6D1EED172E00AC97BF /* PGPLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 752B3A791EC8EB9A003F6C22 /* PGPLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		7580828A1986AFA200348D0D /* libObjectivePGP.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B51914DE1A00C5AD3B /* libObjectivePGP.a */; };
+		7580828A1986AFA200348D0D /* libObjectivePGPStatic.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B51914DE1A00C5AD3B /* libObjectivePGPStatic.a */; };
 		758514EC1EDF09C400CB313F /* PGPFoundation.m in Sources */ = {isa = PBXBuildFile; fileRef = 758514EB1EDF09C400CB313F /* PGPFoundation.m */; };
 		758514F01EDF3D7100CB313F /* PGPKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 758514EF1EDF3D7100CB313F /* PGPKey.m */; };
 		758F3A1A192935C7009307AD /* NSValue+PGPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 758F3A19192935C7009307AD /* NSValue+PGPUtils.m */; };
@@ -168,7 +168,7 @@
 		75572E281ED2193C00205871 /* PGPCryptoHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPCryptoHash.h; sourceTree = "<group>"; };
 		7562858C19239F1B00127E24 /* PGPFingerprint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPFingerprint.h; sourceTree = "<group>"; };
 		7562858D19239F1B00127E24 /* PGPFingerprint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPFingerprint.m; sourceTree = "<group>"; };
-		756299B51914DE1A00C5AD3B /* libObjectivePGP.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libObjectivePGP.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		756299B51914DE1A00C5AD3B /* libObjectivePGPStatic.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libObjectivePGPStatic.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		756299B81914DE1A00C5AD3B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		756299BC1914DE1A00C5AD3B /* ObjectivePGP-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ObjectivePGP-Prefix.pch"; sourceTree = "<group>"; };
 		756299BD1914DE1A00C5AD3B /* ObjectivePGP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ObjectivePGP.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -276,7 +276,7 @@
 				7575BE5B1F00927800121BEA /* libbz2.tbd in Frameworks */,
 				7547A6D11F0085E8002C2145 /* Security.framework in Frameworks */,
 				756299C81914DE1A00C5AD3B /* Foundation.framework in Frameworks */,
-				7580828A1986AFA200348D0D /* libObjectivePGP.a in Frameworks */,
+				7580828A1986AFA200348D0D /* libObjectivePGPStatic.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -321,7 +321,7 @@
 		756299B61914DE1A00C5AD3B /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				756299B51914DE1A00C5AD3B /* libObjectivePGP.a */,
+				756299B51914DE1A00C5AD3B /* libObjectivePGPStatic.a */,
 				756299C51914DE1A00C5AD3B /* ObjectivePGPTests.xctest */,
 			);
 			name = Products;
@@ -568,9 +568,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		756299B41914DE1A00C5AD3B /* ObjectivePGP */ = {
+		756299B41914DE1A00C5AD3B /* ObjectivePGPStatic */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 756299D81914DE1A00C5AD3B /* Build configuration list for PBXNativeTarget "ObjectivePGP" */;
+			buildConfigurationList = 756299D81914DE1A00C5AD3B /* Build configuration list for PBXNativeTarget "ObjectivePGPStatic" */;
 			buildPhases = (
 				756299B11914DE1A00C5AD3B /* Sources */,
 				75804A251EED161800AC97BF /* Headers */,
@@ -581,9 +581,9 @@
 			);
 			dependencies = (
 			);
-			name = ObjectivePGP;
+			name = ObjectivePGPStatic;
 			productName = ObjectivePGP;
-			productReference = 756299B51914DE1A00C5AD3B /* libObjectivePGP.a */;
+			productReference = 756299B51914DE1A00C5AD3B /* libObjectivePGPStatic.a */;
 			productType = "com.apple.product-type.library.static";
 		};
 		756299C41914DE1A00C5AD3B /* ObjectivePGPTests */ = {
@@ -626,7 +626,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				756299B41914DE1A00C5AD3B /* ObjectivePGP */,
+				756299B41914DE1A00C5AD3B /* ObjectivePGPStatic */,
 				756299C41914DE1A00C5AD3B /* ObjectivePGPTests */,
 			);
 		};
@@ -738,7 +738,7 @@
 /* Begin PBXTargetDependency section */
 		756299CC1914DE1A00C5AD3B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 756299B41914DE1A00C5AD3B /* ObjectivePGP */;
+			target = 756299B41914DE1A00C5AD3B /* ObjectivePGPStatic */;
 			targetProxy = 756299CB1914DE1A00C5AD3B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -774,7 +774,7 @@
 				DSTROOT = /tmp/ObjectivePGP.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ObjectivePGP/ObjectivePGP-Prefix.pch";
-				PRODUCT_NAME = ObjectivePGP;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
@@ -785,7 +785,7 @@
 				DSTROOT = /tmp/ObjectivePGP.dst;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ObjectivePGP/ObjectivePGP-Prefix.pch";
-				PRODUCT_NAME = ObjectivePGP;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
@@ -839,7 +839,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		756299D81914DE1A00C5AD3B /* Build configuration list for PBXNativeTarget "ObjectivePGP" */ = {
+		756299D81914DE1A00C5AD3B /* Build configuration list for PBXNativeTarget "ObjectivePGPStatic" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				756299D91914DE1A00C5AD3B /* Debug */,

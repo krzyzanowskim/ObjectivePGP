@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "756299B41914DE1A00C5AD3B"
-               BuildableName = "libObjectivePGP.a"
-               BlueprintName = "ObjectivePGP"
+               BuildableName = "libObjectivePGPStatic.a"
+               BlueprintName = "ObjectivePGPStatic"
                ReferencedContainer = "container:ObjectivePGP.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -48,8 +48,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "756299B41914DE1A00C5AD3B"
-            BuildableName = "libObjectivePGP.a"
-            BlueprintName = "ObjectivePGP"
+            BuildableName = "libObjectivePGPStatic.a"
+            BlueprintName = "ObjectivePGPStatic"
             ReferencedContainer = "container:ObjectivePGP.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -71,8 +71,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "756299B41914DE1A00C5AD3B"
-            BuildableName = "libObjectivePGP.a"
-            BlueprintName = "ObjectivePGP"
+            BuildableName = "libObjectivePGPStatic.a"
+            BlueprintName = "ObjectivePGPStatic"
             ReferencedContainer = "container:ObjectivePGP.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -89,8 +89,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "756299B41914DE1A00C5AD3B"
-            BuildableName = "libObjectivePGP.a"
-            BlueprintName = "ObjectivePGP"
+            BuildableName = "libObjectivePGPStatic.a"
+            BlueprintName = "ObjectivePGPStatic"
             ReferencedContainer = "container:ObjectivePGP.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
