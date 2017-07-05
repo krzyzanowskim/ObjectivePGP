@@ -1,12 +1,12 @@
 //
-//  ObjectivePGP.m
+//  ObjectivePGPObject.m
 //  ObjectivePGP
 //
 //  Created by Marcin Krzyzanowski on 03/05/14.
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import "ObjectivePGP.h"
+#import "ObjectivePGPObject.h"
 #import "PGPArmor.h"
 #import "PGPCompressedPacket.h"
 #import "PGPCryptoUtils.h"
@@ -30,6 +30,7 @@
 #import "PGPFoundation.h"
 #import "PGPLogging.h"
 #import "PGPMacros.h"
+
 
 NS_ASSUME_NONNULL_BEGIN
 

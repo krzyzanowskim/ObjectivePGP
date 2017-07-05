@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "756299B41914DE1A00C5AD3B"
-               BuildableName = "libObjectivePGPStatic.a"
-               BlueprintName = "ObjectivePGPStatic"
+               BlueprintIdentifier = "750F89331F0D6A3F00B99726"
+               BuildableName = "ObjectivePGP.framework"
+               BlueprintName = "ObjectivePGP"
                ReferencedContainer = "container:ObjectivePGP.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -26,33 +26,10 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      enableAddressSanitizer = "YES"
-      enableASanStackUseAfterReturn = "YES"
-      enableUBSanitizer = "YES"
-      disableMainThreadChecker = "YES"
       language = ""
       shouldUseLaunchSchemeArgsEnv = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "756299C41914DE1A00C5AD3B"
-               BuildableName = "ObjectivePGPTests.xctest"
-               BlueprintName = "ObjectivePGPTests"
-               ReferencedContainer = "container:ObjectivePGP.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "756299B41914DE1A00C5AD3B"
-            BuildableName = "libObjectivePGPStatic.a"
-            BlueprintName = "ObjectivePGPStatic"
-            ReferencedContainer = "container:ObjectivePGP.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
       <AdditionalOptions>
       </AdditionalOptions>
    </TestAction>
@@ -70,9 +47,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "756299B41914DE1A00C5AD3B"
-            BuildableName = "libObjectivePGPStatic.a"
-            BlueprintName = "ObjectivePGPStatic"
+            BlueprintIdentifier = "750F89331F0D6A3F00B99726"
+            BuildableName = "ObjectivePGP.framework"
+            BlueprintName = "ObjectivePGP"
             ReferencedContainer = "container:ObjectivePGP.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -88,9 +65,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "756299B41914DE1A00C5AD3B"
-            BuildableName = "libObjectivePGPStatic.a"
-            BlueprintName = "ObjectivePGPStatic"
+            BlueprintIdentifier = "750F89331F0D6A3F00B99726"
+            BuildableName = "ObjectivePGP.framework"
+            BlueprintName = "ObjectivePGP"
             ReferencedContainer = "container:ObjectivePGP.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
