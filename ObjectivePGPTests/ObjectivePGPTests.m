@@ -6,7 +6,6 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import "ObjectivePGP+Private.h"
 #import "ObjectivePGP.h"
 #import "PGPMacros.h"
 #import <XCTest/XCTest.h>
