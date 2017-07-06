@@ -1,4 +1,4 @@
-// Build ObjectivePGP.framework target first.
+// Build ObjectivePGP target first.
 import ObjectivePGP
 import Foundation
 
@@ -11,7 +11,6 @@ guard let key = pgp.findKey(forIdentifier: "878ECFB866753341") else { fatalError
 
 // Encrypt 5 bytes using selected key
 let encryptedArmoredData = try! pgp.encryptData(Data(bytes: [1,2,3,4,5]), using: [key], armored: true)
-let encryptedAscii = String(data: encryptedArmoredData, encoding: .utf8)!
-
-print(encryptedAscii)
-
+if let encryptedAscii = String(data: encryptedArmoredData, encoding: .utf8) {
+    print(encryptedAscii)
+}

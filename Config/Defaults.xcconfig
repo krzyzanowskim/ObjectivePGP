@@ -50,8 +50,9 @@ UNEXPORTED_SYMBOLS_FILE[sdk=macosx*] = $(SRCROOT)/vendor/libs/macosx/symbols
 // Universal Objective-C iOS Project
 SDKROOT = iphoneos
 
-OTHER_LDFLAGS = -ObjC -all_load -lbz2 -lz
+OTHER_LDFLAGS = -ObjC -lbz2 -lz
 ONLY_ACTIVE_ARCH = YES
+ENABLE_BITCODE = NO
 
 // Boolean value. Specifies whether the generated object code is nonrelocatable (external references remain relocatable). Making code nonrelocatable results in faster function calls. This feature is appropriate in applications but not dynamic libraries.
 GCC_DYNAMIC_NO_PIC = NO
