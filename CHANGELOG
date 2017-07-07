@@ -1,6 +1,8 @@
 Version 0.6.1
 - Adds PGPKey.keyID property
-- Build dynamic frameworks for iOS and macOS
+- Adds Swift Playground with a sample Swift code
+- Builds dynamic frameworks for iOS and macOS
+- Builds modules
 
 Version 0.6
 - Update public API
