@@ -97,9 +97,6 @@
 		7537A6D81F0D739A00892829 /* PGPCryptoCFB.h in Headers */ = {isa = PBXBuildFile; fileRef = 751056111940A76F00653C0B /* PGPCryptoCFB.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7537A6D91F0D739A00892829 /* PGPLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 752B3A791EC8EB9A003F6C22 /* PGPLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7537A6DB1F0D74C500892829 /* ObjectivePGP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 750F89341F0D6A3F00B99726 /* ObjectivePGP.framework */; };
-		7537A6DE1F0D7ACF00892829 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7547A6D01F0085E8002C2145 /* Security.framework */; };
-		7537A6DF1F0D7AD800892829 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7575BE5C1F00927F00121BEA /* libz.tbd */; };
-		7537A6E01F0D7ADD00892829 /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7575BE5A1F00927800121BEA /* libbz2.tbd */; };
 		7538C0DE1CDCF47B00A8F136 /* issue35-message.asc in Resources */ = {isa = PBXBuildFile; fileRef = 7538C0DD1CDCF47B00A8F136 /* issue35-message.asc */; };
 		753ADD9A1F0EC638005E1497 /* ObjectivePGP.h in Headers */ = {isa = PBXBuildFile; fileRef = 756299BD1914DE1A00C5AD3B /* ObjectivePGP.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		753ADD9B1F0EC6A0005E1497 /* ObjectivePGPObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 750F89641F0D701E00B99726 /* ObjectivePGPObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -256,6 +253,7 @@
 		75E7B6B919167EFF00C96BAB /* PGPSignaturePacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSignaturePacket.h; sourceTree = "<group>"; };
 		75E7B6BA19167EFF00C96BAB /* PGPSignaturePacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSignaturePacket.m; sourceTree = "<group>"; };
 		75E7B6BC19167F1700C96BAB /* PGPPacketFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPacketFactory.h; sourceTree = "<group>"; };
+		75F67F651F0F672B00FBEFCE /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		75FE9806193FB46200613549 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h; sourceTree = "<group>"; };
 		75FE9807193FB46200613549 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -265,9 +263,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7537A6DE1F0D7ACF00892829 /* Security.framework in Frameworks */,
-				7537A6E01F0D7ADD00892829 /* libbz2.tbd in Frameworks */,
-				7537A6DF1F0D7AD800892829 /* libz.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -342,6 +337,7 @@
 		756299B71914DE1A00C5AD3B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				75F67F651F0F672B00FBEFCE /* Security.framework */,
 				7575BE5C1F00927F00121BEA /* libz.tbd */,
 				7575BE5A1F00927800121BEA /* libbz2.tbd */,
 				7547A6D01F0085E8002C2145 /* Security.framework */,
