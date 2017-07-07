@@ -18,7 +18,7 @@
 		</data>
 		<key>Headers/ObjectivePGP.h</key>
 		<data>
-		jfDOU7w3YM8mBj58R6Txxypgejc=
+		fqNe/OA8EVkTaHRk8wjJX0wh1/A=
 		</data>
 		<key>Headers/ObjectivePGPObject.h</key>
 		<data>
@@ -186,7 +186,7 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		Tr0SlQ8Pc459hJ9FEwhzhdT940w=
+		X09flFRiaQsHSQGn8WJodeM6Mbo=
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
@@ -240,11 +240,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			jfDOU7w3YM8mBj58R6Txxypgejc=
+			fqNe/OA8EVkTaHRk8wjJX0wh1/A=
 			</data>
 			<key>hash2</key>
 			<data>
-			4Rw0ZqRyl+bkEV6TuzofHfzJ+NuI2BulC4hDff6pz+I=
+			OanCHMtgJh2btWuzC7X6yBJXQpmXQNwjbtuzfvydyuY=
 			</data>
 		</dict>
 		<key>Headers/ObjectivePGPObject.h</key>
