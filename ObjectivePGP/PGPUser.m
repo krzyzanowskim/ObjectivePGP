@@ -7,7 +7,6 @@
 //
 
 #import "PGPUser.h"
-#import "ObjectivePGP.h"
 #import "PGPMacros.h"
 #import "PGPPartialKey.h"
 #import "PGPPublicKeyPacket.h"

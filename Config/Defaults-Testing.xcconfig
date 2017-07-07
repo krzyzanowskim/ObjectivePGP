@@ -6,9 +6,6 @@
 
 #include "Defaults.xcconfig"
 
-// Link-Time optimization reduces file size by quite a bit.
-LLVM_LTO = YES
-
 // Enable testability
 ENABLE_TESTABILITY = YES
 

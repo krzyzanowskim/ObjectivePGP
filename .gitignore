@@ -38,6 +38,7 @@ xcuserdata
 *.xccheckout
 *.moved-aside
 DerivedData
+DerivedData.noindex
 *.xcuserstate
 *.swp
 >>>>>>> master

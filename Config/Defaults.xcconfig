@@ -50,16 +50,15 @@ UNEXPORTED_SYMBOLS_FILE[sdk=macosx*] = $(SRCROOT)/vendor/libs/macosx/symbols
 // Universal Objective-C iOS Project
 SDKROOT = iphoneos
 
-OTHER_LDFLAGS = -ObjC -all_load -lbz2 -lz
+OTHER_LDFLAGS = -ObjC -lbz2 -lz
 ONLY_ACTIVE_ARCH = YES
+ENABLE_BITCODE = NO
 
 // Boolean value. Specifies whether the generated object code is nonrelocatable (external references remain relocatable). Making code nonrelocatable results in faster function calls. This feature is appropriate in applications but not dynamic libraries.
 GCC_DYNAMIC_NO_PIC = NO
 
-PGP_CFLAGS_COMMON = $(inherited) -fvisibility=default // -fmodules
+PGP_CFLAGS_COMMON = $(inherited) -fvisibility=default
 GCC_SYMBOLS_PRIVATE_EXTERN = YES
-
-PUBLIC_HEADERS_FOLDER_PATH = include/$(PROJECT_NAME)
 
 // Config files that include this one and want to change this setting should override and that override should have $(PGP_CFLAGS_COMMON) but not $(inherited) because that refers to the higher level in the hierarchy, not earlier in the xcconfig file.
 OTHER_CFLAGS = $(PGP_CFLAGS_COMMON)
@@ -79,8 +78,9 @@ SEPARATE_STRIP = NO
 DEAD_CODE_STRIPPING = NO
 STRIP_STYLE = debugging
 
+// Module
+DEFINES_MODULE = YES
 CLANG_ENABLE_MODULES = YES
-MODULEMAP_FILE = $(SRCROOT)/module.modulemap
 
 GCC_INCREASE_PRECOMPILED_HEADER_SHARING = YES
 GCC_PRECOMPILE_PREFIX_HEADER = NO
@@ -121,8 +121,8 @@ SWIFT_VERSION = 3.0
 SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG
 
 // Xcode 8.3+
-OTHER_SWIFT_FLAGS[sdk=iphonesimulator10.3*] = -enable-bridging-pch
-OTHER_SWIFT_FLAGS[sdk=iphoneos10.3*] = -enable-bridging-pch
+//OTHER_SWIFT_FLAGS[sdk=iphonesimulator10.3*] = -enable-bridging-pch
+//OTHER_SWIFT_FLAGS[sdk=iphoneos10.3*] = -enable-bridging-pch
 
 // Only embed Swift where needed. (New in Xcode 8)
 ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO

@@ -39,6 +39,10 @@ NS_ASSUME_NONNULL_BEGIN
     return [NSString stringWithFormat:@"%@, publicKey: %@, secretKey: %@", super.description, self.publicKey.keyID, self.secretKey.keyID];
 }
 
+- (PGPKeyID *)keyID {
+    return self.publicKey.keyID ?: self.secretKey.keyID;
+}
+
 - (nullable PGPSecretKeyPacket *)signingSecretKey {
     if (!self.secretKey) {
         PGPLogDebug(@"Need secret key to sign");

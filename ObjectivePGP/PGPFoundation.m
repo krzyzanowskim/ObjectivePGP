@@ -6,8 +6,8 @@
 //  Copyright © 2017 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import "ObjectivePGP.h"
 #import "PGPMacros.h"
+#import "PGPFoundation.h"
 
 @implementation PGPFoundation
 
