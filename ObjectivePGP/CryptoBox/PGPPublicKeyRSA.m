@@ -34,8 +34,8 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    rsa->n = BN_dup([[[publicKeyPacket publicMPI:@"N"] bigNum] bignumRef]);
-    rsa->e = BN_dup([[[publicKeyPacket publicMPI:@"E"] bigNum] bignumRef]);
+    rsa->n = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_N] bigNum] bignumRef]);
+    rsa->e = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_E] bigNum] bignumRef]);
 
     NSAssert(rsa->n && rsa->e, @"Missing N or E");
     if (!rsa->n || !rsa->e) {
@@ -75,12 +75,12 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    rsa->n = BN_dup([[[secretKeyPacket publicMPI:@"N"] bigNum] bignumRef]);
-    rsa->e = BN_dup([[[secretKeyPacket publicMPI:@"E"] bigNum] bignumRef]);
+    rsa->n = BN_dup([[[secretKeyPacket publicMPI:PGPMPI_N] bigNum] bignumRef]);
+    rsa->e = BN_dup([[[secretKeyPacket publicMPI:PGPMPI_E] bigNum] bignumRef]);
 
-    rsa->d = BN_dup([[[secretKeyPacket secretMPI:@"D"] bigNum] bignumRef]);
-    rsa->p = BN_dup([[[secretKeyPacket secretMPI:@"Q"] bigNum] bignumRef]); /* p and q are round the other way in openssl */
-    rsa->q = BN_dup([[[secretKeyPacket secretMPI:@"P"] bigNum] bignumRef]);
+    rsa->d = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_D] bigNum] bignumRef]);
+    rsa->p = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_Q] bigNum] bignumRef]); /* p and q are round the other way in openssl */
+    rsa->q = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_P] bigNum] bignumRef]);
 
     if (rsa->d == NULL) {
         return nil;
@@ -132,11 +132,11 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    rsa->n = BN_dup([[[secretKeyPacket publicMPI:@"N"] bigNum] bignumRef]);
-    rsa->d = BN_dup([[[secretKeyPacket secretMPI:@"D"] bigNum] bignumRef]);
-    rsa->p = BN_dup([[[secretKeyPacket secretMPI:@"Q"] bigNum] bignumRef]); /* p and q are round the other way in openssl */
-    rsa->q = BN_dup([[[secretKeyPacket secretMPI:@"P"] bigNum] bignumRef]);
-    rsa->e = BN_dup([[[secretKeyPacket publicMPI:@"E"] bigNum] bignumRef]);
+    rsa->n = BN_dup([[[secretKeyPacket publicMPI:PGPMPI_N] bigNum] bignumRef]);
+    rsa->d = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_D] bigNum] bignumRef]);
+    rsa->p = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_Q] bigNum] bignumRef]); /* p and q are round the other way in openssl */
+    rsa->q = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_P] bigNum] bignumRef]);
+    rsa->e = BN_dup([[[secretKeyPacket publicMPI:PGPMPI_E] bigNum] bignumRef]);
 
     if (toEncrypt.length > secretKeyPacket.keySize) {
         return nil;
@@ -194,8 +194,8 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    rsa->n = BN_dup([[[publicKeyPacket publicMPI:@"N"] bigNum] bignumRef]);
-    rsa->e = BN_dup([[[publicKeyPacket publicMPI:@"E"] bigNum] bignumRef]);
+    rsa->n = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_N] bigNum] bignumRef]);
+    rsa->e = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_E] bigNum] bignumRef]);
 
     NSAssert(rsa->n && rsa->e, @"Missing N or E");
     if (!rsa->n || !rsa->e) {

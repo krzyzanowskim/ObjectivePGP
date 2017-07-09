@@ -152,7 +152,7 @@ NS_ASSUME_NONNULL_BEGIN
     checksum = CFSwapInt16HostToBig(checksum);
     [mData appendBytes:&checksum length:2];
 
-    let modulusMPI = [publicKeyPacket publicMPI:@"N"];
+    let modulusMPI = [publicKeyPacket publicMPI:PGPMPI_N];
     if (!modulusMPI) {
         return error == nil;
     }

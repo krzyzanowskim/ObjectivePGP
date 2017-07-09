@@ -16,6 +16,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+NSString * const PGPMPI_N = @"N";
+NSString * const PGPMPI_E = @"E";
+NSString * const PGPMPI_P = @"P";
+NSString * const PGPMPI_G = @"G";
+NSString * const PGPMPI_Q = @"Q";
+NSString * const PGPMPI_D = @"D";
+NSString * const PGPMPI_U = @"U";
+NSString * const PGPMPI_X = @"X";
+NSString * const PGPMPI_R = @"R";
+NSString * const PGPMPI_S = @"S";
+NSString * const PGPMPI_Y = @"Y";
+
 @interface PGPMPI ()
 
 @property (nonatomic, readwrite) PGPBigNum *bigNum;

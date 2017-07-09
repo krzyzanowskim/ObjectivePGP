@@ -11,6 +11,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+OBJC_EXTERN NSString * const PGPMPI_N;
+OBJC_EXTERN NSString * const PGPMPI_E;
+OBJC_EXTERN NSString * const PGPMPI_P;
+OBJC_EXTERN NSString * const PGPMPI_G;
+OBJC_EXTERN NSString * const PGPMPI_Q;
+OBJC_EXTERN NSString * const PGPMPI_D;
+OBJC_EXTERN NSString * const PGPMPI_U;
+OBJC_EXTERN NSString * const PGPMPI_X;
+OBJC_EXTERN NSString * const PGPMPI_R;
+OBJC_EXTERN NSString * const PGPMPI_S;
+OBJC_EXTERN NSString * const PGPMPI_Y;
+
 @interface PGPMPI : NSObject
 
 @property (nonatomic, readonly, nullable) NSString *identifier;

@@ -220,26 +220,26 @@
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly: {
             // multiprecision integer (MPI) of RSA secret exponent d.
-            let mpiD = [[PGPMPI alloc] initWithMPIData:data identifier:@"D" atPosition:position];
+            let mpiD = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPI_D atPosition:position];
             position = position + mpiD.packetLength;
 
             // MPI of RSA secret prime value p.
-            let mpiP = [[PGPMPI alloc] initWithMPIData:data identifier:@"P" atPosition:position];
+            let mpiP = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPI_P atPosition:position];
             position = position + mpiP.packetLength;
 
             // MPI of RSA secret prime value q (p < q).
-            let mpiQ = [[PGPMPI alloc] initWithMPIData:data identifier:@"Q" atPosition:position];
+            let mpiQ = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPI_Q atPosition:position];
             position = position + mpiQ.packetLength;
 
             // MPI of u, the multiplicative inverse of p, mod q.
-            let mpiU = [[PGPMPI alloc] initWithMPIData:data identifier:@"U" atPosition:position];
+            let mpiU = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPI_U atPosition:position];
             position = position + mpiU.packetLength;
 
             self.secretMPIArray = @[mpiD, mpiP, mpiQ, mpiU];
         } break;
         case PGPPublicKeyAlgorithmDSA: {
             // MPI of DSA secret exponent x.
-            let mpiX = [[PGPMPI alloc] initWithMPIData:data identifier:@"X" atPosition:position];
+            let mpiX = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPI_X atPosition:position];
             position = position + mpiX.packetLength;
 
             self.secretMPIArray = @[mpiX];
@@ -247,7 +247,7 @@
         case PGPPublicKeyAlgorithmElgamal:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign: {
             // MPI of Elgamal secret exponent x.
-            let mpiX = [[PGPMPI alloc] initWithMPIData:data identifier:@"X" atPosition:position];
+            let mpiX = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPI_X atPosition:position];
             position = position + mpiX.packetLength;
 
             self.secretMPIArray = @[mpiX];
