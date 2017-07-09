@@ -7,6 +7,7 @@
 //
 
 #import "PGPMPI.h"
+#import "PGPTypes.h"
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -14,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 @class PGPSecretKeyPacket, PGPPublicKeyPacket;
 
 @interface PGPPublicKeyRSA : NSObject
+
+PGP_EMPTY_INIT_UNAVAILABLE;
 
 // encryption
 + (nullable NSData *)publicEncrypt:(NSData *)toEncrypt withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket;

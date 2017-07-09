@@ -93,10 +93,10 @@ NSString * const PGPMPI_M = @"M";
 
     // mpi
     UInt8 *buf = calloc(BN_num_bytes(self.bigNum.bignumRef), sizeof(UInt8));
+    pgp_defer { free(buf); };
     UInt16 bytes = (bits + 7) / 8;
     BN_bn2bin(self.bigNum.bignumRef, buf);
     [outData appendBytes:buf length:bytes];
-    free(buf);
 
     return outData;
 }

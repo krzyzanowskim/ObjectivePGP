@@ -26,17 +26,17 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSArray<PGPSignatureSubpacket *> *hashedSubpackets;
 @property (nonatomic, readonly) NSArray<PGPSignatureSubpacket *> *unhashedSubpackets;
 @property (nonatomic) NSData *signedHashValueData;
-@property (nonatomic) NSArray<PGPMPI *> *signatureMPIs;
+@property (nonatomic, copy) NSArray<PGPMPI *> *signatureMPIs;
 
-@property (nonatomic, readonly) BOOL canBeUsedToSign;
-@property (nonatomic, readonly) BOOL canBeUsedToEncrypt;
+@property (nonatomic, readonly) BOOL canBeUsedToSign; // computed
+@property (nonatomic, readonly) BOOL canBeUsedToEncrypt; // computed
 
 @property (nonatomic, nullable, readonly) PGPKeyID *issuerKeyID;
 @property (nonatomic, copy, readonly) NSArray<PGPSignatureSubpacket *> *subpackets;
-@property (nonatomic, nullable) NSDate *expirationDate;
-@property (nonatomic, readonly) BOOL isExpired;
-@property (nonatomic, nullable) NSDate *creationDate;
-@property (nonatomic, readonly) BOOL isPrimaryUserID;
+@property (nonatomic, nullable, readonly) NSDate *expirationDate; // computed
+@property (nonatomic, readonly, readonly) BOOL isExpired; // computed
+@property (nonatomic, nullable, readonly) NSDate *creationDate; // computed
+@property (nonatomic, readonly, readonly) BOOL isPrimaryUserID; // computed
 
 /**
  *  Create signature packet for signing. This is convienience constructor.

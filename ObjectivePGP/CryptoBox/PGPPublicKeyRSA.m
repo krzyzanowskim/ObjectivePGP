@@ -33,6 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
     if (!rsa) {
         return nil;
     }
+    pgp_defer { RSA_free(rsa); };
 
     rsa->n = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_N] bigNum] bignumRef]);
     rsa->e = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_E] bigNum] bignumRef]);
@@ -43,6 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     uint8_t *encrypted_em = calloc(BN_num_bytes(rsa->n) & SIZE_T_MAX, 1);
+    pgp_defer { free(encrypted_em); };
     int em_len = RSA_public_encrypt(toEncrypt.length & INT_MAX, toEncrypt.bytes, encrypted_em, rsa, RSA_NO_PADDING);
     if (em_len == -1 || em_len != (publicKeyPacket.keySize & INT_MAX)) {
         ERR_load_crypto_strings();
@@ -52,9 +54,6 @@ NS_ASSUME_NONNULL_BEGIN
         ERR_error_string(err_code, errBuf);
         PGPLogDebug(@"%@", [NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
         free(errBuf);
-
-        free(encrypted_em);
-        RSA_free(rsa);
         return nil;
     }
 
@@ -62,9 +61,6 @@ NS_ASSUME_NONNULL_BEGIN
     NSData *encryptedEm = [NSData dataWithBytes:encrypted_em length:em_len];
 
     rsa->n = rsa->e = NULL;
-    RSA_free(rsa);
-    free(encrypted_em);
-
     return encryptedEm;
 }
 
@@ -74,6 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
     if (!rsa) {
         return nil;
     }
+    pgp_defer { RSA_free(rsa); };
 
     rsa->n = BN_dup([[[secretKeyPacket publicMPI:PGPMPI_N] bigNum] bignumRef]);
     rsa->e = BN_dup([[[secretKeyPacket publicMPI:PGPMPI_E] bigNum] bignumRef]);
@@ -100,6 +97,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     uint8_t *outbuf = calloc(RSA_size(rsa) & SIZE_T_MAX, 1);
+    pgp_defer { free(outbuf); };
     int t = RSA_private_decrypt(toDecrypt.length & INT_MAX, toDecrypt.bytes, outbuf, rsa, RSA_NO_PADDING);
     if (t == -1) {
         ERR_load_crypto_strings();
@@ -111,16 +109,13 @@ NS_ASSUME_NONNULL_BEGIN
         free(errBuf);
 
         ERR_free_strings();
-        free(outbuf);
         return nil;
     }
 
     NSData *decryptedData = [NSData dataWithBytes:outbuf length:t];
     NSAssert(decryptedData, @"Missing data");
 
-    free(outbuf);
     rsa->n = rsa->d = rsa->p = rsa->q = rsa->e = NULL;
-    RSA_free(rsa);
 
     return decryptedData;
 }
@@ -131,6 +126,7 @@ NS_ASSUME_NONNULL_BEGIN
     if (!rsa) {
         return nil;
     }
+    pgp_defer { RSA_free(rsa); };
 
     rsa->n = BN_dup([[[secretKeyPacket publicMPI:PGPMPI_N] bigNum] bignumRef]);
     rsa->d = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_D] bigNum] bignumRef]);
@@ -162,6 +158,8 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     uint8_t *outbuf = calloc(RSA_size(rsa) & SIZE_T_MAX, 1);
+    pgp_defer { free(outbuf); };
+
     int t = RSA_private_encrypt(toEncrypt.length & INT_MAX, (UInt8 *)toEncrypt.bytes, outbuf, rsa, RSA_NO_PADDING);
     if (t == -1) {
         ERR_load_crypto_strings();
@@ -173,16 +171,13 @@ NS_ASSUME_NONNULL_BEGIN
         free(errBuf);
 
         ERR_free_strings();
-        free(outbuf);
         return nil;
     }
 
     NSData *encryptedData = [NSData dataWithBytes:outbuf length:t];
     NSAssert(encryptedData, @"Missing calculated data");
 
-    free(outbuf);
     rsa->n = rsa->d = rsa->p = rsa->q = rsa->e = NULL;
-    RSA_free(rsa);
 
     return encryptedData;
 }
@@ -193,6 +188,7 @@ NS_ASSUME_NONNULL_BEGIN
     if (!rsa) {
         return nil;
     }
+    pgp_defer { RSA_free(rsa); };
 
     rsa->n = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_N] bigNum] bignumRef]);
     rsa->e = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_E] bigNum] bignumRef]);
@@ -203,11 +199,9 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     uint8_t *decrypted_em = calloc(RSA_size(rsa) & SIZE_T_MAX, 1); // RSA_size(rsa) - 11
+    pgp_defer { free(decrypted_em); };
     int em_len = RSA_public_decrypt(toDecrypt.length & INT_MAX, toDecrypt.bytes, decrypted_em, rsa, RSA_NO_PADDING);
     if (em_len == -1 || em_len != (publicKeyPacket.keySize & INT_MAX)) {
-        free(decrypted_em);
-        RSA_free(rsa);
-
         ERR_load_crypto_strings();
 
         unsigned long err_code = ERR_get_error();
@@ -223,8 +217,6 @@ NS_ASSUME_NONNULL_BEGIN
     NSData *decryptedEm = [NSData dataWithBytes:decrypted_em length:em_len];
 
     rsa->n = rsa->e = NULL;
-    RSA_free(rsa);
-    free(decrypted_em);
 
     return decryptedEm;
 }

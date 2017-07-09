@@ -12,6 +12,13 @@
 
 @implementation PGPUserIDPacket
 
+- (instancetype)initWithUserID:(NSString *)userID {
+    if ((self = [super init])) {
+        _userID = userID;
+    }
+    return self;
+}
+
 - (PGPPacketTag)tag {
     return PGPUserIDPacketTag;
 }

@@ -108,7 +108,7 @@ NS_ASSUME_NONNULL_BEGIN
     UInt32 timestamp = 0;
     [packetBody getBytes:&timestamp range:(NSRange){position, 4}];
     timestamp = CFSwapInt32BigToHost(timestamp);
-    _createDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
+    self.createDate = [NSDate dateWithTimeIntervalSince1970:timestamp];
     position = position + 4;
 
     // V3 keys are deprecated; an implementation MUST NOT generate a V3 key, but MAY accept it.
