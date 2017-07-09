@@ -14,9 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPSubKey
 
-- (instancetype)initWithPacket:(PGPPacket *)packet {
-    if ((self = [super init])) {
-        self.primaryKeyPacket = packet;
+- (instancetype)initWithPackets:(NSArray<PGPPacket *> *)packets {
+    if ((self = [super initWithPackets:@[]])) {
+        self.primaryKeyPacket = packets.firstObject;
     }
     return self;
 }

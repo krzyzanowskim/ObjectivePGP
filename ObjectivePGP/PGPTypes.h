@@ -170,4 +170,8 @@ typedef NS_ENUM(UInt8, PGPS2KSpecifier) {
     PGPS2KSpecifierGnuDummy = 101 // The "gnu-dummy S2K" is the marker which will tell that this file does *not* actually contain the secret key.
 };
 
-typedef NS_ENUM(UInt8, PGPS2KUsage) { PGPS2KUsageNone = 0, PGPS2KUsageEncryptedAndHashed = 254, PGPS2KUsageEncrypted = 255 };
+typedef NS_ENUM(UInt8, PGPS2KUsage) {
+    PGPS2KUsageNone = 0,
+    PGPS2KUsageEncryptedAndHashed = 254,
+    PGPS2KUsageEncrypted = 255
+};

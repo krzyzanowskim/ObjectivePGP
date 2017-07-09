@@ -7,6 +7,7 @@
 //
 
 #import "PGPPacket.h"
+#import "PGPPacket+Private.h"
 #import "NSData+PGPUtils.h"
 
 #import "PGPLogging.h"
@@ -15,11 +16,6 @@
 const UInt32 PGPUnknownLength = UINT32_MAX;
 
 NS_ASSUME_NONNULL_BEGIN
-
-@interface PGPPacket ()
-@property (nonatomic, copy, readwrite) NSData *headerData;
-@property (nonatomic, copy, readwrite) NSData *bodyData;
-@end
 
 @implementation PGPPacket
 

@@ -6,6 +6,7 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
+#import "PGPMPI.h"
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN

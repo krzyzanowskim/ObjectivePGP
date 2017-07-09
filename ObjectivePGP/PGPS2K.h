@@ -13,13 +13,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PGPS2K : NSObject
+@interface PGPS2K : NSObject <NSCopying>
 
 @property (nonatomic, readonly) PGPS2KSpecifier specifier;
 @property (nonatomic, readonly) PGPHashAlgorithm hashAlgorithm;
-@property (nonatomic, readonly) NSData *salt; // random 8 bytes.
+@property (nonatomic, copy, readonly) NSData *salt; // random 8 bytes.
 @property (nonatomic, readonly) UInt32 uncodedCount;
-@property (nonatomic, readonly) UInt32 codedCount;
+@property (nonatomic, readonly) UInt32 codedCount; // calculated
 
 @property (nonatomic) NSUInteger length;
 

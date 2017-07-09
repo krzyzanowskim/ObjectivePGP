@@ -65,7 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
     //   Elgamal 2 MPI
 
     let encryptedMPI_MData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
-    self.encryptedMPI_M = [[PGPMPI alloc] initWithMPIData:encryptedMPI_MData identifier:nil atPosition:0];
+    self.encryptedMPI_M = [[PGPMPI alloc] initWithMPIData:encryptedMPI_MData identifier:PGPMPI_M atPosition:0];
     position = position + encryptedMPI_MData.length;
 
     self.encrypted = YES;
@@ -161,7 +161,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     let mEMEEncoded = [PGPPKCSEme encodeMessage:mData keyModulusLength:k error:error];
     let encryptedData = [publicKeyPacket encryptData:mEMEEncoded withPublicKeyAlgorithm:self.publicKeyAlgorithm];
-    let mpiEncoded = [[PGPMPI alloc] initWithData:encryptedData];
+    let mpiEncoded = [[PGPMPI alloc] initWithData:encryptedData identifier:PGPMPI_M];
     self.encryptedMPI_M = mpiEncoded;
     return error == nil;
 }

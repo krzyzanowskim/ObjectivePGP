@@ -25,6 +25,7 @@
     // pseudo-randomly generated nonzero octets.  The length of PS will
     // be at least eight octets.
     NSMutableData *psData = [NSMutableData data];
+    //TODO: use SecRandomCopyBytes
     for (NSUInteger i = 0; i < (k - m.length) - 3; i++) {
         UInt8 b = (UInt8)arc4random_uniform(254) + 1;
         [psData appendBytes:&b length:1];

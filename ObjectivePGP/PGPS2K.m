@@ -26,7 +26,8 @@ static const unsigned int PGP_SALT_SIZE = 8;
 
 @interface PGPS2K ()
 
-@property (nonatomic, readwrite) NSData *salt;
+@property (nonatomic, copy, readwrite) NSData *salt;
+@property (nonatomic, readwrite) UInt32 uncodedCount;
 
 @end
 
@@ -49,6 +50,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
 
 - (NSData *)salt {
     if (!_salt) {
+        //TODO: use SecRandomCopyBytes
         NSMutableData *s = [NSMutableData data];
         for (int i = 0; i < 8; i++) {
             Byte b = (Byte)arc4random_uniform(255);
@@ -246,6 +248,15 @@ static const unsigned int PGP_SALT_SIZE = 8;
 
     // the high-order (leftmost) octets of the hash are used as the key.
     return [hashData subdataWithRange:(NSRange){0, MIN(hashData.length, keySize)}];
+}
+
+#pragma mark - NSCopying
+
+- (id)copyWithZone:(nullable NSZone *)zone {
+    let copy = [[PGPS2K alloc] initWithSpecifier:self.specifier hashAlgorithm:self.hashAlgorithm];
+    copy.salt = self.salt;
+    copy.uncodedCount = self.uncodedCount;
+    return copy;
 }
 
 @end

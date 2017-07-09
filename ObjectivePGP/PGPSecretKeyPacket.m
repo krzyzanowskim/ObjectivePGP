@@ -10,6 +10,8 @@
 //  includes the secret-key material after all the public-key fields.
 
 #import "PGPSecretKeyPacket.h"
+#import "PGPSecretKeyPacket+Private.h"
+#import "PGPPacket+Private.h"
 #import "PGPMPI.h"
 #import "PGPS2K.h"
 #import "PGPTypes.h"
@@ -22,23 +24,12 @@
 #import "PGPCryptoUtils.h"
 #import "PGPPublicKeyRSA.h"
 
-@interface PGPPacket ()
-
-@property (nonatomic, copy, readwrite) NSData *headerData;
-@property (nonatomic, copy, readwrite) NSData *bodyData;
-
-@end
-
 @interface PGPSecretKeyPacket ()
 
-@property (nonatomic, readwrite) PGPS2KUsage s2kUsage;
-@property (nonatomic, readwrite) PGPS2K *s2k;
-@property (nonatomic, readwrite) PGPSymmetricAlgorithm symmetricAlgorithm;
-@property (nonatomic, readwrite) NSData *encryptedMPIsPartData; // after decrypt -> secretMPIArray
-@property (nonatomic, readwrite) NSData *ivData;
-@property (nonatomic, readwrite) NSArray *secretMPIArray; // decrypted MPI
+@property (nonatomic, copy) NSData *encryptedMPIsPartData; // after decrypt -> secretMPIArray
+@property (nonatomic, copy) NSArray *secretMPIArray; // decrypted MPI
+@property (nonatomic) BOOL wasDecrypted; // is decrypted
 
-@property (nonatomic, readwrite) BOOL wasDecrypted; // is decrypted
 @end
 
 @implementation PGPSecretKeyPacket
@@ -71,23 +62,6 @@
 
 - (PGPFingerprint *)fingerprint {
     return [super fingerprint];
-}
-
-- (nullable NSData *)export:(NSError *__autoreleasing _Nullable *)error {
-    let data = [NSMutableData data];
-    let publicKeyData = [super buildPublicKeyBodyData:YES];
-
-    let secretKeyPacketData = [NSMutableData data];
-    [secretKeyPacketData appendData:publicKeyData];
-    [secretKeyPacketData appendData:[self buildSecretKeyDataAndForceV4:YES]];
-
-    let headerData = [self buildHeaderData:secretKeyPacketData];
-    [data appendData:headerData];
-    [data appendData:secretKeyPacketData];
-
-    // header not allways match because export new format while input can be old format
-    NSAssert([secretKeyPacketData isEqualToData:self.bodyData], @"Secret key not match");
-    return data;
 }
 
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
@@ -142,7 +116,7 @@
     }
 
     if (self.s2k.specifier == PGPS2KSpecifierGnuDummy) {
-        self.ivData = [NSData data];
+        self.ivData = NSData.data;
     } else if (self.s2kUsage != PGPS2KUsageNone) {
         // Initial Vector (IV) of the same length as the cipher's block size
         NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:self.symmetricAlgorithm];
@@ -394,16 +368,35 @@
     return [data copy];
 }
 
+#pragma mark - PGPExportable
+
+- (nullable NSData *)export:(NSError *__autoreleasing _Nullable *)error {
+    let data = [NSMutableData data];
+    let publicKeyData = [super buildPublicKeyBodyData:YES];
+
+    let secretKeyPacketData = [NSMutableData data];
+    [secretKeyPacketData appendData:publicKeyData];
+    [secretKeyPacketData appendData:[self buildSecretKeyDataAndForceV4:YES]];
+
+    let headerData = [self buildHeaderData:secretKeyPacketData];
+    [data appendData:headerData];
+    [data appendData:secretKeyPacketData];
+
+    // header not always match because export new format while input can be old format
+    NSAssert(!self.bodyData || [secretKeyPacketData isEqualToData:self.bodyData], @"Secret key doesn't match");
+    return data;
+}
+
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(NSZone *)zone {
     PGPSecretKeyPacket *copy = [super copyWithZone:zone];
     copy->_s2kUsage = self.s2kUsage;
-    copy->_s2k = self.s2k;
+    copy->_s2k = [self.s2k copy];
     copy->_symmetricAlgorithm = self.symmetricAlgorithm;
-    copy->_ivData = self.ivData;
-    copy->_secretMPIArray = self.secretMPIArray;
-    copy->_encryptedMPIsPartData = self.encryptedMPIsPartData;
+    copy->_ivData = [self.ivData copy];
+    copy->_secretMPIArray = [self.secretMPIArray copy];
+    copy->_encryptedMPIsPartData = [self.encryptedMPIsPartData copy];
     return copy;
 }
 

@@ -399,7 +399,7 @@ NS_ASSUME_NONNULL_BEGIN
         return NO;
     }
     // store signature data as MPI
-    self.signatureMPIs = @[[[PGPMPI alloc] initWithData:encryptedEmData]];
+    self.signatureMPIs = @[[[PGPMPI alloc] initWithData:encryptedEmData identifier:PGPMPI_M]];
 
     // add unhashed PGPSignatureSubpacketTypeIssuer subpacket - REQUIRED
     PGPKeyID *keyid = [[PGPKeyID alloc] initWithFingerprint:signingKeyPacket.fingerprint];

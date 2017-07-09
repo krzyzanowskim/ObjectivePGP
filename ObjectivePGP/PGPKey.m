@@ -11,6 +11,8 @@
 #import "PGPLogging.h"
 #import "PGPMacros.h"
 #import "PGPSecretKeyPacket.h"
+#import "PGPSecretKeyPacket+Private.h"
+#import "PGPPublicKeyRSA.h"
 #import "PGPSubKey.h"
 
 #import "PGPMacros.h"

@@ -27,6 +27,7 @@ NSString * const PGPMPI_X = @"X";
 NSString * const PGPMPI_R = @"R";
 NSString * const PGPMPI_S = @"S";
 NSString * const PGPMPI_Y = @"Y";
+NSString * const PGPMPI_M = @"M";
 
 @interface PGPMPI ()
 
@@ -37,30 +38,28 @@ NSString * const PGPMPI_Y = @"Y";
 
 @implementation PGPMPI
 
-- (instancetype)initWithData:(NSData *)dataToMPI {
-    if (self = [self init]) {
+- (instancetype)initWithData:(NSData *)dataToMPI identifier:(NSString *)identifier {
+    if ((self = [super init])) {
         _bigNum = [[PGPBigNum alloc] initWithBIGNUM:BN_bin2bn(dataToMPI.bytes, dataToMPI.length & INT_MAX, NULL)];
         _packetLength = dataToMPI.length + 2;
+        _identifier = [identifier copy];
     }
     return self;
 }
 
+- (instancetype)initWithBigNum:(PGPBigNum *)bigNum identifier:(NSString *)identifier {
+    return (self = [self initWithData:bigNum.data identifier:identifier]);
+}
+
 // parse mpi "packet"
-- (instancetype)initWithMPIData:(NSData *)mpiData identifier:(nullable NSString *)identifier  atPosition:(NSUInteger)position {
-    if (self = [self init]) {
-        _identifier = identifier;
+- (instancetype)initWithMPIData:(NSData *)mpiData identifier:(NSString *)identifier atPosition:(NSUInteger)position {
+    UInt16 bitsBE = 0;
+    [mpiData getBytes:&bitsBE range:(NSRange){position, 2}];
+    UInt16 bits = CFSwapInt16BigToHost(bitsBE);
+    NSUInteger mpiBytesLength = (bits + 7) / 8;
 
-        UInt16 bitsBE = 0;
-        [mpiData getBytes:&bitsBE range:(NSRange){position, 2}];
-        UInt16 bits = CFSwapInt16BigToHost(bitsBE);
-        NSUInteger mpiBytesLength = (bits + 7) / 8;
-
-        NSData *intdata = [mpiData subdataWithRange:(NSRange){position + 2, mpiBytesLength}];
-        _bigNum = [[PGPBigNum alloc] initWithBIGNUM:BN_bin2bn(intdata.bytes, intdata.length & INT_MAX, NULL)];
-        // Additinal rule: The size of an MPI is ((MPI.length + 7) / 8) + 2 octets.
-        _packetLength = intdata.length + 2;
-    }
-    return self;
+    NSData *intData = [mpiData subdataWithRange:(NSRange){position + 2, mpiBytesLength}];
+    return (self = [self initWithData:intData identifier:identifier]);
 }
 
 - (nullable NSData *)bodyData {
@@ -99,11 +98,19 @@ NSString * const PGPMPI_Y = @"Y";
     [outData appendBytes:buf length:bytes];
     free(buf);
 
-    return [outData copy];
+    return outData;
 }
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"%@, \"%@\", %@ bytes, total: %@ bytes", [super description], self.identifier, @(self.bigNum.bytesCount), @(self.packetLength)];
+}
+
+#pragma mark - NSCopying
+
+- (id)copyWithZone:(nullable NSZone *)zone {
+    let copy = [[PGPMPI alloc] initWithBigNum:self.bigNum identifier:self.identifier];
+    copy.packetLength = self.packetLength;
+    return copy;
 }
 
 @end

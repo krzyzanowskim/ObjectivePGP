@@ -6,7 +6,8 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import "PGPPublicKeyPacket.h"
+#import "PGPPublicKeyPacket+Private.h"
+#import "PGPPacket+Private.h"
 #import "NSData+PGPUtils.h"
 #import "PGPMPI.h"
 #import "PGPPublicKeyRSA.h"
@@ -20,18 +21,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PGPPacket ()
-@property (copy, readwrite) NSData *headerData;
-@property (copy, readwrite) NSData *bodyData;
-@end
-
-@interface PGPPublicKeyPacket ()
-@property (nonatomic, readwrite) PGPFingerprint *fingerprint;
-@property (nonatomic, readwrite) PGPKeyID *keyID;
-@property (nonatomic, readwrite) UInt16 V3validityPeriod;
-@end
-
 @implementation PGPPublicKeyPacket
+
+- (instancetype)init {
+    if ((self = [super init])) {
+        _version = 0x04;
+        _createDate = NSDate.date;
+    }
+    return self;
+}
 
 - (PGPPacketTag)tag {
     return PGPPublicKeyPacketTag;
@@ -68,11 +66,12 @@ NS_ASSUME_NONNULL_BEGIN
  *  @return keyID
  */
 - (PGPKeyID *)keyID {
-    if (!_keyID) {
-        _keyID = [[PGPKeyID alloc] initWithFingerprint:self.fingerprint];
-    }
-
-    return _keyID;
+//    if (!_keyID) {
+//        _keyID = [[PGPKeyID alloc] initWithFingerprint:self.fingerprint];
+//    }
+//
+//    return _keyID;
+    return [[PGPKeyID alloc] initWithFingerprint:self.fingerprint];
 }
 
 /**
@@ -82,10 +81,11 @@ NS_ASSUME_NONNULL_BEGIN
  *  @return Fingerprint data
  */
 - (PGPFingerprint *)fingerprint {
-    if (!_fingerprint) {
-        _fingerprint = [[PGPFingerprint alloc] initWithData:[self exportPublicPacketOldStyle]];
-    }
-    return _fingerprint;
+//    if (!_fingerprint) {
+//        _fingerprint = [[PGPFingerprint alloc] initWithData:[self exportPublicPacketOldStyle]];
+//    }
+//    return _fingerprint;
+    return [[PGPFingerprint alloc] initWithData:[self exportPublicPacketOldStyle]];
 }
 
 #pragma mark - Parse data
@@ -279,14 +279,15 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(nullable NSZone *)zone {
-    PGPPublicKeyPacket *copy = (PGPPublicKeyPacket *)[super copyWithZone:zone];
-    copy->_version = self.version;
-    copy->_createDate = self.createDate;
-    copy->_V3validityPeriod = self.V3validityPeriod;
-    copy->_publicKeyAlgorithm = self.publicKeyAlgorithm;
-    copy->_fingerprint = self.fingerprint;
-    copy->_keyID = self.keyID;
-    copy->_publicMPIArray = self.publicMPIArray;
+    let _Nullable copy = PGPCast([super copyWithZone:zone], PGPPublicKeyPacket);
+    if (!copy) {
+        return nil;
+    }
+    copy.version = self.version;
+    copy.createDate = [self.createDate copy];
+    copy.V3validityPeriod = self.V3validityPeriod;
+    copy.publicKeyAlgorithm = self.publicKeyAlgorithm;
+    copy.publicMPIArray = [self.publicMPIArray copy];
     return copy;
 }
 

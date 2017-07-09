@@ -32,7 +32,9 @@ typedef NS_ENUM(NSUInteger, PGPPartialKeyType) { PGPPartialKeyUnknown = 0, PGPPa
 
 @property (nonatomic, readonly) PGPKeyID *keyID;
 
-- (instancetype)initWithPackets:(NSArray<PGPPacket *> *)packets;
+PGP_EMPTY_INIT_UNAVAILABLE;
+
+- (instancetype)initWithPackets:(NSArray<PGPPacket *> *)packets NS_DESIGNATED_INITIALIZER;
 
 /**
  *  Decrypts all secret key and subkey packets

@@ -7,12 +7,8 @@
 //
 
 #import "PGPUserIDPacket.h"
+#import "PGPPacket+Private.h"
 #import "PGPMacros.h"
-
-@interface PGPPacket ()
-@property (nonatomic, copy, readwrite) NSData *headerData;
-@property (nonatomic, copy, readwrite) NSData *bodyData;
-@end
 
 @implementation PGPUserIDPacket
 

@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 @implementation PGPPartialKey
 
 - (instancetype)initWithPackets:(NSArray<PGPPacket *> *)packets {
-    if ((self = [self init])) {
+    if ((self = [super init])) {
         _subKeys = [NSArray<PGPSubKey *> array];
         _directSignatures = [NSArray<PGPSignaturePacket *> array];
         _users = [NSArray<PGPUser *> array];
@@ -133,7 +133,7 @@ NS_ASSUME_NONNULL_BEGIN
             case PGPPublicSubkeyPacketTag:
             case PGPSecretSubkeyPacketTag:
                 user = nil;
-                subKey = [[PGPSubKey alloc] initWithPacket:packet];
+                subKey = [[PGPSubKey alloc] initWithPackets:@[packet]];
                 self.subKeys = [self.subKeys arrayByAddingObject:subKey];
                 break;
             case PGPSignaturePacketTag: {
