@@ -7,6 +7,7 @@
 //
 
 #import "PGPSignatureSubpacket.h"
+#import "PGPSignatureSubpacket+Private.h"
 #import "NSValue+PGPUtils.h"
 #import "PGPCompressedPacket.h"
 #import "PGPKeyID.h"
@@ -16,13 +17,6 @@
 #import "PGPMacros.h"
 
 NS_ASSUME_NONNULL_BEGIN
-
-@implementation PGPSignatureSubpacketHeader
-@end
-
-@interface PGPSignatureSubpacket ()
-@property (nonatomic, readwrite) id value;
-@end
 
 @implementation PGPSignatureSubpacket
 

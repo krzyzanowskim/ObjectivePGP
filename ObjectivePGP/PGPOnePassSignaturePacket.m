@@ -9,6 +9,8 @@
 #import "PGPOnePassSignaturePacket.h"
 #import "PGPKeyID.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @implementation PGPOnePassSignaturePacket
 
 - (id)init {
@@ -47,7 +49,9 @@
     return position;
 }
 
-- (NSData *)export:(NSError *__autoreleasing *)error {
+#pragma mark - PGPExportable
+
+- (nullable NSData *)export:(NSError *__autoreleasing _Nullable *)error {
     NSAssert(self.keyID, @"Missing keyID");
 
     let bodyData = [NSMutableData data];
@@ -69,3 +73,5 @@
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

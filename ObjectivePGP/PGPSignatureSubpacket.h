@@ -7,15 +7,10 @@
 //
 
 #import "PGPTypes.h"
+#import "PGPSignatureSubpacketHeader.h"
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
-
-@interface PGPSignatureSubpacketHeader : NSObject
-@property (nonatomic) PGPSignatureSubpacketType type;
-@property (nonatomic) NSUInteger headerLength;
-@property (nonatomic) NSUInteger bodyLength;
-@end
 
 @interface PGPSignatureSubpacket : NSObject
 

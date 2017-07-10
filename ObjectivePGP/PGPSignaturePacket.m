@@ -7,6 +7,7 @@
 //
 
 #import "PGPSignaturePacket.h"
+#import "PGPSignaturePacket+Private.h"
 #import "NSData+PGPUtils.h"
 #import "PGPKey.h"
 #import "PGPLiteralPacket.h"
@@ -16,6 +17,7 @@
 #import "PGPPublicKeyRSA.h"
 #import "PGPSecretKeyPacket.h"
 #import "PGPSignatureSubpacket.h"
+#import "PGPSignatureSubpacket+Private.h"
 #import "PGPUser.h"
 #import "PGPUserIDPacket.h"
 
@@ -30,13 +32,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PGPSignatureSubpacket ()
-@property (nonatomic, readwrite) id value;
-@end
-
 @interface PGPSignaturePacket ()
-@property (nonatomic, readwrite) NSArray *hashedSubpackets;
-@property (nonatomic, readwrite) NSArray *unhashedSubpackets;
 
 // A V4 signature hashes the packet body
 // starting from its first field, the version number, through the end
