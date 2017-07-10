@@ -10,7 +10,7 @@
 #import "PGPPacket+Private.h"
 #import "NSData+PGPUtils.h"
 #import "PGPMPI.h"
-#import "PGPPublicKeyRSA.h"
+#import "PGPRSA.h"
 #import "PGPTypes.h"
 
 #import <CommonCrypto/CommonCrypto.h>
@@ -266,7 +266,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly: {
             // return ecnrypted m
-            return [PGPPublicKeyRSA publicEncrypt:data withPublicKeyPacket:self];
+            return [PGPRSA publicEncrypt:data withPublicKeyPacket:self];
         } break;
         default:
             // TODO: add algorithms

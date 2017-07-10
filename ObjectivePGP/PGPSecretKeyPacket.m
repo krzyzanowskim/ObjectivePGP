@@ -22,7 +22,7 @@
 #import "NSData+PGPUtils.h"
 #import "PGPCryptoCFB.h"
 #import "PGPCryptoUtils.h"
-#import "PGPPublicKeyRSA.h"
+#import "PGPRSA.h"
 
 @interface PGPSecretKeyPacket ()
 
@@ -284,7 +284,7 @@
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly: {
             // return decrypted m
-            return [PGPPublicKeyRSA privateDecrypt:data withSecretKeyPacket:self];
+            return [PGPRSA privateDecrypt:data withSecretKeyPacket:self];
         } break;
         default:
             // TODO: add algorithms

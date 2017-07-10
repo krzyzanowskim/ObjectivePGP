@@ -14,7 +14,7 @@
 #import "PGPMPI.h"
 #import "PGPPKCSEmsa.h"
 #import "PGPPartialKey.h"
-#import "PGPPublicKeyRSA.h"
+#import "PGPRSA.h"
 #import "PGPSecretKeyPacket.h"
 #import "PGPSignatureSubpacket.h"
 #import "PGPSignatureSubpacket+Private.h"
@@ -290,7 +290,7 @@ NS_ASSUME_NONNULL_BEGIN
             NSData *encryptedEmData = [signatureMPI bodyData];
 
             // decrypted encoded m value
-            NSData *decryptedEmData = [PGPPublicKeyRSA publicDecrypt:encryptedEmData withPublicKeyPacket:signingKeyPacket];
+            NSData *decryptedEmData = [PGPRSA publicDecrypt:encryptedEmData withPublicKeyPacket:signingKeyPacket];
 
             // calculate EM and compare with decrypted EM. PKCS-emsa Encoded M.
             NSData *emData = [PGPPKCSEmsa encode:self.hashAlgoritm message:toHashData encodedMessageLength:signingKeyPacket.keySize error:error];
@@ -379,7 +379,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly: {
-            encryptedEmData = [PGPPublicKeyRSA privateEncrypt:em withSecretKeyPacket:signingKeyPacket];
+            encryptedEmData = [PGPRSA privateEncrypt:em withSecretKeyPacket:signingKeyPacket];
         } break;
 
         default:

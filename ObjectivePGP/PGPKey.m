@@ -13,7 +13,7 @@
 #import "PGPSecretKeyPacket.h"
 #import "PGPSecretKeyPacket+Private.h"
 #import "PGPSignaturePacket+Private.h"
-#import "PGPPublicKeyRSA.h"
+#import "PGPRSA.h"
 #import "PGPSubKey.h"
 
 #import "PGPMacros.h"

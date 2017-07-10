@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class PGPSecretKeyPacket, PGPPublicKeyPacket;
 
-@interface PGPPublicKeyRSA : NSObject
+@interface PGPRSA : NSObject
 
 PGP_EMPTY_INIT_UNAVAILABLE;
 
@@ -25,6 +25,9 @@ PGP_EMPTY_INIT_UNAVAILABLE;
 // signature
 + (nullable NSData *)publicDecrypt:(NSData *)toDecrypt withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket;
 + (nullable NSData *)privateEncrypt:(NSData *)toEncrypt withSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket;
+
+// new keys
++ (nullable NSSet<PGPMPI *> *)generateNewKeyMPIs:(const int)bits algorithm:(PGPPublicKeyAlgorithm)algorithm;
 
 @end
 

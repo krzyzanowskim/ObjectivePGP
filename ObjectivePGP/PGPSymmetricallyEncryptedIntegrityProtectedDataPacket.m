@@ -15,7 +15,7 @@
 #import "PGPModificationDetectionCodePacket.h"
 #import "PGPOnePassSignaturePacket.h"
 #import "PGPPartialKey.h"
-#import "PGPPublicKeyRSA.h"
+#import "PGPRSA.h"
 #import "PGPSecretKeyPacket.h"
 
 #import <CommonCrypto/CommonCrypto.h>
