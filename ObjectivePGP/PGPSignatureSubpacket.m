@@ -42,11 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"%@ %d %@", [super description], self.type, self.value];
-}
-
-- (NSUInteger)length {
-    return _length;
+    return [NSString stringWithFormat:@"%@ %@ %@", [super description], @(self.type), self.value];
 }
 
 /**

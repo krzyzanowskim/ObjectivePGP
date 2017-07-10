@@ -258,7 +258,7 @@ NS_ASSUME_NONNULL_BEGIN
     let mpiQ = [[PGPMPI alloc] initWithBigNum:bigQ identifier:PGPMPI_Q];
     let mpiU = [[PGPMPI alloc] initWithBigNum:bigU identifier:PGPMPI_U];
 
-    return [NSSet setWithArray:@[mpiN, mpiE, mpiD, mpiP, mpiQ, mpiQ, mpiU]];
+    return [NSSet setWithArray:@[mpiN, mpiE, mpiD, mpiP, mpiQ, mpiU]];
 
 //#if FALSE
 //    // Due to SecKeyCopyExternalRepresentation can't use Security for target < iOS 10

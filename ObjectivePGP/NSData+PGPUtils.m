@@ -106,6 +106,21 @@ NS_ASSUME_NONNULL_BEGIN
     });
 }
 
+#pragma mark - NSValue
+
++ (NSData *)dataWithValue:(NSValue *)value {
+    NSUInteger size = 0;
+    let encoding = [value objCType];
+    NSGetSizeAndAlignment(encoding, &size, nil);
+
+    let ptr = calloc(size,1);
+    [value getValue:ptr];
+    let data = [NSData dataWithBytes:ptr length:size];
+    free(ptr);
+
+    return data;
+}
+
 #pragma mark - Encryption
 
 - (NSData *)pgp_encryptBlockWithSymmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm sessionKeyData:(NSData *)sessionKeyData {
