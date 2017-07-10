@@ -102,7 +102,7 @@
 		7547A6D11F0085E8002C2145 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7547A6D01F0085E8002C2145 /* Security.framework */; };
 		75616A5F1F13B4A400336240 /* PGPSignaturePacket+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 75616A5E1F13B4A400336240 /* PGPSignaturePacket+Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		75616A611F13B4EC00336240 /* PGPSignatureSubpacket+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 75616A601F13B4EC00336240 /* PGPSignatureSubpacket+Private.h */; };
-		75616A661F13B5B800336240 /* PGPSignatureSubpacketHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 75616A641F13B5B800336240 /* PGPSignatureSubpacketHeader.h */; };
+		75616A661F13B5B800336240 /* PGPSignatureSubpacketHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 75616A641F13B5B800336240 /* PGPSignatureSubpacketHeader.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		75616A671F13B5B800336240 /* PGPSignatureSubpacketHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 75616A651F13B5B800336240 /* PGPSignatureSubpacketHeader.m */; };
 		756299C81914DE1A00C5AD3B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B81914DE1A00C5AD3B /* Foundation.framework */; };
 		756299D31914DE1A00C5AD3B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 756299D11914DE1A00C5AD3B /* InfoPlist.strings */; };

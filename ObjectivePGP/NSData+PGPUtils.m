@@ -12,14 +12,14 @@
 
 #import <CommonCrypto/CommonCrypto.h>
 
-#include <openssl/aes.h>
-#include <openssl/blowfish.h>
-#include <openssl/camellia.h>
-#include <openssl/cast.h>
-#include <openssl/des.h>
-#include <openssl/idea.h>
-#include <openssl/ripemd.h>
-#include <openssl/sha.h>
+#import <openssl/aes.h>
+#import <openssl/blowfish.h>
+#import <openssl/camellia.h>
+#import <openssl/cast.h>
+#import <openssl/des.h>
+#import <openssl/idea.h>
+#import <openssl/ripemd.h>
+#import <openssl/sha.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

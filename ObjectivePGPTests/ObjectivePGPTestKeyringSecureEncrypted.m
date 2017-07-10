@@ -6,9 +6,7 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import "ObjectivePGP.h"
-#import "PGPMacros.h"
-#import "PGPSecretKeyPacket.h"
+#import <ObjectivePGP/ObjectivePGP.h>
 #import <XCTest/XCTest.h>
 
 @interface ObjectivePGPTestKeyringSecureEncrypted : XCTestCase

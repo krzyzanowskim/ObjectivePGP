@@ -6,8 +6,6 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#pragma once
-
 #import <Foundation/Foundation.h>
 
 #ifndef NS_DESIGNATED_INITIALIZER

@@ -353,7 +353,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     // signed part data
     // timestamp subpacket is required
-    PGPSignatureSubpacket *creationTimeSubpacket = [PGPSignatureSubpacket subpacketWithType:PGPSignatureSubpacketTypeSignatureCreationTime andValue:[NSDate date]];
+    PGPSignatureSubpacket *creationTimeSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeSignatureCreationTime andValue:[NSDate date]];
     self.hashedSubpackets = @[creationTimeSubpacket];
     NSData *signedPartData = [self buildSignedPart:self.hashedSubpackets];
     // calculate trailer
@@ -399,7 +399,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     // add unhashed PGPSignatureSubpacketTypeIssuer subpacket - REQUIRED
     PGPKeyID *keyid = [[PGPKeyID alloc] initWithFingerprint:signingKeyPacket.fingerprint];
-    PGPSignatureSubpacket *issuerSubpacket = [PGPSignatureSubpacket subpacketWithType:PGPSignatureSubpacketTypeIssuerKeyID andValue:keyid];
+    PGPSignatureSubpacket *issuerSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeIssuerKeyID andValue:keyid];
     self.unhashedSubpackets = @[issuerSubpacket];
 
     // Checksum
@@ -596,14 +596,11 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // convert V3 values to V4 subpackets
-    PGPSignatureSubpacket *keyIDSubpacket = [[PGPSignatureSubpacket alloc] init];
-    keyIDSubpacket.type = PGPSignatureSubpacketTypeIssuerKeyID;
-    keyIDSubpacket.value = parsedkeyID;
+    PGPSignatureSubpacket *keyIDSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeIssuerKeyID andValue:parsedkeyID];
     self.unhashedSubpackets = [self.unhashedSubpackets arrayByAddingObject:keyIDSubpacket];
 
-    PGPSignatureSubpacket *creationTimeSubpacket = [[PGPSignatureSubpacket alloc] init];
-    creationTimeSubpacket.type = PGPSignatureSubpacketTypeSignatureCreationTime;
-    creationTimeSubpacket.value = [NSDate dateWithTimeIntervalSince1970:parsedCreationTimestamp];
+    let creationDateTime = [NSDate dateWithTimeIntervalSince1970:parsedCreationTimestamp];
+    PGPSignatureSubpacket *creationTimeSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeSignatureCreationTime andValue:creationDateTime];
     self.hashedSubpackets = [self.hashedSubpackets arrayByAddingObject:creationTimeSubpacket];
 
     return position;
@@ -647,9 +644,9 @@ NS_ASSUME_NONNULL_BEGIN
 
         NSUInteger positionSubpacket = 0;
         while (positionSubpacket < hashedSubpacketsData.length) {
-            PGPSignatureSubpacket *subpacket = [self getSubpacketStartingAtPosition:positionSubpacket fromData:hashedSubpacketsData];
+            let subpacket = [self getSubpacketStartingAtPosition:positionSubpacket fromData:hashedSubpacketsData];
             [hashedSubpackets addObject:subpacket];
-            positionSubpacket = subpacket.bodyRange.location + subpacket.bodyRange.length;
+            positionSubpacket = positionSubpacket + subpacket.length;
         }
 
         self.hashedSubpackets = [hashedSubpackets copy];
@@ -675,9 +672,9 @@ NS_ASSUME_NONNULL_BEGIN
         // Loop subpackets
         NSUInteger positionSubpacket = 0;
         while (positionSubpacket < unhashedSubpacketsData.length) {
-            PGPSignatureSubpacket *subpacket = [self getSubpacketStartingAtPosition:positionSubpacket fromData:unhashedSubpacketsData];
+            let subpacket = [self getSubpacketStartingAtPosition:positionSubpacket fromData:unhashedSubpacketsData];
             [unhashedSubpackets addObject:subpacket];
-            positionSubpacket = subpacket.bodyRange.location + subpacket.bodyRange.length;
+            positionSubpacket = positionSubpacket + subpacket.length;
         }
 
         self.unhashedSubpackets = [unhashedSubpackets copy];
@@ -725,13 +722,13 @@ NS_ASSUME_NONNULL_BEGIN
 // This is because subpacket length is unknow and header need to be found first
 // then subpacket can be parsed
 - (PGPSignatureSubpacket *)getSubpacketStartingAtPosition:(NSUInteger)subpacketsPosition fromData:(NSData *)subpacketsData {
-    NSRange headerRange = (NSRange){subpacketsPosition, MIN((NSUInteger)6, subpacketsData.length - subpacketsPosition)}; // up to 5+1 octets
-    NSData *guessHeaderData = [subpacketsData subdataWithRange:headerRange]; // this is "may be" header to be parsed
-    PGPSignatureSubpacketHeader *subpacketHeader = [PGPSignatureSubpacket subpacketHeaderFromData:guessHeaderData];
+    let headerRange = (NSRange){subpacketsPosition, MIN((NSUInteger)6, subpacketsData.length - subpacketsPosition)}; // up to 5+1 octets
+    let guessHeaderData = [subpacketsData subdataWithRange:headerRange]; // this is "may be" header to be parsed
+    let subpacketHeader = [PGPSignatureSubpacket subpacketHeaderFromData:guessHeaderData];
 
-    NSRange subPacketBodyRange = (NSRange){subpacketsPosition + subpacketHeader.headerLength, subpacketHeader.bodyLength};
-    NSData *subPacketBody = [subpacketsData subdataWithRange:subPacketBodyRange];
-    PGPSignatureSubpacket *subpacket = [[PGPSignatureSubpacket alloc] initWithHeader:subpacketHeader body:subPacketBody bodyRange:subPacketBodyRange];
+    let subPacketBodyRange = (NSRange){subpacketsPosition + subpacketHeader.headerLength, subpacketHeader.bodyLength};
+    let subPacketBody = [subpacketsData subdataWithRange:subPacketBodyRange];
+    let subpacket = [[PGPSignatureSubpacket alloc] initWithHeader:subpacketHeader body:subPacketBody];
 
     return subpacket;
 }

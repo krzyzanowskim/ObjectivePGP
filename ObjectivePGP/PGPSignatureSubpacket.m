@@ -18,26 +18,35 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@interface PGPSignatureSubpacket ()
+
+@property (nonatomic, readwrite) NSUInteger length;
+@end
+
 @implementation PGPSignatureSubpacket
 
-- (instancetype)initWithHeader:(PGPSignatureSubpacketHeader *)header body:(NSData *)subPacketBodyData bodyRange:(NSRange)bodyRange {
-    if (self = [self init]) {
-        _type = header.type;
-        _bodyRange = bodyRange;
+- (instancetype)initWithType:(PGPSignatureSubpacketType)type andValue:(id)value {
+    if (([super init])) {
+        _type = type;
+        _value = value;
+    }
+    return self;
+}
+
+- (instancetype)initWithHeader:(PGPSignatureSubpacketHeader *)header body:(NSData *)subPacketBodyData {
+    if (self = [self initWithType:header.type andValue:NSNull.null]) {
+        _length = header.headerLength + header.bodyLength;
         [self parseSubpacketBody:subPacketBodyData];
     }
     return self;
 }
 
-+ (PGPSignatureSubpacket *)subpacketWithType:(PGPSignatureSubpacketType)type andValue:(id)value {
-    PGPSignatureSubpacket *subpacket = [[PGPSignatureSubpacket alloc] init];
-    subpacket.type = type;
-    subpacket.value = value;
-    return subpacket;
-}
-
 - (NSString *)description {
     return [NSString stringWithFormat:@"%@ %d %@", [super description], self.type, self.value];
+}
+
+- (NSUInteger)length {
+    return _length;
 }
 
 /**
@@ -270,7 +279,10 @@ NS_ASSUME_NONNULL_BEGIN
         {
             // TODO: actually it can be more than one byte (documented)
             //      so I should calculate how many bytes do I need here
-            NSArray *flagsArray = self.value;
+            let flagsArray = PGPCast(self.value, NSArray);
+            if (!flagsArray) {
+                break;
+            }
             PGPSignatureFlags flagByte = PGPSignatureFlagUnknown;
             for (NSNumber *flagByteNumber in flagsArray) {
                 flagByte = flagByte | ((UInt8)[flagByteNumber unsignedIntValue]);
@@ -279,7 +291,10 @@ NS_ASSUME_NONNULL_BEGIN
         } break;
         case PGPSignatureSubpacketTypePreferredSymetricAlgorithm: // NSArray of NSValue @encode(PGPSymmetricAlgorithm)
         {
-            NSArray *algorithmsArray = self.value;
+            let algorithmsArray = PGPCast(self.value, NSArray);
+            if (!algorithmsArray) {
+                break;
+            }
             for (NSValue *val in algorithmsArray) {
                 if (![val pgp_objCTypeIsEqualTo:@encode(PGPSymmetricAlgorithm)]) {
                     continue;
@@ -293,7 +308,10 @@ NS_ASSUME_NONNULL_BEGIN
         } break;
         case PGPSignatureSubpacketTypePreferredHashAlgorithm: // NSArray of of NSValue @encode(PGPHashAlgorithm)
         {
-            NSArray *algorithmsArray = self.value;
+            let algorithmsArray = PGPCast(self.value, NSArray);
+            if (!algorithmsArray) {
+                break;
+            }
             for (NSValue *val in algorithmsArray) {
                 if (![val pgp_objCTypeIsEqualTo:@encode(PGPHashAlgorithm)]) {
                     continue;
@@ -306,7 +324,10 @@ NS_ASSUME_NONNULL_BEGIN
         } break;
         case PGPSignatureSubpacketTypePreferredCompressionAlgorithm: // NSArray of NSValue @encode(PGPCompressionAlgorithm)
         {
-            NSArray *algorithmsArray = self.value;
+            let algorithmsArray = PGPCast(self.value, NSArray);
+            if (!algorithmsArray) {
+                break;
+            }
             for (NSValue *val in algorithmsArray) {
                 if (![val pgp_objCTypeIsEqualTo:@encode(PGPCompressionAlgorithm)]) {
                     continue;
@@ -322,7 +343,10 @@ NS_ASSUME_NONNULL_BEGIN
             // TODO: actually it can be more than one byte (documented)
             //      so I should calculate how many bytes do I need here
             PGPKeyServerPreferenceFlags allFlags = PGPKeyServerPreferenceUnknown;
-            let flagsArray = (NSArray<NSNumber *> *)self.value;
+            let flagsArray = PGPCast(self.value, NSArray);
+            if (!flagsArray) {
+                break;
+            }
             for (NSNumber *flagNumber in flagsArray) {
                 PGPKeyServerPreferenceFlags flag = (PGPKeyServerPreferenceFlags)flagNumber.unsignedIntValue;
                 allFlags = allFlags | flag;
@@ -333,7 +357,10 @@ NS_ASSUME_NONNULL_BEGIN
         {
             // TODO: actually it can be more than one byte (documented)
             //      so I should calculate how many bytes do I need here
-            NSArray *flagsArray = self.value;
+            let flagsArray = PGPCast(self.value, NSArray);
+            if (!flagsArray) {
+                break;
+            }
             PGPFeature flagByte = PGPFeatureModificationUnknown;
             for (NSNumber *flagByteNumber in flagsArray) {
                 flagByte = flagByte | ((UInt8)[flagByteNumber unsignedIntValue]);

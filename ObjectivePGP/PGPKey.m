@@ -8,13 +8,15 @@
 
 #import "PGPKey.h"
 #import "PGPKey+Private.h"
+#import "PGPSubKey.h"
 #import "PGPLogging.h"
 #import "PGPMacros.h"
+
 #import "PGPSecretKeyPacket.h"
 #import "PGPSecretKeyPacket+Private.h"
 #import "PGPSignaturePacket+Private.h"
+#import "PGPSignatureSubpacket+Private.h"
 #import "PGPRSA.h"
-#import "PGPSubKey.h"
 
 #import "PGPMacros.h"
 

@@ -10,7 +10,7 @@
 
 @interface PGPSignaturePacket ()
 
-@property (nonatomic, readwrite) NSArray *hashedSubpackets;
-@property (nonatomic, readwrite) NSArray *unhashedSubpackets;
+@property (nonatomic, copy, readwrite) NSArray<PGPSignatureSubpacket *> *hashedSubpackets;
+@property (nonatomic, copy, readwrite) NSArray<PGPSignatureSubpacket *> *unhashedSubpackets;
 
 @end

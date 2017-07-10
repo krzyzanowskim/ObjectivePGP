@@ -23,8 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) PGPSignatureType type;
 @property (nonatomic) PGPPublicKeyAlgorithm publicKeyAlgorithm;
 @property (nonatomic) PGPHashAlgorithm hashAlgoritm;
-@property (nonatomic, readonly) NSArray<PGPSignatureSubpacket *> *hashedSubpackets;
-@property (nonatomic, readonly) NSArray<PGPSignatureSubpacket *> *unhashedSubpackets;
+@property (nonatomic, copy, readonly) NSArray<PGPSignatureSubpacket *> *hashedSubpackets;
+@property (nonatomic, copy, readonly) NSArray<PGPSignatureSubpacket *> *unhashedSubpackets;
 @property (nonatomic) NSData *signedHashValueData;
 @property (nonatomic, copy) NSArray<PGPMPI *> *signatureMPIs;
 
