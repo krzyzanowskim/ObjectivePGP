@@ -50,6 +50,8 @@
 		750F89601F0D6EF100B99726 /* PGPPKCSEmsa.m in Sources */ = {isa = PBXBuildFile; fileRef = 7597B79B192E9C7F003ABC65 /* PGPPKCSEmsa.m */; };
 		750F89611F0D6EF100B99726 /* PGPPKCSEme.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AE7E28194224CD004DD6A5 /* PGPPKCSEme.m */; };
 		750F89631F0D6EF100B99726 /* PGPCryptoCFB.m in Sources */ = {isa = PBXBuildFile; fileRef = 751056121940A76F00653C0B /* PGPCryptoCFB.m */; };
+		7513A88B1F13ED6B00CF48FD /* PGPSignatureSubpacketCreationTime.h in Headers */ = {isa = PBXBuildFile; fileRef = 7513A8891F13ED6B00CF48FD /* PGPSignatureSubpacketCreationTime.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7513A88C1F13ED6B00CF48FD /* PGPSignatureSubpacketCreationTime.m in Sources */ = {isa = PBXBuildFile; fileRef = 7513A88A1F13ED6B00CF48FD /* PGPSignatureSubpacketCreationTime.m */; };
 		7537A6AD1F0D739A00892829 /* PGPCryptoHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 75572E281ED2193C00205871 /* PGPCryptoHash.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7537A6AE1F0D739A00892829 /* NSData+compression.h in Headers */ = {isa = PBXBuildFile; fileRef = 75A5C152193CE3F6008A2543 /* NSData+compression.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7537A6AF1F0D739A00892829 /* NSData+PGPUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 759DBA121915B5BD00305549 /* NSData+PGPUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -155,6 +157,8 @@
 		750F89641F0D701E00B99726 /* ObjectivePGPObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectivePGPObject.h; sourceTree = "<group>"; };
 		751056111940A76F00653C0B /* PGPCryptoCFB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPCryptoCFB.h; sourceTree = "<group>"; };
 		751056121940A76F00653C0B /* PGPCryptoCFB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPCryptoCFB.m; sourceTree = "<group>"; };
+		7513A8891F13ED6B00CF48FD /* PGPSignatureSubpacketCreationTime.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPSignatureSubpacketCreationTime.h; sourceTree = "<group>"; };
+		7513A88A1F13ED6B00CF48FD /* PGPSignatureSubpacketCreationTime.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PGPSignatureSubpacketCreationTime.m; sourceTree = "<group>"; };
 		751E07341937D53900CA7946 /* PGPOnePassSignaturePacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPOnePassSignaturePacket.h; sourceTree = "<group>"; };
 		751E07351937D53900CA7946 /* PGPOnePassSignaturePacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPOnePassSignaturePacket.m; sourceTree = "<group>"; };
 		752B3A791EC8EB9A003F6C22 /* PGPLogging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPLogging.h; sourceTree = "<group>"; };
@@ -304,6 +308,8 @@
 				7502CEFD1916DCE9001B32D7 /* PGPSignatureSubpacket.h */,
 				75616A601F13B4EC00336240 /* PGPSignatureSubpacket+Private.h */,
 				7502CEFE1916DCE9001B32D7 /* PGPSignatureSubpacket.m */,
+				7513A8891F13ED6B00CF48FD /* PGPSignatureSubpacketCreationTime.h */,
+				7513A88A1F13ED6B00CF48FD /* PGPSignatureSubpacketCreationTime.m */,
 				751E07341937D53900CA7946 /* PGPOnePassSignaturePacket.h */,
 				751E07351937D53900CA7946 /* PGPOnePassSignaturePacket.m */,
 				75616A641F13B5B800336240 /* PGPSignatureSubpacketHeader.h */,
@@ -596,6 +602,7 @@
 				7537A6D81F0D739A00892829 /* PGPCryptoCFB.h in Headers */,
 				7537A6D91F0D739A00892829 /* PGPLogging.h in Headers */,
 				7537A6D21F0D739A00892829 /* PGPKey+Private.h in Headers */,
+				7513A88B1F13ED6B00CF48FD /* PGPSignatureSubpacketCreationTime.h in Headers */,
 				7537A6B51F0D739A00892829 /* PGPBigNum+Private.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -728,6 +735,7 @@
 				750F894C1F0D6EF100B99726 /* PGPSecretSubKeyPacket.m in Sources */,
 				75616A671F13B5B800336240 /* PGPSignatureSubpacketHeader.m in Sources */,
 				750F894D1F0D6EF100B99726 /* PGPUserIDPacket.m in Sources */,
+				7513A88C1F13ED6B00CF48FD /* PGPSignatureSubpacketCreationTime.m in Sources */,
 				750F894E1F0D6EF100B99726 /* PGPTrustPacket.m in Sources */,
 				750F894F1F0D6EF100B99726 /* PGPModificationDetectionCodePacket.m in Sources */,
 				750F89501F0D6EF100B99726 /* PGPLiteralPacket.m in Sources */,

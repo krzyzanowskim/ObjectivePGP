@@ -27,7 +27,7 @@ PGP_EMPTY_INIT_UNAVAILABLE;
 + (PGPSignatureSubpacketHeader *)subpacketHeaderFromData:(NSData *)headerData;
 
 - (void)parseSubpacketBody:(NSData *)packetBody;
-- (nullable NSData *)exportSubpacket:(NSError *__autoreleasing *)error;
+- (nullable NSData *)export:(NSError *__autoreleasing *)error;
 
 @end
 

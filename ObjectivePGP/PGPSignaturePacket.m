@@ -186,7 +186,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSMutableData *data = [NSMutableData data];
 
     // One-octet version number (4).
-    UInt8 exportVersion = 4;
+    UInt8 exportVersion = 0x04;
     [data appendBytes:&exportVersion length:1];
 
     // One-octet signature type.
@@ -226,13 +226,36 @@ NS_ASSUME_NONNULL_BEGIN
     return data;
 }
 
+//- (NSData *)calculateSignedHashValue:(NSData *)toSignData {
+//
+////    [self toSignDataForType:PGPSignaturePositiveCertificationUserIDandPublicKey inputData:nil key: keyPacket:<#(nullable PGPPublicKeyPacket *)#> userID:<#(nullable NSString *)#> error:<#(NSError * _Nullable __autoreleasing * _Nullable)#>]
+//
+//    // calculate trailer
+//    let signedPartData = [self buildSignedPart:self.hashedSubpackets];
+//    NSData *trailerData = [self calculateTrailerFor:signedPartData];
+//
+//    // The concatenation of the data being signed and the signature data
+//    // from the version number through the hashed subpacket data (inclusive)
+//    // is hashed.
+//    // toHash = toSignData + signedPartData + trailerData;
+//    NSMutableData *toHashData = [NSMutableData data];
+//    [toHashData appendData:toSignData];
+//    [toHashData appendData:signedPartData];
+//    [toHashData appendData:trailerData];
+//
+//    // Calculate hash value
+//    return [toHashData pgp_HashedWithAlgorithm:self.hashAlgoritm];
+//}
+
 #pragma mark - Verify
 
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey error:(NSError *__autoreleasing *)error;
-{ return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:nil error:error]; }
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey error:(NSError *__autoreleasing *)error {
+    return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:nil error:error];
+}
 
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error;
-{ return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:userID error:error]; }
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error {
+    return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:userID error:error];
+}
 
 // Opposite to sign, with readed data (not produced)
 - (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error {
@@ -259,23 +282,23 @@ NS_ASSUME_NONNULL_BEGIN
         return NO;
     }
 
+    /// Calculate hash to compare
     // signedPartData
-    NSData *signedPartData = [self buildSignedPart:self.hashedSubpackets];
+    let signedPartData = [self buildSignedPart:self.hashedSubpackets];
     // calculate trailer
-    NSData *trailerData = [self calculateTrailerFor:signedPartData];
+    let trailerData = [self calculateTrailerFor:signedPartData];
 
     // toHash = toSignData + signedPartData + trailerData;
-    NSMutableData *toHashData = [NSMutableData data];
-    [toHashData appendData:toSignData];
+    let toHashData = [NSMutableData dataWithData:toSignData];
     [toHashData appendData:self.rawReadedSignedPartData ?: signedPartData];
     [toHashData appendData:trailerData];
 
     // Calculate hash value
-    NSData *hashData = [toHashData pgp_HashedWithAlgorithm:self.hashAlgoritm];
+    let calculatedHashValueData = [toHashData pgp_HashedWithAlgorithm:self.hashAlgoritm];
 
     // check signed hash value, should match
     // FIXME: propably will fail on V3 signature, need investigate how to handle V3 scenario here
-    if (![self.signedHashValueData isEqualToData:[hashData subdataWithRange:(NSRange){0, 2}]]) {
+    if (![self.signedHashValueData isEqualToData:[calculatedHashValueData subdataWithRange:(NSRange){0, 2}]]) {
         return NO;
     }
 
@@ -353,16 +376,17 @@ NS_ASSUME_NONNULL_BEGIN
 
     // signed part data
     // timestamp subpacket is required
-    PGPSignatureSubpacket *creationTimeSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeSignatureCreationTime andValue:[NSDate date]];
+    let creationTimeSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeSignatureCreationTime andValue:NSDate.date];
     self.hashedSubpackets = @[creationTimeSubpacket];
-    NSData *signedPartData = [self buildSignedPart:self.hashedSubpackets];
+
+    let signedPartData = [self buildSignedPart:self.hashedSubpackets];
     // calculate trailer
-    NSData *trailerData = [self calculateTrailerFor:signedPartData];
+    let trailerData = [self calculateTrailerFor:signedPartData];
 
     // build toSignData, toSign
-    NSData *toSignData = [self toSignDataForType:self.type inputData:inputData key:secretKey keyPacket:signingKeyPacket userID:userID error:error];
+    let toSignData = [self toSignDataForType:self.type inputData:inputData key:secretKey keyPacket:signingKeyPacket userID:userID error:error];
     // toHash = toSignData + signedPartData + trailerData;
-    NSMutableData *toHashData = [NSMutableData dataWithData:toSignData];
+    let toHashData = [NSMutableData dataWithData:toSignData];
     [toHashData appendData:signedPartData];
     [toHashData appendData:trailerData];
 
@@ -409,11 +433,16 @@ NS_ASSUME_NONNULL_BEGIN
     return YES;
 }
 
-- (nullable NSData *)toSignDataForType:(PGPSignatureType)type inputData:(NSData *)inputData key:(PGPPartialKey *)key keyPacket:(PGPPublicKeyPacket *)keyPacket userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error {
-    NSMutableData *toSignData = [NSMutableData data];
+- (nullable NSData *)toSignDataForType:(PGPSignatureType)type inputData:(nullable NSData *)inputData key:(nullable PGPPartialKey *)key keyPacket:(nullable PGPPublicKeyPacket *)keyPacket userID:(nullable NSString *)userID error:(NSError *__autoreleasing _Nullable *)error {
+    let toSignData = [NSMutableData data];
     switch (type) {
         case PGPSignatureBinaryDocument:
         case PGPSignatureCanonicalTextDocument: {
+            if (!inputData) {
+                PGPLogError(@"Invalid paramaters.");
+                if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing input data" }]; }
+                return nil;
+            }
             [toSignData appendData:inputData];
         } break;
         case PGPSignatureGenericCertificationUserIDandPublicKey: // 0x10
@@ -422,6 +451,11 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPSignaturePositiveCertificationUserIDandPublicKey: // 0x13
         case PGPSignatureCertificationRevocation: // 0x28
         {
+            if (!keyPacket) {
+                PGPLogError(@"Invalid paramaters");
+                if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing key packet." }]; }
+                return nil;
+            }
             // A certification signature (type 0x10 through 0x13)
 
             // When a signature is made over a key, the hash data starts with the
@@ -429,24 +463,28 @@ NS_ASSUME_NONNULL_BEGIN
             // of the key packet. (Note that this is an old-style packet header for
             // a key packet with two-octet length.)
 
-            NSData *keyData = [keyPacket exportPublicPacketOldStyle];
+            let keyData = [keyPacket exportPublicPacketOldStyle];
             [toSignData appendData:keyData];
 
-            NSAssert(key.users.count > 0, @"Need at least one user for the key.");
+            if (key) {
+                NSAssert(key.users.count > 0, @"Need at least one user for the key.");
 
-            BOOL userIsValid = NO;
-            for (PGPUser *user in key.users) {
-                if ([user.userID isEqualToString:userID]) {
-                    userIsValid = YES;
+                BOOL userIsValid = NO;
+                for (PGPUser *user in key.users) {
+                    if ([user.userID isEqualToString:userID]) {
+                        userIsValid = YES;
+                    }
+                }
+
+                if (!userIsValid) {
+                    if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Invalid ." }]; }
+                    PGPLogError(@"Invalid user");
+                    return nil;
                 }
             }
 
-            if (!userIsValid) {
-                return nil;
-            }
-
             if (userID.length > 0) {
-                NSData *userIDData = [userID dataUsingEncoding:NSUTF8StringEncoding];
+                let userIDData = [userID dataUsingEncoding:NSUTF8StringEncoding];
                 if (self.version == 4) {
                     // constant tag (1)
                     UInt8 userIDConstant = 0xB4;
@@ -467,17 +505,19 @@ NS_ASSUME_NONNULL_BEGIN
         } break;
 
         default:
-            [toSignData appendData:inputData];
+            if (inputData) {
+                [toSignData appendData:inputData];
+            }
             break;
     }
-    return [toSignData copy];
+    return toSignData;
 }
 
 - (NSData *)calculateTrailerFor:(NSData *)signedPartData {
     NSAssert(self.version == 4, @"Not supported signature version");
-    if (self.version < 4) return nil;
+    if (self.version < 4) { return nil; }
 
-    NSMutableData *trailerData = [NSMutableData data];
+    let trailerData = [NSMutableData data];
     UInt8 prefix[2] = {self.version, 0xFF};
     [trailerData appendBytes:&prefix length:2];
 
@@ -485,7 +525,7 @@ NS_ASSUME_NONNULL_BEGIN
     signatureLength = CFSwapInt32HostToBig(signatureLength);
     [trailerData appendBytes:&signatureLength length:4];
 
-    return [trailerData copy];
+    return trailerData;
 }
 
 #pragma mark - Parse
@@ -740,7 +780,7 @@ NS_ASSUME_NONNULL_BEGIN
         // Hashed subpacket data set (zero or more subpackets)
         for (PGPSignatureSubpacket *subpacket in subpacketsCollection) {
             NSError *error = nil;
-            NSData *subpacketData = [subpacket exportSubpacket:&error];
+            NSData *subpacketData = [subpacket export:&error];
             if (subpacketData && !error) {
                 [subpackets appendData:subpacketData];
             }
