@@ -96,7 +96,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<PGPSignatureSubpacket *> *)subpacketsOfType:(PGPSignatureSubpacketType)type {
     NSMutableArray *arr = [NSMutableArray<PGPSignatureSubpacket *> array];
     for (PGPSignatureSubpacket *subPacket in self.subpackets) {
-        if (subPacket.type == type) {
+        if ((subPacket.type & 0x7F) == type) {
             [arr addObject:subPacket];
         }
     }
