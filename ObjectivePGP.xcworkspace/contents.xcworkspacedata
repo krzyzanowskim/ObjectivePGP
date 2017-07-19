@@ -7,7 +7,4 @@
    <FileRef
       location = "group:ObjectivePGP.xcodeproj">
    </FileRef>
-   <FileRef
-      location = "group:opgp/opgp.xcodeproj">
-   </FileRef>
 </Workspace>
