@@ -15,7 +15,6 @@
 		750F893D1F0D6EF100B99726 /* NSData+compression.m in Sources */ = {isa = PBXBuildFile; fileRef = 75A5C153193CE3F6008A2543 /* NSData+compression.m */; };
 		750F893E1F0D6EF100B99726 /* NSData+PGPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 759DBA131915B5BD00305549 /* NSData+PGPUtils.m */; };
 		750F893F1F0D6EF100B99726 /* PGPCryptoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C4F0E21920FF5F005401A4 /* PGPCryptoUtils.m */; };
-		750F89401F0D6EF100B99726 /* NSValue+PGPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 758F3A19192935C7009307AD /* NSValue+PGPUtils.m */; };
 		750F89411F0D6EF100B99726 /* ObjectivePGPObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 756299BF1914DE1A00C5AD3B /* ObjectivePGPObject.m */; };
 		750F89421F0D6EF100B99726 /* PGPFoundation.m in Sources */ = {isa = PBXBuildFile; fileRef = 758514EB1EDF09C400CB313F /* PGPFoundation.m */; };
 		750F89431F0D6EF100B99726 /* PGPBigNum.m in Sources */ = {isa = PBXBuildFile; fileRef = 7547A6C71F007EF6002C2145 /* PGPBigNum.m */; };
@@ -56,7 +55,6 @@
 		7537A6AE1F0D739A00892829 /* NSData+compression.h in Headers */ = {isa = PBXBuildFile; fileRef = 75A5C152193CE3F6008A2543 /* NSData+compression.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7537A6AF1F0D739A00892829 /* NSData+PGPUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 759DBA121915B5BD00305549 /* NSData+PGPUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7537A6B01F0D739A00892829 /* PGPCryptoUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 75C4F0E11920FF5F005401A4 /* PGPCryptoUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		7537A6B11F0D739A00892829 /* NSValue+PGPUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 758F3A18192935C7009307AD /* NSValue+PGPUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7537A6B21F0D739A00892829 /* PGPMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 752DE5BD1EEE3BE800637E38 /* PGPMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7537A6B31F0D739A00892829 /* PGPFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 758514EA1EDF09C400CB313F /* PGPFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7537A6B41F0D739A00892829 /* PGPTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 759DBA151915BC0400305549 /* PGPTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -221,8 +219,6 @@
 		758514EB1EDF09C400CB313F /* PGPFoundation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPFoundation.m; sourceTree = "<group>"; };
 		758514EE1EDF3D7100CB313F /* PGPKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPKey.h; sourceTree = "<group>"; };
 		758514EF1EDF3D7100CB313F /* PGPKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPKey.m; sourceTree = "<group>"; };
-		758F3A18192935C7009307AD /* NSValue+PGPUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSValue+PGPUtils.h"; sourceTree = "<group>"; };
-		758F3A19192935C7009307AD /* NSValue+PGPUtils.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSValue+PGPUtils.m"; sourceTree = "<group>"; };
 		7590B7AB1ED9BFF7009A0E92 /* issue44-keys.asc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "issue44-keys.asc"; sourceTree = "<group>"; };
 		7597B79A192E9C7F003ABC65 /* PGPPKCSEmsa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPKCSEmsa.h; sourceTree = "<group>"; };
 		7597B79B192E9C7F003ABC65 /* PGPPKCSEmsa.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPKCSEmsa.m; sourceTree = "<group>"; };
@@ -494,8 +490,6 @@
 				759DBA131915B5BD00305549 /* NSData+PGPUtils.m */,
 				75C4F0E11920FF5F005401A4 /* PGPCryptoUtils.h */,
 				75C4F0E21920FF5F005401A4 /* PGPCryptoUtils.m */,
-				758F3A18192935C7009307AD /* NSValue+PGPUtils.h */,
-				758F3A19192935C7009307AD /* NSValue+PGPUtils.m */,
 			);
 			name = Utility;
 			sourceTree = "<group>";
@@ -555,7 +549,6 @@
 				7537A6AE1F0D739A00892829 /* NSData+compression.h in Headers */,
 				7537A6AF1F0D739A00892829 /* NSData+PGPUtils.h in Headers */,
 				7537A6B01F0D739A00892829 /* PGPCryptoUtils.h in Headers */,
-				7537A6B11F0D739A00892829 /* NSValue+PGPUtils.h in Headers */,
 				7537A6B21F0D739A00892829 /* PGPMacros.h in Headers */,
 				7537A6B31F0D739A00892829 /* PGPFoundation.h in Headers */,
 				75C502051F12C00300FEC874 /* PGPPublicKeyPacket+Private.h in Headers */,
@@ -720,7 +713,6 @@
 				750F893D1F0D6EF100B99726 /* NSData+compression.m in Sources */,
 				750F893E1F0D6EF100B99726 /* NSData+PGPUtils.m in Sources */,
 				750F893F1F0D6EF100B99726 /* PGPCryptoUtils.m in Sources */,
-				750F89401F0D6EF100B99726 /* NSValue+PGPUtils.m in Sources */,
 				750F89411F0D6EF100B99726 /* ObjectivePGPObject.m in Sources */,
 				750F89421F0D6EF100B99726 /* PGPFoundation.m in Sources */,
 				750F89431F0D6EF100B99726 /* PGPBigNum.m in Sources */,

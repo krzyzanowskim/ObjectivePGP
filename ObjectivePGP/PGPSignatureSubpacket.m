@@ -9,7 +9,6 @@
 #import "PGPSignatureSubpacket.h"
 #import "PGPSignatureSubpacket+Private.h"
 #import "PGPSignatureSubpacketCreationTime.h"
-#import "NSValue+PGPUtils.h"
 #import "PGPCompressedPacket.h"
 #import "PGPKeyID.h"
 #import "PGPPacket.h"

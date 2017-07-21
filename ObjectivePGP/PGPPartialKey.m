@@ -7,7 +7,6 @@
 //
 
 #import "PGPPartialKey.h"
-#import "NSValue+PGPUtils.h"
 #import "PGPLogging.h"
 #import "PGPMacros.h"
 #import "PGPPublicKeyPacket.h"
@@ -397,13 +396,9 @@ NS_ASSUME_NONNULL_BEGIN
         let primaryUser = [key primaryUserAndSelfCertificate:&selfCertificate];
         if (primaryUser && selfCertificate) {
             PGPSignatureSubpacket *subpacket = [[selfCertificate subpacketsOfType:PGPSignatureSubpacketTypePreferredSymetricAlgorithm] firstObject];
-            NSArray *preferencesArray = subpacket.value;
-            for (NSValue *preferedValue in preferencesArray) {
-                if ([preferedValue pgp_objCTypeIsEqualTo:@encode(PGPSymmetricAlgorithm)]) {
-                    PGPSymmetricAlgorithm algorithm = PGPSymmetricPlaintext;
-                    [preferedValue getValue:&algorithm];
-                    [keyAlgorithms addObject:@(algorithm)];
-                }
+            NSArray<NSNumber *> * _Nullable preferredSymetricAlgorithms = PGPCast(subpacket.value, NSArray);
+            if (preferredSymetricAlgorithms) {
+                [keyAlgorithms addObjectsFromArray:preferredSymetricAlgorithms];
             }
         }
 
@@ -415,7 +410,7 @@ NS_ASSUME_NONNULL_BEGIN
     // intersect
     if (preferecesArray.count > 0) {
         let set = [NSMutableOrderedSet<NSNumber *> orderedSetWithArray:preferecesArray[0]];
-        for (NSArray *prefArray in preferecesArray) {
+        for (NSArray<NSNumber *> *prefArray in preferecesArray) {
             [set intersectSet:[NSSet setWithArray:prefArray]];
         }
         return (PGPSymmetricAlgorithm)[set[0] unsignedIntValue];
