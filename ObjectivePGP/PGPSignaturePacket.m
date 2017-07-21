@@ -226,26 +226,22 @@ NS_ASSUME_NONNULL_BEGIN
     return data;
 }
 
-//- (NSData *)calculateSignedHashValue:(NSData *)toSignData {
-//
-////    [self toSignDataForType:PGPSignaturePositiveCertificationUserIDandPublicKey inputData:nil key: keyPacket:<#(nullable PGPPublicKeyPacket *)#> userID:<#(nullable NSString *)#> error:<#(NSError * _Nullable __autoreleasing * _Nullable)#>]
-//
-//    // calculate trailer
-//    let signedPartData = [self buildSignedPart:self.hashedSubpackets];
-//    NSData *trailerData = [self calculateTrailerFor:signedPartData];
-//
-//    // The concatenation of the data being signed and the signature data
-//    // from the version number through the hashed subpacket data (inclusive)
-//    // is hashed.
-//    // toHash = toSignData + signedPartData + trailerData;
-//    NSMutableData *toHashData = [NSMutableData data];
-//    [toHashData appendData:toSignData];
-//    [toHashData appendData:signedPartData];
-//    [toHashData appendData:trailerData];
-//
-//    // Calculate hash value
-//    return [toHashData pgp_HashedWithAlgorithm:self.hashAlgoritm];
-//}
+- (NSData *)calculateSignedHashWithData:(NSData*)toHashData {
+    // calculate trailer
+    let signedPartData = [self buildSignedPart:self.hashedSubpackets];
+    let trailerData = [self calculateTrailerFor:signedPartData];
+
+    // The concatenation of the data being signed and the signature data
+    // from the version number through the hashed subpacket data (inclusive)
+    // is hashed.
+    // toHash = toSignData + signedPartData + trailerData;
+    NSMutableData *finalToHashData = [NSMutableData dataWithData:toHashData];
+    [finalToHashData appendData:signedPartData];
+    [finalToHashData appendData:trailerData];
+
+    // Calculate hash value
+    return [toHashData pgp_HashedWithAlgorithm:self.hashAlgoritm];
+}
 
 #pragma mark - Verify
 

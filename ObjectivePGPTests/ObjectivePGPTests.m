@@ -47,6 +47,10 @@
     self.oPGP = nil;
 }
 
+- (void)testGenerateNewKey {
+    [PGPKey generateKeyForUserID:@"Marcin <me@example.com>" algorithm:PGPPublicKeyAlgorithmRSA bits:2048];
+}
+
 - (void)testNotDuplicates {
     [self.oPGP importKeysFromFile:self.pubringPlaintext];
     NSUInteger count1 = self.oPGP.keys.count;

@@ -377,8 +377,14 @@
     let secretKeyPacketData = [NSMutableData data];
     [secretKeyPacketData appendData:publicKeyData];
     [secretKeyPacketData appendData:[self buildSecretKeyDataAndForceV4:YES]];
+    if (!self.bodyData) {
+        self.bodyData = secretKeyPacketData;
+    }
 
     let headerData = [self buildHeaderData:secretKeyPacketData];
+    if (!self.headerData) {
+        self.headerData = headerData;
+    }
     [data appendData:headerData];
     [data appendData:secretKeyPacketData];
 

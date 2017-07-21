@@ -245,7 +245,14 @@ NS_ASSUME_NONNULL_BEGIN
     let data = [NSMutableData data];
 
     let bodyData = [self buildPublicKeyBodyData:NO];
+    if (!self.bodyData) {
+        self.bodyData = bodyData;
+    }
+
     let headerData = [self buildHeaderData:bodyData];
+    if (!self.headerData) {
+        self.headerData = headerData;
+    }
     [data appendData:headerData];
     [data appendData:bodyData];
 
