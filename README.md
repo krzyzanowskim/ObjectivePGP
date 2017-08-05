@@ -22,7 +22,7 @@ pod 'ObjectivePGP'
 
 ObjectivePGP comes with the [Frameworks](./Frameworks) for the latest release.
 
-1. Download [ObjectivePGP.framework](./Frameworks) or build a framework with the [build-frameworks.sh](./build-frameworks.sh) script.
+1. Download [ObjectivePGP.framework](https://github.com/krzyzanowskim/ObjectivePGP/releases) or build a framework with the [build-frameworks.sh](./build-frameworks.sh) script.
 1. Link framework with the target
     - Add `ObjectivePGP.framework` to "**Link Binary With Libraries**" list for the target.
     ![screen shot 2017-06-30 at 02 20 47](https://user-images.githubusercontent.com/758033/27715926-d79a4e3c-5d3a-11e7-8b1b-d8b5ddb8182e.png)
@@ -162,6 +162,8 @@ The ObjectivePGP stays under a dual license:
 - Free for non-commercial use, covered by the standard 2-clause BSD license. That means you have to mention Marcin Krzyżanowski as the original author of this code and reproduce the [LICENSE](./LICENSE.txt) text inside your app.
 
 - Commercial-use license to use in commercial products. Please bear in mind that some free products remain commercial products. Please contact me via [email](http://www.krzyzanowskim.com) for details.
+
+Not sure what to choose? check this [thread](https://twitter.com/krzyzanowskim/status/868481597204508672)
 
 ### Acknowledgment
 
