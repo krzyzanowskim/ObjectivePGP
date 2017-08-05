@@ -77,11 +77,9 @@ NS_ASSUME_NONNULL_BEGIN
     // Encrypted data
     [bodyData appendData:self.encryptedData];
 
-    let data = [NSMutableData data];
-    let headerData = [self buildHeaderData:bodyData];
-    [data appendData:headerData];
-    [data appendData:bodyData];
-    return data;
+    return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
+        return bodyData;
+    }];
 }
 
 - (NSArray<PGPPacket *> *)readPacketsFromData:(NSData *)keyringData offset:(NSUInteger)offset mdcLength:(nullable NSUInteger *)mdcLength {

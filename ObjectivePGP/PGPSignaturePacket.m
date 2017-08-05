@@ -86,17 +86,17 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (NSArray<PGPSignatureSubpacket *> *)subpackets {
-    return [self.hashedSubpackets arrayByAddingObjectsFromArray:self.unhashedSubpackets];
+    return [self.hashedSubpackets arrayByAddingObjectsFromArray:self.unhashedSubpackets ?: @[]];
 }
 
 - (NSArray<PGPSignatureSubpacket *> *)subpacketsOfType:(PGPSignatureSubpacketType)type {
-    NSMutableArray *arr = [NSMutableArray<PGPSignatureSubpacket *> array];
+    let filteredSubpackets = [NSMutableArray<PGPSignatureSubpacket *> array];
     for (PGPSignatureSubpacket *subPacket in self.subpackets) {
         if (subPacket.type == type) {
-            [arr addObject:subPacket];
+            [filteredSubpackets addObject:subPacket];
         }
     }
-    return arr;
+    return filteredSubpackets;
 }
 
 - (nullable NSDate *)expirationDate {
@@ -172,18 +172,13 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Build packet
 
 - (nullable NSData *)export:(NSError *__autoreleasing *)error {
-    NSMutableData *data = [NSMutableData data];
-
-    NSData *bodyData = [self buildFullSignatureBodyData:error];
-    NSData *headerData = [self buildHeaderData:bodyData];
-    [data appendData:headerData];
-    [data appendData:bodyData];
-
-    return [data copy];
+    return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
+        return [self buildFullSignatureBodyData:error];
+    }];
 }
 
 - (NSData *)buildSignedPart:(NSArray *)hashedSubpackets {
-    NSMutableData *data = [NSMutableData data];
+    let data = [NSMutableData data];
 
     // One-octet version number (4).
     UInt8 exportVersion = 0x04;
@@ -201,7 +196,7 @@ NS_ASSUME_NONNULL_BEGIN
     // hashed Subpackets
     [data appendData:[self buildSubpacketsCollectionData:hashedSubpackets]];
 
-    return [data copy];
+    return data;
 }
 
 - (NSData *)buildFullSignatureBodyData:(NSError *__autoreleasing *)error {
@@ -509,9 +504,11 @@ NS_ASSUME_NONNULL_BEGIN
     return toSignData;
 }
 
-- (NSData *)calculateTrailerFor:(NSData *)signedPartData {
-    NSAssert(self.version == 4, @"Not supported signature version");
-    if (self.version < 4) { return nil; }
+- (nullable NSData *)calculateTrailerFor:(NSData *)signedPartData {
+    NSAssert(self.version == 0x4, @"Not supported signature version");
+    if (self.version != 0x4) {
+        return nil;
+    }
 
     let trailerData = [NSMutableData data];
     UInt8 prefix[2] = {self.version, 0xFF};

@@ -37,12 +37,9 @@
 }
 
 - (nullable NSData *)export:(NSError *__autoreleasing *)error {
-    let data = [NSMutableData data];
-    let bodyData = [self.userID dataUsingEncoding:NSUTF8StringEncoding];
-    let headerData = [self buildHeaderData:bodyData];
-    [data appendData:headerData];
-    [data appendData:bodyData];
-    return data;
+    return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
+        return [self.userID dataUsingEncoding:NSUTF8StringEncoding];
+    }];
 }
 
 @end

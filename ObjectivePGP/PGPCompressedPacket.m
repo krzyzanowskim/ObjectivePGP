@@ -82,12 +82,9 @@
     NSAssert(compressedData, @"Compression failed");
     [bodyData appendData:compressedData];
 
-    NSMutableData *data = [NSMutableData data];
-    NSData *headerData = [self buildHeaderData:bodyData];
-    [data appendData:headerData];
-    [data appendData:bodyData];
-
-    return [data copy];
+    return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
+        return bodyData;
+    }];
 }
 
 @end

@@ -12,6 +12,8 @@
 #define NS_DESIGNATED_INITIALIZER
 #endif
 
+#define PGP_NOESCAPE __attribute__((noescape))
+
 static NSString *const PGPErrorDomain = @"ObjectivePGP";
 
 typedef NS_ENUM(NSInteger, PGPErrorCode) { PGPErrorGeneral = -1, PGPErrorPassphraseRequired = 5, PGPErrorPassphraseInvalid = 6 };

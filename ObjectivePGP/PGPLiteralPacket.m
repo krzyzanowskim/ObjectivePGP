@@ -130,12 +130,9 @@ NS_ASSUME_NONNULL_BEGIN
             break;
     }
 
-    let data = [NSMutableData data];
-    let headerData = [self buildHeaderData:bodyData];
-    [data appendData:headerData];
-    [data appendData:bodyData];
-
-    return data;
+    return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
+        return bodyData;
+    }];
 }
 
 @end

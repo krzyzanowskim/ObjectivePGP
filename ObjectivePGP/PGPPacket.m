@@ -247,6 +247,31 @@ NS_ASSUME_NONNULL_BEGIN
     return data;
 }
 
++ (NSData *)buildPacketOfType:(PGPPacketTag)tag withBody:(PGP_NOESCAPE NSData *(^)(void))body {
+    // TODO: check all formats, untested
+    // 4.2.2.  New Format Packet Lengths
+    let data = [NSMutableData data];
+
+    // Bit 7 -- Always one
+    // Bit 6 -- New packet format if set
+    UInt8 packetTag = PGPHeaderPacketTagAllwaysSet | PGPHeaderPacketTagNewFormat;
+
+    // Bits 5-0 -- packet tag
+    packetTag |= tag;
+
+    // write ptag
+    [data appendBytes:&packetTag length:1];
+
+    let bodyData = body();
+    // write header
+    [data appendData:[PGPPacket buildNewFormatLengthDataForData:bodyData]];
+
+    // write packet body
+    [data appendData:bodyData];
+
+    return data;
+}
+
 + (NSData *)buildNewFormatLengthDataForData:(NSData *)bodyData {
     let data = [NSMutableData data];
     // write length octets

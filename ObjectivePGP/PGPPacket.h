@@ -29,8 +29,11 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable NSData *)parsePacketHeader:(NSData *)data headerLength:(UInt32 *)headerLength nextPacketOffset:(nullable NSUInteger *)nextPacketOffset packetTag:(PGPPacketTag *)tag indeterminateLength:(BOOL *)indeterminateLength;
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error;
 
-- (NSData *)buildHeaderData:(NSData *)bodyData;
+- (NSData *)buildHeaderData:(NSData *)bodyData DEPRECATED_ATTRIBUTE;
 + (NSData *)buildNewFormatLengthDataForData:(NSData *)bodyData;
+
++ (NSData *)buildPacketOfType:(PGPPacketTag)tag withBody:(PGP_NOESCAPE NSData *(^)(void))body;
+
 
 @end
 

@@ -185,12 +185,9 @@ NS_ASSUME_NONNULL_BEGIN
     }
     [bodyData appendData:exportedMPI]; // m
 
-    let data = [NSMutableData data];
-    let headerData = [self buildHeaderData:bodyData];
-    [data appendData:headerData];
-    [data appendData:bodyData];
-
-    return [data copy];
+    return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
+        return bodyData;
+    }];
 }
 
 

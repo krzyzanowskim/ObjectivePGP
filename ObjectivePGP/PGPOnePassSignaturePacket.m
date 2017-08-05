@@ -54,22 +54,21 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSData *)export:(NSError *__autoreleasing _Nullable *)error {
     NSAssert(self.keyID, @"Missing keyID");
 
-    let bodyData = [NSMutableData data];
+    weakify(self);
+    return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
+        strongify(self)
+        let bodyData = [NSMutableData data];
 
-    [bodyData appendBytes:&_version length:1];
-    [bodyData appendBytes:&_signatureType length:1];
-    [bodyData appendBytes:&_hashAlgorith length:1];
-    [bodyData appendBytes:&_publicKeyAlgorithm length:1];
-    [bodyData appendData:[self.keyID exportKeyData]];
+        [bodyData appendBytes:&self->_version length:1];
+        [bodyData appendBytes:&self->_signatureType length:1];
+        [bodyData appendBytes:&self->_hashAlgorith length:1];
+        [bodyData appendBytes:&self->_publicKeyAlgorithm length:1];
+        [bodyData appendData:[self.keyID exportKeyData]];
 
-    [bodyData appendBytes:&_notNested length:1];
+        [bodyData appendBytes:&self->_notNested length:1];
 
-    let data = [NSMutableData data];
-    let headerData = [self buildHeaderData:bodyData];
-    [data appendData:headerData];
-    [data appendData:bodyData];
-
-    return data;
+        return bodyData;
+    }];
 }
 
 @end

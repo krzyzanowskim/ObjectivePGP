@@ -38,14 +38,9 @@
 }
 
 - (NSData *)export:(NSError *__autoreleasing *)error {
-    NSData *bodyData = [self.hashData subdataWithRange:(NSRange){0, CC_SHA1_DIGEST_LENGTH}]; // force limit to 20 octets
-
-    NSMutableData *data = [NSMutableData data];
-    NSData *headerData = [self buildHeaderData:bodyData];
-    [data appendData:headerData];
-    [data appendData:bodyData];
-
-    return [data copy];
+    return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
+        return [self.hashData subdataWithRange:(NSRange){0, CC_SHA1_DIGEST_LENGTH}]; // force limit to 20 octets
+    }];
 }
 
 @end
