@@ -34,14 +34,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PGPSignaturePacket ()
 
-// A V4 signature hashes the packet body
-// starting from its first field, the version number, through the end
-// of the hashed subpacket data.  Thus, the fields hashed are the
-// signature version, the signature type, the public-key algorithm, the
-// hash algorithm, the hashed subpacket length, and the hashed
-// subpacket body.
-@property (nonatomic) NSData *rawReadedSignedPartData;
-
 @end
 
 @implementation PGPSignaturePacket
@@ -269,7 +261,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     // toHash = toSignData + signedPartData + trailerData;
     let toHashData = [NSMutableData dataWithData:toSignData];
-    [toHashData appendData:self.rawReadedSignedPartData ?: signedPartData];
+    [toHashData appendData:signedPartData];
     [toHashData appendData:trailerData];
 
     // Calculate hash value
@@ -629,7 +621,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSUInteger)parseV4PacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
-    NSUInteger startPosition = position;
+
+    // A V4 signature hashes the packet body
+    // starting from its first field, the version number, through the end
+    // of the hashed subpacket data.  Thus, the fields hashed are the
+    // signature version, the signature type, the public-key algorithm, the
+    // hash algorithm, the hashed subpacket length, and the hashed
+    // subpacket body.
 
     UInt8 parsedVersion = 0;
     // V4
@@ -672,9 +670,6 @@ NS_ASSUME_NONNULL_BEGIN
 
         self.hashedSubpackets = [hashedSubpackets copy];
     }
-
-    // Raw, signed data
-    self.rawReadedSignedPartData = [packetBody subdataWithRange:(NSRange){startPosition, position}];
 
     // Two-octet scalar octet count for the following unhashed subpacket
     UInt16 unhashedOctetCount = 0;

@@ -239,7 +239,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 + (NSData *)buildPacketOfType:(PGPPacketTag)tag withBody:(PGP_NOESCAPE NSData *(^)(void))body {
-    // TODO: check all formats, untested
+    // TODO: Add support to old and new format
     // 4.2.2.  New Format Packet Lengths
     let data = [NSMutableData data];
 
