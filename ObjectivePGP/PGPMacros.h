@@ -21,7 +21,7 @@
 
 #define PGP_EMPTY_INIT_UNAVAILABLE                                                      \
     -(instancetype)init __attribute__((unavailable("Not the designated initializer"))); \
-    +(instancetype) new __attribute__((unavailable("Not the designated initializer")));
+    +(instancetype)new __attribute__((unavailable("Not the designated initializer")));
 
 #define PGPAssertClass(object, allowedClass)                                                                                                                                                                                  \
     do {                                                                                                                                                                                                                      \

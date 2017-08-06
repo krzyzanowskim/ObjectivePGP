@@ -112,7 +112,7 @@ NS_ASSUME_NONNULL_BEGIN
     position = position + 4;
 
     // V3 keys are deprecated; an implementation MUST NOT generate a V3 key, but MAY accept it.
-    if (_version == 0x03) {
+    if (self.version == 0x03) {
         //  A two-octet number denoting the time in days that this key is
         //  valid.  If this number is zero, then it does not expire.
         [packetBody getBytes:&_V3validityPeriod range:(NSRange){position, 2}];
@@ -197,7 +197,7 @@ NS_ASSUME_NONNULL_BEGIN
     UInt32 timestampBE = CFSwapInt32HostToBig(timestamp);
     [data appendBytes:&timestampBE length:4];
 
-    if (!forceV4 && _version == 0x03) {
+    if (!forceV4 && self.version == 0x03) {
         // implementation MUST NOT generate a V3 key, but MAY accept it.
         // however it have to be generated here to calculate the very same fingerprint
         UInt16 V3ValidityPeriodBE = CFSwapInt16HostToBig(_V3validityPeriod);

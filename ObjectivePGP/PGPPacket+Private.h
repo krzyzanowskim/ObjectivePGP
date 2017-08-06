@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, nullable, readwrite) NSData *headerData;
 @property (nonatomic, copy, nullable, readwrite) NSData *bodyData;
 
++ (NSData *)buildNewFormatLengthDataForData:(NSData *)bodyData;
+
 @end
 
 NS_ASSUME_NONNULL_END

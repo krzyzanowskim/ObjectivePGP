@@ -49,6 +49,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)init {
     if (self = [super init]) {
         _version = 4;
+        _hashedSubpackets = [NSArray<PGPSignatureSubpacket *> array];
+        _unhashedSubpackets = [NSArray<PGPSignatureSubpacket *> array];
     }
     return self;
 }
@@ -58,20 +60,6 @@ NS_ASSUME_NONNULL_BEGIN
     signaturePacket.hashAlgoritm = hashAlgorithm;
     signaturePacket.type = type;
     return signaturePacket;
-}
-
-- (NSArray *)hashedSubpackets {
-    if (!_hashedSubpackets) {
-        _hashedSubpackets = [NSArray array];
-    }
-    return _hashedSubpackets;
-}
-
-- (NSArray *)unhashedSubpackets {
-    if (!_unhashedSubpackets) {
-        _unhashedSubpackets = [NSArray array];
-    }
-    return _unhashedSubpackets;
 }
 
 - (PGPPacketTag)tag {
@@ -372,7 +360,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     let signedPartData = [self buildSignedPart:self.hashedSubpackets];
     // calculate trailer
-    let trailerData = [self calculateTrailerFor:signedPartData];
+    let _Nullable trailerData = [self calculateTrailerFor:signedPartData];
 
     // build toSignData, toSign
     let toSignData = [self toSignDataForType:self.type inputData:inputData key:secretKey keyPacket:signingKeyPacket userID:userID error:error];

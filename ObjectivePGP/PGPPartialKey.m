@@ -395,8 +395,8 @@ NS_ASSUME_NONNULL_BEGIN
         PGPSignaturePacket *selfCertificate = nil;
         let primaryUser = [key primaryUserAndSelfCertificate:&selfCertificate];
         if (primaryUser && selfCertificate) {
-            PGPSignatureSubpacket *subpacket = [[selfCertificate subpacketsOfType:PGPSignatureSubpacketTypePreferredSymetricAlgorithm] firstObject];
-            NSArray<NSNumber *> * _Nullable preferredSymetricAlgorithms = PGPCast(subpacket.value, NSArray);
+            let signatureSubpacket = [[selfCertificate subpacketsOfType:PGPSignatureSubpacketTypePreferredSymetricAlgorithm] firstObject];
+            NSArray<NSNumber *> * _Nullable preferredSymetricAlgorithms = PGPCast(signatureSubpacket.value, NSArray);
             if (preferredSymetricAlgorithms) {
                 [keyAlgorithms addObjectsFromArray:preferredSymetricAlgorithms];
             }

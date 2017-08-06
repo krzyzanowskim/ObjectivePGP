@@ -12,6 +12,7 @@
 #import "PGPCompressedPacket.h"
 #import "PGPKeyID.h"
 #import "PGPPacket.h"
+#import "PGPPacket+Private.h"
 
 #import "PGPLogging.h"
 #import "PGPMacros.h"
@@ -342,15 +343,12 @@ NS_ASSUME_NONNULL_BEGIN
             break;
     }
 
-    // subpacket = length + tag + body
+    // subpacket = length + tag(type) + body
     NSMutableData *subpacketData = [NSMutableData data];
     // the subpacket length (1, 2, or 5 octets),
     NSData *subpacketLengthData = [PGPPacket buildNewFormatLengthDataForData:data];
     [subpacketData appendData:subpacketLengthData]; // data with tag
     [subpacketData appendData:data];
-
-    // NSLog(@"exportSubpacket %@, header  %@",@(self.type), [subpacketData subdataWithRange:(NSRange){0, subpacketLengthData.length + 1}]);
-    // NSLog(@"exportSubpacket %@, body  %@",@(self.type), [data subdataWithRange:(NSRange){1,data.length - 1}]);
 
     return [subpacketData copy];
 }
@@ -362,6 +360,8 @@ NS_ASSUME_NONNULL_BEGIN
     UInt32 headerLength = 0;
     UInt32 subpacketLength = 0;
 
+    //TODO: Use -[PGPPacket parseNewFormatHeaderPacket:]. headerLength is different size !?
+    //      Its format is similar to the "new" format packet header lengths, but cannot have Partial Body Lengths.
     if (lengthOctets[0] < 192) {
         // subpacketLen = 1st_octet;
         subpacketLength = lengthOctets[0];

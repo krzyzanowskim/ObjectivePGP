@@ -9,6 +9,7 @@
 #import "PGPSignatureSubpacketCreationTime.h"
 #import "NSData+PGPUtils.h"
 #import "PGPPacket.h"
+#import "PGPPacket+Private.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
