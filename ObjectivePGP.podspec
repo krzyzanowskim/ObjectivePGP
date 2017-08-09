@@ -17,9 +17,11 @@ Pod::Spec.new do |s|
   s.osx.vendored_frameworks = 'Frameworks/macosx/ObjectivePGP.framework'  
   
   s.weak_frameworks = 'Security'
-  s.requires_arc = true
 
   s.pod_target_xcconfig = { 'OTHER_LDFLAGS' => '-lObjC' }
+  s.xcconfig            = { 'FRAMEWORK_SEARCH_PATHS' => '"$(PODS_ROOT)/ObjectivePGP/**"' }
 
   s.libraries =  'z', 'bz2'
+
+  s.requires_arc = true
 end
