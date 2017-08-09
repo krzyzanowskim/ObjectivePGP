@@ -61,7 +61,7 @@ mv "${BUILD_DIR}/${CONFIGURATION}-iphoneos/${TARGET_NAME}.framework/${TARGET_NAM
 ditto "${BUILD_DIR}/${CONFIGURATION}-iphoneos/${TARGET_NAME}.framework" "${IPHONE_UNIVERSAL_LIB_DIR}/${TARGET_NAME}.framework"
 ditto "${BUILD_DIR}/${CONFIGURATION}/${TARGET_NAME}.framework" "${PGP_FRAMEWORKS_DIR}/macosx/${TARGET_NAME}.framework"
 
-cp "scripts/strip-framework.sh" "${IPHONE_UNIVERSAL_LIB_DIR}/${TARGET_NAME}.framework/strip-framework.sh"
+cp "scripts/strip-frameworks.sh" "${IPHONE_UNIVERSAL_LIB_DIR}/${TARGET_NAME}.framework/strip-frameworks.sh"
 
 echo "${BUILD_DIR}"
 rm -rf "${BUILD_DIR}"
