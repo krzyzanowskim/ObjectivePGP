@@ -25,7 +25,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) PGPHashAlgorithm hashAlgoritm;
 @property (nonatomic, copy, readonly) NSArray<PGPSignatureSubpacket *> *hashedSubpackets;
 @property (nonatomic, copy, readonly) NSArray<PGPSignatureSubpacket *> *unhashedSubpackets;
-@property (nonatomic) NSData *signedHashValueData;
+/// Two-octet field holding the left 16 bits of the signed hash value.
+/// Read from the key or set byt the call to `-[PGPSignaturePacket signData:usingKey:passphrase:userID:error]`
+@property (nonatomic, nullable) NSData *signedHashValueData;
 @property (nonatomic, copy) NSArray<PGPMPI *> *signatureMPIs;
 
 @property (nonatomic, readonly) BOOL canBeUsedToSign; // computed
@@ -49,6 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (PGPSignaturePacket *)signaturePacket:(PGPSignatureType)type hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm;
 
 - (NSArray<PGPSignatureSubpacket *> *)subpacketsOfType:(PGPSignatureSubpacketType)type;
+- (NSData *)calculateSignedHashForDataToSign:(NSData *)dataToSign;
 
 /**
  *  Build signature data (signature packet with subpackets).
@@ -60,7 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @return YES on success.
  */
 - (BOOL)signData:(NSData *)inputData secretKey:(PGPPartialKey *)secretKey error:(NSError *__autoreleasing *)error DEPRECATED_ATTRIBUTE;
-- (BOOL)signData:(NSData *)inputData usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error;
+- (BOOL)signData:(nullable NSData *)inputData usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error;
 
 - (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey error:(NSError *__autoreleasing *)error;
 - (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error;

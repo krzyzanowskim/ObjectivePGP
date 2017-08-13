@@ -486,8 +486,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     NSError *exportError = nil;
-    NSData *signaturePacketData = [signaturePacket export:&exportError];
-    NSAssert(!exportError, @"Error on export packet");
+    let _Nullable signaturePacketData = [signaturePacket export:&exportError];
     if (exportError) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Error on export packet" }];

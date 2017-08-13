@@ -70,8 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)isEncrypted {
     if (self.type == PGPPartialKeySecret) {
-        PGPSecretKeyPacket *secretPacket = (PGPSecretKeyPacket *)self.primaryKeyPacket;
-        return secretPacket.isEncryptedWithPassword;
+        return PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket).isEncryptedWithPassword;
     }
     return NO;
 }

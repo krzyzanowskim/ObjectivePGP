@@ -15,7 +15,7 @@
     return PGPUserAttributePacketTag;
 }
 
-// TODO: handle image subtype. Somehow it's broken, so not supported.
+// FIXME: handle image subtype. Somehow it's broken, so not supported.
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
     position = position + packetBody.length;

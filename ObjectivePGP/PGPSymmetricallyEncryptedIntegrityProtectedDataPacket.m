@@ -120,7 +120,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<PGPPacket *> *)decryptWithSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData isIntegrityProtected:(BOOL *)isIntegrityProtected error:(NSError *__autoreleasing _Nullable *)error {
     NSAssert(self.encryptedData, @"Missing encrypted data to decrypt");
     NSAssert(secretKeyPacket, @"Missing secret key");
-    NSAssert(!secretKeyPacket.isEncryptedWithPassword, @"Decrypt secret key first");
 
     // initialize if Packet isIntegrityProtected
     if (isIntegrityProtected) {

@@ -48,7 +48,8 @@
 }
 
 - (void)testGenerateNewKey {
-    [PGPKey generateKeyForUserID:@"Marcin <me@example.com>" algorithm:PGPPublicKeyAlgorithmRSA bits:2048];
+    let keyData = [PGPKey generateKeyForUserID:@"Marcin <me@example.com>" algorithm:PGPPublicKeyAlgorithmRSA bits:2048];
+    [self.oPGP importKeysFromData:keyData];
 }
 
 - (void)testNotDuplicates {

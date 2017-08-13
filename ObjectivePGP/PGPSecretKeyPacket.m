@@ -26,8 +26,6 @@
 
 @interface PGPSecretKeyPacket ()
 
-@property (nonatomic, copy) NSData *encryptedMPIsPartData; // after decrypt -> secretMPIArray
-@property (nonatomic, copy) NSArray *secretMPIArray; // decrypted MPI
 @property (nonatomic) BOOL wasDecrypted; // is decrypted
 
 @end
@@ -42,6 +40,8 @@
     return [NSString stringWithFormat:@"%@ isEncrypted: %@", super.description, @(self.isEncryptedWithPassword)];
 }
 
+// Don't really know if key is password protected.
+// Check the S2K settings and assume if the password is set.
 - (BOOL)isEncryptedWithPassword {
     if (self.wasDecrypted) {
         return NO;

@@ -43,14 +43,15 @@ NS_ASSUME_NONNULL_BEGIN
         _version = 4;
         _hashedSubpackets = [NSArray<PGPSignatureSubpacket *> array];
         _unhashedSubpackets = [NSArray<PGPSignatureSubpacket *> array];
+        _signatureMPIs = [NSArray<PGPMPI *> array];
     }
     return self;
 }
 
 + (PGPSignaturePacket *)signaturePacket:(PGPSignatureType)type hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm {
     let signaturePacket = [[PGPSignaturePacket alloc] init];
-    signaturePacket.hashAlgoritm = hashAlgorithm;
     signaturePacket.type = type;
+    signaturePacket.hashAlgoritm = hashAlgorithm;
     return signaturePacket;
 }
 
@@ -182,6 +183,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSData *)buildFullSignatureBodyData:(NSError *__autoreleasing *)error {
     let data = [NSMutableData data];
 
+    // hashed Subpackets
     let signedPartData = [self buildSignedPart:self.hashedSubpackets];
     [data appendData:signedPartData];
 
@@ -189,8 +191,11 @@ NS_ASSUME_NONNULL_BEGIN
     [data appendData:[self buildSubpacketsCollectionData:self.unhashedSubpackets]];
 
     // signed hash value
+    NSAssert(self.signedHashValueData, @"Missing signed hash");
     [data appendData:self.signedHashValueData];
 
+    // signed PGPMPI_M
+    NSAssert(self.signatureMPIs.count > 0, @"Missing MPIs");
     for (PGPMPI *mpi in self.signatureMPIs) {
         let exportMPI = [mpi exportMPI];
         if (exportMPI) {
@@ -201,21 +206,21 @@ NS_ASSUME_NONNULL_BEGIN
     return data;
 }
 
-- (NSData *)calculateSignedHashWithData:(NSData*)toHashData {
-    // calculate trailer
-    let signedPartData = [self buildSignedPart:self.hashedSubpackets];
-    let trailerData = [self calculateTrailerFor:signedPartData];
-
+- (NSData *)calculateSignedHashForDataToSign:(NSData *)dataToSign {
     // The concatenation of the data being signed and the signature data
     // from the version number through the hashed subpacket data (inclusive)
     // is hashed.
     // toHash = toSignData + signedPartData + trailerData;
-    NSMutableData *finalToHashData = [NSMutableData dataWithData:toHashData];
+    let finalToHashData = [NSMutableData dataWithData:dataToSign];
+
+    let signedPartData = [self buildSignedPart:self.hashedSubpackets];
     [finalToHashData appendData:signedPartData];
+
+    let _Nullable trailerData = [self calculateTrailerFor:signedPartData];
     [finalToHashData appendData:trailerData];
 
     // Calculate hash value
-    return [toHashData pgp_HashedWithAlgorithm:self.hashAlgoritm];
+    return [finalToHashData pgp_HashedWithAlgorithm:self.hashAlgoritm];
 }
 
 #pragma mark - Verify
@@ -245,7 +250,7 @@ NS_ASSUME_NONNULL_BEGIN
     // 5.2.4.  Computing Signatures
 
     // build toSignData, toSign
-    let toSignData = [self toSignDataForType:self.type inputData:inputData key:publicKey keyPacket:signingKeyPacket userID:userID error:error];
+    let toSignData = [self buildDataToSignForType:self.type inputData:inputData key:publicKey keyPacket:signingKeyPacket userID:userID error:error];
     if (!toSignData) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Invalid signature." }];
@@ -312,14 +317,17 @@ NS_ASSUME_NONNULL_BEGIN
     return [self signData:inputData usingKey:key passphrase:nil userID:nil error:error];
 }
 
-- (BOOL)signData:(NSData *)inputData usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error {
-    PGPAssertClass(inputData, NSData);
+/// Sign the signature with the given key.
+/// Set signatureMPIs and updates signed hash.
+///
+/// Update sign related values. This method mutate the signature.
+- (BOOL)signData:(nullable NSData *)inputData usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error {
+    PGPAssertClass(key, PGPKey);
 
     let secretKey = key.secretKey;
-    let publicKey = key.publicKey;
 
-    if (!secretKey && !publicKey) {
-        PGPLogDebug(@"Missing valid key.");
+    if (!secretKey) {
+        PGPLogDebug(@"Invalid key.");
         return NO;
     }
 
@@ -346,23 +354,23 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // signed part data
-    // timestamp subpacket is required
-    let creationTimeSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeSignatureCreationTime andValue:NSDate.date];
-    self.hashedSubpackets = @[creationTimeSubpacket];
+    if (self.hashedSubpackets.count == 0) {
+        // add hashed subpacket - REQUIRED
+        let creationTimeSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeSignatureCreationTime andValue:NSDate.date];
+        self.hashedSubpackets = @[creationTimeSubpacket];
+        PGPLogWarning(@"Signature without subpackets. Define subpackets! Adding minimal set of subpackets.");
+    }
 
     let signedPartData = [self buildSignedPart:self.hashedSubpackets];
     // calculate trailer
     let _Nullable trailerData = [self calculateTrailerFor:signedPartData];
 
     // build toSignData, toSign
-    let toSignData = [self toSignDataForType:self.type inputData:inputData key:secretKey keyPacket:signingKeyPacket userID:userID error:error];
+    let toSignData = [self buildDataToSignForType:self.type inputData:inputData key:secretKey keyPacket:signingKeyPacket userID:userID error:error];
     // toHash = toSignData + signedPartData + trailerData;
     let toHashData = [NSMutableData dataWithData:toSignData];
     [toHashData appendData:signedPartData];
     [toHashData appendData:trailerData];
-
-    // Calculate hash value
-    let hashData = [toHashData pgp_HashedWithAlgorithm:self.hashAlgoritm];
 
     // == Computing Signatures ==
     // Encrypt hash data Packet signature MPIs
@@ -392,19 +400,23 @@ NS_ASSUME_NONNULL_BEGIN
     // store signature data as MPI
     self.signatureMPIs = @[[[PGPMPI alloc] initWithData:encryptedEmData identifier:PGPMPI_M]];
 
-    // add unhashed PGPSignatureSubpacketTypeIssuer subpacket - REQUIRED
-    PGPKeyID *keyid = [[PGPKeyID alloc] initWithFingerprint:signingKeyPacket.fingerprint];
-    PGPSignatureSubpacket *issuerSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeIssuerKeyID andValue:keyid];
-    self.unhashedSubpackets = @[issuerSubpacket];
+    if (self.unhashedSubpackets.count == 0) {
+        // add unhashed PGPSignatureSubpacketTypeIssuer subpacket - REQUIRED
+        let keyid = [[PGPKeyID alloc] initWithFingerprint:signingKeyPacket.fingerprint];
+        PGPSignatureSubpacket *issuerSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeIssuerKeyID andValue:keyid];
+        self.unhashedSubpackets = @[issuerSubpacket];
+        PGPLogWarning(@"Signature without subpackets. Define subpackets! Adding minimal set of subpackets.");
+    }
 
     // Checksum
     // Two-octet field holding the left 16 bits of the signed hash value.
-    NSData *signedHashValue = [hashData subdataWithRange:(NSRange){0, 2}];
-    self.signedHashValueData = signedHashValue;
+    // Calculate hash value
+    let hashValueData = [[self calculateSignedHashForDataToSign:toSignData] subdataWithRange:(NSRange){0, 2}];
+    self.signedHashValueData = hashValueData;
     return YES;
 }
 
-- (nullable NSData *)toSignDataForType:(PGPSignatureType)type inputData:(nullable NSData *)inputData key:(nullable PGPPartialKey *)key keyPacket:(nullable PGPPublicKeyPacket *)keyPacket userID:(nullable NSString *)userID error:(NSError *__autoreleasing _Nullable *)error {
+- (nullable NSData *)buildDataToSignForType:(PGPSignatureType)type inputData:(nullable NSData *)inputData key:(nullable PGPPartialKey *)key keyPacket:(nullable PGPPublicKeyPacket *)keyPacket userID:(nullable NSString *)userID error:(NSError *__autoreleasing _Nullable *)error {
     let toSignData = [NSMutableData data];
     switch (type) {
         case PGPSignatureBinaryDocument:
@@ -698,6 +710,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     // Two-octet field holding the left 16 bits of the signed hash value.
     self.signedHashValueData = [packetBody subdataWithRange:(NSRange){position, 2}];
+
     position = position + 2;
 
     // 5.2.2. One or more multiprecision integers comprising the signature. This portion is algorithm specific
@@ -749,29 +762,31 @@ NS_ASSUME_NONNULL_BEGIN
     return subpacket;
 }
 
+/// count + subpackets(count)
 - (NSData *)buildSubpacketsCollectionData:(NSArray *)subpacketsCollection {
-    NSMutableData *data = [NSMutableData data];
-    if (subpacketsCollection.count > 0) {
-        NSMutableData *subpackets = [NSMutableData data];
-        // Hashed subpacket data set (zero or more subpackets)
-        for (PGPSignatureSubpacket *subpacket in subpacketsCollection) {
-            NSError *error = nil;
-            NSData *subpacketData = [subpacket export:&error];
-            if (subpacketData && !error) {
-                [subpackets appendData:subpacketData];
-            }
-        }
-        // Two-octet scalar octet count for following hashed subpacket data.
-        UInt16 countBE = CFSwapInt16HostToBig((UInt16)subpackets.length);
-        [data appendBytes:&countBE length:2];
-        // subackets data
-        [data appendData:subpackets];
-    } else {
+    let data = [NSMutableData data];
+    if (subpacketsCollection.count == 0) {
         // 0x00 0x00
         UInt16 zeroZero = 0;
         [data appendBytes:&zeroZero length:2];
+        return data;
     }
-    return [data copy];
+
+    let subpackets = [NSMutableData data];
+    // Hashed subpacket data set (zero or more subpackets)
+    for (PGPSignatureSubpacket *subpacket in subpacketsCollection) {
+        NSError *error = nil;
+        NSData *subpacketData = [subpacket export:&error];
+        if (subpacketData && !error) {
+            [subpackets appendData:subpacketData];
+        }
+    }
+    // Two-octet scalar octet count for following hashed subpacket data.
+    UInt16 countBE = CFSwapInt16HostToBig((UInt16)subpackets.length);
+    [data appendBytes:&countBE length:2];
+    // subackets data
+    [data appendData:subpackets];
+    return data;
 }
 
 @end

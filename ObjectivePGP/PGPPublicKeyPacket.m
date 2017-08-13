@@ -66,11 +66,6 @@ NS_ASSUME_NONNULL_BEGIN
  *  @return keyID
  */
 - (PGPKeyID *)keyID {
-//    if (!_keyID) {
-//        _keyID = [[PGPKeyID alloc] initWithFingerprint:self.fingerprint];
-//    }
-//
-//    return _keyID;
     return [[PGPKeyID alloc] initWithFingerprint:self.fingerprint];
 }
 

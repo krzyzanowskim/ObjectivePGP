@@ -27,6 +27,7 @@
 
 - (instancetype)initWithFingerprint:(PGPFingerprint *)fingerprint {
     PGPAssertClass(fingerprint, PGPFingerprint);
+    PGPAssertClass(fingerprint.hashedData, NSData);
     return ((self = [self initWithLongKey:[fingerprint.hashedData subdataWithRange:(NSRange){fingerprint.hashLength - 8, 8}]]));
 }
 
