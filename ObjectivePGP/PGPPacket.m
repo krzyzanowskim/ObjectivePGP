@@ -239,24 +239,59 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 + (NSData *)buildPacketOfType:(PGPPacketTag)tag withBody:(PGP_NOESCAPE NSData *(^)(void))body {
-    // TODO: Add support to old and new format
+    return [self buildPacketOfType:tag isOld:NO withBody:body];
+}
+
++ (NSData *)buildPacketOfType:(PGPPacketTag)tag isOld:(BOOL)isOld withBody:(PGP_NOESCAPE NSData *(^)(void))body {
     // 4.2.2.  New Format Packet Lengths
     let data = [NSMutableData data];
+    let bodyData = body();
+
+    UInt8 packetTag = 0;
 
     // Bit 7 -- Always one
-    // Bit 6 -- New packet format if set
-    UInt8 packetTag = PGPHeaderPacketTagAllwaysSet | PGPHeaderPacketTagNewFormat;
+    packetTag |= PGPHeaderPacketTagAllwaysSet;
 
-    // Bits 5-0 -- packet tag
-    packetTag |= tag;
+    // Bit 6 -- New packet format if set
+    if (!isOld) {
+        packetTag |= PGPHeaderPacketTagNewFormat;
+    }
+
+    if (isOld) {
+        // Bits 5-2 -- packet tag
+        packetTag |= (tag << 4) >> 2;
+
+        // Bits 1-0 -- length-type
+        UInt64 bodyLength = bodyData.length;
+        if (bodyLength < 0xFF) {
+            // 0 - The packet has a one-octet length.  The header is 2 octets long.
+            packetTag |= 0;
+        } else if (bodyLength <= 0xFFFF) {
+            // 1 - The packet has a two-octet length.  The header is 3 octets long.
+            packetTag |= 1;
+        } else if (bodyLength <= 0xFFFFFFFF) {
+            // 2 - The packet has a four-octet length.  The header is 5 octets long.
+            packetTag |= 2;
+        } else {
+            // 3 - The packet is of indeterminate length.
+            // In general, an implementation SHOULD NOT use indeterminate-length packets except where the end of the data will be clear from the context
+            packetTag |= 3;
+            NSAssert(NO, @"In general, an implementation SHOULD NOT use indeterminate-length packets");
+        }
+    } else {
+        // Bits 5-0 -- packet tag
+        packetTag |= tag;
+    }
 
     // write ptag
     [data appendBytes:&packetTag length:1];
 
-    let bodyData = body();
-
     // write header
-    [data appendData:[PGPPacket buildNewFormatLengthDataForData:bodyData]];
+    if (isOld) {
+        [data appendData:[PGPPacket buildOldFormatLengthDataForData:bodyData]];
+    } else {
+        [data appendData:[PGPPacket buildNewFormatLengthDataForData:bodyData]];
+    }
 
     // write packet body
     [data appendData:bodyData];
@@ -288,6 +323,29 @@ NS_ASSUME_NONNULL_BEGIN
         buf[3] = (UInt8)(fiveOctets >> 8);
         buf[4] = (UInt8)(fiveOctets);
         [data appendBytes:buf length:5];
+    }
+    return data;
+}
+
++ (NSData *)buildOldFormatLengthDataForData:(NSData *)bodyData {
+    let data = [NSMutableData data];
+    UInt64 bodyLength = bodyData.length;
+    if (bodyLength < 0xFF) {
+        // 0 - The packet has a one-octet length.  The header is 2 octets long.
+        let bodyLengthBE = bodyLength;
+        [data appendBytes:&bodyLengthBE length:1];
+    } else if (bodyLength <= 0xFFFF) {
+        // 1 - The packet has a two-octet length.  The header is 3 octets long.
+        let bodyLengthBE = CFSwapInt16HostToBig((UInt16)bodyLength);
+        [data appendBytes:&bodyLengthBE length:2];
+    } else if (bodyLength <= 0xFFFFFFFF) {
+        // 2 - The packet has a four-octet length.  The header is 5 octets long.
+        let bodyLengthBE = CFSwapInt64HostToBig(bodyLength);
+        [data appendBytes:&bodyLengthBE length:4];
+    } else {
+        // 3 - The packet is of indeterminate length.
+        // In general, an implementation SHOULD NOT use indeterminate-length packets except where the end of the data will be clear from the context
+        NSAssert(NO, @"In general, an implementation SHOULD NOT use indeterminate-length packets");
     }
     return data;
 }

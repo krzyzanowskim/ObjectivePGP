@@ -58,7 +58,7 @@ NSString * const PGPMPI_M = @"M";
     UInt16 bits = CFSwapInt16BigToHost(bitsBE);
     NSUInteger mpiBytesLength = (bits + 7) / 8;
 
-    NSData *intData = [mpiData subdataWithRange:(NSRange){position + 2, mpiBytesLength}];
+    let intData = [mpiData subdataWithRange:(NSRange){position + 2, mpiBytesLength}];
     return (self = [self initWithData:intData identifier:identifier]);
 }
 

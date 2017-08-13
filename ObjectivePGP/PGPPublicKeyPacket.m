@@ -81,10 +81,6 @@ NS_ASSUME_NONNULL_BEGIN
  *  @return Fingerprint data
  */
 - (PGPFingerprint *)fingerprint {
-//    if (!_fingerprint) {
-//        _fingerprint = [[PGPFingerprint alloc] initWithData:[self exportPublicPacketOldStyle]];
-//    }
-//    return _fingerprint;
     return [[PGPFingerprint alloc] initWithData:[self exportPublicPacketOldStyle]];
 }
 
