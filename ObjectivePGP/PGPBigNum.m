@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @implementation PGPBigNum
 
 - (instancetype)initWithBIGNUM:(BIGNUM *)bignumRef {
-    NSAssert(bignumRef != nil, @"Unexpected nil");
+    NSParameterAssert(bignumRef);
     
     if ((self = [super init])) {
         _bignumRef = BN_dup(bignumRef);
@@ -31,8 +31,9 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (NSData *)data {
-    let buflen = BN_num_bytes(self.bignumRef);
+    let buflen = self.bytesCount;
     let buf = calloc(buflen, 1);
+    pgp_defer { free(buf); };
     BN_bn2bin(self.bignumRef, buf);
     return [NSData dataWithBytes:buf length:buflen];
 }

@@ -822,7 +822,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     if (accumulatedPackets.count > 1) {
-        PGPPartialKey *key = [[PGPPartialKey alloc] initWithPackets:accumulatedPackets];
+        let key = [[PGPPartialKey alloc] initWithPackets:accumulatedPackets];
         [keys addObject:key];
         [accumulatedPackets removeAllObjects];
     }
