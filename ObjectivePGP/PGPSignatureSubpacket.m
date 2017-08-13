@@ -53,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)parseSubpacketBody:(NSData *)packetBodyData {
     PGPLogDebug(@"parseSubpacketBody %@, body %@",@(self.type), packetBodyData);
-    switch (self.type) {
+    switch (self.type & 0x7F) {
         case PGPSignatureSubpacketTypeSignatureCreationTime: // NSDate
         {
             //  5.2.3.4.  Signature Creation Time
@@ -207,7 +207,11 @@ NS_ASSUME_NONNULL_BEGIN
             self.value = [featuresArray copy];
         } break;
         default:
-            PGPLogDebug(@"Unsuported subpacket type %d", self.type);
+            if (self.type & 0x80) {
+                PGPLogError(@"Unsupported critical subpacket type %d", self.type);
+            } else {
+                PGPLogDebug(@"Unsupported subpacket type %d", self.type);
+            }
             break;
     }
 }
@@ -219,7 +223,7 @@ NS_ASSUME_NONNULL_BEGIN
     PGPSignatureSubpacketType type = self.type;
     [data appendBytes:&type length:1];
 
-    switch (self.type) {
+    switch (self.type & 0x7F) {
         case PGPSignatureSubpacketTypeSignatureCreationTime: // NSDate
         {
             let date = PGPCast(self.value, NSDate);
@@ -339,7 +343,11 @@ NS_ASSUME_NONNULL_BEGIN
             [data appendBytes:&flagByte length:sizeof(PGPSignatureFlags)];
         } break;
         default:
-            PGPLogDebug(@"Unsuported subpacket type %d", self.type);
+            if (self.type & 0x80) {
+                PGPLogError(@"Unsupported critical subpacket type %d", self.type);
+            } else {
+                PGPLogDebug(@"Unsupported subpacket type %d", self.type);
+            }
             break;
     }
 

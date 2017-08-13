@@ -73,7 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<PGPSignatureSubpacket *> *)subpacketsOfType:(PGPSignatureSubpacketType)type {
     let filteredSubpackets = [NSMutableArray<PGPSignatureSubpacket *> array];
     for (PGPSignatureSubpacket *subPacket in self.subpackets) {
-        if (subPacket.type == type) {
+        if ((subPacket.type & 0x7F) == type) {
             [filteredSubpackets addObject:subPacket];
         }
     }
@@ -350,6 +350,14 @@ NS_ASSUME_NONNULL_BEGIN
         NSError *decryptError;
         // Copy secret key instance, then decrypt on copy, not on the original (do not leave unencrypted instance around)
         signingKeyPacket = [signingKeyPacket decryptedKeyPacket:PGPNN(passphrase) error:&decryptError];
+        
+        // When error can be passed back to caller, we want to avoid assertion, since there is no way to
+        // know if packet can be decrypted and it is a typical user error to provide the wrong passhrase.
+        if(signingKeyPacket == nil && error != nil) {
+            *error = decryptError;
+            return NO;
+        }
+        
         NSAssert(signingKeyPacket && !decryptError, @"decrypt error %@", decryptError);
     }
 

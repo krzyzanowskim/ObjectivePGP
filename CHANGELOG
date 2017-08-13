@@ -1,3 +1,7 @@
+Version 0.6.2
+- Avoid assertion failing to decrypt packet when signing
+- Support "critical bit"
+
 Version 0.6.1
 - Adds PGPKey.keyID property
 - Adds Swift Playground with a sample Swift code
