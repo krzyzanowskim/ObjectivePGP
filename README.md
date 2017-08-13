@@ -18,7 +18,7 @@ Here is the [blog post](http://blog.krzyzanowskim.com/2014/07/31/short-story-abo
 pod 'ObjectivePGP'
 ```
 
-### Framework
+### Dynamic framework
 
 ObjectivePGP comes with the [Frameworks](./Frameworks) for the latest release.
 
@@ -29,6 +29,13 @@ ObjectivePGP comes with the [Frameworks](./Frameworks) for the latest release.
 1. Link libraries and frameworks
     1. Add `Security.framework` to "**Link Binary With Libraries**" list for the target. These are system libraries.
     1. Add `libz` and `libbz2` to "**Link Binary With Libraries**" list for the target. These are system libraries.
+1. In the Build Phases tab, click the + button at the top and select “New Run Script Phase”. Enter the following code into the script text field:
+
+```sh
+bash "${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectivePGP.framework/strip-frameworks.sh"
+```
+
+(The last step, is required for working around an iOS App Store bug when archiving universal binaries.)
 
 ## Contribution
 
