@@ -64,6 +64,8 @@ NS_ASSUME_NONNULL_BEGIN
     //   RSA 1 MPI
     //   Elgamal 2 MPI
 
+    NSAssert(self.publicKeyAlgorithm == PGPPublicKeyAlgorithmRSA, @"Not supported.");
+
     let encryptedMPI_MData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
     self.encryptedMPI_M = [[PGPMPI alloc] initWithMPIData:encryptedMPI_MData identifier:PGPMPI_M atPosition:0];
     position = position + encryptedMPI_MData.length;

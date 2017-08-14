@@ -246,7 +246,7 @@ NS_ASSUME_NONNULL_BEGIN
     // parse packets
     var packets = [self readPacketsFromData:binaryMessageToDecrypt];
 
-    PGPSymmetricAlgorithm sessionKeyAlgorithm = 0;
+    PGPSymmetricAlgorithm sessionKeyAlgorithm = PGPSymmetricPlaintext;
     PGPSecretKeyPacket *decryptionSecretKeyPacket = nil; // last found secret key to used to decrypt
 
     // 1. search for valid and known (do I have specified key?) ESK
@@ -302,7 +302,7 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    NSData *sessionKeyData = [eskPacket decryptSessionKeyData:decryptionSecretKeyPacket sessionKeyAlgorithm:&sessionKeyAlgorithm error:error];
+    let sessionKeyData = [eskPacket decryptSessionKeyData:decryptionSecretKeyPacket sessionKeyAlgorithm:&sessionKeyAlgorithm error:error];
     NSAssert(sessionKeyAlgorithm > 0, @"Invalid session key algorithm");
 
     NSAssert(sessionKeyData, @"Missing session key data");
@@ -318,15 +318,16 @@ NS_ASSUME_NONNULL_BEGIN
         switch (packet.tag) {
             case PGPSymmetricallyEncryptedIntegrityProtectedDataPacketTag: {
                 // decrypt PGPSymmetricallyEncryptedIntegrityProtectedDataPacket
-                PGPSymmetricallyEncryptedIntegrityProtectedDataPacket *symEncryptedDataPacket = (PGPSymmetricallyEncryptedIntegrityProtectedDataPacket *)packet;
+                let symEncryptedDataPacket = PGPCast(packet, PGPSymmetricallyEncryptedIntegrityProtectedDataPacket);
                 packets = [symEncryptedDataPacket decryptWithSecretKeyPacket:decryptionSecretKeyPacket sessionKeyAlgorithm:sessionKeyAlgorithm sessionKeyData:sessionKeyData isIntegrityProtected:isIntegrityProtected error:error];
-                if (!packets) {
-                    return nil;
-                }
             } break;
             default:
                 break;
         }
+    }
+
+    if (packets.count == 0) {
+        return nil;
     }
 
     PGPLiteralPacket *literalPacket;

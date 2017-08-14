@@ -63,14 +63,16 @@ NS_ASSUME_NONNULL_BEGIN
     NSAssert(sessionKeyData.length >= keySize, @"Invalid session key.");
 
     unsigned char *iv = calloc(1, ivData.length);
+    pgp_defer { if (iv) { free(iv); } };
     if (!iv) {
         return nil;
     }
     memcpy(iv, ivData.bytes, ivData.length);
 
-    const void *encryptedBytes = encryptedData.bytes;
+    let encryptedBytes = encryptedData.bytes;
     NSUInteger outBufferLength = encryptedData.length;
     UInt8 *outBuffer = calloc(outBufferLength, sizeof(UInt8));
+    pgp_defer { if (outBuffer) { free(outBuffer); } };
 
     NSData *decryptedData = nil;
 
@@ -82,8 +84,8 @@ NS_ASSUME_NONNULL_BEGIN
             AES_KEY aes_key;
             AES_set_encrypt_key(sessionKeyData.bytes, MIN((unsigned int)keySize * 8, (unsigned int)sessionKeyData.length * 8), &aes_key);
 
-            int num = 0;
-            AES_cfb128_encrypt(encryptedBytes, outBuffer, outBufferLength, &aes_key, iv, &num, decrypt ? AES_DECRYPT : AES_ENCRYPT);
+            int blocksNum = 0;
+            AES_cfb128_encrypt(encryptedBytes, outBuffer, outBufferLength, &aes_key, iv, &blocksNum, decrypt ? AES_DECRYPT : AES_ENCRYPT);
             decryptedData = [NSData dataWithBytes:outBuffer length:outBufferLength];
 
             memset(&aes_key, 0, sizeof(AES_KEY));
@@ -104,18 +106,18 @@ NS_ASSUME_NONNULL_BEGIN
         } break;
         case PGPSymmetricTripleDES: {
             DES_key_schedule *keys = calloc(3, sizeof(DES_key_schedule));
+            pgp_defer { if (keys) { free(keys); } };
 
             for (NSUInteger n = 0; n < 3; ++n) {
                 DES_set_key((DES_cblock *)(void *)(ivData.bytes + n * 8), &keys[n]);
             }
 
-            int num = 0;
-            DES_ede3_cfb64_encrypt(encryptedBytes, outBuffer, outBufferLength, &keys[0], &keys[1], &keys[2], (DES_cblock *)(void *)iv, &num, decrypt ? DES_DECRYPT : DES_ENCRYPT);
+            int blocksNum = 0;
+            DES_ede3_cfb64_encrypt(encryptedBytes, outBuffer, outBufferLength, &keys[0], &keys[1], &keys[2], (DES_cblock *)(void *)iv, &blocksNum, decrypt ? DES_DECRYPT : DES_ENCRYPT);
             decryptedData = [NSData dataWithBytes:outBuffer length:outBufferLength];
 
             if (keys) {
                 memset(keys, 0, 3 * sizeof(DES_key_schedule));
-                free(keys);
             }
         } break;
         case PGPSymmetricCAST5: {
@@ -146,10 +148,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (outBuffer) {
         memset(outBuffer, 0, outBufferLength);
-        free(outBuffer);
     }
-
-    free(iv);
 
     return [decryptedData copy];
 }
