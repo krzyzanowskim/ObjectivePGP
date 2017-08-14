@@ -398,7 +398,6 @@ NS_ASSUME_NONNULL_BEGIN
             break;
     }
 
-    NSAssert(encryptedEmData, @"Encryption failed");
     if (!encryptedEmData) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Sign Encryption failed" }];

@@ -286,7 +286,6 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    NSAssert(eskPacket, @"Valid PublicKeyEncryptedSessionKeyPacket not found");
     if (!eskPacket) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Valid PublicKeyEncryptedSessionKeyPacket not found" }];
@@ -294,7 +293,6 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    NSAssert(decryptionSecretKeyPacket, @"Decryption secret key packet not found");
     if (!decryptionSecretKeyPacket) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unable to find secret key" }];
