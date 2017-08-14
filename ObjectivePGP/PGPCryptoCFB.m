@@ -109,7 +109,7 @@ NS_ASSUME_NONNULL_BEGIN
             pgp_defer { if (keys) { free(keys); } };
 
             for (NSUInteger n = 0; n < 3; ++n) {
-                DES_set_key((DES_cblock *)(void *)(ivData.bytes + n * 8), &keys[n]);
+                DES_set_key((DES_cblock *)(void *)(sessionKeyData.bytes + n * 8), &keys[n]);
             }
 
             int blocksNum = 0;
