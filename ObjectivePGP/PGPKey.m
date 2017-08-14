@@ -63,6 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
     return signingPacket;
 }
 
+/// Generate RSA Key.
 + (nullable NSData *)generateKeyForUserID:(NSString *)userID algorithm:(PGPPublicKeyAlgorithm)algorithm bits:(int)bits {
     PGPAssertClass(userID, NSString);
 
