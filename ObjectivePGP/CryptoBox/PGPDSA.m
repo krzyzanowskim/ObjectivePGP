@@ -102,7 +102,7 @@ NS_ASSUME_NONNULL_BEGIN
         ERR_error_string(err_code, errBuf);
         PGPLogDebug(@"%@", [NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
     }
-    
+
     let MPI_R = [[PGPMPI alloc] initWithBigNum:[[PGPBigNum alloc] initWithBIGNUM:sig->r] identifier:PGPMPI_R];
     let MPI_S = [[PGPMPI alloc] initWithBigNum:[[PGPBigNum alloc] initWithBIGNUM:sig->s] identifier:PGPMPI_S];
 

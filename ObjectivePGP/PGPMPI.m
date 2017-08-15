@@ -84,7 +84,7 @@ NSString * const PGPMPI_M = @"M";
         return nil;
     }
 
-    NSMutableData *outData = [NSMutableData data];
+    let outData = [NSMutableData data];
 
     // length
     UInt16 bits = (UInt16)BN_num_bits(self.bigNum.bignumRef);

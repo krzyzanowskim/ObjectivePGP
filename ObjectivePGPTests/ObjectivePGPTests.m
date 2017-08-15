@@ -47,10 +47,10 @@
     self.oPGP = nil;
 }
 
-- (void)testGenerateNewKey {
-    let keyData = [PGPKey generateKeyForUserID:@"Marcin <me@example.com>" algorithm:PGPPublicKeyAlgorithmRSA bits:2048];
-    [self.oPGP importKeysFromData:keyData];
-}
+//- (void)testGenerateNewKey {
+//    let keyData = [PGPKey generateKeyForUserID:@"Marcin <me@example.com>" algorithm:PGPPublicKeyAlgorithmRSA bits:2048];
+//    [self.oPGP importKeysFromData:keyData];
+//}
 
 - (void)testNotDuplicates {
     [self.oPGP importKeysFromFile:self.pubringPlaintext];

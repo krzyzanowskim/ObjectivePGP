@@ -149,7 +149,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSError *error;
 
     let publicKeyPacketData = [publicKeyPacket export:&error];
-    // let secretKeyPacketData = [secretKeyPacket export:&error];
+    let secretKeyPacketData = [secretKeyPacket export:&error];
     let userIDPacketData = [userIDPacket export:&error];
 
     // self sign the signature
@@ -164,7 +164,7 @@ NS_ASSUME_NONNULL_BEGIN
     [outputData appendData:userIDPacketData];
     [outputData appendData:publicKeySignaturePacketData];
 
-    // [outputData appendData:secretKeyPacketData];
+    [outputData appendData:secretKeyPacketData];
     // [outputData writeToFile:@"/Users/marcinkrzyzanowski/Devel/ObjectivePGP/test-key.dat" atomically:YES];
 
     return outputData;

@@ -31,7 +31,7 @@ PGP_EMPTY_INIT_UNAVAILABLE;
 
 - (instancetype)initWithSecretKey:(nullable PGPPartialKey *)secretKey publicKey:(nullable PGPPartialKey *)publicKey NS_DESIGNATED_INITIALIZER;
 
-+ (nullable NSData *)generateKeyForUserID:(NSString *)userID algorithm:(PGPPublicKeyAlgorithm)algorithm bits:(int)bits;
++ (nullable NSData *)generateKeyForUserID:(NSString *)userID algorithm:(PGPPublicKeyAlgorithm)algorithm bits:(int)bits NS_UNAVAILABLE;
 
 @end
 
