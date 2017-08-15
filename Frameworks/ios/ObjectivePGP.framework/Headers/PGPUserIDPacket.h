@@ -8,10 +8,15 @@
 //  Tag 13
 
 #import "PGPPacketFactory.h"
+#import "PGPMacros.h"
 #import <Foundation/Foundation.h>
 
 @interface PGPUserIDPacket : PGPPacket
 
 @property (nonatomic, copy, readonly) NSString *userID;
+
+PGP_EMPTY_INIT_UNAVAILABLE
+
+- (instancetype)initWithUserID:(NSString *)userID NS_DESIGNATED_INITIALIZER;
 
 @end

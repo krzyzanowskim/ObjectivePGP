@@ -11,13 +11,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PGPSecretKeyPacket : PGPPublicKeyPacket <NSCopying>
+@interface PGPSecretKeyPacket : PGPPublicKeyPacket <NSCopying, PGPExportable>
 
-@property (nonatomic, readonly) BOOL isEncryptedWithPassword;
 @property (nonatomic, readonly) PGPS2KUsage s2kUsage;
 @property (nonatomic, readonly) PGPS2K *s2k;
 @property (nonatomic, readonly) PGPSymmetricAlgorithm symmetricAlgorithm;
 @property (nonatomic, copy, readonly) NSData *ivData;
+@property (nonatomic, readonly) BOOL isEncryptedWithPassword;
 
 /**
  *  Decrypt packet

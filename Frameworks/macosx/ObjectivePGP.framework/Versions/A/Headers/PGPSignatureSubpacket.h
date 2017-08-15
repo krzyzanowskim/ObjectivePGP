@@ -7,29 +7,27 @@
 //
 
 #import "PGPTypes.h"
+#import "PGPMacros.h"
+#import "PGPSignatureSubpacketHeader.h"
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PGPSignatureSubpacketHeader : NSObject
-@property (nonatomic) PGPSignatureSubpacketType type;
-@property (nonatomic) NSUInteger headerLength;
-@property (nonatomic) NSUInteger bodyLength;
-@end
-
 @interface PGPSignatureSubpacket : NSObject
 
-@property (nonatomic, readonly) NSRange bodyRange; // subrange range within parent packet
-
-@property (nonatomic) PGPSignatureSubpacketType type;
+@property (nonatomic, readonly) PGPSignatureSubpacketType type;
 @property (nonatomic, readonly) id value;
+@property (nonatomic, readonly) NSUInteger length;
 
-- (instancetype)initWithHeader:(PGPSignatureSubpacketHeader *)header body:(NSData *)subPacketBodyData bodyRange:(NSRange)bodyRange;
+PGP_EMPTY_INIT_UNAVAILABLE;
+
+- (instancetype)initWithType:(PGPSignatureSubpacketType)type andValue:(id)value NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithHeader:(PGPSignatureSubpacketHeader *)header body:(NSData *)subPacketBodyData;
+
 + (PGPSignatureSubpacketHeader *)subpacketHeaderFromData:(NSData *)headerData;
-+ (PGPSignatureSubpacket *)subpacketWithType:(PGPSignatureSubpacketType)type andValue:(id)value;
 
 - (void)parseSubpacketBody:(NSData *)packetBody;
-- (nullable NSData *)exportSubpacket:(NSError *__autoreleasing *)error;
+- (nullable NSData *)export:(NSError *__autoreleasing *)error;
 
 @end
 

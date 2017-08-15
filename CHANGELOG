@@ -1,3 +1,11 @@
+Version 0.7
+- Fix TripleDSA decryption.
+- Fix MPI memleak.
+- Fix reading certificate sym. algs.
+- Improve DSA keys support.
+- Improve signature subpackets.
+- Apply OpenPGP errata #2270.
+
 Version 0.6.2
 - Avoid assertion failing to decrypt packet when signing
 - Support "critical bit"

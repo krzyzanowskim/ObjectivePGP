@@ -23,10 +23,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSDate *createDate;
 @property (nonatomic, readonly) UInt16 V3validityPeriod; // obsolete
 @property (nonatomic, readonly) PGPPublicKeyAlgorithm publicKeyAlgorithm;
-@property (nonatomic, readwrite) NSArray *publicMPIArray;
+@property (nonatomic, copy, readonly) NSArray<PGPMPI *> *publicMPIArray;
 
+// generated properties
 @property (nonatomic, readonly) NSUInteger keySize;
-
 @property (nonatomic, readonly) PGPFingerprint *fingerprint;
 @property (nonatomic, readonly) PGPKeyID *keyID;
 

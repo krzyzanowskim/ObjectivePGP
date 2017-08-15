@@ -23,6 +23,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSData *)pgp_SHA512;
 - (NSData *)pgp_RIPEMD160;
 
++ (NSData *)dataWithValue:(NSValue *)value;
+
 - (NSData *)pgp_HashedWithAlgorithm:(PGPHashAlgorithm)hashAlgorithm;
 - (NSData *)pgp_encryptBlockWithSymmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm sessionKeyData:(NSData *)sessionKeyData;
 

@@ -23,20 +23,22 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) PGPSignatureType type;
 @property (nonatomic) PGPPublicKeyAlgorithm publicKeyAlgorithm;
 @property (nonatomic) PGPHashAlgorithm hashAlgoritm;
-@property (nonatomic, readonly) NSArray<PGPSignatureSubpacket *> *hashedSubpackets;
-@property (nonatomic, readonly) NSArray<PGPSignatureSubpacket *> *unhashedSubpackets;
-@property (nonatomic) NSData *signedHashValueData;
-@property (nonatomic) NSArray<PGPMPI *> *signatureMPIs;
+@property (nonatomic, copy, readonly) NSArray<PGPSignatureSubpacket *> *hashedSubpackets;
+@property (nonatomic, copy, readonly) NSArray<PGPSignatureSubpacket *> *unhashedSubpackets;
+/// Two-octet field holding the left 16 bits of the signed hash value.
+/// Read from the key or set byt the call to `-[PGPSignaturePacket signData:usingKey:passphrase:userID:error]`
+@property (nonatomic, nullable) NSData *signedHashValueData;
+@property (nonatomic, copy) NSArray<PGPMPI *> *signatureMPIs;
 
-@property (nonatomic, readonly) BOOL canBeUsedToSign;
-@property (nonatomic, readonly) BOOL canBeUsedToEncrypt;
+@property (nonatomic, readonly) BOOL canBeUsedToSign; // computed
+@property (nonatomic, readonly) BOOL canBeUsedToEncrypt; // computed
 
 @property (nonatomic, nullable, readonly) PGPKeyID *issuerKeyID;
 @property (nonatomic, copy, readonly) NSArray<PGPSignatureSubpacket *> *subpackets;
-@property (nonatomic, nullable) NSDate *expirationDate;
-@property (nonatomic, readonly) BOOL isExpired;
-@property (nonatomic, nullable) NSDate *creationDate;
-@property (nonatomic, readonly) BOOL isPrimaryUserID;
+@property (nonatomic, nullable, readonly) NSDate *expirationDate; // computed
+@property (nonatomic, readonly, readonly) BOOL isExpired; // computed
+@property (nonatomic, nullable, readonly) NSDate *creationDate; // computed
+@property (nonatomic, readonly, readonly) BOOL isPrimaryUserID; // computed
 
 /**
  *  Create signature packet for signing. This is convienience constructor.
@@ -49,6 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (PGPSignaturePacket *)signaturePacket:(PGPSignatureType)type hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm;
 
 - (NSArray<PGPSignatureSubpacket *> *)subpacketsOfType:(PGPSignatureSubpacketType)type;
+- (NSData *)calculateSignedHashForDataToSign:(NSData *)dataToSign;
 
 /**
  *  Build signature data (signature packet with subpackets).
@@ -60,7 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @return YES on success.
  */
 - (BOOL)signData:(NSData *)inputData secretKey:(PGPPartialKey *)secretKey error:(NSError *__autoreleasing *)error DEPRECATED_ATTRIBUTE;
-- (BOOL)signData:(NSData *)inputData usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error;
+- (BOOL)signData:(nullable NSData *)inputData usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error;
 
 - (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey error:(NSError *__autoreleasing *)error;
 - (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error;

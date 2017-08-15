@@ -16,8 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PGPPacket : NSObject <NSCopying, PGPExportable>
 
-@property (nonatomic, copy, readonly) NSData *headerData;
-@property (nonatomic, copy, readonly) NSData *bodyData;
+@property (nonatomic, copy, nullable, readonly) NSData *headerData;
+@property (nonatomic, copy, nullable, readonly) NSData *bodyData;
 @property (nonatomic) BOOL indeterminateLength; // should not be used, but gpg use it
 
 @property (nonatomic, readonly) PGPPacketTag tag;
@@ -29,8 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable NSData *)parsePacketHeader:(NSData *)data headerLength:(UInt32 *)headerLength nextPacketOffset:(nullable NSUInteger *)nextPacketOffset packetTag:(PGPPacketTag *)tag indeterminateLength:(BOOL *)indeterminateLength;
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error;
 
-- (NSData *)buildHeaderData:(NSData *)bodyData;
-+ (NSData *)buildNewFormatLengthDataForData:(NSData *)bodyData;
++ (NSData *)buildPacketOfType:(PGPPacketTag)tag withBody:(PGP_NOESCAPE NSData *(^)(void))body;
+
 
 @end
 

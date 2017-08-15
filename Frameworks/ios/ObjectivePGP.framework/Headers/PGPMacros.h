@@ -9,13 +9,19 @@
 #define let const __auto_type
 #define var __auto_type
 
-#define PGP_NOESCAPE __attribute__((noescape))
+#define weakify(var) __weak typeof(var) PGPWeak_##var = var;
+
+#define strongify(var) \
+    _Pragma("clang diagnostic push") \
+    _Pragma("clang diagnostic ignored \"-Wshadow\"") \
+    __strong typeof(var) var = PGPWeak_##var; \
+    _Pragma("clang diagnostic pop")
 
 #define PGP_CLASS_EXPORT __attribute__((visibility("default")))
 
 #define PGP_EMPTY_INIT_UNAVAILABLE                                                      \
     -(instancetype)init __attribute__((unavailable("Not the designated initializer"))); \
-    +(instancetype) new __attribute__((unavailable("Not the designated initializer")));
+    +(instancetype)new __attribute__((unavailable("Not the designated initializer")));
 
 #define PGPAssertClass(object, allowedClass)                                                                                                                                                                                  \
     do {                                                                                                                                                                                                                      \
