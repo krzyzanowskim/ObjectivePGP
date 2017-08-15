@@ -22,18 +22,18 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
-- (int)bitsCount {
+- (unsigned int)bitsCount {
     return BN_num_bits(self.bignumRef);
 }
 
-- (int)bytesCount {
+- (unsigned int)bytesCount {
     return BN_num_bytes(self.bignumRef);
 }
 
 - (NSData *)data {
     let buflen = self.bytesCount;
     let buf = calloc(buflen, 1);
-    pgp_defer { free(buf); };
+    pgp_defer { if (buf) { free(buf); } };
     BN_bn2bin(self.bignumRef, buf);
     return [NSData dataWithBytes:buf length:buflen];
 }

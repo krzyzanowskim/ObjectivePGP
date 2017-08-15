@@ -15,6 +15,7 @@
 #import "PGPPKCSEmsa.h"
 #import "PGPPartialKey.h"
 #import "PGPRSA.h"
+#import "PGPDSA.h"
 #import "PGPSecretKeyPacket.h"
 #import "PGPSignatureSubpacket.h"
 #import "PGPSignatureSubpacket+Private.h"
@@ -148,6 +149,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"%@, sign: %@, encrypt: %@", super.description, @(self.canBeUsedToSign), @(self.canBeUsedToEncrypt)];
+}
+
+- (nullable PGPMPI *)signatureMPI:(NSString *)identifier {
+    for (PGPMPI *mpi in self.signatureMPIs) {
+        if ([mpi.identifier isEqualToString:identifier]) {
+            return mpi;
+        }
+    }
+
+    return nil;
 }
 
 #pragma mark - Build packet
@@ -287,7 +298,6 @@ NS_ASSUME_NONNULL_BEGIN
 
             // encoded m value
             NSData *encryptedEmData = [signatureMPI bodyData];
-
             // decrypted encoded m value
             NSData *decryptedEmData = [PGPRSA publicDecrypt:encryptedEmData withPublicKeyPacket:signingKeyPacket];
 
@@ -299,12 +309,17 @@ NS_ASSUME_NONNULL_BEGIN
                 }
                 return NO;
             }
-            return YES;
+        } break;
+        case PGPPublicKeyAlgorithmDSA:
+        case PGPPublicKeyAlgorithmECDSA: {
+            return [PGPDSA verify:toHashData signature:self withPublicKeyPacket:signingKeyPacket];
         } break;
         default:
+            [NSException raise:@"PGPNotSupported" format:@"Algorith not supported"];
             break;
     }
-    return NO;
+
+    return YES;
 }
 
 #pragma mark - Sign
@@ -324,19 +339,17 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)signData:(nullable NSData *)inputData usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error {
     PGPAssertClass(key, PGPKey);
 
-    let secretKey = key.secretKey;
-
-    if (!secretKey) {
+    if (!key.secretKey) {
         PGPLogDebug(@"Invalid key.");
         return NO;
     }
 
-    PGPAssertClass(secretKey.primaryKeyPacket, PGPSecretKeyPacket); // Signing key packet not found
+    PGPAssertClass(key.secretKey.primaryKeyPacket, PGPSecretKeyPacket); // Signing key packet not found
 
     var signingKeyPacket = key.signingSecretKey;
     if (!signingKeyPacket) {
         // As of PGP Desktop. The signing signature may be missing.
-        PGPLogDebug(@"Missing signature for the secret key %@", secretKey.keyID);
+        PGPLogDebug(@"Missing signature for the secret key %@", key.secretKey.keyID);
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"No signing signature found" }];
         }
@@ -374,7 +387,7 @@ NS_ASSUME_NONNULL_BEGIN
     let _Nullable trailerData = [self calculateTrailerFor:signedPartData];
 
     // build toSignData, toSign
-    let toSignData = [self buildDataToSignForType:self.type inputData:inputData key:secretKey keyPacket:signingKeyPacket userID:userID error:error];
+    let toSignData = [self buildDataToSignForType:self.type inputData:inputData key:key.secretKey keyPacket:signingKeyPacket userID:userID error:error];
     // toHash = toSignData + signedPartData + trailerData;
     let toHashData = [NSMutableData dataWithData:toSignData];
     [toHashData appendData:signedPartData];
@@ -382,30 +395,32 @@ NS_ASSUME_NONNULL_BEGIN
 
     // == Computing Signatures ==
     // Encrypt hash data Packet signature MPIs
-    // Encrypted m value (PKCS emsa encrypted)
-    NSData *em = [PGPPKCSEmsa encode:self.hashAlgoritm message:toHashData encodedMessageLength:signingKeyPacket.keySize error:nil];
-    NSData *encryptedEmData = nil;
-
     switch (self.publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly: {
+            // Encrypted m value (PKCS emsa encrypted)
+            NSData *em = [PGPPKCSEmsa encode:self.hashAlgoritm message:toHashData encodedMessageLength:signingKeyPacket.keySize error:nil];
+            NSData *encryptedEmData = nil;
             encryptedEmData = [PGPRSA privateEncrypt:em withSecretKeyPacket:signingKeyPacket];
-        } break;
+            if (!encryptedEmData) {
+                if (error) {
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Sign Encryption failed" }];
+                }
+                return NO;
+            }
 
+            // store signature data as MPI
+            self.signatureMPIs = @[[[PGPMPI alloc] initWithData:encryptedEmData identifier:PGPMPI_M]];
+        } break;
+        case PGPPublicKeyAlgorithmDSA:
+        case PGPPublicKeyAlgorithmECDSA: {
+            self.signatureMPIs = [PGPDSA sign:toHashData key:key];
+        } break;
         default:
             [NSException raise:@"PGPNotSupported" format:@"Algorith not supported"];
             break;
     }
-
-    if (!encryptedEmData) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Sign Encryption failed" }];
-        }
-        return NO;
-    }
-    // store signature data as MPI
-    self.signatureMPIs = @[[[PGPMPI alloc] initWithData:encryptedEmData identifier:PGPMPI_M]];
 
     if (self.unhashedSubpackets.count == 0) {
         // add unhashed PGPSignatureSubpacketTypeIssuer subpacket - REQUIRED

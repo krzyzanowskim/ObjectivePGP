@@ -17,6 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable NSData *)buildDataToSignForType:(PGPSignatureType)type inputData:(nullable NSData *)inputData key:(nullable PGPPartialKey *)key keyPacket:(nullable PGPPublicKeyPacket *)keyPacket userID:(nullable NSString *)userID error:(NSError *__autoreleasing _Nullable *)error;
 
+- (nullable PGPMPI *)signatureMPI:(NSString *)identifier;
+
 @end
 
 

@@ -17,6 +17,7 @@
 #import "PGPSignaturePacket+Private.h"
 #import "PGPSignatureSubpacket+Private.h"
 #import "PGPRSA.h"
+#import "PGPDSA.h"
 
 #import "PGPMacros.h"
 
@@ -67,51 +68,55 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable NSData *)generateKeyForUserID:(NSString *)userID algorithm:(PGPPublicKeyAlgorithm)algorithm bits:(int)bits {
     PGPAssertClass(userID, NSString);
 
-    let MPIs = [PGPRSA generateNewKeyMPIs:bits algorithm:algorithm];
-    let MPI_N = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_N]; }] anyObject];
-    let MPI_E = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_E]; }] anyObject];
-    let MPI_D = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_D]; }] anyObject];
-    let MPI_P = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_P]; }] anyObject];
-    let MPI_Q = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_Q]; }] anyObject];
-    let MPI_R = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_R]; }] anyObject];
-    let MPI_S = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_S]; }] anyObject];
-    let MPI_U = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_U]; }] anyObject];
-
-    // Secret
-    let secretKeyPacket = [[PGPSecretKeyPacket alloc] init];
-    secretKeyPacket.version = 0x04;
-    secretKeyPacket.publicKeyAlgorithm = algorithm;
-    secretKeyPacket.s2kUsage = PGPS2KUsageNone;
-    secretKeyPacket.s2k = [[PGPS2K alloc] initWithSpecifier:PGPS2KSpecifierSimple hashAlgorithm:PGPHashSHA1];
-    secretKeyPacket.symmetricAlgorithm = PGPSymmetricAES256;
-
-    NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:secretKeyPacket.symmetricAlgorithm];
-    secretKeyPacket.ivData = [NSMutableData dataWithLength:blockSize];
-    switch (secretKeyPacket.publicKeyAlgorithm) {
-        case PGPPublicKeyAlgorithmRSA:
-        case PGPPublicKeyAlgorithmRSASignOnly:
-        case PGPPublicKeyAlgorithmRSAEncryptOnly:
-            secretKeyPacket.publicMPIArray = @[MPI_N, MPI_E];
-            secretKeyPacket.secretMPIArray = @[MPI_D, MPI_P, MPI_Q, MPI_U];
-            break;
-        default:
-            break;
-    }
-
     // public
     let publicKeyPacket = [[PGPPublicKeyPacket alloc] init];
     publicKeyPacket.version = 0x04;
     publicKeyPacket.publicKeyAlgorithm = algorithm;
     publicKeyPacket.createDate = NSDate.date;
-    switch (publicKeyPacket.publicKeyAlgorithm) {
+
+    // Secret
+    let secretKeyPacket = [[PGPSecretKeyPacket alloc] init];
+    secretKeyPacket.version = 0x04;
+    secretKeyPacket.publicKeyAlgorithm = publicKeyPacket.publicKeyAlgorithm;
+    secretKeyPacket.s2kUsage = PGPS2KUsageNone;
+    secretKeyPacket.s2k = [[PGPS2K alloc] initWithSpecifier:PGPS2KSpecifierSimple hashAlgorithm:PGPHashSHA1];
+    secretKeyPacket.symmetricAlgorithm = PGPSymmetricAES256;
+    NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:secretKeyPacket.symmetricAlgorithm];
+    secretKeyPacket.ivData = [NSMutableData dataWithLength:blockSize];
+    secretKeyPacket.createDate = publicKeyPacket.createDate;
+
+    switch (algorithm) {
         case PGPPublicKeyAlgorithmRSA:
-        case PGPPublicKeyAlgorithmRSASignOnly:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
+        case PGPPublicKeyAlgorithmRSASignOnly: {
+            let MPIs = [PGPRSA generateNewKeyMPIs:bits algorithm:algorithm];
+            let MPI_N = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_N]; }] anyObject];
+            let MPI_E = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_E]; }] anyObject];
+            let MPI_D = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_D]; }] anyObject];
+            let MPI_P = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_P]; }] anyObject];
+            let MPI_Q = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_Q]; }] anyObject];
+            let MPI_U = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_U]; }] anyObject];
+
             publicKeyPacket.publicMPIArray = @[MPI_N, MPI_E];
-            break;
+            secretKeyPacket.secretMPIArray = @[MPI_D, MPI_P, MPI_Q, MPI_U];
+        } break;
+        case PGPPublicKeyAlgorithmDSA:
+        case PGPPublicKeyAlgorithmECDSA: {
+            let MPIs = [PGPDSA generateNewKeyMPIs:bits algorithm:algorithm];
+            let MPI_P = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_P]; }] anyObject];
+            let MPI_Q = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_Q]; }] anyObject];
+            let MPI_G = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_G]; }] anyObject];
+            let MPI_X = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_X]; }] anyObject];
+            let MPI_Y = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_Y]; }] anyObject];
+
+            publicKeyPacket.publicMPIArray = @[MPI_P, MPI_Q, MPI_G, MPI_Y];
+            secretKeyPacket.secretMPIArray = @[MPI_X];
+        } break;
         default:
-            break;
+            NSAssert(NO, @"Not supported");
     }
+
+    secretKeyPacket.publicMPIArray = publicKeyPacket.publicMPIArray;
 
     // user id
     let userIDPacket = [[PGPUserIDPacket alloc] initWithUserID:userID];

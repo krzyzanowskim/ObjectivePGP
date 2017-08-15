@@ -126,6 +126,8 @@
 		75C502091F12C17400FEC874 /* PGPSecretKeyPacket+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 75C502081F12C17400FEC874 /* PGPSecretKeyPacket+Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		75CA419C1CDF775900887C62 /* issue35-key.asc in Resources */ = {isa = PBXBuildFile; fileRef = 75CA419B1CDF775900887C62 /* issue35-key.asc */; };
 		75D53ADF1A2FCDEE00ED9707 /* multiple-keys.asc in Resources */ = {isa = PBXBuildFile; fileRef = 75D53ADE1A2FCDEE00ED9707 /* multiple-keys.asc */; };
+		75F74E481F4383C50054231C /* PGPDSA.h in Headers */ = {isa = PBXBuildFile; fileRef = 75F74E441F4382FF0054231C /* PGPDSA.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		75F74E4A1F4383F90054231C /* PGPDSA.m in Sources */ = {isa = PBXBuildFile; fileRef = 75F74E451F4382FF0054231C /* PGPDSA.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -270,6 +272,8 @@
 		75E7B6BA19167EFF00C96BAB /* PGPSignaturePacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSignaturePacket.m; sourceTree = "<group>"; };
 		75E7B6BC19167F1700C96BAB /* PGPPacketFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPacketFactory.h; sourceTree = "<group>"; };
 		75F67F651F0F672B00FBEFCE /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
+		75F74E441F4382FF0054231C /* PGPDSA.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPDSA.h; sourceTree = "<group>"; };
+		75F74E451F4382FF0054231C /* PGPDSA.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PGPDSA.m; sourceTree = "<group>"; };
 		75FE9806193FB46200613549 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h; sourceTree = "<group>"; };
 		75FE9807193FB46200613549 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -332,6 +336,8 @@
 				754351861ED268B400896236 /* PGPCryptoHash.m */,
 				75C501E51F12337800FEC874 /* PGPRSA.h */,
 				75C501E41F12337800FEC874 /* PGPRSA.m */,
+				75F74E441F4382FF0054231C /* PGPDSA.h */,
+				75F74E451F4382FF0054231C /* PGPDSA.m */,
 			);
 			path = CryptoBox;
 			sourceTree = "<group>";
@@ -592,6 +598,7 @@
 				75616A661F13B5B800336240 /* PGPSignatureSubpacketHeader.h in Headers */,
 				7537A6D11F0D739A00892829 /* PGPKey.h in Headers */,
 				7537A6D31F0D739A00892829 /* PGPExportableProtocol.h in Headers */,
+				75F74E481F4383C50054231C /* PGPDSA.h in Headers */,
 				7537A6D41F0D739A00892829 /* PGPArmor.h in Headers */,
 				7537A6D51F0D739A00892829 /* PGPPKCSEmsa.h in Headers */,
 				7537A6D61F0D739A00892829 /* PGPPKCSEme.h in Headers */,
@@ -721,6 +728,7 @@
 				750F89421F0D6EF100B99726 /* PGPFoundation.m in Sources */,
 				750F89431F0D6EF100B99726 /* PGPBigNum.m in Sources */,
 				750F89441F0D6EF100B99726 /* PGPPacket.m in Sources */,
+				75F74E4A1F4383F90054231C /* PGPDSA.m in Sources */,
 				750F89451F0D6EF100B99726 /* PGPSignaturePacket.m in Sources */,
 				750F89461F0D6EF100B99726 /* PGPSignatureSubpacket.m in Sources */,
 				750F89471F0D6EF100B99726 /* PGPOnePassSignaturePacket.m in Sources */,

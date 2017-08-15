@@ -1,5 +1,5 @@
 //
-//  PGPPublicKeyAlgorithmRSA.m
+//  PGPRSA.m
 //  ObjectivePGP
 //
 //  Created by Marcin Krzyzanowski on 26/05/14.
@@ -225,9 +225,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Generate
 
-+ (nullable NSSet<PGPMPI *> *)generateNewKeyMPIs:(const int)bits algorithm:(PGPPublicKeyAlgorithm)algorithm {
-    NSAssert(algorithm == PGPPublicKeyAlgorithmRSA, @"Only RSA is supported. for now.");
-    
++ (nullable NSSet<PGPMPI *> *)generateNewKeyMPIs:(const int)bits algorithm:(PGPPublicKeyAlgorithm)algorithm {    
     BN_CTX *ctx = BN_CTX_new();
     RSA *rsa = RSA_new();
     BIGNUM *e = BN_new();

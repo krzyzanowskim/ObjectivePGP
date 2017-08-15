@@ -72,7 +72,7 @@ NSString * const PGPMPI_M = @"M";
     NSInteger mpi_BN_length = (BN_num_bits(mpi_BN) + 7) / 8;
     UInt8 *bn_bin = calloc(mpi_BN_length, sizeof(UInt8));
     NSUInteger len = BN_bn2bin(mpi_BN, bn_bin);
-    BN_free(mpi_BN);
+    BN_clear_free(mpi_BN);
 
     NSData *data = [NSData dataWithBytes:bn_bin length:len];
     free(bn_bin);
