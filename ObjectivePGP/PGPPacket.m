@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPPacket
 
+@synthesize tag;
+
 - (instancetype)init {
     return ((self = [super init]));
 }

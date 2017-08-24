@@ -50,3 +50,4 @@ FOUNDATION_EXPORT const unsigned char ObjectivePGPVersionString[];
 #import <ObjectivePGP/PGPUser.h>
 #import <ObjectivePGP/PGPUserAttributePacket.h>
 #import <ObjectivePGP/PGPUserIDPacket.h>
+#import <ObjectivePGP/PGPPacketProtocol.h>
