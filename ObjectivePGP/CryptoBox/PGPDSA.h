@@ -23,7 +23,7 @@ PGP_EMPTY_INIT_UNAVAILABLE;
 + (NSArray<PGPMPI *> *)sign:(NSData *)toSign key:(PGPKey *)key;
 
 // new keys
-+ (nullable NSSet<PGPMPI *> *)generateNewKeyMPIs:(const int)bits algorithm:(PGPPublicKeyAlgorithm)algorithm;
++ (nullable NSSet<PGPMPI *> *)generateNewKeyMPIArray:(const int)bits algorithm:(PGPPublicKeyAlgorithm)algorithm;
 
 @end
 

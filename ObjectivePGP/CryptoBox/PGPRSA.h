@@ -27,7 +27,7 @@ PGP_EMPTY_INIT_UNAVAILABLE;
 + (nullable NSData *)privateEncrypt:(NSData *)toEncrypt withSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket;
 
 // new keys
-+ (nullable NSSet<PGPMPI *> *)generateNewKeyMPIs:(const int)bits algorithm:(PGPPublicKeyAlgorithm)algorithm;
++ (nullable NSSet<PGPMPI *> *)generateNewKeyMPIArray:(const int)bits algorithm:(PGPPublicKeyAlgorithm)algorithm;
 
 @end
 

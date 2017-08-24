@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
         _version = 4;
         _hashedSubpackets = [NSArray<PGPSignatureSubpacket *> array];
         _unhashedSubpackets = [NSArray<PGPSignatureSubpacket *> array];
-        _signatureMPIs = [NSArray<PGPMPI *> array];
+        _signatureMPIArray = [NSArray<PGPMPI *> array];
     }
     return self;
 }
@@ -152,7 +152,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (nullable PGPMPI *)signatureMPI:(NSString *)identifier {
-    for (PGPMPI *mpi in self.signatureMPIs) {
+    for (PGPMPI *mpi in self.signatureMPIArray) {
         if ([mpi.identifier isEqualToString:identifier]) {
             return mpi;
         }
@@ -206,8 +206,8 @@ NS_ASSUME_NONNULL_BEGIN
     [data appendData:self.signedHashValueData];
 
     // signed PGPMPI_M
-    NSAssert(self.signatureMPIs.count > 0, @"Missing MPIs");
-    for (PGPMPI *mpi in self.signatureMPIs) {
+    NSAssert(self.signatureMPIArray.count > 0, @"Missing MPIArray");
+    for (PGPMPI *mpi in self.signatureMPIArray) {
         let exportMPI = [mpi exportMPI];
         if (exportMPI) {
             [data appendData:exportMPI];
@@ -294,7 +294,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmRSASignOnly:
         case PGPPublicKeyAlgorithmRSAEncryptOnly: {
             // convert mpi data to binary signature_bn_bin
-            let signatureMPI = self.signatureMPIs[0];
+            let signatureMPI = self.signatureMPIArray[0];
 
             // encoded m value
             NSData *encryptedEmData = [signatureMPI bodyData];
@@ -333,7 +333,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 /// Sign the signature with the given key.
-/// Set signatureMPIs and updates signed hash.
+/// Set signatureMPIArray and updates signed hash.
 ///
 /// Update sign related values. This method mutate the signature.
 - (BOOL)signData:(nullable NSData *)inputData usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error {
@@ -394,7 +394,7 @@ NS_ASSUME_NONNULL_BEGIN
     [toHashData appendData:trailerData];
 
     // == Computing Signatures ==
-    // Encrypt hash data Packet signature MPIs
+    // Encrypt hash data Packet signature MPIArray
     switch (self.publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
@@ -411,11 +411,11 @@ NS_ASSUME_NONNULL_BEGIN
             }
 
             // store signature data as MPI
-            self.signatureMPIs = @[[[PGPMPI alloc] initWithData:encryptedEmData identifier:PGPMPI_M]];
+            self.signatureMPIArray = @[[[PGPMPI alloc] initWithData:encryptedEmData identifier:PGPMPI_M]];
         } break;
         case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmECDSA: {
-            self.signatureMPIs = [PGPDSA sign:toHashData key:key];
+            self.signatureMPIArray = [PGPDSA sign:toHashData key:key];
         } break;
         default:
             [NSException raise:@"PGPNotSupported" format:@"Algorith not supported"];
@@ -624,7 +624,7 @@ NS_ASSUME_NONNULL_BEGIN
             PGPMPI *mpiN = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_N atPosition:position];
             position = position + mpiN.packetLength;
 
-            self.signatureMPIs = @[mpiN];
+            self.signatureMPIArray = @[mpiN];
         } break;
         case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmECDSA: {
@@ -636,7 +636,7 @@ NS_ASSUME_NONNULL_BEGIN
             PGPMPI *mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_S atPosition:position];
             position = position + mpiS.packetLength;
 
-            self.signatureMPIs = @[mpiR, mpiS];
+            self.signatureMPIArray = @[mpiR, mpiS];
         } break;
         default:
             break;
@@ -746,7 +746,7 @@ NS_ASSUME_NONNULL_BEGIN
             PGPMPI *mpiN = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_N atPosition:position];
             position = position + mpiN.packetLength;
 
-            self.signatureMPIs = @[mpiN];
+            self.signatureMPIArray = @[mpiN];
         } break;
         case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmECDSA: {
@@ -758,7 +758,7 @@ NS_ASSUME_NONNULL_BEGIN
             PGPMPI *mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_S atPosition:position];
             position = position + mpiS.packetLength;
 
-            self.signatureMPIs = @[mpiR, mpiS];
+            self.signatureMPIArray = @[mpiR, mpiS];
         } break;
         default:
             break;

@@ -114,7 +114,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Generate
 
-+ (nullable NSSet<PGPMPI *> *)generateNewKeyMPIs:(const int)bits algorithm:(PGPPublicKeyAlgorithm)algorithm {    
++ (nullable NSSet<PGPMPI *> *)generateNewKeyMPIArray:(const int)bits algorithm:(PGPPublicKeyAlgorithm)algorithm {    
     BN_CTX *ctx = BN_CTX_new();
     pgp_defer { if (ctx) { BN_CTX_free(ctx); } };
     DSA *dsa = DSA_new();

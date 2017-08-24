@@ -225,7 +225,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Generate
 
-+ (nullable NSSet<PGPMPI *> *)generateNewKeyMPIs:(const int)bits algorithm:(PGPPublicKeyAlgorithm)algorithm {    
++ (nullable NSSet<PGPMPI *> *)generateNewKeyMPIArray:(const int)bits algorithm:(PGPPublicKeyAlgorithm)algorithm {    
     BN_CTX *ctx = BN_CTX_new();
     RSA *rsa = RSA_new();
     BIGNUM *e = BN_new();

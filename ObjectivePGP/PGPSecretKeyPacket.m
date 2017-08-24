@@ -125,10 +125,10 @@
         position = position + blockSize;
     }
 
-    // encrypted MPIs
+    // encrypted MPIArray
     // checksum or hash is encrypted together with the algorithm-specific fields (mpis) (if string-to-key usage octet is not zero).
-    self.encryptedMPIsPartData = [data subdataWithRange:(NSRange){position, data.length - position}];
-    // position = position + self.encryptedMPIsPartData.length;
+    self.encryptedMPIPartData = [data subdataWithRange:(NSRange){position, data.length - position}];
+    // position = position + self.encryptedMPIPartData.length;
 
     return data.length;
 }
@@ -262,8 +262,8 @@
     // producing a key to be used with a symmetric block cipher from a string of octets
     let sessionKeyData = [encryptedKey.s2k produceSessionKeyWithPassphrase:passphrase keySize:keySize];
 
-    // Decrypted MPIs
-    let decryptedData = [PGPCryptoCFB decryptData:encryptedKey.encryptedMPIsPartData sessionKeyData:sessionKeyData symmetricAlgorithm:encryptionSymmetricAlgorithm iv:encryptedKey.ivData];
+    // Decrypted MPIArray
+    let decryptedData = [PGPCryptoCFB decryptData:encryptedKey.encryptedMPIPartData sessionKeyData:sessionKeyData symmetricAlgorithm:encryptionSymmetricAlgorithm iv:encryptedKey.ivData];
 
     // now read mpis
     if (decryptedData) {
@@ -338,15 +338,15 @@
         UInt16 checksum = CFSwapInt16HostToBig([data pgp_Checksum]);
         [data appendBytes:&checksum length:2];
     } else {
-        // encrypted MPIs with encrypted hash
-        [data appendData:self.encryptedMPIsPartData];
+        // encrypted MPIArray with encrypted hash
+        [data appendData:self.encryptedMPIPartData];
 
-        // hash is part of encryptedMPIsPartData
+        // hash is part of encryptedMPIPartData
     }
 
     // If the string-to-key usage octet is zero or 255, then a two-octet checksum of the plaintext of the algorithm-specific portion (sum of all octets, mod 65536).
     // This checksum or hash is encrypted together with the algorithm-specific fields
-    // ---> is part of self.encryptedMPIsPartData
+    // ---> is part of self.encryptedMPIPartData
     // if (self.s2kUsage == PGPS2KUsageNone || self.s2kUsage == PGPS2KUsageEncrypted) {
     //    // Checksum
     //    UInt16 checksum = CFSwapInt16HostToBig([data pgp_Checksum]);
@@ -410,7 +410,7 @@
     copy->_symmetricAlgorithm = self.symmetricAlgorithm;
     copy->_ivData = [self.ivData copy];
     copy->_secretMPIArray = [self.secretMPIArray copy];
-    copy->_encryptedMPIsPartData = [self.encryptedMPIsPartData copy];
+    copy->_encryptedMPIPartData = [self.encryptedMPIPartData copy];
     return copy;
 }
 

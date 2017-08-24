@@ -3,7 +3,7 @@
 //  ObjectivePGP
 //
 //  Created by Marcin Krzyzanowski on 06/06/14.
-//  Copyright (c) 2014 Marcin Krzyżanowski. All rencryptedMPIsPartDataights reserved.
+//  Copyright (c) 2014 Marcin Krzyżanowski. All rencryptedMPIPartDataights reserved.
 //
 //  5.1.  Public-Key Encrypted Session Key Packets (Tag 1)
 
@@ -131,7 +131,7 @@ NS_ASSUME_NONNULL_BEGIN
     return sessionKeyData;
 }
 
-// encryption update self.encryptedMPIsPartData
+// encryption update self.encryptedMPIPartData
 - (BOOL)encrypt:(PGPPublicKeyPacket *)publicKeyPacket sessionKeyData:(NSData *)sessionKeyData sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm error:(NSError *__autoreleasing *)error {
     let mData = [NSMutableData data];
 
@@ -192,15 +192,15 @@ NS_ASSUME_NONNULL_BEGIN
     }];
 }
 
-
 #pragma mark - NSCopying
 
 - (instancetype)copyWithZone:(nullable NSZone *)zone {
     PGPPublicKeyEncryptedSessionKeyPacket *copy = [super copyWithZone:zone];
     copy->_version = self.version;
-    copy->_keyID = self.keyID;
+    copy->_keyID = [self.keyID copy];
+    copy->_encrypted = self.isEncrypted;
     copy->_publicKeyAlgorithm = self.publicKeyAlgorithm;
-    copy->_encryptedMPI_M = self.encryptedMPI_M;
+    copy->_encryptedMPI_M = [self.encryptedMPI_M copy];;
     return copy;
 }
 

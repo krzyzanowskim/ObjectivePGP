@@ -5,7 +5,7 @@
 //  Created by Marcin Krzyzanowski on 04/05/14.
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
-//  Multiprecision integers (also called MPIs) are unsigned integers used
+//  Multiprecision integers (also called MPIArray) are unsigned integers used
 //  to hold large integers such as the ones used in cryptographic
 //  calculations.
 

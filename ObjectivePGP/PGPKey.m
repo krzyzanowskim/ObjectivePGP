@@ -89,25 +89,25 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly: {
-            let MPIs = [PGPRSA generateNewKeyMPIs:bits algorithm:algorithm];
-            let MPI_N = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_N]; }] anyObject];
-            let MPI_E = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_E]; }] anyObject];
-            let MPI_D = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_D]; }] anyObject];
-            let MPI_P = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_P]; }] anyObject];
-            let MPI_Q = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_Q]; }] anyObject];
-            let MPI_U = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_U]; }] anyObject];
+            let MPIArray = [PGPRSA generateNewKeyMPIArray:bits algorithm:algorithm];
+            let MPI_N = [[MPIArray objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_N]; }] anyObject];
+            let MPI_E = [[MPIArray objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_E]; }] anyObject];
+            let MPI_D = [[MPIArray objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_D]; }] anyObject];
+            let MPI_P = [[MPIArray objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_P]; }] anyObject];
+            let MPI_Q = [[MPIArray objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_Q]; }] anyObject];
+            let MPI_U = [[MPIArray objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_U]; }] anyObject];
 
             publicKeyPacket.publicMPIArray = @[MPI_N, MPI_E];
             secretKeyPacket.secretMPIArray = @[MPI_D, MPI_P, MPI_Q, MPI_U];
         } break;
         case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmECDSA: {
-            let MPIs = [PGPDSA generateNewKeyMPIs:bits algorithm:algorithm];
-            let MPI_P = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_P]; }] anyObject];
-            let MPI_Q = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_Q]; }] anyObject];
-            let MPI_G = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_G]; }] anyObject];
-            let MPI_X = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_X]; }] anyObject];
-            let MPI_Y = [[MPIs objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_Y]; }] anyObject];
+            let MPIArray = [PGPDSA generateNewKeyMPIArray:bits algorithm:algorithm];
+            let MPI_P = [[MPIArray objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_P]; }] anyObject];
+            let MPI_Q = [[MPIArray objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_Q]; }] anyObject];
+            let MPI_G = [[MPIArray objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_G]; }] anyObject];
+            let MPI_X = [[MPIArray objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_X]; }] anyObject];
+            let MPI_Y = [[MPIArray objectsPassingTest:^BOOL(PGPMPI *mpi, BOOL *stop) { return [mpi.identifier isEqual:PGPMPI_Y]; }] anyObject];
 
             publicKeyPacket.publicMPIArray = @[MPI_P, MPI_Q, MPI_G, MPI_Y];
             secretKeyPacket.secretMPIArray = @[MPI_X];
