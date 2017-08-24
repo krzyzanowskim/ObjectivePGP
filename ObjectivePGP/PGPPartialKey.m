@@ -38,36 +38,6 @@ NS_ASSUME_NONNULL_BEGIN
     return [NSString stringWithFormat:@"Type %@, %@ primary key: %@", self.type == PGPPartialKeyPublic ? @"public" : @"secret", [super description], self.primaryKeyPacket];
 }
 
-- (BOOL)isEqual:(id)object {
-    if (self == object) {
-        return YES;
-    }
-
-    let other = PGPCast(object, PGPPartialKey);
-    if (!other) {
-        return NO;
-    }
-
-    if (self.type != other.type) {
-        return NO;
-    }
-
-    return [self.keyID isEqual:other.keyID];
-}
-
-- (NSUInteger)hash {
-    NSUInteger prime = 31;
-    NSUInteger result = 7;
-    result = prime * result + self.type;
-    result = prime * result + self.keyID.hash;
-    // TODO: check all properties
-    //    result = prime * result + self.users.hash;
-    //    result = prime * result + self.subKeys.hash;
-    //    result = prime * result + self.directSignatures.hash;
-    //    result = prime * result + self.revocationSignature.hash;
-    return result;
-}
-
 - (BOOL)isEncrypted {
     if (self.type == PGPPartialKeySecret) {
         return PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket).isEncryptedWithPassword;
@@ -327,6 +297,38 @@ NS_ASSUME_NONNULL_BEGIN
 
     self.primaryKeyPacket = decryptedPrimaryPacket;
     return YES;
+}
+
+#pragma mark - isEqual
+
+- (BOOL)isEqual:(id)other {
+    if (self == other) { return YES; }
+    if ([other isKindOfClass:self.class]) {
+        return [self isEqualToPartialKey:other];
+    }
+    return NO;
+}
+
+- (BOOL)isEqualToPartialKey:(PGPPartialKey *)other {
+    return self.type == other.type && self.isEncrypted == other.isEncrypted && [self.primaryKeyPacket isEqual:other.primaryKeyPacket] &&
+           [self.users isEqual:other.users] && [self.subKeys isEqual:other.subKeys] && [self.directSignatures isEqual:other.directSignatures] &&
+           [self.revocationSignature isEqual:other.revocationSignature] && [self.keyID isEqual:other.keyID];
+}
+
+- (NSUInteger)hash {
+    NSUInteger prime = 31;
+    NSUInteger result = 1;
+
+    result = prime * result + self.type;
+    result = prime * result + self.isEncrypted;
+    result = prime * result + self.primaryKeyPacket.hash;
+    result = prime * result + self.users.hash;
+    result = prime * result + self.subKeys.hash;
+    result = prime * result + self.directSignatures.hash;
+    result = prime * result + self.revocationSignature.hash;
+    result = prime * result + self.keyID.hash;
+
+    return result;
 }
 
 #pragma mark - PGPExportable

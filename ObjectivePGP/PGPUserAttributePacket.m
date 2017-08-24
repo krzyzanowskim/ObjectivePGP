@@ -65,13 +65,23 @@
     return nil;
 }
 
+#pragma mark - isEqual
+
+- (BOOL)isEqual:(id)other {
+    if (self == other) { return YES; }
+    if ([super isEqual:other] && [other isKindOfClass:self.class]) {
+        return [self isEqualToAttributePacket:other];
+    }
+    return NO;
+}
+
+- (BOOL)isEqualToAttributePacket:(PGPUserAttributePacket *)packet {
+    return [self.subpackets isEqual:packet.subpackets];
+}
+
 - (NSUInteger)hash {
-    NSUInteger prime = 31;
-    NSUInteger result = 1;
-
-    result = prime * result + self.tag;
-    result = prime * result + [self.subpackets hash];
-
+    NSUInteger result = super.hash;
+    result = 31 * result + self.subpackets.hash;
     return result;
 }
 

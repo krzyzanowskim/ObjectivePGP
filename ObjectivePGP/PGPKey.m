@@ -170,35 +170,30 @@ NS_ASSUME_NONNULL_BEGIN
     return outputData;
 }
 
-- (BOOL)isEqual:(id)object {
-    if (object == self) {
-        return YES;
-    }
+#pragma mark - isEqual
 
-    let other = PGPCast(object, PGPKey);
-    if (!other) {
-        return NO;
+- (BOOL)isEqual:(id)other {
+    if (self == other) { return YES; }
+    if ([other isKindOfClass:self.class]) {
+        return [self isEqualToKey:other];
     }
+    return NO;
+}
 
-    BOOL result = YES;
-    if (self.secretKey) {
-        result = [self.secretKey isEqual:other.secretKey];
-    }
-
-    if (result && self.publicKey) {
-        result = [self.publicKey isEqual:other.publicKey];
-    }
-
-    return result;
+- (BOOL)isEqualToKey:(PGPKey *)other {
+    return [self.secretKey isEqual:other.secretKey] && [self.publicKey isEqual:other.publicKey];
 }
 
 - (NSUInteger)hash {
     NSUInteger prime = 31;
-    NSUInteger result = 7;
+    NSUInteger result = 1;
+
     result = prime * result + self.secretKey.hash;
     result = prime * result + self.publicKey.hash;
+
     return result;
 }
+
 
 #pragma mark - PGPExportable
 

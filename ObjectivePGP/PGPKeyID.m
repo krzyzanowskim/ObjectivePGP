@@ -39,26 +39,6 @@
     return self.longKey.copy;
 }
 
-- (BOOL)isEqual:(id)object {
-    if (self == object) {
-        return YES;
-    }
-
-    let other = PGPCast(object, PGPKeyID);
-    if (!other) {
-        return NO;
-    }
-
-    return [self.longKey isEqual:other.longKey];
-}
-
-- (NSUInteger)hash {
-    const NSUInteger prime = 31;
-    NSUInteger result = 7;
-    result = prime * result + self.longKey.hash;
-    return result;
-}
-
 - (NSData *)shortKey {
     return [self.longKey subdataWithRange:(NSRange){4, 4}];
 }
@@ -81,6 +61,26 @@
         [sbuf appendFormat:@"%02X", (unsigned int)buf[i]];
     }
     return sbuf.copy;
+}
+
+#pragma mark - isEqual
+
+- (BOOL)isEqual:(id)other {
+    if (self == other) { return YES; }
+    if ([other isKindOfClass:self.class]) {
+        return [self isEqualToKeyID:other];
+    }
+    return NO;
+}
+
+- (BOOL)isEqualToKeyID:(PGPKeyID *)packet {
+    return [self.longKey isEqual:packet.longKey];
+}
+
+- (NSUInteger)hash {
+    NSUInteger result = super.hash;
+    result = 31 * result + self.longKey.hash;
+    return result;
 }
 
 @end

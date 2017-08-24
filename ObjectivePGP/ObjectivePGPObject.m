@@ -338,7 +338,7 @@ NS_ASSUME_NONNULL_BEGIN
                 // ignore here
                 break;
             case PGPLiteralDataPacketTag:
-                literalPacket = (PGPLiteralPacket *)packet;
+                literalPacket = PGPCast(packet, PGPLiteralPacket);
                 plaintextData = literalPacket.literalRawData;
                 break;
             case PGPSignaturePacketTag:

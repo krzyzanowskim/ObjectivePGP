@@ -28,33 +28,29 @@
     return [sbuf copy];
 }
 
+#pragma mark - isEqual
+
 - (NSUInteger)hashLength {
     return self.hashedData.length;
 }
 
+- (BOOL)isEqual:(id)other {
+    if (self == other) { return YES; }
+    if ([other isKindOfClass:self.class]) {
+        return [self isEqualToFingerprintPacket:other];
+    }
+    return NO;
+}
+
+- (BOOL)isEqualToFingerprintPacket:(PGPFingerprint *)packet {
+    return [self.hashedData isEqual:packet.hashedData] && [self.keyData isEqual:packet.keyData];
+}
+
 - (NSUInteger)hash {
-    const NSUInteger prime = 31;
     NSUInteger result = 1;
-    result = prime * result + [_hashedData hash];
-    result = prime * result + [_keyData hash];
+    result = 31 * result + self.hashedData.hash;
+    result = 31 * result + self.keyData.hash;
     return result;
-}
-
-- (BOOL)isEqual:(id)object {
-    if (self == object) {
-        return YES;
-    }
-
-    if ([self class] != [object class]) {
-        return NO;
-    }
-
-    PGPFingerprint *other = object;
-    return [self.keyData isEqualToData:other.keyData] && [self.hashedData isEqualToData:other.hashedData];
-}
-
-- (BOOL)isEqualToFingerprint:(PGPFingerprint *)fingerprint {
-    return [self isEqual:fingerprint];
 }
 
 @end

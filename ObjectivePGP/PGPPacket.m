@@ -37,17 +37,6 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
-- (NSUInteger)hash {
-#ifndef NSUINTROTATE
-#define NSUINT_BIT (CHAR_BIT * sizeof(NSUInteger))
-#define NSUINTROTATE(val, howmuch) ((((NSUInteger)val) << howmuch) | (((NSUInteger)val) >> (NSUINT_BIT - howmuch)))
-#endif
-
-    NSUInteger hash = [self.headerData hash];
-    hash = NSUINTROTATE(hash, NSUINT_BIT / 2) ^ [self.bodyData hash];
-    return hash;
-}
-
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
     NSAssert(packetBody.length == self.bodyData.length, @"length mismach");
     return 0;
@@ -56,6 +45,28 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSData *)export:(NSError *__autoreleasing *)error {
     [NSException raise:@"MissingExportMethod" format:@"export: selector not overriden"];
     return nil;
+}
+
+#pragma mark - isEqual
+
+- (BOOL)isEqual:(id)other {
+    if (self == other) { return YES; }
+    if ([super isEqual:other] && [other isKindOfClass:self.class]) {
+        return [self isEqualToPacket:other];
+    }
+    return NO;
+}
+
+- (BOOL)isEqualToPacket:(PGPPacket *)packet {
+    return self.tag == packet.tag && self.indeterminateLength == packet.indeterminateLength;
+}
+
+- (NSUInteger)hash {
+    NSUInteger prime = 31;
+    NSUInteger result = 1;
+    result = prime * result + self.tag;
+    result = prime * result + self.indeterminateLength;
+    return result;
 }
 
 #pragma mark - Packet header

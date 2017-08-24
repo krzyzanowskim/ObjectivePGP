@@ -31,20 +31,6 @@ NS_ASSUME_NONNULL_BEGIN
     return self.userIDPacket.userID;
 }
 
-- (NSUInteger)hash {
-    NSUInteger prime = 31;
-    NSUInteger result = 1;
-
-    result = prime * result + [_userID hash];
-    result = prime * result + [_userAttribute hash];
-    result = prime * result + [_selfCertifications hash];
-    result = prime * result + [_otherSignatures hash];
-    result = prime * result + [_revocationSignatures hash];
-    result = prime * result + [_userIDPacket hash];
-
-    return result;
-}
-
 - (NSArray *)otherSignatures {
     if (!_otherSignatures) {
         _otherSignatures = [NSArray array];
@@ -166,6 +152,36 @@ NS_ASSUME_NONNULL_BEGIN
     }];
 
     return [certs firstObject];
+}
+
+#pragma mark - isEqual
+
+- (BOOL)isEqual:(id)other {
+    if (self == other) { return YES; }
+    if ([other isKindOfClass:self.class]) {
+        return [self isEqualToUser:other];
+    }
+    return NO;
+}
+
+- (BOOL)isEqualToUser:(PGPUser *)other {
+    return [self.userID isEqual:other.userID] && [self.userAttribute isEqual:other.userAttribute] &&
+           [self.selfCertifications isEqual:other.selfCertifications] && [self.otherSignatures isEqual:other.otherSignatures] &&
+           [self.revocationSignatures isEqual:other.revocationSignatures] && [self.userIDPacket isEqual:other.userIDPacket];
+}
+
+- (NSUInteger)hash {
+    NSUInteger prime = 31;
+    NSUInteger result = 1;
+
+    result = prime * result + self.userID.hash;
+    result = prime * result + self.userAttribute.hash;
+    result = prime * result + self.selfCertifications.hash;
+    result = prime * result + self.otherSignatures.hash;
+    result = prime * result + self.revocationSignatures.hash;
+    result = prime * result + self.userIDPacket.hash;
+
+    return result;
 }
 
 @end
