@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
         _bodyData = bodyData;
 
         NSError *error = nil;
-        [self parsePacketBody:self.bodyData error:&error];
+        [self parsePacketBody:bodyData error:&error];
         if (error) {
             return nil;
         }
@@ -357,15 +357,6 @@ NS_ASSUME_NONNULL_BEGIN
     copy->_bodyData = self.bodyData;
     copy->_headerData = self.headerData;
     return copy;
-}
-
-#pragma mark - conversion
-
-- (NSData *)packetData {
-    NSMutableData *result = [NSMutableData data];
-    [result appendData:self.headerData];
-    [result appendData:self.bodyData];
-    return result;
 }
 
 @end

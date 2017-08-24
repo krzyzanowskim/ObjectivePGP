@@ -355,7 +355,9 @@ NS_ASSUME_NONNULL_BEGIN
     BOOL _signed = signaturePacket != nil;
     BOOL _valid = NO;
     if (signaturePacket && key.publicKey) {
-        _valid = [self verifyData:plaintextData withSignature:signaturePacket.packetData usingKey:key error:nil];
+        let signatureData = [NSMutableData dataWithData:signaturePacket.headerData];
+        [signatureData appendData:signaturePacket.bodyData];
+        _valid = [self verifyData:plaintextData withSignature:signatureData usingKey:key error:nil];
     }
 
     if (isSigned) {

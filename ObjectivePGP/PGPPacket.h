@@ -16,12 +16,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PGPPacket : NSObject <NSCopying, PGPExportable>
 
-@property (nonatomic, copy, nullable, readonly) NSData *headerData;
-@property (nonatomic, copy, nullable, readonly) NSData *bodyData;
+@property (nonatomic, copy, nullable, readonly) NSData *headerData DEPRECATED_ATTRIBUTE;
+@property (nonatomic, copy, nullable, readonly) NSData *bodyData DEPRECATED_ATTRIBUTE;
 @property (nonatomic) BOOL indeterminateLength; // should not be used, but gpg use it
 
 @property (nonatomic, readonly) PGPPacketTag tag;
-@property (nonatomic, readonly) NSData *packetData;
 
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithHeader:(NSData *)headerData body:(NSData *)bodyData;
