@@ -16,9 +16,6 @@ NS_ASSUME_NONNULL_BEGIN
 extern const UInt32 PGPUnknownLength;
 
 @interface PGPPacket : NSObject <PGPPacketProtocol, NSCopying, PGPExportable>
-
-@property (nonatomic, copy, nullable, readonly) NSData *headerData DEPRECATED_ATTRIBUTE;
-@property (nonatomic, copy, nullable, readonly) NSData *bodyData DEPRECATED_ATTRIBUTE;
 @property (nonatomic) BOOL indeterminateLength; // should not be used, but gpg use it
 
 - (instancetype)init NS_DESIGNATED_INITIALIZER;

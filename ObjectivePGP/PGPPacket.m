@@ -22,14 +22,11 @@ NS_ASSUME_NONNULL_BEGIN
 @synthesize tag;
 
 - (instancetype)init {
-    return ((self = [super init]));
+    return [super init];
 }
 
 - (instancetype)initWithHeader:(NSData *)headerData body:(NSData *)bodyData {
     if ((self = [self init])) {
-        _headerData = headerData;
-        _bodyData = bodyData;
-
         NSError *error = nil;
         [self parsePacketBody:bodyData error:&error];
         if (error) {
@@ -40,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
-    NSAssert(packetBody.length == self.bodyData.length, @"length mismach");
+    PGPAssertClass(packetBody, NSData);
     return 0;
 }
 
@@ -367,8 +364,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (id)copyWithZone:(nullable NSZone *)zone {
     PGPPacket *copy = [[[self class] allocWithZone:zone] init];
-    copy->_bodyData = self.bodyData;
-    copy->_headerData = self.headerData;
+    copy->tag = self.tag;
+    copy->_indeterminateLength = self.indeterminateLength;
     return copy;
 }
 

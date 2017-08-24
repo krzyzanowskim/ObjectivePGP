@@ -355,9 +355,10 @@ NS_ASSUME_NONNULL_BEGIN
     BOOL _signed = signaturePacket != nil;
     BOOL _valid = NO;
     if (signaturePacket && key.publicKey) {
-        let signatureData = [NSMutableData dataWithData:signaturePacket.headerData];
-        [signatureData appendData:signaturePacket.bodyData];
-        _valid = [self verifyData:plaintextData withSignature:signatureData usingKey:key error:nil];
+        let signatureData = [signaturePacket export:error];
+        if (signatureData) {
+            _valid = [self verifyData:plaintextData withSignature:signatureData usingKey:key error:nil];
+        }
     }
 
     if (isSigned) {
@@ -651,15 +652,12 @@ NS_ASSUME_NONNULL_BEGIN
             return NO;
         }
 
-        // do not build signature, use data that was readed from signedDataPackets
-        // to build final data and avoid unecesarry copying data dataWithBytesNoCopy:length:freeWhenDone: is used
-        // signaturePacket and literalDataPacket is strong in this scope so will not be released
-        // before verification process end.
-        NSMutableData *signaturePacketData = [NSMutableData data];
-        [signaturePacketData appendData:[NSData dataWithBytesNoCopy:(void *)signaturePacket.headerData.bytes length:signaturePacket.headerData.length freeWhenDone:NO]];
-        [signaturePacketData appendData:[NSData dataWithBytesNoCopy:(void *)signaturePacket.bodyData.bytes length:signaturePacket.bodyData.length freeWhenDone:NO]];
+        let signaturePacketData = [signaturePacket export:error];
 
-        return [self verifyData:literalDataPacket.literalRawData withSignature:signaturePacketData error:error];
+        if (signaturePacketData && (!error || (error && *error == nil))) {
+            return [self verifyData:literalDataPacket.literalRawData withSignature:signaturePacketData error:error];
+        }
+        return NO;
     }
 }
 

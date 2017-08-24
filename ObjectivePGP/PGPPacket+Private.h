@@ -13,9 +13,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PGPPacket ()
 
-@property (nonatomic, copy, nullable, readwrite) NSData *headerData;
-@property (nonatomic, copy, nullable, readwrite) NSData *bodyData;
-
 + (NSData *)buildNewFormatLengthDataForData:(NSData *)bodyData;
 
 @end
