@@ -101,6 +101,7 @@ NS_ASSUME_NONNULL_BEGIN
         pgp_defer { if (errBuf) { free(errBuf); } };
         ERR_error_string(err_code, errBuf);
         PGPLogDebug(@"%@", [NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
+        return @[];
     }
 
     let MPI_R = [[PGPMPI alloc] initWithBigNum:[[PGPBigNum alloc] initWithBIGNUM:sig->r] identifier:PGPMPI_R];

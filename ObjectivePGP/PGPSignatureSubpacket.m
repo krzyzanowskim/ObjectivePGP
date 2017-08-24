@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @implementation PGPSignatureSubpacket
 
 - (instancetype)initWithType:(PGPSignatureSubpacketType)type andValue:(id)value {
-    if (([super init])) {
+    if ((self = [super init])) {
         _type = type;
         _value = value;
     }
