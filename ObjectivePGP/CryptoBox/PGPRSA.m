@@ -225,7 +225,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Generate
 
-+ (nullable NSSet<PGPMPI *> *)generateNewKeyMPIArray:(const int)bits algorithm:(PGPPublicKeyAlgorithm)algorithm {    
++ (nullable PGPKeyMaterial *)generateNewKeyMPIArray:(const int)bits algorithm:(PGPPublicKeyAlgorithm)algorithm {
     BN_CTX *ctx = BN_CTX_new();
     RSA *rsa = RSA_new();
     BIGNUM *e = BN_new();
@@ -256,54 +256,15 @@ NS_ASSUME_NONNULL_BEGIN
     let mpiQ = [[PGPMPI alloc] initWithBigNum:bigQ identifier:PGPMPI_Q];
     let mpiU = [[PGPMPI alloc] initWithBigNum:bigU identifier:PGPMPI_U];
 
-    return [NSSet setWithArray:@[mpiN, mpiE, mpiD, mpiP, mpiQ, mpiU]];
+    let keyMaterial = [[PGPKeyMaterial alloc] init];
+    keyMaterial.n = mpiN;
+    keyMaterial.e = mpiE;
+    keyMaterial.d = mpiD;
+    keyMaterial.p = mpiP;
+    keyMaterial.q = mpiQ;
+    keyMaterial.u = mpiU;
 
-//#if FALSE
-//    // Due to SecKeyCopyExternalRepresentation can't use Security for target < iOS 10
-//    // TODO: use conditionaly with @available(ios 10.10, *) after Xcode 9 release.
-//    let parameters = @{
-//         (id)kSecAttrKeyType: (id)kSecAttrKeyTypeRSA,
-//         (id)kSecAttrKeySizeInBits: @(bits),
-//         (id)kSecPrivateKeyAttrs:   @{
-//                 (id)kSecAttrIsPermanent:    @NO,
-//                 (id)kSecAttrIsSensitive:    @YES,
-//                 (id)kSecAttrLabel: @"com.krzyzanowskim.objectivepgp.private"
-//             },
-//    };
-//
-//    CFErrorRef error = NULL;
-//    SecKeyRef privateKey = SecKeyCreateRandomKey((__bridge CFDictionaryRef)parameters, &error);
-//    if (!privateKey) {
-//        NSError *err = CFBridgingRelease(error);
-//        PGPLogError(@"%@",err);
-//        return nil;
-//    }
-//
-//    SecKeyRef publicKey = SecKeyCopyPublicKey(privateKey);
-//
-//    if (publicKey)  {
-//        CFRelease(publicKey);
-//    }
-//
-//    CFErrorRef exportError = NULL;
-//    let privateKeyData = (NSData *)CFBridgingRelease(SecKeyCopyExternalRepresentation(privateKey, &exportError));
-//    if (!privateKeyData) {
-//        NSError *err = CFBridgingRelease(error);
-//        PGPLogError(@"%@",err);
-//        CFRelease(privateKey);
-//        return nil;
-//    }
-//
-//    if (privateKey) {
-//        CFRelease(privateKey);
-//    }
-//
-//    if (publicKey) {
-//        CFRelease(publicKey);
-//    }
-//
-//    return privateKeyData;
-//#endif
+    return keyMaterial;
 }
 
 @end

@@ -115,7 +115,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Generate
 
-+ (nullable NSSet<PGPMPI *> *)generateNewKeyMPIArray:(const int)bits algorithm:(PGPPublicKeyAlgorithm)algorithm {    
++ (nullable PGPKeyMaterial *)generateNewKeyMPIArray:(const int)bits algorithm:(PGPPublicKeyAlgorithm)algorithm {    
     BN_CTX *ctx = BN_CTX_new();
     pgp_defer { if (ctx) { BN_CTX_free(ctx); } };
     DSA *dsa = DSA_new();
@@ -140,7 +140,15 @@ NS_ASSUME_NONNULL_BEGIN
     let mpiX = [[PGPMPI alloc] initWithBigNum:bigX identifier:PGPMPI_X];
     let mpiY = [[PGPMPI alloc] initWithBigNum:bigY identifier:PGPMPI_Y];
 
-    return [NSSet setWithArray:@[mpiP, mpiQ, mpiG, mpiR, mpiY, mpiX]];
+    let keyMaterial = [[PGPKeyMaterial alloc] init];
+    keyMaterial.p = mpiP;
+    keyMaterial.q = mpiQ;
+    keyMaterial.g = mpiG;
+    keyMaterial.r = mpiR;
+    keyMaterial.x = mpiX;
+    keyMaterial.y = mpiY;
+
+    return keyMaterial;
 }
 
 @end

@@ -92,7 +92,7 @@ NS_ASSUME_NONNULL_BEGIN
                 user.userAttribute = PGPCast(packet, PGPUserAttributePacket);
                 break;
             case PGPUserIDPacketTag: {
-                PGPUser *parsedUser = [[PGPUser alloc] initWithUserIDPacket:(PGPUserIDPacket *)packet];
+                let parsedUser = [[PGPUser alloc] initWithUserIDPacket:(PGPUserIDPacket *)packet];
                 if (!user) {
                     user = parsedUser;
                 }
