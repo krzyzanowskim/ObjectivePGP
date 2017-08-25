@@ -1,5 +1,5 @@
 //
-//  PGPSubKey.h
+//  PGPPartialSubKey.h
 //  ObjectivePGP
 //
 //  Created by Marcin Krzyzanowski on 16/05/14.
@@ -7,13 +7,13 @@
 //
 
 #import "PGPKeyID.h"
-#import "PGPPacket.h"
 #import "PGPPartialKey.h"
-#import "PGPSignaturePacket.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PGPSubKey : PGPPartialKey
+@class PGPSignaturePacket;
+
+@interface PGPPartialSubKey : PGPPartialKey
 
 PGP_EMPTY_INIT_UNAVAILABLE
 

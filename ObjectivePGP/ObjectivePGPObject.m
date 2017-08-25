@@ -22,7 +22,7 @@
 #import "PGPPublicKeyPacket.h"
 #import "PGPSecretKeyPacket.h"
 #import "PGPSignaturePacket.h"
-#import "PGPSubKey.h"
+#import "PGPPartialSubKey.h"
 #import "PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h"
 #import "PGPUser.h"
 #import "PGPUserIDPacket.h"
@@ -77,14 +77,14 @@ NS_ASSUME_NONNULL_BEGIN
 
         // subkeys
         if (!found && key.publicKey.subKeys.count > 0) {
-            found = [key.publicKey.subKeys indexOfObjectPassingTest:^BOOL(PGPSubKey *subkey, __unused NSUInteger idx, BOOL *stop2) {
+            found = [key.publicKey.subKeys indexOfObjectPassingTest:^BOOL(PGPPartialSubKey *subkey, __unused NSUInteger idx, BOOL *stop2) {
                         *stop2 = [subkey.keyID isEqual:searchKeyID];
                         return *stop2;
                     }] != NSNotFound;
         }
 
         if (!found && key.secretKey.subKeys.count > 0) {
-            found = [key.secretKey.subKeys indexOfObjectPassingTest:^BOOL(PGPSubKey *subkey, __unused NSUInteger idx, BOOL *stop2) {
+            found = [key.secretKey.subKeys indexOfObjectPassingTest:^BOOL(PGPPartialSubKey *subkey, __unused NSUInteger idx, BOOL *stop2) {
                         *stop2 = [subkey.keyID isEqual:searchKeyID];
                         return *stop2;
                     }] != NSNotFound;
@@ -114,7 +114,7 @@ NS_ASSUME_NONNULL_BEGIN
                 return key;
             }
 
-            for (PGPSubKey *subkey in key.publicKey.subKeys) {
+            for (PGPPartialSubKey *subkey in key.publicKey.subKeys) {
                 let subIdentifier = useShortIdentifier ? subkey.keyID.shortKeyString : subkey.keyID.longKeyString;
                 if ([subIdentifier.uppercaseString isEqual:keyIdentifier.uppercaseString]) {
                     return key;
@@ -128,7 +128,7 @@ NS_ASSUME_NONNULL_BEGIN
                 return key;
             }
 
-            for (PGPSubKey *subkey in key.secretKey.subKeys) {
+            for (PGPPartialSubKey *subkey in key.secretKey.subKeys) {
                 let subIdentifier = useShortIdentifier ? subkey.keyID.shortKeyString : subkey.keyID.longKeyString;
                 if ([subIdentifier.uppercaseString isEqual:keyIdentifier.uppercaseString]) {
                     return key;

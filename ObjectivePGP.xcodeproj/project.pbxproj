@@ -42,7 +42,7 @@
 		750F89591F0D6EF100B99726 /* PGPS2K.m in Sources */ = {isa = PBXBuildFile; fileRef = 75DA135D191AE1D6004C9C76 /* PGPS2K.m */; };
 		750F895A1F0D6EF100B99726 /* PGPKeyID.m in Sources */ = {isa = PBXBuildFile; fileRef = 75734BDA191853DF00A54D6E /* PGPKeyID.m */; };
 		750F895B1F0D6EF100B99726 /* PGPUser.m in Sources */ = {isa = PBXBuildFile; fileRef = 7563356C19255C1A00414CCC /* PGPUser.m */; };
-		750F895C1F0D6EF100B99726 /* PGPSubKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 7563356F192582CD00414CCC /* PGPSubKey.m */; };
+		750F895C1F0D6EF100B99726 /* PGPPartialSubKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 7563356F192582CD00414CCC /* PGPPartialSubKey.m */; };
 		750F895D1F0D6EF100B99726 /* PGPPartialKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 750EE3C31922C185009E818E /* PGPPartialKey.m */; };
 		750F895E1F0D6EF100B99726 /* PGPKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 758514EF1EDF3D7100CB313F /* PGPKey.m */; };
 		750F895F1F0D6EF100B99726 /* PGPArmor.m in Sources */ = {isa = PBXBuildFile; fileRef = 755456BF192843E700E5526B /* PGPArmor.m */; };
@@ -84,7 +84,7 @@
 		7537A6CC1F0D739A00892829 /* PGPS2K.h in Headers */ = {isa = PBXBuildFile; fileRef = 75DA135C191AE1D6004C9C76 /* PGPS2K.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7537A6CD1F0D739A00892829 /* PGPKeyID.h in Headers */ = {isa = PBXBuildFile; fileRef = 75734BD9191853DF00A54D6E /* PGPKeyID.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7537A6CE1F0D739A00892829 /* PGPUser.h in Headers */ = {isa = PBXBuildFile; fileRef = 7563356B19255C1A00414CCC /* PGPUser.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		7537A6CF1F0D739A00892829 /* PGPSubKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 7563356E192582CD00414CCC /* PGPSubKey.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7537A6CF1F0D739A00892829 /* PGPPartialSubKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 7563356E192582CD00414CCC /* PGPPartialSubKey.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7537A6D01F0D739A00892829 /* PGPPartialKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 750EE3C21922C185009E818E /* PGPPartialKey.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7537A6D11F0D739A00892829 /* PGPKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 758514EE1EDF3D7100CB313F /* PGPKey.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7537A6D21F0D739A00892829 /* PGPKey+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 75804A241EED159300AC97BF /* PGPKey+Private.h */; };
@@ -203,8 +203,8 @@
 		756299E61915AF0700C5AD3B /* PGPPublicKeyPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPublicKeyPacket.m; sourceTree = "<group>"; };
 		7563356B19255C1A00414CCC /* PGPUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPUser.h; sourceTree = "<group>"; };
 		7563356C19255C1A00414CCC /* PGPUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPUser.m; sourceTree = "<group>"; };
-		7563356E192582CD00414CCC /* PGPSubKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSubKey.h; sourceTree = "<group>"; };
-		7563356F192582CD00414CCC /* PGPSubKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSubKey.m; sourceTree = "<group>"; };
+		7563356E192582CD00414CCC /* PGPPartialSubKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPartialSubKey.h; sourceTree = "<group>"; };
+		7563356F192582CD00414CCC /* PGPPartialSubKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPartialSubKey.m; sourceTree = "<group>"; };
 		7563357219258F1700414CCC /* pubring-test-encrypted.gpg */ = {isa = PBXFileReference; lastKnownFileType = file; path = "pubring-test-encrypted.gpg"; sourceTree = "<group>"; };
 		7563357319258F1700414CCC /* pubring-test-plaintext.gpg */ = {isa = PBXFileReference; lastKnownFileType = file; path = "pubring-test-plaintext.gpg"; sourceTree = "<group>"; };
 		7563357419258F1700414CCC /* secring-test-encrypted.gpg */ = {isa = PBXFileReference; lastKnownFileType = file; path = "secring-test-encrypted.gpg"; sourceTree = "<group>"; };
@@ -417,8 +417,8 @@
 				75734BDA191853DF00A54D6E /* PGPKeyID.m */,
 				7563356B19255C1A00414CCC /* PGPUser.h */,
 				7563356C19255C1A00414CCC /* PGPUser.m */,
-				7563356E192582CD00414CCC /* PGPSubKey.h */,
-				7563356F192582CD00414CCC /* PGPSubKey.m */,
+				7563356E192582CD00414CCC /* PGPPartialSubKey.h */,
+				7563356F192582CD00414CCC /* PGPPartialSubKey.m */,
 				750EE3C21922C185009E818E /* PGPPartialKey.h */,
 				750EE3C31922C185009E818E /* PGPPartialKey.m */,
 				758514EE1EDF3D7100CB313F /* PGPKey.h */,
@@ -611,7 +611,7 @@
 				7537A6CC1F0D739A00892829 /* PGPS2K.h in Headers */,
 				7537A6CD1F0D739A00892829 /* PGPKeyID.h in Headers */,
 				7537A6CE1F0D739A00892829 /* PGPUser.h in Headers */,
-				7537A6CF1F0D739A00892829 /* PGPSubKey.h in Headers */,
+				7537A6CF1F0D739A00892829 /* PGPPartialSubKey.h in Headers */,
 				7537A6D01F0D739A00892829 /* PGPPartialKey.h in Headers */,
 				75616A661F13B5B800336240 /* PGPSignatureSubpacketHeader.h in Headers */,
 				7537A6D11F0D739A00892829 /* PGPKey.h in Headers */,
@@ -773,7 +773,7 @@
 				750F89591F0D6EF100B99726 /* PGPS2K.m in Sources */,
 				750F895A1F0D6EF100B99726 /* PGPKeyID.m in Sources */,
 				750F895B1F0D6EF100B99726 /* PGPUser.m in Sources */,
-				750F895C1F0D6EF100B99726 /* PGPSubKey.m in Sources */,
+				750F895C1F0D6EF100B99726 /* PGPPartialSubKey.m in Sources */,
 				75BF43E31F504D0F004334DE /* PGPKeyGenerator.m in Sources */,
 				75C501E71F1233A500FEC874 /* PGPRSA.m in Sources */,
 				750F895D1F0D6EF100B99726 /* PGPPartialKey.m in Sources */,

@@ -15,7 +15,7 @@
 #import "PGPSecretSubKeyPacket.h"
 #import "PGPSignaturePacket.h"
 #import "PGPSignatureSubpacket.h"
-#import "PGPSubKey.h"
+#import "PGPPartialSubKey.h"
 #import "PGPUser.h"
 #import "PGPUserAttributePacket.h"
 #import "PGPUserAttributeSubpacket.h"
@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithPackets:(NSArray<PGPPacket *> *)packets {
     if ((self = [super init])) {
-        _subKeys = [NSArray<PGPSubKey *> array];
+        _subKeys = [NSArray<PGPPartialSubKey *> array];
         _directSignatures = [NSArray<PGPSignaturePacket *> array];
         _users = [NSArray<PGPUser *> array];
         [self loadPackets:packets];
@@ -56,6 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPSecretKeyPacketTag:
         case PGPSecretSubkeyPacketTag:
             t = PGPPartialKeySecret;
+            break;
         default:
             break;
     }
@@ -72,7 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)loadPackets:(NSArray<PGPPacket *> *)packets {
     // based on packetlist2structure
     PGPKeyID *primaryKeyID;
-    PGPSubKey *subKey;
+    PGPPartialSubKey *subKey;
     PGPUser *user;
 
     for (PGPPacket *packet in packets) {
@@ -101,7 +102,7 @@ NS_ASSUME_NONNULL_BEGIN
             case PGPPublicSubkeyPacketTag:
             case PGPSecretSubkeyPacketTag:
                 user = nil;
-                subKey = [[PGPSubKey alloc] initWithPackets:@[packet]];
+                subKey = [[PGPPartialSubKey alloc] initWithPackets:@[packet]];
                 self.subKeys = [self.subKeys arrayByAddingObject:subKey];
                 break;
             case PGPSignaturePacketTag: {
@@ -174,7 +175,7 @@ NS_ASSUME_NONNULL_BEGIN
         }
     }
 
-    for (PGPSubKey *subKey in self.subKeys) {
+    for (PGPPartialSubKey *subKey in self.subKeys) {
         PGPSignaturePacket *signaturePacket = subKey.bindingSignature;
         if (signaturePacket.canBeUsedToSign) {
             return subKey.primaryKeyPacket;
@@ -198,7 +199,7 @@ NS_ASSUME_NONNULL_BEGIN
         }
     }
 
-    for (PGPSubKey *subKey in self.subKeys) {
+    for (PGPPartialSubKey *subKey in self.subKeys) {
         if ([subKey.keyID isEqual:keyID]) {
             PGPSignaturePacket *signaturePacket = subKey.bindingSignature;
             if (signaturePacket.canBeUsedToSign) {
@@ -222,7 +223,7 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    for (PGPSubKey *subKey in self.subKeys) {
+    for (PGPPartialSubKey *subKey in self.subKeys) {
         let signaturePacket = subKey.bindingSignature;
         if (signaturePacket.canBeUsedToEncrypt) {
             return subKey.primaryKeyPacket;
@@ -255,7 +256,7 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    for (PGPSubKey *subKey in self.subKeys) {
+    for (PGPPartialSubKey *subKey in self.subKeys) {
         let signaturePacket = subKey.bindingSignature;
         if (signaturePacket.canBeUsedToEncrypt && [((PGPSecretKeyPacket *)subKey.primaryKeyPacket).keyID isEqual:keyID]) {
             return PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket);
@@ -284,7 +285,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // decrypt subkeys packets
-    for (PGPSubKey *subKey in self.subKeys) {
+    for (PGPPartialSubKey *subKey in self.subKeys) {
         let subKeySecretPacket = PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket);
         if (subKeySecretPacket) {
             let subKeyDecryptedPacket = [subKeySecretPacket decryptedKeyPacket:passphrase error:error];
@@ -445,7 +446,7 @@ NS_ASSUME_NONNULL_BEGIN
         [arr addObjectsFromArray:[user allPackets]];
     }
 
-    for (PGPSubKey *subKey in self.subKeys) {
+    for (PGPPartialSubKey *subKey in self.subKeys) {
         [arr addObjectsFromArray:[subKey allPackets]];
     }
 
@@ -454,7 +455,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSArray<PGPPacket *> *)allKeyPackets {
     let arr = [NSMutableArray<PGPPacket *> arrayWithObject:self.primaryKeyPacket];
-    for (PGPSubKey *subKey in self.subKeys) {
+    for (PGPPartialSubKey *subKey in self.subKeys) {
         [arr addObject:subKey.primaryKeyPacket];
     }
     return arr;

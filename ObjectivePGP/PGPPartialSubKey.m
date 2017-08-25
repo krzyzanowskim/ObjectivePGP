@@ -1,18 +1,18 @@
 //
-//  PGPSubKey.m
+//  PGPPartialSubKey.m
 //  ObjectivePGP
 //
 //  Created by Marcin Krzyzanowski on 16/05/14.
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import "PGPSubKey.h"
+#import "PGPPartialSubKey.h"
 #import "PGPMacros.h"
 #import "PGPPublicKeyPacket.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@implementation PGPSubKey
+@implementation PGPPartialSubKey
 
 - (instancetype)initWithPackets:(NSArray<PGPPacket *> *)packets {
     if ((self = [super initWithPackets:@[]])) {
