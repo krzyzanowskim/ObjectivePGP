@@ -127,7 +127,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     let publicKeySignaturePacket = [[PGPSignaturePacket alloc] init];
     publicKeySignaturePacket.version = publicKeyPacket.version;
-    publicKeySignaturePacket.type = PGPSignatureGenericCertificationUserIDandPublicKey;
+    publicKeySignaturePacket.type = PGPSignaturePositiveCertificationUserIDandPublicKey;
     publicKeySignaturePacket.publicKeyAlgorithm = publicKeyPacket.publicKeyAlgorithm;
     publicKeySignaturePacket.hashAlgoritm = self.hashAlgorithm;
 
@@ -139,7 +139,6 @@ NS_ASSUME_NONNULL_BEGIN
     let keyFeaturesSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeFeatures andValue:@[@(PGPFeatureModificationDetection)]];
     let keyServerPreferencesSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeKeyServerPreference andValue:@[@(PGPKeyServerPreferenceNoModify)]];
     let issuerKeyIDSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeIssuerKeyID andValue:publicKeyPacket.keyID];
-    let primaryUserIDSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypePrimaryUserID andValue:@(YES)];
 
     publicKeySignaturePacket.hashedSubpackets = @[creationTimeSubpacket,
                                                   keyFlagsSubpacket,
@@ -147,21 +146,20 @@ NS_ASSUME_NONNULL_BEGIN
                                                   preferredSymetricAlgorithmsSubpacket,
                                                   preferredPreferredCompressionSubpacket,
                                                   keyFeaturesSubpacket,
-                                                  keyServerPreferencesSubpacket,
-                                                  primaryUserIDSubpacket];
+                                                  keyServerPreferencesSubpacket];
     publicKeySignaturePacket.unhashedSubpackets = @[issuerKeyIDSubpacket];
 
     // self sign the signature
     NSError *error;
     let userID = key.publicKey.users.firstObject.userID;
-    if (![publicKeySignaturePacket signData:nil usingKey:key passphrase:nil userID:userID error:&error]) {
+    if (![publicKeySignaturePacket signData:nil withKey:key subKey:nil passphrase:nil userID:userID error:&error]) {
         return nil;
     }
 
     return publicKeySignaturePacket;
 }
 
-- (nullable PGPSignaturePacket *)buildPublicSignaturePacketForSubKey:(PGPKey *)subKey {
+- (nullable PGPSignaturePacket *)buildPublicSignaturePacketForSubKey:(PGPKey *)subKey parentKey:(PGPKey *)parentKey {
     let publicSubKeyPacket = PGPCast(subKey.publicKey.primaryKeyPacket, PGPPublicSubKeyPacket);
 
     let publicSubKeySignaturePacket = [[PGPSignaturePacket alloc] init];
@@ -172,16 +170,15 @@ NS_ASSUME_NONNULL_BEGIN
 
     let creationTimeSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeSignatureCreationTime andValue:NSDate.date];
     let keyFlagsSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeKeyFlags andValue:@[@(PGPSignatureFlagAllowEncryptCommunications), @(PGPSignatureFlagAllowEncryptStorage)]];
-    let preferredHashAlgorithmsSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypePreferredHashAlgorithm andValue:@[@(PGPHashSHA256), @(PGPHashSHA384), @(PGPHashSHA512)]];
-    let issuerKeyIDSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeIssuerKeyID andValue:publicSubKeyPacket.keyID];
+    let issuerKeyIDSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeIssuerKeyID andValue:parentKey.signingSecretKey.keyID];
 
-    publicSubKeySignaturePacket.hashedSubpackets = @[creationTimeSubpacket, keyFlagsSubpacket, preferredHashAlgorithmsSubpacket];
+    publicSubKeySignaturePacket.hashedSubpackets = @[creationTimeSubpacket, keyFlagsSubpacket];
     publicSubKeySignaturePacket.unhashedSubpackets = @[issuerKeyIDSubpacket];
 
     // self sign the signature
     NSError *error;
-    let userID = subKey.publicKey.users.firstObject.userID;
-    if (![publicSubKeySignaturePacket signData:nil usingKey:subKey passphrase:nil userID:userID error:&error]) {
+    let userID = parentKey.publicKey.users.firstObject.userID;
+    if (![publicSubKeySignaturePacket signData:nil withKey:parentKey subKey:subKey passphrase:nil userID:userID error:&error]) {
         return nil;
     }
 
@@ -198,7 +195,7 @@ NS_ASSUME_NONNULL_BEGIN
     key.secretKey.users = @[user];
 
     let publicKeySignaturePacket = [self buildPublicSignaturePacketFor:key];
-    let publicSubKeySignaturePacket = [self buildPublicSignaturePacketForSubKey:subKey];
+    let publicSubKeySignaturePacket = [self buildPublicSignaturePacketForSubKey:subKey parentKey:key];
 
     NSError *error;
     let outputData = [NSMutableData data];
@@ -211,8 +208,8 @@ NS_ASSUME_NONNULL_BEGIN
     [outputData appendData:[partialSubKey export:&error]];
     [outputData appendData:[publicSubKeySignaturePacket export:&error]];
 
-    //    [outputData appendData:[key.secretKey.primaryKeyPacket export:&error]];
-    //    [outputData appendData:[userIDPacket export:&error]];
+//    [outputData appendData:[key.secretKey.primaryKeyPacket export:&error]];
+//    [outputData appendData:[userIDPacket export:&error]];
     //    [outputData appendData:[subKey.secretKey.primaryKeyPacket export:&error]];
 
     [outputData writeToFile:@"/Users/marcinkrzyzanowski/Devel/ObjectivePGP/test-key.dat" atomically:YES];

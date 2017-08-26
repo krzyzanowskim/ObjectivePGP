@@ -76,7 +76,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @return Fingerprint data
  */
 - (PGPFingerprint *)fingerprint {
-    return [[PGPFingerprint alloc] initWithData:[self exportPublicPacketOldStyle]];
+    return [[PGPFingerprint alloc] initWithData:[self exportKeyPacketOldStyle]];
 }
 
 #pragma mark - Parse data
@@ -180,7 +180,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return public key data starting with version octet
  */
-- (NSData *)buildPublicKeyBodyData:(BOOL)forceV4 {
+- (NSData *)buildKeyBodyData:(BOOL)forceV4 {
     let data = [NSMutableData dataWithCapacity:128];
     [data appendBytes:&_version length:1];
 
@@ -209,17 +209,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Old-style packet header for a key packet with two-octet length.
 // Old but used by fingerprint and with signing
-- (NSData *)exportPublicPacketOldStyle {
+- (NSData *)exportKeyPacketOldStyle {
     let data = [NSMutableData data];
 
-    let publicKeyData = [self buildPublicKeyBodyData:NO];
+    let keyData = [self buildKeyBodyData:NO];
 
-    NSUInteger length = publicKeyData.length;
+    NSUInteger length = keyData.length;
     UInt8 upper = (UInt8)(length >> 8);
     UInt8 lower = length & 0xff;
     UInt8 headWithLength[3] = {0x99, upper, lower};
     [data appendBytes:&headWithLength length:3];
-    [data appendData:publicKeyData];
+    [data appendData:keyData];
     return data;
 }
 
@@ -234,13 +234,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
     return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
-        return [self buildPublicKeyBodyData:NO];
+        return [self buildKeyBodyData:NO];
     }];
 
     //TODO: to be removed when verified
     //    let data = [NSMutableData data];
     //
-    //    let bodyData = [self buildPublicKeyBodyData:NO];
+    //    let bodyData = [self buildKeyBodyData:NO];
     //    if (!self.bodyData) {
     //        self.bodyData = bodyData;
     //    }

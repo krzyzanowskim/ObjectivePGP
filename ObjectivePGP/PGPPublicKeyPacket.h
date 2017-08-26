@@ -30,8 +30,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) PGPFingerprint *fingerprint;
 @property (nonatomic, readonly) PGPKeyID *keyID;
 
-- (NSData *)exportPublicPacketOldStyle;
-- (NSData *)buildPublicKeyBodyData:(BOOL)forceV4;
+- (NSData *)exportKeyPacketOldStyle;
+- (NSData *)buildKeyBodyData:(BOOL)forceV4;
 
 - (nullable PGPMPI *)publicMPI:(NSString *)identifier;
 - (nullable NSData *)encryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm;

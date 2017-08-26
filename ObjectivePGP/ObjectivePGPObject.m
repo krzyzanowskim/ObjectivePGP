@@ -482,7 +482,7 @@ NS_ASSUME_NONNULL_BEGIN
     PGPAssertClass(key, PGPKey);
 
     let signaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureBinaryDocument hashAlgorithm:preferedHashAlgorithm];
-    if (![signaturePacket signData:dataToSign usingKey:key passphrase:passphrase userID:nil error:error]) {
+    if (![signaturePacket signData:dataToSign withKey:key subKey:nil passphrase:passphrase userID:nil error:error]) {
         PGPLogDebug(@"Can't sign data");
         return nil;
     }
@@ -608,7 +608,7 @@ NS_ASSUME_NONNULL_BEGIN
     if (!signaturePacket) {
         return NO;
     }
-    BOOL verified = [signaturePacket verifyData:signedData withKey:key.publicKey userID:nil error:error];
+    BOOL verified = [signaturePacket verifyData:signedData withKey:key userID:nil error:error];
 
     return verified;
 }

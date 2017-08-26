@@ -373,14 +373,14 @@
 - (nullable NSData *)export:(NSError *__autoreleasing _Nullable *)error {
     return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
         let secretKeyPacketData = [NSMutableData data];
-        [secretKeyPacketData appendData:[super buildPublicKeyBodyData:YES]];
+        [secretKeyPacketData appendData:[super buildKeyBodyData:YES]];
         [secretKeyPacketData appendData:[self buildSecretKeyDataAndForceV4:YES]];
         return  secretKeyPacketData;
     }];
 
     //TODO: to be removed when verified
     //    let data = [NSMutableData data];
-    //    let publicKeyData = [super buildPublicKeyBodyData:YES];
+    //    let publicKeyData = [super buildKeyBodyData:YES];
     //
     //    let secretKeyPacketData = [NSMutableData data];
     //    [secretKeyPacketData appendData:publicKeyData];

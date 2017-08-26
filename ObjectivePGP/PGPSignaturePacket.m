@@ -236,16 +236,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Verify
 
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey error:(NSError *__autoreleasing *)error {
-    return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:nil error:error];
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey error:(NSError *__autoreleasing *)error {
+    return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey.publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:nil error:error];
 }
 
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error {
-    return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:userID error:error];
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error {
+    return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey.publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:userID error:error];
 }
 
 // Opposite to sign, with readed data (not produced)
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error {
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error {
     // no signing packet was found, this we have no valid signature
     PGPAssertClass(signingKeyPacket, PGPPublicKeyPacket);
 
@@ -261,7 +261,7 @@ NS_ASSUME_NONNULL_BEGIN
     // 5.2.4.  Computing Signatures
 
     // build toSignData, toSign
-    let toSignData = [self buildDataToSignForType:self.type inputData:inputData key:publicKey keyPacket:signingKeyPacket userID:userID error:error];
+    let toSignData = [self buildDataToSignForType:self.type inputData:inputData key:publicKey subKey:nil keyPacket:signingKeyPacket userID:userID error:error];
     if (!toSignData) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Invalid signature." }];
@@ -327,16 +327,12 @@ NS_ASSUME_NONNULL_BEGIN
 // 5.2.4.  Computing Signatures
 // http://tools.ietf.org/html/rfc4880#section-5.2.4
 // @see https://github.com/singpolyma/openpgp-spec/blob/master/key-signatures
-- (BOOL)signData:(NSData *)inputData secretKey:(PGPPartialKey *)secretKey error:(NSError *__autoreleasing *)error {
-    let key = [[PGPKey alloc] initWithSecretKey:secretKey publicKey:nil];
-    return [self signData:inputData usingKey:key passphrase:nil userID:nil error:error];
-}
 
 /// Sign the signature with the given key.
 /// Set signatureMPIArray and updates signed hash.
 ///
 /// Update sign related values. This method mutate the signature.
-- (BOOL)signData:(nullable NSData *)inputData usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error {
+- (BOOL)signData:(nullable NSData *)inputData withKey:(PGPKey *)key subKey:(nullable PGPKey *)subKey passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error {
     PGPAssertClass(key, PGPKey);
 
     if (!key.secretKey) {
@@ -387,7 +383,7 @@ NS_ASSUME_NONNULL_BEGIN
     let _Nullable trailerData = [self calculateTrailerFor:signedPartData];
 
     // build toSignData, toSign
-    let toSignData = [self buildDataToSignForType:self.type inputData:inputData key:key.secretKey keyPacket:signingKeyPacket userID:userID error:error];
+    let toSignData = [self buildDataToSignForType:self.type inputData:inputData key:key subKey:subKey keyPacket:signingKeyPacket userID:userID error:error];
     // toHash = toSignData + signedPartData + trailerData;
     let toHashData = [NSMutableData dataWithData:toSignData];
     [toHashData appendData:signedPartData];
@@ -438,7 +434,7 @@ NS_ASSUME_NONNULL_BEGIN
     return YES;
 }
 
-- (nullable NSData *)buildDataToSignForType:(PGPSignatureType)type inputData:(nullable NSData *)inputData key:(nullable PGPPartialKey *)key keyPacket:(nullable PGPPublicKeyPacket *)keyPacket userID:(nullable NSString *)userID error:(NSError *__autoreleasing _Nullable *)error {
+- (nullable NSData *)buildDataToSignForType:(PGPSignatureType)type inputData:(nullable NSData *)inputData key:(nullable PGPKey *)key subKey:(nullable PGPKey *)subKey keyPacket:(nullable PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError *__autoreleasing _Nullable *)error {
     let toSignData = [NSMutableData data];
     switch (type) {
         case PGPSignatureBinaryDocument:
@@ -450,13 +446,30 @@ NS_ASSUME_NONNULL_BEGIN
             }
             [toSignData appendData:inputData];
         } break;
+        case PGPSignatureSubkeyBinding: // 0x18
+        case PGPSignaturePrimaryKeyBinding: { // 0x19
+            if (!signingKeyPacket) {
+                PGPLogError(@"Invalid paramaters");
+                if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing key packet." }]; }
+                return nil;
+            }
+
+            let signingKeyData = [signingKeyPacket exportKeyPacketOldStyle];
+            [toSignData appendData:signingKeyData];
+
+            // A subkey binding signature (type 0x18) or primary key binding signature (type 0x19) then hashes
+            // the subkey using the same format as the main key (also using 0x99 as the first octet).
+            let signingSubKeyData = [(PGPPublicKeyPacket *)subKey.publicKey.primaryKeyPacket exportKeyPacketOldStyle];
+            [toSignData appendData:signingSubKeyData];
+        }
+            break;
         case PGPSignatureGenericCertificationUserIDandPublicKey: // 0x10
         case PGPSignaturePersonalCertificationUserIDandPublicKey: // 0x11
         case PGPSignatureCasualCertificationUserIDandPublicKey: // 0x12
         case PGPSignaturePositiveCertificationUserIDandPublicKey: // 0x13
         case PGPSignatureCertificationRevocation: // 0x28
         {
-            if (!keyPacket) {
+            if (!signingKeyPacket) {
                 PGPLogError(@"Invalid paramaters");
                 if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing key packet." }]; }
                 return nil;
@@ -468,14 +481,15 @@ NS_ASSUME_NONNULL_BEGIN
             // of the key packet. (Note that this is an old-style packet header for
             // a key packet with two-octet length.)
 
-            let keyData = [keyPacket exportPublicPacketOldStyle];
-            [toSignData appendData:keyData];
+            let signingKeyData = [signingKeyPacket exportKeyPacketOldStyle];
+            [toSignData appendData:signingKeyData];
 
-            if (key) {
-                NSAssert(key.users.count > 0, @"Need at least one user for the key.");
+            if (key.secretKey) {
+                let secretPartialKey = key.secretKey;
+                NSAssert(secretPartialKey.users.count > 0, @"Need at least one user for the key.");
 
                 BOOL userIsValid = NO;
-                for (PGPUser *user in key.users) {
+                for (PGPUser *user in secretPartialKey.users) {
                     if ([user.userID isEqualToString:userID]) {
                         userIsValid = YES;
                     }
@@ -508,7 +522,6 @@ NS_ASSUME_NONNULL_BEGIN
             //[data appendBytes:&userAttributeConstant length:sizeof(userAttributeConstant)];
 
         } break;
-
         default:
             if (inputData) {
                 [toSignData appendData:inputData];
