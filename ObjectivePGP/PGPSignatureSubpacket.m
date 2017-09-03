@@ -9,13 +9,14 @@
 #import "PGPSignatureSubpacket.h"
 #import "PGPSignatureSubpacket+Private.h"
 #import "PGPSignatureSubpacketCreationTime.h"
+#import "PGPSignatureSubpacketHeader.h"
 #import "PGPCompressedPacket.h"
 #import "PGPKeyID.h"
 #import "PGPPacket.h"
 #import "PGPPacket+Private.h"
 
 #import "PGPLogging.h"
-#import "PGPMacros.h"
+#import "PGPMacros+Private.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

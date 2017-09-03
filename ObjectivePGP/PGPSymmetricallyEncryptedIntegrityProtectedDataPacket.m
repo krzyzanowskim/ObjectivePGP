@@ -17,6 +17,8 @@
 #import "PGPPartialKey.h"
 #import "PGPRSA.h"
 #import "PGPSecretKeyPacket.h"
+#import "PGPMacros+Private.h"
+#import "PGPFoundation.h"
 
 #import <CommonCrypto/CommonCrypto.h>
 #import <CommonCrypto/CommonCryptor.h>

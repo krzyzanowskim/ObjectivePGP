@@ -9,6 +9,7 @@
 #import "NSData+PGPUtils.h"
 #import "PGPCryptoHash.h"
 #import "PGPCryptoUtils.h"
+#import "PGPMacros+Private.h"
 
 #import <CommonCrypto/CommonCrypto.h>
 

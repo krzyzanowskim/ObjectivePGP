@@ -24,7 +24,7 @@
 #import "PGPUserIDPacket.h"
 
 #import "PGPLogging.h"
-#import "PGPMacros.h"
+#import "PGPMacros+Private.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

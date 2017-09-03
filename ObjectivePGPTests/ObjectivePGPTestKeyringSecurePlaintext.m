@@ -11,6 +11,7 @@
 #import "PGPSecretKeyPacket.h"
 #import "PGPSignaturePacket.h"
 #import "PGPUser.h"
+#import "PGPMacros+Private.h"
 #import <XCTest/XCTest.h>
 
 @interface ObjectivePGPTestKeyringSecurePlaintext : XCTestCase

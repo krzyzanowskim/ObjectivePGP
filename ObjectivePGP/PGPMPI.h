@@ -6,13 +6,12 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import "PGPBigNum.h"
-#import "PGPMacros.h"
+#import <ObjectivePGP/PGPBigNum.h>
+#import <ObjectivePGP/PGPMacros.h>
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define PGPMPIKeyType NSString
 OBJC_EXTERN NSString * const PGPMPI_N;
 OBJC_EXTERN NSString * const PGPMPI_E;
 OBJC_EXTERN NSString * const PGPMPI_P;

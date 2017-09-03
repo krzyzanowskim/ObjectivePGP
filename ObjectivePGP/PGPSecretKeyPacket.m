@@ -17,7 +17,7 @@
 #import "PGPTypes.h"
 
 #import "PGPLogging.h"
-#import "PGPMacros.h"
+#import "PGPMacros+Private.h"
 
 #import "NSData+PGPUtils.h"
 #import "PGPCryptoCFB.h"

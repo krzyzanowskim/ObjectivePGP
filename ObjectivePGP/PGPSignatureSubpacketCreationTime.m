@@ -10,6 +10,7 @@
 #import "NSData+PGPUtils.h"
 #import "PGPPacket.h"
 #import "PGPPacket+Private.h"
+#import "PGPMacros+Private.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

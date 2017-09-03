@@ -8,8 +8,7 @@
 
 #import "PGPLiteralPacket.h"
 #import "PGPTypes.h"
-
-#import "PGPMacros.h"
+#import "PGPMacros+Private.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

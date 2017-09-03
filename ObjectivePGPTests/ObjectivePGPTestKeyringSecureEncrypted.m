@@ -7,6 +7,7 @@
 //
 
 #import <ObjectivePGP/ObjectivePGP.h>
+#import "PGPMacros+Private.h"
 #import <XCTest/XCTest.h>
 
 @interface ObjectivePGPTestKeyringSecureEncrypted : XCTestCase

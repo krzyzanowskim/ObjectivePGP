@@ -11,7 +11,7 @@
 #import "NSData+PGPUtils.h"
 
 #import "PGPLogging.h"
-#import "PGPMacros.h"
+#import "PGPMacros+Private.h"
 
 const UInt32 PGPUnknownLength = UINT32_MAX;
 

@@ -8,9 +8,9 @@
 //  5.2.3.4.  Signature Creation Time
 //  Signature Creation Time MUST be present in the hashed area.
 
-#import "PGPTypes.h"
-#import "PGPMacros.h"
-#import "PGPExportableProtocol.h"
+#import <ObjectivePGP/PGPTypes.h>
+#import <ObjectivePGP/PGPMacros.h>
+#import <ObjectivePGP/PGPExportableProtocol.h>
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN

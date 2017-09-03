@@ -15,7 +15,7 @@
 #import "PGPBigNum+Private.h"
 
 #import "PGPLogging.h"
-#import "PGPMacros.h"
+#import "PGPMacros+Private.h"
 
 #import <openssl/err.h>
 #import <openssl/ssl.h>

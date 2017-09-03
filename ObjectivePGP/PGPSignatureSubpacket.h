@@ -6,12 +6,13 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import "PGPTypes.h"
-#import "PGPMacros.h"
-#import "PGPSignatureSubpacketHeader.h"
+#import <ObjectivePGP/PGPTypes.h>
+#import <ObjectivePGP/PGPMacros.h>
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
+
+@class PGPSignatureSubpacketHeader;
 
 @interface PGPSignatureSubpacket : NSObject
 

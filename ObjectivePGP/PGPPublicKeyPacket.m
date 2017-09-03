@@ -12,6 +12,7 @@
 #import "PGPMPI.h"
 #import "PGPRSA.h"
 #import "PGPTypes.h"
+#import "PGPMacros+Private.h"
 
 #import <CommonCrypto/CommonCrypto.h>
 #import <CommonCrypto/CommonCryptor.h>

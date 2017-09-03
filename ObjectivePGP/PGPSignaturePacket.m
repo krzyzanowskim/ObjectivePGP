@@ -19,11 +19,12 @@
 #import "PGPSecretKeyPacket.h"
 #import "PGPSignatureSubpacket.h"
 #import "PGPSignatureSubpacket+Private.h"
+#import "PGPSignatureSubpacketHeader.h"
 #import "PGPUser.h"
 #import "PGPUserIDPacket.h"
 
 #import "PGPLogging.h"
-#import "PGPMacros.h"
+#import "PGPMacros+Private.h"
 
 #import <openssl/bn.h>
 #import <openssl/dsa.h>

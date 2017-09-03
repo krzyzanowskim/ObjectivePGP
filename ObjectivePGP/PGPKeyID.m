@@ -11,6 +11,8 @@
 
 #import "PGPKeyID.h"
 #import "PGPMacros.h"
+#import "PGPFingerprint.h"
+#import "PGPFoundation.h"
 
 @implementation PGPKeyID
 

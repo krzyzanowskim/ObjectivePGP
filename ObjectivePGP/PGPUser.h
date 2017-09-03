@@ -6,9 +6,8 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import "PGPFoundation.h"
-#import "PGPMacros.h"
-#import "PGPPacket.h"
+#import <ObjectivePGP/PGPMacros.h>
+#import <ObjectivePGP/PGPPacket.h>
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN

@@ -9,7 +9,7 @@
 #import "PGPCryptoHash.h"
 
 #import "PGPLogging.h"
-#import "PGPMacros.h"
+#import "PGPMacros+Private.h"
 
 #import <CommonCrypto/CommonCrypto.h>
 #import <Foundation/Foundation.h>

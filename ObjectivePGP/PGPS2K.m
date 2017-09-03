@@ -11,7 +11,7 @@
 #import "PGPS2K.h"
 
 #import "PGPLogging.h"
-#import "PGPMacros.h"
+#import "PGPMacros+Private.h"
 
 #import <CommonCrypto/CommonCrypto.h>
 #import <CommonCrypto/CommonDigest.h>

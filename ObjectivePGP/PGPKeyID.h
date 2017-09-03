@@ -6,10 +6,10 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import "PGPFingerprint.h"
-#import "PGPFoundation.h"
-#import "PGPMacros.h"
+#import <ObjectivePGP/PGPMacros.h>
 #import <Foundation/Foundation.h>
+
+@class PGPFingerprint;
 
 @interface PGPKeyID : NSObject
 

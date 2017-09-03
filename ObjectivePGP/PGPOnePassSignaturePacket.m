@@ -8,6 +8,7 @@
 
 #import "PGPOnePassSignaturePacket.h"
 #import "PGPKeyID.h"
+#import "PGPMacros+Private.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -10,6 +10,8 @@
 #import "PGPPacket+Private.h"
 #import "PGPMacros.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface PGPUserIDPacket ()
 
 @property (nonatomic, copy, readwrite) NSString *userID;
@@ -20,7 +22,7 @@
 
 - (instancetype)initWithUserID:(NSString *)userID {
     if ((self = [super init])) {
-        _userID = userID;
+        _userID = [userID copy];
     }
     return self;
 }
@@ -49,3 +51,5 @@
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

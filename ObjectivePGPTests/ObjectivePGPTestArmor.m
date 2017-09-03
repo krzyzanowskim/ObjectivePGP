@@ -7,6 +7,7 @@
 //
 
 #import <ObjectivePGP/ObjectivePGP.h>
+#import "PGPMacros+Private.h"
 #import <XCTest/XCTest.h>
 
 @interface ObjectivePGPTestArmor : XCTestCase
@@ -47,14 +48,14 @@
 - (void)testMultipleKeys {
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *path = [bundle pathForResource:@"multiple-keys" ofType:@"asc"];
-    let keys = [self.oPGP importKeysFromFile:path];
+    NSSet<PGPKey *> *keys = [self.oPGP importKeysFromFile:path];
     NSAssert(keys.count == 3, @"Keys not imported properly");
 }
 
 - (void)testArmorPublicKey {
     [self.oPGP importKeysFromFile:self.pubKeyringPath];
 
-    let key = self.oPGP.keys.anyObject;
+    PGPKey *key = self.oPGP.keys.anyObject;
 
     NSError *exportError = nil;
     NSData *keyData = [key.publicKey export:&exportError];

@@ -10,7 +10,6 @@
 #import "PGPKey+Private.h"
 #import "PGPPartialSubKey.h"
 #import "PGPLogging.h"
-#import "PGPMacros.h"
 
 #import "PGPSecretKeyPacket.h"
 #import "PGPSecretKeyPacket+Private.h"
@@ -19,7 +18,7 @@
 #import "PGPRSA.h"
 #import "PGPDSA.h"
 
-#import "PGPMacros.h"
+#import "PGPMacros+Private.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

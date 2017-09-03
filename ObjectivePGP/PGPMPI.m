@@ -12,6 +12,7 @@
 #import "PGPMPI.h"
 #import "PGPBigNum+Private.h"
 #import "PGPLogging.h"
+#import "PGPMacros+Private.h"
 #import <openssl/bn.h>
 
 NS_ASSUME_NONNULL_BEGIN

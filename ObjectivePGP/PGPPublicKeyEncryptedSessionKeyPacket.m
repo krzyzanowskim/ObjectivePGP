@@ -17,6 +17,7 @@
 #import "PGPPublicKeyPacket.h"
 #import "PGPRSA.h"
 #import "PGPSecretKeyPacket.h"
+#import "PGPMacros+Private.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
