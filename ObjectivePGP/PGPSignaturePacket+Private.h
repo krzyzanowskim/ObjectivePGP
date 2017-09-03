@@ -15,6 +15,10 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readwrite) NSArray<PGPSignatureSubpacket *> *hashedSubpackets;
 @property (nonatomic, copy, readwrite) NSArray<PGPSignatureSubpacket *> *unhashedSubpackets;
 
+PGP_EMPTY_INIT_UNAVAILABLE
+
++ (PGPSignaturePacket *)signaturePacket:(PGPSignatureType)type hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm;
+
 - (nullable NSData *)buildDataToSignForType:(PGPSignatureType)type inputData:(nullable NSData *)inputData key:(nullable PGPKey *)key subKey:(nullable PGPKey *)subKey keyPacket:(nullable PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError *__autoreleasing _Nullable *)error;
 
 - (nullable PGPMPI *)signatureMPI:(NSString *)identifier;

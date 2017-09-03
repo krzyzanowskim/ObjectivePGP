@@ -49,8 +49,17 @@
 
 - (void)testGenerateNewKey {
     let keyGenerator = [[PGPKeyGenerator alloc] init];
-    let keyData = [keyGenerator generateFor:@"Marcin <marcin@example.com>"];
-    [self.oPGP importKeysFromData:keyData];
+    let key = [keyGenerator generateFor:@"Marcin <marcin@example.com>"];
+    XCTAssertNotNil(key);
+
+    // test sign
+    let data = [@"objectivepgp" dataUsingEncoding:NSUTF8StringEncoding];
+
+    let sign = [self.oPGP signData:data usingKey:key passphrase:nil detached:YES error:nil];
+    XCTAssertNotNil(sign);
+
+    BOOL verified = [self.oPGP verifyData:data withSignature:sign usingKey:key error:nil];
+    XCTAssertTrue(verified);
 }
 
 - (void)testNotDuplicates {

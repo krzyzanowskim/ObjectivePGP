@@ -35,13 +35,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PGPSignaturePacket ()
 
+- (instancetype)init;
+
 @end
 
 @implementation PGPSignaturePacket
 
 - (instancetype)init {
     if (self = [super init]) {
-        _version = 4;
+        _version = 0x4;
         _hashedSubpackets = [NSArray<PGPSignatureSubpacket *> array];
         _unhashedSubpackets = [NSArray<PGPSignatureSubpacket *> array];
         _signatureMPIArray = [NSArray<PGPMPI *> array];

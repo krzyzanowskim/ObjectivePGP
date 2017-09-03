@@ -225,7 +225,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Generate
 
-+ (nullable PGPKeyMaterial *)generateNewKeyMPIArray:(const int)bits algorithm:(PGPPublicKeyAlgorithm)algorithm {
++ (nullable PGPKeyMaterial *)generateNewKeyMPIArray:(const int)bits {
     BN_CTX *ctx = BN_CTX_new();
     RSA *rsa = RSA_new();
     BIGNUM *e = BN_new();

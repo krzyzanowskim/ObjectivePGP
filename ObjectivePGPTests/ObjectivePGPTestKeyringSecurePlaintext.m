@@ -130,10 +130,11 @@
 
     let keyToSign = [self.oPGP findKeyForIdentifier:@"25A233C2952E4E8B"];
     XCTAssertNotNil(keyToSign);
+    let dataToSign = [NSData dataWithContentsOfFile:fileToSignPath];
 
     // detached signature
     NSError *signatureError = nil;
-    NSData *signatureData = [self.oPGP signData:[NSData dataWithContentsOfFile:fileToSignPath] usingKey:keyToSign passphrase:nil detached:YES error:&signatureError];
+    NSData *signatureData = [self.oPGP signData:dataToSign usingKey:keyToSign passphrase:nil detached:YES error:&signatureError];
     XCTAssertNotNil(signatureData);
     XCTAssertNil(signatureError);
 
@@ -144,12 +145,12 @@
     // Verify
     let keyToValidateSign = [self.oPGP findKeyForIdentifier:@"25A233C2952E4E8B"];
     NSError *verifyError = nil;
-    status = [self.oPGP verifyData:[NSData dataWithContentsOfFile:fileToSignPath] withSignature:signatureData usingKey:keyToValidateSign error:&verifyError];
+    status = [self.oPGP verifyData:dataToSign withSignature:signatureData usingKey:keyToValidateSign error:&verifyError];
     XCTAssertTrue(status);
     XCTAssertNil(verifyError);
 
     // Signed data
-    NSData *signedData = [self.oPGP signData:[NSData dataWithContentsOfFile:fileToSignPath] usingKey:keyToSign passphrase:nil detached:NO error:&signatureError];
+    NSData *signedData = [self.oPGP signData:dataToSign usingKey:keyToSign passphrase:nil detached:NO error:&signatureError];
     XCTAssertNotNil(signedData);
     XCTAssertNil(signatureError);
 

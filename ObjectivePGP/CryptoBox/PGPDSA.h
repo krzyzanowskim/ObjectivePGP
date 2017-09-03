@@ -24,7 +24,7 @@ PGP_EMPTY_INIT_UNAVAILABLE;
 + (NSArray<PGPMPI *> *)sign:(NSData *)toSign key:(PGPKey *)key;
 
 // new keys
-+ (nullable PGPKeyMaterial *)generateNewKeyMPIArray:(const int)bits algorithm:(PGPPublicKeyAlgorithm)algorithm;
++ (nullable PGPKeyMaterial *)generateNewKeyMPIArray:(const int)bits;
 
 @end
 

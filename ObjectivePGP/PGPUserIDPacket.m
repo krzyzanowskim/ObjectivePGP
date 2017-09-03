@@ -10,6 +10,12 @@
 #import "PGPPacket+Private.h"
 #import "PGPMacros.h"
 
+@interface PGPUserIDPacket ()
+
+@property (nonatomic, copy, readwrite) NSString *userID;
+
+@end
+
 @implementation PGPUserIDPacket
 
 - (instancetype)initWithUserID:(NSString *)userID {
@@ -30,7 +36,7 @@
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
 
-    _userID = [[NSString alloc] initWithData:packetBody encoding:NSUTF8StringEncoding];
+    self.userID = [[NSString alloc] initWithData:packetBody encoding:NSUTF8StringEncoding];
     position = position + packetBody.length;
 
     return position;

@@ -7,12 +7,22 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <ObjectivePGP/PGPTypes.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class PGPKey;
+
 @interface PGPKeyGenerator : NSObject
 
-- (NSData *)generateFor:(NSString *)userID;
+@property (nonatomic) int keyBitsLength;
+@property (nonatomic) PGPPublicKeyAlgorithm keyAlgorithm;
+@property (nonatomic) PGPSymmetricAlgorithm symmetricAlgorithm;
+@property (nonatomic) PGPHashAlgorithm hashAlgorithm;
+@property (nonatomic) UInt8 version;
+@property (nonatomic) NSDate *createDate;
+
+- (PGPKey *)generateFor:(NSString *)userID;
 
 @end
 

@@ -53,6 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (void)parseSubpacketBody:(NSData *)packetBodyData {
     PGPLogDebug(@"parseSubpacketBody %@, body %@",@(self.type), packetBodyData);
+
     switch (self.type & 0x7F) {
         case PGPSignatureSubpacketTypeSignatureCreationTime: // NSDate
         {
