@@ -18,6 +18,7 @@ typedef NS_ENUM(NSUInteger, PGPArmorType) {
     PGPArmorCleartextSignedMessage = 7, // TODO: -----BEGIN PGP SIGNED MESSAGE-----
 };
 
+/// ASCII Armor message.
 @interface PGPArmor : NSObject
 
 + (NSData *)armoredData:(NSData *)dataToArmor as:(PGPArmorType)armorType part:(NSUInteger)part of:(NSUInteger)ofParts;

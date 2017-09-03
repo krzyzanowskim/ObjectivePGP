@@ -61,6 +61,13 @@
 
     BOOL verified = [self.oPGP verifyData:data withSignature:sign usingKey:key error:nil];
     XCTAssertTrue(verified);
+
+    // test export
+    let exportedKeyData = [key export:PGPPartialKeyPublic error:nil];
+    XCTAssertNotNil(exportedKeyData);
+    let importedKeys = [self.oPGP importKeysFromData:exportedKeyData];
+    XCTAssert(importedKeys.count == 1);
+    XCTAssertEqualObjects(importedKeys.anyObject.keyID, key.keyID);
 }
 
 - (void)testNotDuplicates {

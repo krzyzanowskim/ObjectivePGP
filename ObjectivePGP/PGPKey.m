@@ -10,6 +10,7 @@
 #import "PGPKey+Private.h"
 #import "PGPPartialSubKey.h"
 #import "PGPLogging.h"
+#import "PGPMacros+Private.h"
 
 #import "PGPSecretKeyPacket.h"
 #import "PGPSecretKeyPacket+Private.h"
@@ -90,22 +91,54 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - PGPExportable
 
+/// Export public and secret keys together.
 - (nullable NSData *)export:(NSError *__autoreleasing _Nullable *)error {
-    NSMutableData *exportData = [NSMutableData data];
+    let exportData = [NSMutableData data];
     if (self.publicKey) {
-        let exported = [self.publicKey export:error];
-        if (exported) {
-            [exportData appendData:exported];
-        }
+        [exportData appendData:[self export:PGPPartialKeyPublic error:error]];
     }
 
     if (self.secretKey) {
-        let exported = [self.secretKey export:error];
-        if (exported) {
-            [exportData appendData:exported];
-        }
+        [exportData appendData:[self export:PGPPartialKeySecret error:error]];
     }
+
     return exportData;
+}
+
+- (nullable NSData *)export:(PGPPartialKeyType)keyType error:(NSError *__autoreleasing _Nullable *)error {
+    switch (keyType) {
+        case PGPPartialKeyPublic: {
+            if (!self.publicKey) {
+                return nil;
+            }
+
+            let exported = [self.publicKey export:error];
+            if (exported) {
+                return [PGPArmor armoredData:exported as:PGPArmorTypePublicKey];
+            }
+        }
+        break;
+        case PGPPartialKeySecret: {
+            if (!self.secretKey) {
+                return nil;
+            }
+
+            let exported = [self.secretKey export:error];
+            if (exported) {
+                return [PGPArmor armoredData:exported as:PGPArmorTypeSecretKey];
+            }
+        }
+        break;
+        default: {
+            PGPLogError(@"Can't export unknown key type: %@", self);
+            if (error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Can't export unknown key type"}];
+            }
+        }
+        break;
+    }
+
+    return nil;
 }
 
 @end

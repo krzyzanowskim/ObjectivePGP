@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) int keyBitsLength;
 @property (nonatomic) PGPPublicKeyAlgorithm keyAlgorithm;
-@property (nonatomic) PGPSymmetricAlgorithm symmetricAlgorithm;
+@property (nonatomic) PGPSymmetricAlgorithm cipherAlgorithm;
 @property (nonatomic) PGPHashAlgorithm hashAlgorithm;
 @property (nonatomic) UInt8 version;
 @property (nonatomic) NSDate *createDate;

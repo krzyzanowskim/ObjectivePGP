@@ -66,7 +66,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (NSArray<PGPPacket *> *)allPackets {
-    NSMutableArray *arr = [NSMutableArray<PGPPacket *> array];
+    let arr = [NSMutableArray<PGPPacket *> array];
 
     if (self.userIDPacket) {
         [arr addObject:self.userIDPacket]; // TODO: || [arr addObject:self.userAttribute]

@@ -336,7 +336,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - PGPExportable
 
 - (nullable NSData *)export:(NSError *_Nullable __autoreleasing *)error {
-    NSMutableData *result = [NSMutableData data];
+    let result = [NSMutableData data];
 
     for (PGPPacket *packet in self.allPacketsArray) {
         let exported = [packet export:error];
@@ -352,7 +352,7 @@ NS_ASSUME_NONNULL_BEGIN
             }
         }
     }
-    return [result copy];
+    return result;
 }
 
 #pragma mark - Verification
@@ -439,7 +439,7 @@ NS_ASSUME_NONNULL_BEGIN
         [arr addObject:PGPNN(self.revocationSignature)];
     }
 
-    for (id packet in self.directSignatures) {
+    for (PGPSignaturePacket *packet in self.directSignatures) {
         [arr addObject:packet];
     }
 

@@ -180,7 +180,7 @@ NS_ASSUME_NONNULL_BEGIN
     let bodyData = [NSMutableData data];
 
     [bodyData appendBytes:&_version length:1]; // 1
-    [bodyData appendData:[self.keyID exportKeyData]]; // 8
+    [bodyData appendData:[self.keyID export:nil]]; // 8
     [bodyData appendBytes:&_publicKeyAlgorithm length:1]; // 1
     let exportedMPI = [self.encryptedMPI_M exportMPI];
     if (!exportedMPI) {

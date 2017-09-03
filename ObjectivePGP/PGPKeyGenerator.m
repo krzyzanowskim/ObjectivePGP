@@ -27,8 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
         _keyBitsLength = 2048;
         _createDate = NSDate.date;
         _version = 0x04;
-        _symmetricAlgorithm = PGPSymmetricAES256;
-        _hashAlgorithm = PGPHashSHA1;
+        _cipherAlgorithm = PGPSymmetricAES256;
+        _hashAlgorithm = PGPHashSHA256;
     }
     return self;
 }
@@ -70,8 +70,8 @@ NS_ASSUME_NONNULL_BEGIN
     secretKeyPacket.version = self.version;
     secretKeyPacket.publicKeyAlgorithm = publicKeyPacket.publicKeyAlgorithm;
     secretKeyPacket.s2kUsage = PGPS2KUsageNone;
-    secretKeyPacket.s2k = [[PGPS2K alloc] initWithSpecifier:PGPS2KSpecifierSimple hashAlgorithm:PGPHashSHA1];
-    secretKeyPacket.symmetricAlgorithm = self.symmetricAlgorithm;
+    secretKeyPacket.s2k = [[PGPS2K alloc] initWithSpecifier:PGPS2KSpecifierSimple hashAlgorithm:self.hashAlgorithm];
+    secretKeyPacket.symmetricAlgorithm = self.cipherAlgorithm;
     NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:secretKeyPacket.symmetricAlgorithm];
     secretKeyPacket.ivData = [NSMutableData dataWithLength:blockSize];
     secretKeyPacket.createDate = publicKeyPacket.createDate;
@@ -95,8 +95,8 @@ NS_ASSUME_NONNULL_BEGIN
     secretSubKeyPacket.version = self.version;
     secretSubKeyPacket.publicKeyAlgorithm = publicSubKeyPacket.publicKeyAlgorithm;
     secretSubKeyPacket.s2kUsage = PGPS2KUsageNone;
-    secretSubKeyPacket.s2k = [[PGPS2K alloc] initWithSpecifier:PGPS2KSpecifierSimple hashAlgorithm:PGPHashSHA1];
-    secretSubKeyPacket.symmetricAlgorithm = self.symmetricAlgorithm;
+    secretSubKeyPacket.s2k = [[PGPS2K alloc] initWithSpecifier:PGPS2KSpecifierSimple hashAlgorithm:self.hashAlgorithm];
+    secretSubKeyPacket.symmetricAlgorithm = self.cipherAlgorithm;
     NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:secretSubKeyPacket.symmetricAlgorithm];
     secretSubKeyPacket.ivData = [NSMutableData dataWithLength:blockSize];
     secretSubKeyPacket.createDate = publicSubKeyPacket.createDate;
@@ -227,9 +227,6 @@ NS_ASSUME_NONNULL_BEGIN
     key.publicKey.users = @[userPublic];
     key.secretKey.users = @[userSecret];
 
-    NSError *error;
-    let outputData = [NSMutableData data];
-
     // Public
 
     let publicKeySignaturePacket = [self buildPublicSignaturePacketFor:key];
@@ -238,32 +235,13 @@ NS_ASSUME_NONNULL_BEGIN
     let publicSubKeySignaturePacket = [self buildPublicSignaturePacketForSubKey:subKey parentKey:key];
     key.publicKey.subKeys.firstObject.bindingSignature = publicSubKeySignaturePacket;
 
-    [outputData appendData:[key.publicKey.primaryKeyPacket export:&error]];
-    [outputData appendData:[userPublic.userIDPacket export:&error]];
-    [outputData appendData:[publicKeySignaturePacket export:&error]];
-
-    for (PGPPartialSubKey *partialPublicSubKey in key.publicKey.subKeys) {
-        [outputData appendData:[partialPublicSubKey export:&error]];
-        [outputData appendData:[publicSubKeySignaturePacket export:&error]];
-    }
-
     // Secret
-    [outputData setData:[NSData data]];
 
     let secretKeySignaturePacket = [self buildSecretSignaturePacketFor:key];
     userSecret.selfCertifications = [userSecret.selfCertifications arrayByAddingObject:secretKeySignaturePacket];
 
     let secretSubKeySignaturePacket = [self buildSecretSignaturePacketForSubKey:subKey parentKey:key];
     key.secretKey.subKeys.firstObject.bindingSignature = secretSubKeySignaturePacket;
-
-    [outputData appendData:[key.secretKey.primaryKeyPacket export:&error]];
-    [outputData appendData:[userSecret.userIDPacket export:&error]];
-    [outputData appendData:[secretKeySignaturePacket export:&error]];
-
-    for (PGPPartialSubKey *partialSecretSubKey in key.secretKey.subKeys) {
-        [outputData appendData:[partialSecretSubKey export:&error]];
-        [outputData appendData:[secretSubKeySignaturePacket export:&error]];
-    }
 
     return key;
 }

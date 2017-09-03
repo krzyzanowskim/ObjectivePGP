@@ -64,7 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
         [bodyData appendBytes:&self->_signatureType length:1];
         [bodyData appendBytes:&self->_hashAlgorith length:1];
         [bodyData appendBytes:&self->_publicKeyAlgorithm length:1];
-        [bodyData appendData:[self.keyID exportKeyData]];
+        [bodyData appendData:[self.keyID export:nil]];
 
         [bodyData appendBytes:&self->_notNested length:1];
 

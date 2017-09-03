@@ -20,16 +20,22 @@ NS_ASSUME_NONNULL_BEGIN
 
 PGP_EMPTY_INIT_UNAVAILABLE;
 
+/// Key ID
 @property (nonatomic, readonly) PGPKeyID *keyID;
 @property (nonatomic, nullable, readonly) PGPPartialKey *secretKey;
 @property (nonatomic, nullable, readonly) PGPPartialKey *publicKey;
 
+/// Whether key is secret.
 @property (nonatomic, readonly) BOOL isSecret;
+/// Whether key is public.
 @property (nonatomic, readonly) BOOL isPublic;
 
 @property (nonatomic, nullable, readonly) PGPSecretKeyPacket *signingSecretKey;
 
 - (instancetype)initWithSecretKey:(nullable PGPPartialKey *)secretKey publicKey:(nullable PGPPartialKey *)publicKey NS_DESIGNATED_INITIALIZER;
+
+/// The ASCII-Armored data.
+- (nullable NSData *)export:(PGPPartialKeyType)keyType error:(NSError *__autoreleasing _Nullable *)error;
 
 @end
 

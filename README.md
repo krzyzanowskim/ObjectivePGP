@@ -151,6 +151,15 @@ if (decryptedData) {
 }
 ```
 
+##### Generate new key
+
+```objective-c
+PGPKeyGenerator *generator = [[PGPKeyGenerator alloc] init];
+PGPKey *key = [keyGenerator generateFor:@"Marcin <marcin@example.com>"];
+NSData *publicKeyData = [key export:PGPPartialKeyPublic error:nil];
+NSData *secretKeyData = [key export:PGPPartialKeySecret error:nil];
+```
+
 ## Changelog
 
 See [CHANGELOG](./CHANGELOG)

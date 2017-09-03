@@ -242,7 +242,7 @@ NS_ASSUME_NONNULL_BEGIN
         {
             let keyID = PGPCast(self.value, PGPKeyID);
             if (keyID) {
-                [data appendData:[keyID exportKeyData]];
+                [data appendData:[keyID export:nil]];
             }
         } break;
         case PGPSignatureSubpacketTypeExportableCertification: // NSNumber BOOL

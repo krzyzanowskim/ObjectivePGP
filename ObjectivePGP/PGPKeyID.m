@@ -14,6 +14,8 @@
 #import "PGPFingerprint.h"
 #import "PGPFoundation.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @implementation PGPKeyID
 
 - (instancetype)initWithLongKey:(NSData *)longKeyData {
@@ -35,10 +37,6 @@
 
 - (NSString *)description {
     return [self longKeyString];
-}
-
-- (NSData *)exportKeyData {
-    return self.longKey.copy;
 }
 
 - (NSData *)shortKey {
@@ -85,4 +83,12 @@
     return result;
 }
 
+#pragma mark - PGPExportable
+
+- (nullable NSData *)export:(NSError *__autoreleasing  _Nullable *)error {
+    return self.longKey.copy;
+}
+
 @end
+
+NS_ASSUME_NONNULL_END
