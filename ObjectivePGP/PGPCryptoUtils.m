@@ -89,7 +89,7 @@
     return NSNotFound;
 }
 
-+ (NSData *)randomData:(int)length {
++ (NSData *)randomData:(NSInteger)length {
     //TODO: use SecRandomCopyBytes
     let s = [NSMutableData data];
     for (int i = 0; i < length; i++) {

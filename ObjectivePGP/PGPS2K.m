@@ -27,7 +27,6 @@ static const unsigned int PGP_SALT_SIZE = 8;
 @interface PGPS2K ()
 
 @property (nonatomic, copy, readwrite) NSData *salt;
-@property (nonatomic, readwrite) UInt32 uncodedCount;
 
 @end
 
@@ -42,10 +41,14 @@ static const unsigned int PGP_SALT_SIZE = 8;
     return self;
 }
 
-+ (PGPS2K *)S2KFromData:(NSData *)data atPosition:(NSUInteger)position {
++ (PGPS2K *)S2KFromData:(NSData *)data atPosition:(NSUInteger)position length:(nullable NSUInteger *)length {
+    PGPAssertClass(data, NSData);
+
     PGPS2K *s2k = [[PGPS2K alloc] initWithSpecifier:PGPS2KSpecifierSimple hashAlgorithm:PGPHashSHA1]; // just default values, overriden in next line
     NSUInteger positionAfter = [s2k parseS2K:data atPosition:position];
-    s2k.length = MAX(positionAfter - position, (NSUInteger)0);
+    if (length) {
+        *length = MAX(positionAfter - position, (NSUInteger)0);
+    }
     return s2k;
 }
 
@@ -239,7 +242,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
 
 - (id)copyWithZone:(nullable NSZone *)zone {
     let copy = [[PGPS2K alloc] initWithSpecifier:self.specifier hashAlgorithm:self.hashAlgorithm];
-    copy.salt = self.salt;
+    copy.salt = [self.salt copyWithZone:zone];
     copy.uncodedCount = self.uncodedCount;
     return copy;
 }

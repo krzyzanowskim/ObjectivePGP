@@ -111,8 +111,9 @@
         position = position + 1;
 
         // S2K
-        self.s2k = [PGPS2K S2KFromData:data atPosition:position];
-        position = position + self.s2k.length;
+        NSUInteger s2kParsedLength = 0;
+        self.s2k = [PGPS2K S2KFromData:data atPosition:position length:&s2kParsedLength];
+        position = position + s2kParsedLength;
     }
 
     if (self.s2k.specifier == PGPS2KSpecifierGnuDummy) {

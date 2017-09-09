@@ -14,6 +14,6 @@
 + (NSUInteger)blockSizeOfSymmetricAlhorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm;
 + (NSUInteger)keySizeOfSymmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm;
 + (NSUInteger)hashSizeOfHashAlhorithm:(PGPHashAlgorithm)hashAlgorithm;
-+ (NSData *)randomData:(int)length;
++ (NSData *)randomData:(NSInteger)length;
 
 @end
