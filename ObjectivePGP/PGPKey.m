@@ -112,10 +112,7 @@ NS_ASSUME_NONNULL_BEGIN
                 return nil;
             }
 
-            let exported = [self.publicKey export:error];
-            if (exported) {
-                return [PGPArmor armoredData:exported as:PGPArmorTypePublicKey];
-            }
+            return [self.publicKey export:error];
         }
         break;
         case PGPPartialKeySecret: {
@@ -123,10 +120,7 @@ NS_ASSUME_NONNULL_BEGIN
                 return nil;
             }
 
-            let exported = [self.secretKey export:error];
-            if (exported) {
-                return [PGPArmor armoredData:exported as:PGPArmorTypeSecretKey];
-            }
+            return [self.secretKey export:error];
         }
         break;
         default: {
