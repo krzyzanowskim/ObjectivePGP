@@ -654,6 +654,17 @@ NS_ASSUME_NONNULL_BEGIN
 
             self.signatureMPIArray = @[mpiR, mpiS];
         } break;
+        case PGPPublicKeyAlgorithmElgamal: {
+            // MPI of Elgamal (Diffie-Hellman) value g**k mod p.
+            PGPMPI *mpiG = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_G atPosition:position];
+            position = position + mpiG.packetLength;
+
+            // MPI of Elgamal (Diffie-Hellman) value m * y**k mod p.
+            PGPMPI *mpiY = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_Y atPosition:position];
+            position = position + mpiY.packetLength;
+
+            self.signatureMPIArray = @[mpiG, mpiY];
+        } break;
         default:
             break;
     }
@@ -775,6 +786,17 @@ NS_ASSUME_NONNULL_BEGIN
             position = position + mpiS.packetLength;
 
             self.signatureMPIArray = @[mpiR, mpiS];
+        } break;
+        case PGPPublicKeyAlgorithmElgamal: {
+            // MPI of Elgamal (Diffie-Hellman) value g**k mod p.
+            PGPMPI *mpiG = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_G atPosition:position];
+            position = position + mpiG.packetLength;
+
+            // MPI of Elgamal (Diffie-Hellman) value m * y**k mod p.
+            PGPMPI *mpiY = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_Y atPosition:position];
+            position = position + mpiY.packetLength;
+
+            self.signatureMPIArray = @[mpiG, mpiY];
         } break;
         default:
             break;
