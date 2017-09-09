@@ -264,10 +264,10 @@ NS_ASSUME_NONNULL_BEGIN
             }
 
             // decrypt key with passphrase if encrypted
-            if (decryptionSecretKeyPacket.isEncryptedWithPassword) {
+            if (decryptionSecretKeyPacket.isEncryptedWithPassphrase) {
                 if (!passphrase) {
                     if (error) {
-                        *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorPassphraseRequired userInfo:@{ NSLocalizedDescriptionKey: @"Password is required for key" }];
+                        *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorPassphraseRequired userInfo:@{ NSLocalizedDescriptionKey: @"Passphrase is required for key" }];
                     }
                     return nil;
                 }
@@ -509,10 +509,10 @@ NS_ASSUME_NONNULL_BEGIN
         onePassPacket.notNested = YES;
         NSError *onePassExportError = nil;
         [signedMessage appendData:[onePassPacket export:&onePassExportError]];
-        NSAssert(!onePassExportError, @"Missing one password data");
+        NSAssert(!onePassExportError, @"Missing one passphrase data");
         if (onePassExportError) {
             if (error) {
-                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing one password data" }];
+                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing one passphrase data" }];
             }
             return nil;
         }

@@ -41,7 +41,7 @@ PGP_EMPTY_INIT_UNAVAILABLE;
  *  Note: After decryption encrypted packets are replaced with new decrypted instances on key.
  *  Warning: It is not good idea to keep decrypted key around
  *
- *  @param passphrase Password
+ *  @param passphrase Passphrase
  *  @param error      error
  *
  *  @return YES on success.

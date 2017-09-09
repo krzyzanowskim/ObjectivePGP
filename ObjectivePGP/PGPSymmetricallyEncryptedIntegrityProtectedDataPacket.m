@@ -135,7 +135,7 @@ NS_ASSUME_NONNULL_BEGIN
         return @[];
     }
 
-    if (secretKeyPacket.isEncryptedWithPassword) {
+    if (secretKeyPacket.isEncryptedWithPassphrase) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Encrypted secret key used to decryption. Decrypt key first" }];
         }

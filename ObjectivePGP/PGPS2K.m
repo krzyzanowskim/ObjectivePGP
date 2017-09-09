@@ -199,12 +199,12 @@ static const unsigned int PGP_SALT_SIZE = 8;
 }
 
 /**
- *  Calculate key for given password
+ *  Calculate key for given passphrase
  *  An S2K specifier can be stored in the secret keyring to specify how
  *  to convert the passphrase to a key that unlocks the secret data.
  *  Simple S2K hashes the passphrase to produce the session key.
  *
- *  @param passphrase Password
+ *  @param passphrase Passphrase
  *  @param keySize    Packet key size
  *
  *  @return NSData with key

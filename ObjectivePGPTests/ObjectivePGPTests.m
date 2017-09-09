@@ -50,7 +50,7 @@
 
 - (void)testGenerateNewKey {
     let keyGenerator = [[PGPKeyGenerator alloc] init];
-    let key = [keyGenerator generateFor:@"Marcin <marcin@example.com>"];
+    let key = [keyGenerator generateFor:@"Marcin <marcin@example.com>" passphrase:nil];
     XCTAssertNotNil(key);
 
     // test sign
@@ -68,6 +68,13 @@
     let importedKeys = [self.oPGP importKeysFromData:exportedKeyData];
     XCTAssert(importedKeys.count == 1);
     XCTAssertEqualObjects(importedKeys.anyObject.keyID, key.keyID);
+}
+
+- (void)testGenerateNewKeyWithPassphrase {
+    let keyGenerator = [[PGPKeyGenerator alloc] init];
+    let key = [keyGenerator generateFor:@"Marcin <marcin@example.com>" passphrase:@"1234567890"];
+    XCTAssertNotNil(key);
+
 }
 
 - (void)testNotDuplicates {

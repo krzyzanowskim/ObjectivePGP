@@ -144,7 +144,7 @@ if (encryptedData) {
 ```objective-c
 NSData *encryptedFileContent = [NSData dataWithContentsOfFile:@"/path/data.enc"];
 
-/* If key is encrypted with the password, you can provide a password key here. */
+/* If key is encrypted with the passphrase, you can provide a passphrase key here. */
 NSData *decryptedData = [pgp decryptData:encryptedFileContent passphrase:nil error:nil];
 if (decryptedData) {
     // Success

@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) UInt8 version;
 @property (nonatomic) NSDate *createDate;
 
-- (PGPKey *)generateFor:(NSString *)userID;
+- (PGPKey *)generateFor:(NSString *)userID passphrase:(nullable NSString *)passphrase;
 
 @end
 

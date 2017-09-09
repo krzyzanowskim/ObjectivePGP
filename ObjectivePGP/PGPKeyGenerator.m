@@ -59,7 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
     return keyMaterial;
 }
 
-- (nullable PGPKey *)buildKey {
+- (nullable PGPKey *)buildKeyWithPassphrase:(nullable NSString *)passphrase {
     let publicKeyPacket = [[PGPPublicKeyPacket alloc] init];
     publicKeyPacket.version = self.version;
     publicKeyPacket.publicKeyAlgorithm = self.keyAlgorithm;
@@ -218,8 +218,8 @@ NS_ASSUME_NONNULL_BEGIN
     return secretSubKeySignaturePacket;
 }
 
-- (PGPKey *)generateFor:(NSString *)userID {
-    let key = [self buildKey];
+- (PGPKey *)generateFor:(NSString *)userID passphrase:(nullable NSString *)passphrase {
+    let key = [self buildKeyWithPassphrase:passphrase];
     let subKey = [self addSubKeyTo:key];
 
     let userPublic = [[PGPUser alloc] initWithUserIDPacket:[[PGPUserIDPacket alloc] initWithUserID:userID]];

@@ -37,12 +37,12 @@
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"%@ isEncrypted: %@", super.description, @(self.isEncryptedWithPassword)];
+    return [NSString stringWithFormat:@"%@ isEncrypted: %@", super.description, @(self.isEncryptedWithPassphrase)];
 }
 
-// Don't really know if key is password protected.
-// Check the S2K settings and assume if the password is set.
-- (BOOL)isEncryptedWithPassword {
+// Don't really know if key is passphrase protected.
+// Check the S2K settings and assume if the passphrase is set.
+- (BOOL)isEncryptedWithPassphrase {
     if (self.wasDecrypted) {
         return NO;
     }
@@ -85,7 +85,7 @@
     }
 
     let encryptedData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
-    if (self.isEncryptedWithPassword) {
+    if (self.isEncryptedWithPassphrase) {
         position = position + [self parseEncryptedPart:encryptedData error:error];
     } else {
         position = position + [self parseUnencryptedPart:encryptedData error:error];
@@ -162,7 +162,7 @@
 
             if (![hashData isEqualToData:calculatedHashData]) {
                 if (error) {
-                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorPassphraseInvalid userInfo:@{ NSLocalizedDescriptionKey: @"Decrypted hash mismatch, invalid password." }];
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorPassphraseInvalid userInfo:@{ NSLocalizedDescriptionKey: @"Decrypted hash mismatch, invalid passphrase." }];
                     return data.length;
                 }
             }
@@ -181,7 +181,7 @@
 
             if (checksum != calculatedChecksum) {
                 if (error) {
-                    *error = [NSError errorWithDomain:PGPErrorDomain code:-1 userInfo:@{ NSLocalizedDescriptionKey: @"Decrypted hash mismatch, check password." }];
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:-1 userInfo:@{ NSLocalizedDescriptionKey: @"Decrypted hash mismatch, check passphrase." }];
                     return data.length;
                 }
             }
@@ -243,7 +243,7 @@
     PGPAssertClass(passphrase, NSString);
     NSParameterAssert(error);
 
-    if (!self.isEncryptedWithPassword) {
+    if (!self.isEncryptedWithPassphrase) {
         return self;
     }
 
@@ -258,7 +258,7 @@
     NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:encryptionSymmetricAlgorithm];
     NSAssert(keySize <= 32, @"invalid keySize");
 
-    // Session key for password
+    // Session key for passphrase
     // producing a key to be used with a symmetric block cipher from a string of octets
     let sessionKeyData = [encryptedKey.s2k produceSessionKeyWithPassphrase:passphrase keySize:keySize];
 
