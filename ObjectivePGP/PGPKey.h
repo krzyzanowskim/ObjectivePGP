@@ -34,7 +34,8 @@ PGP_EMPTY_INIT_UNAVAILABLE;
 
 - (instancetype)initWithSecretKey:(nullable PGPPartialKey *)secretKey publicKey:(nullable PGPPartialKey *)publicKey NS_DESIGNATED_INITIALIZER;
 
-/// The ASCII-Armored data.
+/// The binary format.
+/// @discussion If you need ASCII format, you can use `PGPArmor`.
 - (nullable NSData *)export:(PGPPartialKeyType)keyType error:(NSError *__autoreleasing _Nullable *)error;
 
 @end
