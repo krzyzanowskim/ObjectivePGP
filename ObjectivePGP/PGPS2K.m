@@ -37,6 +37,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
     if ((self = [super init])) {
         _specifier = specifier;
         _hashAlgorithm = hashAlgorithm;
+        _salt = [PGPCryptoUtils randomData:PGP_SALT_SIZE];
     }
     return self;
 }
@@ -46,19 +47,6 @@ static const unsigned int PGP_SALT_SIZE = 8;
     NSUInteger positionAfter = [s2k parseS2K:data atPosition:position];
     s2k.length = MAX(positionAfter - position, (NSUInteger)0);
     return s2k;
-}
-
-- (NSData *)salt {
-    if (!_salt) {
-        //TODO: use SecRandomCopyBytes
-        NSMutableData *s = [NSMutableData data];
-        for (int i = 0; i < 8; i++) {
-            Byte b = (Byte)arc4random_uniform(255);
-            [s appendBytes:&b length:sizeof(b)];
-        }
-        _salt = [s copy];
-    }
-    return _salt;
 }
 
 - (NSUInteger)parseS2K:(NSData *)data atPosition:(NSUInteger)startingPosition {
@@ -120,7 +108,6 @@ static const unsigned int PGP_SALT_SIZE = 8;
     }
 
     if (self.specifier == PGPS2KSpecifierIteratedAndSalted) {
-        NSAssert(self.uncodedCount != 0, @"Count value is 0");
         if (self.uncodedCount == 0) {
             if (error) {
                 *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unexpected count is 0" }];
@@ -134,9 +121,9 @@ static const unsigned int PGP_SALT_SIZE = 8;
     return data;
 }
 
-- (nullable NSData *)buildKeyDataForPassphrase:(NSData *)passphrase prefix:(nullable NSData *)prefix specifier:(PGPS2KSpecifier)specifier salt:(NSData *)salt codedCount:(UInt32)codedCount {
+- (nullable NSData *)buildKeyDataForPassphrase:(NSData *)passphrase prefix:(nullable NSData *)prefix salt:(NSData *)salt codedCount:(UInt32)codedCount {
     PGPUpdateBlock updateBlock = nil;
-    switch (specifier) {
+    switch (self.specifier) {
         case PGPS2KSpecifierGnuDummy:
             // no secret key
             break;
@@ -210,12 +197,10 @@ static const unsigned int PGP_SALT_SIZE = 8;
  *  @return NSData with key
  */
 - (nullable NSData *)produceSessionKeyWithPassphrase:(NSString *)passphrase keySize:(NSUInteger)keySize {
-    let passphraseData = [passphrase dataUsingEncoding:NSUTF8StringEncoding];
-    if (!passphraseData) {
-        return nil;
-    }
+    PGPAssertClass(passphrase, NSString);
 
-    var hashData = [self buildKeyDataForPassphrase:passphraseData prefix:nil specifier:self.specifier salt:self.salt codedCount:self.codedCount];
+    let passphraseData = [passphrase dataUsingEncoding:NSUTF8StringEncoding];
+    var hashData = [self buildKeyDataForPassphrase:passphraseData prefix:nil salt:self.salt codedCount:self.codedCount];
     if (!hashData) {
         return nil;
     }
@@ -238,9 +223,9 @@ static const unsigned int PGP_SALT_SIZE = 8;
                 [prefix appendBytes:&zero length:1];
             }
 
-            let prefixedHashData = [self buildKeyDataForPassphrase:passphraseData prefix:prefix specifier:self.specifier salt:self.salt codedCount:self.codedCount];
+            let prefixedHashData = [self buildKeyDataForPassphrase:passphraseData prefix:prefix salt:self.salt codedCount:self.codedCount];
             [expandedHashData appendData:prefixedHashData];
-            ;
+
             level++;
         }
         hashData = expandedHashData.copy;

@@ -171,7 +171,7 @@ typedef NS_ENUM(UInt8, PGPS2KSpecifier) {
 };
 
 typedef NS_ENUM(UInt8, PGPS2KUsage) {
-    PGPS2KUsageNone = 0,
+    PGPS2KUsageNonEncrypted = 0, // no passphrase
     PGPS2KUsageEncryptedAndHashed = 254,
     PGPS2KUsageEncrypted = 255
 };

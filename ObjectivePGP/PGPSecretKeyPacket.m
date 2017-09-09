@@ -76,12 +76,12 @@
 
     if (self.s2kUsage == PGPS2KUsageEncrypted || self.s2kUsage == PGPS2KUsageEncryptedAndHashed) {
         // moved to parseEncryptedPart:error
-    } else if (self.s2kUsage != PGPS2KUsageNone) {
+    } else if (self.s2kUsage != PGPS2KUsageNonEncrypted) {
         // this is version 3, looks just like a V4 simple hash
         self.symmetricAlgorithm = (PGPSymmetricAlgorithm)self.s2kUsage; // this is tricky, but this is right. V3 algorithm is in place of s2kUsage of V4
         self.s2kUsage = PGPS2KUsageEncrypted;
 
-        self.s2k = [[PGPS2K alloc] initWithSpecifier:PGPS2KSpecifierSimple hashAlgorithm:PGPHashMD5]; // not really parsed s2k
+        self.s2k = [[PGPS2K alloc] initWithSpecifier:PGPS2KSpecifierSimple hashAlgorithm:PGPHashMD5]; // not really parsed s2k, overwritten in parseEncryptedPart
     }
 
     let encryptedData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
@@ -117,7 +117,7 @@
 
     if (self.s2k.specifier == PGPS2KSpecifierGnuDummy) {
         self.ivData = NSData.data;
-    } else if (self.s2kUsage != PGPS2KUsageNone) {
+    } else if (self.s2kUsage != PGPS2KUsageNonEncrypted) {
         // Initial Vector (IV) of the same length as the cipher's block size
         NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:self.symmetricAlgorithm];
         NSAssert(blockSize <= 16, @"invalid blockSize");
@@ -320,13 +320,13 @@
         NSAssert(!exportError, @"export failed");
     }
 
-    if (self.s2kUsage != PGPS2KUsageNone) {
+    if (self.s2kUsage != PGPS2KUsageNonEncrypted) {
         // If secret data is encrypted (string-to-key usage octet not zero), an Initial Vector (IV) of the same length as the cipher's block size.
         // Initial Vector (IV) of the same length as the cipher's block size
         [data appendBytes:self.ivData.bytes length:self.ivData.length];
     }
 
-    if (self.s2kUsage == PGPS2KUsageNone) {
+    if (self.s2kUsage == PGPS2KUsageNonEncrypted) {
         for (PGPMPI *mpi in self.secretMPIArray) {
             let exportMPI = [mpi exportMPI];
             if (exportMPI) {
@@ -347,7 +347,7 @@
     // If the string-to-key usage octet is zero or 255, then a two-octet checksum of the plaintext of the algorithm-specific portion (sum of all octets, mod 65536).
     // This checksum or hash is encrypted together with the algorithm-specific fields
     // ---> is part of self.encryptedMPIPartData
-    // if (self.s2kUsage == PGPS2KUsageNone || self.s2kUsage == PGPS2KUsageEncrypted) {
+    // if (self.s2kUsage == PGPS2KUsageNonEncrypted || self.s2kUsage == PGPS2KUsageEncrypted) {
     //    // Checksum
     //    UInt16 checksum = CFSwapInt16HostToBig([data pgp_Checksum]);
     //    [data appendBytes:&checksum length:2];
@@ -356,7 +356,7 @@
     //    [data appendData:[data pgp_SHA1]];
     //}
 
-    //    } else if (self.s2kUsage != PGPS2KUsageNone) {
+    //    } else if (self.s2kUsage != PGPS2KUsageNonEncrypted) {
     //        // this is version 3, looks just like a V4 simple hash
     //        self.symmetricAlgorithm = (PGPSymmetricAlgorithm)self.s2kUsage; // this is tricky, but this is right. V3 algorithm is in place of s2kUsage of V4
     //        self.s2kUsage = PGPS2KUsageEncrypted;

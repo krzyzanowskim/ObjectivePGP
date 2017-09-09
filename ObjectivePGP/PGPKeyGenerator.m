@@ -94,7 +94,7 @@ NS_ASSUME_NONNULL_BEGIN
     let secretSubKeyPacket = [[PGPSecretSubKeyPacket alloc] init];
     secretSubKeyPacket.version = self.version;
     secretSubKeyPacket.publicKeyAlgorithm = publicSubKeyPacket.publicKeyAlgorithm;
-    secretSubKeyPacket.s2kUsage = PGPS2KUsageNone;
+    secretSubKeyPacket.s2kUsage = PGPS2KUsageNonEncrypted;
     secretSubKeyPacket.s2k = [[PGPS2K alloc] initWithSpecifier:PGPS2KSpecifierSimple hashAlgorithm:self.hashAlgorithm];
     secretSubKeyPacket.symmetricAlgorithm = self.cipherAlgorithm;
     NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:secretSubKeyPacket.symmetricAlgorithm];

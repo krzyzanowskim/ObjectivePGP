@@ -7,6 +7,7 @@
 //
 
 #import "PGPCryptoUtils.h"
+#import "PGPMacros+Private.h"
 
 #import <CommonCrypto/CommonCrypto.h>
 
@@ -86,6 +87,16 @@
             break;
     }
     return NSNotFound;
+}
+
++ (NSData *)randomData:(int)length {
+    //TODO: use SecRandomCopyBytes
+    let s = [NSMutableData data];
+    for (int i = 0; i < length; i++) {
+        let b = (Byte)arc4random_uniform(255);
+        [s appendBytes:&b length:sizeof(b)];
+    }
+    return s;
 }
 
 @end

@@ -28,6 +28,7 @@ PGP_EMPTY_INIT_UNAVAILABLE
 
 + (PGPS2K *)S2KFromData:(NSData *)data atPosition:(NSUInteger)position;
 
+- (nullable NSData *)buildKeyDataForPassphrase:(NSData *)passphrase prefix:(nullable NSData *)prefix salt:(NSData *)salt codedCount:(UInt32)codedCount;
 - (nullable NSData *)produceSessionKeyWithPassphrase:(NSString *)passphrase keySize:(NSUInteger)keySize;
 - (nullable NSData *)export:(NSError *__autoreleasing *)error;
 
