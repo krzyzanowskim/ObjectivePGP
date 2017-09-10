@@ -33,7 +33,7 @@
 		751373871F6536390067A343 /* NSData+compression.m in Sources */ = {isa = PBXBuildFile; fileRef = 751373821F65362C0067A343 /* NSData+compression.m */; };
 		751373881F65363C0067A343 /* NSData+PGPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 751373841F65362C0067A343 /* NSData+PGPUtils.m */; };
 		7513738B1F65366C0067A343 /* PGPCryptoUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 7513738A1F65366C0067A343 /* PGPCryptoUtils.m */; };
-		7513738C1F65366E0067A343 /* PGPCryptoUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 751373891F65366C0067A343 /* PGPCryptoUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7513738C1F65366E0067A343 /* PGPCryptoUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 751373891F65366C0067A343 /* PGPCryptoUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		751373BC1F6537490067A343 /* PGPCompressedPacket.h in Headers */ = {isa = PBXBuildFile; fileRef = 7513738E1F65373E0067A343 /* PGPCompressedPacket.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		751373BD1F6537490067A343 /* PGPCompressedPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 7513738F1F65373E0067A343 /* PGPCompressedPacket.m */; };
 		751373BE1F6537490067A343 /* PGPLiteralPacket.h in Headers */ = {isa = PBXBuildFile; fileRef = 751373901F65373E0067A343 /* PGPLiteralPacket.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -84,7 +84,7 @@
 		751373ED1F65379F0067A343 /* PGPPacketFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 751373EA1F65379C0067A343 /* PGPPacketFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		751373F01F65382C0067A343 /* NSMutableData+PGPUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 751373EE1F65382C0067A343 /* NSMutableData+PGPUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		751373F11F65382C0067A343 /* NSMutableData+PGPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 751373EF1F65382C0067A343 /* NSMutableData+PGPUtils.m */; };
-		7537A6AD1F0D739A00892829 /* PGPCryptoHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 75572E281ED2193C00205871 /* PGPCryptoHash.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7537A6AD1F0D739A00892829 /* PGPCryptoHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 75572E281ED2193C00205871 /* PGPCryptoHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7537A6B21F0D739A00892829 /* PGPMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 752DE5BD1EEE3BE800637E38 /* PGPMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7537A6B31F0D739A00892829 /* PGPFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 758514EA1EDF09C400CB313F /* PGPFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7537A6B41F0D739A00892829 /* PGPTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 759DBA151915BC0400305549 /* PGPTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -132,11 +132,11 @@
 		75BF43E31F504D0F004334DE /* PGPKeyGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 75BF43E11F504D0F004334DE /* PGPKeyGenerator.m */; };
 		75BF43E61F5076B9004334DE /* PGPKeyMaterial.h in Headers */ = {isa = PBXBuildFile; fileRef = 75BF43E41F5076B9004334DE /* PGPKeyMaterial.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		75BF43E71F5076B9004334DE /* PGPKeyMaterial.m in Sources */ = {isa = PBXBuildFile; fileRef = 75BF43E51F5076B9004334DE /* PGPKeyMaterial.m */; };
-		75C501E61F1233A100FEC874 /* PGPRSA.h in Headers */ = {isa = PBXBuildFile; fileRef = 75C501E51F12337800FEC874 /* PGPRSA.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		75C501E61F1233A100FEC874 /* PGPRSA.h in Headers */ = {isa = PBXBuildFile; fileRef = 75C501E51F12337800FEC874 /* PGPRSA.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		75C501E71F1233A500FEC874 /* PGPRSA.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C501E41F12337800FEC874 /* PGPRSA.m */; };
 		75CA419C1CDF775900887C62 /* issue35-key.asc in Resources */ = {isa = PBXBuildFile; fileRef = 75CA419B1CDF775900887C62 /* issue35-key.asc */; };
 		75D53ADF1A2FCDEE00ED9707 /* multiple-keys.asc in Resources */ = {isa = PBXBuildFile; fileRef = 75D53ADE1A2FCDEE00ED9707 /* multiple-keys.asc */; };
-		75F74E481F4383C50054231C /* PGPDSA.h in Headers */ = {isa = PBXBuildFile; fileRef = 75F74E441F4382FF0054231C /* PGPDSA.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		75F74E481F4383C50054231C /* PGPDSA.h in Headers */ = {isa = PBXBuildFile; fileRef = 75F74E441F4382FF0054231C /* PGPDSA.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		75F74E4A1F4383F90054231C /* PGPDSA.m in Sources */ = {isa = PBXBuildFile; fileRef = 75F74E451F4382FF0054231C /* PGPDSA.m */; };
 /* End PBXBuildFile section */
 

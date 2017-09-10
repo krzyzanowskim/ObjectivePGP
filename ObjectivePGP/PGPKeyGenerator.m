@@ -14,6 +14,10 @@
 #import "PGPMacros+Private.h"
 #import "NSData+PGPUtils.h"
 #import "NSMutableData+PGPUtils.h"
+#import "PGPCryptoHash.h"
+#import "PGPCryptoUtils.h"
+#import "PGPRSA.h"
+#import "PGPDSA.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
