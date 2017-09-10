@@ -98,6 +98,7 @@ NS_ASSUME_NONNULL_BEGIN
                 }
             }
         }
+
         // A compressed Packet contains more packets
         let _Nullable compressedPacket = PGPCast(packet, PGPCompressedPacket);
         if (compressedPacket) {
@@ -106,7 +107,7 @@ NS_ASSUME_NONNULL_BEGIN
                 [accumulatedPackets addObjectsFromArray:packets];
             }
         }
-        offset += nextPacketOffset;
+
         if (packet.indeterminateLength && accumulatedPackets.count > 0 && PGPCast(accumulatedPackets.firstObject, PGPCompressedPacket)) {
             //FIXME: substract size of PGPModificationDetectionCodePacket in this very special case - TODO: fix this
             offset -= 22;
@@ -114,6 +115,12 @@ NS_ASSUME_NONNULL_BEGIN
                 *mdcLength -= 22;
             }
         }
+
+        // corrupted data. Move by one byte in hope we find some packet there, or EOF.
+        if (nextPacketOffset == 0) {
+            offset++;
+        }
+        offset += nextPacketOffset;
     }
     return accumulatedPackets;
 }

@@ -772,6 +772,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<PGPPacket *> *)readPacketsFromData:(NSData *)keyringData {
     PGPAssertClass(keyringData, NSData);
 
+    if (keyringData.length == 0) {
+        return @[];
+    }
+
     let accumulatedPackets = [NSMutableArray<PGPPacket *> array];
     NSUInteger offset = 0;
     NSUInteger nextPacketOffset = 0;
@@ -780,6 +784,10 @@ NS_ASSUME_NONNULL_BEGIN
         let packet = [PGPPacketFactory packetWithData:keyringData offset:offset nextPacketOffset:&nextPacketOffset];
         [accumulatedPackets pgp_addObject:packet];
 
+        // corrupted data. Move by one byte in hope we find some packet there, or EOF.
+        if (nextPacketOffset == 0) {
+            offset++;
+        }
         offset += nextPacketOffset;
     }
 
@@ -823,7 +831,7 @@ NS_ASSUME_NONNULL_BEGIN
     while (position < messageData.length) {
         let packet = [PGPPacketFactory packetWithData:messageData offset:position nextPacketOffset:&nextPacketPosition];
         if (!packet) {
-            position += nextPacketPosition;
+            position += (nextPacketPosition > 0) ? nextPacketPosition : 1;
             continue;
         }
 
