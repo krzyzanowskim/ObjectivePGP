@@ -14,6 +14,7 @@
 #import "PGPKeyID.h"
 #import "PGPPacket.h"
 #import "PGPPacket+Private.h"
+#import "NSMutableData+PGPUtils.h"
 
 #import "PGPLogging.h"
 #import "PGPMacros+Private.h"
@@ -240,10 +241,8 @@ NS_ASSUME_NONNULL_BEGIN
         } break;
         case PGPSignatureSubpacketTypeIssuerKeyID: // PGPKeyID
         {
-            let keyID = PGPCast(self.value, PGPKeyID);
-            if (keyID) {
-                [data appendData:[keyID export:nil]];
-            }
+            let _Nullable keyID = PGPCast(self.value, PGPKeyID);
+            [data pgp_appendData:[keyID export:nil]];
         } break;
         case PGPSignatureSubpacketTypeExportableCertification: // NSNumber BOOL
         case PGPSignatureSubpacketTypePrimaryUserID: // NSNumber BOOL
@@ -256,10 +255,8 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPSignatureSubpacketTypePolicyURI: // NSString
         {
             let stringValue = PGPCast(self.value, NSString);
-            let stringData = [stringValue dataUsingEncoding:NSUTF8StringEncoding];
-            if (stringData) {
-                [data appendData:stringData];
-            }
+            let _Nullable stringData = [stringValue dataUsingEncoding:NSUTF8StringEncoding];
+            [data pgp_appendData:stringData];
         } break;
         case PGPSignatureSubpacketTypeReasonForRevocation: {
             // 5.2.3.23.  Reason for Revocation

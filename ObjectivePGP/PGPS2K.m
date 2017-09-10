@@ -17,6 +17,7 @@
 #import <CommonCrypto/CommonDigest.h>
 
 #import "NSData+PGPUtils.h"
+#import "NSMutableData+PGPUtils.h"
 #import "PGPCryptoHash.h"
 #import "PGPCryptoUtils.h"
 
@@ -132,7 +133,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
             break;
         case PGPS2KSpecifierSimple: {
             let data = [NSMutableData dataWithData:prefix ?: [NSData data]];
-            [data appendData:passphrase];
+            [data pgp_appendData:passphrase];
 
             // passphrase
             updateBlock = ^(PGP_NOESCAPE void (^update)(const void *data, int length)) {
@@ -146,7 +147,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
             // prevent dictionary attacks.
             let data = [NSMutableData dataWithData:prefix ?: [NSData data]];
             [data appendData:salt];
-            [data appendData:passphrase];
+            [data pgp_appendData:passphrase];
 
             updateBlock = ^(PGP_NOESCAPE void (^update)(const void *data, int length)) {
                 update(data.bytes, (int)data.length);
@@ -155,7 +156,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
         case PGPS2KSpecifierIteratedAndSalted: {
             // iterated (salt + passphrase)
             let data = [NSMutableData dataWithData:salt];
-            [data appendData:passphrase];
+            [data pgp_appendData:passphrase];
 
             updateBlock = ^(PGP_NOESCAPE void (^update)(const void *data, int length)) {
                 // prefix first

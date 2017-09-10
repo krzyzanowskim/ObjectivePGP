@@ -1,5 +1,5 @@
 //
-//  NSData+Bytes.h
+//  NSData+PGPUtils.h
 //  ObjectivePGP
 //
 //  Created by Marcin Krzyzanowski on 04/05/14.

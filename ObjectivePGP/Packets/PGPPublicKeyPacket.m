@@ -12,6 +12,7 @@
 #import "PGPMPI.h"
 #import "PGPRSA.h"
 #import "PGPTypes.h"
+#import "NSMutableData+PGPUtils.h"
 #import "PGPMacros+Private.h"
 
 #import <CommonCrypto/CommonCrypto.h>
@@ -201,9 +202,7 @@ NS_ASSUME_NONNULL_BEGIN
     // publicMPI is always available, no need to decrypt
     for (PGPMPI *mpi in self.publicMPIArray) {
         let exportMPI = [mpi exportMPI];
-        if (exportMPI) {
-            [data appendData:exportMPI];
-        }
+        [data pgp_appendData:exportMPI];
     }
     return data;
 }

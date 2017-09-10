@@ -22,6 +22,7 @@
 #import "PGPSignatureSubpacketHeader.h"
 #import "PGPUser.h"
 #import "PGPUserIDPacket.h"
+#import "NSMutableData+PGPUtils.h"
 
 #import "PGPLogging.h"
 #import "PGPMacros+Private.h"
@@ -212,9 +213,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSAssert(self.signatureMPIArray.count > 0, @"Missing MPIArray");
     for (PGPMPI *mpi in self.signatureMPIArray) {
         let exportMPI = [mpi exportMPI];
-        if (exportMPI) {
-            [data appendData:exportMPI];
-        }
+        [data pgp_appendData:exportMPI];
     }
 
     return data;
@@ -526,9 +525,7 @@ NS_ASSUME_NONNULL_BEGIN
 
         } break;
         default:
-            if (inputData) {
-                [toSignData appendData:inputData];
-            }
+            [toSignData pgp_appendData:inputData];
             break;
     }
     return toSignData;
@@ -836,10 +833,8 @@ NS_ASSUME_NONNULL_BEGIN
     // Hashed subpacket data set (zero or more subpackets)
     for (PGPSignatureSubpacket *subpacket in subpacketsCollection) {
         NSError *error = nil;
-        NSData *subpacketData = [subpacket export:&error];
-        if (subpacketData && !error) {
-            [subpackets appendData:subpacketData];
-        }
+        let subpacketData = [subpacket export:&error];
+        [subpackets pgp_appendData:subpacketData];
     }
     // Two-octet scalar octet count for following hashed subpacket data.
     UInt16 countBE = CFSwapInt16HostToBig((UInt16)subpackets.length);

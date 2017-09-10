@@ -20,6 +20,7 @@
 #import "PGPUserAttributeSubpacket.h"
 #import "PGPMacros+Private.h"
 #import "PGPFoundation.h"
+#import "NSMutableData+PGPUtils.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -344,7 +345,7 @@ NS_ASSUME_NONNULL_BEGIN
             continue;
         }
 
-        [result appendData:exported]; // TODO: decode secret key first
+        [result pgp_appendData:exported]; // TODO: decode secret key first
         if (error) {
             NSAssert(*error == nil, @"Error while export public key");
             if (*error) {

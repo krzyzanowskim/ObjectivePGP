@@ -8,6 +8,7 @@
 
 #import "PGPPKCSEmsa.h"
 #import "NSData+PGPUtils.h"
+#import "PGPMacros+Private.h"
 #import "PGPCryptoUtils.h"
 #import "PGPTypes.h"
 
@@ -37,7 +38,7 @@ static UInt8 prefix_ripemd160[] = {0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2B, 0x2
  *  @return encoded message
  */
 + (NSData *)encode:(PGPHashAlgorithm)hashAlgorithm message:(NSData *)m encodedMessageLength:(NSUInteger)emLength error:(NSError *__autoreleasing *)error {
-    NSMutableData *tData = [NSMutableData data]; // prefix + hash
+    let tData = [NSMutableData data]; // prefix + hash
     switch (hashAlgorithm) {
         case PGPHashMD5: {
             NSData *hashPrefixData = [NSData dataWithBytes:prefix_md5 length:sizeof(prefix_md5)];

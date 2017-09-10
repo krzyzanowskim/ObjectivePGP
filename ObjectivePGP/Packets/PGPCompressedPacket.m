@@ -9,6 +9,8 @@
 
 #import "PGPCompressedPacket.h"
 #import "NSData+compression.h"
+#import "NSMutableData+PGPUtils.h"
+#import "PGPMacros+Private.h"
 
 @implementation PGPCompressedPacket
 
@@ -57,13 +59,13 @@
 }
 
 - (NSData *)export:(NSError *__autoreleasing *)error {
-    NSMutableData *bodyData = [NSMutableData data];
+    let bodyData = [NSMutableData data];
 
     // - One octet that gives the algorithm used to compress the packet.
     [bodyData appendBytes:&_compressionType length:sizeof(_compressionType)];
 
     // - Compressed data, which makes up the remainder of the packet.
-    NSData *compressedData = nil;
+    NSData * _Nullable compressedData = nil;
     switch (self.compressionType) {
         case PGPCompressionZLIB:
             compressedData = [self.decompressedData zlibCompressed:error];
@@ -80,7 +82,7 @@
             break;
     }
     NSAssert(compressedData, @"Compression failed");
-    [bodyData appendData:compressedData];
+    [bodyData pgp_appendData:compressedData];
 
     return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
         return bodyData;

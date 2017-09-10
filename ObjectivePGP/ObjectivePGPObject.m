@@ -26,6 +26,7 @@
 #import "PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h"
 #import "PGPUser.h"
 #import "PGPUserIDPacket.h"
+#import "NSMutableData+PGPUtils.h"
 
 #import "PGPFoundation.h"
 #import "PGPLogging.h"
@@ -415,7 +416,7 @@ NS_ASSUME_NONNULL_BEGIN
         if (error && *error) {
             return nil;
         }
-        [encryptedMessage appendData:[eskKeyPacket export:error]];
+        [encryptedMessage pgp_appendData:[eskKeyPacket export:error]];
         if (error && *error) {
             return nil;
         }
@@ -457,7 +458,7 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    [encryptedMessage appendData:[symEncryptedDataPacket export:error]];
+    [encryptedMessage pgp_appendData:[symEncryptedDataPacket export:error]];
     if (error && *error) {
         return nil;
     }
@@ -508,7 +509,7 @@ NS_ASSUME_NONNULL_BEGIN
 
         onePassPacket.notNested = YES;
         NSError *onePassExportError = nil;
-        [signedMessage appendData:[onePassPacket export:&onePassExportError]];
+        [signedMessage pgp_appendData:[onePassPacket export:&onePassExportError]];
         NSAssert(!onePassExportError, @"Missing one passphrase data");
         if (onePassExportError) {
             if (error) {
@@ -523,7 +524,7 @@ NS_ASSUME_NONNULL_BEGIN
         literalPacket.timestamp = [NSDate date];
 
         NSError *literalExportError = nil;
-        [signedMessage appendData:[literalPacket export:&literalExportError]];
+        [signedMessage pgp_appendData:[literalPacket export:&literalExportError]];
         NSAssert(!literalExportError, @"Missing literal data");
         if (literalExportError) {
             if (error) {
@@ -544,7 +545,7 @@ NS_ASSUME_NONNULL_BEGIN
         //        }
         //
         //        NSError *compressedExportError = nil;
-        //        [signedMessage appendData:[compressedPacket exportPacket:&compressedExportError]];
+        //        [signedMessage pgp_appendData:[compressedPacket exportPacket:&compressedExportError]];
         //        NSAssert(!compressedExportError, @"Missing compressed data");
         //        if (compressedExportError) {
         //            if (error) {
@@ -553,8 +554,8 @@ NS_ASSUME_NONNULL_BEGIN
         //            return nil;
         //        }
     }
-    [signedMessage appendData:signaturePacketData];
-    return [signedMessage copy];
+    [signedMessage pgp_appendData:signaturePacketData];
+    return signedMessage;
 }
 
 - (BOOL)verifyData:(NSData *)signedData withSignature:(NSData *)signatureData error:(NSError *__autoreleasing _Nullable *)error {

@@ -18,6 +18,7 @@
 #import "PGPSignatureSubpacket+Private.h"
 #import "PGPRSA.h"
 #import "PGPDSA.h"
+#import "NSMutableData+PGPUtils.h"
 
 #import "PGPMacros+Private.h"
 
@@ -95,11 +96,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSData *)export:(NSError *__autoreleasing _Nullable *)error {
     let exportData = [NSMutableData data];
     if (self.publicKey) {
-        [exportData appendData:[self export:PGPPartialKeyPublic error:error]];
+        [exportData pgp_appendData:[self export:PGPPartialKeyPublic error:error]];
     }
 
     if (self.secretKey) {
-        [exportData appendData:[self export:PGPPartialKeySecret error:error]];
+        [exportData pgp_appendData:[self export:PGPPartialKeySecret error:error]];
     }
 
     return exportData;

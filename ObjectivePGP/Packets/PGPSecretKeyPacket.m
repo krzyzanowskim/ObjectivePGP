@@ -15,6 +15,7 @@
 #import "PGPMPI.h"
 #import "PGPS2K.h"
 #import "PGPTypes.h"
+#import "NSMutableData+PGPUtils.h"
 
 #import "PGPLogging.h"
 #import "PGPMacros+Private.h"
@@ -302,9 +303,7 @@
         // If string-to-key usage octet was 255 or 254, a string-to-key specifier.
         NSError *exportError = nil;
         let exportS2K = [self.s2k export:&exportError];
-        if (exportS2K) {
-            [data appendData:exportS2K];
-        }
+        [data pgp_appendData:exportS2K];
         NSAssert(!exportError, @"export failed");
     }
 
@@ -318,9 +317,7 @@
     if (self.s2kUsage == PGPS2KUsageNonEncrypted) {
         for (PGPMPI *mpi in self.secretMPIArray) {
             let exportMPI = [mpi exportMPI];
-            if (exportMPI) {
-                [data appendData:exportMPI];
-            }
+            [data pgp_appendData:exportMPI];
         }
 
         // append hash
@@ -329,7 +326,7 @@
     } else if (self.encryptedMPIPartData) {
         // encrypted MPIArray with encrypted hash
         // hash is part of encryptedMPIPartData
-        [data appendData:self.encryptedMPIPartData];
+        [data pgp_appendData:self.encryptedMPIPartData];
     } else {
         PGPLogWarning(@"Cannot build secret key data. Missing secret MPIs....");
     }
