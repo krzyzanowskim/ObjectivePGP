@@ -111,6 +111,7 @@
 		753ADD9B1F0EC6A0005E1497 /* ObjectivePGPObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 750F89641F0D701E00B99726 /* ObjectivePGPObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		753B05431EF3E05200785EBC /* issue62-message.asc in Resources */ = {isa = PBXBuildFile; fileRef = 753B05421EF3E03800785EBC /* issue62-message.asc */; };
 		7547A6D11F0085E8002C2145 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7547A6D01F0085E8002C2145 /* Security.framework */; };
+		7561B66E1F65C479001D2AD6 /* issue59-keys.asc in Resources */ = {isa = PBXBuildFile; fileRef = 7561B66D1F65C423001D2AD6 /* issue59-keys.asc */; };
 		756299C81914DE1A00C5AD3B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B81914DE1A00C5AD3B /* Foundation.framework */; };
 		756299D31914DE1A00C5AD3B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 756299D11914DE1A00C5AD3B /* InfoPlist.strings */; };
 		756299D51914DE1A00C5AD3B /* ObjectivePGPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 756299D41914DE1A00C5AD3B /* ObjectivePGPTests.m */; };
@@ -234,6 +235,7 @@
 		755456BE192843E700E5526B /* PGPArmor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPArmor.h; sourceTree = "<group>"; };
 		755456BF192843E700E5526B /* PGPArmor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPArmor.m; sourceTree = "<group>"; };
 		75572E281ED2193C00205871 /* PGPCryptoHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPCryptoHash.h; sourceTree = "<group>"; };
+		7561B66D1F65C423001D2AD6 /* issue59-keys.asc */ = {isa = PBXFileReference; lastKnownFileType = text; path = "issue59-keys.asc"; sourceTree = "<group>"; };
 		7562858C19239F1B00127E24 /* PGPFingerprint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPFingerprint.h; sourceTree = "<group>"; };
 		7562858D19239F1B00127E24 /* PGPFingerprint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPFingerprint.m; sourceTree = "<group>"; };
 		756299B81914DE1A00C5AD3B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -544,6 +546,7 @@
 				7590B7AB1ED9BFF7009A0E92 /* issue44-keys.asc */,
 				758042711EF3CC95001ECAC6 /* issue62-keys.asc */,
 				753B05421EF3E03800785EBC /* issue62-message.asc */,
+				7561B66D1F65C423001D2AD6 /* issue59-keys.asc */,
 			);
 			path = TestingFiles;
 			sourceTree = "<group>";
@@ -717,6 +720,7 @@
 				750B43B91ED356D70064BA05 /* issue53-s2k-gnu-dummy.prv.asc in Resources */,
 				7563357819258F1700414CCC /* secring-test-encrypted.gpg in Resources */,
 				750016A919C22E7100EAF308 /* secring-test-plaintext-encrypted-message.asc in Resources */,
+				7561B66E1F65C479001D2AD6 /* issue59-keys.asc in Resources */,
 				75CA419C1CDF775900887C62 /* issue35-key.asc in Resources */,
 				7563357619258F1700414CCC /* pubring-test-encrypted.gpg in Resources */,
 				758042721EF3CC9C001ECAC6 /* issue62-keys.asc in Resources */,

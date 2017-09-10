@@ -163,4 +163,13 @@
     XCTAssertNotNil(decryptedData);
 }
 
+// https://github.com/krzyzanowskim/ObjectivePGP/issues/59
+- (void)testIssue59 {
+    let pgp = self.oPGP;
+    let bundle = [NSBundle bundleForClass:[self class]];
+    let keysPath = [bundle pathForResource:@"issue59-keys" ofType:@"asc"];
+    let keys = [pgp importKeysFromFile:keysPath];
+    XCTAssertEqual(keys.count, (NSUInteger)1);
+}
+
 @end
