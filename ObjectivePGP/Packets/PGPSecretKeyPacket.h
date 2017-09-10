@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) PGPS2KUsage s2kUsage;
 @property (nonatomic, readonly) PGPS2K *s2k;
 @property (nonatomic, readonly) PGPSymmetricAlgorithm symmetricAlgorithm;
-@property (nonatomic, copy, readonly) NSData *ivData;
+@property (nonatomic, nullable, copy, readonly) NSData *ivData;
 @property (nonatomic, readonly) BOOL isEncryptedWithPassphrase;
 
 /**
@@ -30,7 +30,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable PGPSecretKeyPacket *)decryptedKeyPacket:(NSString *)passphrase error:(NSError *__autoreleasing *)error;
 
 - (nullable PGPMPI *)secretMPI:(NSString *)identifier;
-- (nullable NSData *)decryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm;
 
 @end
 

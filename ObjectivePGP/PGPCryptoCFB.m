@@ -51,9 +51,9 @@ NS_ASSUME_NONNULL_BEGIN
                  symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm
                                  iv:(NSData *)ivData
                             decrypt:(BOOL)decrypt {
-    NSAssert(ivData.length > 0, @"Missing IV");
     NSAssert(sessionKeyData.length > 0, @"Missing session key");
     NSAssert(encryptedData.length > 0, @"Missing data");
+    NSAssert(ivData.length > 0, @"Missing IV");
 
     if (ivData.length == 0 || sessionKeyData.length == 0 || encryptedData.length == 0) {
         return nil;

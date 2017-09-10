@@ -69,12 +69,25 @@ NS_ASSUME_NONNULL_BEGIN
     let secretKeyPacket = [[PGPSecretKeyPacket alloc] init];
     secretKeyPacket.version = self.version;
     secretKeyPacket.publicKeyAlgorithm = publicKeyPacket.publicKeyAlgorithm;
-    secretKeyPacket.s2kUsage = PGPS2KUsageNone;
-    secretKeyPacket.s2k = [[PGPS2K alloc] initWithSpecifier:PGPS2KSpecifierSimple hashAlgorithm:self.hashAlgorithm];
     secretKeyPacket.symmetricAlgorithm = self.cipherAlgorithm;
-    NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:secretKeyPacket.symmetricAlgorithm];
-    secretKeyPacket.ivData = [NSMutableData dataWithLength:blockSize];
     secretKeyPacket.createDate = publicKeyPacket.createDate;
+    NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:secretKeyPacket.symmetricAlgorithm];
+    if (!passphrase) {
+        secretKeyPacket.s2kUsage = PGPS2KUsageNonEncrypted;
+        secretKeyPacket.s2k = [[PGPS2K alloc] initWithSpecifier:PGPS2KSpecifierSimple hashAlgorithm:self.hashAlgorithm];
+        secretKeyPacket.ivData = [NSMutableData dataWithLength:blockSize];
+    } else {
+        secretKeyPacket.ivData = [PGPCryptoUtils randomData:blockSize];
+        secretKeyPacket.s2kUsage = PGPS2KUsageEncryptedAndHashed;
+        let s2k = [[PGPS2K alloc] initWithSpecifier:PGPS2KSpecifierIteratedAndSalted hashAlgorithm:self.hashAlgorithm];
+        NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:self.cipherAlgorithm];
+        let sessionKeyData = [s2k produceSessionKeyWithPassphrase:passphrase keySize:keySize];
+        if (sessionKeyData) {
+            let sessionKey = [PGPCryptoCFB encryptData:nil sessionKeyData:sessionKeyData symmetricAlgorithm:self.cipherAlgorithm iv:secretKeyPacket.ivData];
+        }
+
+        secretKeyPacket.s2k = s2k;
+    }
 
     [self fillMPIForPublic:publicKeyPacket andSecret:secretKeyPacket withKeyAlgorithm:self.keyAlgorithm bits:self.keyBitsLength];
 

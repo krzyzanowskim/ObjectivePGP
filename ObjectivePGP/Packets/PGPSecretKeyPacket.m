@@ -328,8 +328,10 @@
         [data appendBytes:&checksum length:2];
     } else if (self.encryptedMPIPartData) {
         // encrypted MPIArray with encrypted hash
-        [data appendData:self.encryptedMPIPartData];
         // hash is part of encryptedMPIPartData
+        [data appendData:self.encryptedMPIPartData];
+    } else {
+        PGPLogWarning(@"Cannot build secret key data. Missing secret MPIs....");
     }
 
     // If the string-to-key usage octet is zero or 255, then a two-octet checksum of the plaintext of the algorithm-specific portion (sum of all octets, mod 65536).
@@ -399,6 +401,7 @@
     copy->_ivData = [self.ivData copy];
     copy->_secretMPIArray = [self.secretMPIArray copy];
     copy->_encryptedMPIPartData = [self.encryptedMPIPartData copy];
+    copy->_wasDecrypted = self.wasDecrypted;
     return copy;
 }
 
