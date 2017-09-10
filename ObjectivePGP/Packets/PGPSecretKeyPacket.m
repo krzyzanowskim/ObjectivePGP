@@ -175,7 +175,7 @@
             NSUInteger checksumLength = 2;
             let clearTextData = [data subdataWithRange:(NSRange){0, data.length - checksumLength}];
             let checksumData = [data subdataWithRange:(NSRange){data.length - checksumLength, checksumLength}];
-            NSUInteger calculatedChecksum = [clearTextData pgp_Checksum];
+            NSUInteger calculatedChecksum = clearTextData.pgp_Checksum;
 
             UInt16 checksum = 0;
             [checksumData getBytes:&checksum length:checksumLength];

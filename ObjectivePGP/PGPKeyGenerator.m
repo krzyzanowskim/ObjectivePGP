@@ -12,6 +12,8 @@
 #import "PGPSecretKeyPacket+Private.h"
 #import "PGPSignaturePacket+Private.h"
 #import "PGPMacros+Private.h"
+#import "NSData+PGPUtils.h"
+#import "NSMutableData+PGPUtils.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -60,6 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (nullable PGPKey *)buildKeyWithPassphrase:(nullable NSString *)passphrase {
+    // Public key
     let publicKeyPacket = [[PGPPublicKeyPacket alloc] init];
     publicKeyPacket.version = self.version;
     publicKeyPacket.publicKeyAlgorithm = self.keyAlgorithm;
@@ -71,6 +74,11 @@ NS_ASSUME_NONNULL_BEGIN
     secretKeyPacket.publicKeyAlgorithm = publicKeyPacket.publicKeyAlgorithm;
     secretKeyPacket.symmetricAlgorithm = self.cipherAlgorithm;
     secretKeyPacket.createDate = publicKeyPacket.createDate;
+
+    // Fill MPIs
+    [self fillMPIForPublic:publicKeyPacket andSecret:secretKeyPacket withKeyAlgorithm:self.keyAlgorithm bits:self.keyBitsLength];
+
+    // Encrypt with passphrase
     NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:secretKeyPacket.symmetricAlgorithm];
     if (!passphrase) {
         secretKeyPacket.s2kUsage = PGPS2KUsageNonEncrypted;
@@ -78,18 +86,36 @@ NS_ASSUME_NONNULL_BEGIN
         secretKeyPacket.ivData = [NSMutableData dataWithLength:blockSize];
     } else {
         secretKeyPacket.ivData = [PGPCryptoUtils randomData:blockSize];
-        secretKeyPacket.s2kUsage = PGPS2KUsageEncryptedAndHashed;
+        secretKeyPacket.s2kUsage = PGPS2KUsageEncrypted; //TODO: PGPS2KUsageEncryptedAndHashed
+
         let s2k = [[PGPS2K alloc] initWithSpecifier:PGPS2KSpecifierIteratedAndSalted hashAlgorithm:self.hashAlgorithm];
-        // build encryptedMPIPartData
-        let sessionKeyData = [s2k produceSessionKeyWithPassphrase:passphrase symmetricAlgorithm:self.cipherAlgorithm];
-        if (sessionKeyData) {
-            let sessionKey = [PGPCryptoCFB encryptData:nil sessionKeyData:sessionKeyData symmetricAlgorithm:self.cipherAlgorithm iv:secretKeyPacket.ivData];
-        }
-
         secretKeyPacket.s2k = s2k;
-    }
+        {
+            // build encryptedMPIPartData
+            let plaintextMPIPartData = [NSMutableData data];
+            switch (secretKeyPacket.s2kUsage) {
+                case PGPS2KUsageEncryptedAndHashed:
+                    break;
+                case PGPS2KUsageEncrypted:
+                    for (PGPMPI *mpi in secretKeyPacket.secretMPIArray) {
+                        [plaintextMPIPartData pgp_appendData:[mpi exportMPI]];
+                    }
 
-    [self fillMPIForPublic:publicKeyPacket andSecret:secretKeyPacket withKeyAlgorithm:self.keyAlgorithm bits:self.keyBitsLength];
+                    break;
+                default:
+                    break;
+            }
+
+            // a two-octet checksum of the plaintext of the algorithm-specific portion
+            UInt16 checksum = CFSwapInt16HostToBig(plaintextMPIPartData.pgp_Checksum);
+            [plaintextMPIPartData appendBytes:&checksum length:2];
+
+            let sessionKeyData = [s2k produceSessionKeyWithPassphrase:passphrase symmetricAlgorithm:self.cipherAlgorithm];
+            if (sessionKeyData) {
+                secretKeyPacket.encryptedMPIPartData = [PGPCryptoCFB encryptData:plaintextMPIPartData sessionKeyData:sessionKeyData symmetricAlgorithm:self.cipherAlgorithm iv:secretKeyPacket.ivData];
+            }
+        }
+    }
 
     // Create Key
     let partialPublicKey = [[PGPPartialKey alloc] initWithPackets:@[publicKeyPacket]];
