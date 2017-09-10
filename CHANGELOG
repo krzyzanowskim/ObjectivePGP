@@ -1,14 +1,22 @@
+Version 0.8.beta.1
+- Adds public and private keys generation feature with PGPKeyGenerator
+- Fixes signature verifying flow, return on fail
+- Improves subkeys support
+- Do not expose private macros
+- Updates equality checks
+- Exports keys without reusing imported raw data.
+
 Version 0.7
-- Fix TripleDSA decryption.
-- Fix MPI memleak.
-- Fix reading certificate sym. algs.
-- Improve DSA keys support.
-- Improve signature subpackets.
+- Fixes TripleDSA decryption.
+- Fixes MPI memleak.
+- Fixes reading certificate sym. algs.
+- Improves DSA keys support.
+- Improves signature subpackets.
 - Apply OpenPGP errata #2270.
 
 Version 0.6.2
-- Avoid assertion failing to decrypt packet when signing
-- Support "critical bit"
+- Avoids assertion failing to decrypt packet when signing
+- Supports "critical bit"
 
 Version 0.6.1
 - Adds PGPKey.keyID property
