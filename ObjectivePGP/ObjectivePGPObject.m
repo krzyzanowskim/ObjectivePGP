@@ -27,6 +27,7 @@
 #import "PGPUser.h"
 #import "PGPUserIDPacket.h"
 #import "NSMutableData+PGPUtils.h"
+#import "NSMutableArray+PGPUtils.h"
 
 #import "PGPFoundation.h"
 #import "PGPLogging.h"
@@ -638,9 +639,7 @@ NS_ASSUME_NONNULL_BEGIN
         // TODO: dont parse data here, get raw data and pass to verifyData:withsignature:
         while (offset < signedDataPackets.length) {
             let packet = [PGPPacketFactory packetWithData:signedDataPackets offset:offset nextPacketOffset:&nextPacketOffset];
-            if (packet) {
-                [accumulatedPackets addObject:packet];
-            }
+            [accumulatedPackets pgp_addObject:packet];
 
             offset += nextPacketOffset;
         }
@@ -779,9 +778,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     while (offset < keyringData.length) {
         let packet = [PGPPacketFactory packetWithData:keyringData offset:offset nextPacketOffset:&nextPacketOffset];
-        if (packet) {
-            [accumulatedPackets addObject:packet];
-        }
+        [accumulatedPackets pgp_addObject:packet];
 
         offset += nextPacketOffset;
     }
@@ -836,7 +833,7 @@ NS_ASSUME_NONNULL_BEGIN
             [accumulatedPackets removeAllObjects];
         }
 
-        [accumulatedPackets addObject:packet];
+        [accumulatedPackets pgp_addObject:packet];
         position += nextPacketPosition;
     }
 
