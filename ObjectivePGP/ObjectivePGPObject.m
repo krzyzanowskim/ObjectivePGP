@@ -342,9 +342,8 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    PGPLiteralPacket *literalPacket;
-    PGPSignaturePacket *signaturePacket;
-    NSData *plaintextData;
+    PGPLiteralPacket * _Nullable literalPacket = nil;
+    PGPSignaturePacket * _Nullable signaturePacket = nil;
     for (PGPPacket *packet in packets) {
         switch (packet.tag) {
             case PGPCompressedDataPacketTag:
@@ -353,7 +352,6 @@ NS_ASSUME_NONNULL_BEGIN
                 break;
             case PGPLiteralDataPacketTag:
                 literalPacket = PGPCast(packet, PGPLiteralPacket);
-                plaintextData = literalPacket.literalRawData;
                 break;
             case PGPSignaturePacketTag:
                 signaturePacket = PGPCast(packet, PGPSignaturePacket);
@@ -366,21 +364,23 @@ NS_ASSUME_NONNULL_BEGIN
         }
     }
 
-    BOOL _signed = signaturePacket != nil;
-    BOOL _valid = NO;
+    BOOL dataIsSigned = signaturePacket != nil;
+    if (isSigned) { *isSigned = dataIsSigned; }
+
+    // available if literalPacket is available
+    let _Nullable plaintextData = literalPacket.literalRawData;
+    if (!plaintextData) {
+        return nil;
+    }
+
+    BOOL dataIsValid = NO;
     if (signaturePacket && key.publicKey) {
         let signatureData = [signaturePacket export:error];
         if (signatureData) {
-            _valid = [self verifyData:plaintextData withSignature:signatureData usingKey:key error:nil];
+            dataIsValid = [self verifyData:plaintextData withSignature:signatureData usingKey:key error:nil];
         }
     }
-
-    if (isSigned) {
-        *isSigned = _signed;
-    }
-    if (isValid) {
-        *isValid = _valid;
-    }
+    if (isValid) { *isValid = dataIsValid; }
 
     return plaintextData;
 }
