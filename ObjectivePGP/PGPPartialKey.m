@@ -47,6 +47,24 @@ NS_ASSUME_NONNULL_BEGIN
     return NO;
 }
 
+- (nullable NSDate *)expirationDate {
+    PGPSignaturePacket * _Nullable primaryUserSelfCertificate = nil;
+    [self primaryUserAndSelfCertificate:&primaryUserSelfCertificate];
+    if (primaryUserSelfCertificate.expirationDate) {
+        return primaryUserSelfCertificate.expirationDate;
+    }
+
+    for (PGPPartialSubKey *subKey in self.subKeys) {
+        if ([subKey.keyID isEqual:self.keyID]) {
+            let _Nullable signaturePacket = subKey.bindingSignature;
+            if (signaturePacket && signaturePacket.expirationDate) {
+                return signaturePacket.expirationDate;
+            }
+        }
+    }
+    return nil;
+}
+
 - (PGPPartialKeyType)type {
     PGPPartialKeyType t = PGPPartialKeyUnknown;
 

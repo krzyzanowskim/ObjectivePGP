@@ -36,9 +36,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, nullable, readonly) PGPKeyID *issuerKeyID;
 @property (nonatomic, copy, readonly) NSArray<PGPSignatureSubpacket *> *subpackets;
 @property (nonatomic, nullable, readonly) NSDate *expirationDate; // computed
-@property (nonatomic, readonly, readonly) BOOL isExpired; // computed
+@property (nonatomic, readonly, readonly, getter=isExpired) BOOL expired; // computed
 @property (nonatomic, nullable, readonly) NSDate *creationDate; // computed
-@property (nonatomic, readonly, readonly) BOOL isPrimaryUserID; // computed
+@property (nonatomic, readonly, readonly, getter=isPrimaryUserID) BOOL primaryUserID; // computed
 
 /**
  *  Create signature packet for signing. This is convienience constructor.

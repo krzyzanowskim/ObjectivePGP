@@ -46,6 +46,10 @@ NS_ASSUME_NONNULL_BEGIN
     return [NSString stringWithFormat:@"%@, publicKey: %@, secretKey: %@", super.description, self.publicKey.keyID, self.secretKey.keyID];
 }
 
+- (nullable NSDate *)expirationDate {
+    return self.publicKey.expirationDate ?: self.secretKey.expirationDate;
+}
+
 - (PGPKeyID *)keyID {
     return self.publicKey.keyID ?: self.secretKey.keyID;
 }
