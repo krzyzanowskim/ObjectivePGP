@@ -200,7 +200,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
  *
  *  @return NSData with key
  */
-- (nullable NSData *)produceSessionKeyWithPassphrase:(NSString *)passphrase keySize:(NSUInteger)keySize {
+- (nullable NSData *)produceSessionKeyWithPassphrase:(NSString *)passphrase symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm {
     PGPAssertClass(passphrase, NSString);
 
     let passphraseData = [passphrase dataUsingEncoding:NSUTF8StringEncoding];
@@ -208,6 +208,10 @@ static const unsigned int PGP_SALT_SIZE = 8;
     if (!hashData) {
         return nil;
     }
+
+    // Keysize
+    NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:symmetricAlgorithm];
+    NSAssert(keySize <= 32, @"invalid keySize");
 
     /*
      If the hash size is less than the key size, multiple instances of the

@@ -80,10 +80,8 @@ NS_ASSUME_NONNULL_BEGIN
         secretKeyPacket.ivData = [PGPCryptoUtils randomData:blockSize];
         secretKeyPacket.s2kUsage = PGPS2KUsageEncryptedAndHashed;
         let s2k = [[PGPS2K alloc] initWithSpecifier:PGPS2KSpecifierIteratedAndSalted hashAlgorithm:self.hashAlgorithm];
-        NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:self.cipherAlgorithm];
-
         // build encryptedMPIPartData
-        let sessionKeyData = [s2k produceSessionKeyWithPassphrase:passphrase keySize:keySize];
+        let sessionKeyData = [s2k produceSessionKeyWithPassphrase:passphrase symmetricAlgorithm:self.cipherAlgorithm];
         if (sessionKeyData) {
             let sessionKey = [PGPCryptoCFB encryptData:nil sessionKeyData:sessionKeyData symmetricAlgorithm:self.cipherAlgorithm iv:secretKeyPacket.ivData];
         }

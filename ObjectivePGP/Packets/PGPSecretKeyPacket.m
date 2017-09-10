@@ -261,13 +261,9 @@
     PGPSecretKeyPacket *encryptedKey = self.copy;
     let encryptionSymmetricAlgorithm = encryptedKey.symmetricAlgorithm;
 
-    // Keysize
-    NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:encryptionSymmetricAlgorithm];
-    NSAssert(keySize <= 32, @"invalid keySize");
-
     // Session key for passphrase
     // producing a key to be used with a symmetric block cipher from a string of octets
-    let sessionKeyData = [encryptedKey.s2k produceSessionKeyWithPassphrase:passphrase keySize:keySize];
+    let sessionKeyData = [encryptedKey.s2k produceSessionKeyWithPassphrase:passphrase symmetricAlgorithm:encryptionSymmetricAlgorithm];
 
     // Decrypted MPIArray
     let decryptedData = [PGPCryptoCFB decryptData:encryptedKey.encryptedMPIPartData sessionKeyData:sessionKeyData symmetricAlgorithm:encryptionSymmetricAlgorithm iv:encryptedKey.ivData];
