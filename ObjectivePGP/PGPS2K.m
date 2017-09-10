@@ -24,6 +24,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 static const unsigned int PGP_SALT_SIZE = 8;
+static const unsigned int PGP_DEFAULT_ITERATIONS_COUNT = 215;
 
 @interface PGPS2K ()
 
@@ -38,6 +39,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
         _specifier = specifier;
         _hashAlgorithm = hashAlgorithm;
         _salt = [PGPCryptoUtils randomData:PGP_SALT_SIZE];
+        _iterationsCount = PGP_DEFAULT_ITERATIONS_COUNT;
     }
     return self;
 }
@@ -79,7 +81,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
 
     // Octet  10:       count, a one-octet, coded value
     if (_specifier == PGPS2KSpecifierIteratedAndSalted) {
-        [data getBytes:&_uncodedCount range:(NSRange){position, 1}];
+        [data getBytes:&self->_iterationsCount range:(NSRange){position, 1}];
         position = position + 1;
     }
 
@@ -112,14 +114,14 @@ static const unsigned int PGP_SALT_SIZE = 8;
     }
 
     if (self.specifier == PGPS2KSpecifierIteratedAndSalted) {
-        if (self.uncodedCount == 0) {
+        if (self.iterationsCount == 0) {
             if (error) {
-                *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unexpected count is 0" }];
+                *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unexpected count: 0" }];
             }
             return nil;
         }
 
-        [data appendBytes:&_uncodedCount length:1];
+        [data appendBytes:&self->_iterationsCount length:1];
     }
 
     return data;
@@ -248,7 +250,7 @@ static const unsigned int PGP_SALT_SIZE = 8;
 - (id)copyWithZone:(nullable NSZone *)zone {
     let copy = [[PGPS2K alloc] initWithSpecifier:self.specifier hashAlgorithm:self.hashAlgorithm];
     copy.salt = [self.salt copyWithZone:zone];
-    copy.uncodedCount = self.uncodedCount;
+    copy.iterationsCount = self.iterationsCount;
     return copy;
 }
 

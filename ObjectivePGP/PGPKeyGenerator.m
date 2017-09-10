@@ -88,32 +88,32 @@ NS_ASSUME_NONNULL_BEGIN
         secretKeyPacket.ivData = [PGPCryptoUtils randomData:blockSize];
         secretKeyPacket.s2kUsage = PGPS2KUsageEncrypted; //TODO: PGPS2KUsageEncryptedAndHashed
 
-        let s2k = [[PGPS2K alloc] initWithSpecifier:PGPS2KSpecifierSalted hashAlgorithm:self.hashAlgorithm]; //TODO: PGPS2KSpecifierIteratedAndSalted
+        let s2k = [[PGPS2K alloc] initWithSpecifier:PGPS2KSpecifierIteratedAndSalted hashAlgorithm:self.hashAlgorithm];
         secretKeyPacket.s2k = s2k;
-        {
-            // build encryptedMPIPartData
-            let plaintextMPIPartData = [NSMutableData data];
-            switch (secretKeyPacket.s2kUsage) {
-                case PGPS2KUsageEncryptedAndHashed:
-                    break;
-                case PGPS2KUsageEncrypted:
-                    for (PGPMPI *mpi in secretKeyPacket.secretMPIArray) {
-                        [plaintextMPIPartData pgp_appendData:[mpi exportMPI]];
-                    }
 
-                    break;
-                default:
-                    break;
-            }
 
-            // a two-octet checksum of the plaintext of the algorithm-specific portion
-            UInt16 checksum = CFSwapInt16HostToBig(plaintextMPIPartData.pgp_Checksum);
-            [plaintextMPIPartData appendBytes:&checksum length:2];
+        // build encryptedMPIPartData
+        let plaintextMPIPartData = [NSMutableData data];
+        switch (secretKeyPacket.s2kUsage) {
+            case PGPS2KUsageEncryptedAndHashed:
+                //TODO: to do
+                break;
+            case PGPS2KUsageEncrypted:
+                for (PGPMPI *mpi in secretKeyPacket.secretMPIArray) {
+                    [plaintextMPIPartData pgp_appendData:[mpi exportMPI]];
+                }
+                break;
+            default:
+                break;
+        }
 
-            let sessionKeyData = [s2k produceSessionKeyWithPassphrase:passphrase symmetricAlgorithm:self.cipherAlgorithm];
-            if (sessionKeyData) {
-                secretKeyPacket.encryptedMPIPartData = [PGPCryptoCFB encryptData:plaintextMPIPartData sessionKeyData:sessionKeyData symmetricAlgorithm:self.cipherAlgorithm iv:secretKeyPacket.ivData];
-            }
+        // a two-octet checksum of the plaintext of the algorithm-specific portion
+        UInt16 checksum = CFSwapInt16HostToBig(plaintextMPIPartData.pgp_Checksum);
+        [plaintextMPIPartData appendBytes:&checksum length:2];
+
+        let sessionKeyData = [s2k produceSessionKeyWithPassphrase:passphrase symmetricAlgorithm:self.cipherAlgorithm];
+        if (sessionKeyData) {
+            secretKeyPacket.encryptedMPIPartData = [PGPCryptoCFB encryptData:plaintextMPIPartData sessionKeyData:sessionKeyData symmetricAlgorithm:self.cipherAlgorithm iv:secretKeyPacket.ivData];
         }
     }
 

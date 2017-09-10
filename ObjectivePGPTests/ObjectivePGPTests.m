@@ -160,19 +160,4 @@
     XCTAssertNotNil(decryptedData);
 }
 
-// https://github.com/krzyzanowskim/ObjectivePGP/issues/67
-- (void)testIssue67 {
-    let pgp = self.oPGP;
-    let bundle = [NSBundle bundleForClass:[self class]];
-    let keysPath = [bundle pathForResource:@"issue67-key" ofType:@"asc"];
-    let keys = [pgp importKeysFromFile:keysPath];
-    XCTAssertEqual(keys.count, (NSUInteger)1);
-
-    NSError *error;
-    let signatureData = [NSData dataWithContentsOfFile:keysPath];
-    let signature = [pgp signData:signatureData usingKey:keys.anyObject passphrase:nil detached:YES error:&error];
-    XCTAssertNotNil(signature);
-    XCTAssertNil(error);
-}
-
 @end

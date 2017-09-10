@@ -16,9 +16,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) PGPS2KSpecifier specifier;
 @property (nonatomic, readonly) PGPHashAlgorithm hashAlgorithm;
-@property (nonatomic, copy, readonly) NSData *salt; // random 8 bytes.
-@property (nonatomic) UInt32 uncodedCount;
-@property (nonatomic, readonly) UInt32 codedCount; // calculated
+// random 8 bytes.
+@property (nonatomic, copy, readonly) NSData *salt;
+// Iteration count.
+@property (nonatomic) UInt32 iterationsCount;
+// calculated
+@property (nonatomic, readonly) UInt32 codedCount;
 
 PGP_EMPTY_INIT_UNAVAILABLE
 
