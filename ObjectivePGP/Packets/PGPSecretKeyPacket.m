@@ -294,11 +294,11 @@
     NSAssert(forceV4 == YES, @"Only V4 is supported");
 
     let data = [NSMutableData data];
-    [data appendBytes:&_s2kUsage length:1];
+    [data appendBytes:&self->_s2kUsage length:1];
 
     if (self.s2kUsage == PGPS2KUsageEncrypted || self.s2kUsage == PGPS2KUsageEncryptedAndHashed) {
         // If string-to-key usage octet was 255 or 254, a one-octet symmetric encryption algorithm
-        [data appendBytes:&_symmetricAlgorithm length:1];
+        [data appendBytes:&self->_symmetricAlgorithm length:1];
 
         // If string-to-key usage octet was 255 or 254, a string-to-key specifier.
         NSError *exportError = nil;
@@ -311,7 +311,7 @@
         NSAssert(self.ivData, @"Require IV");
         // If secret data is encrypted (string-to-key usage octet not zero), an Initial Vector (IV) of the same length as the cipher's block size.
         // Initial Vector (IV) of the same length as the cipher's block size
-        [data appendBytes:self.ivData.bytes length:self.ivData.length];
+        [data appendData:self.ivData];
     }
 
     if (self.s2kUsage == PGPS2KUsageNonEncrypted) {
@@ -321,7 +321,7 @@
         }
 
         // append hash
-        UInt16 checksum = CFSwapInt16HostToBig([data pgp_Checksum]);
+        UInt16 checksum = CFSwapInt16HostToBig(data.pgp_Checksum);
         [data appendBytes:&checksum length:2];
     } else if (self.encryptedMPIPartData) {
         // encrypted MPIArray with encrypted hash
@@ -352,7 +352,7 @@
     //        self.s2k.specifier = PGPS2KSpecifierSimple;
     //        self.s2k.algorithm = PGPHashMD5;
 
-    return [data copy];
+    return data;
 }
 
 #pragma mark - PGPExportable
@@ -360,7 +360,7 @@
 - (nullable NSData *)export:(NSError *__autoreleasing _Nullable *)error {
     return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
         let secretKeyPacketData = [NSMutableData data];
-        [secretKeyPacketData appendData:[super buildKeyBodyData:YES]];
+        [secretKeyPacketData appendData:[self buildKeyBodyData:YES]];
         [secretKeyPacketData appendData:[self buildSecretKeyDataAndForceV4:YES]];
         return  secretKeyPacketData;
     }];

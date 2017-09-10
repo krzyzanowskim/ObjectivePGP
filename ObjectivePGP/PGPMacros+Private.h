@@ -45,3 +45,6 @@
 #pragma clang diagnostic ignored "-Wunused-function"
 static void pgp_defer_cleanup_block(__strong void (^*block)(void)) { (*block)(); }
 #pragma clang diagnostic pop
+
+#define PGPDataAppendPropertyBytes(d,var,len) \
+    [d appendBytes:&self->_##var length:len]

@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "ObjectivePGP"
-  s.version      = "0.7"
+  s.version      = "0.8.beta.1"
   s.summary      = "OpenPGP for iOS and macOS"
   s.description  = "Native OpenPGP (RFC 4880) implementation for iOS and macOS."
   s.homepage     = "https://github.com/krzyzanowskim/ObjectivePGP"
@@ -16,11 +16,10 @@ Pod::Spec.new do |s|
   s.ios.vendored_frameworks = 'Frameworks/ios/ObjectivePGP.framework'
   s.osx.vendored_frameworks = 'Frameworks/macosx/ObjectivePGP.framework'  
   
-  s.weak_frameworks = 'Security'
-
   s.pod_target_xcconfig = { 'OTHER_LDFLAGS' => '-lObjC' }
   s.xcconfig            = { 'FRAMEWORK_SEARCH_PATHS' => '"$(PODS_ROOT)/ObjectivePGP/**"' }
 
+  s.weak_frameworks = 'Security'
   s.libraries =  'z', 'bz2'
 
   s.requires_arc = true
