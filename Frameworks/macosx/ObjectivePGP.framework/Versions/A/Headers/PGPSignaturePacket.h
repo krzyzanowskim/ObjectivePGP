@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Two-octet field holding the left 16 bits of the signed hash value.
 /// Read from the key or set byt the call to `-[PGPSignaturePacket signData:usingKey:passphrase:userID:error]`
 @property (nonatomic, nullable) NSData *signedHashValueData;
-@property (nonatomic, copy) NSArray<PGPMPI *> *signatureMPIs;
+@property (nonatomic, copy) NSArray<PGPMPI *> *signatureMPIArray;
 
 @property (nonatomic, readonly) BOOL canBeUsedToSign; // computed
 @property (nonatomic, readonly) BOOL canBeUsedToEncrypt; // computed
@@ -36,9 +36,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, nullable, readonly) PGPKeyID *issuerKeyID;
 @property (nonatomic, copy, readonly) NSArray<PGPSignatureSubpacket *> *subpackets;
 @property (nonatomic, nullable, readonly) NSDate *expirationDate; // computed
-@property (nonatomic, readonly, readonly) BOOL isExpired; // computed
+@property (nonatomic, readonly, readonly, getter=isExpired) BOOL expired; // computed
 @property (nonatomic, nullable, readonly) NSDate *creationDate; // computed
-@property (nonatomic, readonly, readonly) BOOL isPrimaryUserID; // computed
+@property (nonatomic, readonly, readonly, getter=isPrimaryUserID) BOOL primaryUserID; // computed
 
 /**
  *  Create signature packet for signing. This is convienience constructor.
@@ -56,18 +56,17 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  Build signature data (signature packet with subpackets).
  *
- *  @param inputData Data to sign
- *  @param secretKey Secret key used to create signature
+ *  @param inputData Data to sign.
+ *  @param withKey   A key used to create signature.
  *  @param error     error
  *
  *  @return YES on success.
  */
-- (BOOL)signData:(NSData *)inputData secretKey:(PGPPartialKey *)secretKey error:(NSError *__autoreleasing *)error DEPRECATED_ATTRIBUTE;
-- (BOOL)signData:(nullable NSData *)inputData usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error;
+- (BOOL)signData:(nullable NSData *)inputData withKey:(PGPKey *)key subKey:(nullable PGPKey *)subKey passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error;
 
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey error:(NSError *__autoreleasing *)error;
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error;
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPPartialKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error;
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey error:(NSError *__autoreleasing *)error;
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error;
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error;
 
 @end
 

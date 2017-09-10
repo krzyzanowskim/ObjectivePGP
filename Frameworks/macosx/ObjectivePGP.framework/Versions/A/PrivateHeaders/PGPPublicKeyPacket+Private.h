@@ -16,8 +16,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readwrite) UInt8 version;
 @property (nonatomic, readwrite) PGPPublicKeyAlgorithm publicKeyAlgorithm;
 @property (nonatomic, copy, readwrite) NSDate *createDate;
-//@property (nonatomic, readwrite) PGPFingerprint *fingerprint;
-//@property (nonatomic, readwrite) PGPKeyID *keyID;
 @property (nonatomic, readwrite) UInt16 V3validityPeriod;
 @property (nonatomic, copy, readwrite) NSArray<PGPMPI *> *publicMPIArray;
 

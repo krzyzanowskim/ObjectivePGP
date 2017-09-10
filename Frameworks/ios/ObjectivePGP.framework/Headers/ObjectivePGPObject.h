@@ -17,11 +17,19 @@ NS_ASSUME_NONNULL_BEGIN
 /// Imported keys.
 @property (strong, nonatomic, readonly) NSSet<PGPKey *> *keys;
 
+/*
+ Import keys. `keys` property is updated after successfull import.
+
+ @param path keys to load.
+ @return Set of loaded keys.
+*/
+- (NSSet<PGPKey *> *)importKeys:(NSSet<PGPKey *> *)keys;
+
 /**
  Import keys from the file. `keys` property is updated after successfull import.
 
  @param path Path to the file with the keys.
- @return Array of loaded keys.
+ @return Set of loaded keys.
  */
 - (NSSet<PGPKey *> *)importKeysFromFile:(NSString *)path;
 
@@ -29,9 +37,16 @@ NS_ASSUME_NONNULL_BEGIN
  Import keys from the data. `keys` property is updated after successfull import.
 
  @param data Keys data.
- @return Array of loaded keys.
+ @return Set of loaded keys.
  */
 - (NSSet<PGPKey *> *)importKeysFromData:(NSData *)data;
+
+/**
+ Delete keys
+
+ @param keys Keys to delete from keys object
+*/
+- (void)deleteKeys:(NSArray<PGPKey *> *)keys;
 
 /**
  Import key with given identifier

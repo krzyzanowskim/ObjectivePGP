@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(NSUInteger, PGPPartialKeyType) { PGPPartialKeyUnknown = 0, PGPPartialKeySecret = 1, PGPPartialKeyPublic = 2 };
 
-@class PGPSecretKeyPacket;
+@class PGPSecretKeyPacket, PGPPartialSubKey;
 
 /// Single Private or Public key.
 @interface PGPPartialKey : NSObject <PGPExportable>
@@ -26,9 +26,10 @@ typedef NS_ENUM(NSUInteger, PGPPartialKeyType) { PGPPartialKeyUnknown = 0, PGPPa
 @property (nonatomic) PGPPacket *primaryKeyPacket;
 @property (nonatomic, readonly) BOOL isEncrypted;
 @property (nonatomic, copy) NSArray<PGPUser *> *users;
-@property (nonatomic, copy) NSArray *subKeys; // TODO: nullable
+@property (nonatomic, copy) NSArray<PGPPartialSubKey *> *subKeys; // TODO: nullable
 @property (nonatomic, nullable, copy) NSArray<PGPSignaturePacket *> *directSignatures;
 @property (nonatomic, nullable) PGPPacket *revocationSignature;
+@property (nonatomic, nullable, readonly) NSDate *expirationDate;
 
 @property (nonatomic, readonly) PGPKeyID *keyID;
 
@@ -41,7 +42,7 @@ PGP_EMPTY_INIT_UNAVAILABLE;
  *  Note: After decryption encrypted packets are replaced with new decrypted instances on key.
  *  Warning: It is not good idea to keep decrypted key around
  *
- *  @param passphrase Password
+ *  @param passphrase Passphrase
  *  @param error      error
  *
  *  @return YES on success.

@@ -7,9 +7,11 @@
 //
 //  Tag 13
 
-#import "PGPPacketFactory.h"
-#import "PGPMacros.h"
+#import <ObjectivePGP/PGPMacros.h>
+#import <ObjectivePGP/PGPPacket.h>
 #import <Foundation/Foundation.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface PGPUserIDPacket : PGPPacket
 
@@ -20,3 +22,5 @@ PGP_EMPTY_INIT_UNAVAILABLE
 - (instancetype)initWithUserID:(NSString *)userID NS_DESIGNATED_INITIALIZER;
 
 @end
+
+NS_ASSUME_NONNULL_END
