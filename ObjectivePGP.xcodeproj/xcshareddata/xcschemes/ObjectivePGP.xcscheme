@@ -39,6 +39,11 @@
                BlueprintName = "ObjectivePGPTests"
                ReferencedContainer = "container:ObjectivePGP.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "ObjectivePGPTests/testIssue67">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
       <MacroExpansion>

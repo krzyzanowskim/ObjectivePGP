@@ -120,7 +120,6 @@
 		7563357919258F1700414CCC /* secring-test-plaintext.gpg in Resources */ = {isa = PBXBuildFile; fileRef = 7563357519258F1700414CCC /* secring-test-plaintext.gpg */; };
 		7563357B19258F7100414CCC /* ObjectivePGPTestKeyringSecurePlaintext.m in Sources */ = {isa = PBXBuildFile; fileRef = 7563357A19258F7100414CCC /* ObjectivePGPTestKeyringSecurePlaintext.m */; };
 		7563357D1925936900414CCC /* ObjectivePGPTestKeyringSecureEncrypted.m in Sources */ = {isa = PBXBuildFile; fileRef = 7563357C1925936900414CCC /* ObjectivePGPTestKeyringSecureEncrypted.m */; };
-		756D19351F42025500230393 /* issue67-key.asc in Resources */ = {isa = PBXBuildFile; fileRef = 756D19341F42021400230393 /* issue67-key.asc */; };
 		7575BE5B1F00927800121BEA /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7575BE5A1F00927800121BEA /* libbz2.tbd */; };
 		7575BE5D1F00927F00121BEA /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7575BE5C1F00927F00121BEA /* libz.tbd */; };
 		758042721EF3CC9C001ECAC6 /* issue62-keys.asc in Resources */ = {isa = PBXBuildFile; fileRef = 758042711EF3CC95001ECAC6 /* issue62-keys.asc */; };
@@ -255,7 +254,6 @@
 		7563357519258F1700414CCC /* secring-test-plaintext.gpg */ = {isa = PBXFileReference; lastKnownFileType = file; path = "secring-test-plaintext.gpg"; sourceTree = "<group>"; };
 		7563357A19258F7100414CCC /* ObjectivePGPTestKeyringSecurePlaintext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectivePGPTestKeyringSecurePlaintext.m; sourceTree = "<group>"; };
 		7563357C1925936900414CCC /* ObjectivePGPTestKeyringSecureEncrypted.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectivePGPTestKeyringSecureEncrypted.m; sourceTree = "<group>"; };
-		756D19341F42021400230393 /* issue67-key.asc */ = {isa = PBXFileReference; lastKnownFileType = text; path = "issue67-key.asc"; sourceTree = "<group>"; };
 		75734BD9191853DF00A54D6E /* PGPKeyID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPKeyID.h; sourceTree = "<group>"; };
 		75734BDA191853DF00A54D6E /* PGPKeyID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPKeyID.m; sourceTree = "<group>"; };
 		7575BE5A1F00927800121BEA /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.0.sdk/usr/lib/libbz2.tbd; sourceTree = DEVELOPER_DIR; };
@@ -546,7 +544,6 @@
 				7590B7AB1ED9BFF7009A0E92 /* issue44-keys.asc */,
 				758042711EF3CC95001ECAC6 /* issue62-keys.asc */,
 				753B05421EF3E03800785EBC /* issue62-message.asc */,
-				756D19341F42021400230393 /* issue67-key.asc */,
 			);
 			path = TestingFiles;
 			sourceTree = "<group>";
@@ -715,7 +712,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				756D19351F42025500230393 /* issue67-key.asc in Resources */,
 				756299D31914DE1A00C5AD3B /* InfoPlist.strings in Resources */,
 				750B43BA1ED356D70064BA05 /* issue53-s2k-gnu-dummy.pub.asc in Resources */,
 				750B43B91ED356D70064BA05 /* issue53-s2k-gnu-dummy.prv.asc in Resources */,
