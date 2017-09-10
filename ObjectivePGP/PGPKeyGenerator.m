@@ -88,7 +88,7 @@ NS_ASSUME_NONNULL_BEGIN
         secretKeyPacket.ivData = [PGPCryptoUtils randomData:blockSize];
         secretKeyPacket.s2kUsage = PGPS2KUsageEncrypted; //TODO: PGPS2KUsageEncryptedAndHashed
 
-        let s2k = [[PGPS2K alloc] initWithSpecifier:PGPS2KSpecifierIteratedAndSalted hashAlgorithm:self.hashAlgorithm];
+        let s2k = [[PGPS2K alloc] initWithSpecifier:PGPS2KSpecifierSalted hashAlgorithm:self.hashAlgorithm]; //TODO: PGPS2KSpecifierIteratedAndSalted
         secretKeyPacket.s2k = s2k;
         {
             // build encryptedMPIPartData

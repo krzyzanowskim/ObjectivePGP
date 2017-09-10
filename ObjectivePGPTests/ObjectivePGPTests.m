@@ -54,18 +54,21 @@
     XCTAssertNotNil(key);
 
     // test sign
-    let data = [@"objectivepgp" dataUsingEncoding:NSUTF8StringEncoding];
+    let dataToSign = [@"objectivepgp" dataUsingEncoding:NSUTF8StringEncoding];
 
-    let sign = [self.oPGP signData:data usingKey:key passphrase:nil detached:YES error:nil];
+    let sign = [self.oPGP signData:dataToSign usingKey:key passphrase:nil detached:YES error:nil];
     XCTAssertNotNil(sign);
 
-    BOOL verified = [self.oPGP verifyData:data withSignature:sign usingKey:key error:nil];
-    XCTAssertTrue(verified);
+    BOOL isVerified = [self.oPGP verifyData:dataToSign withSignature:sign usingKey:key error:nil];
+    XCTAssertTrue(isVerified);
 
     // test export
-    let exportedKeyData = [key export:PGPPartialKeyPublic error:nil];
-    XCTAssertNotNil(exportedKeyData);
-    let importedKeys = [self.oPGP importKeysFromData:exportedKeyData];
+    let exportedPublicKeyData = [key export:PGPPartialKeyPublic error:nil];
+    XCTAssertNotNil(exportedPublicKeyData);
+    let exportedSecretKeyData = [key export:PGPPartialKeySecret error:nil];
+    XCTAssertNotNil(exportedSecretKeyData);
+
+    let importedKeys = [self.oPGP importKeysFromData:exportedPublicKeyData];
     XCTAssert(importedKeys.count == 1);
     XCTAssertEqualObjects(importedKeys.anyObject.keyID, key.keyID);
 }
@@ -75,6 +78,13 @@
     let key = [keyGenerator generateFor:@"Marcin <marcin@example.com>" passphrase:@"1234567890"];
     XCTAssertNotNil(key);
 
+    let exportedPublicKeyData = [key export:PGPPartialKeyPublic error:nil];
+    XCTAssertNotNil(exportedPublicKeyData);
+    let exportedSecretKeyData = [key export:PGPPartialKeySecret error:nil];
+    XCTAssertNotNil(exportedSecretKeyData);
+
+    [exportedPublicKeyData writeToFile:@"/Users/marcinkrzyzanowski/Devel/ObjectivePGP/test-key-pub.asc" atomically:NO];
+    [exportedSecretKeyData writeToFile:@"/Users/marcinkrzyzanowski/Devel/ObjectivePGP/test-key-sec.asc" atomically:NO];
 }
 
 - (void)testNotDuplicates {
