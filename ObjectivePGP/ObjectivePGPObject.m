@@ -224,6 +224,18 @@ NS_ASSUME_NONNULL_BEGIN
     return nil;
 }
 
+#pragma mark - Delete
+
+- (void)deleteKeys:(NSArray<PGPKey *> *)keys {
+    PGPAssertClass(keys, NSArray);
+
+    let allKeys = [NSMutableSet<PGPKey *> setWithSet:self.keys];
+    for (PGPKey *key in keys) {
+        [allKeys removeObject:key];
+    }
+    self.keys = allKeys;
+}
+
 #pragma mark - Encrypt & Decrypt
 
 - (nullable NSData *)decryptData:(NSData *)messageDataToDecrypt passphrase:(nullable NSString *)passphrase error:(NSError *__autoreleasing *)error {
@@ -679,12 +691,20 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (NSSet<PGPKey *> *)importKeysFromData:(NSData *)data {
+    PGPAssertClass(data, NSData);
+
     let loadedKeys = [self keysFromData:data];
-    for (PGPKey *key in loadedKeys) {
+    return [self importKeys:loadedKeys];
+}
+
+- (NSSet<PGPKey *> *)importKeys:(NSSet<PGPKey *> *)keys {
+    PGPAssertClass(keys, NSSet);
+
+    for (PGPKey *key in keys) {
         self.keys = [self addOrUpdateCompoundKeyForKey:key.secretKey inContainer:self.keys];
         self.keys = [self addOrUpdateCompoundKeyForKey:key.publicKey inContainer:self.keys];
     }
-    return loadedKeys;
+    return self.keys;
 }
 
 - (BOOL)importKey:(NSString *)shortKeyStringIdentifier fromFile:(NSString *)path {
