@@ -83,8 +83,11 @@
     let exportedSecretKeyData = [key export:PGPPartialKeySecret error:nil];
     XCTAssertNotNil(exportedSecretKeyData);
 
-    [exportedPublicKeyData writeToFile:@"/Users/marcinkrzyzanowski/Devel/ObjectivePGP/test-key-pub.asc" atomically:NO];
-    [exportedSecretKeyData writeToFile:@"/Users/marcinkrzyzanowski/Devel/ObjectivePGP/test-key-sec.asc" atomically:NO];
+    let importedPublicKeys = [self.oPGP importKeysFromData:exportedPublicKeyData];
+    XCTAssert(importedPublicKeys.count == 1);
+
+    let importedSecretKeys = [self.oPGP importKeysFromData:exportedPublicKeyData];
+    XCTAssert(importedSecretKeys.count == 1);
 }
 
 - (void)testNotDuplicates {
