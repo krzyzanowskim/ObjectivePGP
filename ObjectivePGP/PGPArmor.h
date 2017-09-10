@@ -18,14 +18,18 @@ typedef NS_ENUM(NSUInteger, PGPArmorType) {
     PGPArmorCleartextSignedMessage = 7, // TODO: -----BEGIN PGP SIGNED MESSAGE-----
 };
 
+NS_ASSUME_NONNULL_BEGIN
+
 /// ASCII Armor message.
 @interface PGPArmor : NSObject
 
 + (NSData *)armoredData:(NSData *)dataToArmor as:(PGPArmorType)armorType part:(NSUInteger)part of:(NSUInteger)ofParts;
 + (NSData *)armoredData:(NSData *)dataToArmor as:(PGPArmorType)armorType;
 
-+ (NSData *)readArmoredData:(NSString *)armoredString error:(NSError *__autoreleasing *)error;
++ (nullable NSData *)readArmoredData:(NSString *)armoredString error:(NSError *__autoreleasing _Nullable *)error;
 
 + (BOOL)isArmoredData:(NSData *)data;
 
 @end
+
+NS_ASSUME_NONNULL_END

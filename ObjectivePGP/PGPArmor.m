@@ -8,11 +8,16 @@
 
 #import "PGPArmor.h"
 #import "NSData+PGPUtils.h"
+#import "PGPMacros+Private.h"
 #import "PGPPacket.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPArmor
 
 + (BOOL)isArmoredData:(NSData *)data {
+    PGPAssertClass(data, NSData);
+
     // detect if armored, check for string -----BEGIN PGP
     NSString *str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     if (str && [str hasPrefix:@"-----BEGIN PGP"]) {
@@ -98,7 +103,9 @@
     return [armoredMessage dataUsingEncoding:NSASCIIStringEncoding];
 };
 
-+ (NSData *)readArmoredData:(NSString *)armoredString error:(NSError *__autoreleasing *)error {
++ (nullable NSData *)readArmoredData:(NSString *)armoredString error:(NSError *__autoreleasing _Nullable *)error {
+    PGPAssertClass(armoredString, NSString);
+
     NSScanner *scanner = [[NSScanner alloc] initWithString:armoredString];
     scanner.charactersToBeSkipped = nil;
 
@@ -209,3 +216,5 @@
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

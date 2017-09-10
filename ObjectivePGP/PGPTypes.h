@@ -16,11 +16,22 @@
 
 static NSString *const PGPErrorDomain = @"ObjectivePGP";
 
-typedef NS_ENUM(NSInteger, PGPErrorCode) { PGPErrorGeneral = -1, PGPErrorPassphraseRequired = 5, PGPErrorPassphraseInvalid = 6 };
+typedef NS_ENUM(NSInteger, PGPErrorCode) {
+    PGPErrorGeneral = -1,
+    PGPErrorPassphraseRequired = 5,
+    PGPErrorPassphraseInvalid = 6
+};
 
-typedef NS_ENUM(NSInteger, PGPFormatType) { PGPFormatUnknown = 0, PGPFormatOld = 1, PGPFormatNew = 2 };
+typedef NS_ENUM(NSInteger, PGPFormatType) {
+    PGPFormatUnknown = 0,
+    PGPFormatOld = 1,
+    PGPFormatNew = 2
+};
 
-typedef NS_ENUM(NSUInteger, PGPHeaderPacketTag) { PGPHeaderPacketTagNewFormat = 0x40, PGPHeaderPacketTagAllwaysSet = 0x80 };
+typedef NS_ENUM(NSUInteger, PGPHeaderPacketTag) {
+    PGPHeaderPacketTagNewFormat = 0x40,
+    PGPHeaderPacketTagAllwaysSet = 0x80
+};
 
 typedef NS_ENUM(UInt8, PGPPacketTag) {
     PGPInvalidPacketTag = 0,
