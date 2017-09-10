@@ -198,7 +198,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     [data appendBytes:&_publicKeyAlgorithm length:1];
 
-    // publicMPI is allways available, no need to decrypt
+    // publicMPI is always available, no need to decrypt
     for (PGPMPI *mpi in self.publicMPIArray) {
         let exportMPI = [mpi exportMPI];
         if (exportMPI) {

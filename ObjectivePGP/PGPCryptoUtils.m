@@ -7,6 +7,9 @@
 //
 
 #import "PGPCryptoUtils.h"
+#import "PGPRSA.h"
+#import "PGPDSA.h"
+#import "PGPSecretKeyPacket.h"
 #import "PGPMacros+Private.h"
 
 #import <CommonCrypto/CommonCrypto.h>
@@ -18,6 +21,8 @@
 #import <openssl/des.h>
 #import <openssl/idea.h>
 #import <openssl/ripemd.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPCryptoUtils
 
@@ -99,4 +104,24 @@
     return s;
 }
 
++ (nullable NSData *)decryptData:(NSData *)data usingSecretKeyPacket:(PGPSecretKeyPacket *)keyPacket {
+    PGPAssertClass(data, NSData);
+
+    switch (keyPacket.publicKeyAlgorithm) {
+        case PGPPublicKeyAlgorithmRSA:
+        case PGPPublicKeyAlgorithmRSAEncryptOnly:
+        case PGPPublicKeyAlgorithmRSASignOnly: {
+            // return decrypted m
+            return [PGPRSA privateDecrypt:data withSecretKeyPacket:keyPacket];
+        } break;
+        default:
+            // TODO: add algorithms
+            [NSException raise:@"PGPNotSupported" format:@"Algorithm not supported"];
+            break;
+    }
+    return nil;
+}
+
 @end
+
+NS_ASSUME_NONNULL_END

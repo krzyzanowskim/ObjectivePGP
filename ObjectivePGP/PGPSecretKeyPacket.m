@@ -234,6 +234,8 @@
     return data.length;
 }
 
+#pragma mark - Decrypt
+
 /**
  *  Decrypt parsed encrypted packet
  *  Decrypt packet and store decrypted data on instance
@@ -245,10 +247,13 @@
     NSParameterAssert(error);
 
     if (!self.isEncryptedWithPassphrase) {
+        PGPLogDebug(@"No need to decrypt key.");
         return self;
     }
 
     if (!self.ivData) {
+        PGPLogError(@"IV is missing...");
+        if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"IV is missing" } ]; };
         return nil;
     }
 
@@ -275,24 +280,6 @@
     }
     encryptedKey.wasDecrypted = YES;
     return encryptedKey;
-}
-
-#pragma mark - Decrypt
-
-- (nullable NSData *)decryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm {
-    switch (publicKeyAlgorithm) {
-        case PGPPublicKeyAlgorithmRSA:
-        case PGPPublicKeyAlgorithmRSAEncryptOnly:
-        case PGPPublicKeyAlgorithmRSASignOnly: {
-            // return decrypted m
-            return [PGPRSA privateDecrypt:data withSecretKeyPacket:self];
-        } break;
-        default:
-            // TODO: add algorithms
-            [NSException raise:@"PGPNotSupported" format:@"Algorith not supported"];
-            break;
-    }
-    return nil;
 }
 
 #pragma mark - Private
@@ -322,6 +309,7 @@
     }
 
     if (self.s2kUsage != PGPS2KUsageNonEncrypted) {
+        NSAssert(self.ivData, @"Require IV");
         // If secret data is encrypted (string-to-key usage octet not zero), an Initial Vector (IV) of the same length as the cipher's block size.
         // Initial Vector (IV) of the same length as the cipher's block size
         [data appendBytes:self.ivData.bytes length:self.ivData.length];
@@ -338,10 +326,9 @@
         // append hash
         UInt16 checksum = CFSwapInt16HostToBig([data pgp_Checksum]);
         [data appendBytes:&checksum length:2];
-    } else {
+    } else if (self.encryptedMPIPartData) {
         // encrypted MPIArray with encrypted hash
         [data appendData:self.encryptedMPIPartData];
-
         // hash is part of encryptedMPIPartData
     }
 

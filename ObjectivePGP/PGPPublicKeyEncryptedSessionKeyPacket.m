@@ -93,7 +93,7 @@ NS_ASSUME_NONNULL_BEGIN
     let encryptedM = [self.encryptedMPI_M bodyData];
 
     // decrypted m value
-    let mEMEEncoded = [secretKeyPacket decryptData:encryptedM withPublicKeyAlgorithm:self.publicKeyAlgorithm];
+    let mEMEEncoded = [PGPCryptoUtils decryptData:encryptedM usingSecretKeyPacket:secretKeyPacket];
     let mData = [PGPPKCSEme decodeMessage:mEMEEncoded error:error];
     if (error && *error) {
         return nil;
