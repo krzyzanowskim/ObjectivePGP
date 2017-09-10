@@ -280,14 +280,15 @@ NS_ASSUME_NONNULL_BEGIN
             if (decryptionSecretKeyPacket.isEncryptedWithPassphrase) {
                 if (!passphrase) {
                     if (error) {
-                        *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorPassphraseRequired userInfo:@{ NSLocalizedDescriptionKey: @"Passphrase is required for key" }];
+                        *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorPassphraseRequired userInfo:@{ NSLocalizedDescriptionKey: @"Passphrase is required for a key" }];
                     }
                     return nil;
                 }
 
                 decryptionSecretKeyPacket = [decryptionSecretKeyPacket decryptedKeyPacket:passphrase error:error];
                 if (!decryptionSecretKeyPacket || (error && *error)) {
-                    return nil;
+                    decryptionSecretKeyPacket = nil;
+                    continue;
                 }
             }
             eskPacket = pkESKPacket;
@@ -307,7 +308,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (!decryptionSecretKeyPacket) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unable to find secret key" }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unable to find valid secret key" }];
         }
         return nil;
     }
