@@ -1,10 +1,14 @@
 Version 0.8.beta.1
 - Adds public and private keys generation feature with PGPKeyGenerator
+- Adds methods to import and remove key instance
+- Adds expirationDate property to a key instance
+- Improves subkeys handling
+- Exports keys data without reusing imported raw data.
+- Fixes edge cases of decryption data with password encrypted key
+- Fixes exporting private macros
+- Fixes packets equality checks
 - Fixes signature verifying flow, return on fail
-- Improves subkeys support
-- Do not expose private macros
-- Updates equality checks
-- Exports keys without reusing imported raw data.
+- Fixes parsing corrupted input data.
 
 Version 0.7
 - Fixes TripleDSA decryption.
