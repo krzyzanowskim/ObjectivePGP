@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) PGPS2K *s2k;
 @property (nonatomic, readonly) PGPSymmetricAlgorithm symmetricAlgorithm;
 @property (nonatomic, nullable, copy, readonly) NSData *ivData;
-@property (nonatomic, readonly) BOOL isEncryptedWithPassphrase;
+@property (nonatomic, getter=isEncryptedWithPassphrase, readonly) BOOL encryptedWithPassphrase;
 
 /**
  *  Decrypt packet

@@ -99,9 +99,12 @@ static const unsigned int PGP_DEFAULT_ITERATIONS_COUNT = 215;
     return position;
 }
 
-- (UInt32)codedCount {
-    UInt32 expbias = 6;
-    return ((UInt32)16 + (self.uncodedCount & 15)) << ((self.uncodedCount >> 4) + expbias);
+- (UInt32)codedIterationsCount {
+    if (self.iterationsCount > 65011712) {
+        return 255;
+    }
+
+    return ((UInt32)16 + (self.iterationsCount & 15)) << ((self.iterationsCount >> 4) + 6);
 }
 
 - (nullable NSData *)export:(NSError *__autoreleasing *)error {
@@ -206,7 +209,7 @@ static const unsigned int PGP_DEFAULT_ITERATIONS_COUNT = 215;
     PGPAssertClass(passphrase, NSString);
 
     let passphraseData = [passphrase dataUsingEncoding:NSUTF8StringEncoding];
-    var hashData = [self buildKeyDataForPassphrase:passphraseData prefix:nil salt:self.salt codedCount:self.codedCount];
+    var hashData = [self buildKeyDataForPassphrase:passphraseData prefix:nil salt:self.salt codedCount:self.codedIterationsCount];
     if (!hashData) {
         return nil;
     }
@@ -233,7 +236,7 @@ static const unsigned int PGP_DEFAULT_ITERATIONS_COUNT = 215;
                 [prefix appendBytes:&zero length:1];
             }
 
-            let prefixedHashData = [self buildKeyDataForPassphrase:passphraseData prefix:prefix salt:self.salt codedCount:self.codedCount];
+            let prefixedHashData = [self buildKeyDataForPassphrase:passphraseData prefix:prefix salt:self.salt codedCount:self.codedIterationsCount];
             [expandedHashData appendData:prefixedHashData];
 
             level++;

@@ -38,7 +38,7 @@
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"%@ isEncrypted: %@", super.description, @(self.isEncryptedWithPassphrase)];
+    return [NSString stringWithFormat:@"%@ isEncryptedWithPassphrase: %@", super.description, @(self.isEncryptedWithPassphrase)];
 }
 
 // Don't really know if key is passphrase protected.
@@ -160,7 +160,7 @@
 
             let clearTextData = [data subdataWithRange:(NSRange){0, data.length - hashSize}];
             let hashData = [data subdataWithRange:(NSRange){data.length - hashSize, hashSize}];
-            let calculatedHashData = [clearTextData pgp_SHA1];
+            let calculatedHashData = clearTextData.pgp_SHA1;
 
             if (![hashData isEqualToData:calculatedHashData]) {
                 if (error) {

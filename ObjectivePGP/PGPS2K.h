@@ -20,8 +20,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly) NSData *salt;
 // Iteration count.
 @property (nonatomic) UInt32 iterationsCount;
-// calculated
-@property (nonatomic, readonly) UInt32 codedCount;
 
 PGP_EMPTY_INIT_UNAVAILABLE
 
