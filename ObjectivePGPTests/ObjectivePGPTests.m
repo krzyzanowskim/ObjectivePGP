@@ -100,9 +100,11 @@
 }
 
 - (void)testKeyEquality {
-    let keys = [self.oPGP importKeysFromFile:self.pubringPlaintext];
-    let anyKey = keys.anyObject;
-    XCTAssertTrue([keys containsObject:anyKey], @"");
+    [self.oPGP importKeysFromFile:self.pubringPlaintext];
+    [self.oPGP importKeysFromFile:self.secringPathPlaintext];
+    let allKeys = self.oPGP.keys;
+    let anyKey = [self.oPGP findKeyForIdentifier:@"25A233C2952E4E8B"];
+    XCTAssertTrue([allKeys containsObject:anyKey], @"");
 }
 
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/22

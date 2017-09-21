@@ -7,6 +7,11 @@
 // We support iOS and macOS
 SUPPORTED_PLATFORMS = macosx iphoneos iphonesimulator
 TARGETED_DEVICE_FAMILY = 1,2,3,4
+CODE_SIGNING_REQUIRED = NO
+
+VALID_ARCHS[sdk=iphoneos*] = arm64 armv7 armv7s
+VALID_ARCHS[sdk=iphonesimulator*] = x86_64 i386
+VALID_ARCHS[sdk=macosx*] = x86_64 i386
 
 // Deployment targets
 MACOSX_DEPLOYMENT_TARGET = 10.9
@@ -48,7 +53,7 @@ UNEXPORTED_SYMBOLS_FILE[sdk=macosx*] = $(SRCROOT)/vendor/libs/macosx/symbols
 // :MARK: General Project Setup:
 // :MARK: -Toolchain
 // Universal Objective-C iOS Project
-SDKROOT = iphoneos
+SDKROOT = 
 
 OTHER_LDFLAGS = -ObjC -lbz2 -lz
 ONLY_ACTIVE_ARCH = YES

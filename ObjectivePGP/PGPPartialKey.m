@@ -87,8 +87,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (PGPKeyID *)keyID {
     let primaryKeyPacket = PGPCast(self.primaryKeyPacket, PGPPublicKeyPacket);
-    let keyID = [[PGPKeyID alloc] initWithFingerprint:primaryKeyPacket.fingerprint];
-    return keyID;
+    NSParameterAssert(primaryKeyPacket);
+    return [[PGPKeyID alloc] initWithFingerprint:primaryKeyPacket.fingerprint];
+}
+
+- (PGPFingerprint *)fingerprint {
+    let primaryKeyPacket = PGPCast(self.primaryKeyPacket, PGPPublicKeyPacket);
+    NSParameterAssert(primaryKeyPacket);
+    return primaryKeyPacket.fingerprint;
 }
 
 - (void)loadPackets:(NSArray<PGPPacket *> *)packets {
