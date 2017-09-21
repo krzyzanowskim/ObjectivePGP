@@ -15,7 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, nullable, readwrite) PGPPartialKey *secretKey;
 @property (nonatomic, nullable, readwrite) PGPPartialKey *publicKey;
-@property (nonatomic, nullable, readonly) NSDate *expirationDate;
 
 @end
 
