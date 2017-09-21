@@ -32,6 +32,7 @@ typedef NS_ENUM(NSUInteger, PGPPartialKeyType) { PGPPartialKeyUnknown = 0, PGPPa
 @property (nonatomic, nullable, readonly) NSDate *expirationDate;
 
 @property (nonatomic, readonly) PGPKeyID *keyID;
+@property (nonatomic, readonly) PGPFingerprint *fingerprint;
 
 PGP_EMPTY_INIT_UNAVAILABLE;
 

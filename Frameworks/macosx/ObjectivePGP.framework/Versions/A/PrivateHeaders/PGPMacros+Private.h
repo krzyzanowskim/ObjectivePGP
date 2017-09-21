@@ -43,8 +43,9 @@
 #define pgp_defer __strong void (^pgp_defer_block_name(__LINE__))(void) __attribute__((cleanup(pgp_defer_cleanup_block), unused)) = ^
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-function"
-static void pgp_defer_cleanup_block(__strong void (^*block)(void)) { (*block)(); }
+static void pgp_defer_cleanup_block(__strong void (^ _Nonnull * _Nonnull block)(void)) { (*block)(); }
 #pragma clang diagnostic pop
 
 #define PGPDataAppendPropertyBytes(d,var,len) \
     [d appendBytes:&self->_##var length:len]
+

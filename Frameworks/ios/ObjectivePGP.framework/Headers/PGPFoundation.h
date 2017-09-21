@@ -15,6 +15,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 id _Nullable _pgp__cast(id _Nullable obj, Class objClass);
 
+BOOL PGPEqualObjects(id _Nullable obj1, id _Nullable obj2);
+
 @interface PGPFoundation : NSObject
 
 @end

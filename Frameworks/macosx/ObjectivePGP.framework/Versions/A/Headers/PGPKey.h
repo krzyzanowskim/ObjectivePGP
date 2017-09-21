@@ -24,6 +24,7 @@ PGP_EMPTY_INIT_UNAVAILABLE;
 @property (nonatomic, readonly) PGPKeyID *keyID;
 @property (nonatomic, nullable, readonly) PGPPartialKey *secretKey;
 @property (nonatomic, nullable, readonly) PGPPartialKey *publicKey;
+@property (nonatomic, nullable, readonly) NSDate *expirationDate;
 
 /// Whether key is secret.
 @property (nonatomic, readonly) BOOL isSecret;
