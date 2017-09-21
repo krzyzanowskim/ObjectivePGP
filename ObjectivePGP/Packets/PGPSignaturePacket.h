@@ -57,7 +57,10 @@ NS_ASSUME_NONNULL_BEGIN
  *  Build signature data (signature packet with subpackets).
  *
  *  @param inputData Data to sign.
- *  @param withKey   A key used to create signature.
+ *  @param key   A key used to create signature.
+ *  @param subKey Optional. if signature subkey can't be found automatically.
+ *  @param passphrase Optional. Key passphrase do decrypt.
+ *  @param userID Optional.
  *  @param error     error
  *
  *  @return YES on success.

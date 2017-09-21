@@ -202,7 +202,7 @@ static const unsigned int PGP_DEFAULT_ITERATIONS_COUNT = 215;
  *  Simple S2K hashes the passphrase to produce the session key.
  *
  *  @param passphrase Passphrase
- *  @param keySize    Packet key size
+ *  @param symmetricAlgorithm    Cipher algorithm
  *
  *  @return NSData with key
  */
