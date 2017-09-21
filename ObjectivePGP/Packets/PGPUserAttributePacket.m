@@ -8,6 +8,7 @@
 
 #import "PGPUserAttributePacket.h"
 #import "PGPUserAttributeSubpacket.h"
+#import "PGPFoundation.h"
 
 @implementation PGPUserAttributePacket
 
@@ -76,11 +77,11 @@
 }
 
 - (BOOL)isEqualToAttributePacket:(PGPUserAttributePacket *)packet {
-    return [self.subpackets isEqual:packet.subpackets];
+    return PGPEqualObjects(self.subpackets,packet.subpackets);
 }
 
 - (NSUInteger)hash {
-    NSUInteger result = super.hash;
+    NSUInteger result = 1;
     result = 31 * result + self.subpackets.hash;
     return result;
 }

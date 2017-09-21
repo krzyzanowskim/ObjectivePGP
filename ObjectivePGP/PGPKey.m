@@ -80,7 +80,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL)isEqualToKey:(PGPKey *)other {
-    return [self.secretKey isEqual:other.secretKey] && [self.publicKey isEqual:other.publicKey];
+    return PGPEqualObjects(self.secretKey,other.secretKey) && PGPEqualObjects(self.publicKey,other.publicKey);
 }
 
 - (NSUInteger)hash {

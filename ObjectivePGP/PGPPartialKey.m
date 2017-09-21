@@ -21,6 +21,7 @@
 #import "PGPMacros+Private.h"
 #import "PGPFoundation.h"
 #import "NSMutableData+PGPUtils.h"
+#import "PGPFoundation.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -55,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     for (PGPPartialSubKey *subKey in self.subKeys) {
-        if ([subKey.keyID isEqual:self.keyID]) {
+        if (PGPEqualObjects(subKey.keyID,self.keyID)) {
             let _Nullable signaturePacket = subKey.bindingSignature;
             if (signaturePacket && signaturePacket.expirationDate) {
                 return signaturePacket.expirationDate;
@@ -135,7 +136,7 @@ NS_ASSUME_NONNULL_BEGIN
                         if (!user) {
                             continue;
                         }
-                        if ([signaturePacket.issuerKeyID isEqual:primaryKeyID]) {
+                        if (PGPEqualObjects(signaturePacket.issuerKeyID,primaryKeyID)) {
                             user.selfCertifications = [user.selfCertifications arrayByAddingObject:signaturePacket];
                         } else {
                             user.otherSignatures = [user.otherSignatures arrayByAddingObject:signaturePacket];
@@ -212,7 +213,7 @@ NS_ASSUME_NONNULL_BEGIN
     PGPSignaturePacket *primaryUserSelfCertificate = nil;
     [self primaryUserAndSelfCertificate:&primaryUserSelfCertificate];
     if (primaryUserSelfCertificate) {
-        if ([self.keyID isEqual:keyID]) {
+        if (PGPEqualObjects(self.keyID,keyID)) {
             if (primaryUserSelfCertificate.canBeUsedToSign) {
                 return self.primaryKeyPacket;
             }
@@ -220,7 +221,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     for (PGPPartialSubKey *subKey in self.subKeys) {
-        if ([subKey.keyID isEqual:keyID]) {
+        if (PGPEqualObjects(subKey.keyID,keyID)) {
             PGPSignaturePacket *signaturePacket = subKey.bindingSignature;
             if (signaturePacket.canBeUsedToSign) {
                 return subKey.primaryKeyPacket;
@@ -278,13 +279,13 @@ NS_ASSUME_NONNULL_BEGIN
 
     for (PGPPartialSubKey *subKey in self.subKeys) {
         let signaturePacket = subKey.bindingSignature;
-        if (signaturePacket.canBeUsedToEncrypt && [((PGPSecretKeyPacket *)subKey.primaryKeyPacket).keyID isEqual:keyID]) {
+        if (signaturePacket.canBeUsedToEncrypt && PGPEqualObjects(PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket).keyID, keyID)) {
             return PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket);
         }
     }
 
     // assume primary key is always cabable
-    if ([PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket).keyID isEqual:keyID]) {
+    if (PGPEqualObjects(PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket).keyID, keyID)) {
         return PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket);
     }
     return nil;
@@ -331,9 +332,14 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL)isEqualToPartialKey:(PGPPartialKey *)other {
-    return self.type == other.type && self.isEncrypted == other.isEncrypted && [self.primaryKeyPacket isEqual:other.primaryKeyPacket] &&
-           [self.users isEqual:other.users] && [self.subKeys isEqual:other.subKeys] && [self.directSignatures isEqual:other.directSignatures] &&
-           [self.revocationSignature isEqual:other.revocationSignature] && [self.keyID isEqual:other.keyID];
+    return self.type == other.type &&
+           self.isEncrypted == other.isEncrypted &&
+           PGPEqualObjects(self.primaryKeyPacket, other.primaryKeyPacket) &&
+           PGPEqualObjects(self.users, other.users) &&
+           PGPEqualObjects(self.subKeys, other.subKeys) &&
+           PGPEqualObjects(self.directSignatures, other.directSignatures) &&
+           PGPEqualObjects(self.revocationSignature, other.revocationSignature) &&
+           PGPEqualObjects(self.keyID, other.keyID);
 }
 
 - (NSUInteger)hash {

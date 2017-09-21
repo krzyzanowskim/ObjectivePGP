@@ -8,6 +8,7 @@
 
 #import "PGPFingerprint.h"
 #import "NSData+PGPUtils.h"
+#import "PGPFoundation.h"
 
 @implementation PGPFingerprint
 
@@ -43,7 +44,7 @@
 }
 
 - (BOOL)isEqualToFingerprintPacket:(PGPFingerprint *)packet {
-    return [self.hashedData isEqual:packet.hashedData] && [self.keyData isEqual:packet.keyData];
+    return PGPEqualObjects(self.hashedData,packet.hashedData) && PGPEqualObjects(self.keyData,packet.keyData);
 }
 
 - (NSUInteger)hash {

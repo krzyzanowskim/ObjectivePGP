@@ -74,11 +74,11 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL)isEqualToKeyID:(PGPKeyID *)packet {
-    return [self.longKey isEqual:packet.longKey];
+    return PGPEqualObjects(self.longKey,packet.longKey);
 }
 
 - (NSUInteger)hash {
-    NSUInteger result = super.hash;
+    NSUInteger result = 1;
     result = 31 * result + self.longKey.hash;
     return result;
 }

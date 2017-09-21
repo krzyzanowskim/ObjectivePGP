@@ -20,6 +20,7 @@
 #import "NSMutableData+PGPUtils.h"
 #import "PGPCryptoHash.h"
 #import "PGPCryptoUtils.h"
+#import "PGPFoundation.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -89,7 +90,7 @@ static const unsigned int PGP_DEFAULT_ITERATIONS_COUNT = 215;
         // read 3 bytes, and check if it's "GNU" followed by 0x01 || 0x02
         let gnuMarkerSize = 4;
         let gnuString = [[NSString alloc] initWithData:[data subdataWithRange:(NSRange){position, gnuMarkerSize - 1}] encoding:NSASCIIStringEncoding];
-        if ([gnuString isEqual:@"GNU"]) {
+        if (PGPEqualObjects(gnuString,@"GNU")) {
             position = position + gnuMarkerSize;
         } else {
             PGPLogWarning(@"Unknown S2K");

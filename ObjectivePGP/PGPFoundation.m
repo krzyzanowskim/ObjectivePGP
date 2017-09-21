@@ -17,3 +17,8 @@ OBJC_EXTERN inline id _pgp__cast(id obj, Class objClass) {
     NSCParameterAssert(objClass);
     return [obj isKindOfClass:objClass] ? obj : nil;
 }
+
+BOOL PGPEqualObjects(id _Nullable obj1, id _Nullable obj2) {
+    return obj1 == obj2 || [obj1 isEqual:obj2];
+}
+

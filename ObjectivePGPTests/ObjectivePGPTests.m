@@ -99,6 +99,12 @@
     XCTAssertEqual(count1, count2);
 }
 
+- (void)testKeyEquality {
+    let keys = [self.oPGP importKeysFromFile:self.pubringPlaintext];
+    let anyKey = keys.anyObject;
+    XCTAssertTrue([keys containsObject:anyKey], @"");
+}
+
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/22
 - (void)testIssue22 {
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];

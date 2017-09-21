@@ -166,9 +166,12 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL)isEqualToUser:(PGPUser *)other {
-    return [self.userID isEqual:other.userID] && [self.userAttribute isEqual:other.userAttribute] &&
-           [self.selfCertifications isEqual:other.selfCertifications] && [self.otherSignatures isEqual:other.otherSignatures] &&
-           [self.revocationSignatures isEqual:other.revocationSignatures] && [self.userIDPacket isEqual:other.userIDPacket];
+    return PGPEqualObjects(self.userID,other.userID) &&
+           PGPEqualObjects(self.userAttribute,other.userAttribute) &&
+           PGPEqualObjects(self.selfCertifications,other.selfCertifications) &&
+           PGPEqualObjects(self.otherSignatures,other.otherSignatures) &&
+           PGPEqualObjects(self.revocationSignatures,other.revocationSignatures) &&
+           PGPEqualObjects(self.userIDPacket,other.userIDPacket);
 }
 
 - (NSUInteger)hash {
