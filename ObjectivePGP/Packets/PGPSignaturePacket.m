@@ -282,13 +282,15 @@ NS_ASSUME_NONNULL_BEGIN
     [toHashData appendData:signedPartData];
     [toHashData appendData:trailerData];
 
-    // Calculate hash value
-    let calculatedHashValueData = [toHashData pgp_HashedWithAlgorithm:self.hashAlgoritm];
-
-    // check signed hash value, should match
     // FIXME: propably will fail on V3 signature, need investigate how to handle V3 scenario here
-    if (![self.signedHashValueData isEqualToData:[calculatedHashValueData subdataWithRange:(NSRange){0, 2}]]) {
-        return NO;
+    // check signed hash value, should match
+    if (self.version == 0x04) {
+        // Calculate hash value
+        let calculatedHashValueData = [toHashData pgp_HashedWithAlgorithm:self.hashAlgoritm];
+
+        if (![self.signedHashValueData isEqualToData:[calculatedHashValueData subdataWithRange:(NSRange){0, 2}]]) {
+            return NO;
+        }
     }
 
     switch (signingKeyPacket.publicKeyAlgorithm) {
