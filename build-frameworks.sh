@@ -7,7 +7,7 @@ PROJECT_FILE_PATH="${PROJECT_NAME}.xcodeproj"
 TARGET_NAME="${PROJECT_NAME}"
 CONFIGURATION="Release"
 BUILD_DIR="/tmp/$(uuidgen).${PROJECT_NAME}"
-SYMROOT="${BUILD_DIR}"
+SYMROOT="${BUILD_DIR}/Debug"
 OBJROOT="${BUILD_DIR}/Intermediates"
 
 PGP_FRAMEWORKS_DIR="Frameworks"
@@ -31,14 +31,17 @@ function build_framework {
     sdk="${1}"
     PLATFORM_NAME=$(platform_from_sdk "${sdk}")
 
-    xcrun xcodebuild -project "${PROJECT_FILE_PATH}" -target "${TARGET_NAME}" -configuration "${CONFIGURATION}" \
+    xcrun xcodebuild -jobs 1 \
+        -project "${PROJECT_FILE_PATH}" \
+        -target "${TARGET_NAME}" \
+        -configuration "${CONFIGURATION}" \
         -sdk "${sdk}" \
         ONLY_ACTIVE_ARCH=NO \
         BUILD_DIR="${BUILD_DIR}" \
-        SYMROOT="${SYMROOT}" \
-        OBJROOT="${OBJROOT}" \
+        SYMROOT="${SYMROOT}.${sdk}" \
+        OBJROOT="${OBJROOT}.${sdk}" \
         PLATFORM_NAME="${PLATFORM_NAME}" \
-        build
+        build | xcpretty
 }
 
 # Build frameworks
@@ -46,8 +49,6 @@ SDKs=(`xcrun xcodebuild -showsdks | grep -Eo "iphone.*|macos.*"`)
 for sdk in "${SDKs[@]}"; do
     build_framework "${sdk}"
 done
-
-echo "$BUILD_DIR"
 
 mkdir -p "${IPHONE_UNIVERSAL_LIB_DIR}"
 make_fat_library "${BUILD_DIR}/${CONFIGURATION}-iphoneos/${TARGET_NAME}.framework/${TARGET_NAME}" \
@@ -57,11 +58,14 @@ make_fat_library "${BUILD_DIR}/${CONFIGURATION}-iphoneos/${TARGET_NAME}.framewor
 rm "${BUILD_DIR}/${CONFIGURATION}-iphoneos/${TARGET_NAME}.framework/${TARGET_NAME}"
 mv "${BUILD_DIR}/${CONFIGURATION}-iphoneos/${TARGET_NAME}.framework/${TARGET_NAME}.universal" "${BUILD_DIR}/${CONFIGURATION}-iphoneos/${TARGET_NAME}.framework/${TARGET_NAME}"
 
-ditto "${BUILD_DIR}/${CONFIGURATION}-iphoneos/${TARGET_NAME}.framework" "${IPHONE_UNIVERSAL_LIB_DIR}/${TARGET_NAME}.framework"
-ditto "${BUILD_DIR}/${CONFIGURATION}/${TARGET_NAME}.framework" "${PGP_FRAMEWORKS_DIR}/macosx/${TARGET_NAME}.framework"
+ditto "${BUILD_DIR}/${CONFIGURATION}-iphoneos/${TARGET_NAME}.framework"      "${IPHONE_UNIVERSAL_LIB_DIR}/${TARGET_NAME}.framework"
+ditto "${BUILD_DIR}/${CONFIGURATION}-iphoneos/${TARGET_NAME}.framework.dSYM" "${IPHONE_UNIVERSAL_LIB_DIR}/${TARGET_NAME}.framework.dSYM"
+ditto "${BUILD_DIR}/${CONFIGURATION}/${TARGET_NAME}.framework"      "${PGP_FRAMEWORKS_DIR}/macosx/${TARGET_NAME}.framework"
+ditto "${BUILD_DIR}/${CONFIGURATION}/${TARGET_NAME}.framework.dSYM" "${PGP_FRAMEWORKS_DIR}/macosx/${TARGET_NAME}.framework.dSYM"
 
 cp "scripts/strip-frameworks.sh" "${IPHONE_UNIVERSAL_LIB_DIR}/${TARGET_NAME}.framework/strip-frameworks.sh"
 cp "scripts/strip-frameworks.sh" "${PGP_FRAMEWORKS_DIR}/macosx/${TARGET_NAME}.framework/Versions/A/Resources/strip-frameworks.sh"
+
 
 echo "${BUILD_DIR}"
 rm -rf "${BUILD_DIR}"

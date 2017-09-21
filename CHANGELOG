@@ -1,4 +1,4 @@
-Version 0.8.beta.1
+Version 0.8
 - Adds public and private keys generation feature with PGPKeyGenerator
 - Adds methods to import and remove key instance
 - Adds expirationDate property to a key instance

@@ -868,12 +868,14 @@
 		};
 		756299D61914DE1A00C5AD3B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 75BAFAC61F0050A000A956FC /* Defaults-Debug.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		756299D71914DE1A00C5AD3B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 75BAFAC51F0050A000A956FC /* Defaults-Release.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
