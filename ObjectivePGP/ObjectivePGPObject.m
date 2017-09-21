@@ -748,15 +748,21 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (NSSet<PGPKey *> *)keysFromData:(NSData *)fileData {
-    NSAssert(fileData.length > 0, @"Empty data");
+    PGPAssertClass(fileData, NSData);
+    
+    var keys = [NSSet<PGPKey *> set];
+
+    if (fileData.length == 0) {
+        PGPLogError(@"Empty input data");
+        return keys;
+    };
 
     let binRingData = [self convertArmoredMessage2BinaryBlocksWhenNecessary:fileData];
     if (!binRingData || binRingData.count == 0) {
         PGPLogError(@"Invalid input data");
-        return [NSSet<PGPKey *> set];
+        return keys;
     }
 
-    var keys = [[NSSet<PGPKey *> alloc] init];
     for (NSData *data in binRingData) {
         let readPartialKeys = [self readPartialKeysFromData:data];
         for (PGPPartialKey *key in readPartialKeys) {
