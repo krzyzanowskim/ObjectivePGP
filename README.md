@@ -15,7 +15,10 @@ Here is the [blog post](http://blog.krzyzanowskim.com/2014/07/31/short-story-abo
 ### CocoaPods
 
 ```ruby
-pod 'ObjectivePGP'
+target 'MyTargetName' do
+    use_frameworks!
+    pod 'ObjectivePGP'
+end
 ```
 
 ### Dynamic framework
@@ -46,7 +49,7 @@ You are welcome to contribute. Please create [Pull Request](https://github.com/k
 ##### Initialization
 
 ```objective-c
-#include <ObjectivePGP/ObjectivePGP.h>
+#import <ObjectivePGP/ObjectivePGP.h>
 
 ObjectivePGP *pgp = [[ObjectivePGP alloc] init];
 ```
@@ -55,10 +58,10 @@ ObjectivePGP *pgp = [[ObjectivePGP alloc] init];
 
 ```objective-c
 /* Import keys from a keyring file */
-[pgp importKeysFromFile:@"/path/to/secring.gpg"];
+NSSet *keys = [pgp importKeysFromFile:@"/path/to/secring.gpg"];
 
 /* Import keys from a keys file */
-[pgp importKeysFromFile:@"/path/to/key.asc"];
+NSSet *keys = [pgp importKeysFromFile:@"/path/to/key.asc"];
 
 /* Import selected key from a keyring */
 [pgp importKey:@"979E4B03DFFE30C6" fromFile:@"/path/to/secring.gpg"];
