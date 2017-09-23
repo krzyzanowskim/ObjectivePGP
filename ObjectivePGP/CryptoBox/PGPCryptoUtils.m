@@ -13,6 +13,7 @@
 #import "PGPMacros+Private.h"
 
 #import <CommonCrypto/CommonCrypto.h>
+#import <Security/Security.h>
 
 #import <openssl/aes.h>
 #import <openssl/blowfish.h>
@@ -95,13 +96,10 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 + (NSData *)randomData:(NSInteger)length {
-    //TODO: use SecRandomCopyBytes
-    let s = [NSMutableData data];
-    for (int i = 0; i < length; i++) {
-        let b = (Byte)arc4random_uniform(255);
-        [s appendBytes:&b length:sizeof(b)];
-    }
-    return s;
+    NSMutableData *data = [NSMutableData dataWithLength:length];
+    int status = SecRandomCopyBytes(kSecRandomDefault, length, data.mutableBytes);
+    NSAssert(status == errSecSuccess, @"Failed to generate secure random bytes");
+    return data;
 }
 
 + (nullable NSData *)decryptData:(NSData *)data usingSecretKeyPacket:(PGPSecretKeyPacket *)keyPacket {
