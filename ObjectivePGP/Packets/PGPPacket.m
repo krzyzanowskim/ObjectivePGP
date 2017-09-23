@@ -162,7 +162,7 @@ NS_ASSUME_NONNULL_BEGIN
     UInt32 bodyLength = 0;
     UInt32 headerLength = 2;
 
-    const UInt8 *lengthOctets = [headerData subdataWithRange:(NSRange){1, MIN((NSUInteger)5, headerData.length)}].bytes;
+    const UInt8 *lengthOctets = [headerData subdataWithRange:(NSRange){1, MIN((NSUInteger)5, headerData.length - 1)}].bytes;
     UInt8 firstOctet = lengthOctets[0];
 
     if (lengthOctets[0] < 192) {
