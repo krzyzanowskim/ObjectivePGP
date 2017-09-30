@@ -23,6 +23,7 @@
 #import "PGPUser.h"
 #import "PGPUserIDPacket.h"
 #import "NSMutableData+PGPUtils.h"
+#import "NSMutableArray+PGPUtils.h"
 
 #import "PGPLogging.h"
 #import "PGPMacros+Private.h"
@@ -777,7 +778,7 @@ NS_ASSUME_NONNULL_BEGIN
         NSUInteger positionSubpacket = 0;
         while (positionSubpacket < hashedSubpacketsData.length) {
             let subpacket = [self getSubpacketStartingAtPosition:positionSubpacket fromData:hashedSubpacketsData];
-            [hashedSubpackets addObject:subpacket];
+            [hashedSubpackets pgp_addObject:subpacket];
             positionSubpacket = positionSubpacket + subpacket.length;
         }
 
@@ -802,7 +803,7 @@ NS_ASSUME_NONNULL_BEGIN
         NSUInteger positionSubpacket = 0;
         while (positionSubpacket < unhashedSubpacketsData.length) {
             let subpacket = [self getSubpacketStartingAtPosition:positionSubpacket fromData:unhashedSubpacketsData];
-            [unhashedSubpackets addObject:subpacket];
+            [unhashedSubpackets pgp_addObject:subpacket];
             positionSubpacket = positionSubpacket + subpacket.length;
         }
 

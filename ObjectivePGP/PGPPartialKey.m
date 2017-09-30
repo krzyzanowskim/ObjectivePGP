@@ -23,6 +23,7 @@
 #import "PGPMacros+Private.h"
 #import "PGPFoundation.h"
 #import "NSMutableData+PGPUtils.h"
+#import "NSMutableArray+PGPUtils.h"
 #import "PGPFoundation.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -337,7 +338,7 @@ NS_ASSUME_NONNULL_BEGIN
             if (!subKeyDecryptedPacket || *error) {
                 return nil;
             }
-            subKey.primaryKeyPacket = subKeyDecryptedPacket;
+            subKey.primaryKeyPacket = [subKeyDecryptedPacket copy];
         }
     }
 
@@ -498,11 +499,8 @@ NS_ASSUME_NONNULL_BEGIN
     // TODO: handle trust packet somehow. The Trust packet is used only within keyrings and is not normally exported.
     let arr = [NSMutableArray<PGPPacket *> array];
 
-    [arr addObject:self.primaryKeyPacket];
-
-    if (self.revocationSignature) {
-        [arr addObject:PGPNN(self.revocationSignature)];
-    }
+    [arr pgp_addObject:self.primaryKeyPacket];
+    [arr pgp_addObject:self.revocationSignature];
 
     for (PGPSignaturePacket *packet in self.directSignatures) {
         [arr addObject:packet];

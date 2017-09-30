@@ -23,7 +23,7 @@ typedef NS_ENUM(NSUInteger, PGPPartialKeyType) { PGPPartialKeyUnknown = 0, PGPPa
 @interface PGPPartialKey : NSObject <PGPExportable, NSCopying>
 
 @property (nonatomic, readonly) PGPPartialKeyType type;
-@property (nonatomic) PGPPacket *primaryKeyPacket;
+@property (nonatomic, copy) PGPPacket *primaryKeyPacket;
 @property (nonatomic, readonly) BOOL isEncrypted;
 @property (nonatomic, copy) NSArray<PGPUser *> *users;
 @property (nonatomic, copy) NSArray<PGPPartialSubKey *> *subKeys; // TODO: nullable

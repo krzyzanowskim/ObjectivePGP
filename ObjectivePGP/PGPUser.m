@@ -14,6 +14,7 @@
 #import "PGPUserIDPacket.h"
 #import "PGPMacros+Private.h"
 #import "PGPFoundation.h"
+#import "NSMutableArray+PGPUtils.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -70,9 +71,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<PGPPacket *> *)allPackets {
     let arr = [NSMutableArray<PGPPacket *> array];
 
-    if (self.userIDPacket) {
-        [arr addObject:self.userIDPacket]; // TODO: || [arr addObject:self.userAttribute]
-    }
+    [arr pgp_addObject:self.userIDPacket]; // TODO: || [arr addObject:self.userAttribute]
 
     for (id packet in self.revocationSignatures) {
         [arr addObject:packet];

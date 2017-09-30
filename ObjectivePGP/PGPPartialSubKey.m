@@ -20,11 +20,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPPartialSubKey
 
+@synthesize primaryKeyPacket = _primaryKeyPacket;
+
 @dynamic revocationSignature;
 
 - (instancetype)initWithPacket:(PGPPacket *)packet {
     if ((self = [super initWithPackets:@[]])) {
-        self.primaryKeyPacket = packet;
+        _primaryKeyPacket = [packet copy];
     }
     return self;
 }
@@ -54,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
     if (!subKey) {
         return nil;
     }
-    subKey.primaryKeyPacket = self.primaryKeyPacket;
+    subKey.primaryKeyPacket = [self.primaryKeyPacket copy];
     subKey.bindingSignature = [self.bindingSignature copy];
     subKey.revocationSignature = [self.revocationSignature copy];
     return subKey;

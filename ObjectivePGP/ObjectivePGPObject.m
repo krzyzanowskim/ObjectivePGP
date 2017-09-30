@@ -147,10 +147,10 @@ NS_ASSUME_NONNULL_BEGIN
     let exportKeys = [NSMutableArray<PGPPartialKey *> array];
     for (PGPKey *key in self.keys) {
         if (type == PGPPartialKeyPublic && key.publicKey) {
-            [exportKeys addObject:key.publicKey];
+            [exportKeys pgp_addObject:key.publicKey];
         }
         if (type == PGPPartialKeySecret && key.secretKey) {
-            [exportKeys addObject:key.secretKey];
+            [exportKeys pgp_addObject:key.secretKey];
         }
     }
     return [self exportKeys:exportKeys toFile:path error:error];
@@ -245,7 +245,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable NSData *)decryptData:(NSData *)messageDataToDecrypt passphrase:(nullable NSString *)passphrase verifyWithKey:(nullable PGPKey *)key signed:(nullable BOOL *)isSigned valid:(nullable BOOL *)isValid integrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError *__autoreleasing _Nullable *)error {
     PGPAssertClass(messageDataToDecrypt, NSData);
-    let binaryMessages = [self.class convertArmoredMessage2BinaryBlocksWhenNecessary:messageDataToDecrypt];
+    let binaryMessages = [ObjectivePGP convertArmoredMessage2BinaryBlocksWhenNecessary:messageDataToDecrypt];
 
     // decrypt first message only
     let binaryMessageToDecrypt = binaryMessages.count > 0 ? binaryMessages.firstObject : nil;
@@ -257,7 +257,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // parse packets
-    var packets = [self readPacketsFromData:binaryMessageToDecrypt];
+    var packets = [ObjectivePGP readPacketsFromData:binaryMessageToDecrypt];
 
     PGPSymmetricAlgorithm sessionKeyAlgorithm = PGPSymmetricPlaintext;
     PGPSecretKeyPacket * _Nullable decryptionSecretKeyPacket = nil; // last found secret key to used to decrypt
@@ -392,7 +392,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSData *)encryptData:(NSData *)dataToEncrypt usingKeys:(NSArray<PGPKey *> *)keys signWithKey:(nullable PGPKey *)signKey passphrase:(nullable NSString *)passphrase armored:(BOOL)armored error:(NSError *__autoreleasing _Nullable *)error {
     let publicKeys = [NSMutableArray<PGPPartialKey *> array];
     for (PGPKey *key in keys) {
-        [publicKeys addObject:key.publicKey];
+        [publicKeys pgp_addObject:key.publicKey];
     }
 
     let encryptedMessage = [NSMutableData data];
@@ -627,7 +627,8 @@ NS_ASSUME_NONNULL_BEGIN
     return verified;
 }
 
-- (BOOL)verifyData:(NSData *)signedDataPackets error:(NSError *__autoreleasing *)error {
+- (BOOL)verifyData:(NSData *)signedData error:(NSError *__autoreleasing _Nullable *)error {
+    PGPAssertClass(signedData, NSData);
     // this is propably not the best solution when it comes to memory consumption
     // because literal data is copied more than once (first at parse phase, then when is come to build signature packet data
     // I belive this is unecessary but require more work. Schedule to v2.0
@@ -637,8 +638,8 @@ NS_ASSUME_NONNULL_BEGIN
         NSUInteger offset = 0;
         NSUInteger nextPacketOffset;
         // TODO: dont parse data here, get raw data and pass to verifyData:withsignature:
-        while (offset < signedDataPackets.length) {
-            let packet = [PGPPacketFactory packetWithData:signedDataPackets offset:offset nextPacketOffset:&nextPacketOffset];
+        while (offset < signedData.length) {
+            let packet = [PGPPacketFactory packetWithData:signedData offset:offset nextPacketOffset:&nextPacketOffset];
             [accumulatedPackets pgp_addObject:packet];
 
             offset += nextPacketOffset;
@@ -701,8 +702,8 @@ NS_ASSUME_NONNULL_BEGIN
     PGPAssertClass(keys, NSSet);
 
     for (PGPKey *key in keys) {
-        self.keys = [self addOrUpdateCompoundKeyForKey:key.secretKey inContainer:self.keys];
-        self.keys = [self addOrUpdateCompoundKeyForKey:key.publicKey inContainer:self.keys];
+        self.keys = [ObjectivePGP addOrUpdateCompoundKeyForKey:key.secretKey inContainer:self.keys];
+        self.keys = [ObjectivePGP addOrUpdateCompoundKeyForKey:key.publicKey inContainer:self.keys];
     }
     return self.keys;
 }
@@ -757,16 +758,16 @@ NS_ASSUME_NONNULL_BEGIN
         return keys;
     };
 
-    let binRingData = [self.class convertArmoredMessage2BinaryBlocksWhenNecessary:fileData];
+    let binRingData = [ObjectivePGP convertArmoredMessage2BinaryBlocksWhenNecessary:fileData];
     if (!binRingData || binRingData.count == 0) {
         PGPLogError(@"Invalid input data");
         return keys;
     }
 
     for (NSData *data in binRingData) {
-        let readPartialKeys = [self readPartialKeysFromData:data];
+        let readPartialKeys = [ObjectivePGP readPartialKeysFromData:data];
         for (PGPPartialKey *key in readPartialKeys) {
-            keys = [self addOrUpdateCompoundKeyForKey:key inContainer:keys];
+            keys = [ObjectivePGP addOrUpdateCompoundKeyForKey:key inContainer:keys];
         }
     }
 
@@ -775,7 +776,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Private
 
-- (NSArray<PGPPacket *> *)readPacketsFromData:(NSData *)keyringData {
++ (NSArray<PGPPacket *> *)readPacketsFromData:(NSData *)keyringData {
     PGPAssertClass(keyringData, NSData);
 
     if (keyringData.length == 0) {
@@ -801,7 +802,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // Add or update compound key. Returns updated set.
-- (NSSet<PGPKey *> *)addOrUpdateCompoundKeyForKey:(nullable PGPPartialKey *)key inContainer:(NSSet<PGPKey *> *)compoundKeys {
++ (NSSet<PGPKey *> *)addOrUpdateCompoundKeyForKey:(nullable PGPPartialKey *)key inContainer:(NSSet<PGPKey *> *)compoundKeys {
     if (!key) {
         return compoundKeys;
     }
@@ -828,7 +829,7 @@ NS_ASSUME_NONNULL_BEGIN
     return updatedContainer;
 }
 
-- (NSSet<PGPPartialKey *> *)readPartialKeysFromData:(NSData *)messageData {
++ (NSSet<PGPPartialKey *> *)readPartialKeysFromData:(NSData *)messageData {
     let keys = [NSMutableSet<PGPPartialKey *> set];
     let accumulatedPackets = [NSMutableArray<PGPPacket *> array];
     NSUInteger position = 0;
