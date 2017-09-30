@@ -54,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @param packetBody A single subpacket body data.
  */
 - (void)parseSubpacketBody:(NSData *)packetBodyData {
-    PGPLogDebug(@"parseSubpacketBody %@, body %@",@(self.type), packetBodyData);
+    // PGPLogDebug(@"parseSubpacketBody %@, body %@",@(self.type), packetBodyData);
 
     switch (self.type & 0x7F) {
         case PGPSignatureSubpacketTypeSignatureCreationTime: // NSDate

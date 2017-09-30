@@ -248,7 +248,7 @@
     NSParameterAssert(error);
 
     if (!self.isEncryptedWithPassphrase) {
-        PGPLogDebug(@"No need to decrypt key.");
+        // PGPLogDebug(@"No need to decrypt key.");
         return self;
     }
 

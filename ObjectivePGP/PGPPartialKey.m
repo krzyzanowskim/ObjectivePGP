@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"Type %@, %@ primary key: %@", self.type == PGPPartialKeyPublic ? @"public" : @"secret", [super description], self.primaryKeyPacket];
+    return [NSString stringWithFormat:@"%@, Type %@, primary key: %@", [super description], self.type == PGPPartialKeyPublic ? @"public" : @"secret", self.primaryKeyPacket];
 }
 
 #pragma mark - Properties
@@ -313,7 +313,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 // TODO: return error
 - (nullable PGPPartialKey *)decryptedWithPassphrase:(NSString *)passphrase error:(NSError *__autoreleasing *)error {
-    let primarySecretPacket = PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket);
+    PGPAssertClass(passphrase, NSString);
+
+    let encryptedPartialKey = PGPCast([self copy], PGPPartialKey);
+    PGPAssertClass(encryptedPartialKey, PGPPartialKey);
+
+    let primarySecretPacket = PGPCast(encryptedPartialKey.primaryKeyPacket, PGPSecretKeyPacket);
     if (!primarySecretPacket) {
         return nil;
     }
@@ -325,7 +330,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // decrypt subkeys packets
-    for (PGPPartialSubKey *subKey in self.subKeys) {
+    for (PGPPartialSubKey *subKey in encryptedPartialKey.subKeys) {
         let subKeySecretPacket = PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket);
         if (subKeySecretPacket) {
             let subKeyDecryptedPacket = [subKeySecretPacket decryptedWithPassphrase:passphrase error:error];
@@ -336,10 +341,8 @@ NS_ASSUME_NONNULL_BEGIN
         }
     }
 
-    PGPPartialKey *partialKeyCopy = self.copy;
-    partialKeyCopy.primaryKeyPacket = decryptedPrimaryPacket;
-
-    return partialKeyCopy;
+    encryptedPartialKey.primaryKeyPacket = decryptedPrimaryPacket;
+    return encryptedPartialKey;
 }
 
 #pragma mark - isEqual

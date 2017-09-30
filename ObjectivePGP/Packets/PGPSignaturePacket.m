@@ -390,7 +390,10 @@ NS_ASSUME_NONNULL_BEGIN
     PGPAssertClass(key, PGPKey);
 
     if (!key.secretKey) {
-        PGPLogDebug(@"Invalid key.");
+        PGPLogDebug(@"Missing secret key.");
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing secret key" }];
+        }
         return NO;
     }
 
