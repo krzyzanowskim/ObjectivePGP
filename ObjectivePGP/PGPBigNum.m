@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(nullable NSZone *)zone {
-    return [[PGPBigNum alloc] initWithBIGNUM:BN_dup(self.bignumRef)];
+    return [[self.class allocWithZone:zone] initWithBIGNUM:BN_dup(self.bignumRef)];
 }
 
 @end

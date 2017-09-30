@@ -18,6 +18,7 @@
 #import "PGPRSA.h"
 #import "PGPSecretKeyPacket.h"
 #import "PGPMacros+Private.h"
+#import "PGPFoundation.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -193,15 +194,48 @@ NS_ASSUME_NONNULL_BEGIN
     }];
 }
 
+#pragma mark - isEqual
+
+- (BOOL)isEqual:(id)other {
+    if (self == other) { return YES; }
+    if ([super isEqual:other] && [other isKindOfClass:self.class]) {
+        return [self isEqualToSessionKeyPacket:other];
+    }
+    return NO;
+}
+
+- (BOOL)isEqualToSessionKeyPacket:(PGPPublicKeyEncryptedSessionKeyPacket *)packet {
+    return self.version = packet.version &&
+           self.publicKeyAlgorithm == packet.publicKeyAlgorithm &&
+           self.encrypted == packet.encrypted &&
+           PGPEqualObjects(self.keyID, packet.keyID) &&
+           PGPEqualObjects(self.encryptedMPI_M, packet.encryptedMPI_M);
+}
+
+- (NSUInteger)hash {
+    NSUInteger prime = 31;
+    NSUInteger result = [super hash];
+    result = prime * result + self.version;
+    result = prime * result + self.publicKeyAlgorithm;
+    result = prime * result + self.keyID.hash;
+    result = prime * result + self.encrypted;
+    result = prime * result + self.encryptedMPI_M.hash;
+    return result;
+}
+
 #pragma mark - NSCopying
 
 - (instancetype)copyWithZone:(nullable NSZone *)zone {
-    PGPPublicKeyEncryptedSessionKeyPacket *copy = [super copyWithZone:zone];
-    copy->_version = self.version;
-    copy->_keyID = [self.keyID copy];
-    copy->_encrypted = self.isEncrypted;
-    copy->_publicKeyAlgorithm = self.publicKeyAlgorithm;
-    copy->_encryptedMPI_M = [self.encryptedMPI_M copy];;
+    let _Nullable copy = PGPCast([super copyWithZone:zone], PGPPublicKeyEncryptedSessionKeyPacket);
+    if (!copy) {
+        return nil;
+    }
+
+    copy.version = self.version;
+    copy.publicKeyAlgorithm = self.publicKeyAlgorithm;
+    copy.encrypted = self.encrypted;
+    copy.keyID = [self.keyID copy];
+    copy.encryptedMPI_M = [self.encryptedMPI_M copy];
     return copy;
 }
 

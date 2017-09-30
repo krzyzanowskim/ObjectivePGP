@@ -34,6 +34,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@interface PGPSymmetricallyEncryptedIntegrityProtectedDataPacket ()
+
+@property (nonatomic, readwrite) NSUInteger version;
+
+@end
+
+
 @implementation PGPSymmetricallyEncryptedIntegrityProtectedDataPacket
 
 - (instancetype)init {
@@ -252,6 +259,39 @@ NS_ASSUME_NONNULL_BEGIN
 
     self.encryptedData = encrypted;
     return YES;
+}
+
+#pragma mark - isEqual
+
+- (BOOL)isEqual:(id)other {
+    if (self == other) { return YES; }
+    if ([super isEqual:other] && [other isKindOfClass:self.class]) {
+        return [self isEqualToPGPSymmetricallyEncryptedIntegrityProtectedDataPacket:other];
+    }
+    return NO;
+}
+
+- (BOOL)isEqualToPGPSymmetricallyEncryptedIntegrityProtectedDataPacket:(PGPSymmetricallyEncryptedIntegrityProtectedDataPacket *)packet {
+    return self.version == self.version;
+}
+
+- (NSUInteger)hash {
+    NSUInteger prime = 31;
+    NSUInteger result = [super hash];
+    result = prime * result + self.version;
+    return result;
+}
+
+#pragma mark - NSCopying
+
+- (id)copyWithZone:(nullable NSZone *)zone {
+    let _Nullable copy = PGPCast([super copyWithZone:zone], PGPSymmetricallyEncryptedIntegrityProtectedDataPacket);
+    if (!copy) {
+        return nil;
+    }
+
+    copy.version = self.version;
+    return copy;
 }
 
 @end

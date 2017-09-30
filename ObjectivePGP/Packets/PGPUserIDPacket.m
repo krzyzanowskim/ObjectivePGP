@@ -8,7 +8,7 @@
 
 #import "PGPUserIDPacket.h"
 #import "PGPPacket+Private.h"
-#import "PGPMacros.h"
+#import "PGPMacros+Private.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -48,6 +48,38 @@ NS_ASSUME_NONNULL_BEGIN
     return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
         return [self.userID dataUsingEncoding:NSUTF8StringEncoding];
     }];
+}
+
+#pragma mark - isEqual
+
+- (BOOL)isEqual:(id)other {
+    if (self == other) { return YES; }
+    if ([super isEqual:other] && [other isKindOfClass:self.class]) {
+        return [self isEqualToUserIDPacket:other];
+    }
+    return NO;
+}
+
+- (BOOL)isEqualToUserIDPacket:(PGPUserIDPacket *)packet {
+    return PGPEqualObjects(self.userID, packet.userID);
+}
+
+- (NSUInteger)hash {
+    NSUInteger prime = 31;
+    NSUInteger result = [super hash];
+    result = prime * result + self.userID.hash;
+    return result;
+}
+
+#pragma mark - NSCopying
+
+- (id)copyWithZone:(nullable NSZone *)zone {
+    let _Nullable copy = PGPCast([super copyWithZone:zone], PGPUserIDPacket);
+    if (!copy) {
+        return nil;
+    }
+    copy.userID = self.userID;
+    return copy;
 }
 
 @end

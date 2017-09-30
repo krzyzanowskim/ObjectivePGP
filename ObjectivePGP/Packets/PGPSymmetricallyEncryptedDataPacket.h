@@ -8,7 +8,8 @@
 
 #import "PGPPacket.h"
 
-@interface PGPSymmetricallyEncryptedDataPacket : PGPPacket
+@interface PGPSymmetricallyEncryptedDataPacket : PGPPacket <NSCopying>
+
 @property (nonatomic) NSData *encryptedData;
 
 @end

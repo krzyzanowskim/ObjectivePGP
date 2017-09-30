@@ -28,10 +28,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPSignatureSubpacket
 
-- (instancetype)initWithType:(PGPSignatureSubpacketType)type andValue:(id)value {
+- (instancetype)initWithType:(PGPSignatureSubpacketType)type andValue:(id<NSObject, NSCopying>)value {
     if ((self = [super init])) {
         _type = type;
-        _value = value;
+        _value = [value copyWithZone:nil];
     }
     return self;
 }
@@ -82,7 +82,7 @@ NS_ASSUME_NONNULL_BEGIN
             //  5.2.3.5.  Issuer
 
             PGPKeyID *keyID = [[PGPKeyID alloc] initWithLongKey:packetBodyData];
-            self.value = keyID; //[packetBody subdataWithRange:(NSRange){0,8}];
+            self.value = (id)keyID; //[packetBody subdataWithRange:(NSRange){0,8}];
         } break;
         case PGPSignatureSubpacketTypeExportableCertification: // NSNumber BOOL
         {
@@ -406,6 +406,38 @@ NS_ASSUME_NONNULL_BEGIN
     subpacketHeader.bodyLength = subpacketLength;
 
     return subpacketHeader;
+}
+
+#pragma mark - isEqual
+
+- (BOOL)isEqual:(id)other {
+    if (self == other) { return YES; }
+    if ([super isEqual:other] && [other isKindOfClass:self.class]) {
+        return [self isEqualToSignatureSubpacket:other];
+    }
+    return NO;
+}
+
+- (BOOL)isEqualToSignatureSubpacket:(PGPSignatureSubpacket *)packet {
+    return  self.type == packet.type &&
+            self.length == packet.length &&
+            PGPEqualObjects(self.value, packet.value);
+}
+
+- (NSUInteger)hash {
+    NSUInteger prime = 31;
+    NSUInteger result = 1;
+    result = prime * result + self.type;
+    result = prime * result + self.length;
+    result = prime * result + self.value.hash;
+    return result;
+}
+
+#pragma mark - NSCopying
+
+- (id)copyWithZone:(nullable NSZone *)zone {
+    let copy = [[PGPSignatureSubpacket alloc] initWithType:self.type andValue:self.value];
+    return copy;
 }
 
 @end

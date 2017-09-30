@@ -26,6 +26,7 @@ extern const UInt32 PGPUnknownLength;
 
 + (NSData *)buildPacketOfType:(PGPPacketTag)tag withBody:(PGP_NOESCAPE NSData *(^)(void))body;
 
+- (id)copyWithZone:(nullable NSZone *)zone NS_REQUIRES_SUPER;
 
 @end
 

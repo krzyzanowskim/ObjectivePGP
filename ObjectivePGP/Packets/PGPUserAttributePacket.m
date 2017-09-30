@@ -9,6 +9,7 @@
 #import "PGPUserAttributePacket.h"
 #import "PGPUserAttributeSubpacket.h"
 #import "PGPFoundation.h"
+#import "PGPMacros+Private.h"
 
 @implementation PGPUserAttributePacket
 
@@ -85,5 +86,17 @@
     result = 31 * result + self.subpackets.hash;
     return result;
 }
+
+#pragma mark - NSCopying
+
+- (id)copyWithZone:(nullable NSZone *)zone {
+    let _Nullable copy = PGPCast([super copyWithZone:zone], PGPUserAttributePacket);
+    if (!copy) {
+        return nil;
+    }
+    copy.subpackets = [[NSArray alloc] initWithArray:self.subpackets copyItems:YES];
+    return copy;
+}
+
 
 @end

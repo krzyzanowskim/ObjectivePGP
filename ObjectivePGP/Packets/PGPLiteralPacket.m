@@ -9,6 +9,7 @@
 #import "PGPLiteralPacket.h"
 #import "PGPTypes.h"
 #import "PGPMacros+Private.h"
+#import "PGPFoundation.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -132,6 +133,48 @@ NS_ASSUME_NONNULL_BEGIN
     return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
         return bodyData;
     }];
+}
+
+#pragma mark - isEqual
+
+- (BOOL)isEqual:(id)other {
+    if (self == other) { return YES; }
+    if ([super isEqual:other] && [other isKindOfClass:self.class]) {
+        return [self isEqualToLiteralPacket:other];
+    }
+    return NO;
+}
+
+- (BOOL)isEqualToLiteralPacket:(PGPLiteralPacket *)packet {
+    return  self.format == packet.format &&
+            PGPEqualObjects(self.timestamp, packet.timestamp) &&
+            PGPEqualObjects(self.filename, packet.filename) &&
+            PGPEqualObjects(self.literalRawData, packet.literalRawData);
+}
+
+- (NSUInteger)hash {
+    NSUInteger prime = 31;
+    NSUInteger result = [super hash];
+    result = prime * result + self.format;
+    result = prime * result + self.timestamp.hash;
+    result = prime * result + self.filename.hash;
+    result = prime * result + self.literalRawData.hash;
+    return result;
+}
+
+#pragma mark - NSCopying
+
+- (instancetype)copyWithZone:(nullable NSZone *)zone {
+    let _Nullable copy = PGPCast([super copyWithZone:zone], PGPLiteralPacket);
+    if (!copy) {
+        return nil;
+    }
+
+    copy.format = self.format;
+    copy.timestamp = [self.timestamp copy];
+    copy.filename = [self.filename copy];
+    copy.literalRawData = [self.literalRawData copy];
+    return copy;
 }
 
 @end

@@ -7,9 +7,14 @@
 //
 
 #import "PGPTrustPacket.h"
+#import "PGPMacros.h"
+#import "PGPMacros+Private.h"
+#import "PGPFoundation.h"
 
 @interface PGPTrustPacket ()
+
 @property (nonatomic, readwrite) NSData *data;
+
 @end
 
 @implementation PGPTrustPacket
@@ -33,5 +38,38 @@
     //  (1 octet "level" (depth), 1 octet of trust amount)
     return [self.data copy];
 }
+
+#pragma mark - isEqual
+
+- (BOOL)isEqual:(id)other {
+    if (self == other) { return YES; }
+    if ([super isEqual:other] && [other isKindOfClass:self.class]) {
+        return [self isEqualToTrustPacket:other];
+    }
+    return NO;
+}
+
+- (BOOL)isEqualToTrustPacket:(PGPTrustPacket *)packet {
+    return PGPEqualObjects(self.data, packet.data);
+}
+
+- (NSUInteger)hash {
+    NSUInteger prime = 31;
+    NSUInteger result = [super hash];
+    result = prime * result + self.data.hash;
+    return result;
+}
+
+#pragma mark - NSCopying
+
+- (id)copyWithZone:(nullable NSZone *)zone {
+    let _Nullable copy = PGPCast([super copyWithZone:zone], PGPTrustPacket);
+    if (!copy) {
+        return nil;
+    }
+    copy.data = [self.data copy];
+    return copy;
+}
+
 
 @end

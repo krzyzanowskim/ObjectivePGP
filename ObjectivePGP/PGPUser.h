@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class PGPUserIDPacket, PGPUserAttributePacket, PGPSignaturePacket, PGPPartialKey;
 
-@interface PGPUser : NSObject
+@interface PGPUser : NSObject <NSCopying>
 
 @property (nonatomic, copy) NSString *userID;
 @property (nonatomic) PGPUserAttributePacket *userAttribute;
@@ -22,8 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) NSArray<PGPSignaturePacket *> *otherSignatures;
 @property (nonatomic) NSArray<PGPSignaturePacket *> *revocationSignatures;
 
-@property (nonatomic) PGPUserIDPacket *userIDPacket;
-@property (nonatomic) NSArray<PGPPacket *> *allPackets;
+@property (nonatomic, readonly) PGPUserIDPacket *userIDPacket;
+@property (nonatomic, readonly) NSArray<PGPPacket *> *allPackets;
 
 PGP_EMPTY_INIT_UNAVAILABLE
 

@@ -11,6 +11,14 @@
 #import "NSData+compression.h"
 #import "NSMutableData+PGPUtils.h"
 #import "PGPMacros+Private.h"
+#import "PGPFoundation.h"
+
+@interface PGPCompressedPacket ()
+
+@property (nonatomic, readwrite) PGPCompressionAlgorithm compressionType;
+@property (nonatomic, readwrite) NSData *decompressedData;
+
+@end
 
 @implementation PGPCompressedPacket
 
@@ -89,6 +97,40 @@
     }];
 }
 
-@end
+#pragma mark - isEqual
 
-// ret = (int)inflateInit2(&z.zstream, -15)
+- (BOOL)isEqual:(id)other {
+    if (self == other) { return YES; }
+    if ([super isEqual:other] && [other isKindOfClass:self.class]) {
+        return [self isEqualToCompressedPacket:other];
+    }
+    return NO;
+}
+
+- (BOOL)isEqualToCompressedPacket:(PGPCompressedPacket *)packet {
+    return  self.compressionType == packet.compressionType &&
+            PGPEqualObjects(self.decompressedData, packet.decompressedData);
+}
+
+- (NSUInteger)hash {
+    NSUInteger prime = 31;
+    NSUInteger result = [super hash];
+    result = prime * result + self.compressionType;
+    result = prime * result + self.decompressedData.hash;
+    return result;
+}
+
+#pragma mark - NSCopying
+
+- (instancetype)copyWithZone:(nullable NSZone *)zone {
+    let _Nullable copy = PGPCast([super copyWithZone:zone], PGPCompressedPacket);
+    if (!copy) {
+        return nil;
+    }
+
+    copy.compressionType = self.compressionType;
+    copy.decompressedData = [self.decompressedData copy];
+    return copy;
+}
+
+@end

@@ -41,15 +41,6 @@ NS_ASSUME_NONNULL_BEGIN
     return [NSString stringWithFormat:@"%@ %@", [super description], self.keyID];
 }
 
-- (NSUInteger)keySize {
-    for (PGPMPI *mpi in self.publicMPIArray) {
-        if ([mpi.identifier isEqualToString:PGPMPI_N]) {
-            return (mpi.bigNum.bitsCount + 7) / 8; // ks
-        }
-    }
-    return 0;
-}
-
 - (nullable PGPMPI *)publicMPI:(NSString *)identifier {
     for (PGPMPI *mpi in self.publicMPIArray) {
         if ([mpi.identifier isEqualToString:identifier]) {
@@ -60,7 +51,16 @@ NS_ASSUME_NONNULL_BEGIN
     return nil;
 }
 
-#pragma mark - KeyID and Fingerprint
+#pragma mark - Properties
+
+- (NSUInteger)keySize {
+    for (PGPMPI *mpi in self.publicMPIArray) {
+        if ([mpi.identifier isEqualToString:PGPMPI_N]) {
+            return (mpi.bigNum.bitsCount + 7) / 8; // ks
+        }
+    }
+    return 0;
+}
 
 /**
  *  12.2.  Key IDs and Fingerprints
@@ -279,6 +279,36 @@ NS_ASSUME_NONNULL_BEGIN
     return nil;
 }
 
+#pragma mark - isEqual
+
+- (BOOL)isEqual:(id)other {
+    if (self == other) { return YES; }
+    if ([super isEqual:other] && [other isKindOfClass:self.class]) {
+        return [self isEqualToKeyPacket:other];
+    }
+    return NO;
+}
+
+- (BOOL)isEqualToKeyPacket:(PGPPublicKeyPacket *)packet {
+    return self.version = packet.version &&
+           self.publicKeyAlgorithm == packet.publicKeyAlgorithm &&
+           self.V3validityPeriod == packet.V3validityPeriod &&
+           PGPEqualObjects(self.createDate, packet.createDate) &&
+           PGPEqualObjects(self.publicMPIArray, packet.publicMPIArray);
+}
+
+- (NSUInteger)hash {
+    NSUInteger prime = 31;
+    NSUInteger result = [super hash];
+    result = prime * result + self.version;
+    result = prime * result + self.publicKeyAlgorithm;
+    result = prime * result + self.V3validityPeriod;
+    result = prime * result + self.createDate.hash;
+    result = prime * result + self.publicMPIArray.hash;
+    return result;
+}
+
+
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(nullable NSZone *)zone {
@@ -287,10 +317,10 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
     copy.version = self.version;
-    copy.createDate = [self.createDate copy];
-    copy.V3validityPeriod = self.V3validityPeriod;
     copy.publicKeyAlgorithm = self.publicKeyAlgorithm;
-    copy.publicMPIArray = [self.publicMPIArray copy];
+    copy.V3validityPeriod = self.V3validityPeriod;
+    copy.createDate = [self.createDate copy];
+    copy.publicMPIArray = [[NSArray alloc] initWithArray:self.publicMPIArray copyItems:YES];
     return copy;
 }
 

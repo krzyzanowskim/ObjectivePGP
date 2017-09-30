@@ -16,9 +16,10 @@ typedef NS_ENUM(UInt8, PGPCompressionAlgorithm) {
     PGPCompressionBZIP2 = 3
 };
 
-@interface PGPCompressedPacket : PGPPacket
+@interface PGPCompressedPacket : PGPPacket <NSCopying>
+
 @property (nonatomic, readonly) PGPCompressionAlgorithm compressionType;
-@property (nonatomic) NSData *decompressedData;
+@property (nonatomic, readonly) NSData *decompressedData;
 
 - (instancetype)initWithData:(NSData *)dataToCompress type:(PGPCompressionAlgorithm)type;
 

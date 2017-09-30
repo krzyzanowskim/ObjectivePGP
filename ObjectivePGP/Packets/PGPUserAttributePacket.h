@@ -9,7 +9,7 @@
 #import "PGPPacket.h"
 #import "PGPUserAttributeSubpacket.h"
 
-@interface PGPUserAttributePacket : PGPPacket
+@interface PGPUserAttributePacket : PGPPacket <NSCopying>
 
 // array of PGPUserAttributeSubpacket
 @property (nonatomic) NSArray<PGPUserAttributeSubpacket *> *subpackets;

@@ -387,7 +387,7 @@
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(NSZone *)zone {
-    PGPSecretKeyPacket *copy = [super copyWithZone:zone];
+    let copy = PGPCast([super copyWithZone:zone], PGPSecretKeyPacket);
     copy->_s2kUsage = self.s2kUsage;
     copy->_s2k = [self.s2k copy];
     copy->_symmetricAlgorithm = self.symmetricAlgorithm;

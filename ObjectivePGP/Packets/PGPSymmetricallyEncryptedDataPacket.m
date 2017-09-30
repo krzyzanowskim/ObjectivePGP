@@ -11,6 +11,8 @@
 #import "PGPCryptoCFB.h"
 #import "PGPCryptoUtils.h"
 #import "PGPPublicKeyPacket.h"
+#import "PGPMacros+Private.h"
+#import "PGPFoundation.h"
 
 #import <CommonCrypto/CommonCrypto.h>
 #import <CommonCrypto/CommonCryptor.h>
@@ -40,5 +42,38 @@
 
     return self.encryptedData;
 }
+
+#pragma mark - isEqual
+
+- (BOOL)isEqual:(id)other {
+    if (self == other) { return YES; }
+    if ([super isEqual:other] && [other isKindOfClass:self.class]) {
+        return [self isEqualToSymmetricallyEncryptedDataPacket:other];
+    }
+    return NO;
+}
+
+- (BOOL)isEqualToSymmetricallyEncryptedDataPacket:(PGPSymmetricallyEncryptedDataPacket *)packet {
+    return PGPEqualObjects(self.encryptedData, packet.encryptedData);
+}
+
+- (NSUInteger)hash {
+    NSUInteger prime = 31;
+    NSUInteger result = [super hash];
+    result = prime * result + self.encryptedData.hash;
+    return result;
+}
+
+#pragma mark - NSCopying
+
+- (id)copyWithZone:(nullable NSZone *)zone {
+    let _Nullable copy = PGPCast([super copyWithZone:zone], PGPSymmetricallyEncryptedDataPacket);
+    if (!copy) {
+        return nil;
+    }
+    copy.encryptedData = [self.encryptedData copy];
+    return copy;
+}
+
 
 @end

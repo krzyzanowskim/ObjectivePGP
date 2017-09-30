@@ -13,6 +13,7 @@
 #import "PGPBigNum+Private.h"
 #import "PGPLogging.h"
 #import "PGPMacros+Private.h"
+#import "PGPFoundation.h"
 #import <openssl/bn.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -109,7 +110,7 @@ NSString * const PGPMPI_M = @"M";
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(nullable NSZone *)zone {
-    let copy = [[PGPMPI alloc] initWithBigNum:self.bigNum identifier:self.identifier];
+    let copy = PGPCast([[self.class allocWithZone:zone] initWithBigNum:self.bigNum identifier:self.identifier], PGPMPI);
     copy.packetLength = self.packetLength;
     return copy;
 }

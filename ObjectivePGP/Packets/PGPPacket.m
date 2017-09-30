@@ -363,7 +363,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(nullable NSZone *)zone {
-    PGPPacket *copy = [[[self class] allocWithZone:zone] init];
+    PGPPacket *copy = [[self.class allocWithZone:zone] init];
     copy->_tag = self.tag;
     copy->_indeterminateLength = self.indeterminateLength;
     return copy;

@@ -12,6 +12,7 @@
 #import "PGPKeyID.h"
 #import "PGPMacros.h"
 #import "PGPFingerprint.h"
+#import "PGPMacros+Private.h"
 #import "PGPFoundation.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -74,13 +75,20 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL)isEqualToKeyID:(PGPKeyID *)packet {
-    return PGPEqualObjects(self.longKey,packet.longKey);
+    return PGPEqualObjects(self.longKey, packet.longKey);
 }
 
 - (NSUInteger)hash {
     NSUInteger result = 1;
     result = 31 * result + self.longKey.hash;
     return result;
+}
+
+#pragma mark - NSCopying
+
+- (instancetype)copyWithZone:(nullable NSZone *)zone {
+    let copy = PGPCast([[self.class allocWithZone:zone] initWithLongKey:self.longKey], PGPKeyID);
+    return copy;
 }
 
 #pragma mark - PGPExportable

@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPUser
 
+@synthesize userIDPacket = _userIDPacket;
+
 - (instancetype)initWithUserIDPacket:(PGPUserIDPacket *)userPacket {
     PGPAssertClass(userPacket, PGPUserIDPacket);
 
@@ -186,6 +188,17 @@ NS_ASSUME_NONNULL_BEGIN
     result = prime * result + self.userIDPacket.hash;
 
     return result;
+}
+
+#pragma mark - NSCopying
+
+- (instancetype)copyWithZone:(nullable NSZone *)zone {
+    let user = PGPCast([[self.class allocWithZone:zone] initWithUserIDPacket:self.userIDPacket], PGPUser);
+    user.userAttribute = [self.userAttribute copy];
+    user.selfCertifications = [[NSArray alloc] initWithArray:self.selfCertifications copyItems:YES];
+    user.otherSignatures = [[NSArray alloc] initWithArray:self.otherSignatures copyItems:YES];
+    user.revocationSignatures = [[NSArray alloc] initWithArray:self.revocationSignatures copyItems:YES];
+    return user;
 }
 
 @end

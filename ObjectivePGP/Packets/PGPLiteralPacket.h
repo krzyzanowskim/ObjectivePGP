@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef NS_ENUM(UInt8, PGPLiteralPacketFormat) { PGPLiteralPacketBinary = 'b', PGPLiteralPacketText = 't', PGPLiteralPacketTextUTF8 = 'u' };
 
-@interface PGPLiteralPacket : PGPPacket <PGPExportable>
+@interface PGPLiteralPacket : PGPPacket <PGPExportable, NSCopying>
 
 @property (nonatomic) PGPLiteralPacketFormat format;
 @property (nonatomic) NSDate *timestamp;

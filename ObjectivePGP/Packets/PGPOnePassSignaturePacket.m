@@ -8,7 +8,9 @@
 
 #import "PGPOnePassSignaturePacket.h"
 #import "PGPKeyID.h"
+#import "PGPMacros.h"
 #import "PGPMacros+Private.h"
+#import "PGPFoundation.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -48,6 +50,54 @@ NS_ASSUME_NONNULL_BEGIN
     position = position + 1;
 
     return position;
+}
+
+#pragma mark - isEqual
+
+- (BOOL)isEqual:(id)other {
+    if (self == other) { return YES; }
+    if ([super isEqual:other] && [other isKindOfClass:self.class]) {
+        return [self isEqualToOnePassSignaturePacket:other];
+    }
+    return NO;
+}
+
+- (BOOL)isEqualToOnePassSignaturePacket:(PGPOnePassSignaturePacket *)packet {
+    return self.version = packet.version &&
+           self.signatureType == packet.signatureType &&
+           self.hashAlgorith == packet.hashAlgorith &&
+           self.publicKeyAlgorithm == packet.publicKeyAlgorithm &&
+           PGPEqualObjects(self.keyID, packet.keyID) &&
+           self.notNested == packet.notNested;
+}
+
+- (NSUInteger)hash {
+    NSUInteger prime = 31;
+    NSUInteger result = [super hash];
+    result = prime * result + self.version;
+    result = prime * result + self.signatureType;
+    result = prime * result + self.hashAlgorith;
+    result = prime * result + self.publicKeyAlgorithm;
+    result = prime * result + self.keyID.hash;
+    result = prime * result + self.notNested;
+    return result;
+}
+
+#pragma mark - NSCopying
+
+- (instancetype)copyWithZone:(nullable NSZone *)zone {
+    let _Nullable copy = PGPCast([super copyWithZone:zone], PGPOnePassSignaturePacket);
+    if (!copy) {
+        return nil;
+    }
+
+    copy.version = self.version;
+    copy.signatureType = self.signatureType;
+    copy.hashAlgorith = self.hashAlgorith;
+    copy.publicKeyAlgorithm = self.publicKeyAlgorithm;
+    copy.keyID = [self.keyID copy];
+    copy.notNested = self.notNested;
+    return copy;
 }
 
 #pragma mark - PGPExportable

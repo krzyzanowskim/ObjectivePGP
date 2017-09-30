@@ -20,7 +20,7 @@ typedef NS_ENUM(NSUInteger, PGPPartialKeyType) { PGPPartialKeyUnknown = 0, PGPPa
 @class PGPSecretKeyPacket, PGPPartialSubKey;
 
 /// Single Private or Public key.
-@interface PGPPartialKey : NSObject <PGPExportable>
+@interface PGPPartialKey : NSObject <PGPExportable, NSCopying>
 
 @property (nonatomic, readonly) PGPPartialKeyType type;
 @property (nonatomic) PGPPacket *primaryKeyPacket;
@@ -28,7 +28,7 @@ typedef NS_ENUM(NSUInteger, PGPPartialKeyType) { PGPPartialKeyUnknown = 0, PGPPa
 @property (nonatomic, copy) NSArray<PGPUser *> *users;
 @property (nonatomic, copy) NSArray<PGPPartialSubKey *> *subKeys; // TODO: nullable
 @property (nonatomic, nullable, copy) NSArray<PGPSignaturePacket *> *directSignatures;
-@property (nonatomic, nullable) PGPPacket *revocationSignature;
+@property (nonatomic, nullable, readonly) PGPSignaturePacket *revocationSignature;
 @property (nonatomic, nullable, readonly) NSDate *expirationDate;
 
 @property (nonatomic, readonly) PGPKeyID *keyID;
@@ -46,9 +46,9 @@ PGP_EMPTY_INIT_UNAVAILABLE;
  *  @param passphrase Passphrase
  *  @param error      error
  *
- *  @return YES on success.
+ *  @return Decrypted key, or `nil`.
  */
-- (BOOL)decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error;
+- (nullable PGPPartialKey *)decryptedWith:(NSString *)passphrase error:(NSError *__autoreleasing *)error;
 
 /**
  *  Signing key packet
@@ -59,11 +59,13 @@ PGP_EMPTY_INIT_UNAVAILABLE;
 
 - (nullable PGPPacket *)signingKeyPacketWithKeyID:(PGPKeyID *)keyID;
 - (nullable PGPPacket *)encryptionKeyPacket:(NSError *__autoreleasing *)error;
-- (nullable PGPSecretKeyPacket *)decryptionKeyPacketWithID:(PGPKeyID *)keyID error:(NSError *__autoreleasing *)error;
+- (nullable PGPSecretKeyPacket *)decryptionPacketForKeyID:(PGPKeyID *)keyID error:(NSError *__autoreleasing *)error;
 
 - (NSArray<PGPPacket *> *)allKeyPackets;
 - (PGPSymmetricAlgorithm)preferredSymmetricAlgorithm;
 + (PGPSymmetricAlgorithm)preferredSymmetricAlgorithmForKeys:(NSArray<PGPPartialKey *> *)keys;
+
+-(instancetype)copyWithZone:(nullable NSZone *)zone NS_REQUIRES_SUPER;
 
 @end
 

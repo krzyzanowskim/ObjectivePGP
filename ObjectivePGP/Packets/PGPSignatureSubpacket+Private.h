@@ -10,6 +10,6 @@
 
 @interface PGPSignatureSubpacket ()
 
-@property (nonatomic, readwrite) id value;
+@property (nonatomic, readwrite, copy) id<NSObject, NSCopying> value;
 
 @end

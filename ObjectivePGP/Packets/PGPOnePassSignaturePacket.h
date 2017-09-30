@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class PGPKeyID;
 
-@interface PGPOnePassSignaturePacket : PGPPacket <PGPExportable>
+@interface PGPOnePassSignaturePacket : PGPPacket <PGPExportable, NSCopying>
 
 @property (nonatomic) UInt8 version; //  The current version is 3.
 @property (nonatomic) PGPSignatureType signatureType;

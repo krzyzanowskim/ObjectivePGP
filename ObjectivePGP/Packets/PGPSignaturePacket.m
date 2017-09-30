@@ -64,11 +64,61 @@ NS_ASSUME_NONNULL_BEGIN
     return PGPSignaturePacketTag;
 }
 
+#pragma mark - isEqual
+
+- (BOOL)isEqual:(id)other {
+    if (self == other) { return YES; }
+    if ([super isEqual:other] && [other isKindOfClass:self.class]) {
+        return [self isEqualToSignaturePacket:other];
+    }
+    return NO;
+}
+
+- (BOOL)isEqualToSignaturePacket:(PGPSignaturePacket *)packet {
+    return self.version = packet.version &&
+    self.publicKeyAlgorithm == packet.publicKeyAlgorithm &&
+    self.hashAlgoritm == packet.hashAlgoritm &&
+    PGPEqualObjects(self.signedHashValueData, packet.signedHashValueData) &&
+    PGPEqualObjects(self.signatureMPIArray, packet.signatureMPIArray) &&
+    PGPEqualObjects(self.hashedSubpackets, packet.hashedSubpackets) &&
+    PGPEqualObjects(self.unhashedSubpackets, packet.unhashedSubpackets);
+}
+
+- (NSUInteger)hash {
+    NSUInteger prime = 31;
+    NSUInteger result = [super hash];
+    result = prime * result + self.version;
+    result = prime * result + self.publicKeyAlgorithm;
+    result = prime * result + self.hashAlgoritm;
+    result = prime * result + self.signedHashValueData.hash;
+    result = prime * result + self.signatureMPIArray.hash;
+    result = prime * result + self.hashedSubpackets.hash;
+    result = prime * result + self.unhashedSubpackets.hash;
+    return result;
+}
+
+#pragma mark - NSCopying
+
+- (id)copyWithZone:(nullable NSZone *)zone {
+    let _Nullable copy = PGPCast([super copyWithZone:zone], PGPSignaturePacket);
+    if (!copy) {
+        return nil;
+    }
+    copy.version = self.version;
+    copy.publicKeyAlgorithm = self.publicKeyAlgorithm;
+    copy.hashAlgoritm = self.hashAlgoritm;
+    copy.signedHashValueData = [self.signedHashValueData copy];
+    copy.signatureMPIArray = [[NSArray alloc] initWithArray:self.signatureMPIArray copyItems:YES];
+    copy.hashedSubpackets = [[NSArray alloc] initWithArray:self.hashedSubpackets copyItems:YES];
+    copy.unhashedSubpackets = [[NSArray alloc] initWithArray:self.unhashedSubpackets copyItems:YES];
+    return copy;
+}
+
 #pragma mark - Helper properties
 
 - (nullable PGPKeyID *)issuerKeyID {
     let subpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeIssuerKeyID] firstObject];
-    return subpacket.value;
+    return PGPCast(subpacket.value, PGPKeyID);
 }
 
 - (NSArray<PGPSignatureSubpacket *> *)subpackets {
@@ -116,7 +166,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable NSDate *)creationDate {
     PGPSignatureSubpacket *creationDateSubpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeSignatureCreationTime] lastObject];
-    return creationDateSubpacket.value;
+    return PGPCast(creationDateSubpacket.value, NSDate);
 }
 
 - (BOOL)isPrimaryUserID {
@@ -129,7 +179,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (result) {
         PGPSignatureSubpacket *subpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeKeyFlags] firstObject];
-        NSArray *flags = subpacket.value;
+        NSArray<NSNumber *> * _Nullable flags = PGPCast(subpacket.value, NSArray);
         if ([flags containsObject:@(PGPSignatureFlagAllowSignData)]) {
             return YES;
         }
@@ -140,7 +190,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)canBeUsedToEncrypt {
     BOOL result = NO;
     PGPSignatureSubpacket *subpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeKeyFlags] firstObject];
-    NSArray *flags = subpacket.value;
+    NSArray<NSNumber *> * _Nullable flags = PGPCast(subpacket.value, NSArray);
     if ([flags containsObject:@(PGPSignatureFlagAllowEncryptStorage)] || [flags containsObject:@(PGPSignatureFlagAllowEncryptCommunications)]) {
         result = YES;
     }
@@ -362,7 +412,7 @@ NS_ASSUME_NONNULL_BEGIN
     if (signingKeyPacket.isEncryptedWithPassphrase && passphrase && passphrase.length > 0) {
         NSError *decryptError;
         // Copy secret key instance, then decrypt on copy, not on the original (do not leave unencrypted instance around)
-        signingKeyPacket = [signingKeyPacket decryptedKeyPacket:PGPNN(passphrase) error:&decryptError];
+        signingKeyPacket = [signingKeyPacket decryptUsing:PGPNN(passphrase) error:&decryptError];
         
         // When error can be passed back to caller, we want to avoid assertion, since there is no way to
         // know if packet can be decrypted and it is a typical user error to provide the wrong passhrase.

@@ -252,7 +252,7 @@ static const unsigned int PGP_DEFAULT_ITERATIONS_COUNT = 215;
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(nullable NSZone *)zone {
-    let copy = [[PGPS2K alloc] initWithSpecifier:self.specifier hashAlgorithm:self.hashAlgorithm];
+    let copy = PGPCast([[self.class allocWithZone:zone] initWithSpecifier:self.specifier hashAlgorithm:self.hashAlgorithm], PGPS2K);
     copy.salt = [self.salt copyWithZone:zone];
     copy.iterationsCount = self.iterationsCount;
     return copy;

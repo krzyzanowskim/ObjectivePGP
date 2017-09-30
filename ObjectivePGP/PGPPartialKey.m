@@ -7,6 +7,7 @@
 //
 
 #import "PGPPartialKey.h"
+#import "PGPPartialKey+Private.h"
 #import "PGPLogging.h"
 #import "PGPPublicKeyPacket.h"
 #import "PGPPublicSubKeyPacket.h"
@@ -15,6 +16,7 @@
 #import "PGPSignaturePacket.h"
 #import "PGPSignatureSubpacket.h"
 #import "PGPPartialSubKey.h"
+#import "PGPPartialSubKey+Private.h"
 #import "PGPUser.h"
 #import "PGPUserAttributePacket.h"
 #import "PGPUserAttributeSubpacket.h"
@@ -24,6 +26,14 @@
 #import "PGPFoundation.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+@interface PGPPartialKey ()
+
+@property (nonatomic, readwrite) PGPPartialKeyType type;
+@property (nonatomic, readwrite) BOOL isEncrypted;
+@property (nonatomic, nullable, readwrite) NSDate *expirationDate;
+
+@end
 
 @implementation PGPPartialKey
 
@@ -40,6 +50,22 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSString *)description {
     return [NSString stringWithFormat:@"Type %@, %@ primary key: %@", self.type == PGPPartialKeyPublic ? @"public" : @"secret", [super description], self.primaryKeyPacket];
 }
+
+#pragma mark - Properties
+
+- (PGPKeyID *)keyID {
+    let primaryKeyPacket = PGPCast(self.primaryKeyPacket, PGPPublicKeyPacket);
+    NSParameterAssert(primaryKeyPacket);
+    return [[PGPKeyID alloc] initWithFingerprint:primaryKeyPacket.fingerprint];
+}
+
+- (PGPFingerprint *)fingerprint {
+    let primaryKeyPacket = PGPCast(self.primaryKeyPacket, PGPPublicKeyPacket);
+    NSParameterAssert(primaryKeyPacket);
+    return primaryKeyPacket.fingerprint;
+}
+
+#pragma mark -
 
 - (BOOL)isEncrypted {
     if (self.type == PGPPartialKeySecret) {
@@ -85,18 +111,6 @@ NS_ASSUME_NONNULL_BEGIN
     return t;
 }
 
-- (PGPKeyID *)keyID {
-    let primaryKeyPacket = PGPCast(self.primaryKeyPacket, PGPPublicKeyPacket);
-    NSParameterAssert(primaryKeyPacket);
-    return [[PGPKeyID alloc] initWithFingerprint:primaryKeyPacket.fingerprint];
-}
-
-- (PGPFingerprint *)fingerprint {
-    let primaryKeyPacket = PGPCast(self.primaryKeyPacket, PGPPublicKeyPacket);
-    NSParameterAssert(primaryKeyPacket);
-    return primaryKeyPacket.fingerprint;
-}
-
 - (void)loadPackets:(NSArray<PGPPacket *> *)packets {
     // based on packetlist2structure
     PGPKeyID *primaryKeyID;
@@ -107,11 +121,11 @@ NS_ASSUME_NONNULL_BEGIN
         switch (packet.tag) {
             case PGPPublicKeyPacketTag:
                 primaryKeyID = PGPCast(packet, PGPPublicKeyPacket).keyID;
-                self.primaryKeyPacket = packet;
+                self.primaryKeyPacket = [packet copy];
                 break;
             case PGPSecretKeyPacketTag:
                 primaryKeyID = PGPCast(packet, PGPPublicKeyPacket).keyID;
-                self.primaryKeyPacket = packet;
+                self.primaryKeyPacket = [packet copy];
                 break;
             case PGPUserAttributePacketTag:
                 if (!user) {
@@ -129,7 +143,7 @@ NS_ASSUME_NONNULL_BEGIN
             case PGPPublicSubkeyPacketTag:
             case PGPSecretSubkeyPacketTag:
                 user = nil;
-                subKey = [[PGPPartialSubKey alloc] initWithPackets:@[packet]];
+                subKey = [[PGPPartialSubKey alloc] initWithPacket:packet];
                 self.subKeys = [self.subKeys arrayByAddingObject:subKey];
                 break;
             case PGPSignaturePacketTag: {
@@ -362,6 +376,22 @@ NS_ASSUME_NONNULL_BEGIN
     result = prime * result + self.keyID.hash;
 
     return result;
+}
+
+#pragma mark - NSCopying
+
+-(instancetype)copyWithZone:(nullable NSZone *)zone {
+    let partialKey = PGPCast([[self.class allocWithZone:zone] initWithPackets:@[]], PGPPartialKey);
+    PGPAssertClass(partialKey, PGPPartialKey);
+
+    partialKey.type = self.type;
+    partialKey.primaryKeyPacket = [self.primaryKeyPacket copy];
+    partialKey.isEncrypted = self.isEncrypted;
+    partialKey.users = [[NSArray alloc] initWithArray:self.users copyItems:YES];
+    partialKey.subKeys = [[NSArray alloc] initWithArray:self.subKeys copyItems:YES];
+    partialKey.directSignatures = [[NSArray alloc] initWithArray:self.directSignatures copyItems:YES];
+    partialKey.expirationDate = [self.expirationDate copy];
+    return partialKey;
 }
 
 #pragma mark - PGPExportable

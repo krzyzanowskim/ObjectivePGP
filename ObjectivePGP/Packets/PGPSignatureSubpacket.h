@@ -14,15 +14,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class PGPSignatureSubpacketHeader;
 
-@interface PGPSignatureSubpacket : NSObject
+@interface PGPSignatureSubpacket : NSObject <NSCopying>
 
 @property (nonatomic, readonly) PGPSignatureSubpacketType type;
-@property (nonatomic, readonly) id value;
+@property (nonatomic, readonly, copy) id<NSObject, NSCopying> value;
 @property (nonatomic, readonly) NSUInteger length;
 
 PGP_EMPTY_INIT_UNAVAILABLE;
 
-- (instancetype)initWithType:(PGPSignatureSubpacketType)type andValue:(id)value NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithType:(PGPSignatureSubpacketType)type andValue:(id<NSObject, NSCopying>)value NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithHeader:(PGPSignatureSubpacketHeader *)header body:(NSData *)subPacketBodyData;
 
 + (PGPSignatureSubpacketHeader *)subpacketHeaderFromData:(NSData *)headerData;

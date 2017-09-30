@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class PGPFingerprint;
 
 /// The eight-octet Key ID
-@interface PGPKeyID : NSObject <PGPExportable>
+@interface PGPKeyID : NSObject <PGPExportable, NSCopying>
 
 /// The eight-octet Key identifier
 @property (readonly, copy, nonatomic) NSData *longKey;
