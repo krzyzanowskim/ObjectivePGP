@@ -245,7 +245,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable NSData *)decryptData:(NSData *)messageDataToDecrypt passphrase:(nullable NSString *)passphrase verifyWithKey:(nullable PGPKey *)key signed:(nullable BOOL *)isSigned valid:(nullable BOOL *)isValid integrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError *__autoreleasing _Nullable *)error {
     PGPAssertClass(messageDataToDecrypt, NSData);
-    let binaryMessages = [self convertArmoredMessage2BinaryBlocksWhenNecessary:messageDataToDecrypt];
+    let binaryMessages = [self.class convertArmoredMessage2BinaryBlocksWhenNecessary:messageDataToDecrypt];
 
     // decrypt first message only
     let binaryMessageToDecrypt = binaryMessages.count > 0 ? binaryMessages.firstObject : nil;
@@ -757,7 +757,7 @@ NS_ASSUME_NONNULL_BEGIN
         return keys;
     };
 
-    let binRingData = [self convertArmoredMessage2BinaryBlocksWhenNecessary:fileData];
+    let binRingData = [self.class convertArmoredMessage2BinaryBlocksWhenNecessary:fileData];
     if (!binRingData || binRingData.count == 0) {
         PGPLogError(@"Invalid input data");
         return keys;
@@ -860,7 +860,7 @@ NS_ASSUME_NONNULL_BEGIN
     return keys;
 }
 
-- (NSArray<NSData *> *)convertArmoredMessage2BinaryBlocksWhenNecessary:(NSData *)binOrArmorData {
++ (NSArray<NSData *> *)convertArmoredMessage2BinaryBlocksWhenNecessary:(NSData *)binOrArmorData {
     NSData *binRingData = binOrArmorData;
     // detect if armored, check for strin -----BEGIN PGP
     if ([PGPArmor isArmoredData:binRingData]) {
