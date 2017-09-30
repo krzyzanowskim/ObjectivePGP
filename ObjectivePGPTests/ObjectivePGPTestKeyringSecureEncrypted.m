@@ -63,7 +63,7 @@
     let key = self.oPGP.keys.anyObject;
 
     let secretKeyPacket = PGPCast(key.secretKey.primaryKeyPacket, PGPSecretKeyPacket);
-    XCTAssertTrue(key.secretKey.isEncrypted, @"Should be encrypted");
+    XCTAssertTrue(key.secretKey.isEncryptedWithPassword, @"Should be encrypted");
     XCTAssertEqualObjects([secretKeyPacket.keyID longKeyString], @"9528AAA17A9BC007", @"Invalid key identifier");
 }
 

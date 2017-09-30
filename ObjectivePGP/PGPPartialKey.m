@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface PGPPartialKey ()
 
 @property (nonatomic, readwrite) PGPPartialKeyType type;
-@property (nonatomic, readwrite) BOOL isEncrypted;
+@property (nonatomic, readwrite) BOOL isEncryptedWithPassword;
 @property (nonatomic, nullable, readwrite) NSDate *expirationDate;
 
 @end
@@ -68,7 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark -
 
-- (BOOL)isEncrypted {
+- (BOOL)isEncryptedWithPassword {
     if (self.type == PGPPartialKeySecret) {
         return PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket).isEncryptedWithPassphrase;
     }
@@ -358,7 +358,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)isEqualToPartialKey:(PGPPartialKey *)other {
     return self.type == other.type &&
-           self.isEncrypted == other.isEncrypted &&
+           self.isEncryptedWithPassword == other.isEncryptedWithPassword &&
            PGPEqualObjects(self.primaryKeyPacket, other.primaryKeyPacket) &&
            PGPEqualObjects(self.users, other.users) &&
            PGPEqualObjects(self.subKeys, other.subKeys) &&
@@ -372,7 +372,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSUInteger result = 1;
 
     result = prime * result + self.type;
-    result = prime * result + self.isEncrypted;
+    result = prime * result + self.isEncryptedWithPassword;
     result = prime * result + self.primaryKeyPacket.hash;
     result = prime * result + self.users.hash;
     result = prime * result + self.subKeys.hash;
@@ -391,7 +391,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     partialKey.type = self.type;
     partialKey.primaryKeyPacket = [self.primaryKeyPacket copy];
-    partialKey.isEncrypted = self.isEncrypted;
+    partialKey.isEncryptedWithPassword = self.isEncryptedWithPassword;
     partialKey.users = [[NSArray alloc] initWithArray:self.users copyItems:YES];
     partialKey.subKeys = [[NSArray alloc] initWithArray:self.subKeys copyItems:YES];
     partialKey.directSignatures = [[NSArray alloc] initWithArray:self.directSignatures copyItems:YES];

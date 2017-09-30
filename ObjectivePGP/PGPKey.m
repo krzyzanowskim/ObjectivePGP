@@ -42,6 +42,10 @@ NS_ASSUME_NONNULL_BEGIN
     return self.publicKey != nil;
 }
 
+- (BOOL)isEncryptedWithPassword {
+    return self.publicKey.isEncryptedWithPassword || self.secretKey.isEncryptedWithPassword;
+}
+
 - (NSString *)description {
     return [NSString stringWithFormat:@"%@, publicKey: %@, secretKey: %@", super.description, self.publicKey.keyID, self.secretKey.keyID];
 }

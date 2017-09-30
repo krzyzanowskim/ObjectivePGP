@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)init {
     if (self = [super init]) {
         _version = 3;
-        _encrypted = NO;
+        _encryptedWithPassword = NO;
         _publicKeyAlgorithm = PGPPublicKeyAlgorithmRSA;
     }
     return self;
@@ -72,7 +72,7 @@ NS_ASSUME_NONNULL_BEGIN
     self.encryptedMPI_M = [[PGPMPI alloc] initWithMPIData:encryptedMPI_MData identifier:PGPMPI_M atPosition:0];
     position = position + encryptedMPI_MData.length;
 
-    self.encrypted = YES;
+    self.encryptedWithPassword = YES;
 
     return position;
 }
@@ -207,7 +207,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)isEqualToSessionKeyPacket:(PGPPublicKeyEncryptedSessionKeyPacket *)packet {
     return self.version = packet.version &&
            self.publicKeyAlgorithm == packet.publicKeyAlgorithm &&
-           self.encrypted == packet.encrypted &&
+           self.encryptedWithPassword == packet.encryptedWithPassword &&
            PGPEqualObjects(self.keyID, packet.keyID) &&
            PGPEqualObjects(self.encryptedMPI_M, packet.encryptedMPI_M);
 }
@@ -218,7 +218,7 @@ NS_ASSUME_NONNULL_BEGIN
     result = prime * result + self.version;
     result = prime * result + self.publicKeyAlgorithm;
     result = prime * result + self.keyID.hash;
-    result = prime * result + self.encrypted;
+    result = prime * result + self.encryptedWithPassword;
     result = prime * result + self.encryptedMPI_M.hash;
     return result;
 }
@@ -233,7 +233,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     copy.version = self.version;
     copy.publicKeyAlgorithm = self.publicKeyAlgorithm;
-    copy.encrypted = self.encrypted;
+    copy.encryptedWithPassword = self.encryptedWithPassword;
     copy.keyID = [self.keyID copy];
     copy.encryptedMPI_M = [self.encryptedMPI_M copy];
     return copy;

@@ -30,6 +30,8 @@ PGP_EMPTY_INIT_UNAVAILABLE;
 @property (nonatomic, readonly) BOOL isSecret;
 /// Whether key is public.
 @property (nonatomic, readonly) BOOL isPublic;
+/// Whether key is encrypted
+@property (nonatomic, readonly) BOOL isEncryptedWithPassword;
 
 @property (nonatomic, nullable, readonly) PGPSecretKeyPacket *signingSecretKey;
 
