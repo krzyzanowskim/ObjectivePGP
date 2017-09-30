@@ -287,7 +287,7 @@ NS_ASSUME_NONNULL_BEGIN
     return nil;
 }
 
-- (nullable PGPSecretKeyPacket *)decryptionKeyPacketWithID:(PGPKeyID *)keyID error:(NSError *__autoreleasing *)error {
+- (nullable PGPSecretKeyPacket *)decryptionPacketForKeyID:(PGPKeyID *)keyID error:(NSError *__autoreleasing *)error {
     NSAssert(self.type == PGPPartialKeySecret, @"Need secret key to encrypt");
     if (self.type == PGPPartialKeyPublic) {
         if (error) {
@@ -311,34 +311,35 @@ NS_ASSUME_NONNULL_BEGIN
     return nil;
 }
 
-// Note: After decryption encrypted packets are replaced with new decrypted instances on key.
 // TODO: return error
-- (BOOL)decrypt:(NSString *)passphrase error:(NSError *__autoreleasing *)error {
+- (nullable PGPPartialKey *)decryptedWithPassphrase:(NSString *)passphrase error:(NSError *__autoreleasing *)error {
     let primarySecretPacket = PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket);
     if (!primarySecretPacket) {
-        return NO;
+        return nil;
     }
 
     // decrypt primary packet
-    var decryptedPrimaryPacket = [primarySecretPacket decryptedKeyPacket:passphrase error:error];
-    if (!decryptedPrimaryPacket) {
-        return NO;
+    var decryptedPrimaryPacket = [primarySecretPacket decryptedWithPassphrase:passphrase error:error];
+    if (!decryptedPrimaryPacket || *error) {
+        return nil;
     }
 
     // decrypt subkeys packets
     for (PGPPartialSubKey *subKey in self.subKeys) {
         let subKeySecretPacket = PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket);
         if (subKeySecretPacket) {
-            let subKeyDecryptedPacket = [subKeySecretPacket decryptedKeyPacket:passphrase error:error];
-            if (!subKeyDecryptedPacket) {
-                return NO;
+            let subKeyDecryptedPacket = [subKeySecretPacket decryptedWithPassphrase:passphrase error:error];
+            if (!subKeyDecryptedPacket || *error) {
+                return nil;
             }
             subKey.primaryKeyPacket = subKeyDecryptedPacket;
         }
     }
 
-    self.primaryKeyPacket = decryptedPrimaryPacket;
-    return YES;
+    PGPPartialKey *partialKeyCopy = self.copy;
+    partialKeyCopy.primaryKeyPacket = decryptedPrimaryPacket;
+
+    return partialKeyCopy;
 }
 
 #pragma mark - isEqual

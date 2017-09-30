@@ -40,7 +40,6 @@ PGP_EMPTY_INIT_UNAVAILABLE;
 
 /**
  *  Decrypts all secret key and subkey packets
- *  Note: After decryption encrypted packets are replaced with new decrypted instances on key.
  *  Warning: It is not good idea to keep decrypted key around
  *
  *  @param passphrase Passphrase
@@ -48,7 +47,7 @@ PGP_EMPTY_INIT_UNAVAILABLE;
  *
  *  @return Decrypted key, or `nil`.
  */
-- (nullable PGPPartialKey *)decryptedWith:(NSString *)passphrase error:(NSError *__autoreleasing *)error;
+- (nullable PGPPartialKey *)decryptedWithPassphrase:(NSString *)passphrase error:(NSError *__autoreleasing *)error;
 
 /**
  *  Signing key packet

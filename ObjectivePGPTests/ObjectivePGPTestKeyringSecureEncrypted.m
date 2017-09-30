@@ -74,8 +74,8 @@
 
     [self measureBlock:^{
         NSError *decryptError = nil;
-        BOOL status = [key.secretKey decrypt:@"1234" error:&decryptError];
-        XCTAssertTrue(status, @"Decryption failed");
+        PGPPartialKey *decryptedKey = [key.secretKey decryptedWithPassphrase:@"1234" error:&decryptError];
+        XCTAssertNotNil(decryptedKey, @"Decryption failed");
         XCTAssertNil(decryptError, @"Decryption failed");
     }];
 }

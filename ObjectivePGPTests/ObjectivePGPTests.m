@@ -115,8 +115,9 @@
     let key = [self.oPGP.keys anyObject];
 
     NSError *err = nil;
-    XCTAssertTrue([key.secretKey decrypt:@"weakpassphrase" error:&err]);
-    NSData *exportedKeyData = [key.secretKey export:nil];
+    PGPPartialKey * _Nullable decryptedKey = [key.secretKey decryptedWithPassphrase:@"weakpassphrase" error:&err];
+    XCTAssertNotNil(decryptedKey);
+    NSData *exportedKeyData = [decryptedKey export:nil];
     XCTAssert(exportedKeyData.length == 4869);
     XCTAssert(self.oPGP.keys.count == 1, @"");
 }

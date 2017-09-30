@@ -150,8 +150,8 @@ NS_ASSUME_NONNULL_BEGIN
     [self fillMPIForPublic:publicSubKeyPacket andSecret:secretSubKeyPacket withKeyAlgorithm:self.keyAlgorithm bits:self.keyBitsLength];
 
     // Create Key
-    let publicSubKey = [[PGPPartialSubKey alloc] initWithPackets:@[publicSubKeyPacket]];
-    let secretSubKey = [[PGPPartialSubKey alloc] initWithPackets:@[secretSubKeyPacket]];
+    let publicSubKey = [[PGPPartialSubKey alloc] initWithPacket:publicSubKeyPacket];
+    let secretSubKey = [[PGPPartialSubKey alloc] initWithPacket:secretSubKeyPacket];
 
     parentKey.publicKey.subKeys = [parentKey.publicKey.subKeys arrayByAddingObject:publicSubKey];
     parentKey.secretKey.subKeys = [parentKey.secretKey.subKeys arrayByAddingObject:secretSubKey];

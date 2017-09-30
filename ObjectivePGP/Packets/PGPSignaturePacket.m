@@ -412,7 +412,7 @@ NS_ASSUME_NONNULL_BEGIN
     if (signingKeyPacket.isEncryptedWithPassphrase && passphrase && passphrase.length > 0) {
         NSError *decryptError;
         // Copy secret key instance, then decrypt on copy, not on the original (do not leave unencrypted instance around)
-        signingKeyPacket = [signingKeyPacket decryptUsing:PGPNN(passphrase) error:&decryptError];
+        signingKeyPacket = [signingKeyPacket decryptedWithPassphrase:PGPNN(passphrase) error:&decryptError];
         
         // When error can be passed back to caller, we want to avoid assertion, since there is no way to
         // know if packet can be decrypted and it is a typical user error to provide the wrong passhrase.

@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return Decrypted key on success
  */
-- (nullable PGPSecretKeyPacket *)decryptedKeyPacket:(NSString *)passphrase error:(NSError *__autoreleasing *)error;
+- (nullable PGPSecretKeyPacket *)decryptedWithPassphrase:(NSString *)passphrase error:(NSError *__autoreleasing *)error;
 
 - (nullable PGPMPI *)secretMPI:(NSString *)identifier;
 

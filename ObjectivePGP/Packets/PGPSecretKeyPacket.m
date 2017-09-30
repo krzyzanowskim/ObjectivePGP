@@ -243,7 +243,7 @@
  *  TODO: V3 support - partially supported, need testing.
  *  NOTE: Decrypted packet data should be released/forget after use
  */
-- (nullable PGPSecretKeyPacket *)decryptedKeyPacket:(NSString *)passphrase error:(NSError *__autoreleasing *)error {
+- (nullable PGPSecretKeyPacket *)decryptedWithPassphrase:(NSString *)passphrase error:(NSError *__autoreleasing *)error {
     PGPAssertClass(passphrase, NSString);
     NSParameterAssert(error);
 
@@ -258,25 +258,25 @@
         return nil;
     }
 
-    PGPSecretKeyPacket *encryptedKey = self.copy;
-    let encryptionSymmetricAlgorithm = encryptedKey.symmetricAlgorithm;
+    PGPSecretKeyPacket *decryptedKeyPacket = self.copy;
+    let encryptionSymmetricAlgorithm = decryptedKeyPacket.symmetricAlgorithm;
 
     // Session key for passphrase
     // producing a key to be used with a symmetric block cipher from a string of octets
-    let sessionKeyData = [encryptedKey.s2k produceSessionKeyWithPassphrase:passphrase symmetricAlgorithm:encryptionSymmetricAlgorithm];
+    let sessionKeyData = [decryptedKeyPacket.s2k produceSessionKeyWithPassphrase:passphrase symmetricAlgorithm:encryptionSymmetricAlgorithm];
 
     // Decrypted MPIArray
-    let decryptedData = [PGPCryptoCFB decryptData:encryptedKey.encryptedMPIPartData sessionKeyData:sessionKeyData symmetricAlgorithm:encryptionSymmetricAlgorithm iv:encryptedKey.ivData];
+    let decryptedData = [PGPCryptoCFB decryptData:decryptedKeyPacket.encryptedMPIPartData sessionKeyData:sessionKeyData symmetricAlgorithm:encryptionSymmetricAlgorithm iv:decryptedKeyPacket.ivData];
 
     // now read mpis
     if (decryptedData) {
-        [encryptedKey parseUnencryptedPart:decryptedData error:error];
+        [decryptedKeyPacket parseUnencryptedPart:decryptedData error:error];
         if (*error) {
             return nil;
         }
     }
-    encryptedKey.wasDecrypted = YES;
-    return encryptedKey;
+    decryptedKeyPacket.wasDecrypted = YES;
+    return decryptedKeyPacket;
 }
 
 #pragma mark - Private

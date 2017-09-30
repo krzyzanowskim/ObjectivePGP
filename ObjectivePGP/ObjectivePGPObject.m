@@ -272,7 +272,7 @@ NS_ASSUME_NONNULL_BEGIN
                 continue;
             }
 
-            decryptionSecretKeyPacket = PGPCast([decryptionKey.secretKey decryptionKeyPacketWithID:pkESKPacket.keyID error:error], PGPSecretKeyPacket);
+            decryptionSecretKeyPacket = PGPCast([decryptionKey.secretKey decryptionPacketForKeyID:pkESKPacket.keyID error:error], PGPSecretKeyPacket);
             if (!decryptionSecretKeyPacket) {
                 continue;
             }
@@ -286,7 +286,7 @@ NS_ASSUME_NONNULL_BEGIN
                     return nil;
                 }
 
-                decryptionSecretKeyPacket = [decryptionSecretKeyPacket decryptedKeyPacket:passphrase error:error];
+                decryptionSecretKeyPacket = [decryptionSecretKeyPacket decryptedWithPassphrase:passphrase error:error];
                 if (!decryptionSecretKeyPacket || (error && *error)) {
                     decryptionSecretKeyPacket = nil;
                     continue;
