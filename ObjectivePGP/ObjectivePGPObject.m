@@ -260,10 +260,10 @@ NS_ASSUME_NONNULL_BEGIN
     var packets = [self readPacketsFromData:binaryMessageToDecrypt];
 
     PGPSymmetricAlgorithm sessionKeyAlgorithm = PGPSymmetricPlaintext;
-    PGPSecretKeyPacket *decryptionSecretKeyPacket = nil; // last found secret key to used to decrypt
+    PGPSecretKeyPacket * _Nullable decryptionSecretKeyPacket = nil; // last found secret key to used to decrypt
 
     // 1. search for valid and known (do I have specified key?) ESK
-    PGPPublicKeyEncryptedSessionKeyPacket *eskPacket = nil;
+    PGPPublicKeyEncryptedSessionKeyPacket * _Nullable eskPacket = nil;
     for (PGPPacket *packet in packets) {
         if (packet.tag == PGPPublicKeyEncryptedSessionKeyPacketTag) {
             let pkESKPacket = PGPCast(packet, PGPPublicKeyEncryptedSessionKeyPacket);
@@ -501,7 +501,7 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    NSError *exportError = nil;
+    NSError * _Nullable exportError = nil;
     let _Nullable signaturePacketData = [signaturePacket export:&exportError];
     if (exportError) {
         if (error) {
@@ -522,7 +522,7 @@ NS_ASSUME_NONNULL_BEGIN
         onePassPacket.keyID = [signaturePacket issuerKeyID];
 
         onePassPacket.notNested = YES;
-        NSError *onePassExportError = nil;
+        NSError * _Nullable onePassExportError = nil;
         [signedMessage pgp_appendData:[onePassPacket export:&onePassExportError]];
         NSAssert(!onePassExportError, @"Missing one passphrase data");
         if (onePassExportError) {
@@ -644,8 +644,8 @@ NS_ASSUME_NONNULL_BEGIN
             offset += nextPacketOffset;
         }
 
-        PGPSignaturePacket *signaturePacket = nil;
-        PGPLiteralPacket *literalDataPacket = nil;
+        PGPSignaturePacket * _Nullable signaturePacket = nil;
+        PGPLiteralPacket * _Nullable literalDataPacket = nil;
 
         for (PGPPacket *packet in accumulatedPackets) {
             if (packet.tag == PGPSignaturePacketTag) {
@@ -738,7 +738,7 @@ NS_ASSUME_NONNULL_BEGIN
         return [NSSet<PGPKey *> set];
     }
 
-    NSError *error = nil;
+    NSError * _Nullable error = nil;
     NSData *fileData = [NSData dataWithContentsOfFile:fullPath options:NSDataReadingMappedIfSafe | NSDataReadingUncached error:&error];
     if (!fileData || error) {
         return [NSSet<PGPKey *> set];
@@ -861,22 +861,22 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 + (NSArray<NSData *> *)convertArmoredMessage2BinaryBlocksWhenNecessary:(NSData *)binOrArmorData {
-    NSData *binRingData = binOrArmorData;
-    // detect if armored, check for strin -----BEGIN PGP
+    let binRingData = binOrArmorData;
+    // detect if armored, check for string -----BEGIN PGP
     if ([PGPArmor isArmoredData:binRingData]) {
-        NSError *deadmorError = nil;
-        NSString *armoredString = [[NSString alloc] initWithData:binRingData encoding:NSUTF8StringEncoding];
+        NSError * _Nullable deadmorError = nil;
+        var armoredString = [[NSString alloc] initWithData:binRingData encoding:NSUTF8StringEncoding];
 
         // replace \n to \r\n
         // propably unecessary since armore code care about \r\n or \n as newline sentence
         armoredString = [armoredString stringByReplacingOccurrencesOfString:@"\r\n" withString:@"\n"];
         armoredString = [armoredString stringByReplacingOccurrencesOfString:@"\n" withString:@"\r\n"];
 
-        NSMutableArray *extractedBlocks = [[NSMutableArray alloc] init];
-        NSRegularExpression *regex = [[NSRegularExpression alloc] initWithPattern:@"(-----)(BEGIN|END)[ ](PGP)[A-Z ]*(-----)" options:NSRegularExpressionDotMatchesLineSeparators error:nil];
+        let extractedBlocks = [[NSMutableArray<NSString *> alloc] init];
+        let regex = [[NSRegularExpression alloc] initWithPattern:@"(-----)(BEGIN|END)[ ](PGP)[A-Z ]*(-----)" options:NSRegularExpressionDotMatchesLineSeparators error:nil];
         __block NSInteger offset = 0;
         [regex enumerateMatchesInString:armoredString options:NSMatchingReportCompletion range:NSMakeRange(0, armoredString.length) usingBlock:^(NSTextCheckingResult *_Nullable result, __unused NSMatchingFlags flags, __unused BOOL *stop) {
-            NSString *substring = [armoredString substringWithRange:result.range];
+            let substring = [armoredString substringWithRange:result.range];
             if ([substring containsString:@"END"]) {
                 NSInteger endIndex = result.range.location + result.range.length;
                 [extractedBlocks addObject:[armoredString substringWithRange:NSMakeRange(offset, endIndex - offset)]];
@@ -887,14 +887,13 @@ NS_ASSUME_NONNULL_BEGIN
 
         let extractedData = [[NSMutableArray<NSData *> alloc] init];
         for (NSString *extractedString in extractedBlocks) {
-            binRingData = [PGPArmor readArmoredData:extractedString error:&deadmorError];
+            let armodedData = [PGPArmor readArmoredData:extractedString error:&deadmorError];
             if (deadmorError) {
                 return @[];
-            } else {
-                [extractedData addObject:binRingData];
             }
-        }
 
+            [extractedData pgp_addObject:armodedData];
+        }
         return extractedData;
     }
     return @[binRingData];
