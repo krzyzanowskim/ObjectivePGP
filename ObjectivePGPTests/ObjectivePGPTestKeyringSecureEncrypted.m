@@ -69,8 +69,9 @@
 
 - (void)testKeyDecryption {
     [self.oPGP importKeysFromFile:self.secKeyringPath];
-
     let key = self.oPGP.keys.anyObject;
+
+    XCTAssertTrue(key.isEncryptedWithPassword);
 
     [self measureBlock:^{
         NSError *decryptError = nil;

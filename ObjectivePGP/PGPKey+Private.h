@@ -13,8 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PGPKey ()
 
-@property (nonatomic, nullable, readwrite) PGPPartialKey *secretKey;
-@property (nonatomic, nullable, readwrite) PGPPartialKey *publicKey;
+@property (nonatomic, nullable, copy, readwrite) PGPPartialKey *secretKey;
+@property (nonatomic, nullable, copy, readwrite) PGPPartialKey *publicKey;
 
 @end
 

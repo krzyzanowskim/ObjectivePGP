@@ -16,14 +16,14 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// Public + Private key with the same ID.
-@interface PGPKey : NSObject <PGPExportable>
+@interface PGPKey : NSObject <PGPExportable, NSCopying>
 
 PGP_EMPTY_INIT_UNAVAILABLE;
 
 /// Key ID
 @property (nonatomic, readonly) PGPKeyID *keyID;
-@property (nonatomic, nullable, readonly) PGPPartialKey *secretKey;
-@property (nonatomic, nullable, readonly) PGPPartialKey *publicKey;
+@property (nonatomic, nullable, copy, readonly) PGPPartialKey *secretKey;
+@property (nonatomic, nullable, copy, readonly) PGPPartialKey *publicKey;
 @property (nonatomic, nullable, readonly) NSDate *expirationDate;
 
 /// Whether key is secret.
@@ -35,7 +35,21 @@ PGP_EMPTY_INIT_UNAVAILABLE;
 
 @property (nonatomic, nullable, readonly) PGPSecretKeyPacket *signingSecretKey;
 
+
+/// Initialize the key with partial keys
 - (instancetype)initWithSecretKey:(nullable PGPPartialKey *)secretKey publicKey:(nullable PGPPartialKey *)publicKey NS_DESIGNATED_INITIALIZER;
+
+/**
+*  Decrypts key.
+*  Warning: It is not good idea to keep decrypted key around
+*
+*  @param passphrase Passphrase
+*  @param error      error
+*
+*  @return Decrypted key, or `nil`.
+*/
+- (nullable PGPKey *)decryptedWithPassphrase:(NSString *)passphrase error:(NSError *__autoreleasing _Nullable *)error;
+
 
 /// The binary format.
 /// @discussion If you need ASCII format, you can use `PGPArmor`.

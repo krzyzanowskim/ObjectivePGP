@@ -28,8 +28,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithSecretKey:(nullable PGPPartialKey *)secretKey publicKey:(nullable PGPPartialKey *)publicKey {
     if ((self = [super init])) {
-        _secretKey = secretKey;
-        _publicKey = publicKey;
+        _secretKey = [secretKey copy];
+        _publicKey = [publicKey copy];
     }
     return self;
 }
@@ -73,6 +73,13 @@ NS_ASSUME_NONNULL_BEGIN
     return signingPacket;
 }
 
+- (nullable PGPKey *)decryptedWithPassphrase:(NSString *)passphrase error:(NSError *__autoreleasing _Nullable *)error {
+    let decryptedPartialKey = [self.secretKey decryptedWithPassphrase:passphrase error:error];
+    PGPKey *decryptedKey = self.copy;
+    decryptedKey.secretKey = decryptedPartialKey;
+    return decryptedKey;
+}
+
 #pragma mark - isEqual
 
 - (BOOL)isEqual:(id)other {
@@ -97,6 +104,12 @@ NS_ASSUME_NONNULL_BEGIN
     return result;
 }
 
+#pragma mark - NSCopying
+
+- (instancetype)copyWithZone:(nullable NSZone *)zone {
+    let copy = PGPCast([[self.class allocWithZone:zone] initWithSecretKey:[self.secretKey copy] publicKey:[self.publicKey copy]], PGPKey);
+    return copy;
+}
 
 #pragma mark - PGPExportable
 
