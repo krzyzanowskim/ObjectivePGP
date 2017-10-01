@@ -28,14 +28,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PGPPartialKey ()
-
-@property (nonatomic, readwrite) PGPPartialKeyType type;
-@property (nonatomic, readwrite) BOOL isEncryptedWithPassword;
-@property (nonatomic, nullable, readwrite) NSDate *expirationDate;
-
-@end
-
 @implementation PGPPartialKey
 
 - (instancetype)initWithPackets:(NSArray<PGPPacket *> *)packets {
@@ -66,8 +58,6 @@ NS_ASSUME_NONNULL_BEGIN
     return primaryKeyPacket.fingerprint;
 }
 
-#pragma mark -
-
 - (BOOL)isEncryptedWithPassword {
     if (self.type == PGPPartialKeySecret) {
         return PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket).isEncryptedWithPassphrase;
@@ -92,6 +82,8 @@ NS_ASSUME_NONNULL_BEGIN
     }
     return nil;
 }
+
+#pragma mark -
 
 - (PGPPartialKeyType)type {
     PGPPartialKeyType t = PGPPartialKeyUnknown;
@@ -358,13 +350,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)isEqualToPartialKey:(PGPPartialKey *)other {
     return self.type == other.type &&
-           self.isEncryptedWithPassword == other.isEncryptedWithPassword &&
            PGPEqualObjects(self.primaryKeyPacket, other.primaryKeyPacket) &&
            PGPEqualObjects(self.users, other.users) &&
            PGPEqualObjects(self.subKeys, other.subKeys) &&
            PGPEqualObjects(self.directSignatures, other.directSignatures) &&
-           PGPEqualObjects(self.revocationSignature, other.revocationSignature) &&
-           PGPEqualObjects(self.keyID, other.keyID);
+           PGPEqualObjects(self.revocationSignature, other.revocationSignature);
 }
 
 - (NSUInteger)hash {
@@ -372,13 +362,11 @@ NS_ASSUME_NONNULL_BEGIN
     NSUInteger result = 1;
 
     result = prime * result + self.type;
-    result = prime * result + self.isEncryptedWithPassword;
     result = prime * result + self.primaryKeyPacket.hash;
     result = prime * result + self.users.hash;
     result = prime * result + self.subKeys.hash;
     result = prime * result + self.directSignatures.hash;
     result = prime * result + self.revocationSignature.hash;
-    result = prime * result + self.keyID.hash;
 
     return result;
 }
@@ -391,11 +379,10 @@ NS_ASSUME_NONNULL_BEGIN
 
     partialKey.type = self.type;
     partialKey.primaryKeyPacket = [self.primaryKeyPacket copy];
-    partialKey.isEncryptedWithPassword = self.isEncryptedWithPassword;
     partialKey.users = [[NSArray alloc] initWithArray:self.users copyItems:YES];
     partialKey.subKeys = [[NSArray alloc] initWithArray:self.subKeys copyItems:YES];
     partialKey.directSignatures = [[NSArray alloc] initWithArray:self.directSignatures copyItems:YES];
-    partialKey.expirationDate = [self.expirationDate copy];
+    partialKey.revocationSignature = [self.revocationSignature copy];
     return partialKey;
 }
 

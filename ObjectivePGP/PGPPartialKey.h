@@ -24,15 +24,15 @@ typedef NS_ENUM(NSUInteger, PGPPartialKeyType) { PGPPartialKeyUnknown = 0, PGPPa
 
 @property (nonatomic, readonly) PGPPartialKeyType type;
 @property (nonatomic, copy) PGPPacket *primaryKeyPacket;
-@property (nonatomic, readonly) BOOL isEncryptedWithPassword;
 @property (nonatomic, copy) NSArray<PGPUser *> *users;
 @property (nonatomic, copy) NSArray<PGPPartialSubKey *> *subKeys; // TODO: nullable
-@property (nonatomic, nullable, copy) NSArray<PGPSignaturePacket *> *directSignatures;
-@property (nonatomic, nullable, readonly) PGPSignaturePacket *revocationSignature;
-@property (nonatomic, nullable, readonly) NSDate *expirationDate;
+@property (nonatomic, nullable, copy, readonly) NSArray<PGPSignaturePacket *> *directSignatures;
+@property (nonatomic, nullable, copy, readonly) PGPSignaturePacket *revocationSignature;
 
-@property (nonatomic, readonly) PGPKeyID *keyID;
-@property (nonatomic, readonly) PGPFingerprint *fingerprint;
+@property (nonatomic, readonly) BOOL isEncryptedWithPassword; // calculated
+@property (nonatomic, nullable, readonly) NSDate *expirationDate; // calculated
+@property (nonatomic, readonly) PGPKeyID *keyID; // calculated
+@property (nonatomic, readonly) PGPFingerprint *fingerprint; // calculated
 
 PGP_EMPTY_INIT_UNAVAILABLE;
 

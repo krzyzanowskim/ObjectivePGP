@@ -24,7 +24,7 @@
 @interface ObjectivePGPTests : XCTestCase
 
 @property (nonatomic) ObjectivePGP *oPGP;
-@property (nonatomic) NSString *secringPathPlaintext, *secringPathEncrypted;
+@property (nonatomic) NSString *secringPathPlaintext, *secringEncrypted;
 @property (nonatomic) NSString *pubringPlaintext, *pubringEncrypted;
 
 @end
@@ -36,7 +36,7 @@
 
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     self.secringPathPlaintext = [bundle pathForResource:@"secring-test-plaintext" ofType:@"gpg"];
-    self.secringPathEncrypted = [bundle pathForResource:@"secring-test-encrypted" ofType:@"gpg"];
+    self.secringEncrypted = [bundle pathForResource:@"secring-test-encrypted" ofType:@"gpg"];
     self.pubringPlaintext = [bundle pathForResource:@"pubring-test-plaintext" ofType:@"gpg"];
     self.pubringEncrypted = [bundle pathForResource:@"pubring-test-encrypted" ofType:@"gpg"];
 

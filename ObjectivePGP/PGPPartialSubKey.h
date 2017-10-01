@@ -20,8 +20,8 @@ PGP_EMPTY_INIT_UNAVAILABLE
 
 - (instancetype)initWithPacket:(PGPPacket *)packet NS_DESIGNATED_INITIALIZER;
 
-@property (nonatomic, nullable, readonly) PGPSignaturePacket *bindingSignature;
-@property (nonatomic, nullable, readonly) PGPSignaturePacket *revocationSignature;
+@property (nonatomic, nullable, copy, readonly) PGPSignaturePacket *bindingSignature;
+@property (nonatomic, nullable, copy, readonly) PGPSignaturePacket *revocationSignature;
 
 @property (nonatomic, readonly) PGPKeyID *keyID;
 
