@@ -807,7 +807,7 @@ NS_ASSUME_NONNULL_BEGIN
         return compoundKeys;
     }
 
-    NSMutableSet *updatedContainer = [NSMutableSet<PGPKey *> setWithSet:compoundKeys];
+    NSMutableArray *updatedContainer = [NSMutableArray<PGPKey *> arrayWithArray:compoundKeys.allObjects];
 
     let foundCompoundKey = [[compoundKeys objectsPassingTest:^BOOL(PGPKey *obj, BOOL *stop) {
         *stop = [obj.publicKey.keyID isEqual:key.keyID] || [obj.secretKey.keyID isEqual:key.keyID];
@@ -826,7 +826,7 @@ NS_ASSUME_NONNULL_BEGIN
         }
     }
 
-    return updatedContainer;
+    return [NSSet<PGPKey *> setWithArray:updatedContainer];
 }
 
 + (NSSet<PGPPartialKey *> *)readPartialKeysFromData:(NSData *)messageData {
