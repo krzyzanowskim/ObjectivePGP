@@ -155,6 +155,9 @@
             NSUInteger hashSize = [PGPCryptoUtils hashSizeOfHashAlhorithm:PGPHashSHA1];
             if (hashSize == NSNotFound) {
                 PGPLogWarning(@"Invalid hash size");
+                if (error) {
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorPassphraseInvalid userInfo:@{ NSLocalizedDescriptionKey: @"Decrypted hash mismatch, invalid passphrase." }];
+                }
                 return 0;
             }
 
@@ -165,8 +168,8 @@
             if (![hashData isEqualToData:calculatedHashData]) {
                 if (error) {
                     *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorPassphraseInvalid userInfo:@{ NSLocalizedDescriptionKey: @"Decrypted hash mismatch, invalid passphrase." }];
-                    return data.length;
                 }
+                return data.length;
             }
 
         } break;
@@ -184,8 +187,8 @@
             if (checksum != calculatedChecksum) {
                 if (error) {
                     *error = [NSError errorWithDomain:PGPErrorDomain code:-1 userInfo:@{ NSLocalizedDescriptionKey: @"Decrypted hash mismatch, check passphrase." }];
-                    return data.length;
                 }
+                return data.length;
             }
         } break;
     }
@@ -243,9 +246,8 @@
  *  TODO: V3 support - partially supported, need testing.
  *  NOTE: Decrypted packet data should be released/forget after use
  */
-- (nullable PGPSecretKeyPacket *)decryptedWithPassphrase:(NSString *)passphrase error:(NSError *__autoreleasing *)error {
+- (nullable PGPSecretKeyPacket *)decryptedWithPassphrase:(NSString *)passphrase error:(NSError *__autoreleasing _Nullable *)error {
     PGPAssertClass(passphrase, NSString);
-    NSParameterAssert(error);
 
     if (!self.isEncryptedWithPassphrase) {
         // PGPLogDebug(@"No need to decrypt key.");

@@ -107,6 +107,10 @@
     let encryptedKey = [self.oPGP findKeyForIdentifier:@"9528AAA17A9BC007"];
     XCTAssertNotNil(encryptedKey);
     XCTAssertTrue(encryptedKey.isEncryptedWithPassword);
+    NSError *error;
+
+    let decryptedKey = [encryptedKey decryptedWithPassphrase:@"1234" error:&error];
+    XCTAssertNotNil(decryptedKey);
     XCTAssertTrue([self.oPGP.keys containsObject:encryptedKey]);
 }
 
