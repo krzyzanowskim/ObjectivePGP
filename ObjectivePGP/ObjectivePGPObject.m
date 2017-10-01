@@ -702,8 +702,8 @@ NS_ASSUME_NONNULL_BEGIN
     PGPAssertClass(keys, NSSet);
 
     for (PGPKey *key in keys) {
-        self.keys = [ObjectivePGP addOrUpdateCompoundKeyForKey:key.secretKey inContainer:self.keys];
-        self.keys = [ObjectivePGP addOrUpdateCompoundKeyForKey:key.publicKey inContainer:self.keys];
+        self.keys = [ObjectivePGP addOrUpdatePartialKey:key.secretKey inContainer:self.keys];
+        self.keys = [ObjectivePGP addOrUpdatePartialKey:key.publicKey inContainer:self.keys];
     }
     return self.keys;
 }
@@ -767,7 +767,7 @@ NS_ASSUME_NONNULL_BEGIN
     for (NSData *data in binRingData) {
         let readPartialKeys = [ObjectivePGP readPartialKeysFromData:data];
         for (PGPPartialKey *key in readPartialKeys) {
-            keys = [ObjectivePGP addOrUpdateCompoundKeyForKey:key inContainer:keys];
+            keys = [ObjectivePGP addOrUpdatePartialKey:key inContainer:keys];
         }
     }
 
@@ -802,7 +802,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // Add or update compound key. Returns updated set.
-+ (NSSet<PGPKey *> *)addOrUpdateCompoundKeyForKey:(nullable PGPPartialKey *)key inContainer:(NSSet<PGPKey *> *)compoundKeys {
++ (NSSet<PGPKey *> *)addOrUpdatePartialKey:(nullable PGPPartialKey *)key inContainer:(NSSet<PGPKey *> *)compoundKeys {
     if (!key) {
         return compoundKeys;
     }
@@ -830,7 +830,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 + (NSSet<PGPPartialKey *> *)readPartialKeysFromData:(NSData *)messageData {
-    let keys = [NSMutableSet<PGPPartialKey *> set];
+    let partialKeys = [NSMutableSet<PGPPartialKey *> set];
     let accumulatedPackets = [NSMutableArray<PGPPacket *> array];
     NSUInteger position = 0;
     NSUInteger nextPacketPosition = 0;
@@ -843,8 +843,8 @@ NS_ASSUME_NONNULL_BEGIN
         }
 
         if ((accumulatedPackets.count > 1) && ((packet.tag == PGPPublicKeyPacketTag) || (packet.tag == PGPSecretKeyPacketTag))) {
-            let key = [[PGPPartialKey alloc] initWithPackets:accumulatedPackets];
-            [keys addObject:key];
+            let partialKey = [[PGPPartialKey alloc] initWithPackets:accumulatedPackets];
+            [partialKeys addObject:partialKey];
             [accumulatedPackets removeAllObjects];
         }
 
@@ -854,11 +854,11 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (accumulatedPackets.count > 1) {
         let key = [[PGPPartialKey alloc] initWithPackets:accumulatedPackets];
-        [keys addObject:key];
+        [partialKeys addObject:key];
         [accumulatedPackets removeAllObjects];
     }
 
-    return keys;
+    return partialKeys;
 }
 
 + (NSArray<NSData *> *)convertArmoredMessage2BinaryBlocksWhenNecessary:(NSData *)binOrArmorData {

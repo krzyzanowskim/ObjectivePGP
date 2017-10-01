@@ -76,11 +76,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable PGPKey *)decryptedWithPassphrase:(NSString *)passphrase error:(NSError *__autoreleasing _Nullable *)error {
     let decryptedPartialKey = [self.secretKey decryptedWithPassphrase:passphrase error:error];
     if (decryptedPartialKey) {
-        PGPKey *decryptedKey = self.copy;
-        decryptedKey.secretKey = decryptedPartialKey;
-        return decryptedKey;
+        return [[PGPKey alloc] initWithSecretKey:decryptedPartialKey publicKey:self.publicKey];
     }
-    return self;
+    return nil;
 }
 
 #pragma mark - isEqual

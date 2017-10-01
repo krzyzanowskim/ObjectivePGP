@@ -110,8 +110,10 @@
     NSError *error;
 
     let decryptedKey = [encryptedKey decryptedWithPassphrase:@"1234" error:&error];
+    XCTAssertFalse(decryptedKey.isEncryptedWithPassword);
     XCTAssertNotNil(decryptedKey);
     let decryptedKey2 = [encryptedKey decryptedWithPassphrase:@"12345" error:&error];
+    XCTAssertTrue(encryptedKey.isEncryptedWithPassword);
     XCTAssertNil(decryptedKey2);
 
     XCTAssertTrue([self.oPGP.keys containsObject:encryptedKey]);
