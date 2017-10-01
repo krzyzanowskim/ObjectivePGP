@@ -111,6 +111,9 @@
 
     let decryptedKey = [encryptedKey decryptedWithPassphrase:@"1234" error:&error];
     XCTAssertNotNil(decryptedKey);
+    let decryptedKey2 = [encryptedKey decryptedWithPassphrase:@"12345" error:&error];
+    XCTAssertNil(decryptedKey2);
+
     XCTAssertTrue([self.oPGP.keys containsObject:encryptedKey]);
 }
 
