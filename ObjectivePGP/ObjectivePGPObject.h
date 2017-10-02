@@ -17,20 +17,12 @@ NS_ASSUME_NONNULL_BEGIN
 /// Imported keys.
 @property (strong, nonatomic, readonly) NSArray<PGPKey *> *keys;
 
-/*
+/**
  Import keys. `keys` property is updated after successfull import.
 
- @param path keys to load.
- @return Set of loaded keys.
-*/
+ @param keys Keys to import.
+ */
 - (void)importKeys:(NSArray<PGPKey *> *)keys;
-
-/**
- Delete keys
-
- @param keys Keys to delete from keys object
-*/
-- (void)deleteKeys:(NSArray<PGPKey *> *)keys;
 
 /**
  Import key with given identifier
@@ -42,23 +34,30 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)importKey:(NSString *)shortKeyStringIdentifier fromFile:(NSString *)path;
 
 /**
+ Delete keys
+
+ @param keys Keys to delete from the `keys` collection.
+ */
+- (void)deleteKeys:(NSArray<PGPKey *> *)keys;
+
+/**
  Read keys from the data. Does not import the keys.
 
- @param fileData Keys data.
- @return Array of parsed keys.
+ @param data Key or keyring data.
+ @return Array of read keys.
  */
-- (NSArray<PGPKey *> *)keysFromData:(NSData *)fileData;
+- (NSArray<PGPKey *> *)keysFromData:(NSData *)data;
 
 /**
  Read keys from the file. Does not import the keys.
 
  @param path Path to the keys file.
- @return Array of parsed keys.
+ @return Array of read keys.
  */
 - (NSArray<PGPKey *> *)keysFromFile:(NSString *)path;
 
 /**
- Save keys of given type (public or private) to the file.
+ Export, previously imported, keys of given type (public or secret) to the file at given path.
 
  @param type Keys type.
  @param path Full path to the destination file.
@@ -68,24 +67,24 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)exportKeysOfType:(PGPPartialKeyType)type toFile:(NSString *)path error:(NSError *__autoreleasing _Nullable *)error;
 
 /**
- Export key data.
+ Export, previously imported, single key data.
 
  @param key Key to export.
  @param armored Choose the format. Binary or Armored (armored is a string based format)
- @return Data or `nil` if can't export key.
+ @return Data, or `nil` if can't export the key.
  */
 - (nullable NSData *)exportKey:(PGPKey *)key armored:(BOOL)armored;
 
 /**
- Search for string based key identifier.
+ Search imported keys for the key identifier.
 
- @param keyIdentifier Key identifier. Short (8 characters, e.g: 4EF122E5) or long (16 characters, e.g: 71180E514EF122E5) identifier.
- @return Key instance, or `nil` if not found.
+ @param identifier Key identifier. Short (8 characters, e.g: "4EF122E5") or long (16 characters, e.g: "71180E514EF122E5") identifier.
+ @return Key instance, or `nil` if the key is not found.
  */
-- (nullable PGPKey *)findKeyForIdentifier:(NSString *)keyIdentifier;
+- (nullable PGPKey *)findKeyForIdentifier:(NSString *)identifier;
 
 /**
- Search for key id.
+ Search imported keys for key id instance.
 
  @param keyID Key identifier.
  @return Key instance or `nil` if not found.
@@ -93,7 +92,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable PGPKey *)findKeyForKeyID:(PGPKeyID *)keyID;
 
 /**
- Search for keys for given user id.
+ Search imported keys for given user id.
 
  @param userID A string based identifier (usually name with the e-mail address).
  @return Array of found keys, or empty array if not found.
@@ -103,14 +102,14 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Sign data using a key.
 
- @param dataToSign Data to sign.
+ @param data Data to sign.
  @param key Key to be used to sign.
  @param passphrase Optional. Passphrase for the key.
- @param detached whether output detached signature.
+ @param detached Whether result in detachec signature only, or return input data with a signature.
  @param error Error.
  @return Signed data, or `nil` if fail.
  */
-- (nullable NSData *)signData:(NSData *)dataToSign usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase detached:(BOOL)detached error:(NSError *__autoreleasing _Nullable *)error;
+- (nullable NSData *)signData:(NSData *)data usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase detached:(BOOL)detached error:(NSError *__autoreleasing _Nullable *)error;
 
 /**
  Verify signed data. Validates with the imported keys.
@@ -142,11 +141,56 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPKey *)key error:(NSError *__autoreleasing _Nullable *)error;
 
-- (nullable NSData *)encryptData:(NSData *)dataToEncrypt usingKeys:(NSArray<PGPKey *> *)keys armored:(BOOL)armored error:(NSError *__autoreleasing _Nullable *)error;
-- (nullable NSData *)encryptData:(NSData *)dataToEncrypt usingKeys:(NSArray<PGPKey *> *)keys signWithKey:(nullable PGPKey *)signKey passphrase:(nullable NSString *)passphrase armored:(BOOL)armored error:(NSError *__autoreleasing _Nullable *)error;
+/**
+ Encrypt data using given keys. Output in binary or ASCII format.
 
-- (nullable NSData *)decryptData:(NSData *)messageDataToDecrypt passphrase:(nullable NSString *)passphrase error:(NSError *__autoreleasing _Nullable *)error;
-- (nullable NSData *)decryptData:(NSData *)messageDataToDecrypt passphrase:(nullable NSString *)passphrase verifyWithKey:(nullable PGPKey *)key signed:(nullable BOOL *)isSigned valid:(nullable BOOL *)isValid integrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError *__autoreleasing _Nullable *)error;
+ @param data Data to encrypt.
+ @param keys Keys to use to encrypte `data`
+ @param armored Whether the output data should be armored (ASCII format) or not.
+ @param error Error.
+ @return Encrypted data in requested format.
+ */
+- (nullable NSData *)encryptData:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys armored:(BOOL)armored error:(NSError *__autoreleasing _Nullable *)error;
+
+
+/**
+ Encrypt and sign input data with given keys. Output in binary or ASCII format.
+
+ @param data Data to encrypt and sign.
+ @param keys Keys to use to encrypte `data`.
+ @param signKey Key to use to sign `data`.
+ @param passphrase Optional. Passphrase for signature key.
+ @param armored Whether the output data should be armored (ASCII format) or not.
+ @param error Error.
+ @return Encrypted and signed data in requested format.
+ */
+- (nullable NSData *)encryptData:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys signWithKey:(nullable PGPKey *)signKey passphrase:(nullable NSString *)passphrase armored:(BOOL)armored error:(NSError *__autoreleasing _Nullable *)error;
+
+
+/**
+ Decrypt encrypted message data.
+
+ @param data Data to decrypt.
+ @param passphrase Optional. Passphrase for the key to decrypt.
+ @param error Error.
+ @return Decrypted data.
+ */
+- (nullable NSData *)decryptData:(NSData *)data passphrase:(nullable NSString *)passphrase error:(NSError *__autoreleasing _Nullable *)error;
+
+
+/**
+ Decrypt encrypted message data, and verify the signature.
+
+ @param data Data to decrypt.
+ @param passphrase Optional. Passphrase for the key to decrypt.
+ @param key Key to use to decrypt message.
+ @param isSigned Whether message is signed.
+ @param isValid whether message is valid.
+ @param isIntegrityProtected Whether message integrity is protected;
+ @param error Error.
+ @return Decrypted data.
+ */
+- (nullable NSData *)decryptData:(NSData *)data passphrase:(nullable NSString *)passphrase verifyWithKey:(nullable PGPKey *)key signed:(nullable BOOL *)isSigned valid:(nullable BOOL *)isValid integrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError *__autoreleasing _Nullable *)error;
 
 @end
 
