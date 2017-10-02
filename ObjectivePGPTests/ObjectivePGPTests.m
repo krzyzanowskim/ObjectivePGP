@@ -125,6 +125,30 @@
     XCTAssertTrue([self.pgp.keys containsObject:encryptedKey]);
 }
 
+
+- (void)testExportImport {
+    let keys1 = [self loadKeysFromFile:@"pubring-test-plaintext.gpg"];
+    let keys2 = [self loadKeysFromFile:@"pubring-test-encrypted.gpg"];
+    let keys3 = [self loadKeysFromFile:@"secring-test-plaintext.gpg"];
+    let keys4 = [self loadKeysFromFile:@"secring-test-encrypted.gpg"];
+    [self.pgp importKeys:keys1];
+    [self.pgp importKeys:keys2];
+    [self.pgp importKeys:keys3];
+    [self.pgp importKeys:keys4];
+
+    XCTAssertNotNil(self.pgp.keys.firstObject);
+    NSUInteger keysCount = self.pgp.keys.count;
+
+    for (PGPKey *key in self.pgp.keys) {
+        let exportedKeyData = [key export:nil];
+        let readKeys = [self.pgp keysFromData:exportedKeyData];
+        XCTAssertTrue(readKeys.count == 1);
+        [self.pgp importKeys:readKeys];
+    }
+
+    XCTAssertEqual(self.pgp.keys.count, keysCount);
+}
+
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/22
 - (void)testIssue22 {
     let keys = [self loadKeysFromFile:@"issue22-original.asc"];
