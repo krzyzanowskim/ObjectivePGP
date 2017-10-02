@@ -1,5 +1,5 @@
 //
-//  NSMutableArray+PGPUtils.h
+//  NSArray+PGPUtils.h
 //  ObjectivePGP
 //
 //  Created by Marcin Krzyzanowski on 10/09/2017.
@@ -13,6 +13,12 @@ NS_ASSUME_NONNULL_BEGIN
 @interface NSMutableArray <ObjectType> (PGPUtils)
 
 - (void)pgp_addObject:(nullable ObjectType)anObject;
+
+@end
+
+@interface NSArray <ObjectType> (PGPUtils)
+
+- (NSArray<ObjectType> *)pgp_objectsPassingTest:(BOOL (^)(ObjectType obj, BOOL *stop))predicate;
 
 @end
 

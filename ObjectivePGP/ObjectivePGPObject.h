@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ObjectivePGP : NSObject
 
 /// Imported keys.
-@property (strong, nonatomic, readonly) NSSet<PGPKey *> *keys;
+@property (strong, nonatomic, readonly) NSArray<PGPKey *> *keys;
 
 /*
  Import keys. `keys` property is updated after successfull import.
@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param path keys to load.
  @return Set of loaded keys.
 */
-- (NSSet<PGPKey *> *)importKeys:(NSSet<PGPKey *> *)keys;
+- (NSArray<PGPKey *> *)importKeys:(NSArray<PGPKey *> *)keys;
 
 /**
  Import keys from the file. `keys` property is updated after successfull import.
@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param path Path to the file with the keys.
  @return Set of loaded keys.
  */
-- (NSSet<PGPKey *> *)importKeysFromFile:(NSString *)path;
+- (NSArray<PGPKey *> *)importKeysFromFile:(NSString *)path;
 
 /**
  Import keys from the data. `keys` property is updated after successfull import.
@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param data Keys data.
  @return Set of loaded keys.
  */
-- (NSSet<PGPKey *> *)importKeysFromData:(NSData *)data;
+- (NSArray<PGPKey *> *)importKeysFromData:(NSData *)data;
 
 /**
  Delete keys
@@ -63,7 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param fileData Keys data.
  @return Array of parsed keys.
  */
-- (NSSet<PGPKey *> *)keysFromData:(NSData *)fileData;
+- (NSArray<PGPKey *> *)keysFromData:(NSData *)fileData;
 
 /**
  Read keys from the file. Does not import the keys.
@@ -71,7 +71,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param path Path to the keys file.
  @return Array of parsed keys.
  */
-- (NSSet<PGPKey *> *)keysFromFile:(NSString *)path;
+- (NSArray<PGPKey *> *)keysFromFile:(NSString *)path;
 
 /**
  Save keys of given type (public or private) to the file.
@@ -114,7 +114,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param userID A string based identifier (usually name with the e-mail address).
  @return Array of found keys, or empty array if not found.
  */
-- (NSSet<PGPKey *> *)findKeysForUserID:(NSString *)userID;
+- (NSArray<PGPKey *> *)findKeysForUserID:(NSString *)userID;
 
 /**
  Sign data using a key.

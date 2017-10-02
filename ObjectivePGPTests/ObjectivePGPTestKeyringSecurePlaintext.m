@@ -87,7 +87,7 @@
     XCTAssertNotNil([checkPGP importKeysFromFile:exportSecretKeyringPath]);
     XCTAssert(self.oPGP.keys.count > 0, @"Keys not loaded");
 
-    let key = checkPGP.keys.anyObject;
+    let key = checkPGP.keys.firstObject;
     let secretKeyPacket = PGPCast(key.secretKey.primaryKeyPacket, PGPSecretKeyPacket);
     XCTAssertFalse(key.secretKey.isEncryptedWithPassword, @"Should not be encrypted");
     XCTAssertEqualObjects([secretKeyPacket.keyID longKeyString], @"25A233C2952E4E8B", @"Invalid key identifier");
@@ -113,7 +113,7 @@
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
     XCTAssert(self.oPGP.keys.count > 0, @"Keys not loaded");
 
-    let key = self.oPGP.keys.anyObject;
+    let key = self.oPGP.keys.firstObject;
 
     let secretKeyPacket = PGPCast(key.secretKey.primaryKeyPacket, PGPSecretKeyPacket);
     XCTAssertFalse(key.secretKey.isEncryptedWithPassword, @"Should not be encrypted");
@@ -219,13 +219,13 @@
     [self.oPGP decryptData:[NSData dataWithContentsOfFile:encryptedPath] passphrase:nil error:&error];
 }
 
-- (void)testEcnryptWithMultipleRecipients {
+- (void)testEncryptWithMultipleRecipients {
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.pubKeyringPath]);
     XCTAssertNotNil([self.oPGP importKeysFromFile:self.secKeyringPath]);
 
     // Public key
-    let keyToEncrypt1 = [self.oPGP findKeyForIdentifier:@"952E4E8B"];
     let keyToEncrypt2 = [self.oPGP findKeyForIdentifier:@"66753341"];
+    let keyToEncrypt1 = [self.oPGP findKeyForIdentifier:@"952E4E8B"];
 
     XCTAssertNotNil(keyToEncrypt1);
     XCTAssertNotNil(keyToEncrypt2);

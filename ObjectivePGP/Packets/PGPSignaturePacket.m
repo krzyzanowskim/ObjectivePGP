@@ -23,7 +23,7 @@
 #import "PGPUser.h"
 #import "PGPUserIDPacket.h"
 #import "NSMutableData+PGPUtils.h"
-#import "NSMutableArray+PGPUtils.h"
+#import "NSArray+PGPUtils.h"
 
 #import "PGPLogging.h"
 #import "PGPMacros+Private.h"

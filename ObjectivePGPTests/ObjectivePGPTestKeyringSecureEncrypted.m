@@ -53,14 +53,14 @@
 - (void)testUsers {
     [self.oPGP importKeysFromFile:self.secKeyringPath];
 
-    let key = self.oPGP.keys.anyObject;
+    let key = self.oPGP.keys.firstObject;
     XCTAssert(key.secretKey.users.count == 1, @"Invalid users count");
 }
 
 - (void)testPrimaryKey {
     [self.oPGP importKeysFromFile:self.secKeyringPath];
 
-    let key = self.oPGP.keys.anyObject;
+    let key = self.oPGP.keys.firstObject;
 
     let secretKeyPacket = PGPCast(key.secretKey.primaryKeyPacket, PGPSecretKeyPacket);
     XCTAssertTrue(key.secretKey.isEncryptedWithPassword, @"Should be encrypted");
@@ -69,7 +69,7 @@
 
 - (void)testKeyDecryption {
     [self.oPGP importKeysFromFile:self.secKeyringPath];
-    let key = self.oPGP.keys.anyObject;
+    let key = self.oPGP.keys.firstObject;
 
     XCTAssertTrue(key.isEncryptedWithPassword);
 

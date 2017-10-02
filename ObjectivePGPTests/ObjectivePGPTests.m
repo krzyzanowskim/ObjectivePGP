@@ -70,7 +70,7 @@
 
     let importedKeys = [self.oPGP importKeysFromData:exportedPublicKeyData];
     XCTAssert(importedKeys.count == 1);
-    XCTAssertEqualObjects(importedKeys.anyObject.keyID, key.keyID);
+    XCTAssertEqualObjects(importedKeys.firstObject.keyID, key.keyID);
 }
 
 - (void)testGenerateNewKeyWithPassphrase {
@@ -124,7 +124,7 @@
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *originalKeyFilePath = [bundle pathForResource:@"issue22-original" ofType:@"asc"];
     [self.oPGP importKeysFromFile:originalKeyFilePath];
-    let key = [self.oPGP.keys anyObject];
+    let key = [self.oPGP.keys firstObject];
 
     NSError *err = nil;
     PGPPartialKey * _Nullable decryptedKey = [key.secretKey decryptedWithPassphrase:@"weakpassphrase" error:&err];

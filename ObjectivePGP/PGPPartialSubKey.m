@@ -14,7 +14,7 @@
 #import "PGPFoundation.h"
 #import "PGPKeyID.h"
 #import "PGPMacros+Private.h"
-#import "NSMutableArray+PGPUtils.h"
+#import "NSArray+PGPUtils.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

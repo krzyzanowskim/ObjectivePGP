@@ -48,14 +48,14 @@
 - (void)testMultipleKeys {
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *path = [bundle pathForResource:@"multiple-keys" ofType:@"asc"];
-    NSSet<PGPKey *> *keys = [self.oPGP importKeysFromFile:path];
+    NSArray<PGPKey *> *keys = [self.oPGP importKeysFromFile:path];
     NSAssert(keys.count == 3, @"Keys not imported properly");
 }
 
 - (void)testArmorPublicKey {
     [self.oPGP importKeysFromFile:self.pubKeyringPath];
 
-    PGPKey *key = self.oPGP.keys.anyObject;
+    PGPKey *key = self.oPGP.keys.firstObject;
 
     NSError *exportError = nil;
     NSData *keyData = [key.publicKey export:&exportError];
