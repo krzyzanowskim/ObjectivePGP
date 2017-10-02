@@ -192,6 +192,13 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (nullable NSData *)decryptData:(NSData *)data passphrase:(nullable NSString *)passphrase verifyWithKey:(nullable PGPKey *)key signed:(nullable BOOL *)isSigned valid:(nullable BOOL *)isValid integrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError *__autoreleasing _Nullable *)error;
 
+
+/// Deprecated.
+- (NSSet<PGPKey *> *)importKeysFromData:(NSData *)data DEPRECATED_ATTRIBUTE;
+
+/// Deprecated.
+- (NSSet<PGPKey *> *)importKeysFromFile:(NSString *)path DEPRECATED_ATTRIBUTE;
+
 @end
 
 NS_ASSUME_NONNULL_END

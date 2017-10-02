@@ -1,3 +1,10 @@
+- Fixes keys management (import/export issues).
+- Fixes instances equality.
+- Reverts NSSet collections to NSArray.
+- Improves objects copying (NSCopying for packets).
+- Update tests.
+- Updates documentations.
+
 Version 0.8
 - Adds public and private keys generation feature with PGPKeyGenerator
 - Adds methods to import and remove key instance

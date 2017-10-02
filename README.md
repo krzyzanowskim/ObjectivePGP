@@ -57,14 +57,18 @@ ObjectivePGP *pgp = [[ObjectivePGP alloc] init];
 ##### Load keys (private or public)
 
 ```objective-c
-/* Import keys from a keyring file */
-NSSet *keys = [pgp importKeysFromFile:@"/path/to/secring.gpg"];
+/* Load keys from a keyring file */
+NSArray *keys = [pgp keysFromFile:@"/path/to/secring.gpg"];
 
-/* Import keys from a keys file */
-NSSet *keys = [pgp importKeysFromFile:@"/path/to/key.asc"];
+/* Load eys from a keys file */
+NSArray *keys = [pgp keysFromFile:@"/path/to/key.asc"];
+
+/* Import keys */
+[pgp importKeys:keys];
 
 /* Import selected key from a keyring */
 [pgp importKey:@"979E4B03DFFE30C6" fromFile:@"/path/to/secring.gpg"];
+
 ```
 
 ##### Search for keys
@@ -88,8 +92,7 @@ if ([pgp exportKeysOfType:PGPPartialKeyPublic toFile:@"pubring.gpg" error:nil]) 
     // success
 }
 
-/* Export single key */
-/* export key and save as armored (ASCII) file */
+/* Export a key and save as armored (ASCII) file */
 PGPKey *key = [self.pgp findKeyForIdentifier:@"979E4B03DFFE30C6"];
 NSData *armoredKeyData = [pgp exportKey:key armored:YES];
 [armoredKeyData writeToFile:@"pubkey.asc" atomically:YES];
