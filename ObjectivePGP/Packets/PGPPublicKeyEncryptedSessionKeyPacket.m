@@ -226,17 +226,17 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - NSCopying
 
 - (instancetype)copyWithZone:(nullable NSZone *)zone {
-    let _Nullable copy = PGPCast([super copyWithZone:zone], PGPPublicKeyEncryptedSessionKeyPacket);
-    if (!copy) {
+    let _Nullable duplicate = PGPCast([super copyWithZone:zone], PGPPublicKeyEncryptedSessionKeyPacket);
+    if (!duplicate) {
         return nil;
     }
 
-    copy.version = self.version;
-    copy.publicKeyAlgorithm = self.publicKeyAlgorithm;
-    copy.encryptedWithPassword = self.encryptedWithPassword;
-    copy.keyID = self.keyID;
-    copy.encryptedMPI_M = self.encryptedMPI_M;
-    return copy;
+    duplicate.version = self.version;
+    duplicate.publicKeyAlgorithm = self.publicKeyAlgorithm;
+    duplicate.encryptedWithPassword = self.encryptedWithPassword;
+    duplicate.keyID = self.keyID;
+    duplicate.encryptedMPI_M = self.encryptedMPI_M;
+    return duplicate;
 }
 
 @end

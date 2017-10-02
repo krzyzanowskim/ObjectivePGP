@@ -389,16 +389,16 @@
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(NSZone *)zone {
-    let copy = PGPCast([super copyWithZone:zone], PGPSecretKeyPacket);
-    copy.version = self.version;
-    copy.s2kUsage = self.s2kUsage;
-    copy.s2k = self.s2k;
-    copy.symmetricAlgorithm = self.symmetricAlgorithm;
-    copy.ivData = self.ivData;
-    copy.secretMPIArray = self.secretMPIArray;
-    copy.encryptedMPIPartData = self.encryptedMPIPartData;;
-    copy.wasDecrypted = self.wasDecrypted;
-    return copy;
+    let duplicate = PGPCast([super copyWithZone:zone], PGPSecretKeyPacket);
+    duplicate.version = self.version;
+    duplicate.s2kUsage = self.s2kUsage;
+    duplicate.s2k = self.s2k;
+    duplicate.symmetricAlgorithm = self.symmetricAlgorithm;
+    duplicate.ivData = self.ivData;
+    duplicate.secretMPIArray = self.secretMPIArray;
+    duplicate.encryptedMPIPartData = self.encryptedMPIPartData;;
+    duplicate.wasDecrypted = self.wasDecrypted;
+    return duplicate;
 }
 
 @end

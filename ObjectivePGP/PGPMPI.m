@@ -110,9 +110,9 @@ NSString * const PGPMPI_M = @"M";
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(nullable NSZone *)zone {
-    let copy = PGPCast([[self.class allocWithZone:zone] initWithBigNum:self.bigNum identifier:self.identifier], PGPMPI);
-    copy.packetLength = self.packetLength;
-    return copy;
+    let duplicate = PGPCast([[self.class allocWithZone:zone] initWithBigNum:self.bigNum identifier:self.identifier], PGPMPI);
+    duplicate.packetLength = self.packetLength;
+    return duplicate;
 }
 
 @end

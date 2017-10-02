@@ -123,14 +123,14 @@
 #pragma mark - NSCopying
 
 - (instancetype)copyWithZone:(nullable NSZone *)zone {
-    let _Nullable copy = PGPCast([super copyWithZone:zone], PGPCompressedPacket);
-    if (!copy) {
+    let _Nullable duplicate = PGPCast([super copyWithZone:zone], PGPCompressedPacket);
+    if (!duplicate) {
         return nil;
     }
 
-    copy.compressionType = self.compressionType;
-    copy.decompressedData = self.decompressedData;
-    return copy;
+    duplicate.compressionType = self.compressionType;
+    duplicate.decompressedData = self.decompressedData;
+    return duplicate;
 }
 
 @end

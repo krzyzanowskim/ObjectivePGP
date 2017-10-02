@@ -312,16 +312,16 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(nullable NSZone *)zone {
-    let _Nullable copy = PGPCast([super copyWithZone:zone], PGPPublicKeyPacket);
-    if (!copy) {
+    let _Nullable duplicate = PGPCast([super copyWithZone:zone], PGPPublicKeyPacket);
+    if (!duplicate) {
         return nil;
     }
-    copy.version = self.version;
-    copy.publicKeyAlgorithm = self.publicKeyAlgorithm;
-    copy.V3validityPeriod = self.V3validityPeriod;
-    copy.createDate = self.createDate;
-    copy.publicMPIArray = [[NSArray alloc] initWithArray:self.publicMPIArray copyItems:YES];
-    return copy;
+    duplicate.version = self.version;
+    duplicate.publicKeyAlgorithm = self.publicKeyAlgorithm;
+    duplicate.V3validityPeriod = self.V3validityPeriod;
+    duplicate.createDate = self.createDate;
+    duplicate.publicMPIArray = [[NSArray alloc] initWithArray:self.publicMPIArray copyItems:YES];
+    return duplicate;
 }
 
 @end

@@ -436,8 +436,8 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(nullable NSZone *)zone {
-    let copy = [[PGPSignatureSubpacket alloc] initWithType:self.type andValue:self.value];
-    return copy;
+    let duplicate = [[PGPSignatureSubpacket alloc] initWithType:self.type andValue:self.value];
+    return duplicate;
 }
 
 @end

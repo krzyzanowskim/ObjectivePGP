@@ -13,6 +13,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PGPPacket ()
 
+@property (nonatomic, readwrite) BOOL indeterminateLength; // should not be used, but gpg use it
+@property (nonatomic, readwrite) PGPPacketTag tag;
+
 + (NSData *)buildNewFormatLengthDataForData:(NSData *)bodyData;
 
 @end

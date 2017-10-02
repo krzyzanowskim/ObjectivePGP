@@ -285,13 +285,13 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(nullable NSZone *)zone {
-    let _Nullable copy = PGPCast([super copyWithZone:zone], PGPSymmetricallyEncryptedIntegrityProtectedDataPacket);
-    if (!copy) {
+    let _Nullable duplicate = PGPCast([super copyWithZone:zone], PGPSymmetricallyEncryptedIntegrityProtectedDataPacket);
+    if (!duplicate) {
         return nil;
     }
 
-    copy.version = self.version;
-    return copy;
+    duplicate.version = self.version;
+    return duplicate;
 }
 
 @end

@@ -7,7 +7,6 @@
 //
 
 #import "PGPExportableProtocol.h"
-#import "PGPPacketProtocol.h"
 #import "PGPTypes.h"
 #import <Foundation/Foundation.h>
 
@@ -15,8 +14,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 extern const UInt32 PGPUnknownLength;
 
-@interface PGPPacket : NSObject <PGPPacketProtocol, NSCopying, PGPExportable>
-@property (nonatomic) BOOL indeterminateLength; // should not be used, but gpg use it
+@interface PGPPacket : NSObject <NSCopying, PGPExportable>
+
+@property (nonatomic, readonly) BOOL indeterminateLength;
+@property (nonatomic, readonly) PGPPacketTag tag;
 
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithHeader:(NSData *)headerData body:(NSData *)bodyData;

@@ -90,12 +90,12 @@
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(nullable NSZone *)zone {
-    let _Nullable copy = PGPCast([super copyWithZone:zone], PGPUserAttributePacket);
-    if (!copy) {
+    let _Nullable duplicate = PGPCast([super copyWithZone:zone], PGPUserAttributePacket);
+    if (!duplicate) {
         return nil;
     }
-    copy.subpackets = [[NSArray alloc] initWithArray:self.subpackets copyItems:YES];
-    return copy;
+    duplicate.subpackets = [[NSArray alloc] initWithArray:self.subpackets copyItems:YES];
+    return duplicate;
 }
 
 

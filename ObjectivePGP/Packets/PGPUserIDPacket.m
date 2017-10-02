@@ -74,12 +74,12 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(nullable NSZone *)zone {
-    let _Nullable copy = PGPCast([super copyWithZone:zone], PGPUserIDPacket);
-    if (!copy) {
+    let _Nullable duplicate = PGPCast([super copyWithZone:zone], PGPUserIDPacket);
+    if (!duplicate) {
         return nil;
     }
-    copy.userID = self.userID;
-    return copy;
+    duplicate.userID = self.userID;
+    return duplicate;
 }
 
 @end

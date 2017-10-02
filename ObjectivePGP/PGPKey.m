@@ -108,8 +108,8 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - NSCopying
 
 - (instancetype)copyWithZone:(nullable NSZone *)zone {
-    let copy = PGPCast([[self.class allocWithZone:zone] initWithSecretKey:self.secretKey publicKey:self.publicKey], PGPKey);
-    return copy;
+    let duplicate = PGPCast([[self.class allocWithZone:zone] initWithSecretKey:self.secretKey publicKey:self.publicKey], PGPKey);
+    return duplicate;
 }
 
 #pragma mark - PGPExportable

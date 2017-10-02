@@ -85,18 +85,18 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - NSCopying
 
 - (instancetype)copyWithZone:(nullable NSZone *)zone {
-    let _Nullable copy = PGPCast([super copyWithZone:zone], PGPOnePassSignaturePacket);
-    if (!copy) {
+    let _Nullable duplicate = PGPCast([super copyWithZone:zone], PGPOnePassSignaturePacket);
+    if (!duplicate) {
         return nil;
     }
 
-    copy.version = self.version;
-    copy.signatureType = self.signatureType;
-    copy.hashAlgorith = self.hashAlgorith;
-    copy.publicKeyAlgorithm = self.publicKeyAlgorithm;
-    copy.keyID = self.keyID;
-    copy.notNested = self.notNested;
-    return copy;
+    duplicate.version = self.version;
+    duplicate.signatureType = self.signatureType;
+    duplicate.hashAlgorith = self.hashAlgorith;
+    duplicate.publicKeyAlgorithm = self.publicKeyAlgorithm;
+    duplicate.keyID = self.keyID;
+    duplicate.notNested = self.notNested;
+    return duplicate;
 }
 
 #pragma mark - PGPExportable

@@ -67,12 +67,12 @@
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(nullable NSZone *)zone {
-    let _Nullable copy = PGPCast([super copyWithZone:zone], PGPSymmetricallyEncryptedDataPacket);
-    if (!copy) {
+    let _Nullable duplicate = PGPCast([super copyWithZone:zone], PGPSymmetricallyEncryptedDataPacket);
+    if (!duplicate) {
         return nil;
     }
-    copy.encryptedData = self.encryptedData;
-    return copy;
+    duplicate.encryptedData = self.encryptedData;
+    return duplicate;
 }
 
 

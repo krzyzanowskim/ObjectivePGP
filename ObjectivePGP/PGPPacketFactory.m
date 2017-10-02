@@ -7,6 +7,7 @@
 //
 
 #import "PGPPacketFactory.h"
+#import "PGPPacket+Private.h"
 #import "PGPCompressedPacket.h"
 #import "PGPLiteralPacket.h"
 #import "PGPModificationDetectionCodePacket.h"

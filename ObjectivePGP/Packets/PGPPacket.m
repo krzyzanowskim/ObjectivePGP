@@ -19,10 +19,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPPacket
 
-@synthesize tag = _tag;
-
 - (instancetype)init {
-    return [super init];
+    if (self == [super init]) {
+
+    }
+    return self;
 }
 
 - (instancetype)initWithHeader:(NSData *)headerData body:(NSData *)bodyData {
@@ -363,10 +364,10 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(nullable NSZone *)zone {
-    PGPPacket *copy = [[self.class allocWithZone:zone] init];
-    copy->_tag = self.tag;
-    copy->_indeterminateLength = self.indeterminateLength;
-    return copy;
+    PGPPacket *duplicate = [[self.class allocWithZone:zone] init];
+    duplicate.tag = self.tag;
+    duplicate.indeterminateLength = self.indeterminateLength;
+    return duplicate;
 }
 
 @end

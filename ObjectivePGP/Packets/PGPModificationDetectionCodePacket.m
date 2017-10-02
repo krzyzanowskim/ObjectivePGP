@@ -75,13 +75,13 @@
 #pragma mark - NSCopying
 
 - (instancetype)copyWithZone:(nullable NSZone *)zone {
-    let _Nullable copy = PGPCast([super copyWithZone:zone], PGPModificationDetectionCodePacket);
-    if (!copy) {
+    let _Nullable duplicate = PGPCast([super copyWithZone:zone], PGPModificationDetectionCodePacket);
+    if (!duplicate) {
         return nil;
     }
 
-    copy.hashData = self.hashData;
-    return copy;
+    duplicate.hashData = self.hashData;
+    return duplicate;
 }
 
 @end

@@ -101,18 +101,18 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(nullable NSZone *)zone {
-    let _Nullable copy = PGPCast([super copyWithZone:zone], PGPSignaturePacket);
-    if (!copy) {
+    let _Nullable duplicate = PGPCast([super copyWithZone:zone], PGPSignaturePacket);
+    if (!duplicate) {
         return nil;
     }
-    copy.version = self.version;
-    copy.publicKeyAlgorithm = self.publicKeyAlgorithm;
-    copy.hashAlgoritm = self.hashAlgoritm;
-    copy.signedHashValueData = self.signedHashValueData;
-    copy.signatureMPIArray = [[NSArray alloc] initWithArray:self.signatureMPIArray copyItems:YES];
-    copy.hashedSubpackets = [[NSArray alloc] initWithArray:self.hashedSubpackets copyItems:YES];
-    copy.unhashedSubpackets = [[NSArray alloc] initWithArray:self.unhashedSubpackets copyItems:YES];
-    return copy;
+    duplicate.version = self.version;
+    duplicate.publicKeyAlgorithm = self.publicKeyAlgorithm;
+    duplicate.hashAlgoritm = self.hashAlgoritm;
+    duplicate.signedHashValueData = self.signedHashValueData;
+    duplicate.signatureMPIArray = [[NSArray alloc] initWithArray:self.signatureMPIArray copyItems:YES];
+    duplicate.hashedSubpackets = [[NSArray alloc] initWithArray:self.hashedSubpackets copyItems:YES];
+    duplicate.unhashedSubpackets = [[NSArray alloc] initWithArray:self.unhashedSubpackets copyItems:YES];
+    return duplicate;
 }
 
 #pragma mark - Helper properties
