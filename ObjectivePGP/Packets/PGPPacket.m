@@ -50,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)isEqual:(id)other {
     if (self == other) { return YES; }
-    if ([super isEqual:other] && [other isKindOfClass:self.class]) {
+    if ([other isKindOfClass:self.class]) {
         return [self isEqualToPacket:other];
     }
     return NO;
