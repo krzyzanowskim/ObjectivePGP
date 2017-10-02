@@ -676,36 +676,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Parse keyring
 
-/**
- *  Load keyring file (secring or pubring)
- *
- *  @param path Path to file
- *
- *  @return YES on success
- */
-- (NSArray<PGPKey *> *)importKeysFromFile:(NSString *)path {
-    if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
-        return @[];
-    }
-
-    return [self importKeysFromData:[NSData dataWithContentsOfFile:path options:NSDataReadingMappedIfSafe error:nil]];
-}
-
-- (NSArray<PGPKey *> *)importKeysFromData:(NSData *)data {
-    PGPAssertClass(data, NSData);
-
-    let loadedKeys = [self keysFromData:data];
-    return [self importKeys:loadedKeys];
-}
-
-- (NSArray<PGPKey *> *)importKeys:(NSArray<PGPKey *> *)keys {
+- (void)importKeys:(NSArray<PGPKey *> *)keys {
     PGPAssertClass(keys, NSArray);
 
     for (PGPKey *key in keys) {
         self.keys = [ObjectivePGP addOrUpdatePartialKey:key.secretKey inContainer:self.keys];
         self.keys = [ObjectivePGP addOrUpdatePartialKey:key.publicKey inContainer:self.keys];
     }
-    return self.keys;
 }
 
 - (BOOL)importKey:(NSString *)shortKeyStringIdentifier fromFile:(NSString *)path {

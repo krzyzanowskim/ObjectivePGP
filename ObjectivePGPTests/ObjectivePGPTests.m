@@ -23,9 +23,8 @@
 
 @interface ObjectivePGPTests : XCTestCase
 
-@property (nonatomic) ObjectivePGP *oPGP;
-@property (nonatomic) NSString *secringPathPlaintext, *secringEncrypted;
-@property (nonatomic) NSString *pubringPlaintext, *pubringEncrypted;
+@property (nonatomic, nullable) ObjectivePGP *pgp;
+@property (nonatomic, readonly) NSBundle *bundle;
 
 @end
 
@@ -34,18 +33,18 @@
 - (void)setUp {
     [super setUp];
 
-    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-    self.secringPathPlaintext = [bundle pathForResource:@"secring-test-plaintext" ofType:@"gpg"];
-    self.secringEncrypted = [bundle pathForResource:@"secring-test-encrypted" ofType:@"gpg"];
-    self.pubringPlaintext = [bundle pathForResource:@"pubring-test-plaintext" ofType:@"gpg"];
-    self.pubringEncrypted = [bundle pathForResource:@"pubring-test-encrypted" ofType:@"gpg"];
+    _bundle = [NSBundle bundleForClass:self.class];
+    _pgp = [[ObjectivePGP alloc] init];
+}
 
-    self.oPGP = [[ObjectivePGP alloc] init];
+- (NSArray<PGPKey *> *)loadKeysFromFile:(NSString *)fileName {
+    let path = [self.bundle pathForResource:fileName.stringByDeletingPathExtension ofType:fileName.pathExtension];
+    return [self.pgp keysFromFile:path];
 }
 
 - (void)tearDown {
     [super tearDown];
-    self.oPGP = nil;
+    self.pgp = nil;
 }
 
 - (void)testGenerateNewKey {
@@ -56,10 +55,10 @@
     // test sign
     let dataToSign = [@"objectivepgp" dataUsingEncoding:NSUTF8StringEncoding];
 
-    let sign = [self.oPGP signData:dataToSign usingKey:key passphrase:nil detached:YES error:nil];
+    let sign = [self.pgp signData:dataToSign usingKey:key passphrase:nil detached:YES error:nil];
     XCTAssertNotNil(sign);
 
-    BOOL isVerified = [self.oPGP verifyData:dataToSign withSignature:sign usingKey:key error:nil];
+    BOOL isVerified = [self.pgp verifyData:dataToSign withSignature:sign usingKey:key error:nil];
     XCTAssertTrue(isVerified);
 
     // test export
@@ -68,7 +67,7 @@
     let exportedSecretKeyData = [key export:PGPPartialKeySecret error:nil];
     XCTAssertNotNil(exportedSecretKeyData);
 
-    let importedKeys = [self.oPGP importKeysFromData:exportedPublicKeyData];
+    let importedKeys = [self.pgp keysFromData:exportedPublicKeyData];
     XCTAssert(importedKeys.count == 1);
     XCTAssertEqualObjects(importedKeys.firstObject.keyID, key.keyID);
 }
@@ -83,28 +82,35 @@
     let exportedSecretKeyData = [key export:PGPPartialKeySecret error:nil];
     XCTAssertNotNil(exportedSecretKeyData);
 
-    let importedPublicKeys = [self.oPGP importKeysFromData:exportedPublicKeyData];
+    let importedPublicKeys = [self.pgp keysFromData:exportedPublicKeyData];
     XCTAssert(importedPublicKeys.count == 1);
 
-    let importedSecretKeys = [self.oPGP importKeysFromData:exportedPublicKeyData];
+    let importedSecretKeys = [self.pgp keysFromData:exportedPublicKeyData];
     XCTAssert(importedSecretKeys.count == 1);
 }
 
 - (void)testNotDuplicates {
-    [self.oPGP importKeysFromFile:self.pubringPlaintext];
-    NSUInteger count1 = self.oPGP.keys.count;
-    [self.oPGP importKeysFromFile:self.pubringPlaintext];
-    NSUInteger count2 = self.oPGP.keys.count;
+    let keys1 = [self loadKeysFromFile:@"pubring-test-plaintext.gpg"];
+    [self.pgp importKeys:keys1];
+    NSUInteger count1 = self.pgp.keys.count;
+
+    let keys2 = [self loadKeysFromFile:@"pubring-test-plaintext.gpg"];
+    [self.pgp importKeys:keys2];
+    NSUInteger count2 = self.pgp.keys.count;
 
     XCTAssertEqual(count1, count2);
 }
 
 - (void)testKeyEquality {
-    [self.oPGP importKeysFromFile:self.pubringPlaintext];
-    [self.oPGP importKeysFromFile:self.secringPathPlaintext];
-    [self.oPGP importKeysFromFile:self.pubringEncrypted];
-    [self.oPGP importKeysFromFile:self.secringEncrypted];
-    let encryptedKey = [self.oPGP findKeyForIdentifier:@"9528AAA17A9BC007"];
+    let keys1 = [self loadKeysFromFile:@"pubring-test-plaintext.gpg"];
+    let keys2 = [self loadKeysFromFile:@"pubring-test-encrypted.gpg"];
+    let keys3 = [self loadKeysFromFile:@"secring-test-plaintext.gpg"];
+    let keys4 = [self loadKeysFromFile:@"secring-test-encrypted.gpg"];
+    [self.pgp importKeys:keys1];
+    [self.pgp importKeys:keys2];
+    [self.pgp importKeys:keys3];
+    [self.pgp importKeys:keys4];
+    let encryptedKey = [self.pgp findKeyForIdentifier:@"9528AAA17A9BC007"];
     XCTAssertNotNil(encryptedKey);
     XCTAssertTrue(encryptedKey.isEncryptedWithPassword);
     NSError *error;
@@ -116,80 +122,71 @@
     XCTAssertTrue(encryptedKey.isEncryptedWithPassword);
     XCTAssertNil(decryptedKey2);
 
-    XCTAssertTrue([self.oPGP.keys containsObject:encryptedKey]);
+    XCTAssertTrue([self.pgp.keys containsObject:encryptedKey]);
 }
 
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/22
 - (void)testIssue22 {
-    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-    NSString *originalKeyFilePath = [bundle pathForResource:@"issue22-original" ofType:@"asc"];
-    [self.oPGP importKeysFromFile:originalKeyFilePath];
-    let key = [self.oPGP.keys firstObject];
+    let keys = [self loadKeysFromFile:@"issue22-original.asc"];
+    [self.pgp importKeys:keys];
+    let key = [self.pgp.keys firstObject];
 
     NSError *err = nil;
     PGPPartialKey * _Nullable decryptedKey = [key.secretKey decryptedWithPassphrase:@"weakpassphrase" error:&err];
     XCTAssertNotNil(decryptedKey);
     NSData *exportedKeyData = [decryptedKey export:nil];
     XCTAssert(exportedKeyData.length == 4869);
-    XCTAssert(self.oPGP.keys.count == 1, @"");
+    XCTAssert(self.pgp.keys.count == 1, @"");
 }
 
 - (void)testIssue35 {
-    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-    NSString *messagePath = [bundle pathForResource:@"issue35-message" ofType:@"asc"];
-    NSString *keyPath = [bundle pathForResource:@"issue35-key" ofType:@"asc"];
+    let messagePath = [self.bundle pathForResource:@"issue35-message" ofType:@"asc"];
+    let keys = [self loadKeysFromFile:@"issue35-key.asc"];
+
     NSError *error = nil;
-    [self.oPGP importKeysFromFile:keyPath];
-    [self.oPGP decryptData:[NSData dataWithContentsOfFile:messagePath] passphrase:nil error:&error];
+    [self.pgp importKeys:keys];
+    [self.pgp decryptData:[NSData dataWithContentsOfFile:messagePath] passphrase:nil error:&error];
 }
 
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/53
 - (void)testIssue53GNUDummyS2K {
-    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-    NSString *keyPathPrv = [bundle pathForResource:@"issue53-s2k-gnu-dummy.prv" ofType:@"asc"];
-    NSString *keyPathPub = [bundle pathForResource:@"issue53-s2k-gnu-dummy.pub" ofType:@"asc"];
-    XCTAssertTrue([self.oPGP importKeysFromFile:keyPathPrv]);
-    XCTAssertTrue([self.oPGP importKeysFromFile:keyPathPub]);
+    let keys1 = [self loadKeysFromFile:@"issue53-s2k-gnu-dummy.prv.asc"];
+    let keys2 = [self loadKeysFromFile:@"issue53-s2k-gnu-dummy.pub.asc"];
+    [self.pgp importKeys:keys1];
+    [self.pgp importKeys:keys2];
+    XCTAssertTrue(self.pgp.keys.count > 0);
 }
 
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/44
 - (void)testIssue44 {
-    let pgp = self.oPGP;
-    let bundle = [NSBundle bundleForClass:[self class]];
-    let keysPath = [bundle pathForResource:@"issue44-keys" ofType:@"asc"];
-
-    let keys = [pgp importKeysFromFile:keysPath];
+    let keys = [self loadKeysFromFile:@"issue44-keys.asc"];
+    [self.pgp importKeys:keys];
     XCTAssertEqual(keys.count, (NSUInteger)1);
 
-    let keyToSign = [pgp findKeyForIdentifier:@"71180E514EF122E5"];
+    let keyToSign = [self.pgp findKeyForIdentifier:@"71180E514EF122E5"];
     XCTAssertNotNil(keyToSign);
 
-    let signatureData = [NSData dataWithContentsOfFile:keysPath];
-    let signature = [pgp signData:signatureData usingKey:keyToSign passphrase:@"passphrase" detached:YES error:nil];
+    let signatureData = [NSData dataWithContentsOfFile:[self.bundle pathForResource:@"issue44-keys" ofType:@"asc"]];
+    let signature = [self.pgp signData:signatureData usingKey:keyToSign passphrase:@"passphrase" detached:YES error:nil];
     XCTAssertNotNil(signature);
 }
 
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/62
 - (void)testIssue62 {
-    let pgp = self.oPGP;
-    let bundle = [NSBundle bundleForClass:[self class]];
-    let keysPath = [bundle pathForResource:@"issue62-keys" ofType:@"asc"];
-    let keys = [pgp importKeysFromFile:keysPath];
+    let keys = [self loadKeysFromFile:@"issue62-keys.asc"];
+    [self.pgp importKeys:keys];
     XCTAssertEqual(keys.count, (NSUInteger)1);
 
+    let data = [NSData dataWithContentsOfFile:[self.bundle pathForResource:@"issue62-message" ofType:@"asc"]];
     NSError *error;
-    let data = [NSData dataWithContentsOfFile:[bundle pathForResource:@"issue62-message" ofType:@"asc"]];
-    let decryptedData = [pgp decryptData:data passphrase:nil error:&error];
+    let decryptedData = [self.pgp decryptData:data passphrase:nil error:&error];
     XCTAssertNil(error);
     XCTAssertNotNil(decryptedData);
 }
 
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/59
 - (void)testIssue59 {
-    let pgp = self.oPGP;
-    let bundle = [NSBundle bundleForClass:[self class]];
-    let keysPath = [bundle pathForResource:@"issue59-keys" ofType:@"asc"];
-    let keys = [pgp importKeysFromFile:keysPath];
+    let keys = [self loadKeysFromFile:@"issue59-keys.asc"];
     XCTAssertEqual(keys.count, (NSUInteger)1);
 }
 

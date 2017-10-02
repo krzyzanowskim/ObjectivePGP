@@ -14,7 +14,7 @@
 @property (nonatomic) NSString *secKeyringPath;
 @property (nonatomic) NSString *pubKeyringPath;
 @property (nonatomic) NSString *workingDirectory;
-@property (nonatomic) ObjectivePGP *oPGP;
+@property (nonatomic) ObjectivePGP *pgp;
 @end
 
 @implementation ObjectivePGPTestArmor
@@ -23,7 +23,7 @@
     [super setUp];
     NSLog(@"%s", __PRETTY_FUNCTION__);
 
-    self.oPGP = [[ObjectivePGP alloc] init];
+    self.pgp = [[ObjectivePGP alloc] init];
 
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     self.secKeyringPath = [bundle pathForResource:@"secring-test-plaintext" ofType:@"gpg"];
@@ -42,20 +42,23 @@
     NSLog(@"%s", __PRETTY_FUNCTION__);
     [super tearDown];
     [[NSFileManager defaultManager] removeItemAtPath:self.workingDirectory error:nil];
-    self.oPGP = nil;
+    self.pgp = nil;
 }
 
 - (void)testMultipleKeys {
-    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSBundle *bundle = [NSBundle bundleForClass:self.class];
     NSString *path = [bundle pathForResource:@"multiple-keys" ofType:@"asc"];
-    NSArray<PGPKey *> *keys = [self.oPGP importKeysFromFile:path];
-    NSAssert(keys.count == 3, @"Keys not imported properly");
+    let keys = [self.pgp keysFromFile:path];
+    [self.pgp importKeys:keys];
+    XCTAssertEqual(keys.count, (NSUInteger)3);
+    XCTAssertEqual(self.pgp.keys.count, (NSUInteger)3);
 }
 
 - (void)testArmorPublicKey {
-    [self.oPGP importKeysFromFile:self.pubKeyringPath];
+    let keys = [self.pgp keysFromFile:self.pubKeyringPath];
+    [self.pgp importKeys:keys];
 
-    PGPKey *key = self.oPGP.keys.firstObject;
+    PGPKey *key = self.pgp.keys.firstObject;
 
     NSError *exportError = nil;
     NSData *keyData = [key.publicKey export:&exportError];
@@ -83,9 +86,9 @@
 
 //- (void) testEmbededArmoredData
 //{
-//    [self.oPGP importKeysFromFile:self.pubKeyringPath];
+//    [self.pgp importKeysFromFile:self.pubKeyringPath];
 //
-//    PGPKey *key = self.oPGP.keys[0];
+//    PGPKey *key = self.pgp.keys[0];
 //
 //    NSError *exportError = nil;
 //    NSData *keyData = [key export:&exportError];

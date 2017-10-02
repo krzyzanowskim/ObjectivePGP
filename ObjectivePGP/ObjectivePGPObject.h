@@ -23,23 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param path keys to load.
  @return Set of loaded keys.
 */
-- (NSArray<PGPKey *> *)importKeys:(NSArray<PGPKey *> *)keys;
-
-/**
- Import keys from the file. `keys` property is updated after successfull import.
-
- @param path Path to the file with the keys.
- @return Set of loaded keys.
- */
-- (NSArray<PGPKey *> *)importKeysFromFile:(NSString *)path;
-
-/**
- Import keys from the data. `keys` property is updated after successfull import.
-
- @param data Keys data.
- @return Set of loaded keys.
- */
-- (NSArray<PGPKey *> *)importKeysFromData:(NSData *)data;
+- (void)importKeys:(NSArray<PGPKey *> *)keys;
 
 /**
  Delete keys
