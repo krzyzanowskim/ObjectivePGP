@@ -114,11 +114,11 @@ NS_ASSUME_NONNULL_BEGIN
         switch (packet.tag) {
             case PGPPublicKeyPacketTag:
                 primaryKeyID = PGPCast(packet, PGPPublicKeyPacket).keyID;
-                self.primaryKeyPacket = [packet copy];
+                self.primaryKeyPacket = packet;
                 break;
             case PGPSecretKeyPacketTag:
                 primaryKeyID = PGPCast(packet, PGPPublicKeyPacket).keyID;
-                self.primaryKeyPacket = [packet copy];
+                self.primaryKeyPacket = packet;
                 break;
             case PGPUserAttributePacketTag:
                 if (!user) {
@@ -308,7 +308,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable PGPPartialKey *)decryptedWithPassphrase:(NSString *)passphrase error:(NSError *__autoreleasing *)error {
     PGPAssertClass(passphrase, NSString);
 
-    let encryptedPartialKey = PGPCast([self copy], PGPPartialKey);
+    // decrypt copy of self
+    let encryptedPartialKey = PGPCast(self.copy, PGPPartialKey);
     PGPAssertClass(encryptedPartialKey, PGPPartialKey);
 
     let primarySecretPacket = PGPCast(encryptedPartialKey.primaryKeyPacket, PGPSecretKeyPacket);
@@ -378,11 +379,11 @@ NS_ASSUME_NONNULL_BEGIN
     PGPAssertClass(partialKey, PGPPartialKey);
 
     partialKey.type = self.type;
-    partialKey.primaryKeyPacket = [self.primaryKeyPacket copy];
+    partialKey.primaryKeyPacket = self.primaryKeyPacket;
     partialKey.users = [[NSArray alloc] initWithArray:self.users copyItems:YES];
     partialKey.subKeys = [[NSArray alloc] initWithArray:self.subKeys copyItems:YES];
     partialKey.directSignatures = [[NSArray alloc] initWithArray:self.directSignatures copyItems:YES];
-    partialKey.revocationSignature = [self.revocationSignature copy];
+    partialKey.revocationSignature = self.revocationSignature;
     return partialKey;
 }
 

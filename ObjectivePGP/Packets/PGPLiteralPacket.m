@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithData:(NSData *)rawData {
     if (self = [self init]) {
-        _literalRawData = rawData;
+        _literalRawData = [rawData copy];
     }
     return self;
 }
@@ -171,9 +171,9 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     copy.format = self.format;
-    copy.timestamp = [self.timestamp copy];
-    copy.filename = [self.filename copy];
-    copy.literalRawData = [self.literalRawData copy];
+    copy.timestamp = self.timestamp;
+    copy.filename = self.filename;
+    copy.literalRawData = self.literalRawData;
     return copy;
 }
 

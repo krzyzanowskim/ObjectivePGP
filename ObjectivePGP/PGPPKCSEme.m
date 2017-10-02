@@ -39,7 +39,7 @@
     [emData appendData:psData];
     [emData appendBytes:emSuffix length:sizeof(emSuffix)];
     [emData appendData:m];
-    return [emData copy];
+    return emData;
 }
 
 + (NSData *)decodeMessage:(NSData *)m error:(NSError *__autoreleasing *)error {

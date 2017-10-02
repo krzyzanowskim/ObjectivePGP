@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) PGPSignatureType signatureType;
 @property (nonatomic) PGPHashAlgorithm hashAlgorith;
 @property (nonatomic) PGPPublicKeyAlgorithm publicKeyAlgorithm;
-@property (nonatomic) PGPKeyID *keyID; // 8
+@property (nonatomic, copy) PGPKeyID *keyID; // 8
 @property (nonatomic) BOOL notNested;
 
 @end

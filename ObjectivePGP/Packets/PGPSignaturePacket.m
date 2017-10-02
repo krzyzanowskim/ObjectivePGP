@@ -108,7 +108,7 @@ NS_ASSUME_NONNULL_BEGIN
     copy.version = self.version;
     copy.publicKeyAlgorithm = self.publicKeyAlgorithm;
     copy.hashAlgoritm = self.hashAlgoritm;
-    copy.signedHashValueData = [self.signedHashValueData copy];
+    copy.signedHashValueData = self.signedHashValueData;
     copy.signatureMPIArray = [[NSArray alloc] initWithArray:self.signatureMPIArray copyItems:YES];
     copy.hashedSubpackets = [[NSArray alloc] initWithArray:self.hashedSubpackets copyItems:YES];
     copy.unhashedSubpackets = [[NSArray alloc] initWithArray:self.unhashedSubpackets copyItems:YES];
@@ -782,7 +782,7 @@ NS_ASSUME_NONNULL_BEGIN
             positionSubpacket = positionSubpacket + subpacket.length;
         }
 
-        self.hashedSubpackets = [hashedSubpackets copy];
+        self.hashedSubpackets = hashedSubpackets;
     }
 
     // Two-octet scalar octet count for the following unhashed subpacket
@@ -807,7 +807,7 @@ NS_ASSUME_NONNULL_BEGIN
             positionSubpacket = positionSubpacket + subpacket.length;
         }
 
-        self.unhashedSubpackets = [unhashedSubpackets copy];
+        self.unhashedSubpackets = unhashedSubpackets;
     }
 
     // Two-octet field holding the left 16 bits of the signed hash value.

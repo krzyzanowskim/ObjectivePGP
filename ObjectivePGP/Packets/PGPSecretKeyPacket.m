@@ -390,13 +390,14 @@
 
 - (id)copyWithZone:(NSZone *)zone {
     let copy = PGPCast([super copyWithZone:zone], PGPSecretKeyPacket);
-    copy->_s2kUsage = self.s2kUsage;
-    copy->_s2k = [self.s2k copy];
-    copy->_symmetricAlgorithm = self.symmetricAlgorithm;
-    copy->_ivData = [self.ivData copy];
-    copy->_secretMPIArray = [self.secretMPIArray copy];
-    copy->_encryptedMPIPartData = [self.encryptedMPIPartData copy];
-    copy->_wasDecrypted = self.wasDecrypted;
+    copy.version = self.version;
+    copy.s2kUsage = self.s2kUsage;
+    copy.s2k = self.s2k;
+    copy.symmetricAlgorithm = self.symmetricAlgorithm;
+    copy.ivData = self.ivData;
+    copy.secretMPIArray = self.secretMPIArray;
+    copy.encryptedMPIPartData = self.encryptedMPIPartData;;
+    copy.wasDecrypted = self.wasDecrypted;
     return copy;
 }
 

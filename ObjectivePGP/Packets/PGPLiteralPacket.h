@@ -16,10 +16,10 @@ typedef NS_ENUM(UInt8, PGPLiteralPacketFormat) { PGPLiteralPacketBinary = 'b', P
 @interface PGPLiteralPacket : PGPPacket <PGPExportable, NSCopying>
 
 @property (nonatomic) PGPLiteralPacketFormat format;
-@property (nonatomic) NSDate *timestamp;
-@property (nonatomic, nullable) NSString *filename;
+@property (nonatomic, copy) NSDate *timestamp;
+@property (nonatomic, copy, nullable) NSString *filename;
 
-@property (nonatomic) NSData *literalRawData;
+@property (nonatomic, copy) NSData *literalRawData;
 
 - (instancetype)initWithData:(NSData *)rawData;
 + (PGPLiteralPacket *)literalPacket:(PGPLiteralPacketFormat)format withData:(NSData *)rawData;

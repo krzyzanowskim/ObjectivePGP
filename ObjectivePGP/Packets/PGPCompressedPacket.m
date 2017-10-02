@@ -129,7 +129,7 @@
     }
 
     copy.compressionType = self.compressionType;
-    copy.decompressedData = [self.decompressedData copy];
+    copy.decompressedData = self.decompressedData;
     return copy;
 }
 

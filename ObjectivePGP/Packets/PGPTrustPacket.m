@@ -13,7 +13,7 @@
 
 @interface PGPTrustPacket ()
 
-@property (nonatomic, readwrite) NSData *data;
+@property (nonatomic, copy, readwrite) NSData *data;
 
 @end
 
@@ -36,7 +36,7 @@
 - (nullable NSData *)export:(NSError *__autoreleasing *)error {
     // TODO: export trust packet
     //  (1 octet "level" (depth), 1 octet of trust amount)
-    return [self.data copy];
+    return self.data.copy;
 }
 
 #pragma mark - isEqual
@@ -67,7 +67,7 @@
     if (!copy) {
         return nil;
     }
-    copy.data = [self.data copy];
+    copy.data = self.data;
     return copy;
 }
 

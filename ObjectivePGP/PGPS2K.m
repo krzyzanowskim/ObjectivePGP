@@ -242,7 +242,7 @@ static const unsigned int PGP_DEFAULT_ITERATIONS_COUNT = 215;
 
             level++;
         }
-        hashData = expandedHashData.copy;
+        hashData = expandedHashData;
     }
 
     // the high-order (leftmost) octets of the hash are used as the key.

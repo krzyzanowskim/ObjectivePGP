@@ -42,8 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
     [packetBody getBytes:&_publicKeyAlgorithm range:(NSRange){position, 1}];
     position = position + 1;
 
-    PGPKeyID *keyID = [[PGPKeyID alloc] initWithLongKey:[packetBody subdataWithRange:(NSRange){position, 8}]];
-    self.keyID = keyID;
+    self.keyID = [[PGPKeyID alloc] initWithLongKey:[packetBody subdataWithRange:(NSRange){position, 8}]];
     position = position + 8;
 
     [packetBody getBytes:&_notNested range:(NSRange){position, 1}];
@@ -95,7 +94,7 @@ NS_ASSUME_NONNULL_BEGIN
     copy.signatureType = self.signatureType;
     copy.hashAlgorith = self.hashAlgorith;
     copy.publicKeyAlgorithm = self.publicKeyAlgorithm;
-    copy.keyID = [self.keyID copy];
+    copy.keyID = self.keyID;
     copy.notNested = self.notNested;
     return copy;
 }

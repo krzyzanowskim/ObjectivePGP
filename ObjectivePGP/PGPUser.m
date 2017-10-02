@@ -193,7 +193,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)copyWithZone:(nullable NSZone *)zone {
     let user = PGPCast([[self.class allocWithZone:zone] initWithUserIDPacket:self.userIDPacket], PGPUser);
-    user.userAttribute = [self.userAttribute copy];
+    user.userAttribute = self.userAttribute;
     user.selfCertifications = [[NSArray alloc] initWithArray:self.selfCertifications copyItems:YES];
     user.otherSignatures = [[NSArray alloc] initWithArray:self.otherSignatures copyItems:YES];
     user.revocationSignatures = [[NSArray alloc] initWithArray:self.revocationSignatures copyItems:YES];

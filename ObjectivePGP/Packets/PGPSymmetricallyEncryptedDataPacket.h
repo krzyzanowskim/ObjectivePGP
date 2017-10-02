@@ -10,6 +10,6 @@
 
 @interface PGPSymmetricallyEncryptedDataPacket : PGPPacket <NSCopying>
 
-@property (nonatomic) NSData *encryptedData;
+@property (nonatomic, copy) NSData *encryptedData;
 
 @end

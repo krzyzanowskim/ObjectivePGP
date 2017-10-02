@@ -151,7 +151,7 @@ NS_ASSUME_NONNULL_BEGIN
         memset(outBuffer, 0, outBufferLength);
     }
 
-    return [decryptedData copy];
+    return decryptedData;
 }
 
 @end

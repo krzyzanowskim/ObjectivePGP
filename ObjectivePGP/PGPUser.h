@@ -17,10 +17,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface PGPUser : NSObject <NSCopying>
 
 @property (nonatomic, copy) NSString *userID;
-@property (nonatomic) PGPUserAttributePacket *userAttribute;
-@property (nonatomic) NSArray<PGPSignaturePacket *> *selfCertifications;
-@property (nonatomic) NSArray<PGPSignaturePacket *> *otherSignatures;
-@property (nonatomic) NSArray<PGPSignaturePacket *> *revocationSignatures;
+@property (nonatomic, copy) PGPUserAttributePacket *userAttribute;
+@property (nonatomic, copy) NSArray<PGPSignaturePacket *> *selfCertifications;
+@property (nonatomic, copy) NSArray<PGPSignaturePacket *> *otherSignatures;
+@property (nonatomic, copy) NSArray<PGPSignaturePacket *> *revocationSignatures;
 
 @property (nonatomic, readonly) PGPUserIDPacket *userIDPacket;
 @property (nonatomic, readonly) NSArray<PGPPacket *> *allPackets;

@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) UInt8 version;
 @property (nonatomic) PGPPublicKeyAlgorithm publicKeyAlgorithm;
 @property (nonatomic, getter=isEncryptedWithPassword) BOOL encryptedWithPassword;
-@property (nonatomic) PGPKeyID *keyID;
+@property (nonatomic, copy) PGPKeyID *keyID;
 
 - (BOOL)encrypt:(PGPPublicKeyPacket *)publicKeyPacket sessionKeyData:(NSData *)sessionKeyData sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm error:(NSError *__autoreleasing *)error;
 - (nullable NSData *)decryptSessionKeyData:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm *)sessionKeyAlgorithm error:(NSError *__autoreleasing *)error;

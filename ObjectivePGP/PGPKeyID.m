@@ -51,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
     for (NSUInteger i = 0; i < sKey.length; ++i) {
         [sbuf appendFormat:@"%02X", (unsigned int)buf[i]];
     }
-    return sbuf.copy;
+    return sbuf;
 }
 
 - (NSString *)longKeyString {
@@ -61,7 +61,7 @@ NS_ASSUME_NONNULL_BEGIN
     for (NSUInteger i = 0; i < lKey.length; ++i) {
         [sbuf appendFormat:@"%02X", (unsigned int)buf[i]];
     }
-    return sbuf.copy;
+    return sbuf;
 }
 
 #pragma mark - isEqual
@@ -87,8 +87,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - NSCopying
 
 - (instancetype)copyWithZone:(nullable NSZone *)zone {
-    let copy = PGPCast([[self.class allocWithZone:zone] initWithLongKey:self.longKey], PGPKeyID);
-    return copy;
+    return PGPCast([[self.class allocWithZone:zone] initWithLongKey:self.longKey], PGPKeyID);
 }
 
 #pragma mark - PGPExportable

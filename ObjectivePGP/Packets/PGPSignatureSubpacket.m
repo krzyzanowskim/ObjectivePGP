@@ -142,7 +142,7 @@ NS_ASSUME_NONNULL_BEGIN
                 [flagsArray addObject:@(PGPSignatureFlagPrivateKeyMayBeInThePossesionOfManyPersons)];
             }
 
-            self.value = [flagsArray copy];
+            self.value = flagsArray;
         } break;
         case PGPSignatureSubpacketTypePreferredSymetricAlgorithm: // NSArray of NSNumber(PGPSymmetricAlgorithm)
         {
@@ -155,7 +155,7 @@ NS_ASSUME_NONNULL_BEGIN
                 [algorithmsArray addObject:@(algorithm)];
             }
 
-            self.value = [algorithmsArray copy];
+            self.value = algorithmsArray;
         } break;
         case PGPSignatureSubpacketTypePreferredHashAlgorithm: // NSArray of NSNumber(PGPHashAlgorithm)
         {
@@ -182,7 +182,7 @@ NS_ASSUME_NONNULL_BEGIN
                 [algorithmsArray addObject:@(algorithm)];
             }
 
-            self.value = [algorithmsArray copy];
+            self.value = algorithmsArray;
         } break;
         case PGPSignatureSubpacketTypeKeyServerPreference: // NSArray of NSNumber(PGPKeyServerPreferenceFlags)
         {
@@ -194,7 +194,7 @@ NS_ASSUME_NONNULL_BEGIN
             if (flag & PGPKeyServerPreferenceNoModify) {
                 [flagsArray addObject:@(PGPKeyServerPreferenceNoModify)];
             }
-            self.value = [flagsArray copy];
+            self.value = flagsArray;
         } break;
         case PGPSignatureSubpacketTypeFeatures: // NSArray of NSNumber(PGPFeature)
         {
@@ -207,7 +207,7 @@ NS_ASSUME_NONNULL_BEGIN
                 [featuresArray addObject:@(feature)];
             }
 
-            self.value = [featuresArray copy];
+            self.value = featuresArray;
         } break;
         default:
             if (self.type & 0x80) {
@@ -357,7 +357,7 @@ NS_ASSUME_NONNULL_BEGIN
     [subpacketData appendData:subpacketLengthData]; // data with tag
     [subpacketData appendData:data];
 
-    return [subpacketData copy];
+    return subpacketData;
 }
 
 + (PGPSignatureSubpacketHeader *)subpacketHeaderFromData:(NSData *)headerData {

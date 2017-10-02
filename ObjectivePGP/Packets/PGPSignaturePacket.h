@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, copy, readonly) NSArray<PGPSignatureSubpacket *> *unhashedSubpackets;
 /// Two-octet field holding the left 16 bits of the signed hash value.
 /// Read from the key or set byt the call to `-[PGPSignaturePacket signData:usingKey:passphrase:userID:error]`
-@property (nonatomic, nullable) NSData *signedHashValueData;
+@property (nonatomic, copy, nullable) NSData *signedHashValueData;
 @property (nonatomic, copy) NSArray<PGPMPI *> *signatureMPIArray;
 
 @property (nonatomic, readonly) BOOL canBeUsedToSign; // computed

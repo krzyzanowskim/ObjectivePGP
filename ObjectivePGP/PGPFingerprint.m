@@ -26,7 +26,7 @@
     for (NSUInteger i = 0; i < self.hashedData.length; ++i) {
         [sbuf appendFormat:@"%02X", (unsigned int)buf[i]];
     }
-    return [sbuf copy];
+    return sbuf;
 }
 
 #pragma mark - isEqual

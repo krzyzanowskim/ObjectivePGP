@@ -319,7 +319,7 @@ NS_ASSUME_NONNULL_BEGIN
     copy.version = self.version;
     copy.publicKeyAlgorithm = self.publicKeyAlgorithm;
     copy.V3validityPeriod = self.V3validityPeriod;
-    copy.createDate = [self.createDate copy];
+    copy.createDate = self.createDate;
     copy.publicMPIArray = [[NSArray alloc] initWithArray:self.publicMPIArray copyItems:YES];
     return copy;
 }

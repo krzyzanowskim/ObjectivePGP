@@ -80,7 +80,7 @@
         return nil;
     }
 
-    copy.hashData = [self.hashData copy];
+    copy.hashData = self.hashData;
     return copy;
 }
 

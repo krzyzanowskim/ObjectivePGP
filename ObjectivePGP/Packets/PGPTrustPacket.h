@@ -12,6 +12,6 @@
 
 @interface PGPTrustPacket : PGPPacket <NSCopying>
 
-@property (nonatomic, readonly) NSData *data;
+@property (nonatomic, copy, readonly) NSData *data;
 
 @end

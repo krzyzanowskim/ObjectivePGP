@@ -10,7 +10,7 @@
 
 @interface PGPModificationDetectionCodePacket : PGPPacket <NSCopying>
 
-@property (nonatomic, readonly) NSData *hashData;
+@property (nonatomic, copy, readonly) NSData *hashData;
 
 - (instancetype)initWithData:(NSData *)data;
 

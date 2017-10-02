@@ -31,7 +31,7 @@
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
 
-    self.encryptedData = [packetBody copy];
+    self.encryptedData = packetBody;
 
     return position;
 }
@@ -71,7 +71,7 @@
     if (!copy) {
         return nil;
     }
-    copy.encryptedData = [self.encryptedData copy];
+    copy.encryptedData = self.encryptedData;
     return copy;
 }
 

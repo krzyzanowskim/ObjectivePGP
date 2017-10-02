@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PGPPublicKeyEncryptedSessionKeyPacket ()
 
-@property (nonatomic) PGPMPI *encryptedMPI_M;
+@property (nonatomic, copy) PGPMPI *encryptedMPI_M;
 
 @end
 
@@ -234,8 +234,8 @@ NS_ASSUME_NONNULL_BEGIN
     copy.version = self.version;
     copy.publicKeyAlgorithm = self.publicKeyAlgorithm;
     copy.encryptedWithPassword = self.encryptedWithPassword;
-    copy.keyID = [self.keyID copy];
-    copy.encryptedMPI_M = [self.encryptedMPI_M copy];
+    copy.keyID = self.keyID;
+    copy.encryptedMPI_M = self.encryptedMPI_M;
     return copy;
 }
 
