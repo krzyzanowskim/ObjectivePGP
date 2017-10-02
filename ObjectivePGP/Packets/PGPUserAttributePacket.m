@@ -82,7 +82,7 @@
 }
 
 - (NSUInteger)hash {
-    NSUInteger result = 1;
+    NSUInteger result = [super hash];
     result = 31 * result + self.subpackets.hash;
     return result;
 }
