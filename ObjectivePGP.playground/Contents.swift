@@ -2,12 +2,15 @@
 import ObjectivePGP
 import Foundation
 
-guard let keyURL = Bundle.main.url(forResource: "marcin.krzyzanowski@gmail.com", withExtension: "asc"),
-      let keyData = try? Data(contentsOf: keyURL) else { fatalError("Can't find key file") }
-
 let pgp = ObjectivePGP()
-pgp.import(keys: pgp.keys(from: keyData))
-guard let key = pgp.findKey(identifier: "878ECFB866753341") else { fatalError("Can't find the key") }
+
+// Generate new key
+let generator = KeyGenerator()
+let newKey = generator.generate(for: "marcin@krzyzanowskim.com", passphrase: nil)
+
+// import key
+pgp.import(keys: [newKey])
+guard let key = pgp.findKey(newKey.keyID.shortIdentifier) else { fatalError("Can't find the key") }
 
 // Encrypt 5 bytes using selected key
 let encryptedArmoredData = try! pgp.encrypt(data: Data(bytes: [1,2,3,4,5]), using: [key], armored: true)

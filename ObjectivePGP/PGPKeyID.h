@@ -18,17 +18,15 @@ NS_ASSUME_NONNULL_BEGIN
 NS_SWIFT_NAME(KeyID) @interface PGPKeyID : NSObject <PGPExportable, NSCopying>
 
 /// The eight-octet Key identifier
-@property (readonly, copy, nonatomic) NSData *longKey;
-@property (readonly, nonatomic) NSString *longKeyString;
+@property (readonly, nonatomic) NSString *longIdentifier;
 
 /// The four-octet Key identifier
-@property (readonly, nonatomic) NSData *shortKey;
-@property (readonly, nonatomic) NSString *shortKeyString;
+@property (readonly, nonatomic) NSString *shortIdentifier;
 
 PGP_EMPTY_INIT_UNAVAILABLE
 
 /// Initialize with eight-octet key identifier
-- (instancetype)initWithLongKey:(NSData *)data NS_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithLongKey:(NSData *)data NS_DESIGNATED_INITIALIZER;
 
 /// Initialize with fingerprint
 - (instancetype)initWithFingerprint:(PGPFingerprint *)fingerprint;

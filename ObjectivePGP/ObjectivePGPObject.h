@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param path Path to the file with the keys.
  @return YES on success.
  */
-- (BOOL)importKey:(NSString *)shortKeyStringIdentifier fromFile:(NSString *)path;
+- (BOOL)importKey:(NSString *)shortKeyStringIdentifier fromFile:(NSString *)path NS_SWIFT_NAME(import(key:file:));
 
 /**
  Delete keys
@@ -81,7 +81,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param identifier Key identifier. Short (8 characters, e.g: "4EF122E5") or long (16 characters, e.g: "71180E514EF122E5") identifier.
  @return Key instance, or `nil` if the key is not found.
  */
-- (nullable PGPKey *)findKeyForIdentifier:(NSString *)identifier NS_SWIFT_NAME(findKey(identifier:));
+- (nullable PGPKey *)findKeyForIdentifier:(NSString *)identifier NS_SWIFT_NAME(findKey(_:));
 
 /**
  Search imported keys for key id instance.
@@ -89,7 +89,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param keyID Key identifier.
  @return Key instance or `nil` if not found.
  */
-- (nullable PGPKey *)findKeyForKeyID:(PGPKeyID *)keyID NS_SWIFT_NAME(findKey(keyID:));
+- (nullable PGPKey *)findKeyForKeyID:(PGPKeyID *)keyID NS_SWIFT_NAME(findKey(_:));
 
 /**
  Search imported keys for given user id.
@@ -97,7 +97,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param userID A string based identifier (usually name with the e-mail address).
  @return Array of found keys, or empty array if not found.
  */
-- (NSArray<PGPKey *> *)findKeysForUserID:(NSString *)userID NS_SWIFT_NAME(findKeys(userID:));
+- (NSArray<PGPKey *> *)findKeysForUserID:(NSString *)userID NS_SWIFT_NAME(findKeys(_:));
 
 /**
  Sign data using a key.

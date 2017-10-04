@@ -17,9 +17,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@interface PGPKeyID ()
+
+@property (copy, nonatomic) NSData *longKey;
+
+@end
+
 @implementation PGPKeyID
 
-- (instancetype)initWithLongKey:(NSData *)longKeyData {
+- (nullable instancetype)initWithLongKey:(NSData *)longKeyData {
     if (longKeyData.length != 8) {
         return nil;
     }
@@ -37,14 +43,14 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (NSString *)description {
-    return [self longKeyString];
+    return [self longIdentifier];
 }
 
 - (NSData *)shortKey {
     return [self.longKey subdataWithRange:(NSRange){4, 4}];
 }
 
-- (NSString *)shortKeyString {
+- (NSString *)shortIdentifier {
     NSData *sKey = self.shortKey;
     NSMutableString *sbuf = [NSMutableString stringWithCapacity:sKey.length * 2];
     const unsigned char *buf = sKey.bytes;
@@ -54,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
     return sbuf;
 }
 
-- (NSString *)longKeyString {
+- (NSString *)longIdentifier {
     NSData *lKey = self.longKey;
     NSMutableString *sbuf = [NSMutableString stringWithCapacity:lKey.length * 2];
     const unsigned char *buf = lKey.bytes;

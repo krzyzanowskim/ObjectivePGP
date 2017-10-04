@@ -93,7 +93,7 @@
     let key = checkPGP.keys.firstObject;
     let secretKeyPacket = PGPCast(key.secretKey.primaryKeyPacket, PGPSecretKeyPacket);
     XCTAssertFalse(key.secretKey.isEncryptedWithPassword, @"Should not be encrypted");
-    XCTAssertEqualObjects([secretKeyPacket.keyID longKeyString], @"25A233C2952E4E8B", @"Invalid key identifier");
+    XCTAssertEqualObjects([secretKeyPacket.keyID longIdentifier], @"25A233C2952E4E8B", @"Invalid key identifier");
 }
 
 - (void)testSavePublicKeys {
@@ -118,7 +118,7 @@
     let key = self.pgp.keys.firstObject;
     let secretKeyPacket = PGPCast(key.secretKey.primaryKeyPacket, PGPSecretKeyPacket);
     XCTAssertFalse(key.secretKey.isEncryptedWithPassword, @"Should not be encrypted");
-    XCTAssertEqualObjects([secretKeyPacket.keyID longKeyString], @"25A233C2952E4E8B", @"Invalid key identifier");
+    XCTAssertEqualObjects([secretKeyPacket.keyID longIdentifier], @"25A233C2952E4E8B", @"Invalid key identifier");
 }
 
 - (void)testSigning {

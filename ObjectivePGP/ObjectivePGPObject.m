@@ -110,13 +110,13 @@ NS_ASSUME_NONNULL_BEGIN
     // public
     for (PGPKey *key in self.keys) {
         if (key.publicKey) {
-            let identifier = useShortIdentifier ? key.publicKey.keyID.shortKeyString : key.publicKey.keyID.longKeyString;
+            let identifier = useShortIdentifier ? key.publicKey.keyID.shortIdentifier : key.publicKey.keyID.longIdentifier;
             if ([identifier.uppercaseString isEqual:keyIdentifier.uppercaseString]) {
                 return key;
             }
 
             for (PGPPartialSubKey *subkey in key.publicKey.subKeys) {
-                let subIdentifier = useShortIdentifier ? subkey.keyID.shortKeyString : subkey.keyID.longKeyString;
+                let subIdentifier = useShortIdentifier ? subkey.keyID.shortIdentifier : subkey.keyID.longIdentifier;
                 if ([subIdentifier.uppercaseString isEqual:keyIdentifier.uppercaseString]) {
                     return key;
                 }
@@ -124,13 +124,13 @@ NS_ASSUME_NONNULL_BEGIN
         }
 
         if (key.secretKey) {
-            let identifier = useShortIdentifier ? key.secretKey.keyID.shortKeyString : key.secretKey.keyID.longKeyString;
+            let identifier = useShortIdentifier ? key.secretKey.keyID.shortIdentifier : key.secretKey.keyID.longIdentifier;
             if ([identifier.uppercaseString isEqual:keyIdentifier.uppercaseString]) {
                 return key;
             }
 
             for (PGPPartialSubKey *subkey in key.secretKey.subKeys) {
-                let subIdentifier = useShortIdentifier ? subkey.keyID.shortKeyString : subkey.keyID.longKeyString;
+                let subIdentifier = useShortIdentifier ? subkey.keyID.shortIdentifier : subkey.keyID.longIdentifier;
                 if ([subIdentifier.uppercaseString isEqual:keyIdentifier.uppercaseString]) {
                     return key;
                 }
@@ -694,7 +694,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     let foundKey = [[loadedKeys pgp_objectsPassingTest:^BOOL(PGPKey *key, BOOL *stop) {
-        *stop = [key.publicKey.keyID.shortKeyString.uppercaseString isEqualToString:shortKeyStringIdentifier.uppercaseString] || [key.secretKey.keyID.shortKeyString.uppercaseString isEqualToString:shortKeyStringIdentifier.uppercaseString];
+        *stop = [key.publicKey.keyID.shortIdentifier.uppercaseString isEqualToString:shortKeyStringIdentifier.uppercaseString] || [key.secretKey.keyID.shortIdentifier.uppercaseString isEqualToString:shortKeyStringIdentifier.uppercaseString];
         return *stop;
 
     }] firstObject];
