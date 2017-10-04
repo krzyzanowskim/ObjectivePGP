@@ -684,7 +684,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 }
 
-- (BOOL)importKey:(NSString *)shortKeyStringIdentifier fromFile:(NSString *)path {
+- (BOOL)importKey:(NSString *)keyIdentifier fromFile:(NSString *)path {
     let fullPath = [path stringByExpandingTildeInPath];
 
     let loadedKeys = [self keysFromFile:fullPath];
@@ -693,7 +693,8 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     let foundKey = [[loadedKeys pgp_objectsPassingTest:^BOOL(PGPKey *key, BOOL *stop) {
-        *stop = [key.publicKey.keyID.shortIdentifier.uppercaseString isEqualToString:shortKeyStringIdentifier.uppercaseString] || [key.secretKey.keyID.shortIdentifier.uppercaseString isEqualToString:shortKeyStringIdentifier.uppercaseString];
+        *stop = [key.publicKey.keyID.shortIdentifier.uppercaseString isEqualToString:keyIdentifier.uppercaseString] || [key.secretKey.keyID.shortIdentifier.uppercaseString isEqualToString:keyIdentifier.uppercaseString] ||
+                [key.publicKey.keyID.longIdentifier.uppercaseString isEqualToString:keyIdentifier.uppercaseString] || [key.secretKey.keyID.longIdentifier.uppercaseString isEqualToString:keyIdentifier.uppercaseString];
         return *stop;
 
     }] firstObject];

@@ -27,11 +27,11 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Import key with given identifier
 
- @param shortKeyStringIdentifier Short (8 characters) key identifier to load.
+ @param keyIdentifier Short (8 characters) key identifier to load.
  @param path Path to the file with the keys.
  @return YES on success.
  */
-- (BOOL)importKey:(NSString *)shortKeyStringIdentifier fromFile:(NSString *)path NS_SWIFT_NAME(import(keyIdentifier:fromFile:));
+- (BOOL)importKey:(NSString *)keyIdentifier fromFile:(NSString *)path NS_SWIFT_NAME(import(keyIdentifier:fromFile:));
 
 /**
  Delete keys
