@@ -55,10 +55,10 @@
     // test sign
     let dataToSign = [@"objectivepgp" dataUsingEncoding:NSUTF8StringEncoding];
 
-    let sign = [self.pgp signData:dataToSign usingKey:key passphrase:nil detached:YES error:nil];
+    let sign = [self.pgp sign:dataToSign usingKey:key passphrase:nil detached:YES error:nil];
     XCTAssertNotNil(sign);
 
-    BOOL isVerified = [self.pgp verifyData:dataToSign withSignature:sign usingKey:key error:nil];
+    BOOL isVerified = [self.pgp verify:dataToSign withSignature:sign usingKey:key error:nil];
     XCTAssertTrue(isVerified);
 
     // test export
@@ -169,7 +169,7 @@
 
     NSError *error = nil;
     [self.pgp importKeys:keys];
-    [self.pgp decryptData:[NSData dataWithContentsOfFile:messagePath] passphrase:nil error:&error];
+    [self.pgp decrypt:[NSData dataWithContentsOfFile:messagePath] passphrase:nil error:&error];
 }
 
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/53
@@ -191,7 +191,7 @@
     XCTAssertNotNil(keyToSign);
 
     let signatureData = [NSData dataWithContentsOfFile:[self.bundle pathForResource:@"issue44-keys" ofType:@"asc"]];
-    let signature = [self.pgp signData:signatureData usingKey:keyToSign passphrase:@"passphrase" detached:YES error:nil];
+    let signature = [self.pgp sign:signatureData usingKey:keyToSign passphrase:@"passphrase" detached:YES error:nil];
     XCTAssertNotNil(signature);
 }
 
@@ -203,7 +203,7 @@
 
     let data = [NSData dataWithContentsOfFile:[self.bundle pathForResource:@"issue62-message" ofType:@"asc"]];
     NSError *error;
-    let decryptedData = [self.pgp decryptData:data passphrase:nil error:&error];
+    let decryptedData = [self.pgp decrypt:data passphrase:nil error:&error];
     XCTAssertNil(error);
     XCTAssertNotNil(decryptedData);
 }
