@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @param keys Keys to import.
  */
-- (void)importKeys:(NSArray<PGPKey *> *)keys;
+- (void)importKeys:(NSArray<PGPKey *> *)keys NS_SWIFT_NAME(import(keys:));
 
 /**
  Import key with given identifier
@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @param keys Keys to delete from the `keys` collection.
  */
-- (void)deleteKeys:(NSArray<PGPKey *> *)keys;
+- (void)deleteKeys:(NSArray<PGPKey *> *)keys NS_SWIFT_NAME(delete(keys:));
 
 /**
  Read keys from the data. Does not import the keys.
@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param data Key or keyring data.
  @return Array of read keys.
  */
-- (NSArray<PGPKey *> *)keysFromData:(NSData *)data;
+- (NSArray<PGPKey *> *)keysFromData:(NSData *)data NS_SWIFT_NAME(keys(from:));
 
 /**
  Read keys from the file. Does not import the keys.
@@ -54,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param path Path to the keys file.
  @return Array of read keys.
  */
-- (NSArray<PGPKey *> *)keysFromFile:(NSString *)path;
+- (NSArray<PGPKey *> *)keysFromFile:(NSString *)path NS_SWIFT_NAME(keys(from:));
 
 /**
  Export, previously imported, keys of given type (public or secret) to the file at given path.
@@ -64,7 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error.
  @return YES on success.
  */
-- (BOOL)exportKeysOfType:(PGPPartialKeyType)type toFile:(NSString *)path error:(NSError *__autoreleasing _Nullable *)error;
+- (BOOL)exportKeysOfType:(PGPPartialKeyType)type toFile:(NSString *)path error:(NSError *__autoreleasing _Nullable *)error NS_SWIFT_NAME(export(type:to:));
 
 /**
  Export, previously imported, single key data.
@@ -73,7 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param armored Choose the format. Binary or Armored (armored is a string based format)
  @return Data, or `nil` if can't export the key.
  */
-- (nullable NSData *)exportKey:(PGPKey *)key armored:(BOOL)armored;
+- (nullable NSData *)exportKey:(PGPKey *)key armored:(BOOL)armored NS_SWIFT_NAME(export(key:armored:));
 
 /**
  Search imported keys for the key identifier.
@@ -81,7 +81,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param identifier Key identifier. Short (8 characters, e.g: "4EF122E5") or long (16 characters, e.g: "71180E514EF122E5") identifier.
  @return Key instance, or `nil` if the key is not found.
  */
-- (nullable PGPKey *)findKeyForIdentifier:(NSString *)identifier;
+- (nullable PGPKey *)findKeyForIdentifier:(NSString *)identifier NS_SWIFT_NAME(findKey(identifier:));
 
 /**
  Search imported keys for key id instance.
@@ -89,7 +89,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param keyID Key identifier.
  @return Key instance or `nil` if not found.
  */
-- (nullable PGPKey *)findKeyForKeyID:(PGPKeyID *)keyID;
+- (nullable PGPKey *)findKeyForKeyID:(PGPKeyID *)keyID NS_SWIFT_NAME(findKey(keyID:));
 
 /**
  Search imported keys for given user id.
@@ -97,7 +97,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param userID A string based identifier (usually name with the e-mail address).
  @return Array of found keys, or empty array if not found.
  */
-- (NSArray<PGPKey *> *)findKeysForUserID:(NSString *)userID;
+- (NSArray<PGPKey *> *)findKeysForUserID:(NSString *)userID NS_SWIFT_NAME(findKeys(userID:));
 
 /**
  Sign data using a key.
@@ -109,7 +109,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error.
  @return Signed data, or `nil` if fail.
  */
-- (nullable NSData *)signData:(NSData *)data usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase detached:(BOOL)detached error:(NSError *__autoreleasing _Nullable *)error;
+- (nullable NSData *)signData:(NSData *)data usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase detached:(BOOL)detached error:(NSError *__autoreleasing _Nullable *)error NS_SWIFT_NAME(sign(data:using:passphrase:detached:));
 
 /**
  Verify signed data. Validates with the imported keys.
@@ -118,7 +118,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error
  @return YES on success.
  */
-- (BOOL)verifyData:(NSData *)signedData error:(NSError *__autoreleasing _Nullable *)error;
+- (BOOL)verifyData:(NSData *)signedData error:(NSError *__autoreleasing _Nullable *)error NS_SWIFT_NAME(verify(data:));
 
 /**
  Verify signed data, with detached signature data.
@@ -128,7 +128,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error
  @return YES on success.
  */
-- (BOOL)verifyData:(NSData *)signedData withSignature:(NSData *)signatureData error:(NSError *__autoreleasing _Nullable *)error;
+- (BOOL)verifyData:(NSData *)signedData withSignature:(NSData *)signatureData error:(NSError *__autoreleasing _Nullable *)error NS_SWIFT_NAME(verify(data:with:));
 
 /**
  Verify signed data using given key.
@@ -139,7 +139,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error.
  @return YES on success.
  */
-- (BOOL)verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPKey *)key error:(NSError *__autoreleasing _Nullable *)error;
+- (BOOL)verifyData:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPKey *)key error:(NSError *__autoreleasing _Nullable *)error NS_SWIFT_NAME(verify(data:with:using:));
 
 /**
  Encrypt data using given keys. Output in binary or ASCII format.
@@ -150,7 +150,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error.
  @return Encrypted data in requested format.
  */
-- (nullable NSData *)encryptData:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys armored:(BOOL)armored error:(NSError *__autoreleasing _Nullable *)error;
+- (nullable NSData *)encryptData:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys armored:(BOOL)armored error:(NSError *__autoreleasing _Nullable *)error NS_SWIFT_NAME(encrypt(data:using:armored:));
 
 
 /**
@@ -164,7 +164,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error.
  @return Encrypted and signed data in requested format.
  */
-- (nullable NSData *)encryptData:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys signWithKey:(nullable PGPKey *)signKey passphrase:(nullable NSString *)passphrase armored:(BOOL)armored error:(NSError *__autoreleasing _Nullable *)error;
+- (nullable NSData *)encryptData:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys signWithKey:(nullable PGPKey *)signKey passphrase:(nullable NSString *)passphrase armored:(BOOL)armored error:(NSError *__autoreleasing _Nullable *)error NS_SWIFT_NAME(encrypt(data:using:signWith:passphrase:armored:));
 
 
 /**
@@ -175,7 +175,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error.
  @return Decrypted data.
  */
-- (nullable NSData *)decryptData:(NSData *)data passphrase:(nullable NSString *)passphrase error:(NSError *__autoreleasing _Nullable *)error;
+- (nullable NSData *)decryptData:(NSData *)data passphrase:(nullable NSString *)passphrase error:(NSError *__autoreleasing _Nullable *)error NS_SWIFT_NAME(decrypt(data:passphrase:));
 
 
 /**
@@ -190,7 +190,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error.
  @return Decrypted data.
  */
-- (nullable NSData *)decryptData:(NSData *)data passphrase:(nullable NSString *)passphrase verifyWithKey:(nullable PGPKey *)key signed:(nullable BOOL *)isSigned valid:(nullable BOOL *)isValid integrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError *__autoreleasing _Nullable *)error;
+- (nullable NSData *)decryptData:(NSData *)data passphrase:(nullable NSString *)passphrase verifyWithKey:(nullable PGPKey *)key signed:(nullable BOOL *)isSigned valid:(nullable BOOL *)isValid integrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError *__autoreleasing _Nullable *)error NS_SWIFT_NAME(decrypt(data:passphrase:verifyWith:signed:valid:integrityProtected:));
 
 
 /// Deprecated.
