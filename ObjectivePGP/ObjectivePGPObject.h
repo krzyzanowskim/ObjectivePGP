@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param path Path to the file with the keys.
  @return YES on success.
  */
-- (BOOL)importKey:(NSString *)shortKeyStringIdentifier fromFile:(NSString *)path NS_SWIFT_NAME(import(key:file:));
+- (BOOL)importKey:(NSString *)shortKeyStringIdentifier fromFile:(NSString *)path NS_SWIFT_NAME(import(keyIdentifier:fromFile:));
 
 /**
  Delete keys
@@ -54,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param path Path to the keys file.
  @return Array of read keys.
  */
-- (NSArray<PGPKey *> *)keysFromFile:(NSString *)path NS_SWIFT_NAME(keys(from:));
+- (NSArray<PGPKey *> *)keysFromFile:(NSString *)path NS_SWIFT_NAME(keys(fromFile:));
 
 /**
  Export, previously imported, keys of given type (public or secret) to the file at given path.
@@ -81,7 +81,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param identifier Key identifier. Short (8 characters, e.g: "4EF122E5") or long (16 characters, e.g: "71180E514EF122E5") identifier.
  @return Key instance, or `nil` if the key is not found.
  */
-- (nullable PGPKey *)findKeyForIdentifier:(NSString *)identifier NS_SWIFT_NAME(findKey(_:));
+- (nullable PGPKey *)findKeyWithIdentifier:(NSString *)identifier NS_SWIFT_NAME(findKey(with:));
 
 /**
  Search imported keys for key id instance.
@@ -89,7 +89,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param keyID Key identifier.
  @return Key instance or `nil` if not found.
  */
-- (nullable PGPKey *)findKeyForKeyID:(PGPKeyID *)keyID NS_SWIFT_NAME(findKey(_:));
+- (nullable PGPKey *)findKeyWithKeyID:(PGPKeyID *)keyID NS_SWIFT_NAME(findKey(with:));
 
 /**
  Search imported keys for given user id.

@@ -66,7 +66,7 @@ NS_ASSUME_NONNULL_BEGIN
     }];
 }
 
-- (nullable PGPKey *)findKeyForKeyID:(PGPKeyID *)searchKeyID {
+- (nullable PGPKey *)findKeyWithKeyID:(PGPKeyID *)searchKeyID {
     PGPAssertClass(searchKeyID, PGPKeyID);
 
     return [[self.keys pgp_objectsPassingTest:^BOOL(PGPKey *key, BOOL *stop) {
@@ -96,8 +96,7 @@ NS_ASSUME_NONNULL_BEGIN
     }] firstObject];
 }
 
-// TODO: rename to getKeyForFingerprint or something
-- (nullable PGPKey *)findKeyForIdentifier:(NSString *)keyIdentifier {
+- (nullable PGPKey *)findKeyWithIdentifier:(NSString *)keyIdentifier {
     PGPAssertClass(keyIdentifier, NSString);
 
     if (keyIdentifier.length != 8 && keyIdentifier.length != 16) {
@@ -267,7 +266,7 @@ NS_ASSUME_NONNULL_BEGIN
     for (PGPPacket *packet in packets) {
         if (packet.tag == PGPPublicKeyEncryptedSessionKeyPacketTag) {
             let pkESKPacket = PGPCast(packet, PGPPublicKeyEncryptedSessionKeyPacket);
-            let decryptionKey = [self findKeyForKeyID:pkESKPacket.keyID];
+            let decryptionKey = [self findKeyWithKeyID:pkESKPacket.keyID];
             if (!decryptionKey.secretKey) {
                 continue;
             }
@@ -593,7 +592,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     let issuerKeyID = [signaturePacket issuerKeyID];
 
-    let issuerKey = [self findKeyForKeyID:issuerKeyID];
+    let issuerKey = [self findKeyWithKeyID:issuerKeyID];
     if (!issuerKey) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing issuer" }];

@@ -95,7 +95,7 @@
     [self importSecureKeyring];
     [self importPublicKeyring];
 
-    let encKey = [self.pgp findKeyForIdentifier:@"9528AAA17A9BC007"];
+    let encKey = [self.pgp findKeyWithIdentifier:@"9528AAA17A9BC007"];
     // encrypt
     NSData *tmpdata = [@"this is test" dataUsingEncoding:NSUTF8StringEncoding];
     NSError *encError;
@@ -118,7 +118,7 @@
     status = [[NSFileManager defaultManager] copyItemAtPath:self.secKeyringPath toPath:fileToSignPath error:nil];
     XCTAssertTrue(status);
 
-    let keyToSign = [self.pgp findKeyForIdentifier:@"9528AAA17A9BC007"];
+    let keyToSign = [self.pgp findKeyWithIdentifier:@"9528AAA17A9BC007"];
     XCTAssertNotNil(keyToSign);
 
     // detached signature
