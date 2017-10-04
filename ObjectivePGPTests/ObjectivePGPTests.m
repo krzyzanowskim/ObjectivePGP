@@ -110,7 +110,7 @@
     [self.pgp importKeys:keys2];
     [self.pgp importKeys:keys3];
     [self.pgp importKeys:keys4];
-    let encryptedKey = [self.pgp findKeyForIdentifier:@"9528AAA17A9BC007"];
+    let encryptedKey = [self.pgp findKeyWithIdentifier:@"9528AAA17A9BC007"];
     XCTAssertNotNil(encryptedKey);
     XCTAssertTrue(encryptedKey.isEncryptedWithPassword);
     NSError *error;
@@ -187,7 +187,7 @@
     [self.pgp importKeys:keys];
     XCTAssertEqual(keys.count, (NSUInteger)1);
 
-    let keyToSign = [self.pgp findKeyForIdentifier:@"71180E514EF122E5"];
+    let keyToSign = [self.pgp findKeyWithIdentifier:@"71180E514EF122E5"];
     XCTAssertNotNil(keyToSign);
 
     let signatureData = [NSData dataWithContentsOfFile:[self.bundle pathForResource:@"issue44-keys" ofType:@"asc"]];

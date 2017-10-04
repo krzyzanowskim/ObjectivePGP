@@ -75,10 +75,10 @@ NSArray *keys = [pgp keysFromFile:@"/path/to/key.asc"];
 
 ```objective-c
 /* long identifier 979E4B03DFFE30C6 */
-PGPKey *key = [pgp findKeyForIdentifier:@"979E4B03DFFE30C6"];
+PGPKey *key = [pgp findKeyWithIdentifier:@"979E4B03DFFE30C6"];
 
 /* Short identifier 979E4B03 (the same result as previous) */
-PGPKey *key = [pgp findKeyForIdentifier:@"979E4B03"];
+PGPKey *key = [pgp findKeyWithIdentifier:@"979E4B03"];
 
 /* First key that match given user identifier string. */
 PGPKey *key = [pgp findKeysForUserID:@"Name <email@example.com>"];
@@ -93,7 +93,7 @@ if ([pgp exportKeysOfType:PGPPartialKeyPublic toFile:@"pubring.gpg" error:nil]) 
 }
 
 /* Export a key and save as armored (ASCII) file */
-PGPKey *key = [self.pgp findKeyForIdentifier:@"979E4B03DFFE30C6"];
+PGPKey *key = [self.pgp findKeyWithIdentifier:@"979E4B03DFFE30C6"];
 NSData *armoredKeyData = [pgp exportKey:key armored:YES];
 [armoredKeyData writeToFile:@"pubkey.asc" atomically:YES];
 ```
@@ -104,7 +104,7 @@ NSData *armoredKeyData = [pgp exportKey:key armored:YES];
 NSData *fileContent = [NSData dataWithContentsOfFile:@"/path/file/to/data.txt"];
 
 /* Choose a key to use to sign the data */
-PGPKey *key = [self.pgp findKeyForIdentifier:@"979E4B03DFFE30C6"];
+PGPKey *key = [self.pgp findKeyWithIdentifier:@"979E4B03DFFE30C6"];
 
 /* Sign and return only a signature data (detached = YES) */
 NSData *signature = [pgp signData:fileContent usingKey:key passphrase:nil detached:YES error:nil];
@@ -136,7 +136,7 @@ if ([pgp verifyData:dataContent withSignature:signatureContent]) {
 NSData *fileContent = [NSData dataWithContentsOfFile:@"/path/plaintext.txt"];
 
 /* Choose the public key to use to encrypt data. Must be imported previously */
-PGPKey *key = [self.pgp findKeyForIdentifier:@"979E4B03DFFE30C6"];
+PGPKey *key = [self.pgp findKeyWithIdentifier:@"979E4B03DFFE30C6"];
 
 /* Encrypt data. Armor output (ASCII file)  */
 NSData *encryptedData = [pgp encryptData:fileContent usingKeys:@[key] armored:YES error:nil];

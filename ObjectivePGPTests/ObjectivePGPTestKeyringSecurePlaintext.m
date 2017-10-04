@@ -67,7 +67,7 @@
     let foundKeys2 = [self.pgp findKeysForUserID:@"ERR Marcin (test) <marcink@up-next.com>"];
     XCTAssertTrue(foundKeys2.count == 0);
 
-    let key = [self.pgp findKeyForIdentifier:@"952E4E8B"];
+    let key = [self.pgp findKeyWithIdentifier:@"952E4E8B"];
     XCTAssertNotNil(key, @"Key 952E4E8B not found");
 }
 
@@ -134,7 +134,7 @@
     BOOL status = [[NSFileManager defaultManager] copyItemAtPath:secKeyringPath toPath:fileToSignPath error:nil];
     XCTAssertTrue(status);
 
-    let keyToSign = [self.pgp findKeyForIdentifier:@"25A233C2952E4E8B"];
+    let keyToSign = [self.pgp findKeyWithIdentifier:@"25A233C2952E4E8B"];
     XCTAssertNotNil(keyToSign);
     let dataToSign = [NSData dataWithContentsOfFile:fileToSignPath];
 
@@ -149,7 +149,7 @@
     XCTAssertTrue(status);
 
     // Verify
-    let keyToValidateSign = [self.pgp findKeyForIdentifier:@"25A233C2952E4E8B"];
+    let keyToValidateSign = [self.pgp findKeyWithIdentifier:@"25A233C2952E4E8B"];
     NSError *verifyError = nil;
     status = [self.pgp verifyData:dataToSign withSignature:signatureData usingKey:keyToValidateSign error:&verifyError];
     XCTAssertTrue(status);
@@ -180,7 +180,7 @@
     [self.pgp importKeys:keys2];
 
     // Public key
-    let keyToEncrypt = [self.pgp findKeyForIdentifier:@"25A233C2952E4E8B"];
+    let keyToEncrypt = [self.pgp findKeyWithIdentifier:@"25A233C2952E4E8B"];
 
     XCTAssertNotNil(keyToEncrypt);
 
@@ -236,8 +236,8 @@
     [self.pgp importKeys:keys2];
 
     // Public key
-    let keyToEncrypt2 = [self.pgp findKeyForIdentifier:@"66753341"];
-    let keyToEncrypt1 = [self.pgp findKeyForIdentifier:@"952E4E8B"];
+    let keyToEncrypt2 = [self.pgp findKeyWithIdentifier:@"66753341"];
+    let keyToEncrypt1 = [self.pgp findKeyWithIdentifier:@"952E4E8B"];
 
     XCTAssertNotNil(keyToEncrypt1);
     XCTAssertNotNil(keyToEncrypt2);
