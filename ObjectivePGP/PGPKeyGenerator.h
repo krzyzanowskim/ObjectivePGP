@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class PGPKey;
 
-@interface PGPKeyGenerator : NSObject
+NS_SWIFT_NAME(KeyGenerator) @interface PGPKeyGenerator : NSObject
 
 @property (nonatomic) int keyBitsLength;
 @property (nonatomic) PGPPublicKeyAlgorithm keyAlgorithm;

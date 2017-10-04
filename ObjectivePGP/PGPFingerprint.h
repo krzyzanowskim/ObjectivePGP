@@ -8,7 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
-@interface PGPFingerprint : NSObject
+NS_SWIFT_NAME(Fingerprint) @interface PGPFingerprint : NSObject
+
 @property (nonatomic, copy) NSData *hashedData;
 @property (nonatomic, copy) NSData *keyData;
 

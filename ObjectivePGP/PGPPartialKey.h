@@ -20,7 +20,7 @@ typedef NS_ENUM(NSUInteger, PGPPartialKeyType) { PGPPartialKeyUnknown = 0, PGPPa
 @class PGPSecretKeyPacket, PGPPartialSubKey;
 
 /// Single Private or Public key.
-@interface PGPPartialKey : NSObject <PGPExportable, NSCopying>
+NS_SWIFT_NAME(PartialKey) @interface PGPPartialKey : NSObject <PGPExportable, NSCopying>
 
 @property (nonatomic, readonly) PGPPartialKeyType type;
 @property (nonatomic, copy) PGPPacket *primaryKeyPacket;

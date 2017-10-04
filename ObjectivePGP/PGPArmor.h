@@ -21,7 +21,7 @@ typedef NS_ENUM(NSUInteger, PGPArmorType) {
 NS_ASSUME_NONNULL_BEGIN
 
 /// ASCII Armor message.
-@interface PGPArmor : NSObject
+NS_SWIFT_NAME(Armor) @interface PGPArmor : NSObject
 
 + (NSData *)armoredData:(NSData *)dataToArmor as:(PGPArmorType)armorType part:(NSUInteger)part of:(NSUInteger)ofParts;
 + (NSData *)armoredData:(NSData *)dataToArmor as:(PGPArmorType)armorType;

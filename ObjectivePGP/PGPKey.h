@@ -16,7 +16,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// Public + Private key with the same ID.
-@interface PGPKey : NSObject <PGPExportable, NSCopying>
+NS_SWIFT_NAME(Key) @interface PGPKey : NSObject <PGPExportable, NSCopying>
 
 PGP_EMPTY_INIT_UNAVAILABLE;
 

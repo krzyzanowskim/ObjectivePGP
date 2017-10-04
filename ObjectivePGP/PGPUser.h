@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @class PGPUserIDPacket, PGPUserAttributePacket, PGPSignaturePacket, PGPPartialKey;
 
-@interface PGPUser : NSObject <NSCopying>
+NS_SWIFT_NAME(User) @interface PGPUser : NSObject <NSCopying>
 
 @property (nonatomic, copy) NSString *userID;
 @property (nonatomic, copy) PGPUserAttributePacket *userAttribute;

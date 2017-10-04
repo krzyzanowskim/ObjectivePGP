@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @class PGPFingerprint;
 
 /// The eight-octet Key ID
-@interface PGPKeyID : NSObject <PGPExportable, NSCopying>
+NS_SWIFT_NAME(KeyID) @interface PGPKeyID : NSObject <PGPExportable, NSCopying>
 
 /// The eight-octet Key identifier
 @property (readonly, copy, nonatomic) NSData *longKey;
@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 PGP_EMPTY_INIT_UNAVAILABLE
 
 /// Initialize with eight-octet key identifier
-- (instancetype)initWithLongKey:(NSData *)longKeyData NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithLongKey:(NSData *)data NS_DESIGNATED_INITIALIZER;
 
 /// Initialize with fingerprint
 - (instancetype)initWithFingerprint:(PGPFingerprint *)fingerprint;
