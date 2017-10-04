@@ -2,8 +2,9 @@
 - Fixes instances equality.
 - Reverts NSSet collections to NSArray.
 - Improves objects copying (NSCopying for packets).
-- Update tests.
+- Updates tests.
 - Updates documentations.
+- Updates Swift API.
 
 Version 0.8
 - Adds public and private keys generation feature with PGPKeyGenerator
