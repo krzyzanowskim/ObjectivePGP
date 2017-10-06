@@ -8,6 +8,7 @@
 
 #import <ObjectivePGP/ObjectivePGP.h>
 #import "PGPMacros+Private.h"
+#import "PGPTestUtils.h"
 #import <XCTest/XCTest.h>
 
 @interface ObjectivePGPTestKeyringSecureEncrypted : XCTestCase
@@ -25,7 +26,7 @@
 
     self.pgp = [[ObjectivePGP alloc] init];
 
-    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    let bundle = PGPTestUtils.filesBundle;
     self.secKeyringPath = [bundle pathForResource:@"secring-test-encrypted" ofType:@"gpg"];
     self.pubKeyringPath = [bundle pathForResource:@"pubring-test-encrypted" ofType:@"gpg"];
 

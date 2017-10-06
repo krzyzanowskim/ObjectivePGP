@@ -8,6 +8,7 @@
 
 #import <ObjectivePGP/ObjectivePGP.h>
 #import "PGPMacros+Private.h"
+#import "PGPTestUtils.h"
 #import <XCTest/XCTest.h>
 
 @interface ObjectivePGPTestArmor : XCTestCase
@@ -21,11 +22,9 @@
 
 - (void)setUp {
     [super setUp];
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-
     self.pgp = [[ObjectivePGP alloc] init];
 
-    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSBundle *bundle = PGPTestUtils.filesBundle;;
     self.secKeyringPath = [bundle pathForResource:@"secring-test-plaintext" ofType:@"gpg"];
     self.pubKeyringPath = [bundle pathForResource:@"pubring-test-plaintext" ofType:@"gpg"];
 
@@ -39,14 +38,13 @@
 }
 
 - (void)tearDown {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
     [super tearDown];
     [[NSFileManager defaultManager] removeItemAtPath:self.workingDirectory error:nil];
     self.pgp = nil;
 }
 
 - (void)testMultipleKeys {
-    NSBundle *bundle = [NSBundle bundleForClass:self.class];
+    NSBundle *bundle = PGPTestUtils.filesBundle;
     NSString *path = [bundle pathForResource:@"multiple-keys" ofType:@"asc"];
     let keys = [self.pgp keysFromFile:path];
     [self.pgp importKeys:keys];

@@ -12,6 +12,7 @@
 #import "PGPSignaturePacket.h"
 #import "PGPUser.h"
 #import "PGPMacros+Private.h"
+#import "PGPTestUtils.h"
 #import <XCTest/XCTest.h>
 
 @interface ObjectivePGPTestKeyringSecurePlaintext : XCTestCase
@@ -23,10 +24,9 @@
 @implementation ObjectivePGPTestKeyringSecurePlaintext
 
 - (void)setUp {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
     [super setUp];
 
-    _bundle = [NSBundle bundleForClass:self.class];
+    _bundle = PGPTestUtils.filesBundle;
     _pgp = [[ObjectivePGP alloc] init];
 
     NSString *newDir = [@"ObjectivePGPTests" stringByAppendingPathComponent:[[NSUUID UUID] UUIDString]];
@@ -50,7 +50,6 @@
 }
 
 - (void)tearDown {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
     [super tearDown];
     [[NSFileManager defaultManager] removeItemAtPath:self.workingDirectory error:nil];
     self.pgp = nil;

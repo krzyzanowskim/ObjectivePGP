@@ -8,6 +8,7 @@
 
 #import <ObjectivePGP/ObjectivePGP.h>
 #import "PGPMacros+Private.h"
+#import "PGPTestUtils.h"
 #import <XCTest/XCTest.h>
 
 // sec   2048R/AEEF64C8 2014-05-03
@@ -33,7 +34,7 @@
 - (void)setUp {
     [super setUp];
 
-    _bundle = [NSBundle bundleForClass:self.class];
+    _bundle = PGPTestUtils.filesBundle;
     _pgp = [[ObjectivePGP alloc] init];
 }
 

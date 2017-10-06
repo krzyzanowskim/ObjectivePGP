@@ -7,10 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		750016A919C22E7100EAF308 /* secring-test-plaintext-encrypted-message.asc in Resources */ = {isa = PBXBuildFile; fileRef = 750016A819C22E7100EAF308 /* secring-test-plaintext-encrypted-message.asc */; };
-		75040AB21926BB35000CEA93 /* ObjectivePGPTestArmor.m in Sources */ = {isa = PBXBuildFile; fileRef = 75040AB11926BB35000CEA93 /* ObjectivePGPTestArmor.m */; };
-		750B43B91ED356D70064BA05 /* issue53-s2k-gnu-dummy.prv.asc in Resources */ = {isa = PBXBuildFile; fileRef = 750B43B71ED356D70064BA05 /* issue53-s2k-gnu-dummy.prv.asc */; };
-		750B43BA1ED356D70064BA05 /* issue53-s2k-gnu-dummy.pub.asc in Resources */ = {isa = PBXBuildFile; fileRef = 750B43B81ED356D70064BA05 /* issue53-s2k-gnu-dummy.pub.asc */; };
+		75040AB21926BB35000CEA93 /* PGPTestArmor.m in Sources */ = {isa = PBXBuildFile; fileRef = 75040AB11926BB35000CEA93 /* PGPTestArmor.m */; };
 		750F52C01F5C833400DA7DE4 /* PGPMacros+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 750F52BF1F5C832500DA7DE4 /* PGPMacros+Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		750F893C1F0D6EF100B99726 /* PGPCryptoHash.m in Sources */ = {isa = PBXBuildFile; fileRef = 754351861ED268B400896236 /* PGPCryptoHash.m */; };
 		750F89411F0D6EF100B99726 /* ObjectivePGPObject.m in Sources */ = {isa = PBXBuildFile; fileRef = 756299BF1914DE1A00C5AD3B /* ObjectivePGPObject.m */; };
@@ -105,36 +102,26 @@
 		7537A6D81F0D739A00892829 /* PGPCryptoCFB.h in Headers */ = {isa = PBXBuildFile; fileRef = 751056111940A76F00653C0B /* PGPCryptoCFB.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7537A6D91F0D739A00892829 /* PGPLogging.h in Headers */ = {isa = PBXBuildFile; fileRef = 752B3A791EC8EB9A003F6C22 /* PGPLogging.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7537A6DB1F0D74C500892829 /* ObjectivePGP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 750F89341F0D6A3F00B99726 /* ObjectivePGP.framework */; };
-		7538C0DE1CDCF47B00A8F136 /* issue35-message.asc in Resources */ = {isa = PBXBuildFile; fileRef = 7538C0DD1CDCF47B00A8F136 /* issue35-message.asc */; };
 		753ADD9A1F0EC638005E1497 /* ObjectivePGP.h in Headers */ = {isa = PBXBuildFile; fileRef = 756299BD1914DE1A00C5AD3B /* ObjectivePGP.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		753ADD9B1F0EC6A0005E1497 /* ObjectivePGPObject.h in Headers */ = {isa = PBXBuildFile; fileRef = 750F89641F0D701E00B99726 /* ObjectivePGPObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		753B05431EF3E05200785EBC /* issue62-message.asc in Resources */ = {isa = PBXBuildFile; fileRef = 753B05421EF3E03800785EBC /* issue62-message.asc */; };
 		7547A6D11F0085E8002C2145 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7547A6D01F0085E8002C2145 /* Security.framework */; };
-		7561B66E1F65C479001D2AD6 /* issue59-keys.asc in Resources */ = {isa = PBXBuildFile; fileRef = 7561B66D1F65C423001D2AD6 /* issue59-keys.asc */; };
 		7561B68E1F65E121001D2AD6 /* NSArray+PGPUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 7561B68C1F65E121001D2AD6 /* NSArray+PGPUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7561B68F1F65E121001D2AD6 /* NSArray+PGPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 7561B68D1F65E121001D2AD6 /* NSArray+PGPUtils.m */; };
 		756299C81914DE1A00C5AD3B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 756299B81914DE1A00C5AD3B /* Foundation.framework */; };
 		756299D31914DE1A00C5AD3B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 756299D11914DE1A00C5AD3B /* InfoPlist.strings */; };
-		756299D51914DE1A00C5AD3B /* ObjectivePGPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 756299D41914DE1A00C5AD3B /* ObjectivePGPTests.m */; };
-		7563357619258F1700414CCC /* pubring-test-encrypted.gpg in Resources */ = {isa = PBXBuildFile; fileRef = 7563357219258F1700414CCC /* pubring-test-encrypted.gpg */; };
-		7563357719258F1700414CCC /* pubring-test-plaintext.gpg in Resources */ = {isa = PBXBuildFile; fileRef = 7563357319258F1700414CCC /* pubring-test-plaintext.gpg */; };
-		7563357819258F1700414CCC /* secring-test-encrypted.gpg in Resources */ = {isa = PBXBuildFile; fileRef = 7563357419258F1700414CCC /* secring-test-encrypted.gpg */; };
-		7563357919258F1700414CCC /* secring-test-plaintext.gpg in Resources */ = {isa = PBXBuildFile; fileRef = 7563357519258F1700414CCC /* secring-test-plaintext.gpg */; };
-		7563357B19258F7100414CCC /* ObjectivePGPTestKeyringSecurePlaintext.m in Sources */ = {isa = PBXBuildFile; fileRef = 7563357A19258F7100414CCC /* ObjectivePGPTestKeyringSecurePlaintext.m */; };
-		7563357D1925936900414CCC /* ObjectivePGPTestKeyringSecureEncrypted.m in Sources */ = {isa = PBXBuildFile; fileRef = 7563357C1925936900414CCC /* ObjectivePGPTestKeyringSecureEncrypted.m */; };
+		756299D51914DE1A00C5AD3B /* PGPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 756299D41914DE1A00C5AD3B /* PGPTests.m */; };
+		7563357B19258F7100414CCC /* PGPTestKeyringSecurePlaintext.m in Sources */ = {isa = PBXBuildFile; fileRef = 7563357A19258F7100414CCC /* PGPTestKeyringSecurePlaintext.m */; };
+		7563357D1925936900414CCC /* PGPTestKeyringSecureEncrypted.m in Sources */ = {isa = PBXBuildFile; fileRef = 7563357C1925936900414CCC /* PGPTestKeyringSecureEncrypted.m */; };
 		7575BE5B1F00927800121BEA /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7575BE5A1F00927800121BEA /* libbz2.tbd */; };
 		7575BE5D1F00927F00121BEA /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7575BE5C1F00927F00121BEA /* libz.tbd */; };
-		758042721EF3CC9C001ECAC6 /* issue62-keys.asc in Resources */ = {isa = PBXBuildFile; fileRef = 758042711EF3CC95001ECAC6 /* issue62-keys.asc */; };
-		7590B7AC1ED9BFF7009A0E92 /* issue44-keys.asc in Resources */ = {isa = PBXBuildFile; fileRef = 7590B7AB1ED9BFF7009A0E92 /* issue44-keys.asc */; };
-		75B9268B1CBA3A0200B3EF41 /* issue22-original.asc in Resources */ = {isa = PBXBuildFile; fileRef = 75B926891CBA3A0200B3EF41 /* issue22-original.asc */; };
+		75AB35061F8819A600A1CDD6 /* testfiles.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 75AB35051F88193B00A1CDD6 /* testfiles.bundle */; };
+		75AB350A1F881E3F00A1CDD6 /* PGPTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AB35091F881E3F00A1CDD6 /* PGPTestUtils.m */; };
 		75BF43E21F504D0F004334DE /* PGPKeyGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 75BF43E01F504D0F004334DE /* PGPKeyGenerator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		75BF43E31F504D0F004334DE /* PGPKeyGenerator.m in Sources */ = {isa = PBXBuildFile; fileRef = 75BF43E11F504D0F004334DE /* PGPKeyGenerator.m */; };
 		75BF43E61F5076B9004334DE /* PGPKeyMaterial.h in Headers */ = {isa = PBXBuildFile; fileRef = 75BF43E41F5076B9004334DE /* PGPKeyMaterial.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		75BF43E71F5076B9004334DE /* PGPKeyMaterial.m in Sources */ = {isa = PBXBuildFile; fileRef = 75BF43E51F5076B9004334DE /* PGPKeyMaterial.m */; };
 		75C501E61F1233A100FEC874 /* PGPRSA.h in Headers */ = {isa = PBXBuildFile; fileRef = 75C501E51F12337800FEC874 /* PGPRSA.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		75C501E71F1233A500FEC874 /* PGPRSA.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C501E41F12337800FEC874 /* PGPRSA.m */; };
-		75CA419C1CDF775900887C62 /* issue35-key.asc in Resources */ = {isa = PBXBuildFile; fileRef = 75CA419B1CDF775900887C62 /* issue35-key.asc */; };
-		75D53ADF1A2FCDEE00ED9707 /* multiple-keys.asc in Resources */ = {isa = PBXBuildFile; fileRef = 75D53ADE1A2FCDEE00ED9707 /* multiple-keys.asc */; };
 		75E9AD0D1F7FF01C00B0559B /* PGPPartialSubKey+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 75E9AD0C1F7FF01C00B0559B /* PGPPartialSubKey+Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		75E9AD0F1F7FF10100B0559B /* PGPPartialKey+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 75E9AD0E1F7FF10100B0559B /* PGPPartialKey+Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		75F74E481F4383C50054231C /* PGPDSA.h in Headers */ = {isa = PBXBuildFile; fileRef = 75F74E441F4382FF0054231C /* PGPDSA.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -152,11 +139,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		750016A819C22E7100EAF308 /* secring-test-plaintext-encrypted-message.asc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "secring-test-plaintext-encrypted-message.asc"; sourceTree = "<group>"; };
-		75040AB11926BB35000CEA93 /* ObjectivePGPTestArmor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectivePGPTestArmor.m; sourceTree = "<group>"; };
+		75040AB11926BB35000CEA93 /* PGPTestArmor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPTestArmor.m; sourceTree = "<group>"; };
 		750676C01F005B2F00066408 /* Defaults-Testing.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Defaults-Testing.xcconfig"; sourceTree = "<group>"; };
-		750B43B71ED356D70064BA05 /* issue53-s2k-gnu-dummy.prv.asc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "issue53-s2k-gnu-dummy.prv.asc"; sourceTree = "<group>"; };
-		750B43B81ED356D70064BA05 /* issue53-s2k-gnu-dummy.pub.asc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "issue53-s2k-gnu-dummy.pub.asc"; sourceTree = "<group>"; };
 		750EE3C21922C185009E818E /* PGPPartialKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPartialKey.h; sourceTree = "<group>"; };
 		750EE3C31922C185009E818E /* PGPPartialKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPartialKey.m; sourceTree = "<group>"; };
 		750F52BF1F5C832500DA7DE4 /* PGPMacros+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PGPMacros+Private.h"; sourceTree = "<group>"; };
@@ -224,8 +208,6 @@
 		752B3A791EC8EB9A003F6C22 /* PGPLogging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPLogging.h; sourceTree = "<group>"; };
 		752DE5BA1EEE26C200637E38 /* PGPExportableProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPExportableProtocol.h; sourceTree = "<group>"; };
 		752DE5BD1EEE3BE800637E38 /* PGPMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPMacros.h; sourceTree = "<group>"; };
-		7538C0DD1CDCF47B00A8F136 /* issue35-message.asc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "issue35-message.asc"; sourceTree = "<group>"; };
-		753B05421EF3E03800785EBC /* issue62-message.asc */ = {isa = PBXFileReference; lastKnownFileType = text; path = "issue62-message.asc"; sourceTree = "<group>"; };
 		754351861ED268B400896236 /* PGPCryptoHash.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPCryptoHash.m; sourceTree = "<group>"; };
 		7547A6BF1F0068FB002C2145 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		7547A6C61F007EF6002C2145 /* PGPBigNum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPBigNum.h; sourceTree = "<group>"; };
@@ -237,7 +219,6 @@
 		755456BE192843E700E5526B /* PGPArmor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPArmor.h; sourceTree = "<group>"; };
 		755456BF192843E700E5526B /* PGPArmor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPArmor.m; sourceTree = "<group>"; };
 		75572E281ED2193C00205871 /* PGPCryptoHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPCryptoHash.h; sourceTree = "<group>"; };
-		7561B66D1F65C423001D2AD6 /* issue59-keys.asc */ = {isa = PBXFileReference; lastKnownFileType = text; path = "issue59-keys.asc"; sourceTree = "<group>"; };
 		7561B68C1F65E121001D2AD6 /* NSArray+PGPUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSArray+PGPUtils.h"; sourceTree = "<group>"; };
 		7561B68D1F65E121001D2AD6 /* NSArray+PGPUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSArray+PGPUtils.m"; sourceTree = "<group>"; };
 		7562858C19239F1B00127E24 /* PGPFingerprint.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPFingerprint.h; sourceTree = "<group>"; };
@@ -249,37 +230,33 @@
 		756299C51914DE1A00C5AD3B /* ObjectivePGPTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ObjectivePGPTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		756299D01914DE1A00C5AD3B /* ObjectivePGPTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ObjectivePGPTests-Info.plist"; sourceTree = "<group>"; };
 		756299D21914DE1A00C5AD3B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		756299D41914DE1A00C5AD3B /* ObjectivePGPTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ObjectivePGPTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		756299D41914DE1A00C5AD3B /* PGPTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = PGPTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		7563356B19255C1A00414CCC /* PGPUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPUser.h; sourceTree = "<group>"; };
 		7563356C19255C1A00414CCC /* PGPUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPUser.m; sourceTree = "<group>"; };
 		7563356E192582CD00414CCC /* PGPPartialSubKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPartialSubKey.h; sourceTree = "<group>"; };
 		7563356F192582CD00414CCC /* PGPPartialSubKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPartialSubKey.m; sourceTree = "<group>"; };
-		7563357219258F1700414CCC /* pubring-test-encrypted.gpg */ = {isa = PBXFileReference; lastKnownFileType = file; path = "pubring-test-encrypted.gpg"; sourceTree = "<group>"; };
-		7563357319258F1700414CCC /* pubring-test-plaintext.gpg */ = {isa = PBXFileReference; lastKnownFileType = file; path = "pubring-test-plaintext.gpg"; sourceTree = "<group>"; };
-		7563357419258F1700414CCC /* secring-test-encrypted.gpg */ = {isa = PBXFileReference; lastKnownFileType = file; path = "secring-test-encrypted.gpg"; sourceTree = "<group>"; };
-		7563357519258F1700414CCC /* secring-test-plaintext.gpg */ = {isa = PBXFileReference; lastKnownFileType = file; path = "secring-test-plaintext.gpg"; sourceTree = "<group>"; };
-		7563357A19258F7100414CCC /* ObjectivePGPTestKeyringSecurePlaintext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectivePGPTestKeyringSecurePlaintext.m; sourceTree = "<group>"; };
-		7563357C1925936900414CCC /* ObjectivePGPTestKeyringSecureEncrypted.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ObjectivePGPTestKeyringSecureEncrypted.m; sourceTree = "<group>"; };
+		7563357A19258F7100414CCC /* PGPTestKeyringSecurePlaintext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPTestKeyringSecurePlaintext.m; sourceTree = "<group>"; };
+		7563357C1925936900414CCC /* PGPTestKeyringSecureEncrypted.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPTestKeyringSecureEncrypted.m; sourceTree = "<group>"; };
 		75734BD9191853DF00A54D6E /* PGPKeyID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPKeyID.h; sourceTree = "<group>"; };
 		75734BDA191853DF00A54D6E /* PGPKeyID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPKeyID.m; sourceTree = "<group>"; };
 		7575BE5A1F00927800121BEA /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.0.sdk/usr/lib/libbz2.tbd; sourceTree = DEVELOPER_DIR; };
 		7575BE5C1F00927F00121BEA /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.0.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
-		758042711EF3CC95001ECAC6 /* issue62-keys.asc */ = {isa = PBXFileReference; lastKnownFileType = text; path = "issue62-keys.asc"; sourceTree = "<group>"; };
 		75804A241EED159300AC97BF /* PGPKey+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PGPKey+Private.h"; sourceTree = "<group>"; };
 		758475E1195AF866003953B2 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		758514EA1EDF09C400CB313F /* PGPFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPFoundation.h; sourceTree = "<group>"; };
 		758514EB1EDF09C400CB313F /* PGPFoundation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPFoundation.m; sourceTree = "<group>"; };
 		758514EE1EDF3D7100CB313F /* PGPKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPKey.h; sourceTree = "<group>"; };
 		758514EF1EDF3D7100CB313F /* PGPKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPKey.m; sourceTree = "<group>"; };
-		7590B7AB1ED9BFF7009A0E92 /* issue44-keys.asc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "issue44-keys.asc"; sourceTree = "<group>"; };
 		7597B79A192E9C7F003ABC65 /* PGPPKCSEmsa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPKCSEmsa.h; sourceTree = "<group>"; };
 		7597B79B192E9C7F003ABC65 /* PGPPKCSEmsa.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPKCSEmsa.m; sourceTree = "<group>"; };
 		759DBA151915BC0400305549 /* PGPTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPTypes.h; sourceTree = "<group>"; };
 		759DBA161915CBDF00305549 /* PGPMPI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPMPI.h; sourceTree = "<group>"; };
 		759DBA171915CBDF00305549 /* PGPMPI.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPMPI.m; sourceTree = "<group>"; };
+		75AB35051F88193B00A1CDD6 /* testfiles.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = testfiles.bundle; sourceTree = "<group>"; };
+		75AB35081F881E3F00A1CDD6 /* PGPTestUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPTestUtils.h; sourceTree = "<group>"; };
+		75AB35091F881E3F00A1CDD6 /* PGPTestUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PGPTestUtils.m; sourceTree = "<group>"; };
 		75AE7E27194224CD004DD6A5 /* PGPPKCSEme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPKCSEme.h; sourceTree = "<group>"; };
 		75AE7E28194224CD004DD6A5 /* PGPPKCSEme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPKCSEme.m; sourceTree = "<group>"; };
-		75B926891CBA3A0200B3EF41 /* issue22-original.asc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "issue22-original.asc"; sourceTree = "<group>"; };
 		75BAFAC41F004E6000A956FC /* Defaults.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Defaults.xcconfig; sourceTree = "<group>"; };
 		75BAFAC51F0050A000A956FC /* Defaults-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Defaults-Release.xcconfig"; sourceTree = "<group>"; };
 		75BAFAC61F0050A000A956FC /* Defaults-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Defaults-Debug.xcconfig"; sourceTree = "<group>"; };
@@ -289,8 +266,6 @@
 		75BF43E51F5076B9004334DE /* PGPKeyMaterial.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PGPKeyMaterial.m; sourceTree = "<group>"; };
 		75C501E41F12337800FEC874 /* PGPRSA.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PGPRSA.m; sourceTree = "<group>"; };
 		75C501E51F12337800FEC874 /* PGPRSA.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPRSA.h; sourceTree = "<group>"; };
-		75CA419B1CDF775900887C62 /* issue35-key.asc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "issue35-key.asc"; sourceTree = "<group>"; };
-		75D53ADE1A2FCDEE00ED9707 /* multiple-keys.asc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "multiple-keys.asc"; sourceTree = "<group>"; };
 		75DA135C191AE1D6004C9C76 /* PGPS2K.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPS2K.h; sourceTree = "<group>"; };
 		75DA135D191AE1D6004C9C76 /* PGPS2K.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPS2K.m; sourceTree = "<group>"; };
 		75E9AD0C1F7FF01C00B0559B /* PGPPartialSubKey+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PGPPartialSubKey+Private.h"; sourceTree = "<group>"; };
@@ -519,11 +494,12 @@
 		756299CE1914DE1A00C5AD3B /* ObjectivePGPTests */ = {
 			isa = PBXGroup;
 			children = (
-				7563357119258F1700414CCC /* TestingFiles */,
-				756299D41914DE1A00C5AD3B /* ObjectivePGPTests.m */,
-				7563357A19258F7100414CCC /* ObjectivePGPTestKeyringSecurePlaintext.m */,
-				7563357C1925936900414CCC /* ObjectivePGPTestKeyringSecureEncrypted.m */,
-				75040AB11926BB35000CEA93 /* ObjectivePGPTestArmor.m */,
+				756299D41914DE1A00C5AD3B /* PGPTests.m */,
+				7563357A19258F7100414CCC /* PGPTestKeyringSecurePlaintext.m */,
+				7563357C1925936900414CCC /* PGPTestKeyringSecureEncrypted.m */,
+				75040AB11926BB35000CEA93 /* PGPTestArmor.m */,
+				75AB35081F881E3F00A1CDD6 /* PGPTestUtils.h */,
+				75AB35091F881E3F00A1CDD6 /* PGPTestUtils.m */,
 				756299CF1914DE1A00C5AD3B /* Supporting Files */,
 			);
 			path = ObjectivePGPTests;
@@ -532,32 +508,11 @@
 		756299CF1914DE1A00C5AD3B /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				75AB35051F88193B00A1CDD6 /* testfiles.bundle */,
 				756299D01914DE1A00C5AD3B /* ObjectivePGPTests-Info.plist */,
 				756299D11914DE1A00C5AD3B /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
-			sourceTree = "<group>";
-		};
-		7563357119258F1700414CCC /* TestingFiles */ = {
-			isa = PBXGroup;
-			children = (
-				75B926891CBA3A0200B3EF41 /* issue22-original.asc */,
-				7538C0DD1CDCF47B00A8F136 /* issue35-message.asc */,
-				75CA419B1CDF775900887C62 /* issue35-key.asc */,
-				75D53ADE1A2FCDEE00ED9707 /* multiple-keys.asc */,
-				750016A819C22E7100EAF308 /* secring-test-plaintext-encrypted-message.asc */,
-				7563357219258F1700414CCC /* pubring-test-encrypted.gpg */,
-				7563357319258F1700414CCC /* pubring-test-plaintext.gpg */,
-				7563357419258F1700414CCC /* secring-test-encrypted.gpg */,
-				7563357519258F1700414CCC /* secring-test-plaintext.gpg */,
-				750B43B71ED356D70064BA05 /* issue53-s2k-gnu-dummy.prv.asc */,
-				750B43B81ED356D70064BA05 /* issue53-s2k-gnu-dummy.pub.asc */,
-				7590B7AB1ED9BFF7009A0E92 /* issue44-keys.asc */,
-				758042711EF3CC95001ECAC6 /* issue62-keys.asc */,
-				753B05421EF3E03800785EBC /* issue62-message.asc */,
-				7561B66D1F65C423001D2AD6 /* issue59-keys.asc */,
-			);
-			path = TestingFiles;
 			sourceTree = "<group>";
 		};
 		75BAFAC31F004E6000A956FC /* Config */ = {
@@ -727,21 +682,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				756299D31914DE1A00C5AD3B /* InfoPlist.strings in Resources */,
-				750B43BA1ED356D70064BA05 /* issue53-s2k-gnu-dummy.pub.asc in Resources */,
-				750B43B91ED356D70064BA05 /* issue53-s2k-gnu-dummy.prv.asc in Resources */,
-				7563357819258F1700414CCC /* secring-test-encrypted.gpg in Resources */,
-				750016A919C22E7100EAF308 /* secring-test-plaintext-encrypted-message.asc in Resources */,
-				7561B66E1F65C479001D2AD6 /* issue59-keys.asc in Resources */,
-				75CA419C1CDF775900887C62 /* issue35-key.asc in Resources */,
-				7563357619258F1700414CCC /* pubring-test-encrypted.gpg in Resources */,
-				758042721EF3CC9C001ECAC6 /* issue62-keys.asc in Resources */,
-				7590B7AC1ED9BFF7009A0E92 /* issue44-keys.asc in Resources */,
-				7538C0DE1CDCF47B00A8F136 /* issue35-message.asc in Resources */,
-				7563357919258F1700414CCC /* secring-test-plaintext.gpg in Resources */,
-				7563357719258F1700414CCC /* pubring-test-plaintext.gpg in Resources */,
-				75B9268B1CBA3A0200B3EF41 /* issue22-original.asc in Resources */,
-				75D53ADF1A2FCDEE00ED9707 /* multiple-keys.asc in Resources */,
-				753B05431EF3E05200785EBC /* issue62-message.asc in Resources */,
+				75AB35061F8819A600A1CDD6 /* testfiles.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -805,10 +746,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7563357B19258F7100414CCC /* ObjectivePGPTestKeyringSecurePlaintext.m in Sources */,
-				75040AB21926BB35000CEA93 /* ObjectivePGPTestArmor.m in Sources */,
-				756299D51914DE1A00C5AD3B /* ObjectivePGPTests.m in Sources */,
-				7563357D1925936900414CCC /* ObjectivePGPTestKeyringSecureEncrypted.m in Sources */,
+				7563357B19258F7100414CCC /* PGPTestKeyringSecurePlaintext.m in Sources */,
+				75040AB21926BB35000CEA93 /* PGPTestArmor.m in Sources */,
+				756299D51914DE1A00C5AD3B /* PGPTests.m in Sources */,
+				75AB350A1F881E3F00A1CDD6 /* PGPTestUtils.m in Sources */,
+				7563357D1925936900414CCC /* PGPTestKeyringSecureEncrypted.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
