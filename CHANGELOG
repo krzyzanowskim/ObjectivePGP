@@ -1,10 +1,11 @@
 - Fixes keys management (import/export issues).
 - Fixes instances equality.
+- Fixes partial packets with zero body length.
 - Reverts NSSet collections to NSArray.
 - Improves objects copying (NSCopying for packets).
 - Updates tests.
 - Updates documentations.
-- Updates Swift API.
+- Updates API.
 
 Version 0.8
 - Adds public and private keys generation feature with PGPKeyGenerator
