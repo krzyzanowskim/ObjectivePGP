@@ -8,6 +8,7 @@
 
 #import "PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h"
 #import "NSData+PGPUtils.h"
+#import "PGPPacket+Private.h"
 #import "PGPCompressedPacket.h"
 #import "PGPCryptoCFB.h"
 #import "PGPCryptoUtils.h"

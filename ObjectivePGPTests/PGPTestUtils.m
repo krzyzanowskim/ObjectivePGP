@@ -18,8 +18,13 @@ NS_ASSUME_NONNULL_BEGIN
     return [NSBundle bundleWithPath:path];
 }
 
++ (NSString *)pathToBundledFile:(NSString *)fileName {
+    NSBundle *bundle = self.filesBundle;
+    return [bundle pathForResource:fileName.stringByDeletingPathExtension ofType:fileName.pathExtension];
+}
+
 + (NSArray<PGPKey *> *)keysFromFile:(NSString *)fileName {
-    NSString *path = [PGPTestUtils.filesBundle pathForResource:fileName.stringByDeletingPathExtension ofType:fileName.pathExtension];
+    NSString *path = [self pathToBundledFile:fileName];
     return [ObjectivePGP keysFromFile:path];
 }
 

@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface PGPTestUtils : NSObject
 
 + (nullable NSBundle *)filesBundle;
-
++ (NSString *)pathToBundledFile:(NSString *)fileName;
 + (NSArray<PGPKey *> *)keysFromFile:(NSString *)fileName;
 
 @end

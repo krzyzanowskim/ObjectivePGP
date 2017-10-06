@@ -16,7 +16,6 @@ extern const UInt32 PGPUnknownLength;
 
 @interface PGPPacket : NSObject <NSCopying, PGPExportable>
 
-@property (nonatomic, readonly) BOOL indeterminateLength;
 @property (nonatomic, readonly) PGPPacketTag tag;
 
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
