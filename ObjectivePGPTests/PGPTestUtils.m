@@ -7,6 +7,7 @@
 //
 
 #import "PGPTestUtils.h"
+#import <ObjectivePGP/ObjectivePGP.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -16,6 +17,12 @@ NS_ASSUME_NONNULL_BEGIN
     NSString *path = [[NSBundle bundleForClass:self.class] pathForResource:@"testfiles" ofType:@"bundle"];
     return [NSBundle bundleWithPath:path];
 }
+
++ (NSArray<PGPKey *> *)keysFromFile:(NSString *)fileName {
+    NSString *path = [PGPTestUtils.filesBundle pathForResource:fileName.stringByDeletingPathExtension ofType:fileName.pathExtension];
+    return [ObjectivePGP keysFromFile:path];
+}
+
 
 @end
 

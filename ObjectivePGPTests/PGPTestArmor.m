@@ -12,8 +12,6 @@
 #import <XCTest/XCTest.h>
 
 @interface ObjectivePGPTestArmor : XCTestCase
-@property (nonatomic) NSString *secKeyringPath;
-@property (nonatomic) NSString *pubKeyringPath;
 @property (nonatomic) NSString *workingDirectory;
 @property (nonatomic) ObjectivePGP *pgp;
 @end
@@ -23,10 +21,6 @@
 - (void)setUp {
     [super setUp];
     self.pgp = [[ObjectivePGP alloc] init];
-
-    NSBundle *bundle = PGPTestUtils.filesBundle;;
-    self.secKeyringPath = [bundle pathForResource:@"secring-test-plaintext" ofType:@"gpg"];
-    self.pubKeyringPath = [bundle pathForResource:@"pubring-test-plaintext" ofType:@"gpg"];
 
     NSString *newDir = [@"ObjectivePGPTests" stringByAppendingPathComponent:[[NSUUID UUID] UUIDString]];
     NSString *tmpDirectoryPath = [NSTemporaryDirectory() stringByAppendingPathComponent:newDir];
@@ -44,16 +38,14 @@
 }
 
 - (void)testMultipleKeys {
-    NSBundle *bundle = PGPTestUtils.filesBundle;
-    NSString *path = [bundle pathForResource:@"multiple-keys" ofType:@"asc"];
-    let keys = [self.pgp keysFromFile:path];
+    let keys = [PGPTestUtils keysFromFile:@"multiple-keys.asc"];
     [self.pgp importKeys:keys];
     XCTAssertEqual(keys.count, (NSUInteger)3);
     XCTAssertEqual(self.pgp.keys.count, (NSUInteger)3);
 }
 
 - (void)testArmorPublicKey {
-    let keys = [self.pgp keysFromFile:self.pubKeyringPath];
+    let keys = [PGPTestUtils keysFromFile:@"pubring-test-plaintext.gpg"];
     [self.pgp importKeys:keys];
 
     PGPKey *key = self.pgp.keys.firstObject;

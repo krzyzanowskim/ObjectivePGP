@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param data Key or keyring data.
  @return Array of read keys.
  */
-- (NSArray<PGPKey *> *)keysFromData:(NSData *)data NS_SWIFT_NAME(keys(from:));
++ (NSArray<PGPKey *> *)keysFromData:(NSData *)data NS_SWIFT_NAME(keys(from:));
 
 /**
  Read keys from the file. Does not import the keys.
@@ -54,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param path Path to the keys file.
  @return Array of read keys.
  */
-- (NSArray<PGPKey *> *)keysFromFile:(NSString *)path NS_SWIFT_NAME(keys(fromFile:));
++ (NSArray<PGPKey *> *)keysFromFile:(NSString *)path NS_SWIFT_NAME(keys(fromFile:));
 
 /**
  Export, previously imported, keys of given type (public or secret) to the file at given path.

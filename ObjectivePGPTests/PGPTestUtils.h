@@ -8,8 +8,16 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
+@class PGPKey;
+
 @interface PGPTestUtils : NSObject
 
 + (nullable NSBundle *)filesBundle;
 
++ (NSArray<PGPKey *> *)keysFromFile:(NSString *)fileName;
+
 @end
+
+NS_ASSUME_NONNULL_END

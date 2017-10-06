@@ -12,8 +12,6 @@
 #import <XCTest/XCTest.h>
 
 @interface ObjectivePGPTestKeyringSecureEncrypted : XCTestCase
-@property (nonatomic) NSString *secKeyringPath;
-@property (nonatomic) NSString *pubKeyringPath;
 @property (nonatomic) NSString *workingDirectory;
 @property (nonatomic) ObjectivePGP *pgp;
 @end
@@ -22,14 +20,7 @@
 
 - (void)setUp {
     [super setUp];
-    NSLog(@"%s", __PRETTY_FUNCTION__);
-
     self.pgp = [[ObjectivePGP alloc] init];
-
-    let bundle = PGPTestUtils.filesBundle;
-    self.secKeyringPath = [bundle pathForResource:@"secring-test-encrypted" ofType:@"gpg"];
-    self.pubKeyringPath = [bundle pathForResource:@"pubring-test-encrypted" ofType:@"gpg"];
-
     NSString *newDir = [@"ObjectivePGPTests" stringByAppendingPathComponent:[[NSUUID UUID] UUIDString]];
     NSString *tmpDirectoryPath = [NSTemporaryDirectory() stringByAppendingPathComponent:newDir];
     [[NSFileManager defaultManager] createDirectoryAtPath:tmpDirectoryPath withIntermediateDirectories:YES attributes:nil error:nil];
@@ -40,25 +31,23 @@
 }
 
 - (void)importSecureKeyring {
-    let keys = [self.pgp keysFromFile:self.secKeyringPath];
+    let keys = [PGPTestUtils keysFromFile:@"secring-test-encrypted.gpg"];
     [self.pgp importKeys:keys];
 }
 
 - (void)importPublicKeyring {
-    let keys = [self.pgp keysFromFile:self.pubKeyringPath];
+    let keys = [PGPTestUtils keysFromFile:@"pubring-test-encrypted.gpg"];
     [self.pgp importKeys:keys];
 }
 
 - (void)tearDown {
-    NSLog(@"%s", __PRETTY_FUNCTION__);
     [super tearDown];
     [[NSFileManager defaultManager] removeItemAtPath:self.workingDirectory error:nil];
     self.pgp = nil;
 }
 
 - (void)testLoadKeyring {
-    let keys = [self.pgp keysFromFile:self.secKeyringPath];
-    [self.pgp importKeys:keys];
+    [self importSecureKeyring];
     XCTAssert(self.pgp.keys.count == 1, @"Should load 1 key");
 }
 
@@ -116,7 +105,7 @@
 
     // file to sign
     NSString *fileToSignPath = [self.workingDirectory stringByAppendingPathComponent:@"signed_file.bin"];
-    status = [[NSFileManager defaultManager] copyItemAtPath:self.secKeyringPath toPath:fileToSignPath error:nil];
+    status = [[@"12345678901234567890123456789" dataUsingEncoding:NSUTF8StringEncoding] writeToFile:fileToSignPath atomically:YES];
     XCTAssertTrue(status);
 
     let keyToSign = [self.pgp findKeyWithIdentifier:@"9528AAA17A9BC007"];

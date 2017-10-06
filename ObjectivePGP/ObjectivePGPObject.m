@@ -687,7 +687,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)importKey:(NSString *)keyIdentifier fromFile:(NSString *)path {
     let fullPath = [path stringByExpandingTildeInPath];
 
-    let loadedKeys = [self keysFromFile:fullPath];
+    let loadedKeys = [self.class keysFromFile:fullPath];
     if (loadedKeys.count == 0) {
         return NO;
     }
@@ -708,7 +708,7 @@ NS_ASSUME_NONNULL_BEGIN
     return YES;
 }
 
-- (NSArray<PGPKey *> *)keysFromFile:(NSString *)path {
++ (NSArray<PGPKey *> *)keysFromFile:(NSString *)path {
     NSString *fullPath = [path stringByExpandingTildeInPath];
 
     BOOL isDirectory = NO;
@@ -725,7 +725,7 @@ NS_ASSUME_NONNULL_BEGIN
     return [self keysFromData:fileData];
 }
 
-- (NSArray<PGPKey *> *)keysFromData:(NSData *)fileData {
++ (NSArray<PGPKey *> *)keysFromData:(NSData *)fileData {
     PGPAssertClass(fileData, NSData);
     
     var keys = [NSArray<PGPKey *> array];
@@ -883,13 +883,13 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Deprecated
 
 - (NSSet<PGPKey *> *)importKeysFromData:(NSData *)data {
-    let keys = [self keysFromData:data];
+    let keys = [self.class keysFromData:data];
     [self importKeys:keys];
     return [NSSet setWithArray:keys];
 }
 
 - (NSSet<PGPKey *> *)importKeysFromFile:(NSString *)path {
-    let keys = [self keysFromFile:path];
+    let keys = [self.class keysFromFile:path];
     [self importKeys:keys];
     return [NSSet setWithArray:keys];
 }
