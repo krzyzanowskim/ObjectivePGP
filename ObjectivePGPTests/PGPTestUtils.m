@@ -2,8 +2,11 @@
 //  PGPTestUtils.m
 //  ObjectivePGPTests
 //
-//  Created by Marcin Krzyzanowski on 06/10/2017.
-//  Copyright © 2017 Marcin Krzyżanowski. All rights reserved.
+//  Copyright (c) Marcin Krzyżanowski. All rights reserved.
+//
+//  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY
+//  INTERNATIONAL COPYRIGHT LAW. USAGE IS BOUND TO THE LICENSE AGREEMENT.
+//  This notice may not be removed from this file.
 //
 
 #import "PGPTestUtils.h"

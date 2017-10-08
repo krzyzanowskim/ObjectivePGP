@@ -1,8 +1,4 @@
 //
-//  PGPPublicKeyEncryptedSessionKeyPacket.m
-//  ObjectivePGP
-//
-//  Created by Marcin Krzyzanowski on 06/06/14.
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rencryptedMPIPartDataights reserved.
 //
 //  5.1.  Public-Key Encrypted Session Key Packets (Tag 1)

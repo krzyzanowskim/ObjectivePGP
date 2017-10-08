@@ -423,7 +423,6 @@
 				751373801F65362C0067A343 /* Utils */,
 				75572E231ED2186300205871 /* CryptoBox */,
 				7513738D1F65373E0067A343 /* Packets */,
-				75AB35361F8A30FD00A1CDD6 /* Info.plist */,
 				756299BD1914DE1A00C5AD3B /* ObjectivePGP.h */,
 				750F89641F0D701E00B99726 /* ObjectivePGPObject.h */,
 				756299BF1914DE1A00C5AD3B /* ObjectivePGPObject.m */,
@@ -476,6 +475,7 @@
 		756299BB1914DE1A00C5AD3B /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				75AB35361F8A30FD00A1CDD6 /* Info.plist */,
 				756299BC1914DE1A00C5AD3B /* ObjectivePGP-Prefix.pch */,
 			);
 			name = "Supporting Files";

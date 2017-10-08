@@ -1,9 +1,9 @@
 //
-//  PGPKeyID.m
-//  ObjectivePGP
+//  Copyright (c) Marcin Krzyżanowski. All rights reserved.
 //
-//  Created by Marcin Krzyzanowski on 06/05/14.
-//  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
+//  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY
+//  INTERNATIONAL COPYRIGHT LAW. USAGE IS BOUND TO THE LICENSE AGREEMENT.
+//  This notice may not be removed from this file.
 //
 // Fingerprint:     4772 3A3C EE12 760F 7DC8  4AE0 1B63 BCB7 E810 38C6
 // Long Key ID:                                    1B63 BCB7 E810 38C6 <- this
