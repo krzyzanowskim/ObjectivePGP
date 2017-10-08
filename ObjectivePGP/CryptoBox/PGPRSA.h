@@ -9,11 +9,11 @@
 #import "PGPMPI.h"
 #import "PGPTypes.h"
 #import "PGPKeyMaterial.h"
+#import "PGPPublicKeyPacket.h"
+#import "PGPSecretKeyPacket.h"
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
-
-@class PGPSecretKeyPacket, PGPPublicKeyPacket;
 
 @interface PGPRSA : NSObject
 

@@ -14,6 +14,7 @@
 #import "PGPKeyID.h"
 #import "PGPPacket.h"
 #import "PGPPacket+Private.h"
+#import "PGPFoundation.h"
 #import "NSMutableData+PGPUtils.h"
 
 #import "PGPLogging.h"
