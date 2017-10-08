@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @implementation PGPPacket
 
 - (instancetype)init {
-    if (self == [super init]) {
+    if (self = [super init]) {
 
     }
     return self;

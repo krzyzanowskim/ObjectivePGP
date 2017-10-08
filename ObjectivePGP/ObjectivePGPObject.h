@@ -194,10 +194,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /// Deprecated.
-- (NSSet<PGPKey *> *)importKeysFromData:(NSData *)data DEPRECATED_ATTRIBUTE;
+- (NSSet<PGPKey *> *)importKeysFromData:(NSData *)data DEPRECATED_MSG_ATTRIBUTE("Use +[ObjectivePGP keysFromData:] instead");
 
 /// Deprecated.
-- (NSSet<PGPKey *> *)importKeysFromFile:(NSString *)path DEPRECATED_ATTRIBUTE;
+- (NSSet<PGPKey *> *)importKeysFromFile:(NSString *)path DEPRECATED_MSG_ATTRIBUTE("Use +[ObjectivePGP keysFromFile:] instead.");
 
 @end
 

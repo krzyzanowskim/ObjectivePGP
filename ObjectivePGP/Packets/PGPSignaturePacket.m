@@ -241,7 +241,7 @@ NS_ASSUME_NONNULL_BEGIN
     [data appendBytes:&_hashAlgoritm length:1];
 
     // hashed Subpackets
-    [data appendData:[self buildSubpacketsCollectionData:hashedSubpackets]];
+    [data appendData:[PGPSignaturePacket buildSubpacketsCollectionData:hashedSubpackets]];
 
     return data;
 }
@@ -254,7 +254,7 @@ NS_ASSUME_NONNULL_BEGIN
     [data appendData:signedPartData];
 
     // unhashed Subpackets
-    [data appendData:[self buildSubpacketsCollectionData:self.unhashedSubpackets]];
+    [data appendData:[PGPSignaturePacket buildSubpacketsCollectionData:self.unhashedSubpackets]];
 
     // signed hash value
     NSAssert(self.signedHashValueData, @"Missing signed hash");
@@ -314,7 +314,7 @@ NS_ASSUME_NONNULL_BEGIN
     // 5.2.4.  Computing Signatures
 
     // build toSignData, toSign
-    let toSignData = [self buildDataToSignForType:self.type inputData:inputData key:publicKey subKey:nil keyPacket:signingKeyPacket userID:userID error:error];
+    let toSignData = [PGPSignaturePacket buildDataToSignForType:self.type inputData:inputData key:publicKey subKey:nil keyPacket:signingKeyPacket userID:userID error:error];
     if (!toSignData) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Invalid signature." }];
@@ -387,7 +387,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Set signatureMPIArray and updates signed hash.
 ///
 /// Update sign related values. This method mutate the signature.
-- (BOOL)signData:(nullable NSData *)inputData withKey:(PGPKey *)key subKey:(nullable PGPKey *)subKey passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error {
+- (BOOL)signData:(nullable NSData *)inputData withKey:(PGPKey *)key subKey:(nullable PGPKey *)subKey passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError *__autoreleasing _Nullable *)error {
     PGPAssertClass(key, PGPKey);
 
     if (!key.secretKey) {
@@ -441,7 +441,7 @@ NS_ASSUME_NONNULL_BEGIN
     let _Nullable trailerData = [self calculateTrailerFor:signedPartData];
 
     // build toSignData, toSign
-    let toSignData = [self buildDataToSignForType:self.type inputData:inputData key:key subKey:subKey keyPacket:signingKeyPacket userID:userID error:error];
+    let toSignData = [PGPSignaturePacket buildDataToSignForType:self.type inputData:inputData key:key subKey:subKey keyPacket:signingKeyPacket userID:userID error:error];
     // toHash = toSignData + signedPartData + trailerData;
     let toHashData = [NSMutableData dataWithData:toSignData];
     [toHashData appendData:signedPartData];
@@ -492,7 +492,7 @@ NS_ASSUME_NONNULL_BEGIN
     return YES;
 }
 
-- (nullable NSData *)buildDataToSignForType:(PGPSignatureType)type inputData:(nullable NSData *)inputData key:(nullable PGPKey *)key subKey:(nullable PGPKey *)subKey keyPacket:(nullable PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError *__autoreleasing _Nullable *)error {
++ (nullable NSData *)buildDataToSignForType:(PGPSignatureType)type inputData:(nullable NSData *)inputData key:(nullable PGPKey *)key subKey:(nullable PGPKey *)subKey keyPacket:(nullable PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError *__autoreleasing _Nullable *)error {
     let toSignData = [NSMutableData data];
     switch (type) {
         case PGPSignatureBinaryDocument:
@@ -612,7 +612,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @param packetBody Packet body
  */
 
-- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing _Nullable *)error {
     __unused NSUInteger position = [super parsePacketBody:packetBody error:error];
     NSUInteger startPosition = position;
 
@@ -641,7 +641,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 // FIXME: V3 signatures fail somewehere (I don't know where yet) because everything is designed
 // for V4 and uses V4 specific data to (for example) validate signature
-- (NSUInteger)parseV3PacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
+- (NSUInteger)parseV3PacketBody:(NSData *)packetBody error:(NSError *__autoreleasing _Nullable *)error {
+    PGPAssertClass(packetBody, NSData);
     NSUInteger position = [super parsePacketBody:packetBody error:error];
 
     // V3
@@ -723,17 +724,19 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // convert V3 values to V4 subpackets
-    PGPSignatureSubpacket *keyIDSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeIssuerKeyID andValue:parsedkeyID];
+    let keyIDSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeIssuerKeyID andValue:parsedkeyID];
     self.unhashedSubpackets = [self.unhashedSubpackets arrayByAddingObject:keyIDSubpacket];
 
     let creationDateTime = [NSDate dateWithTimeIntervalSince1970:parsedCreationTimestamp];
-    PGPSignatureSubpacket *creationTimeSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeSignatureCreationTime andValue:creationDateTime];
+    let creationTimeSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeSignatureCreationTime andValue:creationDateTime];
     self.hashedSubpackets = [self.hashedSubpackets arrayByAddingObject:creationTimeSubpacket];
 
     return position;
 }
 
-- (NSUInteger)parseV4PacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
+- (NSUInteger)parseV4PacketBody:(NSData *)packetBody error:(NSError *__autoreleasing _Nullable *)error {
+    PGPAssertClass(packetBody, NSData);
+
     NSUInteger position = [super parsePacketBody:packetBody error:error];
 
     // A V4 signature hashes the packet body
@@ -777,7 +780,7 @@ NS_ASSUME_NONNULL_BEGIN
 
         NSUInteger positionSubpacket = 0;
         while (positionSubpacket < hashedSubpacketsData.length) {
-            let subpacket = [self getSubpacketStartingAtPosition:positionSubpacket fromData:hashedSubpacketsData];
+            let subpacket = [PGPSignaturePacket getSubpacketStartingAtPosition:positionSubpacket fromData:hashedSubpacketsData];
             [hashedSubpackets pgp_addObject:subpacket];
             positionSubpacket = positionSubpacket + subpacket.length;
         }
@@ -802,7 +805,7 @@ NS_ASSUME_NONNULL_BEGIN
         // Loop subpackets
         NSUInteger positionSubpacket = 0;
         while (positionSubpacket < unhashedSubpacketsData.length) {
-            let subpacket = [self getSubpacketStartingAtPosition:positionSubpacket fromData:unhashedSubpacketsData];
+            let subpacket = [PGPSignaturePacket getSubpacketStartingAtPosition:positionSubpacket fromData:unhashedSubpacketsData];
             [unhashedSubpackets pgp_addObject:subpacket];
             positionSubpacket = positionSubpacket + subpacket.length;
         }
@@ -863,7 +866,7 @@ NS_ASSUME_NONNULL_BEGIN
 // I don't like this part, really ugly
 // This is because subpacket length is unknow and header need to be found first
 // then subpacket can be parsed
-- (PGPSignatureSubpacket *)getSubpacketStartingAtPosition:(NSUInteger)subpacketsPosition fromData:(NSData *)subpacketsData {
++ (PGPSignatureSubpacket *)getSubpacketStartingAtPosition:(NSUInteger)subpacketsPosition fromData:(NSData *)subpacketsData {
     let headerRange = (NSRange){subpacketsPosition, MIN((NSUInteger)6, subpacketsData.length - subpacketsPosition)}; // up to 5+1 octets
     let guessHeaderData = [subpacketsData subdataWithRange:headerRange]; // this is "may be" header to be parsed
     let subpacketHeader = [PGPSignatureSubpacket subpacketHeaderFromData:guessHeaderData];
@@ -876,7 +879,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 /// count + subpackets(count)
-- (NSData *)buildSubpacketsCollectionData:(NSArray *)subpacketsCollection {
++ (NSData *)buildSubpacketsCollectionData:(NSArray <PGPSignatureSubpacket *> *)subpacketsCollection {
     let data = [NSMutableData data];
     if (subpacketsCollection.count == 0) {
         // 0x00 0x00

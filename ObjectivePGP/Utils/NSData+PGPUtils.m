@@ -124,13 +124,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Encryption
 
-- (NSData *)pgp_encryptBlockWithSymmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm sessionKeyData:(NSData *)sessionKeyData {
-    NSAssert(sessionKeyData, @"Missing key data");
-
-    if (!sessionKeyData) {
-        return nil;
-    }
-
+- (nullable NSData *)pgp_encryptBlockWithSymmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm sessionKeyData:(NSData *)sessionKeyData {
+    PGPAssertClass(sessionKeyData, NSData);
     NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:symmetricAlgorithm];
 
     NSData *ret = nil;

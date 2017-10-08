@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSData *)dataWithValue:(NSValue *)value;
 
 - (NSData *)pgp_HashedWithAlgorithm:(PGPHashAlgorithm)hashAlgorithm;
-- (NSData *)pgp_encryptBlockWithSymmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm sessionKeyData:(NSData *)sessionKeyData;
+- (nullable NSData *)pgp_encryptBlockWithSymmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm sessionKeyData:(NSData *)sessionKeyData;
 
 @end
 
