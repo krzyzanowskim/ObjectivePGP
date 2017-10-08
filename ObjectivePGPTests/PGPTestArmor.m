@@ -38,14 +38,14 @@
 }
 
 - (void)testMultipleKeys {
-    let keys = [PGPTestUtils keysFromFile:@"multiple-keys.asc"];
+    let keys = [PGPTestUtils readKeysFromFile:@"multiple-keys.asc"];
     [self.pgp importKeys:keys];
     XCTAssertEqual(keys.count, (NSUInteger)3);
     XCTAssertEqual(self.pgp.keys.count, (NSUInteger)3);
 }
 
 - (void)testArmorPublicKey {
-    let keys = [PGPTestUtils keysFromFile:@"pubring-test-plaintext.gpg"];
+    let keys = [PGPTestUtils readKeysFromFile:@"pubring-test-plaintext.gpg"];
     [self.pgp importKeys:keys];
 
     PGPKey *key = self.pgp.keys.firstObject;

@@ -31,12 +31,12 @@
 }
 
 - (void)importSecureKeyring {
-    let keys = [PGPTestUtils keysFromFile:@"secring-test-encrypted.gpg"];
+    let keys = [PGPTestUtils readKeysFromFile:@"secring-test-encrypted.gpg"];
     [self.pgp importKeys:keys];
 }
 
 - (void)importPublicKeyring {
-    let keys = [PGPTestUtils keysFromFile:@"pubring-test-encrypted.gpg"];
+    let keys = [PGPTestUtils readKeysFromFile:@"pubring-test-encrypted.gpg"];
     [self.pgp importKeys:keys];
 }
 

@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param data Key or keyring data.
  @return Array of read keys.
  */
-+ (NSArray<PGPKey *> *)keysFromData:(NSData *)data NS_SWIFT_NAME(keys(from:));
++ (NSArray<PGPKey *> *)readKeysFromData:(NSData *)data NS_SWIFT_NAME(readKeys(from:));
 
 /**
  Read keys from the file. Does not import the keys.
@@ -54,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param path Path to the keys file.
  @return Array of read keys.
  */
-+ (NSArray<PGPKey *> *)keysFromFile:(NSString *)path NS_SWIFT_NAME(keys(fromFile:));
++ (NSArray<PGPKey *> *)readKeysFromFile:(NSString *)path NS_SWIFT_NAME(readKeys(fromFile:));
 
 /**
  Export, previously imported, keys of given type (public or secret) to the file at given path.
@@ -194,10 +194,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /// Deprecated.
-- (NSSet<PGPKey *> *)importKeysFromData:(NSData *)data DEPRECATED_MSG_ATTRIBUTE("Use +[ObjectivePGP keysFromData:] instead");
+- (NSSet<PGPKey *> *)importreadKeysFromData:(NSData *)data DEPRECATED_MSG_ATTRIBUTE("Use +[ObjectivePGP readKeysFromData:] instead");
 
 /// Deprecated.
-- (NSSet<PGPKey *> *)importKeysFromFile:(NSString *)path DEPRECATED_MSG_ATTRIBUTE("Use +[ObjectivePGP keysFromFile:] instead.");
+- (NSSet<PGPKey *> *)importKeysFromFile:(NSString *)path DEPRECATED_MSG_ATTRIBUTE("Use +[ObjectivePGP readKeysFromFile:] instead.");
 
 @end
 

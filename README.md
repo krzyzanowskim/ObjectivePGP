@@ -58,10 +58,10 @@ ObjectivePGP *pgp = [[ObjectivePGP alloc] init];
 
 ```objective-c
 /* Load keys from a keyring file */
-NSArray *keys = [pgp keysFromFile:@"/path/to/secring.gpg"];
+NSArray *keys = [pgp readKeysFromFile:@"/path/to/secring.gpg"];
 
 /* Load eys from a keys file */
-NSArray *keys = [pgp keysFromFile:@"/path/to/key.asc"];
+NSArray *keys = [pgp readKeysFromFile:@"/path/to/key.asc"];
 
 /* Import keys */
 [pgp importKeys:keys];

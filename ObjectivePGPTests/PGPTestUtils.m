@@ -23,9 +23,9 @@ NS_ASSUME_NONNULL_BEGIN
     return [bundle pathForResource:fileName.stringByDeletingPathExtension ofType:fileName.pathExtension];
 }
 
-+ (NSArray<PGPKey *> *)keysFromFile:(NSString *)fileName {
++ (NSArray<PGPKey *> *)readKeysFromFile:(NSString *)fileName {
     NSString *path = [self pathToBundledFile:fileName];
-    return [ObjectivePGP keysFromFile:path];
+    return [ObjectivePGP readKeysFromFile:path];
 }
 
 

@@ -41,7 +41,7 @@
 }
 
 - (NSArray<PGPKey *> *)loadKeysFromFile:(NSString *)fileName {
-    return [PGPTestUtils keysFromFile:fileName];
+    return [PGPTestUtils readKeysFromFile:fileName];
 }
 
 - (void)tearDown {
@@ -78,7 +78,7 @@
 
     // Check if can be loaded
     ObjectivePGP *checkPGP = [[ObjectivePGP alloc] init];
-    let checkKeys = [ObjectivePGP keysFromFile:exportSecretKeyringPath];
+    let checkKeys = [ObjectivePGP readKeysFromFile:exportSecretKeyringPath];
     [checkPGP importKeys:checkKeys];
     XCTAssertTrue(checkKeys.count > 0);
 

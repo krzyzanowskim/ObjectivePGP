@@ -39,7 +39,7 @@
 }
 
 - (NSArray<PGPKey *> *)importKeysFromFile:(NSString *)fileName {
-    let keys = [PGPTestUtils keysFromFile:fileName];
+    let keys = [PGPTestUtils readKeysFromFile:fileName];
     [self.pgp importKeys:keys];
     return keys;
 }
@@ -69,7 +69,7 @@
     let exportedSecretKeyData = [key export:PGPPartialKeySecret error:nil];
     XCTAssertNotNil(exportedSecretKeyData);
 
-    let importedKeys = [ObjectivePGP keysFromData:exportedPublicKeyData];
+    let importedKeys = [ObjectivePGP readKeysFromData:exportedPublicKeyData];
     XCTAssert(importedKeys.count == 1);
     XCTAssertEqualObjects(importedKeys.firstObject.keyID, key.keyID);
 }
@@ -84,10 +84,10 @@
     let exportedSecretKeyData = [key export:PGPPartialKeySecret error:nil];
     XCTAssertNotNil(exportedSecretKeyData);
 
-    let importedPublicKeys = [ObjectivePGP keysFromData:exportedPublicKeyData];
+    let importedPublicKeys = [ObjectivePGP readKeysFromData:exportedPublicKeyData];
     XCTAssert(importedPublicKeys.count == 1);
 
-    let importedSecretKeys = [ObjectivePGP keysFromData:exportedPublicKeyData];
+    let importedSecretKeys = [ObjectivePGP readKeysFromData:exportedPublicKeyData];
     XCTAssert(importedSecretKeys.count == 1);
 }
 
@@ -133,7 +133,7 @@
 
     for (PGPKey *key in self.pgp.keys) {
         let exportedKeyData = [key export:nil];
-        let readKeys = [ObjectivePGP keysFromData:exportedKeyData];
+        let readKeys = [ObjectivePGP readKeysFromData:exportedKeyData];
         XCTAssertTrue(readKeys.count == 1);
         [self.pgp importKeys:readKeys];
     }
@@ -196,7 +196,7 @@
 
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/59
 - (void)testIssue59 {
-    let keys = [PGPTestUtils keysFromFile:@"issue59-keys.asc"];
+    let keys = [PGPTestUtils readKeysFromFile:@"issue59-keys.asc"];
     XCTAssertEqual(keys.count, (NSUInteger)1);
 }
 

@@ -687,7 +687,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)importKey:(NSString *)keyIdentifier fromFile:(NSString *)path {
     let fullPath = [path stringByExpandingTildeInPath];
 
-    let loadedKeys = [self.class keysFromFile:fullPath];
+    let loadedKeys = [self.class readKeysFromFile:fullPath];
     if (loadedKeys.count == 0) {
         return NO;
     }
@@ -708,7 +708,7 @@ NS_ASSUME_NONNULL_BEGIN
     return YES;
 }
 
-+ (NSArray<PGPKey *> *)keysFromFile:(NSString *)path {
++ (NSArray<PGPKey *> *)readKeysFromFile:(NSString *)path {
     NSString *fullPath = [path stringByExpandingTildeInPath];
 
     BOOL isDirectory = NO;
@@ -722,10 +722,10 @@ NS_ASSUME_NONNULL_BEGIN
         return @[];
     }
 
-    return [self keysFromData:fileData];
+    return [self readKeysFromData:fileData];
 }
 
-+ (NSArray<PGPKey *> *)keysFromData:(NSData *)fileData {
++ (NSArray<PGPKey *> *)readKeysFromData:(NSData *)fileData {
     PGPAssertClass(fileData, NSData);
     
     var keys = [NSArray<PGPKey *> array];
@@ -742,7 +742,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     for (NSData *data in binRingData) {
-        let readPartialKeys = [ObjectivePGP readPartialKeysFromData:data];
+        let readPartialKeys = [ObjectivePGP readPartialreadKeysFromData:data];
         for (PGPPartialKey *key in readPartialKeys) {
             keys = [ObjectivePGP addOrUpdatePartialKey:key inContainer:keys];
         }
@@ -809,7 +809,7 @@ NS_ASSUME_NONNULL_BEGIN
     return updatedContainer;
 }
 
-+ (NSArray<PGPPartialKey *> *)readPartialKeysFromData:(NSData *)messageData {
++ (NSArray<PGPPartialKey *> *)readPartialreadKeysFromData:(NSData *)messageData {
     let partialKeys = [NSMutableArray<PGPPartialKey *> array];
     let accumulatedPackets = [NSMutableArray<PGPPacket *> array];
     NSUInteger position = 0;
@@ -882,14 +882,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Deprecated
 
-- (NSSet<PGPKey *> *)importKeysFromData:(NSData *)data {
-    let keys = [self.class keysFromData:data];
+- (NSSet<PGPKey *> *)importreadKeysFromData:(NSData *)data {
+    let keys = [self.class readKeysFromData:data];
     [self importKeys:keys];
     return [NSSet setWithArray:keys];
 }
 
 - (NSSet<PGPKey *> *)importKeysFromFile:(NSString *)path {
-    let keys = [self.class keysFromFile:path];
+    let keys = [self.class readKeysFromFile:path];
     [self importKeys:keys];
     return [NSSet setWithArray:keys];
 }
