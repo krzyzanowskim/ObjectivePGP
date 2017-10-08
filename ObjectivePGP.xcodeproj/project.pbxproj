@@ -145,8 +145,6 @@
 		750EE3C31922C185009E818E /* PGPPartialKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPartialKey.m; sourceTree = "<group>"; };
 		750F52BF1F5C832500DA7DE4 /* PGPMacros+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PGPMacros+Private.h"; sourceTree = "<group>"; };
 		750F89341F0D6A3F00B99726 /* ObjectivePGP.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ObjectivePGP.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		750F89361F0D6A3F00B99726 /* ObjectivePGP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ObjectivePGP.h; sourceTree = "<group>"; };
-		750F89371F0D6A3F00B99726 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		750F89641F0D701E00B99726 /* ObjectivePGPObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ObjectivePGPObject.h; sourceTree = "<group>"; };
 		751056111940A76F00653C0B /* PGPCryptoCFB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPCryptoCFB.h; sourceTree = "<group>"; };
 		751056121940A76F00653C0B /* PGPCryptoCFB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPCryptoCFB.m; sourceTree = "<group>"; };
@@ -255,6 +253,7 @@
 		75AB35051F88193B00A1CDD6 /* testfiles.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = testfiles.bundle; sourceTree = "<group>"; };
 		75AB35081F881E3F00A1CDD6 /* PGPTestUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPTestUtils.h; sourceTree = "<group>"; };
 		75AB35091F881E3F00A1CDD6 /* PGPTestUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PGPTestUtils.m; sourceTree = "<group>"; };
+		75AB35361F8A30FD00A1CDD6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		75AE7E27194224CD004DD6A5 /* PGPPKCSEme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPKCSEme.h; sourceTree = "<group>"; };
 		75AE7E28194224CD004DD6A5 /* PGPPKCSEme.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPKCSEme.m; sourceTree = "<group>"; };
 		75BAFAC41F004E6000A956FC /* Defaults.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Defaults.xcconfig; sourceTree = "<group>"; };
@@ -298,15 +297,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		750F89351F0D6A3F00B99726 /* ObjectivePGP */ = {
-			isa = PBXGroup;
-			children = (
-				750F89361F0D6A3F00B99726 /* ObjectivePGP.h */,
-				750F89371F0D6A3F00B99726 /* Info.plist */,
-			);
-			path = ObjectivePGP;
-			sourceTree = "<group>";
-		};
 		751373801F65362C0067A343 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
@@ -398,7 +388,6 @@
 				75BAFAC31F004E6000A956FC /* Config */,
 				756299BA1914DE1A00C5AD3B /* ObjectivePGP */,
 				756299CE1914DE1A00C5AD3B /* ObjectivePGPTests */,
-				750F89351F0D6A3F00B99726 /* ObjectivePGP */,
 				756299B71914DE1A00C5AD3B /* Frameworks */,
 				756299B61914DE1A00C5AD3B /* Products */,
 			);
@@ -434,6 +423,7 @@
 				751373801F65362C0067A343 /* Utils */,
 				75572E231ED2186300205871 /* CryptoBox */,
 				7513738D1F65373E0067A343 /* Packets */,
+				75AB35361F8A30FD00A1CDD6 /* Info.plist */,
 				756299BD1914DE1A00C5AD3B /* ObjectivePGP.h */,
 				750F89641F0D701E00B99726 /* ObjectivePGPObject.h */,
 				756299BF1914DE1A00C5AD3B /* ObjectivePGPObject.m */,
