@@ -12,13 +12,17 @@
 #import "PGPPublicKeyPacket+Private.h"
 #import "PGPSecretKeyPacket+Private.h"
 #import "PGPSignaturePacket+Private.h"
-#import "PGPMacros+Private.h"
-#import "NSData+PGPUtils.h"
-#import "NSMutableData+PGPUtils.h"
+#import "PGPPublicSubKeyPacket.h"
+#import "PGPSecretSubKeyPacket.h"
+#import "PGPUserIDPacket.h"
 #import "PGPCryptoHash.h"
 #import "PGPCryptoUtils.h"
 #import "PGPRSA.h"
 #import "PGPDSA.h"
+#import "PGPCryptoCFB.h"
+#import "PGPMacros+Private.h"
+#import "NSData+PGPUtils.h"
+#import "NSMutableData+PGPUtils.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

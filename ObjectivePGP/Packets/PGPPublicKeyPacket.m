@@ -12,6 +12,7 @@
 #import "PGPMPI.h"
 #import "PGPRSA.h"
 #import "PGPTypes.h"
+#import "PGPFoundation.h"
 #import "NSMutableData+PGPUtils.h"
 #import "PGPMacros+Private.h"
 

@@ -26,6 +26,8 @@
 #import <openssl/idea.h>
 #import <openssl/sha.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @implementation PGPSymmetricallyEncryptedDataPacket
 
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
@@ -36,9 +38,11 @@
     return position;
 }
 
-- (NSData *)export:(NSError *__autoreleasing *)error {
+- (nullable NSData *)export:(NSError *__autoreleasing _Nullable *)error {
     NSAssert(self.encryptedData, @"Need encrypted data, use PGPSymmetricallyEncryptedIntegrityProtectedDataPacket instead");
-    if (!self.encryptedData) return nil;
+    if (!self.encryptedData) {
+        return nil;
+    }
 
     return self.encryptedData;
 }
@@ -75,5 +79,6 @@
     return duplicate;
 }
 
-
 @end
+
+NS_ASSUME_NONNULL_END

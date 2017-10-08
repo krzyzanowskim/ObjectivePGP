@@ -14,6 +14,8 @@
 
 #import <CommonCrypto/CommonCrypto.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface PGPModificationDetectionCodePacket ()
 
 @property (nonatomic, readwrite) NSData *hashData;
@@ -45,7 +47,7 @@
     return position;
 }
 
-- (NSData *)export:(NSError *__autoreleasing *)error {
+- (nullable NSData *)export:(NSError *__autoreleasing *)error {
     return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
         return [self.hashData subdataWithRange:(NSRange){0, CC_SHA1_DIGEST_LENGTH}]; // force limit to 20 octets
     }];
@@ -85,3 +87,5 @@
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

@@ -6,6 +6,7 @@
 //  Copyright © 2017 Marcin Krzyżanowski. All rights reserved.
 //
 
+#import "PGPSignaturePacket.h"
 #import <ObjectivePGP/ObjectivePGP.h>
 
 NS_ASSUME_NONNULL_BEGIN

@@ -7,7 +7,10 @@
 //
 
 #import "PGPPacket.h"
-#import "PGPUserAttributeSubpacket.h"
+
+NS_ASSUME_NONNULL_BEGIN
+
+@class PGPUserAttributeSubpacket;
 
 @interface PGPUserAttributePacket : PGPPacket <NSCopying>
 
@@ -15,3 +18,5 @@
 @property (nonatomic) NSArray<PGPUserAttributeSubpacket *> *subpackets;
 
 @end
+
+NS_ASSUME_NONNULL_END

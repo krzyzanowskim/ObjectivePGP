@@ -11,6 +11,8 @@
 #import "PGPFoundation.h"
 #import "PGPMacros+Private.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @implementation PGPUserAttributePacket
 
 - (PGPPacketTag)tag {
@@ -62,7 +64,7 @@
     return position;
 }
 
-- (NSData *)export:(NSError *__autoreleasing *)error {
+- (nullable NSData *)export:(NSError *__autoreleasing _Nullable *)error {
     // TODO: export
     return nil;
 }
@@ -98,5 +100,6 @@
     return duplicate;
 }
 
-
 @end
+
+NS_ASSUME_NONNULL_END

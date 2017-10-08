@@ -8,14 +8,6 @@
 
 #import "PGPPacket.h"
 
-// 9.3.  Compression Algorithms
-typedef NS_ENUM(UInt8, PGPCompressionAlgorithm) {
-    PGPCompressionUncompressed = 0,
-    PGPCompressionZIP = 1, // TODO: Unsupported
-    PGPCompressionZLIB = 2,
-    PGPCompressionBZIP2 = 3
-};
-
 @interface PGPCompressedPacket : PGPPacket <NSCopying>
 
 @property (nonatomic, readonly) PGPCompressionAlgorithm compressionType;

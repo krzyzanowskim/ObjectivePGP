@@ -9,15 +9,18 @@
 #import "PGPExportableProtocol.h"
 #import "PGPKeyID.h"
 #import "PGPPacket.h"
-#import "PGPSignaturePacket.h"
 #import "PGPTypes.h"
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSUInteger, PGPPartialKeyType) { PGPPartialKeyUnknown = 0, PGPPartialKeySecret = 1, PGPPartialKeyPublic = 2 };
+typedef NS_ENUM(NSUInteger, PGPPartialKeyType) {
+    PGPPartialKeyUnknown = 0,
+    PGPPartialKeySecret = 1,
+    PGPPartialKeyPublic = 2
+};
 
-@class PGPSecretKeyPacket, PGPPartialSubKey;
+@class PGPSignaturePacket, PGPUser, PGPSecretKeyPacket, PGPPartialSubKey;
 
 /// Single Private or Public key.
 NS_SWIFT_NAME(PartialKey) @interface PGPPartialKey : NSObject <PGPExportable, NSCopying>

@@ -8,7 +8,6 @@
 
 #import "PGPSignaturePacket.h"
 #import "PGPSignaturePacket+Private.h"
-#import "NSData+PGPUtils.h"
 #import "PGPKey.h"
 #import "PGPLiteralPacket.h"
 #import "PGPMPI.h"
@@ -22,8 +21,10 @@
 #import "PGPSignatureSubpacketHeader.h"
 #import "PGPUser.h"
 #import "PGPUserIDPacket.h"
+#import "PGPFoundation.h"
 #import "NSMutableData+PGPUtils.h"
 #import "NSArray+PGPUtils.h"
+#import "NSData+PGPUtils.h"
 
 #import "PGPLogging.h"
 #import "PGPMacros+Private.h"

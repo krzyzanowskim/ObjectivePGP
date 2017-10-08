@@ -42,8 +42,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSArray<PGPPacket *> *)allPackets {
     let arr = [NSMutableArray<PGPPacket *> arrayWithObject:self.primaryKeyPacket];
-    [arr pgp_addObject:self.revocationSignature];
-    [arr pgp_addObject:self.bindingSignature];
+    [arr pgp_addObject:PGPCast(self.revocationSignature, PGPPacket)];
+    [arr pgp_addObject:PGPCast(self.bindingSignature, PGPPacket)];
     return arr;
 }
 

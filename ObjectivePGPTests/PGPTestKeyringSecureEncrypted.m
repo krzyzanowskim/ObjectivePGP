@@ -62,10 +62,8 @@
     [self importSecureKeyring];
 
     let key = self.pgp.keys.firstObject;
-
-    let secretKeyPacket = PGPCast(key.secretKey.primaryKeyPacket, PGPSecretKeyPacket);
-    XCTAssertTrue(key.secretKey.isEncryptedWithPassword, @"Should be encrypted");
-    XCTAssertEqualObjects([secretKeyPacket.keyID longIdentifier], @"9528AAA17A9BC007", @"Invalid key identifier");
+    XCTAssertTrue(key.isEncryptedWithPassword, @"Should be encrypted");
+    XCTAssertEqualObjects([key.keyID longIdentifier], @"9528AAA17A9BC007", @"Invalid key identifier");
 }
 
 - (void)testKeyDecryption {

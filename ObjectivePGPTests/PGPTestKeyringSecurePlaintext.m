@@ -6,11 +6,7 @@
 //  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import "ObjectivePGP.h"
-#import "PGPMacros.h"
-#import "PGPSecretKeyPacket.h"
-#import "PGPSignaturePacket.h"
-#import "PGPUser.h"
+#import <ObjectivePGP/ObjectivePGP.h>
 #import "PGPMacros+Private.h"
 #import "PGPTestUtils.h"
 #import <XCTest/XCTest.h>
@@ -89,9 +85,8 @@
     XCTAssert(self.pgp.keys.count > 0, @"Keys not loaded");
 
     let key = checkPGP.keys.firstObject;
-    let secretKeyPacket = PGPCast(key.secretKey.primaryKeyPacket, PGPSecretKeyPacket);
-    XCTAssertFalse(key.secretKey.isEncryptedWithPassword, @"Should not be encrypted");
-    XCTAssertEqualObjects([secretKeyPacket.keyID longIdentifier], @"25A233C2952E4E8B", @"Invalid key identifier");
+    XCTAssertFalse(key.isEncryptedWithPassword, @"Should not be encrypted");
+    XCTAssertEqualObjects([key.keyID longIdentifier], @"25A233C2952E4E8B", @"Invalid key identifier");
 }
 
 - (void)testSavePublicKeys {
@@ -114,9 +109,8 @@
     XCTAssertTrue(self.pgp.keys.count > 0);
 
     let key = self.pgp.keys.firstObject;
-    let secretKeyPacket = PGPCast(key.secretKey.primaryKeyPacket, PGPSecretKeyPacket);
-    XCTAssertFalse(key.secretKey.isEncryptedWithPassword, @"Should not be encrypted");
-    XCTAssertEqualObjects([secretKeyPacket.keyID longIdentifier], @"25A233C2952E4E8B", @"Invalid key identifier");
+    XCTAssertFalse(key.isEncryptedWithPassword, @"Should not be encrypted");
+    XCTAssertEqualObjects([key.keyID longIdentifier], @"25A233C2952E4E8B", @"Invalid key identifier");
 }
 
 - (void)testSigning {

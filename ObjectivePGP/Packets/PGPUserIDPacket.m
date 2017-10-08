@@ -8,6 +8,7 @@
 
 #import "PGPUserIDPacket.h"
 #import "PGPPacket+Private.h"
+#import "PGPFoundation.h"
 #import "PGPMacros+Private.h"
 
 NS_ASSUME_NONNULL_BEGIN

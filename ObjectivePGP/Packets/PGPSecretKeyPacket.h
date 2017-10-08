@@ -7,9 +7,10 @@
 //
 
 #import "PGPPublicKeyPacket.h"
-#import "PGPS2K.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+@class PGPS2K;
 
 @interface PGPSecretKeyPacket : PGPPublicKeyPacket <NSCopying, PGPExportable>
 

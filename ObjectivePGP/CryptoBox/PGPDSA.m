@@ -14,9 +14,11 @@
 #import "PGPSecretKeyPacket.h"
 #import "PGPSignaturePacket+Private.h"
 #import "PGPBigNum+Private.h"
+#import "PGPKey.h"
 
 #import "PGPLogging.h"
 #import "PGPMacros+Private.h"
+#import "PGPFoundation.h"
 
 #import <openssl/err.h>
 #import <openssl/ssl.h>

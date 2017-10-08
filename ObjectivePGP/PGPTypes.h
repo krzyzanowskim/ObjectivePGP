@@ -186,3 +186,11 @@ typedef NS_ENUM(UInt8, PGPS2KUsage) {
     PGPS2KUsageEncryptedAndHashed = 254,
     PGPS2KUsageEncrypted = 255
 };
+
+// 9.3.  Compression Algorithms
+typedef NS_ENUM(UInt8, PGPCompressionAlgorithm) {
+    PGPCompressionUncompressed = 0,
+    PGPCompressionZIP = 1,
+    PGPCompressionZLIB = 2,
+    PGPCompressionBZIP2 = 3
+};
