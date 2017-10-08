@@ -40,7 +40,7 @@
 		751373C21F6537490067A343 /* PGPOnePassSignaturePacket.h in Headers */ = {isa = PBXBuildFile; fileRef = 751373941F65373E0067A343 /* PGPOnePassSignaturePacket.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		751373C31F6537490067A343 /* PGPOnePassSignaturePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 751373951F65373E0067A343 /* PGPOnePassSignaturePacket.m */; };
 		751373C41F6537490067A343 /* PGPPacket+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 751373961F65373E0067A343 /* PGPPacket+Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		751373C51F6537490067A343 /* PGPPacket.h in Headers */ = {isa = PBXBuildFile; fileRef = 751373971F65373E0067A343 /* PGPPacket.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		751373C51F6537490067A343 /* PGPPacket.h in Headers */ = {isa = PBXBuildFile; fileRef = 751373971F65373E0067A343 /* PGPPacket.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		751373C61F6537490067A343 /* PGPPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 751373981F65373E0067A343 /* PGPPacket.m */; };
 		751373C81F6537490067A343 /* PGPPublicKeyEncryptedSessionKeyPacket.h in Headers */ = {isa = PBXBuildFile; fileRef = 7513739A1F65373E0067A343 /* PGPPublicKeyEncryptedSessionKeyPacket.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		751373C91F6537490067A343 /* PGPPublicKeyEncryptedSessionKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 7513739B1F65373E0067A343 /* PGPPublicKeyEncryptedSessionKeyPacket.m */; };
@@ -77,7 +77,7 @@
 		751373E81F6537490067A343 /* PGPUserIDPacket.h in Headers */ = {isa = PBXBuildFile; fileRef = 751373BA1F65373E0067A343 /* PGPUserIDPacket.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		751373E91F6537490067A343 /* PGPUserIDPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 751373BB1F65373E0067A343 /* PGPUserIDPacket.m */; };
 		751373EC1F65379D0067A343 /* PGPPacketFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 751373EB1F65379D0067A343 /* PGPPacketFactory.m */; };
-		751373ED1F65379F0067A343 /* PGPPacketFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 751373EA1F65379C0067A343 /* PGPPacketFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		751373ED1F65379F0067A343 /* PGPPacketFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 751373EA1F65379C0067A343 /* PGPPacketFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		751373F01F65382C0067A343 /* NSMutableData+PGPUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 751373EE1F65382C0067A343 /* NSMutableData+PGPUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		751373F11F65382C0067A343 /* NSMutableData+PGPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 751373EF1F65382C0067A343 /* NSMutableData+PGPUtils.m */; };
 		7537A6AD1F0D739A00892829 /* PGPCryptoHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 75572E281ED2193C00205871 /* PGPCryptoHash.h */; settings = {ATTRIBUTES = (Private, ); }; };

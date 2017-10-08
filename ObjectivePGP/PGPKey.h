@@ -6,7 +6,6 @@
 //  Copyright © 2017 Marcin Krzyżanowski. All rights reserved.
 //
 
-#import "PGPPacket.h"
 #import "PGPPartialKey.h"
 #import "PGPTypes.h"
 

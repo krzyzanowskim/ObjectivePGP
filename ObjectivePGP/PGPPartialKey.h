@@ -8,7 +8,6 @@
 
 #import "PGPExportableProtocol.h"
 #import "PGPKeyID.h"
-#import "PGPPacket.h"
 #import "PGPTypes.h"
 #import <Foundation/Foundation.h>
 
@@ -20,7 +19,7 @@ typedef NS_ENUM(NSUInteger, PGPPartialKeyType) {
     PGPPartialKeyPublic = 2
 };
 
-@class PGPSignaturePacket, PGPUser, PGPSecretKeyPacket, PGPPartialSubKey;
+@class PGPPacket, PGPSignaturePacket, PGPUser, PGPSecretKeyPacket, PGPPartialSubKey;
 
 /// Single Private or Public key.
 NS_SWIFT_NAME(PartialKey) @interface PGPPartialKey : NSObject <PGPExportable, NSCopying>

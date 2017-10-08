@@ -7,12 +7,11 @@
 //
 
 #import <ObjectivePGP/PGPMacros.h>
-#import <ObjectivePGP/PGPPacket.h>
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class PGPUserIDPacket, PGPUserAttributePacket, PGPSignaturePacket, PGPPartialKey;
+@class PGPPacket, PGPUserIDPacket, PGPUserAttributePacket, PGPSignaturePacket, PGPPartialKey;
 
 NS_SWIFT_NAME(User) @interface PGPUser : NSObject <NSCopying>
 
