@@ -1,10 +1,9 @@
 //
-//  Copyright (c) Marcin Krzyżanowski. All rights reserved.
+//  ObjectivePGP
 //
-//  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY
-//  INTERNATIONAL COPYRIGHT LAW. USAGE IS BOUND TO THE LICENSE AGREEMENT.
-//  This notice may not be removed from this file.
+//  Copyright © Marcin Krzyżanowski. All rights reserved.
 //
+//  DO NOT MODIFY. FILE GENERATED AUTOMATICALLY.
 
 #import <Foundation/Foundation.h>
 
@@ -27,4 +26,3 @@ FOUNDATION_EXPORT const unsigned char ObjectivePGPVersionString[];
 #import <ObjectivePGP/PGPKey.h>
 #import <ObjectivePGP/PGPExportableProtocol.h>
 #import <ObjectivePGP/PGPArmor.h>
-

@@ -1,9 +1,9 @@
 //
-//  PGPArmor.h
-//  ObjectivePGP
+//  Copyright (c) Marcin Krzyżanowski. All rights reserved.
 //
-//  Created by Marcin Krzyzanowski on 18/05/14.
-//  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
+//  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY
+//  INTERNATIONAL COPYRIGHT LAW. USAGE IS BOUND TO THE LICENSE AGREEMENT.
+//  This notice may not be removed from this file.
 //
 
 #import <Foundation/Foundation.h>
@@ -21,7 +21,7 @@ typedef NS_ENUM(NSUInteger, PGPArmorType) {
 NS_ASSUME_NONNULL_BEGIN
 
 /// ASCII Armor message.
-@interface PGPArmor : NSObject
+NS_SWIFT_NAME(Armor) @interface PGPArmor : NSObject
 
 + (NSData *)armoredData:(NSData *)dataToArmor as:(PGPArmorType)armorType part:(NSUInteger)part of:(NSUInteger)ofParts;
 + (NSData *)armoredData:(NSData *)dataToArmor as:(PGPArmorType)armorType;

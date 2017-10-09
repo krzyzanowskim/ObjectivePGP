@@ -1,11 +1,12 @@
+Version 0.9
 - Fixes keys management (import/export issues).
 - Fixes instances equality.
 - Fixes partial packets with zero body length.
-- Reverts NSSet collections to NSArray.
 - Improves objects copying (NSCopying for packets).
+- Reverts NSSet collections to NSArray.
+- Updates public API (cleanups).
 - Updates tests.
 - Updates documentations.
-- Updates API.
 
 Version 0.8
 - Adds public and private keys generation feature with PGPKeyGenerator

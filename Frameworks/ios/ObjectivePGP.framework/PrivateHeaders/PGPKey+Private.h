@@ -1,9 +1,9 @@
 //
-//  PGPKey+Private.h
-//  ObjectivePGP
+//  Copyright (c) Marcin Krzyżanowski. All rights reserved.
 //
-//  Created by Marcin Krzyzanowski on 10/06/2017.
-//  Copyright © 2017 Marcin Krzyżanowski. All rights reserved.
+//  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY
+//  INTERNATIONAL COPYRIGHT LAW. USAGE IS BOUND TO THE LICENSE AGREEMENT.
+//  This notice may not be removed from this file.
 //
 
 #import "PGPKey.h"
@@ -13,8 +13,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PGPKey ()
 
-@property (nonatomic, nullable, readwrite) PGPPartialKey *secretKey;
-@property (nonatomic, nullable, readwrite) PGPPartialKey *publicKey;
+@property (nonatomic, nullable, copy, readwrite) PGPPartialKey *secretKey;
+@property (nonatomic, nullable, copy, readwrite) PGPPartialKey *publicKey;
 
 @end
 

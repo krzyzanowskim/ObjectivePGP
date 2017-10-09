@@ -1,0 +1,27 @@
+//
+//  Copyright (c) Marcin Krzyżanowski. All rights reserved.
+//
+//  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY
+//  INTERNATIONAL COPYRIGHT LAW. USAGE IS BOUND TO THE LICENSE AGREEMENT.
+//  This notice may not be removed from this file.
+//
+
+#import "PGPPacket.h"
+#import "PGPExportableProtocol.h"
+
+NS_ASSUME_NONNULL_BEGIN
+
+@class PGPKeyID, PGPPublicKeyPacket, PGPSecretKeyPacket;
+
+@interface PGPPublicKeyEncryptedSessionKeyPacket : PGPPacket <NSCopying, PGPExportable>
+@property (nonatomic) UInt8 version;
+@property (nonatomic) PGPPublicKeyAlgorithm publicKeyAlgorithm;
+@property (nonatomic, getter=isEncryptedWithPassword) BOOL encryptedWithPassword;
+@property (nonatomic, copy) PGPKeyID *keyID;
+
+- (BOOL)encrypt:(PGPPublicKeyPacket *)publicKeyPacket sessionKeyData:(NSData *)sessionKeyData sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm error:(NSError *__autoreleasing *)error;
+- (nullable NSData *)decryptSessionKeyData:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm *)sessionKeyAlgorithm error:(NSError *__autoreleasing *)error;
+
+@end
+
+NS_ASSUME_NONNULL_END

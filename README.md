@@ -58,10 +58,10 @@ ObjectivePGP *pgp = [[ObjectivePGP alloc] init];
 
 ```objective-c
 /* Load keys from a keyring file */
-NSArray *keys = [pgp readKeysFromFile:@"/path/to/secring.gpg"];
+NSArray *keys = [ObjectivePGP readKeysFromFile:@"/path/to/secring.gpg"];
 
 /* Load eys from a keys file */
-NSArray *keys = [pgp readKeysFromFile:@"/path/to/key.asc"];
+NSArray *keys = [ObjectivePGP readKeysFromFile:@"/path/to/key.asc"];
 
 /* Import keys */
 [pgp importKeys:keys];
@@ -107,10 +107,10 @@ NSData *fileContent = [NSData dataWithContentsOfFile:@"/path/file/to/data.txt"];
 PGPKey *key = [self.pgp findKeyWithIdentifier:@"979E4B03DFFE30C6"];
 
 /* Sign and return only a signature data (detached = YES) */
-NSData *signature = [pgp signData:fileContent usingKey:key passphrase:nil detached:YES error:nil];
+NSData *signature = [pgp sign:fileContent usingKey:key passphrase:nil detached:YES error:nil];
 
 /* Sign and return a data with the signature (detached = NO) */
-NSData *signedData = [pgp signData:fileContent usingSecretKey:key passphrase:nil detached:NO error:nil];
+NSData *signedData = [pgp sign:fileContent usingSecretKey:key passphrase:nil detached:NO error:nil];
 ```
 
 ##### Verify signature from data (or file)
@@ -118,14 +118,14 @@ NSData *signedData = [pgp signData:fileContent usingSecretKey:key passphrase:nil
 ```objective-c
 /* embedded signature */
 NSData *signedContent = [NSData dataWithContentsOfFile:@"/path/file/to/data.signed"];
-if ([pgp verifyData:signedContent]) {
+if ([pgp verify:signedContent error:nil]) {
     // Success
 }
 
 /* detached signature */
 NSData *signatureContent = [NSData dataWithContentsOfFile:@"/path/file/to/signature"];
 NSData *dataContent = [NSData dataWithContentsOfFile:@"/path/file/to/data.txt"];
-if ([pgp verifyData:dataContent withSignature:signatureContent]) {
+if ([pgp verify:dataContent withSignature:signatureContent error:nil]) {
     // Success
 }
 ```
@@ -139,7 +139,7 @@ NSData *fileContent = [NSData dataWithContentsOfFile:@"/path/plaintext.txt"];
 PGPKey *key = [self.pgp findKeyWithIdentifier:@"979E4B03DFFE30C6"];
 
 /* Encrypt data. Armor output (ASCII file)  */
-NSData *encryptedData = [pgp encryptData:fileContent usingKeys:@[key] armored:YES error:nil];
+NSData *encryptedData = [pgp encrypt:fileContent usingKeys:@[key] armored:YES error:nil];
 if (encryptedData) {
     // Success
 }
@@ -151,7 +151,7 @@ if (encryptedData) {
 NSData *encryptedFileContent = [NSData dataWithContentsOfFile:@"/path/data.enc"];
 
 /* If key is encrypted with the passphrase, you can provide a passphrase key here. */
-NSData *decryptedData = [pgp decryptData:encryptedFileContent passphrase:nil error:nil];
+NSData *decryptedData = [pgp decrypt:encryptedFileContent passphrase:nil error:nil];
 if (decryptedData) {
     // Success
 }

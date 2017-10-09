@@ -1,12 +1,14 @@
 //
-//  PGPSecretKeyPacket+Private.h
-//  ObjectivePGP
+//  Copyright (c) Marcin Krzyżanowski. All rights reserved.
 //
-//  Created by Marcin Krzyzanowski on 09/07/2017.
-//  Copyright © 2017 Marcin Krzyżanowski. All rights reserved.
+//  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY
+//  INTERNATIONAL COPYRIGHT LAW. USAGE IS BOUND TO THE LICENSE AGREEMENT.
+//  This notice may not be removed from this file.
 //
 
 #import "PGPPublicKeyPacket+Private.h"
+#import "PGPS2K.h"
+#import "PGPSecretKeyPacket.h"
 #import <ObjectivePGP/ObjectivePGP.h>
 
 NS_ASSUME_NONNULL_BEGIN

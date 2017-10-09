@@ -1,9 +1,9 @@
 //
-//  PGPKeyID.h
-//  ObjectivePGP
+//  Copyright (c) Marcin Krzyżanowski. All rights reserved.
 //
-//  Created by Marcin Krzyzanowski on 06/05/14.
-//  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
+//  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY
+//  INTERNATIONAL COPYRIGHT LAW. USAGE IS BOUND TO THE LICENSE AGREEMENT.
+//  This notice may not be removed from this file.
 //
 
 #import <ObjectivePGP/PGPMacros.h>
@@ -15,20 +15,18 @@ NS_ASSUME_NONNULL_BEGIN
 @class PGPFingerprint;
 
 /// The eight-octet Key ID
-@interface PGPKeyID : NSObject <PGPExportable>
+NS_SWIFT_NAME(KeyID) @interface PGPKeyID : NSObject <PGPExportable, NSCopying>
 
 /// The eight-octet Key identifier
-@property (readonly, copy, nonatomic) NSData *longKey;
-@property (readonly, nonatomic) NSString *longKeyString;
+@property (readonly, nonatomic) NSString *longIdentifier;
 
 /// The four-octet Key identifier
-@property (readonly, nonatomic) NSData *shortKey;
-@property (readonly, nonatomic) NSString *shortKeyString;
+@property (readonly, nonatomic) NSString *shortIdentifier;
 
 PGP_EMPTY_INIT_UNAVAILABLE
 
 /// Initialize with eight-octet key identifier
-- (instancetype)initWithLongKey:(NSData *)longKeyData NS_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithLongKey:(NSData *)data NS_DESIGNATED_INITIALIZER;
 
 /// Initialize with fingerprint
 - (instancetype)initWithFingerprint:(PGPFingerprint *)fingerprint;

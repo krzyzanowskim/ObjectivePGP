@@ -1,29 +1,28 @@
 //
-//  PGPUser.h
-//  ObjectivePGP
+//  Copyright (c) Marcin Krzyżanowski. All rights reserved.
 //
-//  Created by Marcin Krzyzanowski on 15/05/14.
-//  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
+//  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY
+//  INTERNATIONAL COPYRIGHT LAW. USAGE IS BOUND TO THE LICENSE AGREEMENT.
+//  This notice may not be removed from this file.
 //
 
 #import <ObjectivePGP/PGPMacros.h>
-#import <ObjectivePGP/PGPPacket.h>
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class PGPUserIDPacket, PGPUserAttributePacket, PGPSignaturePacket, PGPPartialKey;
+@class PGPPacket, PGPUserIDPacket, PGPUserAttributePacket, PGPSignaturePacket, PGPPartialKey;
 
-@interface PGPUser : NSObject
+NS_SWIFT_NAME(User) @interface PGPUser : NSObject <NSCopying>
 
 @property (nonatomic, copy) NSString *userID;
-@property (nonatomic) PGPUserAttributePacket *userAttribute;
-@property (nonatomic) NSArray<PGPSignaturePacket *> *selfCertifications;
-@property (nonatomic) NSArray<PGPSignaturePacket *> *otherSignatures;
-@property (nonatomic) NSArray<PGPSignaturePacket *> *revocationSignatures;
+@property (nonatomic, copy) PGPUserAttributePacket *userAttribute;
+@property (nonatomic, copy) NSArray<PGPSignaturePacket *> *selfCertifications;
+@property (nonatomic, copy) NSArray<PGPSignaturePacket *> *otherSignatures;
+@property (nonatomic, copy) NSArray<PGPSignaturePacket *> *revocationSignatures;
 
-@property (nonatomic) PGPUserIDPacket *userIDPacket;
-@property (nonatomic) NSArray<PGPPacket *> *allPackets;
+@property (nonatomic, readonly) PGPUserIDPacket *userIDPacket;
+@property (nonatomic, readonly) NSArray<PGPPacket *> *allPackets;
 
 PGP_EMPTY_INIT_UNAVAILABLE
 

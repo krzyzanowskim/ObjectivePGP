@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param path Path to the file with the keys.
  @return YES on success.
  */
-- (BOOL)importKey:(NSString *)keyIdentifier fromFile:(NSString *)path NS_SWIFT_NAME(import(keyIdentifier:fromFile:));
+- (BOOL)importKey:(NSString *)identifier fromFile:(NSString *)path NS_SWIFT_NAME(import(keyIdentifier:fromFile:));
 
 /**
  Delete keys
@@ -54,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param path Path to the keys file.
  @return Array of read keys.
  */
-+ (NSArray<PGPKey *> *)readKeysFromFile:(NSString *)path NS_SWIFT_NAME(readKeys(fromFile:));
++ (NSArray<PGPKey *> *)readKeysFromFile:(NSString *)path NS_SWIFT_NAME(readKeys(from:));
 
 /**
  Export, previously imported, keys of given type (public or secret) to the file at given path.

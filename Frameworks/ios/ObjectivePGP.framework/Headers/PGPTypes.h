@@ -1,9 +1,9 @@
 //
-//  PGPTypes.h
-//  PGPKeyring
+//  Copyright (c) Marcin Krzyżanowski. All rights reserved.
 //
-//  Created by Marcin Krzyzanowski on 04/05/14.
-//  Copyright (c) 2014 Marcin Krzyżanowski. All rights reserved.
+//  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY
+//  INTERNATIONAL COPYRIGHT LAW. USAGE IS BOUND TO THE LICENSE AGREEMENT.
+//  This notice may not be removed from this file.
 //
 
 #import <Foundation/Foundation.h>
@@ -185,4 +185,12 @@ typedef NS_ENUM(UInt8, PGPS2KUsage) {
     PGPS2KUsageNonEncrypted = 0, // no passphrase
     PGPS2KUsageEncryptedAndHashed = 254,
     PGPS2KUsageEncrypted = 255
+};
+
+// 9.3.  Compression Algorithms
+typedef NS_ENUM(UInt8, PGPCompressionAlgorithm) {
+    PGPCompressionUncompressed = 0,
+    PGPCompressionZIP = 1,
+    PGPCompressionZLIB = 2,
+    PGPCompressionBZIP2 = 3
 };

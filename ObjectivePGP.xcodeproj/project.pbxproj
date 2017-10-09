@@ -124,6 +124,9 @@
 		75C501E71F1233A500FEC874 /* PGPRSA.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C501E41F12337800FEC874 /* PGPRSA.m */; };
 		75E9AD0D1F7FF01C00B0559B /* PGPPartialSubKey+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 75E9AD0C1F7FF01C00B0559B /* PGPPartialSubKey+Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		75E9AD0F1F7FF10100B0559B /* PGPPartialKey+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 75E9AD0E1F7FF10100B0559B /* PGPPartialKey+Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		75F6BAAC1F8AED3B00A0B885 /* ObjectivePGP-Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 75F6BAAB1F8AED3500A0B885 /* ObjectivePGP-Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		75F6BAAE1F8AF29F00A0B885 /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 75F6BAAD1F8AF28100A0B885 /* LICENSE.txt */; };
+		75F6BAAF1F8AF2CC00A0B885 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 758475E1195AF866003953B2 /* README.md */; };
 		75F74E481F4383C50054231C /* PGPDSA.h in Headers */ = {isa = PBXBuildFile; fileRef = 75F74E441F4382FF0054231C /* PGPDSA.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		75F74E4A1F4383F90054231C /* PGPDSA.m in Sources */ = {isa = PBXBuildFile; fileRef = 75F74E451F4382FF0054231C /* PGPDSA.m */; };
 /* End PBXBuildFile section */
@@ -270,6 +273,8 @@
 		75E9AD0C1F7FF01C00B0559B /* PGPPartialSubKey+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PGPPartialSubKey+Private.h"; sourceTree = "<group>"; };
 		75E9AD0E1F7FF10100B0559B /* PGPPartialKey+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PGPPartialKey+Private.h"; sourceTree = "<group>"; };
 		75F67F651F0F672B00FBEFCE /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
+		75F6BAAB1F8AED3500A0B885 /* ObjectivePGP-Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ObjectivePGP-Private.h"; sourceTree = "<group>"; };
+		75F6BAAD1F8AF28100A0B885 /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		75F74E441F4382FF0054231C /* PGPDSA.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPDSA.h; sourceTree = "<group>"; };
 		75F74E451F4382FF0054231C /* PGPDSA.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PGPDSA.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -385,6 +390,7 @@
 			isa = PBXGroup;
 			children = (
 				758475E1195AF866003953B2 /* README.md */,
+				75F6BAAD1F8AF28100A0B885 /* LICENSE.txt */,
 				75BAFAC31F004E6000A956FC /* Config */,
 				756299BA1914DE1A00C5AD3B /* ObjectivePGP */,
 				756299CE1914DE1A00C5AD3B /* ObjectivePGPTests */,
@@ -424,6 +430,7 @@
 				75572E231ED2186300205871 /* CryptoBox */,
 				7513738D1F65373E0067A343 /* Packets */,
 				756299BD1914DE1A00C5AD3B /* ObjectivePGP.h */,
+				75F6BAAB1F8AED3500A0B885 /* ObjectivePGP-Private.h */,
 				750F89641F0D701E00B99726 /* ObjectivePGPObject.h */,
 				756299BF1914DE1A00C5AD3B /* ObjectivePGPObject.m */,
 				751373EA1F65379C0067A343 /* PGPPacketFactory.h */,
@@ -569,6 +576,7 @@
 				7537A6D51F0D739A00892829 /* PGPPKCSEmsa.h in Headers */,
 				7537A6D61F0D739A00892829 /* PGPPKCSEme.h in Headers */,
 				7537A6D81F0D739A00892829 /* PGPCryptoCFB.h in Headers */,
+				75F6BAAC1F8AED3B00A0B885 /* ObjectivePGP-Private.h in Headers */,
 				7537A6D91F0D739A00892829 /* PGPLogging.h in Headers */,
 				751373BC1F6537490067A343 /* PGPCompressedPacket.h in Headers */,
 				7537A6D01F0D739A00892829 /* PGPPartialKey.h in Headers */,
@@ -594,6 +602,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 750F89391F0D6A3F00B99726 /* Build configuration list for PBXNativeTarget "ObjectivePGP" */;
 			buildPhases = (
+				75F6BAB01F8AF2E800A0B885 /* Generate umbrella headers */,
 				750F892F1F0D6A3F00B99726 /* Sources */,
 				750F89301F0D6A3F00B99726 /* Frameworks */,
 				750F89311F0D6A3F00B99726 /* Headers */,
@@ -664,6 +673,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				75F6BAAF1F8AF2CC00A0B885 /* README.md in Resources */,
+				75F6BAAE1F8AF29F00A0B885 /* LICENSE.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -677,6 +688,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		75F6BAB01F8AF2E800A0B885 /* Generate umbrella headers */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 12;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Generate umbrella headers";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/bash;
+			shellScript = "export LANG=en_US.UTF-8\nexport LANGUAGE=en_US.UTF-8\nexport LC_ALL=en_US.UTF-8\n\n[[ -s \"$HOME/.rvm/scripts/rvm\" ]] && source \"$HOME/.rvm/scripts/rvm\"\n\n\"${PROJECT_DIR}/scripts/generate-umbrella-header.rb\" \"${PROJECT_FILE_PATH}\"";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		750F892F1F0D6A3F00B99726 /* Sources */ = {
