@@ -1,3 +1,7 @@
+Version 0.9.1
+- Fixes subkeys generation
+- Adds support for embedded signatures
+
 Version 0.9
 - Fixes keys management (import/export issues).
 - Fixes instances equality.
