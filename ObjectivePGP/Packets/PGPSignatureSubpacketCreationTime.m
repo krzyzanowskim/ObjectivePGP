@@ -37,21 +37,10 @@ static const NSUInteger PGPSignatureSubpacketLength = 4;
     return [[PGPSignatureSubpacketCreationTime alloc] initWithDate:date];
 }
 
-#pragma mark - PGPExportable
+#pragma mark - NSCopying
 
-- (nullable NSData *)export:(NSError *__autoreleasing  _Nullable *)error {
-    let timestamp = CFSwapInt32HostToBig((UInt32)[self.value timeIntervalSince1970]);
-    let valueData = [NSData dataWithBytes:&timestamp length:PGPSignatureSubpacketLength];
-
-    let type = self.class.type;
-    let typedData = [NSMutableData dataWithBytes:&type length:1];
-    [typedData appendData:valueData];
-
-
-    let output = [NSMutableData data];
-    [output appendData:[PGPPacket buildNewFormatLengthDataForData:typedData]];
-    [output appendData:typedData];
-    return output;
+- (id)copyWithZone:(nullable NSZone *)zone {
+    return [[PGPSignatureSubpacketCreationTime alloc] initWithDate:self.value];
 }
 
 @end

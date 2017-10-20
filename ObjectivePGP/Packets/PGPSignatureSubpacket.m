@@ -9,8 +9,10 @@
 #import "PGPSignatureSubpacket.h"
 #import "PGPSignatureSubpacket+Private.h"
 #import "PGPSignatureSubpacketCreationTime.h"
+#import "PGPSignatureSubpacketEmbeddedSignature.h"
 #import "PGPSignatureSubpacketHeader.h"
 #import "PGPCompressedPacket.h"
+#import "PGPSignaturePacket.h"
 #import "PGPKeyID.h"
 #import "PGPPacket.h"
 #import "PGPPacket+Private.h"
@@ -64,6 +66,11 @@ NS_ASSUME_NONNULL_BEGIN
             //  Signature Creation Time MUST be present in the hashed area.
             self.value = [PGPSignatureSubpacketCreationTime packetWithData:packetBodyData].value;
         } break;
+        case PGPSignatureSubpacketTypeEmbeddedSignature: {
+            //  5.2.3.26.  Embedded Signature
+            // TODO: such a mess with subpackets. Needs refactor: specific subpacket inherit from the PGPSignatureSubpacket and implements import/export
+            self.value = [PGPSignatureSubpacketEmbeddedSignature packetWithData:packetBodyData];
+        } break;
         case PGPSignatureSubpacketTypeSignatureExpirationTime: // NSNumber
         case PGPSignatureSubpacketTypeKeyExpirationTime: {
             //  5.2.3.10. Signature Expiration Time
@@ -82,8 +89,8 @@ NS_ASSUME_NONNULL_BEGIN
         {
             //  5.2.3.5.  Issuer
 
-            PGPKeyID *keyID = [[PGPKeyID alloc] initWithLongKey:packetBodyData];
-            self.value = (id)keyID; //[packetBody subdataWithRange:(NSRange){0,8}];
+            let keyID = [[PGPKeyID alloc] initWithLongKey:packetBodyData];
+            self.value = keyID; //[packetBody subdataWithRange:(NSRange){0,8}];
         } break;
         case PGPSignatureSubpacketTypeExportableCertification: // NSNumber BOOL
         {
@@ -233,6 +240,11 @@ NS_ASSUME_NONNULL_BEGIN
             let date = PGPCast(self.value, NSDate);
             let signatureCreationTimestamp = CFSwapInt32HostToBig((UInt32)[date timeIntervalSince1970]);
             [data appendBytes:&signatureCreationTimestamp length:4];
+        } break;
+        case PGPSignatureSubpacketTypeEmbeddedSignature: // PGPSignature
+        {
+            let subpacketEmbeddedSignature = PGPCast(self.value, PGPSignatureSubpacketEmbeddedSignature);
+            return [subpacketEmbeddedSignature export:error];
         } break;
         case PGPSignatureSubpacketTypeSignatureExpirationTime: // NSNumber
         case PGPSignatureSubpacketTypeKeyExpirationTime: {

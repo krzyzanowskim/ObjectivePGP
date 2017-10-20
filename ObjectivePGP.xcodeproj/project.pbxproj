@@ -112,6 +112,8 @@
 		756299D51914DE1A00C5AD3B /* PGPTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 756299D41914DE1A00C5AD3B /* PGPTests.m */; };
 		7563357B19258F7100414CCC /* PGPTestKeyringSecurePlaintext.m in Sources */ = {isa = PBXBuildFile; fileRef = 7563357A19258F7100414CCC /* PGPTestKeyringSecurePlaintext.m */; };
 		7563357D1925936900414CCC /* PGPTestKeyringSecureEncrypted.m in Sources */ = {isa = PBXBuildFile; fileRef = 7563357C1925936900414CCC /* PGPTestKeyringSecureEncrypted.m */; };
+		757183BA1F9A7D56004D7DF1 /* PGPSignatureSubpacketEmbeddedSignature.h in Headers */ = {isa = PBXBuildFile; fileRef = 757183B81F9A7D56004D7DF1 /* PGPSignatureSubpacketEmbeddedSignature.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		757183BB1F9A7D56004D7DF1 /* PGPSignatureSubpacketEmbeddedSignature.m in Sources */ = {isa = PBXBuildFile; fileRef = 757183B91F9A7D56004D7DF1 /* PGPSignatureSubpacketEmbeddedSignature.m */; };
 		7575BE5B1F00927800121BEA /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7575BE5A1F00927800121BEA /* libbz2.tbd */; };
 		7575BE5D1F00927F00121BEA /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7575BE5C1F00927F00121BEA /* libz.tbd */; };
 		75AB35061F8819A600A1CDD6 /* testfiles.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 75AB35051F88193B00A1CDD6 /* testfiles.bundle */; };
@@ -238,6 +240,8 @@
 		7563356F192582CD00414CCC /* PGPPartialSubKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPartialSubKey.m; sourceTree = "<group>"; };
 		7563357A19258F7100414CCC /* PGPTestKeyringSecurePlaintext.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPTestKeyringSecurePlaintext.m; sourceTree = "<group>"; };
 		7563357C1925936900414CCC /* PGPTestKeyringSecureEncrypted.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPTestKeyringSecureEncrypted.m; sourceTree = "<group>"; };
+		757183B81F9A7D56004D7DF1 /* PGPSignatureSubpacketEmbeddedSignature.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPSignatureSubpacketEmbeddedSignature.h; sourceTree = "<group>"; };
+		757183B91F9A7D56004D7DF1 /* PGPSignatureSubpacketEmbeddedSignature.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PGPSignatureSubpacketEmbeddedSignature.m; sourceTree = "<group>"; };
 		75734BD9191853DF00A54D6E /* PGPKeyID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPKeyID.h; sourceTree = "<group>"; };
 		75734BDA191853DF00A54D6E /* PGPKeyID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPKeyID.m; sourceTree = "<group>"; };
 		7575BE5A1F00927800121BEA /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.0.sdk/usr/lib/libbz2.tbd; sourceTree = DEVELOPER_DIR; };
@@ -351,6 +355,8 @@
 				751373AB1F65373E0067A343 /* PGPSignatureSubpacket.m */,
 				751373AC1F65373E0067A343 /* PGPSignatureSubpacketCreationTime.h */,
 				751373AD1F65373E0067A343 /* PGPSignatureSubpacketCreationTime.m */,
+				757183B81F9A7D56004D7DF1 /* PGPSignatureSubpacketEmbeddedSignature.h */,
+				757183B91F9A7D56004D7DF1 /* PGPSignatureSubpacketEmbeddedSignature.m */,
 				751373AE1F65373E0067A343 /* PGPSignatureSubpacketHeader.h */,
 				751373AF1F65373E0067A343 /* PGPSignatureSubpacketHeader.m */,
 				751373B01F65373E0067A343 /* PGPSymmetricallyEncryptedDataPacket.h */,
@@ -592,6 +598,7 @@
 				751373ED1F65379F0067A343 /* PGPPacketFactory.h in Headers */,
 				7537A6B51F0D739A00892829 /* PGPBigNum+Private.h in Headers */,
 				75E9AD0F1F7FF10100B0559B /* PGPPartialKey+Private.h in Headers */,
+				757183BA1F9A7D56004D7DF1 /* PGPSignatureSubpacketEmbeddedSignature.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -753,6 +760,7 @@
 				751373BD1F6537490067A343 /* PGPCompressedPacket.m in Sources */,
 				750F89601F0D6EF100B99726 /* PGPPKCSEmsa.m in Sources */,
 				751373DF1F6537490067A343 /* PGPSymmetricallyEncryptedDataPacket.m in Sources */,
+				757183BB1F9A7D56004D7DF1 /* PGPSignatureSubpacketEmbeddedSignature.m in Sources */,
 				751373E31F6537490067A343 /* PGPTrustPacket.m in Sources */,
 				751373D11F6537490067A343 /* PGPSecretKeyPacket.m in Sources */,
 				750F89611F0D6EF100B99726 /* PGPPKCSEme.m in Sources */,

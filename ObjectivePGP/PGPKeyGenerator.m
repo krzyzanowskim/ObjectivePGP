@@ -14,6 +14,7 @@
 #import "PGPSignaturePacket+Private.h"
 #import "PGPPublicSubKeyPacket.h"
 #import "PGPSecretSubKeyPacket.h"
+#import "PGPSignatureSubpacketEmbeddedSignature.h"
 #import "PGPUserIDPacket.h"
 #import "PGPCryptoHash.h"
 #import "PGPCryptoUtils.h"
@@ -221,6 +222,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 - (nullable PGPSignaturePacket *)buildPublicSignaturePacketForSubKey:(PGPKey *)subKey parentKey:(PGPKey *)parentKey {
+    NSError *error;
+
     let publicSubKeyPacket = PGPCast(subKey.publicKey.primaryKeyPacket, PGPPublicSubKeyPacket);
 
     let publicSubKeySignaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureSubkeyBinding hashAlgorithm:self.hashAlgorithm];
@@ -231,11 +234,18 @@ NS_ASSUME_NONNULL_BEGIN
     let keyFlagsSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeKeyFlags andValue:@[@(PGPSignatureFlagAllowEncryptCommunications), @(PGPSignatureFlagAllowEncryptStorage)]];
     let issuerKeyIDSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeIssuerKeyID andValue:parentKey.signingSecretKey.keyID];
 
-    publicSubKeySignaturePacket.hashedSubpackets = @[creationTimeSubpacket, keyFlagsSubpacket];
+    // embeded signature
+    let embeddedSignaturePacket = [PGPSignaturePacket signaturePacket:PGPSignaturePrimaryKeyBinding hashAlgorithm:self.hashAlgorithm];
+    embeddedSignaturePacket.version = 0x04;
+    embeddedSignaturePacket.publicKeyAlgorithm = publicSubKeyPacket.publicKeyAlgorithm;
+    [embeddedSignaturePacket signData:nil withKey:subKey subKey:nil passphrase:nil userID:nil error:&error];
+    let subpacketEmbeddedSignature = [[PGPSignatureSubpacketEmbeddedSignature alloc] initWithSignature:embeddedSignaturePacket];
+    let embeddedSignatureSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeEmbeddedSignature andValue:subpacketEmbeddedSignature];
+
+    publicSubKeySignaturePacket.hashedSubpackets = @[creationTimeSubpacket, keyFlagsSubpacket, embeddedSignatureSubpacket];
     publicSubKeySignaturePacket.unhashedSubpackets = @[issuerKeyIDSubpacket];
 
     // self sign the signature
-    NSError *error;
     let userID = parentKey.publicKey.users.firstObject.userID;
     if (![publicSubKeySignaturePacket signData:nil withKey:parentKey subKey:subKey passphrase:nil userID:userID error:&error]) {
         return nil;
@@ -245,6 +255,8 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (nullable PGPSignaturePacket *)buildSecretSignaturePacketForSubKey:(PGPKey *)subKey parentKey:(PGPKey *)parentKey {
+    NSError *error;
+
     let secretSubKeyPacket = PGPCast(subKey.secretKey.primaryKeyPacket, PGPSecretSubKeyPacket);
 
     let secretSubKeySignaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureSubkeyBinding hashAlgorithm:self.hashAlgorithm];
@@ -255,11 +267,18 @@ NS_ASSUME_NONNULL_BEGIN
     let keyFlagsSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeKeyFlags andValue:@[@(PGPSignatureFlagAllowEncryptCommunications), @(PGPSignatureFlagAllowEncryptStorage)]];
     let issuerKeyIDSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeIssuerKeyID andValue:parentKey.signingSecretKey.keyID];
 
-    secretSubKeySignaturePacket.hashedSubpackets = @[creationTimeSubpacket, keyFlagsSubpacket];
+    // embeded signature
+    let embeddedSignaturePacket = [PGPSignaturePacket signaturePacket:PGPSignaturePrimaryKeyBinding hashAlgorithm:self.hashAlgorithm];
+    embeddedSignaturePacket.version = secretSubKeyPacket.version;
+    embeddedSignaturePacket.publicKeyAlgorithm = secretSubKeyPacket.publicKeyAlgorithm;
+    [embeddedSignaturePacket signData:nil withKey:subKey subKey:nil passphrase:nil userID:nil error:&error];
+    let subpacketEmbeddedSignature = [[PGPSignatureSubpacketEmbeddedSignature alloc] initWithSignature:embeddedSignaturePacket];
+    let embeddedSignatureSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeEmbeddedSignature andValue:subpacketEmbeddedSignature];
+
+    secretSubKeySignaturePacket.hashedSubpackets = @[creationTimeSubpacket, keyFlagsSubpacket, embeddedSignatureSubpacket];
     secretSubKeySignaturePacket.unhashedSubpackets = @[issuerKeyIDSubpacket];
 
     // self sign the signature
-    NSError *error;
     let userID = parentKey.secretKey.users.firstObject.userID;
     if (![secretSubKeySignaturePacket signData:nil withKey:parentKey subKey:subKey passphrase:nil userID:userID error:&error]) {
         return nil;

@@ -153,8 +153,8 @@
     PGPPartialKey * _Nullable decryptedKey = [key.secretKey decryptedWithPassphrase:@"weakpassphrase" error:&err];
     XCTAssertNotNil(decryptedKey);
     NSData *exportedKeyData = [decryptedKey export:nil];
-    XCTAssert(exportedKeyData.length == 4869);
-    XCTAssert(self.pgp.keys.count == 1, @"");
+    XCTAssertEqual(exportedKeyData.length, (NSUInteger)4869);
+    XCTAssertEqual(self.pgp.keys.count, (NSUInteger)1);
 }
 
 - (void)testIssue35 {

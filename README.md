@@ -172,7 +172,6 @@ See [CHANGELOG](./CHANGELOG)
 
 Known limitations:
 
-- Embedded signatures are not supported.
 - ZIP compression not fully supported.
 - Blowfish, Twofish and Elgamal are not supported.
 - Missing external configuration for default values.

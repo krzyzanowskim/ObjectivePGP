@@ -25,6 +25,8 @@
 #import "PGPCryptoUtils.h"
 #import "PGPRSA.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface PGPSecretKeyPacket ()
 
 @property (nonatomic) BOOL wasDecrypted; // is decrypted
@@ -388,7 +390,7 @@
 
 #pragma mark - NSCopying
 
-- (id)copyWithZone:(NSZone *)zone {
+- (id)copyWithZone:(nullable NSZone *)zone {
     let duplicate = PGPCast([super copyWithZone:zone], PGPSecretKeyPacket);
     duplicate.version = self.version;
     duplicate.s2kUsage = self.s2kUsage;
@@ -402,3 +404,5 @@
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

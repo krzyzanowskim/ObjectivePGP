@@ -169,6 +169,13 @@ NS_ASSUME_NONNULL_BEGIN
                         if (!subKey) {
                             continue;
                         }
+
+                        // TODO: check embedded signature "PGPSignaturePrimaryKeyBinding"
+                        // A signature that binds a signing subkey MUST have
+                        // an Embedded Signature subpacket in this binding signature that
+                        // contains a 0x19 signature made by the signing subkey on the
+                        // primary key and subkey.
+
                         subKey.bindingSignature = PGPCast(packet, PGPSignaturePacket);
                         break;
                     case PGPSignatureKeyRevocation:
