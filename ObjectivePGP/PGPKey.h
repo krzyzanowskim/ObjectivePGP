@@ -52,7 +52,7 @@ PGP_EMPTY_INIT_UNAVAILABLE;
 
 /// The binary format.
 /// @discussion If you need ASCII format, you can use `PGPArmor`.
-- (nullable NSData *)export:(PGPPartialKeyType)keyType error:(NSError * __autoreleasing _Nullable *)error;
+- (nullable NSData *)export:(PGPPartialKeyType)keyType error:(NSError * __autoreleasing _Nullable *)error NS_SWIFT_NAME(export(keyType:));
 
 @end
 
