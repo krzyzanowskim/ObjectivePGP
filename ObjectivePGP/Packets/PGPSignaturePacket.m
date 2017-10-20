@@ -107,6 +107,7 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
     duplicate.version = self.version;
+    duplicate.type = self.type;
     duplicate.publicKeyAlgorithm = self.publicKeyAlgorithm;
     duplicate.hashAlgoritm = self.hashAlgoritm;
     duplicate.signedHashValueData = self.signedHashValueData;
