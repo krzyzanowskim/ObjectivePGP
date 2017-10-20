@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)init {
     if (self = [super init]) {
-        _version = 0x4;
+        _version = 0x04;
         _hashedSubpackets = [NSArray<PGPSignatureSubpacket *> array];
         _unhashedSubpackets = [NSArray<PGPSignatureSubpacket *> array];
         _signatureMPIArray = [NSArray<PGPMPI *> array];
@@ -315,7 +315,7 @@ NS_ASSUME_NONNULL_BEGIN
     // 5.2.4.  Computing Signatures
 
     // build toSignData, toSign
-    let toSignData = [PGPSignaturePacket buildDataToSignForType:self.type inputData:inputData key:publicKey subKey:nil keyPacket:signingKeyPacket userID:userID error:error];
+    let toSignData = [self buildDataToSignForType:self.type inputData:inputData key:publicKey subKey:nil keyPacket:signingKeyPacket userID:userID error:error];
     if (!toSignData) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Invalid signature." }];
@@ -442,7 +442,7 @@ NS_ASSUME_NONNULL_BEGIN
     let _Nullable trailerData = [self calculateTrailerFor:signedPartData];
 
     // build toSignData, toSign
-    let toSignData = [PGPSignaturePacket buildDataToSignForType:self.type inputData:inputData key:key subKey:subKey keyPacket:signingKeyPacket userID:userID error:error];
+    let toSignData = [self buildDataToSignForType:self.type inputData:inputData key:key subKey:subKey keyPacket:signingKeyPacket userID:userID error:error];
     // toHash = toSignData + signedPartData + trailerData;
     let toHashData = [NSMutableData dataWithData:toSignData];
     [toHashData appendData:signedPartData];
@@ -493,7 +493,7 @@ NS_ASSUME_NONNULL_BEGIN
     return YES;
 }
 
-+ (nullable NSData *)buildDataToSignForType:(PGPSignatureType)type inputData:(nullable NSData *)inputData key:(nullable PGPKey *)key subKey:(nullable PGPKey *)subKey keyPacket:(nullable PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError *__autoreleasing _Nullable *)error {
+- (nullable NSData *)buildDataToSignForType:(PGPSignatureType)type inputData:(nullable NSData *)inputData key:(nullable PGPKey *)key subKey:(nullable PGPKey *)subKey keyPacket:(nullable PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError *__autoreleasing _Nullable *)error {
     let toSignData = [NSMutableData data];
     switch (type) {
         case PGPSignatureBinaryDocument:
@@ -563,7 +563,7 @@ NS_ASSUME_NONNULL_BEGIN
 
             if (userID.length > 0) {
                 let userIDData = [userID dataUsingEncoding:NSUTF8StringEncoding];
-                if (self.version == 4) {
+                if (self.version == 0x04) {
                     // constant tag (1)
                     UInt8 userIDConstant = 0xB4;
                     [toSignData appendBytes:&userIDConstant length:1];
@@ -589,8 +589,8 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (nullable NSData *)calculateTrailerFor:(NSData *)signedPartData {
-    NSAssert(self.version == 0x4, @"Not supported signature version");
-    if (self.version != 0x4) {
+    NSAssert(self.version == 0x04, @"Not supported signature version");
+    if (self.version != 0x04) {
         return nil;
     }
 
