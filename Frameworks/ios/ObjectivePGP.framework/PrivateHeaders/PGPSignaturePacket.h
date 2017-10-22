@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface PGPSignaturePacket : PGPPacket <NSCopying>
 
 @property (nonatomic) UInt8 version;
-@property (nonatomic) PGPSignatureType type;
+@property (nonatomic, readonly) PGPSignatureType type;
 @property (nonatomic) PGPPublicKeyAlgorithm publicKeyAlgorithm;
 @property (nonatomic) PGPHashAlgorithm hashAlgoritm;
 @property (nonatomic, copy, readonly) NSArray<PGPSignatureSubpacket *> *hashedSubpackets;
@@ -33,8 +33,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) BOOL canBeUsedToSign; // computed
 @property (nonatomic, readonly) BOOL canBeUsedToEncrypt; // computed
 
-@property (nonatomic, nullable, readonly) PGPKeyID *issuerKeyID;
-@property (nonatomic, copy, readonly) NSArray<PGPSignatureSubpacket *> *subpackets;
+@property (nonatomic, nullable, readonly) PGPKeyID *issuerKeyID; // computed
+@property (nonatomic, copy, readonly) NSArray<PGPSignatureSubpacket *> *subpackets; // computed
 @property (nonatomic, nullable, readonly) NSDate *expirationDate; // computed
 @property (nonatomic, readonly, readonly, getter=isExpired) BOOL expired; // computed
 @property (nonatomic, nullable, readonly) NSDate *creationDate; // computed

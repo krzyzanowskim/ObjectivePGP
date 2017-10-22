@@ -15,10 +15,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PGPSignatureSubpacketCreationTime : NSObject <PGPExportable>
+@interface PGPSignatureSubpacketCreationTime : NSObject <NSCopying>
 
 @property (nonatomic, copy, readonly) NSDate *value;
-@property (class, nonatomic, readonly) PGPSignatureSubpacketType type;
 
 PGP_EMPTY_INIT_UNAVAILABLE
 

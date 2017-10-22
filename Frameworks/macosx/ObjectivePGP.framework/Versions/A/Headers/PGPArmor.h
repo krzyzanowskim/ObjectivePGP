@@ -23,10 +23,10 @@ NS_ASSUME_NONNULL_BEGIN
 /// ASCII Armor message.
 NS_SWIFT_NAME(Armor) @interface PGPArmor : NSObject
 
-+ (NSData *)armoredData:(NSData *)dataToArmor as:(PGPArmorType)armorType part:(NSUInteger)part of:(NSUInteger)ofParts;
-+ (NSData *)armoredData:(NSData *)dataToArmor as:(PGPArmorType)armorType;
++ (NSString *)armored:(NSData *)data as:(PGPArmorType)type part:(NSUInteger)part of:(NSUInteger)ofParts;
++ (NSString *)armored:(NSData *)data as:(PGPArmorType)type;
 
-+ (nullable NSData *)readArmoredData:(NSString *)armoredString error:(NSError *__autoreleasing _Nullable *)error;
++ (nullable NSData *)readArmored:(NSString *)string error:(NSError *__autoreleasing _Nullable *)error;
 
 + (BOOL)isArmoredData:(NSData *)data;
 
