@@ -55,19 +55,19 @@
     XCTAssertNil(exportError);
     XCTAssertNotNil(keyData);
 
-    NSData *armoredData = [PGPArmor armoredData:keyData as:PGPArmorTypePublicKey];
-    XCTAssertNotNil(armoredData);
+    var armoredString = [PGPArmor armored:keyData as:PGPArmorTypePublicKey];
+    XCTAssertNotNil(armoredString);
 
-    BOOL status = [armoredData writeToFile:[self.workingDirectory stringByAppendingPathComponent:@"pubkey.asc"] atomically:YES];
+    BOOL status = [[armoredString dataUsingEncoding:NSUTF8StringEncoding] writeToFile:[self.workingDirectory stringByAppendingPathComponent:@"pubkey.asc"] atomically:YES];
     XCTAssertTrue(status);
 
     NSError *loadError = nil;
-    NSString *armoredString = [NSString stringWithContentsOfFile:[self.workingDirectory stringByAppendingPathComponent:@"pubkey.asc"] encoding:NSASCIIStringEncoding error:&loadError];
+    armoredString = [NSString stringWithContentsOfFile:[self.workingDirectory stringByAppendingPathComponent:@"pubkey.asc"] encoding:NSASCIIStringEncoding error:&loadError];
     XCTAssertNil(loadError);
     XCTAssertNotNil(armoredString);
 
     NSError *readArmoredError = nil;
-    NSData *decodedData = [PGPArmor readArmoredData:armoredString error:&readArmoredError];
+    NSData *decodedData = [PGPArmor readArmored:armoredString error:&readArmoredError];
     XCTAssertNil(readArmoredError);
     XCTAssertNotNil(decodedData);
 

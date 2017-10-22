@@ -217,7 +217,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     if (armored) {
-        return [PGPArmor armoredData:keyData as:PGPArmorTypePublicKey];
+        return [[PGPArmor armored:keyData as:PGPArmorTypePublicKey] dataUsingEncoding:NSUTF8StringEncoding];
     } else {
         return keyData;
     }
@@ -477,7 +477,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     if (armored) {
-        return [PGPArmor armoredData:encryptedMessage as:PGPArmorTypeMessage];
+        return [[PGPArmor armored:encryptedMessage as:PGPArmorTypeMessage] dataUsingEncoding:NSUTF8StringEncoding];
     }
 
     return encryptedMessage;
@@ -868,7 +868,7 @@ NS_ASSUME_NONNULL_BEGIN
 
         let extractedData = [[NSMutableArray<NSData *> alloc] init];
         for (NSString *extractedString in extractedBlocks) {
-            let armodedData = [PGPArmor readArmoredData:extractedString error:&deadmorError];
+            let armodedData = [PGPArmor readArmored:extractedString error:&deadmorError];
             if (deadmorError) {
                 return @[];
             }

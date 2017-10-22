@@ -1,6 +1,7 @@
 Version 0.9.1
-- Fixes subkeys generation
-- Adds support for embedded signatures
+- Fixes subkeys generation.
+- Adds support for embedded signatures.
+- PGPArmor return String now.
 
 Version 0.9
 - Fixes keys management (import/export issues).

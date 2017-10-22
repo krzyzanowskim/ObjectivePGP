@@ -26,16 +26,16 @@ NS_ASSUME_NONNULL_BEGIN
     return NO;
 }
 
-+ (NSData *)armoredData:(NSData *)dataToArmor as:(PGPArmorType)armorType {
-    return [[self class] armoredData:dataToArmor as:armorType part:NSUIntegerMax of:NSUIntegerMax];
++ (NSString *)armored:(NSData *)data as:(PGPArmorType)type {
+    return [[self class] armored:data as:type part:NSUIntegerMax of:NSUIntegerMax];
 }
 
-+ (NSData *)armoredData:(NSData *)dataToArmor as:(PGPArmorType)armorType part:(NSUInteger)part of:(NSUInteger)ofParts {
++ (NSString *)armored:(NSData *)data as:(PGPArmorType)type part:(NSUInteger)part of:(NSUInteger)ofParts {
     NSMutableDictionary *headers = [@{ @"Version": @"ObjectivePGP", @"Comment": @"https://www.objectivepgp.com", @"Charset": @"UTF-8" } mutableCopy];
 
     NSMutableString *headerString = [NSMutableString stringWithString:@"-----"];
     NSMutableString *footerString = [NSMutableString stringWithString:@"-----"];
-    switch (armorType) {
+    switch (type) {
         case PGPArmorTypePublicKey:
             [headerString appendString:@"BEGIN PGP PUBLIC KEY BLOCK"];
             [footerString appendString:@"END PGP PUBLIC KEY BLOCK"];
@@ -81,12 +81,12 @@ NS_ASSUME_NONNULL_BEGIN
     [armoredMessage appendString:@"\n"];
 
     // - The ASCII-Armored data
-    NSString *radix64 = [dataToArmor base64EncodedStringWithOptions:NSDataBase64Encoding76CharacterLineLength | NSDataBase64EncodingEndLineWithLineFeed];
+    NSString *radix64 = [data base64EncodedStringWithOptions:NSDataBase64Encoding76CharacterLineLength | NSDataBase64EncodingEndLineWithLineFeed];
     [armoredMessage appendString:radix64];
     [armoredMessage appendString:@"\n"];
 
     // - An Armor Checksum
-    UInt32 checksum = [dataToArmor pgp_CRC24];
+    UInt32 checksum = [data pgp_CRC24];
     UInt8 c[3]; // 24 bit
     c[0] = (UInt8)(checksum >> 16);
     c[1] = (UInt8)(checksum >> 8);
@@ -99,14 +99,13 @@ NS_ASSUME_NONNULL_BEGIN
 
     // - The Armor Tail, which depends on the Armor Header Line
     [armoredMessage appendString:footerString];
-
-    return [armoredMessage dataUsingEncoding:NSASCIIStringEncoding];
+    return armoredMessage;
 };
 
-+ (nullable NSData *)readArmoredData:(NSString *)armoredString error:(NSError *__autoreleasing _Nullable *)error {
-    PGPAssertClass(armoredString, NSString);
++ (nullable NSData *)readArmored:(NSString *)string error:(NSError *__autoreleasing _Nullable *)error {
+    PGPAssertClass(string, NSString);
 
-    NSScanner *scanner = [[NSScanner alloc] initWithString:armoredString];
+    NSScanner *scanner = [[NSScanner alloc] initWithString:string];
     scanner.charactersToBeSkipped = nil;
 
     // check header line
