@@ -303,8 +303,6 @@ NS_ASSUME_NONNULL_BEGIN
     // no signing packet was found, this we have no valid signature
     PGPAssertClass(signingKeyPacket, PGPPublicKeyPacket);
 
-    // FIXME: publicKey is actually secret key sometimes?
-
     if (self.type == PGPSignatureBinaryDocument && inputData.length == 0) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Invalid signature packet type" }];

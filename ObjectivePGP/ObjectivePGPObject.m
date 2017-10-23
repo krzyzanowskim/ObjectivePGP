@@ -421,7 +421,7 @@ NS_ASSUME_NONNULL_BEGIN
         }
 
         // var pkESKeyPacket = new packet.PublicKeyEncryptedSessionKey();
-        PGPPublicKeyEncryptedSessionKeyPacket *eskKeyPacket = [[PGPPublicKeyEncryptedSessionKeyPacket alloc] init];
+        let eskKeyPacket = [[PGPPublicKeyEncryptedSessionKeyPacket alloc] init];
         eskKeyPacket.keyID = encryptionKeyPacket.keyID;
         eskKeyPacket.publicKeyAlgorithm = encryptionKeyPacket.publicKeyAlgorithm;
         BOOL encrypted = [eskKeyPacket encrypt:encryptionKeyPacket sessionKeyData:sessionKeyData sessionKeyAlgorithm:preferredSymmeticAlgorithm error:error];

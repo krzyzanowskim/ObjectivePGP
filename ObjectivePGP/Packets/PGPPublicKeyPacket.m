@@ -30,6 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
     if ((self = [super init])) {
         _version = 0x04;
         _createDate = NSDate.date;
+        _publicMPIs = [NSArray<PGPMPI *> array];
     }
     return self;
 }
@@ -43,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (nullable PGPMPI *)publicMPI:(NSString *)identifier {
-    for (PGPMPI *mpi in self.publicMPIArray) {
+    for (PGPMPI *mpi in self.publicMPIs) {
         if ([mpi.identifier isEqualToString:identifier]) {
             return mpi;
         }
@@ -55,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Properties
 
 - (NSUInteger)keySize {
-    for (PGPMPI *mpi in self.publicMPIArray) {
+    for (PGPMPI *mpi in self.publicMPIs) {
         if ([mpi.identifier isEqualToString:PGPMPI_N]) {
             return (mpi.bigNum.bitsCount + 7) / 8; // ks
         }
@@ -132,7 +133,7 @@ NS_ASSUME_NONNULL_BEGIN
             let mpiE = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_E atPosition:position];
             position = position + mpiE.packetLength;
 
-            self.publicMPIArray = @[mpiN, mpiE];
+            self.publicMPIs = @[mpiN, mpiE];
         } break;
         case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmECDSA: {
@@ -152,7 +153,7 @@ NS_ASSUME_NONNULL_BEGIN
             let mpiY = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_Y atPosition:position];
             position = position + mpiY.packetLength;
 
-            self.publicMPIArray = @[mpiP, mpiQ, mpiG, mpiY];
+            self.publicMPIs = @[mpiP, mpiQ, mpiG, mpiY];
         } break;
         case PGPPublicKeyAlgorithmElgamal:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign: {
@@ -168,7 +169,7 @@ NS_ASSUME_NONNULL_BEGIN
             let mpiY = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_Y atPosition:position];
             position = position + mpiY.packetLength;
 
-            self.publicMPIArray = @[mpiP, mpiG, mpiY];
+            self.publicMPIs = @[mpiP, mpiG, mpiY];
         } break;
         default:
             @throw [NSException exceptionWithName:@"Unknown Algorithm" reason:@"Given algorithm is not supported" userInfo:nil];
@@ -201,7 +202,7 @@ NS_ASSUME_NONNULL_BEGIN
     [data appendBytes:&_publicKeyAlgorithm length:1];
 
     // publicMPI is always available, no need to decrypt
-    for (PGPMPI *mpi in self.publicMPIArray) {
+    for (PGPMPI *mpi in self.publicMPIs) {
         let exportMPI = [mpi exportMPI];
         [data pgp_appendData:exportMPI];
     }
@@ -295,7 +296,7 @@ NS_ASSUME_NONNULL_BEGIN
            self.publicKeyAlgorithm == packet.publicKeyAlgorithm &&
            self.V3validityPeriod == packet.V3validityPeriod &&
            PGPEqualObjects(self.createDate, packet.createDate) &&
-           PGPEqualObjects(self.publicMPIArray, packet.publicMPIArray);
+           PGPEqualObjects(self.publicMPIs, packet.publicMPIs);
 }
 
 - (NSUInteger)hash {
@@ -305,7 +306,7 @@ NS_ASSUME_NONNULL_BEGIN
     result = prime * result + self.publicKeyAlgorithm;
     result = prime * result + self.V3validityPeriod;
     result = prime * result + self.createDate.hash;
-    result = prime * result + self.publicMPIArray.hash;
+    result = prime * result + self.publicMPIs.hash;
     return result;
 }
 
@@ -321,7 +322,7 @@ NS_ASSUME_NONNULL_BEGIN
     duplicate.publicKeyAlgorithm = self.publicKeyAlgorithm;
     duplicate.V3validityPeriod = self.V3validityPeriod;
     duplicate.createDate = self.createDate;
-    duplicate.publicMPIArray = [[NSArray alloc] initWithArray:self.publicMPIArray copyItems:YES];
+    duplicate.publicMPIs = [[NSArray alloc] initWithArray:self.publicMPIs copyItems:YES];
     return duplicate;
 }
 

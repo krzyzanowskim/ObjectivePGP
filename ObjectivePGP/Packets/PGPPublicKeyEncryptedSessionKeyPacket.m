@@ -76,8 +76,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSData *)decryptSessionKeyData:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm *)sessionKeyAlgorithm error:(NSError *__autoreleasing _Nullable *)error {
     NSAssert(!secretKeyPacket.isEncryptedWithPassphrase, @"Secret key can't be decrypted");
 
-    // FIXME: Key is read from the packet, so it shouldn't be passed as parameter to the method because
-    //       key is unknown earlier
     let _Nullable secretKeyKeyID = [[PGPKeyID alloc] initWithFingerprint:secretKeyPacket.fingerprint];
     if (!secretKeyKeyID || !PGPEqualObjects(self.keyID, secretKeyKeyID)) {
         if (error) {
@@ -100,7 +98,9 @@ NS_ASSUME_NONNULL_BEGIN
     PGPSymmetricAlgorithm sessionKeyAlgorithmRead = PGPSymmetricPlaintext;
     [mData getBytes:&sessionKeyAlgorithmRead range:(NSRange){position, 1}];
     NSAssert(sessionKeyAlgorithmRead < PGPSymmetricMax, @"Invalid algorithm");
-    *sessionKeyAlgorithm = sessionKeyAlgorithmRead;
+    if (sessionKeyAlgorithm) {
+        *sessionKeyAlgorithm = sessionKeyAlgorithmRead;
+    }
     position = position + 1;
 
     NSUInteger sessionKeySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:sessionKeyAlgorithmRead];
@@ -182,6 +182,7 @@ NS_ASSUME_NONNULL_BEGIN
     [bodyData appendBytes:&_publicKeyAlgorithm length:1]; // 1
     let exportedMPI = [self.encryptedMPI_M exportMPI];
     if (!exportedMPI) {
+        //TODO: NSError
         return nil;
     }
     [bodyData appendData:exportedMPI]; // m
@@ -223,11 +224,8 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - NSCopying
 
 - (instancetype)copyWithZone:(nullable NSZone *)zone {
-    let _Nullable duplicate = PGPCast([super copyWithZone:zone], PGPPublicKeyEncryptedSessionKeyPacket);
-    if (!duplicate) {
-        return nil;
-    }
-
+    let duplicate = PGPCast([super copyWithZone:zone], PGPPublicKeyEncryptedSessionKeyPacket);
+    PGPAssertClass(duplicate, PGPPublicKeyEncryptedSessionKeyPacket);
     duplicate.version = self.version;
     duplicate.publicKeyAlgorithm = self.publicKeyAlgorithm;
     duplicate.encryptedWithPassword = self.encryptedWithPassword;

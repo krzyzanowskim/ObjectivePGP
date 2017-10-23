@@ -54,13 +54,13 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly: {
             keyMaterial = [PGPRSA generateNewKeyMPIArray:bits];
-            publicKeyPacket.publicMPIArray = @[keyMaterial.n, keyMaterial.e];
+            publicKeyPacket.publicMPIs = @[keyMaterial.n, keyMaterial.e];
             secretKeyPacket.secretMPIArray = @[keyMaterial.d, keyMaterial.p, keyMaterial.q, keyMaterial.u];
         } break;
         case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmECDSA: {
             keyMaterial = [PGPDSA generateNewKeyMPIArray:bits];
-            publicKeyPacket.publicMPIArray = @[keyMaterial.p, keyMaterial.q, keyMaterial.g, keyMaterial.y];
+            publicKeyPacket.publicMPIs = @[keyMaterial.p, keyMaterial.q, keyMaterial.g, keyMaterial.y];
             secretKeyPacket.secretMPIArray = @[keyMaterial.x];
         } break;
         default:
@@ -68,7 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
             return nil;
     }
 
-    secretKeyPacket.publicMPIArray = publicKeyPacket.publicMPIArray;
+    secretKeyPacket.publicMPIs = publicKeyPacket.publicMPIs;
     return keyMaterial;
 }
 

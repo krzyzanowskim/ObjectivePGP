@@ -49,7 +49,7 @@ PGP_EMPTY_INIT_UNAVAILABLE;
  *
  *  @return Decrypted key, or `nil`.
  */
-- (nullable PGPPartialKey *)decryptedWithPassphrase:(NSString *)passphrase error:(NSError *__autoreleasing *)error;
+- (nullable PGPPartialKey *)decryptedWithPassphrase:(NSString *)passphrase error:(NSError *__autoreleasing _Nullable *)error;
 
 /**
  *  Signing key packet

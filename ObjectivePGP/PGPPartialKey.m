@@ -288,7 +288,7 @@ NS_ASSUME_NONNULL_BEGIN
     return nil;
 }
 
-- (nullable PGPSecretKeyPacket *)decryptionPacketForKeyID:(PGPKeyID *)keyID error:(NSError *__autoreleasing *)error {
+- (nullable PGPSecretKeyPacket *)decryptionPacketForKeyID:(PGPKeyID *)keyID error:(NSError *__autoreleasing _Nullable *)error {
     NSAssert(self.type == PGPPartialKeySecret, @"Need secret key to encrypt");
     if (self.type == PGPPartialKeyPublic) {
         if (error) {
@@ -305,7 +305,7 @@ NS_ASSUME_NONNULL_BEGIN
         }
     }
 
-    // assume primary key is always cabable
+    // assume primary key is always capable
     if (PGPEqualObjects(PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket).keyID, keyID)) {
         return PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket);
     }
@@ -313,7 +313,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // TODO: return error
-- (nullable PGPPartialKey *)decryptedWithPassphrase:(NSString *)passphrase error:(NSError *__autoreleasing *)error {
+- (nullable PGPPartialKey *)decryptedWithPassphrase:(NSString *)passphrase error:(NSError *__autoreleasing _Nullable *)error {
     PGPAssertClass(passphrase, NSString);
 
     // decrypt copy of self
