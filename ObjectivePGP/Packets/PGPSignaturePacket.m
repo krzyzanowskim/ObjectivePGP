@@ -90,6 +90,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSUInteger prime = 31;
     NSUInteger result = [super hash];
     result = prime * result + self.version;
+    result = prime * result + self.type;
     result = prime * result + self.publicKeyAlgorithm;
     result = prime * result + self.hashAlgoritm;
     result = prime * result + self.signedHashValueData.hash;
@@ -101,11 +102,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - NSCopying
 
-- (id)copyWithZone:(nullable NSZone *)zone {
-    let _Nullable duplicate = PGPCast([super copyWithZone:zone], PGPSignaturePacket);
-    if (!duplicate) {
-        return nil;
-    }
+- (instancetype)copyWithZone:(nullable NSZone *)zone {
+    let duplicate = PGPCast([super copyWithZone:zone], PGPSignaturePacket);
+    PGPAssertClass(duplicate, PGPSignaturePacket)
     duplicate.version = self.version;
     duplicate.type = self.type;
     duplicate.publicKeyAlgorithm = self.publicKeyAlgorithm;
