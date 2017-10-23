@@ -11,11 +11,11 @@ extern NSString *const ZlibErrorDomain;
 
 @interface NSData (compression)
 
-- (NSData *)zlibCompressed:(NSError *__autoreleasing _Nullable *)error;
-- (NSData *)zlibDecompressed:(NSError *__autoreleasing _Nullable *)error compressionType:(int)compressionType;
+- (nullable NSData *)zlibCompressed:(NSError *__autoreleasing _Nullable *)error;
+- (nullable NSData *)zlibDecompressed:(NSError *__autoreleasing _Nullable *)error compressionType:(int)compressionType;
 
-- (NSData *)bzip2Decompressed:(NSError *__autoreleasing *)error;
-- (NSData *)bzip2Compressed:(NSError *__autoreleasing _Nullable *)error;
+- (nullable NSData *)bzip2Decompressed:(NSError *__autoreleasing *)error;
+- (nullable NSData *)bzip2Compressed:(NSError *__autoreleasing _Nullable *)error;
 
 @end
 

@@ -73,13 +73,13 @@ NS_ASSUME_NONNULL_BEGIN
     return position;
 }
 
-- (nullable NSData *)decryptSessionKeyData:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm *)sessionKeyAlgorithm error:(NSError *__autoreleasing *)error {
+- (nullable NSData *)decryptSessionKeyData:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm *)sessionKeyAlgorithm error:(NSError *__autoreleasing _Nullable *)error {
     NSAssert(!secretKeyPacket.isEncryptedWithPassphrase, @"Secret key can't be decrypted");
 
     // FIXME: Key is read from the packet, so it shouldn't be passed as parameter to the method because
     //       key is unknown earlier
-    let secretKeyKeyID = [[PGPKeyID alloc] initWithFingerprint:secretKeyPacket.fingerprint];
-    if (!secretKeyKeyID || ![self.keyID isEqual:secretKeyKeyID]) {
+    let _Nullable secretKeyKeyID = [[PGPKeyID alloc] initWithFingerprint:secretKeyPacket.fingerprint];
+    if (!secretKeyKeyID || !PGPEqualObjects(self.keyID, secretKeyKeyID)) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Invalid secret key used to decrypt session key, expected %@, got %@", self.keyID, secretKeyKeyID] }];
         }

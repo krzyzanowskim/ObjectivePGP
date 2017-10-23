@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation NSData (compression)
 
-- (NSData *)zlibCompressed:(NSError *__autoreleasing _Nullable *)error {
+- (nullable NSData *)zlibCompressed:(NSError *__autoreleasing _Nullable *)error {
     if ([self length] == 0) {
         return [NSData data];
     }
@@ -57,7 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
     return compressed;
 }
 
-- (NSData *)zlibDecompressed:(NSError *__autoreleasing _Nullable *)error compressionType:(int)compressionType {
+- (nullable NSData *)zlibDecompressed:(NSError *__autoreleasing _Nullable *)error compressionType:(int)compressionType {
     if ([self length] == 0) {
         return [NSData data];
     }
@@ -106,7 +106,7 @@ NS_ASSUME_NONNULL_BEGIN
     return decompressed;
 }
 
-- (NSData *)bzip2Decompressed:(NSError *__autoreleasing _Nullable *)error {
+- (nullable NSData *)bzip2Decompressed:(NSError *__autoreleasing _Nullable *)error {
     int bzret = 0;
     bz_stream stream = {.avail_in = 0x00};
     stream.next_in = (void *)[self bytes];
@@ -144,7 +144,7 @@ NS_ASSUME_NONNULL_BEGIN
     return decompressedData;
 }
 
-- (NSData *)bzip2Compressed:(NSError *__autoreleasing _Nullable *)error {
+- (nullable NSData *)bzip2Compressed:(NSError *__autoreleasing _Nullable *)error {
     int bzret = 0;
     bz_stream stream = {.avail_in = 0x00};
     stream.next_in = (void *)[self bytes];

@@ -39,7 +39,7 @@ static const NSUInteger PGPSignatureSubpacketLength = 4;
 
 #pragma mark - NSCopying
 
-- (id)copyWithZone:(nullable NSZone *)zone {
+- (instancetype)copyWithZone:(nullable NSZone *)zone {
     return [[PGPSignatureSubpacketCreationTime alloc] initWithDate:self.value];
 }
 
