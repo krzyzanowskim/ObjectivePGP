@@ -68,7 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSDate *)expirationDate {
     PGPSignaturePacket * _Nullable primaryUserSelfCertificate = nil;
     [self primaryUserAndSelfCertificate:&primaryUserSelfCertificate];
-    if (primaryUserSelfCertificate.expirationDate) {
+    if (primaryUserSelfCertificate && primaryUserSelfCertificate.expirationDate) {
         return primaryUserSelfCertificate.expirationDate;
     }
 
@@ -407,11 +407,9 @@ NS_ASSUME_NONNULL_BEGIN
         }
 
         [result pgp_appendData:exported]; // TODO: decode secret key first
-        if (error) {
-            NSAssert(*error == nil, @"Error while export public key");
-            if (*error) {
-                return nil;
-            }
+        if (error && *error) {
+            PGPLogWarning(@"Problem while export public key: %@", [*error localizedDescription]);
+            return nil;
         }
     }
     return result;

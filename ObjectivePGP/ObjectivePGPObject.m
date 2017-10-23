@@ -389,15 +389,15 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (nullable NSData *)encrypt:(NSData *)dataToEncrypt usingKeys:(NSArray<PGPKey *> *)keys signWithKey:(nullable PGPKey *)signKey passphrase:(nullable NSString *)passphrase armored:(BOOL)armored error:(NSError *__autoreleasing _Nullable *)error {
-    let publicKeys = [NSMutableArray<PGPPartialKey *> array];
+    let publicPartialKeys = [NSMutableArray<PGPPartialKey *> array];
     for (PGPKey *key in keys) {
-        [publicKeys pgp_addObject:key.publicKey];
+        [publicPartialKeys pgp_addObject:key.publicKey];
     }
 
     let encryptedMessage = [NSMutableData data];
 
     // PGPPublicKeyEncryptedSessionKeyPacket goes here
-    let preferredSymmeticAlgorithm = [PGPPartialKey preferredSymmetricAlgorithmForKeys:publicKeys];
+    let preferredSymmeticAlgorithm = [PGPPartialKey preferredSymmetricAlgorithmForKeys:publicPartialKeys];
 
     // Random bytes as a string to be used as a key
     NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:preferredSymmeticAlgorithm];
@@ -409,13 +409,13 @@ NS_ASSUME_NONNULL_BEGIN
 
     let sessionKeyData = [NSMutableData dataWithBytes:buf length:keySize];
 
-    for (PGPPartialKey *publicKey in publicKeys) {
+    for (PGPPartialKey *publicPartialKey in publicPartialKeys) {
         // Encrypted Message :- Encrypted Data | ESK Sequence, Encrypted Data.
         // Encrypted Data :- Symmetrically Encrypted Data Packet | Symmetrically Encrypted Integrity Protected Data Packet
         // ESK :- Public-Key Encrypted Session Key Packet | Symmetric-Key Encrypted Session Key Packet.
 
         // ESK
-        let encryptionKeyPacket = PGPCast([publicKey encryptionKeyPacket:error], PGPPublicKeyPacket);
+        let encryptionKeyPacket = PGPCast([publicPartialKey encryptionKeyPacket:error], PGPPublicKeyPacket);
         if (!encryptionKeyPacket) {
             continue;
         }
@@ -424,15 +424,18 @@ NS_ASSUME_NONNULL_BEGIN
         PGPPublicKeyEncryptedSessionKeyPacket *eskKeyPacket = [[PGPPublicKeyEncryptedSessionKeyPacket alloc] init];
         eskKeyPacket.keyID = encryptionKeyPacket.keyID;
         eskKeyPacket.publicKeyAlgorithm = encryptionKeyPacket.publicKeyAlgorithm;
-        [eskKeyPacket encrypt:encryptionKeyPacket sessionKeyData:sessionKeyData sessionKeyAlgorithm:preferredSymmeticAlgorithm error:error];
-        PGPLogWarning(@"Missing literal data");
-        if (error && *error) {
+        BOOL encrypted = [eskKeyPacket encrypt:encryptionKeyPacket sessionKeyData:sessionKeyData sessionKeyAlgorithm:preferredSymmeticAlgorithm error:error];
+        if (!encrypted || (error && *error)) {
+            PGPLogWarning(@"Failed encrypt Symmetric-key Encrypted Session Key packet");
             return nil;
         }
         [encryptedMessage pgp_appendData:[eskKeyPacket export:error]];
         if (error && *error) {
+            PGPLogWarning(@"Missing literal data");
             return nil;
         }
+
+        //TODO: find the compression type most common to the used keys
     }
 
     NSData *content;

@@ -130,7 +130,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // encryption update self.encryptedMPIPartData
-- (BOOL)encrypt:(PGPPublicKeyPacket *)publicKeyPacket sessionKeyData:(NSData *)sessionKeyData sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm error:(NSError *__autoreleasing *)error {
+- (BOOL)encrypt:(PGPPublicKeyPacket *)publicKeyPacket sessionKeyData:(NSData *)sessionKeyData sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm error:(NSError *__autoreleasing _Nullable *)error {
     let mData = [NSMutableData data];
 
     //    The value "m" in the above formulas is derived from the session key
@@ -154,7 +154,8 @@ NS_ASSUME_NONNULL_BEGIN
 
     let modulusMPI = [publicKeyPacket publicMPI:PGPMPI_N];
     if (!modulusMPI) {
-        return error == nil;
+        //TODO: add error message
+        return NO;
     }
 
     unsigned int k = (unsigned int)modulusMPI.bigNum.bytesCount;
@@ -163,7 +164,7 @@ NS_ASSUME_NONNULL_BEGIN
     let encryptedData = [publicKeyPacket encryptData:mEMEEncoded withPublicKeyAlgorithm:self.publicKeyAlgorithm];
     let mpiEncoded = [[PGPMPI alloc] initWithData:encryptedData identifier:PGPMPI_M];
     self.encryptedMPI_M = mpiEncoded;
-    return error == nil;
+    return YES;
 }
 
 #pragma mark - PGPExportable
