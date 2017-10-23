@@ -62,7 +62,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL)isEqualToOnePassSignaturePacket:(PGPOnePassSignaturePacket *)packet {
-    return self.version = packet.version &&
+    return self.version == packet.version &&
            self.signatureType == packet.signatureType &&
            self.hashAlgorith == packet.hashAlgorith &&
            self.publicKeyAlgorithm == packet.publicKeyAlgorithm &&

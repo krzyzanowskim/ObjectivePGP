@@ -291,7 +291,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL)isEqualToKeyPacket:(PGPPublicKeyPacket *)packet {
-    return self.version = packet.version &&
+    return self.version == packet.version &&
            self.publicKeyAlgorithm == packet.publicKeyAlgorithm &&
            self.V3validityPeriod == packet.V3validityPeriod &&
            PGPEqualObjects(self.createDate, packet.createDate) &&

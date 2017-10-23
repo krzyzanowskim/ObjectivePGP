@@ -202,7 +202,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL)isEqualToSessionKeyPacket:(PGPPublicKeyEncryptedSessionKeyPacket *)packet {
-    return self.version = packet.version &&
+    return self.version == packet.version &&
            self.publicKeyAlgorithm == packet.publicKeyAlgorithm &&
            self.encryptedWithPassword == packet.encryptedWithPassword &&
            PGPEqualObjects(self.keyID, packet.keyID) &&

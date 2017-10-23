@@ -77,7 +77,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL)isEqualToSignaturePacket:(PGPSignaturePacket *)packet {
-    return self.version = packet.version &&
+    return self.version == packet.version &&
     self.publicKeyAlgorithm == packet.publicKeyAlgorithm &&
     self.hashAlgoritm == packet.hashAlgoritm &&
     PGPEqualObjects(self.signedHashValueData, packet.signedHashValueData) &&
