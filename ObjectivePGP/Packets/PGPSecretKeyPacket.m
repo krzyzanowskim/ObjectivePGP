@@ -55,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable PGPMPI *)secretMPI:(NSString *)identifier {
     for (PGPMPI *mpi in self.secretMPIArray) {
-        if ([mpi.identifier isEqual:identifier]) {
+        if (PGPEqualObjects(mpi.identifier, identifier)) {
             return mpi;
         }
     }

@@ -71,22 +71,22 @@ NS_ASSUME_NONNULL_BEGIN
 
     return [[self.keys pgp_objectsPassingTest:^BOOL(PGPKey *key, BOOL *stop) {
         // top-level keys
-        __block BOOL found = (key.publicKey && [key.publicKey.keyID isEqual:searchKeyID]);
+        __block BOOL found = (key.publicKey && PGPEqualObjects(key.publicKey.keyID, searchKeyID));
         if (!found) {
-            found = (key.secretKey && [key.secretKey.keyID isEqual:searchKeyID]);
+            found = (key.secretKey && PGPEqualObjects(key.secretKey.keyID,searchKeyID));
         }
 
         // subkeys
         if (!found && key.publicKey.subKeys.count > 0) {
             found = [key.publicKey.subKeys indexOfObjectPassingTest:^BOOL(PGPPartialSubKey *subkey, __unused NSUInteger idx, BOOL *stop2) {
-                        *stop2 = [subkey.keyID isEqual:searchKeyID];
+                        *stop2 = PGPEqualObjects(subkey.keyID,searchKeyID);
                         return *stop2;
                     }] != NSNotFound;
         }
 
         if (!found && key.secretKey.subKeys.count > 0) {
             found = [key.secretKey.subKeys indexOfObjectPassingTest:^BOOL(PGPPartialSubKey *subkey, __unused NSUInteger idx, BOOL *stop2) {
-                        *stop2 = [subkey.keyID isEqual:searchKeyID];
+                        *stop2 = PGPEqualObjects(subkey.keyID,searchKeyID);
                         return *stop2;
                     }] != NSNotFound;
         }
@@ -789,7 +789,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     PGPKey *foundCompoundKey = nil;
     for (PGPKey *searchKey in keys) {
-        if ([searchKey.publicKey.keyID isEqual:key.keyID] || [searchKey.secretKey.keyID isEqual:key.keyID]) {
+        if (PGPEqualObjects(searchKey.publicKey.keyID,key.keyID) || PGPEqualObjects(searchKey.secretKey.keyID,key.keyID)) {
             foundCompoundKey = searchKey;
             break;
         }
