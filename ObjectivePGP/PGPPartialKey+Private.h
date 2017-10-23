@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface PGPPartialKey ()
 
 @property (nonatomic, readwrite) PGPPartialKeyType type;
+@property (nonatomic, copy, readwrite) NSArray<PGPPartialSubKey *> *subKeys;
 @property (nonatomic, copy, readwrite) NSArray<PGPSignaturePacket *> *directSignatures;
 @property (nonatomic, nullable, copy, readwrite) PGPSignaturePacket *revocationSignature;
 

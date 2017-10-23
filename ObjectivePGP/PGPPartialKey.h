@@ -27,7 +27,7 @@ NS_SWIFT_NAME(PartialKey) @interface PGPPartialKey : NSObject <PGPExportable, NS
 @property (nonatomic, readonly) PGPPartialKeyType type;
 @property (nonatomic, copy) PGPPacket *primaryKeyPacket;
 @property (nonatomic, copy) NSArray<PGPUser *> *users;
-@property (nonatomic, copy) NSArray<PGPPartialSubKey *> *subKeys; // TODO: nullable
+@property (nonatomic, copy, readonly) NSArray<PGPPartialSubKey *> *subKeys;
 @property (nonatomic, copy, readonly) NSArray<PGPSignaturePacket *> *directSignatures;
 @property (nonatomic, nullable, copy, readonly) PGPSignaturePacket *revocationSignature;
 

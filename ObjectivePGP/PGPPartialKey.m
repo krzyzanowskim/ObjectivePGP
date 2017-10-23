@@ -141,6 +141,7 @@ NS_ASSUME_NONNULL_BEGIN
                 break;
             case PGPSignaturePacketTag: {
                 let signaturePacket = PGPCast(packet, PGPSignaturePacket);
+                PGPAssertClass(signaturePacket, signaturePacket);
                 switch (signaturePacket.type) {
                     case PGPSignatureGenericCertificationUserIDandPublicKey:
                     case PGPSignatureCasualCertificationUserIDandPublicKey:

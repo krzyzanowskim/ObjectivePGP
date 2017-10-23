@@ -9,6 +9,7 @@
 #import "PGPKeyGenerator.h"
 #import "PGPTypes.h"
 #import "PGPPartialSubKey+Private.h"
+#import "PGPPartialKey+Private.h"
 #import "PGPPublicKeyPacket+Private.h"
 #import "PGPSecretKeyPacket+Private.h"
 #import "PGPSignaturePacket+Private.h"
