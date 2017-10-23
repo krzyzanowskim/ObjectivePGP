@@ -13,19 +13,21 @@
 #import "PGPMacros+Private.h"
 #import "PGPFoundation.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface PGPCompressedPacket ()
 
 @property (nonatomic, readwrite) PGPCompressionAlgorithm compressionType;
-@property (nonatomic, readwrite) NSData *decompressedData;
+@property (nonatomic, copy, readwrite) NSData *decompressedData;
 
 @end
 
 @implementation PGPCompressedPacket
 
-- (instancetype)initWithData:(NSData *)dataToCompress type:(PGPCompressionAlgorithm)type {
+- (instancetype)initWithData:(NSData *)data type:(PGPCompressionAlgorithm)type {
     if (self = [self init]) {
-        self->_decompressedData = dataToCompress;
-        self->_compressionType = type;
+        _decompressedData = [data copy];
+        _compressionType = type;
     }
     return self;
 }
@@ -34,7 +36,7 @@
     return PGPCompressedDataPacketTag;
 }
 
-- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing _Nullable *)error {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
 
     // - One octet that gives the algorithm used to compress the packet.
@@ -66,7 +68,7 @@
     return position;
 }
 
-- (NSData *)export:(NSError *__autoreleasing *)error {
+- (nullable NSData *)export:(NSError *__autoreleasing _Nullable *)error {
     let bodyData = [NSMutableData data];
 
     // - One octet that gives the algorithm used to compress the packet.
@@ -123,14 +125,13 @@
 #pragma mark - NSCopying
 
 - (instancetype)copyWithZone:(nullable NSZone *)zone {
-    let _Nullable duplicate = PGPCast([super copyWithZone:zone], PGPCompressedPacket);
-    if (!duplicate) {
-        return nil;
-    }
-
+    let duplicate = PGPCast([super copyWithZone:zone], PGPCompressedPacket);
+    PGPAssertClass(duplicate, PGPCompressedPacket)
     duplicate.compressionType = self.compressionType;
     duplicate.decompressedData = self.decompressedData;
     return duplicate;
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

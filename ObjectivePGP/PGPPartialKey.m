@@ -419,7 +419,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Verification
 
 // Returns primary user with self certificate
-- (nullable PGPUser *)primaryUserAndSelfCertificate:(PGPSignaturePacket *__autoreleasing *)selfCertificateOut {
+- (nullable PGPUser *)primaryUserAndSelfCertificate:(PGPSignaturePacket *__autoreleasing _Nullable *)selfCertificateOut {
     PGPUser *foundUser = nil;
 
     for (PGPUser *user in self.users) {
@@ -437,7 +437,10 @@ NS_ASSUME_NONNULL_BEGIN
         } else if (!foundUser) {
             foundUser = user;
         }
-        *selfCertificateOut = selfCertificate;
+
+        if (selfCertificateOut) {
+            *selfCertificateOut = selfCertificate;
+        }
     }
     return foundUser;
 }

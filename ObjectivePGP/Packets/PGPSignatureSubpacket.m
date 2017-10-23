@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
-- (instancetype)initWithHeader:(PGPSignatureSubpacketHeader *)header body:(NSData *)subPacketBodyData {
+- (nullable instancetype)initWithHeader:(PGPSignatureSubpacketHeader *)header body:(NSData *)subPacketBodyData {
     if (self = [self initWithType:header.type andValue:NSNull.null]) {
         _length = header.headerLength + header.bodyLength;
         [self parseSubpacketBody:subPacketBodyData];

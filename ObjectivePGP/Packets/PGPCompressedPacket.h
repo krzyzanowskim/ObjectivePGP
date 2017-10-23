@@ -8,11 +8,15 @@
 
 #import "PGPPacket.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface PGPCompressedPacket : PGPPacket <NSCopying>
 
 @property (nonatomic, readonly) PGPCompressionAlgorithm compressionType;
 @property (nonatomic, copy, readonly) NSData *decompressedData;
 
-- (instancetype)initWithData:(NSData *)dataToCompress type:(PGPCompressionAlgorithm)type;
+- (instancetype)initWithData:(NSData *)data type:(PGPCompressionAlgorithm)type;
 
 @end
+
+NS_ASSUME_NONNULL_END

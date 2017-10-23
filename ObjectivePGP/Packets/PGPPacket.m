@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
-- (instancetype)initWithHeader:(NSData *)headerData body:(NSData *)bodyData {
+- (nullable instancetype)initWithHeader:(NSData *)headerData body:(NSData *)bodyData {
     if ((self = [self init])) {
         NSError *error = nil;
         [self parsePacketBody:bodyData error:&error];

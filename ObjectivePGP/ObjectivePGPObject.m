@@ -442,21 +442,19 @@ NS_ASSUME_NONNULL_BEGIN
         if (error && *error) {
             return nil;
         }
-
     } else {
         // Prepare literal packet
         let literalPacket = [PGPLiteralPacket literalPacket:PGPLiteralPacketBinary withData:dataToEncrypt];
         literalPacket.filename = nil;
-        literalPacket.timestamp = [NSDate date];
-        PGPLogWarning(@"Missing literal data");
-        if (error && *error) {
-            return nil;
-        }
+        literalPacket.timestamp = NSDate.date;
+
         let literalPacketData = [literalPacket export:error];
         if (error && *error) {
+            PGPLogWarning(@"Missing literal packet data");
             return nil;
         }
 
+        //FIXME: do not use hardcoded value for compression type
         let compressedPacket = [[PGPCompressedPacket alloc] initWithData:literalPacketData type:PGPCompressionBZIP2];
         content = [compressedPacket export:error];
         if (error && *error) {
@@ -897,3 +895,4 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 NS_ASSUME_NONNULL_END
+

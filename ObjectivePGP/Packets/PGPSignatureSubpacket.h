@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 PGP_EMPTY_INIT_UNAVAILABLE;
 
 - (instancetype)initWithType:(PGPSignatureSubpacketType)type andValue:(id<NSObject, NSCopying>)value NS_DESIGNATED_INITIALIZER;
-- (instancetype)initWithHeader:(PGPSignatureSubpacketHeader *)header body:(NSData *)subPacketBodyData;
+- (nullable instancetype)initWithHeader:(PGPSignatureSubpacketHeader *)header body:(NSData *)subPacketBodyData;
 
 + (PGPSignatureSubpacketHeader *)subpacketHeaderFromData:(NSData *)headerData;
 

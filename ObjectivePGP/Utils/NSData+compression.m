@@ -8,9 +8,11 @@
 #import <bzlib.h>
 #import <zlib.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @implementation NSData (compression)
 
-- (NSData *)zlibCompressed:(NSError *__autoreleasing *)error {
+- (NSData *)zlibCompressed:(NSError *__autoreleasing _Nullable *)error {
     if ([self length] == 0) {
         return [NSData data];
     }
@@ -55,7 +57,7 @@
     return compressed;
 }
 
-- (NSData *)zlibDecompressed:(NSError *__autoreleasing *)error compressionType:(int)compressionType {
+- (NSData *)zlibDecompressed:(NSError *__autoreleasing _Nullable *)error compressionType:(int)compressionType {
     if ([self length] == 0) {
         return [NSData data];
     }
@@ -104,7 +106,7 @@
     return decompressed;
 }
 
-- (NSData *)bzip2Decompressed:(NSError *__autoreleasing *)error {
+- (NSData *)bzip2Decompressed:(NSError *__autoreleasing _Nullable *)error {
     int bzret = 0;
     bz_stream stream = {.avail_in = 0x00};
     stream.next_in = (void *)[self bytes];
@@ -142,7 +144,7 @@
     return decompressedData;
 }
 
-- (NSData *)bzip2Compressed:(NSError *__autoreleasing *)error {
+- (NSData *)bzip2Compressed:(NSError *__autoreleasing _Nullable *)error {
     int bzret = 0;
     bz_stream stream = {.avail_in = 0x00};
     stream.next_in = (void *)[self bytes];
@@ -183,3 +185,5 @@
 }
 
 @end
+
+NS_ASSUME_NONNULL_END
