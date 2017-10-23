@@ -203,4 +203,14 @@
     XCTAssertEqual(keys.count, (NSUInteger)1);
 }
 
+-(void)testSigningSubKey {
+    let keys = [PGPTestUtils readKeysFromFile:@"sub-signing-key.asc"];
+    XCTAssertEqual(keys.count, (NSUInteger)1);
+    
+    let data = [@"Hello World!" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError* error = nil;
+    let signature = [self.pgp sign:data usingKey:keys[0] passphrase:nil detached:NO error:&error];
+    XCTAssertNotNil(signature, @"Signing failed: %@", error);
+}
+
 @end
