@@ -432,7 +432,7 @@ NS_ASSUME_NONNULL_BEGIN
         // add hashed subpacket - REQUIRED
         let creationTimeSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeSignatureCreationTime andValue:NSDate.date];
         self.hashedSubpackets = @[creationTimeSubpacket];
-        PGPLogWarning(@"Signature without subpackets. Define subpackets! Adding minimal set of subpackets.");
+        PGPLogDebug(@"Signature without subpackets. Adding minimal set of subpackets.");
     }
 
     let signedPartData = [self buildSignedPart:self.hashedSubpackets];
@@ -480,7 +480,7 @@ NS_ASSUME_NONNULL_BEGIN
         let keyid = [[PGPKeyID alloc] initWithFingerprint:signingKeyPacket.fingerprint];
         PGPSignatureSubpacket *issuerSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeIssuerKeyID andValue:keyid];
         self.unhashedSubpackets = @[issuerSubpacket];
-        PGPLogWarning(@"Signature without subpackets. Define subpackets! Adding minimal set of subpackets.");
+        PGPLogDebug(@"Signature without subpackets. Adding minimal set of subpackets.");
     }
 
     // Checksum
