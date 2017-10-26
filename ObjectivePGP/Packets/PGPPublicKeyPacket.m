@@ -172,7 +172,9 @@ NS_ASSUME_NONNULL_BEGIN
             self.publicMPIs = @[mpiP, mpiG, mpiY];
         } break;
         default:
-            @throw [NSException exceptionWithName:@"Unknown Algorithm" reason:@"Given algorithm is not supported" userInfo:nil];
+            if (error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Public key algorithm is not supported" }];
+            }
             break;
     }
 

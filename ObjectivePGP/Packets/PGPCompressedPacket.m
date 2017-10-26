@@ -63,7 +63,6 @@ NS_ASSUME_NONNULL_BEGIN
             if (error) {
                 *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"This type of compression is not supported" }];
             }
-            @throw [NSException exceptionWithName:@"Unsupported Compression" reason:@"Compression type is not supported" userInfo:nil];
             break;
     }
 
@@ -95,7 +94,11 @@ NS_ASSUME_NONNULL_BEGIN
             return nil;
             break;
     }
-    NSAssert(compressedData, @"Compression failed");
+
+    if (error && *error) {
+        PGPLogDebug(@"Compression failed: %@", (*error).localizedDescription);
+        return nil;
+    }
     [bodyData pgp_appendData:compressedData];
 
     return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
