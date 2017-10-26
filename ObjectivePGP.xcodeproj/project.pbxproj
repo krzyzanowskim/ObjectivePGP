@@ -399,6 +399,7 @@
 				75F6BAAD1F8AF28100A0B885 /* LICENSE.txt */,
 				75BAFAC31F004E6000A956FC /* Config */,
 				756299BA1914DE1A00C5AD3B /* ObjectivePGP */,
+				75E2F34C1F9E53C5007DAE51 /* vendor */,
 				756299CE1914DE1A00C5AD3B /* ObjectivePGPTests */,
 				756299B71914DE1A00C5AD3B /* Frameworks */,
 				756299B61914DE1A00C5AD3B /* Products */,
@@ -527,6 +528,13 @@
 				750676C01F005B2F00066408 /* Defaults-Testing.xcconfig */,
 			);
 			path = Config;
+			sourceTree = "<group>";
+		};
+		75E2F34C1F9E53C5007DAE51 /* vendor */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = vendor;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

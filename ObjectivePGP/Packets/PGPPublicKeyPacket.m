@@ -90,7 +90,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @param packetBody Packet body
  */
-- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing _Nullable *)error {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
 
     // A one-octet version number (2,3,4).

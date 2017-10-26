@@ -12,6 +12,7 @@
 #import "NSMutableData+PGPUtils.h"
 #import "PGPMacros+Private.h"
 #import "PGPFoundation.h"
+#import "PGPLogging.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -44,13 +45,15 @@ NS_ASSUME_NONNULL_BEGIN
     position = position + 1;
 
     // - Compressed data, which makes up the remainder of the packet.
-    NSData *compressedData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
+    let compressedData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
 
     // TODO: for ZIP use AgileBits/objective-zip
     switch (self.compressionType) {
-        case PGPCompressionZLIB:
         case PGPCompressionZIP:
-            self.decompressedData = [compressedData zlibDecompressed:error compressionType:self.compressionType];
+            self.decompressedData = [compressedData zipDecompressed:error];
+            break;
+        case PGPCompressionZLIB:
+            self.decompressedData = [compressedData zlibDecompressed:error];
             break;
         case PGPCompressionBZIP2:
             self.decompressedData = [compressedData bzip2Decompressed:error];
@@ -64,7 +67,6 @@ NS_ASSUME_NONNULL_BEGIN
             break;
     }
 
-    compressedData = nil;
     return position;
 }
 
@@ -77,13 +79,15 @@ NS_ASSUME_NONNULL_BEGIN
     // - Compressed data, which makes up the remainder of the packet.
     NSData * _Nullable compressedData = nil;
     switch (self.compressionType) {
+        case PGPCompressionZIP:
+            compressedData = [self.decompressedData zipCompressed:error];
+            break;
         case PGPCompressionZLIB:
             compressedData = [self.decompressedData zlibCompressed:error];
             break;
         case PGPCompressionBZIP2:
             compressedData = [self.decompressedData bzip2Compressed:error];
             break;
-
         default:
             if (error) {
                 *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"This type of compression is not supported" }];
