@@ -17,7 +17,7 @@ extern NSString *const ZlibErrorDomain;
 - (nullable NSData *)zipDecompressed:(NSError *__autoreleasing _Nullable *)error;
 - (nullable NSData *)zlibDecompressed:(NSError *__autoreleasing _Nullable *)error;
 
-- (nullable NSData *)bzip2Decompressed:(NSError *__autoreleasing *)error;
+- (nullable NSData *)bzip2Decompressed:(NSError *__autoreleasing _Nullable *)error;
 - (nullable NSData *)bzip2Compressed:(NSError *__autoreleasing _Nullable *)error;
 
 @end
