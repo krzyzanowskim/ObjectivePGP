@@ -150,7 +150,7 @@ NS_ASSUME_NONNULL_BEGIN
     bzret = BZ2_bzDecompressInit(&stream, 0, NO);
     if (bzret != BZ_OK) {
         if (error) {
-            *error = [NSError errorWithDomain:@"BZIP2" code:bzret userInfo:@{ NSLocalizedDescriptionKey: NSLocalizedString(@"BZ2_bzDecompressInit failed", nil) }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:bzret userInfo:@{ NSLocalizedDescriptionKey: NSLocalizedString(@"BZ2_bzDecompressInit failed", nil) }];
         }
         return nil;
     }
@@ -160,7 +160,7 @@ NS_ASSUME_NONNULL_BEGIN
         bzret = BZ2_bzDecompress(&stream);
         if (bzret < BZ_OK) {
             if (error) {
-                *error = [NSError errorWithDomain:@"BZIP2" code:bzret userInfo:@{ NSLocalizedDescriptionKey: NSLocalizedString(@"BZ2_bzDecompress failed", nil) }];
+                *error = [NSError errorWithDomain:PGPErrorDomain code:bzret userInfo:@{ NSLocalizedDescriptionKey: NSLocalizedString(@"BZ2_bzDecompress failed", nil) }];
             }
             return nil;
         }
@@ -189,7 +189,7 @@ NS_ASSUME_NONNULL_BEGIN
     bzret = BZ2_bzCompressInit(&stream, compression, 0, 0);
     if (bzret != BZ_OK) {
         if (error) {
-            *error = [NSError errorWithDomain:@"BZIP2" code:bzret userInfo:@{ NSLocalizedDescriptionKey: NSLocalizedString(@"BZ2_bzCompressInit failed", nil) }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:bzret userInfo:@{ NSLocalizedDescriptionKey: NSLocalizedString(@"BZ2_bzCompressInit failed", nil) }];
         }
         return nil;
     }
@@ -200,7 +200,7 @@ NS_ASSUME_NONNULL_BEGIN
         bzret = BZ2_bzCompress(&stream, (stream.avail_in) ? BZ_RUN : BZ_FINISH);
         if (bzret < BZ_OK) {
             if (error) {
-                *error = [NSError errorWithDomain:@"BZIP2" code:bzret userInfo:@{ NSLocalizedDescriptionKey: NSLocalizedString(@"BZ2_bzCompress failed", nil) }];
+                *error = [NSError errorWithDomain:PGPErrorDomain code:bzret userInfo:@{ NSLocalizedDescriptionKey: NSLocalizedString(@"BZ2_bzCompress failed", nil) }];
             }
             return nil;
         }
