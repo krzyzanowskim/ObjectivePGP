@@ -458,7 +458,7 @@ NS_ASSUME_NONNULL_BEGIN
         }
 
         //FIXME: do not use hardcoded value for compression type
-        let compressedPacket = [[PGPCompressedPacket alloc] initWithData:literalPacketData type:PGPCompressionZIP];
+        let compressedPacket = [[PGPCompressedPacket alloc] initWithData:literalPacketData type:PGPCompressionZLIB];
         content = [compressedPacket export:error];
         if (error && *error) {
             return nil;
