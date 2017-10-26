@@ -178,7 +178,12 @@ typedef NS_ENUM(UInt8, PGPS2KSpecifier) {
     PGPS2KSpecifierSimple = 0,
     PGPS2KSpecifierSalted = 1,
     PGPS2KSpecifierIteratedAndSalted = 3,
-    PGPS2KSpecifierGnuDummy = 101 // The "gnu-dummy S2K" is the marker which will tell that this file does *not* actually contain the secret key.
+    // GNU extensions to the S2K algorithm.
+    // see: https://git.gnupg.org/cgi-bin/gitweb.cgi?p=gnupg.git;a=blob;f=doc/DETAILS;h=8ead6a8f5250656f72aea99042f392cb6749b8ff;hb=refs/heads/master#l1309
+    // The "gnu-dummy S2K" is the marker which will tell that this file does *not* actually contain the secret key.
+    PGPS2KSpecifierGnuDummy = 101,
+    // TODO: gnu-divert-to-card S2K
+    PGPS2KSpecifierDivertToCard = 102
 };
 
 typedef NS_ENUM(UInt8, PGPS2KUsage) {

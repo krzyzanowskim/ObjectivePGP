@@ -314,9 +314,8 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     let sessionKeyData = [eskPacket decryptSessionKeyData:decryptionSecretKeyPacket sessionKeyAlgorithm:&sessionKeyAlgorithm error:error];
-    NSAssert(sessionKeyAlgorithm > 0, @"Invalid session key algorithm");
+    NSAssert(sessionKeyAlgorithm < PGPSymmetricMax, @"Invalid session key algorithm");
 
-    NSAssert(sessionKeyData, @"Missing session key data");
     if (!sessionKeyData) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Missing session key data" }];
@@ -338,6 +337,9 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     if (packets.count == 0) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unable to find valid packets to decrypt." }];
+        }
         return nil;
     }
 

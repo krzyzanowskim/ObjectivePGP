@@ -73,7 +73,12 @@ NS_ASSUME_NONNULL_BEGIN
     let encryptedBytes = encryptedData.bytes;
     NSUInteger outBufferLength = encryptedData.length;
     UInt8 *outBuffer = calloc(outBufferLength, sizeof(UInt8));
-    pgp_defer { if (outBuffer) { free(outBuffer); } };
+    pgp_defer {
+        if (outBuffer) {
+            memset(outBuffer, 0, outBufferLength);
+            free(outBuffer);
+        }
+    };
 
     NSData *decryptedData = nil;
 
@@ -107,7 +112,12 @@ NS_ASSUME_NONNULL_BEGIN
         } break;
         case PGPSymmetricTripleDES: {
             DES_key_schedule *keys = calloc(3, sizeof(DES_key_schedule));
-            pgp_defer { if (keys) { free(keys); } };
+            pgp_defer {
+                if (keys) {
+                    memset(keys, 0, 3 * sizeof(DES_key_schedule));
+                    free(keys);
+                }
+            };
 
             for (NSUInteger n = 0; n < 3; ++n) {
                 DES_set_key((DES_cblock *)(void *)(sessionKeyData.bytes + n * 8), &keys[n]);
@@ -116,10 +126,6 @@ NS_ASSUME_NONNULL_BEGIN
             int blocksNum = 0;
             DES_ede3_cfb64_encrypt(encryptedBytes, outBuffer, outBufferLength, &keys[0], &keys[1], &keys[2], (DES_cblock *)(void *)iv, &blocksNum, decrypt ? DES_DECRYPT : DES_ENCRYPT);
             decryptedData = [NSData dataWithBytes:outBuffer length:outBufferLength];
-
-            if (keys) {
-                memset(keys, 0, 3 * sizeof(DES_key_schedule));
-            }
         } break;
         case PGPSymmetricCAST5: {
             // initialize
@@ -145,10 +151,6 @@ NS_ASSUME_NONNULL_BEGIN
             break;
         default:
             break;
-    }
-
-    if (outBuffer) {
-        memset(outBuffer, 0, outBufferLength);
     }
 
     return decryptedData;

@@ -67,7 +67,9 @@ NS_ASSUME_NONNULL_BEGIN
     return [super fingerprint];
 }
 
-- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing _Nullable *)error {
+    PGPAssertClass(packetBody, NSData);
+
     NSUInteger position = [super parsePacketBody:packetBody error:error];
     //  5.5.3.  Secret-Key Packet Formats
 
@@ -120,6 +122,8 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     if (self.s2k.specifier == PGPS2KSpecifierGnuDummy) {
+        self.ivData = NSData.data;
+    } else if (self.s2k.specifier == PGPS2KSpecifierDivertToCard) {
         self.ivData = NSData.data;
     } else if (self.s2kUsage != PGPS2KUsageNonEncrypted) {
         // Initial Vector (IV) of the same length as the cipher's block size
@@ -268,6 +272,12 @@ NS_ASSUME_NONNULL_BEGIN
     // Session key for passphrase
     // producing a key to be used with a symmetric block cipher from a string of octets
     let sessionKeyData = [decryptedKeyPacket.s2k produceSessionKeyWithPassphrase:passphrase symmetricAlgorithm:encryptionSymmetricAlgorithm];
+    if (!sessionKeyData) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Can't build session key." } ];
+        }
+        return nil;
+    }
 
     // Decrypted MPIArray
     let decryptedData = [PGPCryptoCFB decryptData:decryptedKeyPacket.encryptedMPIPartData sessionKeyData:sessionKeyData symmetricAlgorithm:encryptionSymmetricAlgorithm iv:decryptedKeyPacket.ivData];
@@ -279,6 +289,7 @@ NS_ASSUME_NONNULL_BEGIN
             return nil;
         }
     }
+
     decryptedKeyPacket.wasDecrypted = YES;
     return decryptedKeyPacket;
 }

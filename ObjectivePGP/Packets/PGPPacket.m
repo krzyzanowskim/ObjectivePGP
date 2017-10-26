@@ -37,12 +37,12 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
-- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing _Nullable *)error {
     PGPAssertClass(packetBody, NSData);
     return 0;
 }
 
-- (nullable NSData *)export:(NSError *__autoreleasing *)error {
+- (nullable NSData *)export:(NSError *__autoreleasing _Nullable *)error {
     [NSException raise:@"MissingExportMethod" format:@"export: selector not overriden"];
     return nil;
 }

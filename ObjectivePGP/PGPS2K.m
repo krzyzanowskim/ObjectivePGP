@@ -64,7 +64,7 @@ static const unsigned int PGP_DEFAULT_ITERATIONS_COUNT = 215;
     [data getBytes:&_specifier range:(NSRange){position, 1}];
     position = position + 1;
 
-    NSAssert(_specifier == PGPS2KSpecifierIteratedAndSalted || _specifier == PGPS2KSpecifierSalted || _specifier == PGPS2KSpecifierSimple || _specifier == PGPS2KSpecifierGnuDummy, @"Bad s2k specifier");
+    NSAssert(_specifier == PGPS2KSpecifierIteratedAndSalted || _specifier == PGPS2KSpecifierSalted || _specifier == PGPS2KSpecifierSimple || _specifier == PGPS2KSpecifierGnuDummy ||  _specifier == PGPS2KSpecifierDivertToCard, @"Invalid s2k specifier");
 
     // this is not documented, but now I need to read S2K key specified by s2kSpecifier
     // 3.7.1.1.  Simple S2K
@@ -86,7 +86,7 @@ static const unsigned int PGP_DEFAULT_ITERATIONS_COUNT = 215;
         position = position + 1;
     }
 
-    if (self.specifier == PGPS2KSpecifierGnuDummy) {
+    if (self.specifier == PGPS2KSpecifierGnuDummy || self.specifier == PGPS2KSpecifierDivertToCard) {
         // read 3 bytes, and check if it's "GNU" followed by 0x01 || 0x02
         let gnuMarkerSize = 4;
         let gnuString = [[NSString alloc] initWithData:[data subdataWithRange:(NSRange){position, gnuMarkerSize - 1}] encoding:NSASCIIStringEncoding];
