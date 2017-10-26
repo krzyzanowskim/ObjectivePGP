@@ -203,4 +203,26 @@
     XCTAssertEqual(keys.count, (NSUInteger)1);
 }
 
+-(void)testSigningSubKey {
+    // subkey generated with GnuPG 2.1.18
+    //
+    // gpg --gen-key
+    //      Test User <test@fake.workingcopyapp.com>
+    //      passphrase: 12345678
+    // gpg --edit-key test@fake.workingcopyapp.com
+    //       addkey
+    //       4: RSA (sign only)
+    //       50 days expiration
+    // gpg --list-signatures     # to get fingerprint
+    // gpg --armor --export-secret-subkeys FA0D04B6D62865E5
+    
+    let keys = [PGPTestUtils readKeysFromFile:@"sub-signing-key.asc"];
+    XCTAssertEqual(keys.count, (NSUInteger)1);
+    
+    NSError* error = nil;
+    let data = [@"Hello World!" dataUsingEncoding:NSUTF8StringEncoding];
+    let signature = [self.pgp sign:data usingKey:keys[0] passphrase:@"12345678" detached:NO error:&error];
+    XCTAssertNotNil(signature, @"Signing failed: %@", error);
+}
+
 @end
