@@ -208,6 +208,15 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
+    // Favor subkey over primary key.
+    // check subkeys, by default first check the subkeys
+    for (PGPPartialSubKey *subKey in self.subKeys) {
+        PGPSignaturePacket *signaturePacket = subKey.bindingSignature;
+        if (signaturePacket.canBeUsedToSign) {
+            return subKey.primaryKeyPacket;
+        }
+    }
+
     // check primary user self certificates
     PGPSignaturePacket *primaryUserSelfCertificate = nil;
     [self primaryUserAndSelfCertificate:&primaryUserSelfCertificate];
@@ -217,19 +226,21 @@ NS_ASSUME_NONNULL_BEGIN
         }
     }
 
-    for (PGPPartialSubKey *subKey in self.subKeys) {
-        PGPSignaturePacket *signaturePacket = subKey.bindingSignature;
-        if (signaturePacket.canBeUsedToSign) {
-            return subKey.primaryKeyPacket;
-        }
-    }
-
     // By convention, the top-level key provides signature services
     return PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket);
 }
 
 // signature packet that is available for verifying signature with a keyID
 - (nullable PGPPacket *)signingKeyPacketWithKeyID:(PGPKeyID *)keyID {
+    for (PGPPartialSubKey *subKey in self.subKeys) {
+        if (PGPEqualObjects(subKey.keyID,keyID)) {
+            PGPSignaturePacket *signaturePacket = subKey.bindingSignature;
+            if (signaturePacket.canBeUsedToSign) {
+                return subKey.primaryKeyPacket;
+            }
+        }
+    }
+
     // check primary user self certificates
     PGPSignaturePacket *primaryUserSelfCertificate = nil;
     [self primaryUserAndSelfCertificate:&primaryUserSelfCertificate];
@@ -237,15 +248,6 @@ NS_ASSUME_NONNULL_BEGIN
         if (PGPEqualObjects(self.keyID,keyID)) {
             if (primaryUserSelfCertificate.canBeUsedToSign) {
                 return self.primaryKeyPacket;
-            }
-        }
-    }
-
-    for (PGPPartialSubKey *subKey in self.subKeys) {
-        if (PGPEqualObjects(subKey.keyID,keyID)) {
-            PGPSignaturePacket *signaturePacket = subKey.bindingSignature;
-            if (signaturePacket.canBeUsedToSign) {
-                return subKey.primaryKeyPacket;
             }
         }
     }
