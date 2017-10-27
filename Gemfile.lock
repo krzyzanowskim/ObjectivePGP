@@ -5,7 +5,7 @@ GEM
     claide (1.0.2)
     colored2 (3.1.2)
     nanaimo (0.2.3)
-    xcodeproj (1.5.2)
+    xcodeproj (1.5.3)
       CFPropertyList (~> 2.3.3)
       claide (>= 1.0.2, < 2.0)
       colored2 (~> 3.1)
