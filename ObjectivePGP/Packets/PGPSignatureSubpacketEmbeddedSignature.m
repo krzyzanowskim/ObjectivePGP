@@ -12,6 +12,8 @@
 #import "PGPPacket+Private.h"
 #import "PGPFoundation.h"
 
+// PGPSignatureSubpacketTypeEmbeddedSignature
+
 NS_ASSUME_NONNULL_BEGIN
 
 @interface PGPSignatureSubpacketEmbeddedSignature ()
@@ -36,12 +38,8 @@ NS_ASSUME_NONNULL_BEGIN
     return embeddedSignature;
 }
 
-+ (PGPSignatureSubpacketType)type {
-    return PGPSignatureSubpacketTypeEmbeddedSignature;
-}
-
 - (nullable NSData *)export:(NSError *__autoreleasing  _Nullable * _Nullable)error {
-    let type = self.class.type;
+    let type = PGPSignatureSubpacketTypeEmbeddedSignature;
     let typedData = [NSMutableData dataWithBytes:&type length:1];
 
     let signatureValue = PGPCast(self.signaturePacket, PGPSignaturePacket);

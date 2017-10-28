@@ -146,7 +146,7 @@ typedef NS_ENUM(UInt8, PGPSignatureSubpacketType) {
     PGPSignatureSubpacketTypeReasonForRevocation = 29,
     PGPSignatureSubpacketTypeFeatures = 30,
     PGPSignatureSubpacketTypeSignatureTarget = 31, // TODO
-    PGPSignatureSubpacketTypeEmbeddedSignature = 32 // TODO
+    PGPSignatureSubpacketTypeEmbeddedSignature = 32
 };
 
 // 5.2.3.21.  Key Flags

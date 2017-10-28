@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (nullable instancetype)initWithHeader:(PGPSignatureSubpacketHeader *)header body:(NSData *)subPacketBodyData {
-    if (self = [self initWithType:header.type andValue:NSNull.null]) {
+    if (self = [self initWithType:header.type andValue:nil]) {
         _length = header.headerLength + header.bodyLength;
         [self parseSubpacketBody:subPacketBodyData];
     }
@@ -48,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"%@ %@ %@", [super description], @(self.type), self.value];
+    return [NSString stringWithFormat:@"%@ type: %@ value: %@", [super description], @(self.type), self.value ?: @"nil"];
 }
 
 /**
@@ -155,7 +155,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPSignatureSubpacketTypePreferredSymetricAlgorithm: // NSArray of NSNumber(PGPSymmetricAlgorithm)
         {
             // 5.2.3.7.  Preferred Symmetric Algorithms
-            NSMutableArray *algorithmsArray = [NSMutableArray array];
+            let algorithmsArray = [NSMutableArray array];
 
             for (NSUInteger i = 0; i < packetBodyData.length; i++) {
                 PGPSymmetricAlgorithm algorithm = PGPSymmetricPlaintext;
@@ -320,6 +320,7 @@ NS_ASSUME_NONNULL_BEGIN
             if (!algorithmsArray) {
                 break;
             }
+
             for (NSNumber *val in algorithmsArray) {
                 PGPCompressionAlgorithm hashAlgorithm = (UInt8)val.unsignedIntValue;
                 [data appendBytes:&hashAlgorithm length:sizeof(PGPCompressionAlgorithm)];
@@ -366,9 +367,9 @@ NS_ASSUME_NONNULL_BEGIN
     // subpacket = length + tag(type) + body
     NSMutableData *subpacketData = [NSMutableData data];
     // the subpacket length (1, 2, or 5 octets),
-    NSData *subpacketLengthData = [PGPPacket buildNewFormatLengthDataForData:data];
-    [subpacketData appendData:subpacketLengthData]; // data with tag
-    [subpacketData appendData:data];
+    let subpacketLengthData = [PGPPacket buildNewFormatLengthDataForData:data];
+    [subpacketData pgp_appendData:subpacketLengthData]; // data with tag
+    [subpacketData pgp_appendData:data];
 
     return subpacketData;
 }
@@ -413,7 +414,7 @@ NS_ASSUME_NONNULL_BEGIN
     // I'm drunk, or person who defined it this way was drunk.
     subpacketLength = subpacketLength - 1;
 
-    PGPSignatureSubpacketHeader *subpacketHeader = [[PGPSignatureSubpacketHeader alloc] init];
+    let subpacketHeader = [[PGPSignatureSubpacketHeader alloc] init];
     subpacketHeader.type = subpacketType;
     subpacketHeader.headerLength = headerLength;
     subpacketHeader.bodyLength = subpacketLength;

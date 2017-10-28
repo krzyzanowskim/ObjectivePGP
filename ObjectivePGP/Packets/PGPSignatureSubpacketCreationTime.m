@@ -12,6 +12,8 @@
 #import "PGPPacket+Private.h"
 #import "PGPMacros+Private.h"
 
+// PGPSignatureSubpacketTypeSignatureCreationTime
+
 NS_ASSUME_NONNULL_BEGIN
 
 static const NSUInteger PGPSignatureSubpacketLength = 4;
@@ -23,10 +25,6 @@ static const NSUInteger PGPSignatureSubpacketLength = 4;
         _value = [date copy];
     }
     return self;
-}
-
-+ (PGPSignatureSubpacketType)type {
-    return PGPSignatureSubpacketTypeSignatureCreationTime;
 }
 
 + (instancetype)packetWithData:(NSData *)packetBodyData {
