@@ -17,18 +17,18 @@ NS_ASSUME_NONNULL_BEGIN
 @interface PGPSignatureSubpacket : NSObject <NSCopying>
 
 @property (nonatomic, readonly) PGPSignatureSubpacketType type;
-@property (nonatomic, readonly, copy) id<NSObject, NSCopying> value;
+@property (nonatomic, readonly, nullable, copy) id<NSObject, NSCopying> value;
 @property (nonatomic, readonly) NSUInteger length;
 
 PGP_EMPTY_INIT_UNAVAILABLE;
 
-- (instancetype)initWithType:(PGPSignatureSubpacketType)type andValue:(id<NSObject, NSCopying>)value NS_DESIGNATED_INITIALIZER;
-- (instancetype)initWithHeader:(PGPSignatureSubpacketHeader *)header body:(NSData *)subPacketBodyData;
+- (instancetype)initWithType:(PGPSignatureSubpacketType)type andValue:(nullable id<NSObject, NSCopying>)value NS_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithHeader:(PGPSignatureSubpacketHeader *)header body:(NSData *)subPacketBodyData;
 
 + (PGPSignatureSubpacketHeader *)subpacketHeaderFromData:(NSData *)headerData;
 
 - (void)parseSubpacketBody:(NSData *)packetBody;
-- (nullable NSData *)export:(NSError *__autoreleasing *)error;
+- (nullable NSData *)export:(NSError *__autoreleasing _Nullable *)error;
 
 @end
 
