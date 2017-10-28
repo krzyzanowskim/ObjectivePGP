@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPSignatureSubpacket
 
-- (instancetype)initWithType:(PGPSignatureSubpacketType)type andValue:(id<NSObject, NSCopying>)value {
+- (instancetype)initWithType:(PGPSignatureSubpacketType)type andValue:(nullable id<NSObject, NSCopying>)value {
     if ((self = [super init])) {
         _type = type;
         _value = [value copyWithZone:nil];
