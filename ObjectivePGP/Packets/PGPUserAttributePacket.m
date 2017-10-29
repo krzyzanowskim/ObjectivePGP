@@ -16,6 +16,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPUserAttributePacket
 
+- (instancetype)init {
+    if ((self = [super init])) {
+        _subpackets = [NSArray<PGPUserAttributeSubpacket *> array];
+    }
+    return self;
+}
+
 - (PGPPacketTag)tag {
     return PGPUserAttributePacketTag;
 }
