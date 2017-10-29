@@ -510,8 +510,23 @@ NS_ASSUME_NONNULL_BEGIN
             }
             [toSignData appendData:inputData];
         } break;
-        case PGPSignatureSubkeyBinding: // 0x18
+        case PGPSignatureSubkeyBinding: { // 0x18
+            // the subkey using the same format as the main key (also using 0x99 as the first octet).
+            if (!signingKeyPacket || !subKey) {
+                PGPLogError(@"Invalid paramaters");
+                if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing valid key packet." }]; }
+                return nil;
+            }
+
+            let signingKeyData = [signingKeyPacket exportKeyPacketOldStyle];
+            [toSignData appendData:signingKeyData];
+
+            let _Nullable signingSubKeyData = [PGPCast(subKey.publicKey.primaryKeyPacket, PGPPublicKeyPacket) exportKeyPacketOldStyle];
+            PGPAssertClass(signingSubKeyData, NSData);
+            [toSignData pgp_appendData:signingSubKeyData];
+        } break;
         case PGPSignaturePrimaryKeyBinding: { // 0x19
+            // A primary key binding signature (type 0x19) then hashes
             if (!signingKeyPacket) {
                 PGPLogError(@"Invalid paramaters");
                 if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing key packet." }]; }
@@ -520,13 +535,7 @@ NS_ASSUME_NONNULL_BEGIN
 
             let signingKeyData = [signingKeyPacket exportKeyPacketOldStyle];
             [toSignData appendData:signingKeyData];
-
-            // A subkey binding signature (type 0x18) or primary key binding signature (type 0x19) then hashes
-            // the subkey using the same format as the main key (also using 0x99 as the first octet).
-            let signingSubKeyData = [(PGPPublicKeyPacket *)subKey.publicKey.primaryKeyPacket exportKeyPacketOldStyle];
-            [toSignData appendData:signingSubKeyData];
-        }
-            break;
+        } break;
         case PGPSignatureGenericCertificationUserIDandPublicKey: // 0x10
         case PGPSignaturePersonalCertificationUserIDandPublicKey: // 0x11
         case PGPSignatureCasualCertificationUserIDandPublicKey: // 0x12
