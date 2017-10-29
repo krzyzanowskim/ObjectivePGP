@@ -128,13 +128,13 @@ NS_ASSUME_NONNULL_BEGIN
         if (nextPacketOffset == 0) {
             offset++;
         }
-        offset += nextPacketOffset;
+        offset = offset + (NSInteger)nextPacketOffset;
     }
     return accumulatedPackets;
 }
 
 // return array of packets
-- (NSArray<PGPPacket *> *)decryptWithSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData isIntegrityProtected:(BOOL *)isIntegrityProtected error:(NSError * __autoreleasing _Nullable *)error {
+- (NSArray<PGPPacket *> *)decryptWithSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData isIntegrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError * __autoreleasing _Nullable *)error {
     NSAssert(self.encryptedData, @"Missing encrypted data to decrypt");
     NSAssert(secretKeyPacket, @"Missing secret key");
 

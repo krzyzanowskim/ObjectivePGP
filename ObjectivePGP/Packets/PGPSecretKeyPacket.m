@@ -204,7 +204,7 @@ NS_ASSUME_NONNULL_BEGIN
 
             if (checksum != calculatedChecksum) {
                 if (error) {
-                    *error = [NSError errorWithDomain:PGPErrorDomain code:-1 userInfo:@{ NSLocalizedDescriptionKey: @"Decrypted hash mismatch, check passphrase." }];
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Decrypted hash mismatch, check passphrase." }];
                 }
 
                 if (length) {

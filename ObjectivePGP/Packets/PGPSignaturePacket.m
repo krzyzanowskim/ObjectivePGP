@@ -447,7 +447,13 @@ NS_ASSUME_NONNULL_BEGIN
     let _Nullable trailerData = [self calculateTrailerFor:signedPartData];
 
     // build toSignData, toSign
-    let toSignData = [self buildDataToSignForType:self.type inputData:inputData key:key subKey:subKey keyPacket:signingKeyPacket userID:userID error:error];
+    let _Nullable toSignData = [self buildDataToSignForType:self.type inputData:inputData key:key subKey:subKey keyPacket:signingKeyPacket userID:userID error:error];
+    if (!toSignData) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Can't sign" }];
+        }
+        return NO;
+    }
     // toHash = toSignData + signedPartData + trailerData;
     let toHashData = [NSMutableData dataWithData:toSignData];
     [toHashData appendData:signedPartData];
@@ -569,14 +575,19 @@ NS_ASSUME_NONNULL_BEGIN
                 }
 
                 if (!userIsValid) {
-                    if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Invalid ." }]; }
+                    if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Invalid user id" }]; }
                     PGPLogError(@"Invalid user");
                     return nil;
                 }
             }
 
             if (userID.length > 0) {
-                let userIDData = [userID dataUsingEncoding:NSUTF8StringEncoding];
+                let _Nullable userIDData = [userID dataUsingEncoding:NSUTF8StringEncoding];
+                if (!userIDData) {
+                    if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Invalid user id" }]; }
+                    return nil;
+                }
+
                 if (self.version == 0x04) {
                     // constant tag (1)
                     UInt8 userIDConstant = 0xB4;
@@ -588,7 +599,7 @@ NS_ASSUME_NONNULL_BEGIN
                     [toSignData appendBytes:&userIDLength length:4];
                 }
                 // data
-                [toSignData appendData:userIDData];
+                [toSignData pgp_appendData:userIDData];
             }
             // TODO user attributes alternative
             // UInt8 userAttributeConstant = 0xD1;
