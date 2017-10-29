@@ -114,7 +114,7 @@ NS_ASSUME_NONNULL_BEGIN
 //};
 
 // Returns the most significant (latest valid) self signature of the user
-- (nullable PGPSignaturePacket *)validSelfCertificate:(PGPPartialKey *)key {
+- (nullable PGPSignaturePacket *)validSelfCertificate {
     if (self.selfCertifications.count == 0) {
         return nil;
     }

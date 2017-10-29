@@ -27,7 +27,7 @@ NS_SWIFT_NAME(User) @interface PGPUser : NSObject <NSCopying>
 PGP_EMPTY_INIT_UNAVAILABLE
 
 - (instancetype)initWithUserIDPacket:(PGPUserIDPacket *)userPacket NS_DESIGNATED_INITIALIZER;
-- (nullable PGPSignaturePacket *)validSelfCertificate:(PGPPartialKey *)key;
+- (nullable PGPSignaturePacket *)validSelfCertificate;
 
 @end
 
