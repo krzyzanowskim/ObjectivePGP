@@ -273,7 +273,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL)isEqualToPGPSymmetricallyEncryptedIntegrityProtectedDataPacket:(PGPSymmetricallyEncryptedIntegrityProtectedDataPacket *)packet {
-    return self.version == self.version;
+    return self.version == packet.version;
 }
 
 - (NSUInteger)hash {
