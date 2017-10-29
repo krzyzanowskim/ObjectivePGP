@@ -95,8 +95,8 @@ NS_ASSUME_NONNULL_BEGIN
     return NSNotFound;
 }
 
-+ (NSData *)randomData:(NSInteger)length {
-    NSMutableData *data = [NSMutableData dataWithLength:length];
++ (NSData *)randomData:(NSUInteger)length {
+    let data = [NSMutableData dataWithLength:length];
     int status = SecRandomCopyBytes(kSecRandomDefault, length, data.mutableBytes);
     NSAssert(status == errSecSuccess, @"Failed to generate secure random bytes");
     return data;

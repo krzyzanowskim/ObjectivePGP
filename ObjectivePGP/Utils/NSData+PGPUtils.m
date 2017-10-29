@@ -134,7 +134,7 @@ NS_ASSUME_NONNULL_BEGIN
     switch (symmetricAlgorithm) {
         case PGPSymmetricCAST5: {
             CAST_KEY *encrypt_key = calloc(1, sizeof(CAST_KEY));
-            CAST_set_key(encrypt_key, (unsigned int)keySize, sessionKeyData.bytes);
+            CAST_set_key(encrypt_key, (int)keySize, sessionKeyData.bytes);
             UInt8 *outBuf = calloc(self.length, sizeof(UInt8));
             CAST_ecb_encrypt(self.bytes, outBuf, encrypt_key, CAST_ENCRYPT);
             ret = [NSData dataWithBytes:&outBuf length:self.length];

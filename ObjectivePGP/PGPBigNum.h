@@ -12,8 +12,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PGPBigNum : NSObject <NSCopying>
 
-@property (nonatomic, readonly) unsigned int bitsCount;
-@property (nonatomic, readonly) unsigned int bytesCount;
+@property (nonatomic, readonly) int bitsCount;
+@property (nonatomic, readonly) int bytesCount;
 @property (nonatomic, readonly) NSData *data;
 
 @end

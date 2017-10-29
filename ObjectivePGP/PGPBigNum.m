@@ -23,16 +23,16 @@ NS_ASSUME_NONNULL_BEGIN
     return self;
 }
 
-- (unsigned int)bitsCount {
+- (int)bitsCount {
     return BN_num_bits(self.bignumRef);
 }
 
-- (unsigned int)bytesCount {
+- (int)bytesCount {
     return BN_num_bytes(self.bignumRef);
 }
 
 - (NSData *)data {
-    let buflen = self.bytesCount;
+    let buflen = (size_t)self.bytesCount;
     let buf = calloc(buflen, 1);
     pgp_defer { if (buf) { free(buf); } };
     BN_bn2bin(self.bignumRef, buf);

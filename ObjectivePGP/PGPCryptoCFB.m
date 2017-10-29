@@ -88,7 +88,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPSymmetricAES192:
         case PGPSymmetricAES256: {
             AES_KEY aes_key;
-            AES_set_encrypt_key(sessionKeyData.bytes, MIN((unsigned int)keySize * 8, (unsigned int)sessionKeyData.length * 8), &aes_key);
+            AES_set_encrypt_key(sessionKeyData.bytes, MIN((int)keySize * 8, (int)sessionKeyData.length * 8), &aes_key);
 
             int blocksNum = 0;
             AES_cfb128_encrypt(encryptedBytes, outBuffer, outBufferLength, &aes_key, iv, &blocksNum, decrypt ? AES_DECRYPT : AES_ENCRYPT);

@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    uint8_t *encrypted_em = calloc(BN_num_bytes(rsa->n) & SIZE_T_MAX, 1);
+    uint8_t *encrypted_em = calloc((size_t)BN_num_bytes(rsa->n) & SIZE_T_MAX, 1);
     pgp_defer { free(encrypted_em); };
     int em_len = RSA_public_encrypt(toEncrypt.length & INT_MAX, toEncrypt.bytes, encrypted_em, rsa, RSA_NO_PADDING);
     if (em_len == -1 || em_len != (publicKeyPacket.keySize & INT_MAX)) {

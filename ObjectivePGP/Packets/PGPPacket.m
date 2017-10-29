@@ -73,7 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSUInteger prime = 31;
     NSUInteger result = 1;
     result = prime * result + self.tag;
-    result = prime * result + self.indeterminateLength;
+    result = prime * result + (NSUInteger)self.indeterminateLength;
     return result;
 }
 

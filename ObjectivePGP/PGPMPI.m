@@ -70,13 +70,13 @@ NSString * const PGPMPI_M = @"M";
         return nil;
     }
 
-    BIGNUM *mpi_BN = BN_dup(self.bigNum.bignumRef);
-    NSInteger mpi_BN_length = (BN_num_bits(mpi_BN) + 7) / 8;
-    UInt8 *bn_bin = calloc(mpi_BN_length, sizeof(UInt8));
-    NSUInteger len = BN_bn2bin(mpi_BN, bn_bin);
+    let mpi_BN = BN_dup(self.bigNum.bignumRef);
+    let mpi_BN_length = (BN_num_bits(mpi_BN) + 7) / 8;
+    UInt8 *bn_bin = calloc((size_t)mpi_BN_length, sizeof(UInt8));
+    let len = (NSUInteger)BN_bn2bin(mpi_BN, bn_bin);
     BN_clear_free(mpi_BN);
 
-    NSData *data = [NSData dataWithBytes:bn_bin length:len];
+    let data = [NSData dataWithBytes:bn_bin length:len];
     free(bn_bin);
     return data;
 }
@@ -94,7 +94,7 @@ NSString * const PGPMPI_M = @"M";
     [outData appendBytes:&bitsBE length:2];
 
     // mpi
-    UInt8 *buf = calloc(BN_num_bytes(self.bigNum.bignumRef), sizeof(UInt8));
+    UInt8 *buf = calloc((size_t)BN_num_bytes(self.bigNum.bignumRef), sizeof(UInt8));
     pgp_defer { free(buf); };
     UInt16 bytes = (bits + 7) / 8;
     BN_bn2bin(self.bigNum.bignumRef, buf);
