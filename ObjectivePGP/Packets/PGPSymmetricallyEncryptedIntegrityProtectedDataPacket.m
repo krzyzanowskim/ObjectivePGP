@@ -92,11 +92,12 @@ NS_ASSUME_NONNULL_BEGIN
     }];
 }
 
-- (NSArray<PGPPacket *> *)readPacketsFromData:(NSData *)keyringData offset:(NSUInteger)offset mdcLength:(nullable NSUInteger *)mdcLength {
+- (NSArray<PGPPacket *> *)readPacketsFromData:(NSData *)keyringData offset:(NSUInteger)offsetPosition mdcLength:(nullable NSUInteger *)mdcLength {
     let accumulatedPackets = [NSMutableArray<PGPPacket *> array];
-    NSUInteger nextPacketOffset = 0;
     if (mdcLength) { *mdcLength = 0; }
-    while (offset < keyringData.length) {
+    NSInteger offset = offsetPosition;
+    NSUInteger nextPacketOffset = 0;
+    while (offset < (NSInteger)keyringData.length) {
         let _Nullable packet = [PGPPacketFactory packetWithData:keyringData offset:offset nextPacketOffset:&nextPacketOffset];
         if (packet) {
             [accumulatedPackets addObject:packet];
