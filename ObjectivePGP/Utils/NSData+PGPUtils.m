@@ -47,15 +47,16 @@ NS_ASSUME_NONNULL_BEGIN
 - (UInt32)pgp_CRC24 {
     UInt32 crc = CRC24_INIT;
     NSUInteger len = self.length;
+    NSUInteger j = 0;
     const UInt8 *octets = self.bytes;
-    int i;
-    while (len--) {
+    for (j = len; j > 0; j--) {
         crc ^= (*octets++) << 16;
-        for (i = 0; i < 8; i++) {
+        for (int i = 0; i < 8; i++) {
             crc <<= 1;
             if (crc & 0x1000000) crc ^= CRC24_POLY;
         }
     }
+
     return crc & 0xFFFFFFL;
 }
 
