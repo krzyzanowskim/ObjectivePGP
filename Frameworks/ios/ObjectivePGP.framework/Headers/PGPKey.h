@@ -47,7 +47,7 @@ PGP_EMPTY_INIT_UNAVAILABLE;
 *
 *  @return Decrypted key, or `nil`.
 */
-- (nullable PGPKey *)decryptedWithPassphrase:(NSString *)passphrase error:(NSError *__autoreleasing _Nullable *)error;
+- (nullable PGPKey *)decryptedWithPassphrase:(NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error;
 
 
 /// The binary format.

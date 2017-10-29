@@ -11,6 +11,6 @@
 
 @interface PGPPKCSEmsa : NSObject
 
-+ (NSData *)encode:(PGPHashAlgorithm)hashAlgorithm message:(NSData *)m encodedMessageLength:(NSUInteger)emLen error:(NSError *__autoreleasing *)error;
++ (NSData *)encode:(PGPHashAlgorithm)hashAlgorithm message:(NSData *)m encodedMessageLength:(NSUInteger)emLen error:(NSError * __autoreleasing *)error;
 
 @end

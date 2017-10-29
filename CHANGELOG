@@ -1,3 +1,12 @@
+Version 0.9.2
+- Fixes nullability and undefined behaviours issues.
+- Fixes issue where subkey should be used to sign for some keys.
+- Fixes packets equality issues.
+- Improves gnu-dummy support.
+- Improves ZIP compression support.
+- Sets default key size for key generator to 3072 bits.
+- Improves error handling.
+
 Version 0.9.1
 - Fixes subkeys generation.
 - Adds support for embedded signatures.

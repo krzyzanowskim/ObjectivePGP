@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 NS_SWIFT_NAME(User) @interface PGPUser : NSObject <NSCopying>
 
 @property (nonatomic, copy) NSString *userID;
-@property (nonatomic, copy) PGPUserAttributePacket *userAttribute;
+@property (nonatomic, nullable, copy) PGPUserAttributePacket *userAttribute;
 @property (nonatomic, copy) NSArray<PGPSignaturePacket *> *selfCertifications;
 @property (nonatomic, copy) NSArray<PGPSignaturePacket *> *otherSignatures;
 @property (nonatomic, copy) NSArray<PGPSignaturePacket *> *revocationSignatures;
@@ -27,7 +27,7 @@ NS_SWIFT_NAME(User) @interface PGPUser : NSObject <NSCopying>
 PGP_EMPTY_INIT_UNAVAILABLE
 
 - (instancetype)initWithUserIDPacket:(PGPUserIDPacket *)userPacket NS_DESIGNATED_INITIALIZER;
-- (nullable PGPSignaturePacket *)validSelfCertificate:(PGPPartialKey *)key;
+- (nullable PGPSignaturePacket *)validSelfCertificate;
 
 @end
 

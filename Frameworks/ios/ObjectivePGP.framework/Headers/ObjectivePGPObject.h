@@ -64,7 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error.
  @return YES on success.
  */
-- (BOOL)exportKeysOfType:(PGPPartialKeyType)type toFile:(NSString *)path error:(NSError *__autoreleasing _Nullable *)error NS_SWIFT_NAME(export(type:to:));
+- (BOOL)exportKeysOfType:(PGPPartialKeyType)type toFile:(NSString *)path error:(NSError * __autoreleasing _Nullable *)error NS_SWIFT_NAME(export(type:to:));
 
 /**
  Export, previously imported, single key data.
@@ -109,7 +109,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error.
  @return Signed data, or `nil` if fail.
  */
-- (nullable NSData *)sign:(NSData *)data usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase detached:(BOOL)detached error:(NSError *__autoreleasing _Nullable *)error;
+- (nullable NSData *)sign:(NSData *)data usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase detached:(BOOL)detached error:(NSError * __autoreleasing _Nullable *)error;
 
 /**
  Verify signed data. Validates with the imported keys.
@@ -118,7 +118,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error
  @return YES on success.
  */
-- (BOOL)verify:(NSData *)data error:(NSError *__autoreleasing _Nullable *)error;
+- (BOOL)verify:(NSData *)data error:(NSError * __autoreleasing _Nullable *)error;
 
 /**
  Verify signed data, with detached signature data.
@@ -128,7 +128,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error
  @return YES on success.
  */
-- (BOOL)verify:(NSData *)data withSignature:(NSData *)signature error:(NSError *__autoreleasing _Nullable *)error;
+- (BOOL)verify:(NSData *)data withSignature:(NSData *)signature error:(NSError * __autoreleasing _Nullable *)error;
 
 /**
  Verify signed data using given key.
@@ -139,7 +139,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error.
  @return YES on success.
  */
-- (BOOL)verify:(NSData *)data withSignature:(NSData *)signature usingKey:(PGPKey *)key error:(NSError *__autoreleasing _Nullable *)error;
+- (BOOL)verify:(NSData *)data withSignature:(NSData *)signature usingKey:(PGPKey *)key error:(NSError * __autoreleasing _Nullable *)error;
 
 /**
  Encrypt data using given keys. Output in binary or ASCII format.
@@ -150,7 +150,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error.
  @return Encrypted data in requested format.
  */
-- (nullable NSData *)encrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys armored:(BOOL)armored error:(NSError *__autoreleasing _Nullable *)error;
+- (nullable NSData *)encrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys armored:(BOOL)armored error:(NSError * __autoreleasing _Nullable *)error;
 
 
 /**
@@ -164,7 +164,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error.
  @return Encrypted and signed data in requested format.
  */
-- (nullable NSData *)encrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys signWithKey:(nullable PGPKey *)signKey passphrase:(nullable NSString *)passphrase armored:(BOOL)armored error:(NSError *__autoreleasing _Nullable *)error;
+- (nullable NSData *)encrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys signWithKey:(nullable PGPKey *)signKey passphrase:(nullable NSString *)passphrase armored:(BOOL)armored error:(NSError * __autoreleasing _Nullable *)error;
 
 
 /**
@@ -175,7 +175,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error.
  @return Decrypted data.
  */
-- (nullable NSData *)decrypt:(NSData *)data passphrase:(nullable NSString *)passphrase error:(NSError *__autoreleasing _Nullable *)error;
+- (nullable NSData *)decrypt:(NSData *)data passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error;
 
 
 /**
@@ -190,7 +190,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error.
  @return Decrypted data.
  */
-- (nullable NSData *)decrypt:(NSData *)data passphrase:(nullable NSString *)passphrase verifyWithKey:(nullable PGPKey *)key signed:(nullable BOOL *)isSigned valid:(nullable BOOL *)isValid integrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError *__autoreleasing _Nullable *)error;
+- (nullable NSData *)decrypt:(NSData *)data passphrase:(nullable NSString *)passphrase verifyWithKey:(nullable PGPKey *)key signed:(nullable BOOL *)isSigned valid:(nullable BOOL *)isValid integrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError * __autoreleasing _Nullable *)error;
 
 
 /// Deprecated.

@@ -8,11 +8,12 @@
 
 #import <ObjectivePGP/PGPMacros.h>
 #import <ObjectivePGP/PGPTypes.h>
+#import <ObjectivePGP/PGPExportableProtocol.h>
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PGPS2K : NSObject <NSCopying>
+@interface PGPS2K : NSObject <NSCopying, PGPExportable>
 
 @property (nonatomic, readonly) PGPS2KSpecifier specifier;
 @property (nonatomic, readonly) PGPHashAlgorithm hashAlgorithm;
@@ -29,7 +30,7 @@ PGP_EMPTY_INIT_UNAVAILABLE
 
 - (nullable NSData *)buildKeyDataForPassphrase:(NSData *)passphrase prefix:(nullable NSData *)prefix salt:(NSData *)salt codedCount:(UInt32)codedCount;
 - (nullable NSData *)produceSessionKeyWithPassphrase:(NSString *)passphrase symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm;
-- (nullable NSData *)export:(NSError *__autoreleasing *)error;
+- (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error;
 
 @end
 
