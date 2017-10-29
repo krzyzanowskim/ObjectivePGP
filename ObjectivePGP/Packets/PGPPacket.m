@@ -20,21 +20,29 @@ NS_ASSUME_NONNULL_BEGIN
 @implementation PGPPacket
 
 - (instancetype)init {
-    if (self = [super init]) {
-
+    if ((self = [super init])) {
+        _tag = PGPInvalidPacketTag;
     }
     return self;
 }
 
-- (nullable instancetype)initWithHeader:(NSData *)headerData body:(NSData *)bodyData {
-    if ((self = [self init])) {
-        NSError *error = nil;
-        [self parsePacketBody:bodyData error:&error];
-        if (error) {
-            return nil;
-        }
++ (nullable instancetype)packetWithBody:(NSData *)bodyData {
+    PGPAssertClass(bodyData, NSData);
+    
+    id packet = [[self.class alloc] init];
+
+    NSError *error = nil;
+    if ([packet respondsToSelector:@selector(parsePacketBody:error:)]) {
+        [packet parsePacketBody:bodyData error:&error];
+    } else {
+        return nil;
     }
-    return self;
+
+    if (error) {
+        return nil;
+    }
+
+    return packet;
 }
 
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing _Nullable *)error {

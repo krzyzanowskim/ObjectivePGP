@@ -53,55 +53,57 @@ NS_ASSUME_NONNULL_BEGIN
         PGPPacket *packet = nil;
         switch (packetTag) {
             case PGPPublicKeyPacketTag:
-                packet = [[PGPPublicKeyPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+                packet = [PGPPublicKeyPacket packetWithBody:packetBodyData];
                 break;
             case PGPPublicSubkeyPacketTag:
-                packet = [[PGPPublicSubKeyPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+                packet = [PGPPublicSubKeyPacket packetWithBody:packetBodyData];
                 break;
             case PGPSignaturePacketTag:
-                packet = [[PGPSignaturePacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+                packet = [PGPSignaturePacket packetWithBody:packetBodyData];
                 break;
             case PGPUserAttributePacketTag:
-                packet = [[PGPUserAttributePacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+                packet = [PGPUserAttributePacket packetWithBody:packetBodyData];
                 break;
             case PGPUserIDPacketTag:
-                packet = [[PGPUserIDPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+                packet = [PGPUserIDPacket packetWithBody:packetBodyData];
                 break;
             case PGPTrustPacketTag:
-                packet = [[PGPTrustPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+                packet = [PGPTrustPacket packetWithBody:packetBodyData];
                 break;
             case PGPLiteralDataPacketTag:
-                packet = [[PGPLiteralPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+                packet = [PGPLiteralPacket packetWithBody:packetBodyData];
                 break;
             case PGPSecretKeyPacketTag:
-                packet = [[PGPSecretKeyPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+                packet = [PGPSecretKeyPacket packetWithBody:packetBodyData];
                 break;
             case PGPSecretSubkeyPacketTag:
-                packet = [[PGPSecretSubKeyPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+                packet = [PGPSecretSubKeyPacket packetWithBody:packetBodyData];
                 break;
             case PGPModificationDetectionCodePacketTag:
-                packet = [[PGPModificationDetectionCodePacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+                packet = [PGPModificationDetectionCodePacket packetWithBody:packetBodyData];
                 break;
             case PGPOnePassSignaturePacketTag:
-                packet = [[PGPOnePassSignaturePacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+                packet = [PGPOnePassSignaturePacket packetWithBody:packetBodyData];
                 break;
             case PGPCompressedDataPacketTag:
-                packet = [[PGPCompressedPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+                packet = [PGPCompressedPacket packetWithBody:packetBodyData];
                 break;
 //          case PGPSymmetricallyEncryptedDataPacketTag:
-//              packet = [[PGPSymmetricallyEncryptedDataPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+//              packet = [PGPSymmetricallyEncryptedDataPacket packetWithData:packetBodyData];
 //              break;
             case PGPSymmetricallyEncryptedIntegrityProtectedDataPacketTag:
-                packet = [[PGPSymmetricallyEncryptedIntegrityProtectedDataPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+                packet = [PGPSymmetricallyEncryptedIntegrityProtectedDataPacket packetWithBody:packetBodyData];
                 break;
             case PGPPublicKeyEncryptedSessionKeyPacketTag:
-                packet = [[PGPPublicKeyEncryptedSessionKeyPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+                packet = [PGPPublicKeyEncryptedSessionKeyPacket packetWithBody:packetBodyData];
                 break;
             default:
                 PGPLogWarning(@"Packet tag %@ is not supported", @(packetTag));
-                packet = [[PGPPacket alloc] initWithHeader:packetHeaderData body:packetBodyData];
+                packet = [PGPPacket packetWithBody:packetBodyData];
                 break;
         }
+
+        PGPAssertClass(packet, PGPPacket);
 
         if (indeterminateLength) {
             packet.indeterminateLength = YES;

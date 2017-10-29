@@ -19,7 +19,7 @@ extern const UInt32 PGPUnknownLength;
 @property (nonatomic, readonly) PGPPacketTag tag;
 
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
-- (nullable instancetype)initWithHeader:(NSData *)headerData body:(NSData *)bodyData;
++ (nullable instancetype)packetWithBody:(NSData *)bodyData;
 
 + (nullable NSData *)parsePacketHeader:(NSData *)data headerLength:(UInt32 *)headerLength nextPacketOffset:(nullable NSUInteger *)nextPacketOffset packetTag:(PGPPacketTag *)tag indeterminateLength:(BOOL *)indeterminateLength;
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error;
