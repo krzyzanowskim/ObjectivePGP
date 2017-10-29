@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)init {
     if ((self = [super init])) {
         _keyAlgorithm = PGPPublicKeyAlgorithmRSA;
-        _keyBitsLength = 2048;
+        _keyBitsLength = 3072;
         _createDate = NSDate.date;
         _version = 0x04;
         _cipherAlgorithm = PGPSymmetricAES256;
