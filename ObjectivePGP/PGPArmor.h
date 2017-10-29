@@ -26,7 +26,7 @@ NS_SWIFT_NAME(Armor) @interface PGPArmor : NSObject
 + (NSString *)armored:(NSData *)data as:(PGPArmorType)type part:(NSUInteger)part of:(NSUInteger)ofParts;
 + (NSString *)armored:(NSData *)data as:(PGPArmorType)type;
 
-+ (nullable NSData *)readArmored:(NSString *)string error:(NSError *__autoreleasing _Nullable *)error;
++ (nullable NSData *)readArmored:(NSString *)string error:(NSError * __autoreleasing _Nullable *)error;
 
 + (BOOL)isArmoredData:(NSData *)data;
 

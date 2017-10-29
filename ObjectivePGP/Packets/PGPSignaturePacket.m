@@ -219,9 +219,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Build packet
 
-- (nullable NSData *)export:(NSError *__autoreleasing *)error {
+- (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
     return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
-        return [self buildFullSignatureBodyData:error];
+        return [self buildFullSignatureBodyData];
     }];
 }
 
@@ -247,7 +247,7 @@ NS_ASSUME_NONNULL_BEGIN
     return data;
 }
 
-- (NSData *)buildFullSignatureBodyData:(NSError *__autoreleasing *)error {
+- (nullable NSData *)buildFullSignatureBodyData {
     let data = [NSMutableData data];
 
     // hashed Subpackets
@@ -258,11 +258,18 @@ NS_ASSUME_NONNULL_BEGIN
     [data appendData:[PGPSignaturePacket buildSubpacketsCollectionData:self.unhashedSubpackets]];
 
     // signed hash value
-    NSAssert(self.signedHashValueData, @"Missing signed hash");
-    [data appendData:self.signedHashValueData];
+    if (!self.signedHashValueData) {
+        PGPLogError(@"Missing signed hash for the signature.");
+        return nil;
+    }
+    [data pgp_appendData:self.signedHashValueData];
 
     // signed PGPMPI_M
-    NSAssert(self.signatureMPIArray.count > 0, @"Missing MPIArray");
+    if (self.signatureMPIArray.count == 0) {
+        PGPLogError(@"Missing MPI for the signature.");
+        return nil;
+    }
+
     for (PGPMPI *mpi in self.signatureMPIArray) {
         let exportMPI = [mpi exportMPI];
         [data pgp_appendData:exportMPI];
@@ -290,16 +297,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Verify
 
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey error:(NSError *__autoreleasing *)error {
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey error:(NSError * __autoreleasing *)error {
     return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey.publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:nil error:error];
 }
 
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error {
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error {
     return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey.publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:userID error:error];
 }
 
 // Opposite to sign, with readed data (not produced)
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError *__autoreleasing *)error {
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error {
     // no signing packet was found, this we have no valid signature
     PGPAssertClass(signingKeyPacket, PGPPublicKeyPacket);
 
@@ -386,7 +393,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Set signatureMPIArray and updates signed hash.
 ///
 /// Update sign related values. This method mutate the signature.
-- (BOOL)signData:(nullable NSData *)inputData withKey:(PGPKey *)key subKey:(nullable PGPKey *)subKey passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError *__autoreleasing _Nullable *)error {
+- (BOOL)signData:(nullable NSData *)inputData withKey:(PGPKey *)key subKey:(nullable PGPKey *)subKey passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(key, PGPKey);
 
     if (!key.secretKey) {
@@ -491,7 +498,7 @@ NS_ASSUME_NONNULL_BEGIN
     return YES;
 }
 
-- (nullable NSData *)buildDataToSignForType:(PGPSignatureType)type inputData:(nullable NSData *)inputData key:(nullable PGPKey *)key subKey:(nullable PGPKey *)subKey keyPacket:(nullable PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError *__autoreleasing _Nullable *)error {
+- (nullable NSData *)buildDataToSignForType:(PGPSignatureType)type inputData:(nullable NSData *)inputData key:(nullable PGPKey *)key subKey:(nullable PGPKey *)subKey keyPacket:(nullable PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError * __autoreleasing _Nullable *)error {
     let toSignData = [NSMutableData data];
     switch (type) {
         case PGPSignatureBinaryDocument:
@@ -611,7 +618,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @param packetBody Packet body
  */
 
-- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing _Nullable *)error {
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError * __autoreleasing _Nullable *)error {
     __unused NSUInteger position = [super parsePacketBody:packetBody error:error];
     NSUInteger startPosition = position;
 
@@ -640,7 +647,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // FIXME: V3 signatures fail somewehere (I don't know where yet) because everything is designed
 // for V4 and uses V4 specific data to (for example) validate signature
-- (NSUInteger)parseV3PacketBody:(NSData *)packetBody error:(NSError *__autoreleasing _Nullable *)error {
+- (NSUInteger)parseV3PacketBody:(NSData *)packetBody error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(packetBody, NSData);
     NSUInteger position = [super parsePacketBody:packetBody error:error];
 
@@ -649,6 +656,13 @@ NS_ASSUME_NONNULL_BEGIN
     UInt8 parsedVersion = 0;
     [packetBody getBytes:&parsedVersion range:(NSRange){position, 1}];
     position = position + 1;
+
+    if (parsedVersion != 0x03) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Unexpected packed version. Expected version 3" }];
+        }
+        return position;
+    }
 
     // One-octet length of following hashed material.  MUST be 5.
     UInt8 parsedLength = 0;
@@ -733,7 +747,7 @@ NS_ASSUME_NONNULL_BEGIN
     return position;
 }
 
-- (NSUInteger)parseV4PacketBody:(NSData *)packetBody error:(NSError *__autoreleasing _Nullable *)error {
+- (NSUInteger)parseV4PacketBody:(NSData *)packetBody error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(packetBody, NSData);
 
     NSUInteger position = [super parsePacketBody:packetBody error:error];
@@ -750,6 +764,13 @@ NS_ASSUME_NONNULL_BEGIN
     // One-octet version number (4).
     [packetBody getBytes:&parsedVersion range:(NSRange){position, 1}];
     position = position + 1;
+
+    if (parsedVersion != 0x04) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Unexpected packed version. Expected version 4" }];
+        }
+        return position;
+    }
 
     // One-octet signature type.
     [packetBody getBytes:&_type range:(NSRange){position, 1}];

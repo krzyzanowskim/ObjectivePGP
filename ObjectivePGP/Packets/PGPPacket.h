@@ -6,8 +6,8 @@
 //  This notice may not be removed from this file.
 //
 
-#import "PGPExportableProtocol.h"
-#import "PGPTypes.h"
+#import <ObjectivePGP/PGPExportableProtocol.h>
+#import <ObjectivePGP/PGPTypes.h>
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -22,7 +22,7 @@ extern const UInt32 PGPUnknownLength;
 + (nullable instancetype)packetWithBody:(NSData *)bodyData;
 
 + (nullable NSData *)parsePacketHeader:(NSData *)data headerLength:(UInt32 *)headerLength nextPacketOffset:(nullable NSUInteger *)nextPacketOffset packetTag:(PGPPacketTag *)tag indeterminateLength:(BOOL *)indeterminateLength;
-- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error;
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError * __autoreleasing _Nullable *)error;
 
 + (NSData *)buildPacketOfType:(PGPPacketTag)tag withBody:(PGP_NOESCAPE NSData *(^)(void))body;
 

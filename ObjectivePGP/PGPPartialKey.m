@@ -257,7 +257,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // signature packet that is available for signing data
-- (nullable PGPPacket *)encryptionKeyPacket:(NSError *__autoreleasing *)error {
+- (nullable PGPPacket *)encryptionKeyPacket:(NSError * __autoreleasing *)error {
     NSAssert(self.type == PGPPartialKeyPublic, @"Need public key to encrypt");
     if (self.type == PGPPartialKeySecret) {
         if (error) {
@@ -290,7 +290,7 @@ NS_ASSUME_NONNULL_BEGIN
     return nil;
 }
 
-- (nullable PGPSecretKeyPacket *)decryptionPacketForKeyID:(PGPKeyID *)keyID error:(NSError *__autoreleasing _Nullable *)error {
+- (nullable PGPSecretKeyPacket *)decryptionPacketForKeyID:(PGPKeyID *)keyID error:(NSError * __autoreleasing _Nullable *)error {
     NSAssert(self.type == PGPPartialKeySecret, @"Need secret key to encrypt");
     if (self.type == PGPPartialKeyPublic) {
         if (error) {
@@ -315,7 +315,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // TODO: return error
-- (nullable PGPPartialKey *)decryptedWithPassphrase:(NSString *)passphrase error:(NSError *__autoreleasing _Nullable *)error {
+- (nullable PGPPartialKey *)decryptedWithPassphrase:(NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(passphrase, NSString);
 
     // decrypt copy of self

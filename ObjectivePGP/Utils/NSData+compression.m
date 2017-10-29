@@ -13,15 +13,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation NSData (compression)
 
-- (nullable NSData *)zipCompressed:(NSError *__autoreleasing _Nullable *)error {
+- (nullable NSData *)zipCompressed:(NSError * __autoreleasing _Nullable *)error {
     return [self zlibCompressed:error compressionType:PGPCompressionZIP];
 }
 
-- (nullable NSData *)zlibCompressed:(NSError *__autoreleasing _Nullable *)error {
+- (nullable NSData *)zlibCompressed:(NSError * __autoreleasing _Nullable *)error {
     return [self zlibCompressed:error compressionType:PGPCompressionZLIB];
 }
 
-- (nullable NSData *)zlibCompressed:(NSError *__autoreleasing _Nullable *)error compressionType:(PGPCompressionAlgorithm)compressionType {
+- (nullable NSData *)zlibCompressed:(NSError * __autoreleasing _Nullable *)error compressionType:(PGPCompressionAlgorithm)compressionType {
     if (self.length == 0) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Compression failed"}];
@@ -74,16 +74,16 @@ NS_ASSUME_NONNULL_BEGIN
     return compressed;
 }
 
-- (nullable NSData *)zipDecompressed:(NSError *__autoreleasing _Nullable *)error {
+- (nullable NSData *)zipDecompressed:(NSError * __autoreleasing _Nullable *)error {
     return [self zlibDecompressed:error compressionType:PGPCompressionZIP];
 }
 
-- (nullable NSData *)zlibDecompressed:(NSError *__autoreleasing _Nullable *)error {
+- (nullable NSData *)zlibDecompressed:(NSError * __autoreleasing _Nullable *)error {
     return [self zlibDecompressed:error compressionType:PGPCompressionZLIB];
 }
 
 
-- (nullable NSData *)zlibDecompressed:(NSError *__autoreleasing _Nullable *)error compressionType:(PGPCompressionAlgorithm)compressionType {
+- (nullable NSData *)zlibDecompressed:(NSError * __autoreleasing _Nullable *)error compressionType:(PGPCompressionAlgorithm)compressionType {
     if (self.length == 0) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Decompression failed"}];
@@ -136,7 +136,7 @@ NS_ASSUME_NONNULL_BEGIN
     return decompressed;
 }
 
-- (nullable NSData *)bzip2Decompressed:(NSError *__autoreleasing _Nullable *)error {
+- (nullable NSData *)bzip2Decompressed:(NSError * __autoreleasing _Nullable *)error {
     int bzret = 0;
     bz_stream stream = {.avail_in = 0x00};
     stream.next_in = (void *)[self bytes];
@@ -174,7 +174,7 @@ NS_ASSUME_NONNULL_BEGIN
     return decompressedData;
 }
 
-- (nullable NSData *)bzip2Compressed:(NSError *__autoreleasing _Nullable *)error {
+- (nullable NSData *)bzip2Compressed:(NSError * __autoreleasing _Nullable *)error {
     int bzret = 0;
     bz_stream stream = {.avail_in = 0x00};
     stream.next_in = (void *)[self bytes];

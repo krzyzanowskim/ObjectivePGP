@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
     return PGPCompressedDataPacketTag;
 }
 
-- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing _Nullable *)error {
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError * __autoreleasing _Nullable *)error {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
 
     // - One octet that gives the algorithm used to compress the packet.
@@ -69,7 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
     return position;
 }
 
-- (nullable NSData *)export:(NSError *__autoreleasing _Nullable *)error {
+- (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
     let bodyData = [NSMutableData data];
 
     // - One octet that gives the algorithm used to compress the packet.

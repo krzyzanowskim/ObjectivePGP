@@ -10,6 +10,7 @@
 #import "PGPUserAttributeSubpacket.h"
 #import "PGPFoundation.h"
 #import "PGPMacros+Private.h"
+#import "PGPLogging.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // FIXME: handle image subtype. Somehow it's broken, so not supported.
-- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError * __autoreleasing _Nullable *)error {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
     position = position + packetBody.length;
     return position;
@@ -64,8 +65,9 @@ NS_ASSUME_NONNULL_BEGIN
     return position;
 }
 
-- (nullable NSData *)export:(NSError *__autoreleasing _Nullable *)error {
+- (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
     // TODO: export
+    PGPLogDebug(@"Exporting %@ not implemented", self.className);
     return nil;
 }
 

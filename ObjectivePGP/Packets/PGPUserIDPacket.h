@@ -13,7 +13,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PGPUserIDPacket : PGPPacket <NSCopying>
+@interface PGPUserIDPacket : PGPPacket <NSCopying, PGPExportable>
 
 @property (nonatomic, copy, readonly) NSString *userID;
 

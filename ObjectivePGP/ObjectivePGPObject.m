@@ -142,7 +142,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Save
 
-- (BOOL)exportKeysOfType:(PGPPartialKeyType)type toFile:(NSString *)path error:(NSError *__autoreleasing *)error {
+- (BOOL)exportKeysOfType:(PGPPartialKeyType)type toFile:(NSString *)path error:(NSError * __autoreleasing *)error {
     let exportKeys = [NSMutableArray<PGPPartialKey *> array];
     for (PGPKey *key in self.keys) {
         if (type == PGPPartialKeyPublic && key.publicKey) {
@@ -155,7 +155,7 @@ NS_ASSUME_NONNULL_BEGIN
     return [self exportKeys:exportKeys toFile:path error:error];
 }
 
-- (BOOL)exportKeys:(NSArray<PGPPartialKey *> *)keys toFile:(NSString *)path error:(NSError *__autoreleasing *)error {
+- (BOOL)exportKeys:(NSArray<PGPPartialKey *> *)keys toFile:(NSString *)path error:(NSError * __autoreleasing *)error {
     NSParameterAssert(keys);
     PGPAssertClass(path, NSString);
 
@@ -171,7 +171,7 @@ NS_ASSUME_NONNULL_BEGIN
     return YES;
 }
 
-- (BOOL)appendKey:(PGPPartialKey *)key toKeyring:(NSString *)path error:(NSError *__autoreleasing *)error {
+- (BOOL)appendKey:(PGPPartialKey *)key toKeyring:(NSString *)path error:(NSError * __autoreleasing *)error {
     NSFileManager *fm = [NSFileManager defaultManager];
 
     if (!path) {
@@ -238,11 +238,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Encrypt & Decrypt
 
-- (nullable NSData *)decrypt:(NSData *)messageDataToDecrypt passphrase:(nullable NSString *)passphrase error:(NSError *__autoreleasing *)error {
+- (nullable NSData *)decrypt:(NSData *)messageDataToDecrypt passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing *)error {
     return [self decrypt:messageDataToDecrypt passphrase:passphrase verifyWithKey:nil signed:nil valid:nil integrityProtected:nil error:error];
 }
 
-- (nullable NSData *)decrypt:(NSData *)messageDataToDecrypt passphrase:(nullable NSString *)passphrase verifyWithKey:(nullable PGPKey *)key signed:(nullable BOOL *)isSigned valid:(nullable BOOL *)isValid integrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError *__autoreleasing _Nullable *)error {
+- (nullable NSData *)decrypt:(NSData *)messageDataToDecrypt passphrase:(nullable NSString *)passphrase verifyWithKey:(nullable PGPKey *)key signed:(nullable BOOL *)isSigned valid:(nullable BOOL *)isValid integrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(messageDataToDecrypt, NSData);
     let binaryMessages = [ObjectivePGP convertArmoredMessage2BinaryBlocksWhenNecessary:messageDataToDecrypt];
 
@@ -386,11 +386,11 @@ NS_ASSUME_NONNULL_BEGIN
     return plaintextData;
 }
 
-- (nullable NSData *)encrypt:(NSData *)dataToEncrypt usingKeys:(NSArray<PGPKey *> *)keys armored:(BOOL)armored error:(NSError *__autoreleasing _Nullable *)error {
+- (nullable NSData *)encrypt:(NSData *)dataToEncrypt usingKeys:(NSArray<PGPKey *> *)keys armored:(BOOL)armored error:(NSError * __autoreleasing _Nullable *)error {
     return [self encrypt:dataToEncrypt usingKeys:keys signWithKey:nil passphrase:nil armored:armored error:error];
 }
 
-- (nullable NSData *)encrypt:(NSData *)dataToEncrypt usingKeys:(NSArray<PGPKey *> *)keys signWithKey:(nullable PGPKey *)signKey passphrase:(nullable NSString *)passphrase armored:(BOOL)armored error:(NSError *__autoreleasing _Nullable *)error {
+- (nullable NSData *)encrypt:(NSData *)dataToEncrypt usingKeys:(NSArray<PGPKey *> *)keys signWithKey:(nullable PGPKey *)signKey passphrase:(nullable NSString *)passphrase armored:(BOOL)armored error:(NSError * __autoreleasing _Nullable *)error {
     let publicPartialKeys = [NSMutableArray<PGPPartialKey *> array];
     for (PGPKey *key in keys) {
         [publicPartialKeys pgp_addObject:key.publicKey];
@@ -488,12 +488,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Sign & Verify
 
-- (nullable NSData *)sign:(NSData *)dataToSign usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase detached:(BOOL)detached error:(NSError *__autoreleasing *)error {
+- (nullable NSData *)sign:(NSData *)dataToSign usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase detached:(BOOL)detached error:(NSError * __autoreleasing *)error {
     // TODO: configurable defaults for prefered hash
     return [self sign:dataToSign usingKey:key passphrase:passphrase hashAlgorithm:PGPHashSHA512 detached:detached error:error];
 }
 
-- (nullable NSData *)sign:(NSData *)dataToSign usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase hashAlgorithm:(PGPHashAlgorithm)preferedHashAlgorithm detached:(BOOL)detached error:(NSError *__autoreleasing *)error {
+- (nullable NSData *)sign:(NSData *)dataToSign usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase hashAlgorithm:(PGPHashAlgorithm)preferedHashAlgorithm detached:(BOOL)detached error:(NSError * __autoreleasing *)error {
     PGPAssertClass(dataToSign, NSData);
     PGPAssertClass(key, PGPKey);
 
@@ -574,7 +574,7 @@ NS_ASSUME_NONNULL_BEGIN
     return signedMessage;
 }
 
-- (BOOL)verify:(NSData *)signedData withSignature:(NSData *)signatureData error:(NSError *__autoreleasing _Nullable *)error {
+- (BOOL)verify:(NSData *)signedData withSignature:(NSData *)signatureData error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(signedData, NSData);
     PGPAssertClass(signatureData, NSData);
 
@@ -606,7 +606,7 @@ NS_ASSUME_NONNULL_BEGIN
     return [self verify:signedData withSignature:signatureData usingKey:issuerKey error:error];
 }
 
-- (BOOL)verify:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPKey *)key error:(NSError *__autoreleasing _Nullable *)error {
+- (BOOL)verify:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPKey *)key error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(signedData, NSData);
     PGPAssertClass(signedData, NSData);
     PGPAssertClass(key, PGPKey);
@@ -629,7 +629,7 @@ NS_ASSUME_NONNULL_BEGIN
     return verified;
 }
 
-- (BOOL)verify:(NSData *)signedData error:(NSError *__autoreleasing _Nullable *)error {
+- (BOOL)verify:(NSData *)signedData error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(signedData, NSData);
     // this is propably not the best solution when it comes to memory consumption
     // because literal data is copied more than once (first at parse phase, then when is come to build signature packet data

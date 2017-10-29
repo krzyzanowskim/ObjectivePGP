@@ -73,7 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
     return signingPacket;
 }
 
-- (nullable PGPKey *)decryptedWithPassphrase:(NSString *)passphrase error:(NSError *__autoreleasing _Nullable *)error {
+- (nullable PGPKey *)decryptedWithPassphrase:(NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error {
     let decryptedPartialKey = [self.secretKey decryptedWithPassphrase:passphrase error:error];
     if (decryptedPartialKey) {
         return [[PGPKey alloc] initWithSecretKey:decryptedPartialKey publicKey:self.publicKey];
@@ -115,7 +115,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - PGPExportable
 
 /// Export public and secret keys together.
-- (nullable NSData *)export:(NSError *__autoreleasing _Nullable *)error {
+- (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
     let exportData = [NSMutableData data];
     if (self.publicKey) {
         [exportData pgp_appendData:[self export:PGPPartialKeyPublic error:error]];
@@ -128,7 +128,7 @@ NS_ASSUME_NONNULL_BEGIN
     return exportData;
 }
 
-- (nullable NSData *)export:(PGPPartialKeyType)keyType error:(NSError *__autoreleasing _Nullable *)error {
+- (nullable NSData *)export:(PGPPartialKeyType)keyType error:(NSError * __autoreleasing _Nullable *)error {
     switch (keyType) {
         case PGPPartialKeyPublic: {
             if (!self.publicKey) {

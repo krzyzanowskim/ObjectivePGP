@@ -14,7 +14,7 @@
 
 @implementation PGPPKCSEme
 
-+ (NSData *)encodeMessage:(NSData *)m keyModulusLength:(NSUInteger)k error:(NSError *__autoreleasing *)error {
++ (NSData *)encodeMessage:(NSData *)m keyModulusLength:(NSUInteger)k error:(NSError * __autoreleasing *)error {
     if (m.length > k - 11) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Message to long" }];
@@ -42,7 +42,7 @@
     return emData;
 }
 
-+ (NSData *)decodeMessage:(NSData *)m error:(NSError *__autoreleasing *)error {
++ (NSData *)decodeMessage:(NSData *)m error:(NSError * __autoreleasing *)error {
     NSUInteger position = 0;
     UInt8 emPrefix[2];
     [m getBytes:&emPrefix range:(NSRange){position, sizeof(emPrefix)}];

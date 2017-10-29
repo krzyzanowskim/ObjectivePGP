@@ -102,7 +102,7 @@ NS_ASSUME_NONNULL_BEGIN
     return armoredMessage;
 };
 
-+ (nullable NSData *)readArmored:(NSString *)string error:(NSError *__autoreleasing _Nullable *)error {
++ (nullable NSData *)readArmored:(NSString *)string error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(string, NSString);
 
     NSScanner *scanner = [[NSScanner alloc] initWithString:string];

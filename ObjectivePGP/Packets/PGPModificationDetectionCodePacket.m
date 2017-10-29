@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
     return PGPModificationDetectionCodePacketTag; // 19
 }
 
-- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError * __autoreleasing _Nullable *)error {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
 
     // 5.14.  Modification Detection Code Packet (Tag 19)
@@ -47,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
     return position;
 }
 
-- (nullable NSData *)export:(NSError *__autoreleasing *)error {
+- (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
     return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
         return [self.hashData subdataWithRange:(NSRange){0, CC_SHA1_DIGEST_LENGTH}]; // force limit to 20 octets
     }];

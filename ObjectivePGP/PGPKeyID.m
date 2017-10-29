@@ -98,8 +98,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - PGPExportable
 
-- (nullable NSData *)export:(NSError *__autoreleasing  _Nullable *)error {
-    return self.longKey.copy;
+- (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
+    return [self.longKey copy];
 }
 
 @end

@@ -55,7 +55,7 @@ NS_ASSUME_NONNULL_BEGIN
     return PGPSymmetricallyEncryptedIntegrityProtectedDataPacketTag; // 18
 }
 
-- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError * __autoreleasing _Nullable *)error {
     NSUInteger position = 0;
 
     // The content of an encrypted data packet is more OpenPGP packets
@@ -70,7 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
     return position;
 }
 
-- (nullable NSData *)export:(NSError *__autoreleasing _Nullable *)error {
+- (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
     NSAssert(self.encryptedData, @"No encrypted data?");
     NSAssert(self.version == 1, @"Require version == 1");
 
@@ -134,7 +134,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // return array of packets
-- (NSArray<PGPPacket *> *)decryptWithSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData isIntegrityProtected:(BOOL *)isIntegrityProtected error:(NSError *__autoreleasing _Nullable *)error {
+- (NSArray<PGPPacket *> *)decryptWithSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData isIntegrityProtected:(BOOL *)isIntegrityProtected error:(NSError * __autoreleasing _Nullable *)error {
     NSAssert(self.encryptedData, @"Missing encrypted data to decrypt");
     NSAssert(secretKeyPacket, @"Missing secret key");
 
@@ -213,7 +213,7 @@ NS_ASSUME_NONNULL_BEGIN
     return [packets subarrayWithRange:(NSRange){0, packets.count - 1}];
 }
 
-- (BOOL)encrypt:(NSData *)literalPacketData symmetricAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData error:(NSError *__autoreleasing _Nullable *)error {
+- (BOOL)encrypt:(NSData *)literalPacketData symmetricAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData error:(NSError * __autoreleasing _Nullable *)error {
     // OpenPGP does symmetric encryption using a variant of Cipher Feedback mode (CFB mode).
     NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:sessionKeyAlgorithm];
 

@@ -67,7 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
     return [super fingerprint];
 }
 
-- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing _Nullable *)error {
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(packetBody, NSData);
 
     NSUInteger position = [super parsePacketBody:packetBody error:error];
@@ -90,10 +90,11 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     let encryptedData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
-    if (self.isEncryptedWithPassphrase) {
-        position = position + [self parseEncryptedPart:encryptedData error:error];
-    } else {
-        position = position + [self parseUnencryptedPart:encryptedData error:error];
+    NSUInteger length = 0;
+    if (self.isEncryptedWithPassphrase && [self parseEncryptedPart:encryptedData length:&length error:error]) {
+        position = position + length;
+    } else if ([self parseUnencryptedPart:encryptedData length:&length error:error]) {
+        position = position + length;
     }
 
     return position;
@@ -103,11 +104,12 @@ NS_ASSUME_NONNULL_BEGIN
  *  Encrypted algorithm-specific fields for secret keys
  *
  *  @param data Encrypted data
+ *  @param length Length of parsed data
  *  @param error error
  *
- *  @return length
+ *  @return YES on success.
  */
-- (NSUInteger)parseEncryptedPart:(NSData *)data error:(NSError *__autoreleasing *)error {
+- (BOOL)parseEncryptedPart:(NSData *)data length:(NSUInteger *)length error:(NSError * __autoreleasing _Nullable *)error {
     NSUInteger position = 0;
 
     if (self.s2kUsage == PGPS2KUsageEncrypted || self.s2kUsage == PGPS2KUsageEncryptedAndHashed) {
@@ -131,6 +133,10 @@ NS_ASSUME_NONNULL_BEGIN
         NSAssert(blockSize <= 16, @"invalid blockSize");
         self.ivData = [data subdataWithRange:(NSRange){position, blockSize}];
         position = position + blockSize;
+    } else if (error) {
+        *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Cannot export packet. Unsupported S2K setup."}];
+        *length = data.length;
+        return NO;
     }
 
     // encrypted MPIArray
@@ -138,7 +144,8 @@ NS_ASSUME_NONNULL_BEGIN
     self.encryptedMPIPartData = [data subdataWithRange:(NSRange){position, data.length - position}];
     // position = position + self.encryptedMPIPartData.length;
 
-    return data.length;
+    *length = data.length;
+    return YES;
 }
 
 /**
@@ -150,7 +157,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return length
  */
-- (NSUInteger)parseUnencryptedPart:(NSData *)data error:(NSError *__autoreleasing *)error {
+- (BOOL)parseUnencryptedPart:(NSData *)data length:(nullable NSUInteger *)length error:(NSError * __autoreleasing _Nullable *)error {
     NSUInteger position = 0;
 
     // check hash before read actual data
@@ -160,11 +167,13 @@ NS_ASSUME_NONNULL_BEGIN
             // a 20-octet SHA-1 hash of the plaintext of the algorithm-specific portion.
             NSUInteger hashSize = [PGPCryptoUtils hashSizeOfHashAlhorithm:PGPHashSHA1];
             if (hashSize == NSNotFound) {
-                PGPLogWarning(@"Invalid hash size");
                 if (error) {
                     *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorPassphraseInvalid userInfo:@{ NSLocalizedDescriptionKey: @"Decrypted hash mismatch, invalid passphrase." }];
                 }
-                return 0;
+                if (length) {
+                    *length = data.length;
+                }
+                return NO;
             }
 
             let clearTextData = [data subdataWithRange:(NSRange){0, data.length - hashSize}];
@@ -175,7 +184,10 @@ NS_ASSUME_NONNULL_BEGIN
                 if (error) {
                     *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorPassphraseInvalid userInfo:@{ NSLocalizedDescriptionKey: @"Decrypted hash mismatch, invalid passphrase." }];
                 }
-                return data.length;
+                if (length) {
+                    *length = data.length;
+                }
+                return NO;
             }
 
         } break;
@@ -194,7 +206,11 @@ NS_ASSUME_NONNULL_BEGIN
                 if (error) {
                     *error = [NSError errorWithDomain:PGPErrorDomain code:-1 userInfo:@{ NSLocalizedDescriptionKey: @"Decrypted hash mismatch, check passphrase." }];
                 }
-                return data.length;
+
+                if (length) {
+                    *length = data.length;
+                }
+                return NO;
             }
         } break;
     }
@@ -241,7 +257,10 @@ NS_ASSUME_NONNULL_BEGIN
             break;
     }
 
-    return data.length;
+    if (length) {
+        *length = data.length;
+    }
+    return YES;
 }
 
 #pragma mark - Decrypt
@@ -252,7 +271,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  TODO: V3 support - partially supported, need testing.
  *  NOTE: Decrypted packet data should be released/forget after use
  */
-- (nullable PGPSecretKeyPacket *)decryptedWithPassphrase:(NSString *)passphrase error:(NSError *__autoreleasing _Nullable *)error {
+- (nullable PGPSecretKeyPacket *)decryptedWithPassphrase:(NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(passphrase, NSString);
 
     if (!self.isEncryptedWithPassphrase) {
@@ -284,7 +303,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     // now read mpis
     if (decryptedData) {
-        [decryptedKeyPacket parseUnencryptedPart:decryptedData error:error];
+        [decryptedKeyPacket parseUnencryptedPart:decryptedData length:nil error:error];
         if (*error) {
             return nil;
         }
@@ -368,35 +387,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - PGPExportable
 
-- (nullable NSData *)export:(NSError *__autoreleasing _Nullable *)error {
+- (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
     return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
         let secretKeyPacketData = [NSMutableData data];
         [secretKeyPacketData appendData:[self buildKeyBodyData:YES]];
         [secretKeyPacketData appendData:[self buildSecretKeyDataAndForceV4:YES]];
-        return  secretKeyPacketData;
+        return secretKeyPacketData;
     }];
-
-    //TODO: to be removed when verified
-    //    let data = [NSMutableData data];
-    //    let publicKeyData = [super buildKeyBodyData:YES];
-    //
-    //    let secretKeyPacketData = [NSMutableData data];
-    //    [secretKeyPacketData appendData:publicKeyData];
-    //    [secretKeyPacketData appendData:[self buildSecretKeyDataAndForceV4:YES]];
-    //    if (!self.bodyData) {
-    //        self.bodyData = secretKeyPacketData;
-    //    }
-    //
-    //    let headerData = [self buildHeaderData:secretKeyPacketData];
-    //    if (!self.headerData) {
-    //        self.headerData = headerData;
-    //    }
-    //    [data appendData:headerData];
-    //    [data appendData:secretKeyPacketData];
-    //
-    //    // header not always match because export new format while input can be old format
-    //    NSAssert(!self.bodyData || [secretKeyPacketData isEqualToData:self.bodyData], @"Secret key doesn't match");
-    //    return data;
 }
 
 #pragma mark - NSCopying

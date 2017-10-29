@@ -38,13 +38,16 @@ NS_ASSUME_NONNULL_BEGIN
     return embeddedSignature;
 }
 
-- (nullable NSData *)export:(NSError *__autoreleasing  _Nullable * _Nullable)error {
+- (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
     let type = PGPSignatureSubpacketTypeEmbeddedSignature;
     let typedData = [NSMutableData dataWithBytes:&type length:1];
 
     let signatureValue = PGPCast(self.signaturePacket, PGPSignaturePacket);
-    let signatureBody = [signatureValue buildFullSignatureBodyData:error];
+    let _Nullable signatureBody = [signatureValue buildFullSignatureBodyData];
     if (!signatureBody) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Unable to export packet. Can't build signature." }];
+        }
         return nil;
     }
 

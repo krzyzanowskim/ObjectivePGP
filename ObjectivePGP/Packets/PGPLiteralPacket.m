@@ -43,7 +43,7 @@ NS_ASSUME_NONNULL_BEGIN
     return PGPLiteralDataPacketTag;
 }
 
-- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError * __autoreleasing _Nullable *)error {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
 
     // A one-octet field that describes how the data is formatted.
@@ -91,7 +91,6 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
-    NSAssert(self.literalRawData, @"Missing literal data");
     if (!self.literalRawData) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Missing literal data" }];

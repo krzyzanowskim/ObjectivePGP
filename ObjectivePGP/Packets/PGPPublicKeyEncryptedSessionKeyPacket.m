@@ -39,7 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
     return PGPPublicKeyEncryptedSessionKeyPacketTag; // 1
 }
 
-- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError * __autoreleasing _Nullable *)error {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
 
     // - A one-octet number giving the version number of the packet type. The currently defined value for packet version is 3.
@@ -73,7 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
     return position;
 }
 
-- (nullable NSData *)decryptSessionKeyData:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm *)sessionKeyAlgorithm error:(NSError *__autoreleasing _Nullable *)error {
+- (nullable NSData *)decryptSessionKeyData:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm *)sessionKeyAlgorithm error:(NSError * __autoreleasing _Nullable *)error {
     NSAssert(!secretKeyPacket.isEncryptedWithPassphrase, @"Secret key can't be decrypted");
 
     let _Nullable secretKeyKeyID = [[PGPKeyID alloc] initWithFingerprint:secretKeyPacket.fingerprint];
@@ -130,7 +130,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // encryption update self.encryptedMPIPartData
-- (BOOL)encrypt:(PGPPublicKeyPacket *)publicKeyPacket sessionKeyData:(NSData *)sessionKeyData sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm error:(NSError *__autoreleasing _Nullable *)error {
+- (BOOL)encrypt:(PGPPublicKeyPacket *)publicKeyPacket sessionKeyData:(NSData *)sessionKeyData sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm error:(NSError * __autoreleasing _Nullable *)error {
     let mData = [NSMutableData data];
 
     //    The value "m" in the above formulas is derived from the session key
@@ -169,9 +169,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - PGPExportable
 
-- (nullable NSData *)export:(NSError *__autoreleasing  _Nullable *)error {
-    NSAssert(self.encryptedMPI_M, @"Missing encrypted mpi m");
+- (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
     if (!self.encryptedMPI_M) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Cannot export session key packet"}];
+        }
         return nil;
     }
 
@@ -182,7 +184,9 @@ NS_ASSUME_NONNULL_BEGIN
     [bodyData appendBytes:&_publicKeyAlgorithm length:1]; // 1
     let exportedMPI = [self.encryptedMPI_M exportMPI];
     if (!exportedMPI) {
-        //TODO: NSError
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Cannot export session key packet"}];
+        }
         return nil;
     }
     [bodyData appendData:exportedMPI]; // m

@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
     return [NSString stringWithFormat:@"%@ %@", [super description], self.userID];
 }
 
-- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError * __autoreleasing _Nullable *)error {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
 
     self.userID = [[NSString alloc] initWithData:packetBody encoding:NSUTF8StringEncoding];
@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
     return position;
 }
 
-- (nullable NSData *)export:(NSError *__autoreleasing *)error {
+- (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
     return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
         return [self.userID dataUsingEncoding:NSUTF8StringEncoding];
     }];

@@ -227,7 +227,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 }
 
-- (nullable NSData *)export:(NSError *__autoreleasing *)error {
+- (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
     NSMutableData *data = [NSMutableData data];
 
     // subpacket type
@@ -449,9 +449,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - NSCopying
 
-- (id)copyWithZone:(nullable NSZone *)zone {
-    let duplicate = [[PGPSignatureSubpacket alloc] initWithType:self.type andValue:self.value];
-    return duplicate;
+- (instancetype)copyWithZone:(nullable NSZone *)zone {
+    return [[PGPSignatureSubpacket alloc] initWithType:self.type andValue:self.value];
 }
 
 @end

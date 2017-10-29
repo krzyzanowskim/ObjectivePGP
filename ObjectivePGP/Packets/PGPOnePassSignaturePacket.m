@@ -11,6 +11,7 @@
 #import "PGPMacros.h"
 #import "PGPMacros+Private.h"
 #import "PGPFoundation.h"
+#import "NSMutableData+PGPUtils.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -27,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
     return PGPOnePassSignaturePacketTag;
 }
 
-- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError * __autoreleasing _Nullable *)error {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
 
     [packetBody getBytes:&_version range:(NSRange){position, 1}];
@@ -101,7 +102,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - PGPExportable
 
-- (nullable NSData *)export:(NSError *__autoreleasing _Nullable *)error {
+- (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
     NSAssert(self.keyID, @"Missing keyID");
 
     weakify(self);
@@ -113,7 +114,7 @@ NS_ASSUME_NONNULL_BEGIN
         [bodyData appendBytes:&self->_signatureType length:1];
         [bodyData appendBytes:&self->_hashAlgorith length:1];
         [bodyData appendBytes:&self->_publicKeyAlgorithm length:1];
-        [bodyData appendData:[self.keyID export:nil]];
+        [bodyData pgp_appendData:[self.keyID export:error]];
 
         [bodyData appendBytes:&self->_notNested length:1];
 

@@ -108,7 +108,7 @@ static const unsigned int PGP_DEFAULT_ITERATIONS_COUNT = 215;
     return ((UInt32)16 + (self.iterationsCount & 15)) << ((self.iterationsCount >> 4) + 6);
 }
 
-- (nullable NSData *)export:(NSError *__autoreleasing *)error {
+- (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
     NSMutableData *data = [NSMutableData data];
     [data appendBytes:&_specifier length:1];
     [data appendBytes:&_hashAlgorithm length:1];

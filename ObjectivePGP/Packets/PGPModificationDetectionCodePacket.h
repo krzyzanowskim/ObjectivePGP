@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PGPModificationDetectionCodePacket : PGPPacket <NSCopying>
+@interface PGPModificationDetectionCodePacket : PGPPacket <NSCopying, PGPExportable>
 
 @property (nonatomic, copy, readonly) NSData *hashData;
 

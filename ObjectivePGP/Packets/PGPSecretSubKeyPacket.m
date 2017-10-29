@@ -16,7 +16,7 @@
     return PGPSecretSubkeyPacketTag;
 }
 
-- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError * __autoreleasing _Nullable *)error {
     return [super parsePacketBody:packetBody error:error];
 }
 

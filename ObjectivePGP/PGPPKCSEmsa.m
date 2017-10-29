@@ -37,7 +37,7 @@ static UInt8 prefix_ripemd160[] = {0x30, 0x21, 0x30, 0x09, 0x06, 0x05, 0x2B, 0x2
  *
  *  @return encoded message
  */
-+ (NSData *)encode:(PGPHashAlgorithm)hashAlgorithm message:(NSData *)m encodedMessageLength:(NSUInteger)emLength error:(NSError *__autoreleasing *)error {
++ (NSData *)encode:(PGPHashAlgorithm)hashAlgorithm message:(NSData *)m encodedMessageLength:(NSUInteger)emLength error:(NSError * __autoreleasing *)error {
     let tData = [NSMutableData data]; // prefix + hash
     switch (hashAlgorithm) {
         case PGPHashMD5: {

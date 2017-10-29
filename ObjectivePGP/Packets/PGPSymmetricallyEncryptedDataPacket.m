@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPSymmetricallyEncryptedDataPacket
 
-- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError *__autoreleasing *)error {
+- (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError * __autoreleasing _Nullable *)error {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
 
     self.encryptedData = packetBody;
@@ -38,9 +38,11 @@ NS_ASSUME_NONNULL_BEGIN
     return position;
 }
 
-- (nullable NSData *)export:(NSError *__autoreleasing _Nullable *)error {
-    NSAssert(self.encryptedData, @"Need encrypted data, use PGPSymmetricallyEncryptedIntegrityProtectedDataPacket instead");
+- (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
     if (!self.encryptedData) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Unable to export packet. Missing encrypted data." }];
+        }
         return nil;
     }
 
