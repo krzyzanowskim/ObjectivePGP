@@ -7,6 +7,7 @@
 //
 
 #import "NSMutableData+PGPUtils.h"
+#import "PGPMacros.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -14,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)pgp_appendData:(nullable NSData *)other {
     if (other) {
-        [self appendData:other];
+        [self appendData:PGPNN(other)];
     }
 }
 

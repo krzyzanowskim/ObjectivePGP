@@ -341,7 +341,7 @@ NS_ASSUME_NONNULL_BEGIN
         NSAssert(self.ivData, @"Require IV");
         // If secret data is encrypted (string-to-key usage octet not zero), an Initial Vector (IV) of the same length as the cipher's block size.
         // Initial Vector (IV) of the same length as the cipher's block size
-        [data appendData:self.ivData];
+        [data pgp_appendData:self.ivData];
     }
 
     if (self.s2kUsage == PGPS2KUsageNonEncrypted) {

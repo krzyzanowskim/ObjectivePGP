@@ -514,7 +514,7 @@ NS_ASSUME_NONNULL_BEGIN
                 if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing input data" }]; }
                 return nil;
             }
-            [toSignData appendData:inputData];
+            [toSignData pgp_appendData:inputData];
         } break;
         case PGPSignatureSubkeyBinding: { // 0x18
             // the subkey using the same format as the main key (also using 0x99 as the first octet).
@@ -569,7 +569,7 @@ NS_ASSUME_NONNULL_BEGIN
 
                 BOOL userIsValid = NO;
                 for (PGPUser *user in secretPartialKey.users) {
-                    if ([user.userID isEqualToString:userID]) {
+                    if ([user.userID isEqualToString:PGPNN(userID)]) {
                         userIsValid = YES;
                     }
                 }

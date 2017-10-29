@@ -285,7 +285,7 @@ NS_ASSUME_NONNULL_BEGIN
                     return nil;
                 }
 
-                decryptionSecretKeyPacket = [decryptionSecretKeyPacket decryptedWithPassphrase:passphrase error:error];
+                decryptionSecretKeyPacket = [decryptionSecretKeyPacket decryptedWithPassphrase:PGPNN(passphrase) error:error];
                 if (!decryptionSecretKeyPacket || (error && *error)) {
                     decryptionSecretKeyPacket = nil;
                     continue;
@@ -313,7 +313,7 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    let sessionKeyData = [eskPacket decryptSessionKeyData:decryptionSecretKeyPacket sessionKeyAlgorithm:&sessionKeyAlgorithm error:error];
+    let sessionKeyData = [eskPacket decryptSessionKeyData:PGPNN(decryptionSecretKeyPacket) sessionKeyAlgorithm:&sessionKeyAlgorithm error:error];
     NSAssert(sessionKeyAlgorithm < PGPSymmetricMax, @"Invalid session key algorithm");
 
     if (!sessionKeyData) {
@@ -328,8 +328,8 @@ NS_ASSUME_NONNULL_BEGIN
         switch (packet.tag) {
             case PGPSymmetricallyEncryptedIntegrityProtectedDataPacketTag: {
                 // decrypt PGPSymmetricallyEncryptedIntegrityProtectedDataPacket
-                let symEncryptedDataPacket = PGPCast(packet, PGPSymmetricallyEncryptedIntegrityProtectedDataPacket);
-                packets = [symEncryptedDataPacket decryptWithSecretKeyPacket:decryptionSecretKeyPacket sessionKeyAlgorithm:sessionKeyAlgorithm sessionKeyData:sessionKeyData isIntegrityProtected:isIntegrityProtected error:error];
+                let _Nullable symEncryptedDataPacket = PGPCast(packet, PGPSymmetricallyEncryptedIntegrityProtectedDataPacket);
+                packets = [symEncryptedDataPacket decryptWithSecretKeyPacket:PGPNN(decryptionSecretKeyPacket) sessionKeyAlgorithm:sessionKeyAlgorithm sessionKeyData:sessionKeyData isIntegrityProtected:isIntegrityProtected error:error];
             } break;
             default:
                 break;
@@ -371,6 +371,9 @@ NS_ASSUME_NONNULL_BEGIN
     // available if literalPacket is available
     let _Nullable plaintextData = literalPacket.literalRawData;
     if (!plaintextData) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Expected literal data" }];
+        }
         return nil;
     }
 
@@ -378,7 +381,7 @@ NS_ASSUME_NONNULL_BEGIN
     if (signaturePacket && key.publicKey) {
         let signatureData = [signaturePacket export:error];
         if (signatureData) {
-            dataIsValid = [self verify:plaintextData withSignature:signatureData usingKey:key error:nil];
+            dataIsValid = [self verify:plaintextData withSignature:signatureData usingKey:PGPNN(key) error:error];
         }
     }
     if (isValid) { *isValid = dataIsValid; }
@@ -403,13 +406,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     // Random bytes as a string to be used as a key
     NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:preferredSymmeticAlgorithm];
-    uint8_t buf[keySize];
-    if (SecRandomCopyBytes(kSecRandomDefault, keySize, buf) == -1) {
-        //TODO: error
-        return nil;
-    }
-
-    let sessionKeyData = [NSMutableData dataWithBytes:buf length:keySize];
+    let sessionKeyData = [PGPCryptoUtils randomData:keySize];
 
     for (PGPPartialKey *publicPartialKey in publicPartialKeys) {
         // Encrypted Message :- Encrypted Data | ESK Sequence, Encrypted Data.
@@ -521,12 +518,11 @@ NS_ASSUME_NONNULL_BEGIN
         onePassPacket.publicKeyAlgorithm = signaturePacket.publicKeyAlgorithm;
         onePassPacket.hashAlgorith = signaturePacket.hashAlgoritm;
 
-        onePassPacket.keyID = [signaturePacket issuerKeyID];
+        onePassPacket.keyID = PGPNN([signaturePacket issuerKeyID]);
 
         onePassPacket.notNested = YES;
         NSError * _Nullable onePassExportError = nil;
         [signedMessage pgp_appendData:[onePassPacket export:&onePassExportError]];
-        NSAssert(!onePassExportError, @"Missing one passphrase data");
         if (onePassExportError) {
             if (error) {
                 *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing one passphrase data" }];
@@ -541,7 +537,6 @@ NS_ASSUME_NONNULL_BEGIN
 
         NSError *literalExportError = nil;
         [signedMessage pgp_appendData:[literalPacket export:&literalExportError]];
-        NSAssert(!literalExportError, @"Missing literal data");
         if (literalExportError) {
             if (error) {
                 *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing literal data" }];
@@ -580,8 +575,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     // search for key in keys
     let packet = [PGPPacketFactory packetWithData:signatureData offset:0 nextPacketOffset:NULL];
-    if (![packet isKindOfClass:[PGPSignaturePacket class]]) {
-        PGPLogWarning(@"Missing key signature");
+    if (![packet isKindOfClass:PGPSignaturePacket.class]) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing signature packet" }];
         }
@@ -669,8 +663,8 @@ NS_ASSUME_NONNULL_BEGIN
 
         let signaturePacketData = [signaturePacket export:error];
 
-        if (signaturePacketData && (!error || (error && *error == nil))) {
-            return [self verify:literalDataPacket.literalRawData withSignature:signaturePacketData error:error];
+        if (signaturePacketData && literalDataPacket.literalRawData && (!error || (error && *error == nil))) {
+            return [self verify:PGPNN(literalDataPacket.literalRawData) withSignature:signaturePacketData error:error];
         }
         return NO;
     }

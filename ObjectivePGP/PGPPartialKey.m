@@ -466,7 +466,7 @@ NS_ASSUME_NONNULL_BEGIN
             let signatureSubpacket = [[selfCertificate subpacketsOfType:PGPSignatureSubpacketTypePreferredSymetricAlgorithm] firstObject];
             NSArray<NSNumber *> * _Nullable preferredSymetricAlgorithms = PGPCast(signatureSubpacket.value, NSArray);
             if (preferredSymetricAlgorithms) {
-                [keyAlgorithms addObjectsFromArray:preferredSymetricAlgorithms];
+                [keyAlgorithms addObjectsFromArray:PGPNN(preferredSymetricAlgorithms)];
             }
         }
 

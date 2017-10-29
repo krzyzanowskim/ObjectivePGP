@@ -124,7 +124,7 @@ NS_ASSUME_NONNULL_BEGIN
                 break;
         }
 
-        let sessionKeyData = [s2k produceSessionKeyWithPassphrase:passphrase symmetricAlgorithm:self.cipherAlgorithm];
+        let sessionKeyData = [s2k produceSessionKeyWithPassphrase:PGPNN(passphrase) symmetricAlgorithm:self.cipherAlgorithm];
         if (sessionKeyData) {
             secretKeyPacket.encryptedMPIPartData = [PGPCryptoCFB encryptData:plaintextMPIPartData sessionKeyData:sessionKeyData symmetricAlgorithm:self.cipherAlgorithm iv:secretKeyPacket.ivData];
         }
