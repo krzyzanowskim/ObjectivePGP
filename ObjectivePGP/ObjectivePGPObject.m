@@ -813,20 +813,22 @@ NS_ASSUME_NONNULL_BEGIN
     NSUInteger nextPacketPosition = 0;
 
     while (position < messageData.length) {
-        let packet = [PGPPacketFactory packetWithData:messageData offset:position nextPacketOffset:&nextPacketPosition];
-        if (!packet) {
-            position += (nextPacketPosition > 0) ? nextPacketPosition : 1;
-            continue;
-        }
+        @autoreleasepool {
+            let packet = [PGPPacketFactory packetWithData:messageData offset:position nextPacketOffset:&nextPacketPosition];
+            if (!packet) {
+                position += (nextPacketPosition > 0) ? nextPacketPosition : 1;
+                continue;
+            }
 
-        if ((accumulatedPackets.count > 1) && ((packet.tag == PGPPublicKeyPacketTag) || (packet.tag == PGPSecretKeyPacketTag))) {
-            let partialKey = [[PGPPartialKey alloc] initWithPackets:accumulatedPackets];
-            [partialKeys addObject:partialKey];
-            [accumulatedPackets removeAllObjects];
-        }
+            if ((accumulatedPackets.count > 1) && ((packet.tag == PGPPublicKeyPacketTag) || (packet.tag == PGPSecretKeyPacketTag))) {
+                let partialKey = [[PGPPartialKey alloc] initWithPackets:accumulatedPackets];
+                [partialKeys addObject:partialKey];
+                [accumulatedPackets removeAllObjects];
+            }
 
-        [accumulatedPackets pgp_addObject:packet];
-        position += nextPacketPosition;
+            [accumulatedPackets pgp_addObject:packet];
+            position += nextPacketPosition;
+        }
     }
 
     if (accumulatedPackets.count > 1) {
