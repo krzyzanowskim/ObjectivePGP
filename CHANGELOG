@@ -1,3 +1,6 @@
+Version 0.9.3
+- Fixes public key equality checks.
+
 Version 0.9.2
 - Fixes nullability and undefined behaviours issues.
 - Fixes issue where subkey should be used to sign for some keys.
