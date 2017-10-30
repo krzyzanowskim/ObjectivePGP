@@ -107,6 +107,28 @@ NSString * const PGPMPI_M = @"M";
     return [NSString stringWithFormat:@"%@, \"%@\", %@ bytes, total: %@ bytes", [super description], self.identifier, @(self.bigNum.bytesCount), @(self.packetLength)];
 }
 
+#pragma mark - isEqual
+
+- (BOOL)isEqual:(id)other {
+    if (self == other) { return YES; }
+    if ([other isKindOfClass:self.class]) {
+        return [self isEqualToMPI:other];
+    }
+    return NO;
+}
+
+- (BOOL)isEqualToMPI:(PGPMPI *)other {
+    return PGPEqualObjects(self.identifier, other.identifier) && PGPEqualObjects(self.bigNum, other.bigNum);
+}
+
+- (NSUInteger)hash {
+    NSUInteger prime = 31;
+    NSUInteger result = 1;
+    result = prime * result + self.identifier.hash;
+    result = prime * result + self.bigNum.hash;
+    return result;
+}
+
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(nullable NSZone *)zone {
