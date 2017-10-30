@@ -105,9 +105,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
     NSAssert(self.keyID, @"Missing keyID");
 
-    weakify(self);
+    pgpweakify(self);
     return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
-        strongify(self)
+        pgpstrongify(self)
         let bodyData = [NSMutableData data];
 
         [bodyData appendBytes:&self->_version length:1];
