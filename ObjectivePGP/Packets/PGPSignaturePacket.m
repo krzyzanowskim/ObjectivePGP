@@ -822,9 +822,13 @@ NS_ASSUME_NONNULL_BEGIN
 
         NSUInteger positionSubpacket = 0;
         while (positionSubpacket < hashedSubpacketsData.length) {
-            let subpacket = [PGPSignaturePacket getSubpacketStartingAtPosition:positionSubpacket fromData:hashedSubpacketsData];
-            [hashedSubpackets pgp_addObject:subpacket];
-            positionSubpacket = positionSubpacket + subpacket.length;
+            let _Nullable subpacket = [PGPSignaturePacket getSubpacketStartingAtPosition:positionSubpacket fromData:hashedSubpacketsData];
+            if (subpacket) {
+                [hashedSubpackets pgp_addObject:subpacket];
+                positionSubpacket = positionSubpacket + subpacket.length;
+            } else {
+                positionSubpacket += 2; // move two bytes to next subpacket (header length)
+            }
         }
 
         self.hashedSubpackets = hashedSubpackets;
@@ -847,9 +851,13 @@ NS_ASSUME_NONNULL_BEGIN
         // Loop subpackets
         NSUInteger positionSubpacket = 0;
         while (positionSubpacket < unhashedSubpacketsData.length) {
-            let subpacket = [PGPSignaturePacket getSubpacketStartingAtPosition:positionSubpacket fromData:unhashedSubpacketsData];
-            [unhashedSubpackets pgp_addObject:subpacket];
-            positionSubpacket = positionSubpacket + subpacket.length;
+            let _Nullable subpacket = [PGPSignaturePacket getSubpacketStartingAtPosition:positionSubpacket fromData:unhashedSubpacketsData];
+            if (subpacket) {
+                [unhashedSubpackets pgp_addObject:subpacket];
+                positionSubpacket = positionSubpacket + subpacket.length;
+            } else {
+                positionSubpacket += 2; // move two bytes to next subpacket (header length)
+            }
         }
 
         self.unhashedSubpackets = unhashedSubpackets;
@@ -908,10 +916,15 @@ NS_ASSUME_NONNULL_BEGIN
 // I don't like this part, really ugly
 // This is because subpacket length is unknow and header need to be found first
 // then subpacket can be parsed
-+ (PGPSignatureSubpacket *)getSubpacketStartingAtPosition:(NSUInteger)subpacketsPosition fromData:(NSData *)subpacketsData {
++ (nullable PGPSignatureSubpacket *)getSubpacketStartingAtPosition:(NSUInteger)subpacketsPosition fromData:(NSData *)subpacketsData {
     let headerRange = (NSRange){subpacketsPosition, MIN((NSUInteger)6, subpacketsData.length - subpacketsPosition)}; // up to 5+1 octets
     let guessHeaderData = [subpacketsData subdataWithRange:headerRange]; // this is "may be" header to be parsed
     let subpacketHeader = [PGPSignatureSubpacket subpacketHeaderFromData:guessHeaderData];
+
+    if (subpacketHeader.bodyLength == 0) {
+        // missing body, ignore.
+        return nil;
+    }
 
     let subPacketBodyRange = (NSRange){subpacketsPosition + subpacketHeader.headerLength, subpacketHeader.bodyLength};
     let subPacketBody = [subpacketsData subdataWithRange:subPacketBodyRange];

@@ -203,13 +203,16 @@
     XCTAssertEqual(keys.count, (NSUInteger)1);
 }
 
-- (void)testIssue82 {
+- (void)testIssue82KeysEquality {
     let keys1 = [PGPTestUtils readKeysFromFile:@"issue82-keys.asc"];
     let keys2 = [PGPTestUtils readKeysFromFile:@"issue82-keys.asc"];
     XCTAssertEqualObjects(keys1, keys2);
 }
 
-- (void)testIssue84 {
+// https://github.com/krzyzanowskim/ObjectivePGP/issues/84
+// Embedded signatures code seems to have broken reading keys
+- (void)testIssue84EmbeddedSignatures {
+    // Input data is broken. Embeded signature has invalid data, ignore and load key anyway.
     let keys = [PGPTestUtils readKeysFromFile:@"issue84-key.asc"];
     XCTAssertEqual(keys.count, (NSUInteger)1);
 }
