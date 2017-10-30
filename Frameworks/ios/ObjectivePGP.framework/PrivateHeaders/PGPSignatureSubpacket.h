@@ -8,13 +8,14 @@
 
 #import <ObjectivePGP/PGPTypes.h>
 #import <ObjectivePGP/PGPMacros.h>
+#import <ObjectivePGP/PGPExportableProtocol.h>
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class PGPSignatureSubpacketHeader;
 
-@interface PGPSignatureSubpacket : NSObject <NSCopying>
+@interface PGPSignatureSubpacket : NSObject <NSCopying, PGPExportable>
 
 @property (nonatomic, readonly) PGPSignatureSubpacketType type;
 @property (nonatomic, readonly, nullable, copy) id<NSObject, NSCopying> value;
