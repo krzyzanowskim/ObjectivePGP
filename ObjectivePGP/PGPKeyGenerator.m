@@ -55,13 +55,13 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmRSASignOnly: {
             keyMaterial = [PGPRSA generateNewKeyMPIArray:bits];
             publicKeyPacket.publicMPIs = @[keyMaterial.n, keyMaterial.e];
-            secretKeyPacket.secretMPIArray = @[keyMaterial.d, keyMaterial.p, keyMaterial.q, keyMaterial.u];
+            secretKeyPacket.secretMPIs = @[keyMaterial.d, keyMaterial.p, keyMaterial.q, keyMaterial.u];
         } break;
         case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmECDSA: {
             keyMaterial = [PGPDSA generateNewKeyMPIArray:bits];
             publicKeyPacket.publicMPIs = @[keyMaterial.p, keyMaterial.q, keyMaterial.g, keyMaterial.y];
-            secretKeyPacket.secretMPIArray = @[keyMaterial.x];
+            secretKeyPacket.secretMPIs = @[keyMaterial.x];
         } break;
         default:
             NSAssert(NO, @"Not supported");
@@ -105,7 +105,7 @@ NS_ASSUME_NONNULL_BEGIN
         // build encryptedMPIPartData
         let plaintextMPIPartData = [NSMutableData data];
 
-        for (PGPMPI *mpi in secretKeyPacket.secretMPIArray) {
+        for (PGPMPI *mpi in secretKeyPacket.secretMPIs) {
             [plaintextMPIPartData pgp_appendData:[mpi exportMPI]];
         }
 

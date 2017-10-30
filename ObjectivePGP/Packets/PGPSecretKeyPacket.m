@@ -54,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (nullable PGPMPI *)secretMPI:(NSString *)identifier {
-    for (PGPMPI *mpi in self.secretMPIArray) {
+    for (PGPMPI *mpi in self.secretMPIs) {
         if (PGPEqualObjects(mpi.identifier, identifier)) {
             return mpi;
         }
@@ -180,7 +180,7 @@ NS_ASSUME_NONNULL_BEGIN
             let hashData = [data subdataWithRange:(NSRange){data.length - hashSize, hashSize}];
             let calculatedHashData = clearTextData.pgp_SHA1;
 
-            if (![hashData isEqualToData:calculatedHashData]) {
+            if (!PGPEqualObjects(hashData,calculatedHashData)) {
                 if (error) {
                     *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorPassphraseInvalid userInfo:@{ NSLocalizedDescriptionKey: @"Decrypted hash mismatch, invalid passphrase." }];
                 }
@@ -236,14 +236,14 @@ NS_ASSUME_NONNULL_BEGIN
             let mpiU = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPI_U atPosition:position];
             position = position + mpiU.packetLength;
 
-            self.secretMPIArray = @[mpiD, mpiP, mpiQ, mpiU];
+            self.secretMPIs = @[mpiD, mpiP, mpiQ, mpiU];
         } break;
         case PGPPublicKeyAlgorithmDSA: {
             // MPI of DSA secret exponent x.
             let mpiX = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPI_X atPosition:position];
             position = position + mpiX.packetLength;
 
-            self.secretMPIArray = @[mpiX];
+            self.secretMPIs = @[mpiX];
         } break;
         case PGPPublicKeyAlgorithmElgamal:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign: {
@@ -251,7 +251,7 @@ NS_ASSUME_NONNULL_BEGIN
             let mpiX = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPI_X atPosition:position];
             position = position + mpiX.packetLength;
 
-            self.secretMPIArray = @[mpiX];
+            self.secretMPIs = @[mpiX];
         } break;
         default:
             break;
@@ -345,7 +345,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     if (self.s2kUsage == PGPS2KUsageNonEncrypted) {
-        for (PGPMPI *mpi in self.secretMPIArray) {
+        for (PGPMPI *mpi in self.secretMPIs) {
             let exportMPI = [mpi exportMPI];
             [data pgp_appendData:exportMPI];
         }
@@ -396,6 +396,39 @@ NS_ASSUME_NONNULL_BEGIN
     }];
 }
 
+#pragma mark - isEqual
+
+- (BOOL)isEqual:(id)other {
+    if (self == other) { return YES; }
+    if ([super isEqual:other] && [other isKindOfClass:self.class]) {
+        return [self isEqualToKeyPacket:other];
+    }
+    return NO;
+}
+
+- (BOOL)isEqualToKeyPacket:(PGPSecretKeyPacket *)packet {
+    return self.version == packet.version &&
+        self.s2kUsage == packet.s2kUsage &&
+        self.publicKeyAlgorithm == packet.publicKeyAlgorithm &&
+        self.V3validityPeriod == packet.V3validityPeriod &&
+        PGPEqualObjects(self.createDate, packet.createDate) &&
+        PGPEqualObjects(self.publicMPIs, packet.publicMPIs) &&
+        PGPEqualObjects(self.secretMPIs, packet.secretMPIs);
+}
+
+- (NSUInteger)hash {
+    NSUInteger prime = 31;
+    NSUInteger result = [super hash];
+    result = prime * result + self.version;
+    result = prime * result + self.s2kUsage;
+    result = prime * result + self.publicKeyAlgorithm;
+    result = prime * result + self.V3validityPeriod;
+    result = prime * result + self.createDate.hash;
+    result = prime * result + self.publicMPIs.hash;
+    result = prime * result + self.secretMPIs.hash;
+    return result;
+}
+
 #pragma mark - NSCopying
 
 - (id)copyWithZone:(nullable NSZone *)zone {
@@ -405,7 +438,7 @@ NS_ASSUME_NONNULL_BEGIN
     duplicate.s2k = self.s2k;
     duplicate.symmetricAlgorithm = self.symmetricAlgorithm;
     duplicate.ivData = self.ivData;
-    duplicate.secretMPIArray = self.secretMPIArray;
+    duplicate.secretMPIs = self.secretMPIs;
     duplicate.encryptedMPIPartData = self.encryptedMPIPartData;;
     duplicate.wasDecrypted = self.wasDecrypted;
     return duplicate;
