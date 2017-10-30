@@ -78,12 +78,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)isEqualToSignaturePacket:(PGPSignaturePacket *)packet {
     return self.version == packet.version &&
-    self.publicKeyAlgorithm == packet.publicKeyAlgorithm &&
-    self.hashAlgoritm == packet.hashAlgoritm &&
-    PGPEqualObjects(self.signedHashValueData, packet.signedHashValueData) &&
-    PGPEqualObjects(self.signatureMPIArray, packet.signatureMPIArray) &&
-    PGPEqualObjects(self.hashedSubpackets, packet.hashedSubpackets) &&
-    PGPEqualObjects(self.unhashedSubpackets, packet.unhashedSubpackets);
+            self.publicKeyAlgorithm == packet.publicKeyAlgorithm &&
+            self.hashAlgoritm == packet.hashAlgoritm &&
+            PGPEqualObjects(self.signedHashValueData, packet.signedHashValueData) &&
+            PGPEqualObjects(self.signatureMPIArray, packet.signatureMPIArray) &&
+            PGPEqualObjects(self.hashedSubpackets, packet.hashedSubpackets) &&
+            PGPEqualObjects(self.unhashedSubpackets, packet.unhashedSubpackets);
 }
 
 - (NSUInteger)hash {

@@ -27,41 +27,15 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (self = [super init]) {
         _userIDPacket = userPacket;
+        _otherSignatures = [NSArray<PGPSignaturePacket *> array];
+        _revocationSignatures = [NSArray<PGPSignaturePacket *> array];
+        _selfCertifications = [NSArray<PGPSignaturePacket *> array];
     }
     return self;
 }
 
 - (NSString *)userID {
     return self.userIDPacket.userID;
-}
-
-- (NSArray *)otherSignatures {
-    if (!_otherSignatures) {
-        _otherSignatures = [NSArray array];
-    }
-    return _otherSignatures;
-}
-
-- (NSArray *)revocationSignatures {
-    if (!_revocationSignatures) {
-        _revocationSignatures = [NSArray array];
-    }
-    return _revocationSignatures;
-}
-
-- (NSArray *)selfCertifications {
-    if (!_selfCertifications) {
-        _selfCertifications = [NSArray array];
-    }
-    return _selfCertifications;
-}
-
-- (PGPUserIDPacket *)userIDPacket {
-    if (!_userIDPacket) {
-        NSAssert(false, @"wat?");
-        // build userIDPacket
-    }
-    return _userIDPacket;
 }
 
 - (NSString *)description {
