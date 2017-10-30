@@ -1,5 +1,6 @@
 Version 0.9.3
 - Fixes public key equality checks.
+- Ignores invalid/broken signature subpackets.
 
 Version 0.9.2
 - Fixes nullability and undefined behaviours issues.
