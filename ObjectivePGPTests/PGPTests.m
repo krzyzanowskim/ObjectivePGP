@@ -206,7 +206,7 @@
 - (void)testIssue82 {
     let keys1 = [PGPTestUtils readKeysFromFile:@"issue82-keys.asc"];
     let keys2 = [PGPTestUtils readKeysFromFile:@"issue82-keys.asc"];
-    XCTAssertEqual(keys1, keys2);
+    XCTAssertEqualObjects(keys1, keys2);
 }
 
 -(void)testSigningSubKey {
