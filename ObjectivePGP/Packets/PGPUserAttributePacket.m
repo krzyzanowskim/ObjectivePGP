@@ -74,7 +74,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
     // TODO: export
-    PGPLogDebug(@"Exporting %@ not implemented", self.className);
+    PGPLogDebug(@"Exporting %@ not implemented", NSStringFromClass(self.class));
     return nil;
 }
 
