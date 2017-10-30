@@ -9,6 +9,7 @@
 #import "PGPBigNum.h"
 #import "PGPBigNum+Private.h"
 #import "PGPMacros+Private.h"
+#import "PGPFoundation.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -41,6 +42,27 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)dealloc {
     BN_clear_free(_bignumRef);
+}
+
+#pragma mark - isEqual
+
+- (BOOL)isEqual:(id)other {
+    if (self == other) { return YES; }
+    if ([other isKindOfClass:self.class]) {
+        return [self isEqualToBigNum:other];
+    }
+    return NO;
+}
+
+- (BOOL)isEqualToBigNum:(PGPBigNum *)other {
+    return BN_cmp(self.bignumRef, other.bignumRef) == 0;
+}
+
+- (NSUInteger)hash {
+    NSUInteger prime = 31;
+    NSUInteger result = 1;
+    result = prime * result + self.data.hash;
+    return result;
 }
 
 #pragma mark - NSCopying
