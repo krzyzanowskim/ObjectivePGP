@@ -119,7 +119,8 @@ typedef NS_ENUM(UInt8, PGPSignatureType) {
     PGPSignatureSubkeyRevocation = 0x28, // 0x28: Subkey revocation signature (subkey_revocation)
     PGPSignatureCertificationRevocation = 0x30, // 0x30: Certification revocation signature (cert_revocation)
     PGPSignatureTimestamp = 0x40,
-    PGPSignature3PartyConfirmation = 0x50
+    PGPSignature3PartyConfirmation = 0x50,
+    PGPSignatureUnknown = 0xFF
 };
 
 typedef NS_ENUM(UInt8, PGPSignatureSubpacketType) {

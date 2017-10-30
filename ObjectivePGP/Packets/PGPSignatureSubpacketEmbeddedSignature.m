@@ -32,8 +32,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 + (instancetype)packetWithData:(NSData *)packetBodyData {
-    let signaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureBinaryDocument hashAlgorithm:PGPHashUnknown]; // unknown
-    [signaturePacket parsePacketBody:packetBodyData error:nil];
+    let signaturePacket = [PGPSignaturePacket packetWithBody:packetBodyData];
     let embeddedSignature = [[PGPSignatureSubpacketEmbeddedSignature alloc] initWithSignature:signaturePacket];
     return embeddedSignature;
 }
