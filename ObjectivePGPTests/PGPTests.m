@@ -209,6 +209,11 @@
     XCTAssertEqualObjects(keys1, keys2);
 }
 
+- (void)testIssue84 {
+    let keys = [PGPTestUtils readKeysFromFile:@"issue84-key.asc"];
+    XCTAssertEqual(keys.count, (NSUInteger)1);
+}
+
 -(void)testSigningSubKey {
     // subkey generated with GnuPG 2.1.18
     //
