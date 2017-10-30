@@ -147,7 +147,7 @@ NS_ASSUME_NONNULL_BEGIN
         }
         break;
         default: {
-            PGPLogError(@"Can't export unknown key type: %@", self);
+            PGPLogDebug(@"Can't export unknown key type: %@", self);
             if (error) {
                 *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"Can't export unknown key type"}];
             }

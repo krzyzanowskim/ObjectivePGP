@@ -263,7 +263,7 @@ NS_ASSUME_NONNULL_BEGIN
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Wrong key type, require public key" }];
         }
-        PGPLogWarning(@"Need public key to encrypt");
+        PGPLogDebug(@"Need public key to encrypt");
         return nil;
     }
 
@@ -296,7 +296,7 @@ NS_ASSUME_NONNULL_BEGIN
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Wrong key type, require secret key" }];
         }
-        PGPLogWarning(@"Need public key to encrypt");
+        PGPLogDebug(@"Need public key to encrypt");
         return nil;
     }
 
@@ -410,7 +410,7 @@ NS_ASSUME_NONNULL_BEGIN
 
         [result pgp_appendData:exported]; // TODO: decode secret key first
         if (error && *error) {
-            PGPLogWarning(@"Problem while export public key: %@", [*error localizedDescription]);
+            PGPLogDebug(@"Problem while export public key: %@", [*error localizedDescription]);
             return nil;
         }
     }

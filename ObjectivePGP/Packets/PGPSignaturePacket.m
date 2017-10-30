@@ -512,7 +512,6 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPSignatureBinaryDocument:
         case PGPSignatureCanonicalTextDocument: {
             if (!inputData) {
-                PGPLogError(@"Invalid paramaters.");
                 if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing input data" }]; }
                 return nil;
             }
@@ -521,7 +520,6 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPSignatureSubkeyBinding: { // 0x18
             // the subkey using the same format as the main key (also using 0x99 as the first octet).
             if (!signingKeyPacket || !subKey) {
-                PGPLogError(@"Invalid paramaters");
                 if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing valid key packet." }]; }
                 return nil;
             }
@@ -536,7 +534,6 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPSignaturePrimaryKeyBinding: { // 0x19
             // A primary key binding signature (type 0x19) then hashes
             if (!signingKeyPacket) {
-                PGPLogError(@"Invalid paramaters");
                 if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing key packet." }]; }
                 return nil;
             }
@@ -551,7 +548,6 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPSignatureCertificationRevocation: // 0x28
         {
             if (!signingKeyPacket) {
-                PGPLogError(@"Invalid paramaters");
                 if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing key packet." }]; }
                 return nil;
             }
@@ -577,8 +573,8 @@ NS_ASSUME_NONNULL_BEGIN
                 }
 
                 if (!userIsValid) {
+                    PGPLogDebug(@"Invalid user id");
                     if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Invalid user id" }]; }
-                    PGPLogError(@"Invalid user");
                     return nil;
                 }
             }

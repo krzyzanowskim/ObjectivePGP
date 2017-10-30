@@ -425,12 +425,12 @@ NS_ASSUME_NONNULL_BEGIN
         eskKeyPacket.publicKeyAlgorithm = encryptionKeyPacket.publicKeyAlgorithm;
         BOOL encrypted = [eskKeyPacket encrypt:encryptionKeyPacket sessionKeyData:sessionKeyData sessionKeyAlgorithm:preferredSymmeticAlgorithm error:error];
         if (!encrypted || (error && *error)) {
-            PGPLogWarning(@"Failed encrypt Symmetric-key Encrypted Session Key packet");
+            PGPLogDebug(@"Failed encrypt Symmetric-key Encrypted Session Key packet. Error: %@", error ? *error : @"Unknown");
             return nil;
         }
         [encryptedMessage pgp_appendData:[eskKeyPacket export:error]];
         if (error && *error) {
-            PGPLogWarning(@"Missing literal data");
+            PGPLogDebug(@"Missing literal data. Error: %@", error ? *error : @"Unknown");
             return nil;
         }
 
@@ -452,7 +452,7 @@ NS_ASSUME_NONNULL_BEGIN
 
         let literalPacketData = [literalPacket export:error];
         if (error && *error) {
-            PGPLogWarning(@"Missing literal packet data");
+            PGPLogDebug(@"Missing literal packet data. Error: %@", *error);
             return nil;
         }
 
