@@ -227,8 +227,59 @@ NS_ASSUME_NONNULL_BEGIN
     }
 }
 
++ (PGPSignatureSubpacketHeader *)subpacketHeaderFromData:(NSData *)headerData {
+    NSUInteger position = 0;
+
+    const UInt8 *lengthOctets = [headerData subdataWithRange:NSMakeRange(position, MIN((NSUInteger)5, headerData.length))].bytes;
+    UInt32 headerLength = 0;
+    UInt32 subpacketLength = 0;
+
+    //TODO: Use -[PGPPacket parseNewFormatHeaderPacket:]. headerLength is different size !?
+    //      Its format is similar to the "new" format packet header lengths, but cannot have Partial Body Lengths.
+    if (lengthOctets[0] < 192) {
+        // subpacketLen = 1st_octet;
+        subpacketLength = lengthOctets[0];
+        headerLength = 1;
+    } else if (lengthOctets[0] >= 192 && lengthOctets[0] < 255) {
+        // subpacketLen = ((1st_octet - 192) << 8) + (2nd_octet) + 192
+        subpacketLength = ((lengthOctets[0] - 192) << 8) + (lengthOctets[1]) + 192;
+        headerLength = 2;
+    } else if (lengthOctets[0] == 255) {
+        // subpacketLen = (2nd_octet << 24) | (3rd_octet << 16) |
+        //                (4th_octet << 8)  | 5th_octet
+        subpacketLength = (lengthOctets[1] << 24) | (lengthOctets[2] << 16) | (lengthOctets[3] << 8) | lengthOctets[4];
+        headerLength = 5;
+    }
+    position = position + headerLength;
+
+    // TODO: Bit 7 of the subpacket type is the "critical" bit.
+    PGPSignatureSubpacketType subpacketType = PGPSignatureSubpacketTypeUnknown;
+    [headerData getBytes:&subpacketType range:(NSRange){position, 1}];
+    headerLength = headerLength + 1;
+
+    // Note: "The length includes the type octet but not this length"
+    // Example: 02 19 01
+    // length 0x02 = 2
+    // type 0x19   = 25
+    // body: 0x01  = 1
+    // so... given body length is = 2 but body length is in fact = 1
+    // this is because given body length include type octet which is from header namespace, not body really.
+    // I'm drunk, or person who defined it this way was drunk.
+    subpacketLength = subpacketLength - 1;
+
+    let subpacketHeader = [[PGPSignatureSubpacketHeader alloc] init];
+    subpacketHeader.type = subpacketType;
+    subpacketHeader.headerLength = headerLength;
+    subpacketHeader.bodyLength = subpacketLength;
+
+    return subpacketHeader;
+}
+
+#pragma mark - PGPExportable
+
 - (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
     NSMutableData *data = [NSMutableData data];
+    BOOL unsupportedType = NO;
 
     // subpacket type
     PGPSignatureSubpacketType type = self.type;
@@ -361,65 +412,21 @@ NS_ASSUME_NONNULL_BEGIN
             } else {
                 PGPLogDebug(@"Unsupported subpacket type %d", self.type);
             }
+            unsupportedType = YES;
             break;
     }
 
-    // subpacket = length + tag(type) + body
-    NSMutableData *subpacketData = [NSMutableData data];
-    // the subpacket length (1, 2, or 5 octets),
-    let subpacketLengthData = [PGPPacket buildNewFormatLengthDataForData:data];
-    [subpacketData pgp_appendData:subpacketLengthData]; // data with tag
-    [subpacketData pgp_appendData:data];
+    if (!unsupportedType) {
+        // subpacket = length + tag(type) + body
+        NSMutableData *subpacketData = [NSMutableData data];
+        // the subpacket length (1, 2, or 5 octets),
+        let subpacketLengthData = [PGPPacket buildNewFormatLengthDataForData:data];
+        [subpacketData pgp_appendData:subpacketLengthData]; // data with tag
+        [subpacketData pgp_appendData:data];
+        return subpacketData;
 
-    return subpacketData;
-}
-
-+ (PGPSignatureSubpacketHeader *)subpacketHeaderFromData:(NSData *)headerData {
-    NSUInteger position = 0;
-
-    const UInt8 *lengthOctets = [headerData subdataWithRange:NSMakeRange(position, MIN((NSUInteger)5, headerData.length))].bytes;
-    UInt32 headerLength = 0;
-    UInt32 subpacketLength = 0;
-
-    //TODO: Use -[PGPPacket parseNewFormatHeaderPacket:]. headerLength is different size !?
-    //      Its format is similar to the "new" format packet header lengths, but cannot have Partial Body Lengths.
-    if (lengthOctets[0] < 192) {
-        // subpacketLen = 1st_octet;
-        subpacketLength = lengthOctets[0];
-        headerLength = 1;
-    } else if (lengthOctets[0] >= 192 && lengthOctets[0] < 255) {
-        // subpacketLen = ((1st_octet - 192) << 8) + (2nd_octet) + 192
-        subpacketLength = ((lengthOctets[0] - 192) << 8) + (lengthOctets[1]) + 192;
-        headerLength = 2;
-    } else if (lengthOctets[0] == 255) {
-        // subpacketLen = (2nd_octet << 24) | (3rd_octet << 16) |
-        //                (4th_octet << 8)  | 5th_octet
-        subpacketLength = (lengthOctets[1] << 24) | (lengthOctets[2] << 16) | (lengthOctets[3] << 8) | lengthOctets[4];
-        headerLength = 5;
     }
-    position = position + headerLength;
-
-    // TODO: Bit 7 of the subpacket type is the "critical" bit.
-    PGPSignatureSubpacketType subpacketType = PGPSignatureSubpacketTypeUnknown;
-    [headerData getBytes:&subpacketType range:(NSRange){position, 1}];
-    headerLength = headerLength + 1;
-
-    // Note: "The length includes the type octet but not this length"
-    // Example: 02 19 01
-    // length 0x02 = 2
-    // type 0x19   = 25
-    // body: 0x01  = 1
-    // so... given body length is = 2 but body length is in fact = 1
-    // this is because given body length include type octet which is from header namespace, not body really.
-    // I'm drunk, or person who defined it this way was drunk.
-    subpacketLength = subpacketLength - 1;
-
-    let subpacketHeader = [[PGPSignatureSubpacketHeader alloc] init];
-    subpacketHeader.type = subpacketType;
-    subpacketHeader.headerLength = headerLength;
-    subpacketHeader.bodyLength = subpacketLength;
-
-    return subpacketHeader;
+    return nil;
 }
 
 #pragma mark - isEqual
