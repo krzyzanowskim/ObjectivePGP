@@ -108,29 +108,6 @@ static const unsigned int PGP_DEFAULT_ITERATIONS_COUNT = 215;
     return ((UInt32)16 + (self.iterationsCount & 15)) << ((self.iterationsCount >> 4) + 6);
 }
 
-- (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
-    NSMutableData *data = [NSMutableData data];
-    [data appendBytes:&_specifier length:1];
-    [data appendBytes:&_hashAlgorithm length:1];
-
-    if (self.specifier == PGPS2KSpecifierSalted || self.specifier == PGPS2KSpecifierIteratedAndSalted) {
-        [data appendData:self.salt];
-    }
-
-    if (self.specifier == PGPS2KSpecifierIteratedAndSalted) {
-        if (self.iterationsCount == 0) {
-            if (error) {
-                *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unexpected count: 0" }];
-            }
-            return nil;
-        }
-
-        [data appendBytes:&self->_iterationsCount length:1];
-    }
-
-    return data;
-}
-
 - (nullable NSData *)buildKeyDataForPassphrase:(NSData *)passphrase prefix:(nullable NSData *)prefix salt:(NSData *)salt codedCount:(UInt32)codedCount {
     PGPUpdateBlock updateBlock = nil;
     switch (self.specifier) {
@@ -247,6 +224,31 @@ static const unsigned int PGP_DEFAULT_ITERATIONS_COUNT = 215;
 
     // the high-order (leftmost) octets of the hash are used as the key.
     return [hashData subdataWithRange:(NSRange){0, MIN(hashData.length, keySize)}];
+}
+
+#pragma mark - PGPExportable
+
+- (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
+    NSMutableData *data = [NSMutableData data];
+    [data appendBytes:&_specifier length:1];
+    [data appendBytes:&_hashAlgorithm length:1];
+
+    if (self.specifier == PGPS2KSpecifierSalted || self.specifier == PGPS2KSpecifierIteratedAndSalted) {
+        [data appendData:self.salt];
+    }
+
+    if (self.specifier == PGPS2KSpecifierIteratedAndSalted) {
+        if (self.iterationsCount == 0) {
+            if (error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unexpected count: 0" }];
+            }
+            return nil;
+        }
+
+        [data appendBytes:&self->_iterationsCount length:1];
+    }
+
+    return data;
 }
 
 #pragma mark - NSCopying
