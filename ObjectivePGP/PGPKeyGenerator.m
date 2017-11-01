@@ -136,7 +136,7 @@ NS_ASSUME_NONNULL_BEGIN
     return [[PGPKey alloc] initWithSecretKey:partialSecretKey publicKey:partialPublicKey];
 }
 
-- (PGPKey *)addSubKeyTo:(PGPKey *)parentKey {
+- (PGPKey *)addSubKeyTo:(PGPKey *)parentKey passphrase:(nullable NSString *)passphrase {
     let publicSubKeyPacket = [[PGPPublicSubKeyPacket alloc] init];
     publicSubKeyPacket.version = self.version;
     publicSubKeyPacket.publicKeyAlgorithm = self.keyAlgorithm;
@@ -146,14 +146,52 @@ NS_ASSUME_NONNULL_BEGIN
     let secretSubKeyPacket = [[PGPSecretSubKeyPacket alloc] init];
     secretSubKeyPacket.version = self.version;
     secretSubKeyPacket.publicKeyAlgorithm = publicSubKeyPacket.publicKeyAlgorithm;
-    secretSubKeyPacket.s2kUsage = PGPS2KUsageNonEncrypted;
-    secretSubKeyPacket.s2k = [[PGPS2K alloc] initWithSpecifier:PGPS2KSpecifierSimple hashAlgorithm:self.hashAlgorithm];
     secretSubKeyPacket.symmetricAlgorithm = self.cipherAlgorithm;
-    NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:secretSubKeyPacket.symmetricAlgorithm];
-    secretSubKeyPacket.ivData = [NSMutableData dataWithLength:blockSize];
     secretSubKeyPacket.createDate = publicSubKeyPacket.createDate;
 
+    // Fill MPIs
     [self fillMPIForPublic:publicSubKeyPacket andSecret:secretSubKeyPacket withKeyAlgorithm:self.keyAlgorithm bits:self.keyBitsLength];
+
+    //TODO: refactor duplicated code
+    NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:secretSubKeyPacket.symmetricAlgorithm];
+    if (!passphrase) {
+        secretSubKeyPacket.s2kUsage = PGPS2KUsageNonEncrypted;
+        secretSubKeyPacket.s2k = [[PGPS2K alloc] initWithSpecifier:PGPS2KSpecifierSimple hashAlgorithm:self.hashAlgorithm];
+        secretSubKeyPacket.ivData = [NSMutableData dataWithLength:blockSize];
+    } else {
+        secretSubKeyPacket.ivData = [PGPCryptoUtils randomData:blockSize];
+        secretSubKeyPacket.s2kUsage = PGPS2KUsageEncryptedAndHashed;
+
+        let s2k = [[PGPS2K alloc] initWithSpecifier:PGPS2KSpecifierIteratedAndSalted hashAlgorithm:self.hashAlgorithm];
+        secretSubKeyPacket.s2k = s2k;
+
+        // build encryptedMPIPartData
+        let plaintextMPIPartData = [NSMutableData data];
+
+        for (PGPMPI *mpi in secretSubKeyPacket.secretMPIs) {
+            [plaintextMPIPartData pgp_appendData:[mpi exportMPI]];
+        }
+
+        switch (secretSubKeyPacket.s2kUsage) {
+            case PGPS2KUsageEncryptedAndHashed: {
+                // a 20-octet SHA-1 hash of the plaintext of the algorithm-specific portion
+                let hashData = plaintextMPIPartData.pgp_SHA1;
+                [plaintextMPIPartData pgp_appendData:hashData];
+            } break;
+            case PGPS2KUsageEncrypted: {
+                // a two-octet checksum of the plaintext of the algorithm-specific portion
+                UInt16 checksum = CFSwapInt16HostToBig(plaintextMPIPartData.pgp_Checksum);
+                [plaintextMPIPartData appendBytes:&checksum length:2];
+            } break;
+            default:
+                break;
+        }
+
+        let sessionKeyData = [s2k produceSessionKeyWithPassphrase:PGPNN(passphrase) symmetricAlgorithm:self.cipherAlgorithm];
+        if (sessionKeyData) {
+            secretSubKeyPacket.encryptedMPIPartData = [PGPCryptoCFB encryptData:plaintextMPIPartData sessionKeyData:sessionKeyData symmetricAlgorithm:self.cipherAlgorithm iv:secretSubKeyPacket.ivData];
+        }
+    }
 
     // Create Key
     let publicSubKey = [[PGPPartialSubKey alloc] initWithPacket:publicSubKeyPacket];
@@ -290,7 +328,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (PGPKey *)generateFor:(NSString *)userID passphrase:(nullable NSString *)passphrase {
     let key = [self buildKeyWithPassphrase:passphrase];
-    let subKey = [self addSubKeyTo:key];
+    let subKey = [self addSubKeyTo:key passphrase:passphrase];
 
     let userPublic = [[PGPUser alloc] initWithUserIDPacket:[[PGPUserIDPacket alloc] initWithUserID:userID]];
     let userSecret = [[PGPUser alloc] initWithUserIDPacket:[[PGPUserIDPacket alloc] initWithUserID:userID]];

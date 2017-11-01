@@ -203,6 +203,33 @@
     XCTAssertEqual(keys.count, (NSUInteger)1);
 }
 
+- (void)testIssue77EncryptionKey {
+    let generator = [[PGPKeyGenerator alloc] init];
+    let key = [generator generateFor:@"marcin77@example.com" passphrase:@"test"];
+    NSError *err;
+    let publicKeyData = [key export:PGPPartialKeyPublic error:&err];
+    let secretKeyData = [key export:PGPPartialKeySecret error:&err];
+
+    let pgp = [[ObjectivePGP alloc] init];
+    let publicKeys = [ObjectivePGP readKeysFromData:publicKeyData];
+    let secretKeys = [ObjectivePGP readKeysFromData:secretKeyData];
+    [pgp importKeys:@[publicKeys.firstObject, secretKeys.firstObject]];
+
+    let message = [@"test message" dataUsingEncoding:NSUTF8StringEncoding];
+
+    NSError *encryptError;
+    let encryptedMessage = [pgp encrypt:message usingKeys:publicKeys armored:YES error:&encryptError];
+
+    NSError *decryptError1;
+    let decryptedMessage1 = [pgp decrypt:encryptedMessage passphrase:nil error:&decryptError1];
+    XCTAssertEqualObjects(decryptedMessage1, nil);
+
+
+    NSError *decryptError2;
+    let decryptedMessage2 = [pgp decrypt:encryptedMessage passphrase:@"test" error:&decryptError2];
+    XCTAssertEqualObjects(decryptedMessage2, message);
+}
+
 - (void)testIssue82KeysEquality {
     let keys1 = [PGPTestUtils readKeysFromFile:@"issue82-keys.asc"];
     let keys2 = [PGPTestUtils readKeysFromFile:@"issue82-keys.asc"];
