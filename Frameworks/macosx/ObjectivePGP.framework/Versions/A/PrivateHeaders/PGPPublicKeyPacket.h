@@ -7,10 +7,8 @@
 //
 //  Tag 6
 
-#import "PGPFingerprint.h"
-#import "PGPKeyID.h"
 #import "PGPPacketFactory.h"
-#import "PGPTypes.h"
+#import <ObjectivePGP/ObjectivePGP.h>
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN

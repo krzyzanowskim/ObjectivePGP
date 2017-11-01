@@ -11,9 +11,9 @@
 #define let const __auto_type
 #define var __auto_type
 
-#define weakify(var) __weak typeof(var) PGPWeak_##var = var;
+#define pgpweakify(var) __weak typeof(var) PGPWeak_##var = var;
 
-#define strongify(var) \
+#define pgpstrongify(var) \
     _Pragma("clang diagnostic push") \
     _Pragma("clang diagnostic ignored \"-Wshadow\"") \
     __strong typeof(var) var = PGPWeak_##var; \

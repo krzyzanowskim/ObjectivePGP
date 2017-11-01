@@ -1,3 +1,7 @@
+Version 0.9.4
+- Fixes generation subkeys with passphrase.
+- Improves memory usage when reading messages.
+
 Version 0.9.3
 - Fixes public key equality checks.
 - Ignores invalid/broken signature subpackets.
