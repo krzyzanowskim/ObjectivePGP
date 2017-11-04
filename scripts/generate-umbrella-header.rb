@@ -7,7 +7,7 @@ project = Xcodeproj::Project.open("#{ARGV[0]}")
 target = project.targets.first
 
 filenames_public = target.headers_build_phase.files.select do |pbx_header_file|
-	pbx_header_file.settings["ATTRIBUTES"].include?("Public")
+  pbx_header_file.settings != nil && pbx_header_file.settings["ATTRIBUTES"].include?("Public")
 end.select do |file|
   file.display_name != "#{target.product_name}.h" && file.display_name != "#{target.product_name}-Private.h"
 end.map do |file|
@@ -15,7 +15,7 @@ end.map do |file|
 end
 
 filenames_private = target.headers_build_phase.files.select do |pbx_header_file|
-	pbx_header_file.settings["ATTRIBUTES"].include?("Private")
+	pbx_header_file.settings != nil && pbx_header_file.settings["ATTRIBUTES"].include?("Private")
 end.select do |file|
   file.display_name != "#{target.product_name}.h" && file.display_name != "#{target.product_name}-Private.h"
 end.map do |file|
