@@ -6,7 +6,7 @@
 //  This notice may not be removed from this file.
 //
 
-#import "PGPKey.h"
+#import <ObjectivePGP/PGPKey.h>
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN

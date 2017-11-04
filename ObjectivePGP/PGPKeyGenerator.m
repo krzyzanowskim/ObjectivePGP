@@ -19,6 +19,7 @@
 #import "PGPUserIDPacket.h"
 #import "PGPCryptoHash.h"
 #import "PGPCryptoUtils.h"
+#import "PGPFoundation.h"
 #import "PGPRSA.h"
 #import "PGPDSA.h"
 #import "PGPCryptoCFB.h"

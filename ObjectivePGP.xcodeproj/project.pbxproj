@@ -82,7 +82,7 @@
 		751373F11F65382C0067A343 /* NSMutableData+PGPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 751373EF1F65382C0067A343 /* NSMutableData+PGPUtils.m */; };
 		7537A6AD1F0D739A00892829 /* PGPCryptoHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 75572E281ED2193C00205871 /* PGPCryptoHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7537A6B21F0D739A00892829 /* PGPMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 752DE5BD1EEE3BE800637E38 /* PGPMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		7537A6B31F0D739A00892829 /* PGPFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 758514EA1EDF09C400CB313F /* PGPFoundation.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7537A6B31F0D739A00892829 /* PGPFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 758514EA1EDF09C400CB313F /* PGPFoundation.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7537A6B41F0D739A00892829 /* PGPTypes.h in Headers */ = {isa = PBXBuildFile; fileRef = 759DBA151915BC0400305549 /* PGPTypes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7537A6B51F0D739A00892829 /* PGPBigNum+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 7547A6CA1F0080CF002C2145 /* PGPBigNum+Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7537A6B61F0D739A00892829 /* PGPBigNum.h in Headers */ = {isa = PBXBuildFile; fileRef = 7547A6C61F007EF6002C2145 /* PGPBigNum.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -445,10 +445,10 @@
 				752DE5BD1EEE3BE800637E38 /* PGPMacros.h */,
 				750F52BF1F5C832500DA7DE4 /* PGPMacros+Private.h */,
 				758514EA1EDF09C400CB313F /* PGPFoundation.h */,
-				759DBA151915BC0400305549 /* PGPTypes.h */,
 				758514EB1EDF09C400CB313F /* PGPFoundation.m */,
-				7547A6CA1F0080CF002C2145 /* PGPBigNum+Private.h */,
+				759DBA151915BC0400305549 /* PGPTypes.h */,
 				7547A6C61F007EF6002C2145 /* PGPBigNum.h */,
+				7547A6CA1F0080CF002C2145 /* PGPBigNum+Private.h */,
 				7547A6C71F007EF6002C2145 /* PGPBigNum.m */,
 				759DBA161915CBDF00305549 /* PGPMPI.h */,
 				759DBA171915CBDF00305549 /* PGPMPI.m */,
