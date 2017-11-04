@@ -132,7 +132,7 @@
 
     // detached signature
     NSError *signatureError = nil;
-    NSData *signatureData = [self.pgp sign:dataToSign usingKey:keyToSign passphrase:nil detached:YES error:&signatureError];
+    NSData *signatureData = [ObjectivePGP sign:dataToSign usingKey:keyToSign passphrase:nil detached:YES error:&signatureError];
     XCTAssertNotNil(signatureData);
     XCTAssertNil(signatureError);
 
@@ -143,12 +143,12 @@
     // Verify
     let keyToValidateSign = [self.pgp findKeyWithIdentifier:@"25A233C2952E4E8B"];
     NSError *verifyError = nil;
-    status = [self.pgp verify:dataToSign withSignature:signatureData usingKey:keyToValidateSign error:&verifyError];
+    status = [ObjectivePGP verify:dataToSign withSignature:signatureData usingKey:keyToValidateSign error:&verifyError];
     XCTAssertTrue(status);
     XCTAssertNil(verifyError);
 
     // Signed data
-    NSData *signedData = [self.pgp sign:dataToSign usingKey:keyToSign passphrase:nil detached:NO error:&signatureError];
+    NSData *signedData = [ObjectivePGP sign:dataToSign usingKey:keyToSign passphrase:nil detached:NO error:&signatureError];
     XCTAssertNotNil(signedData);
     XCTAssertNil(signatureError);
 
@@ -181,7 +181,7 @@
 
     // encrypt PLAINTEXT
     NSError *encryptError = nil;
-    NSData *encryptedData = [self.pgp encrypt:plainData usingKeys:@[keyToEncrypt] armored:NO error:&encryptError];
+    NSData *encryptedData = [ObjectivePGP encrypt:plainData usingKeys:@[keyToEncrypt] armored:NO error:&encryptError];
     XCTAssertNil(encryptError);
     XCTAssertNotNil(encryptedData);
 
@@ -198,12 +198,11 @@
     XCTAssertEqualObjects(decryptedString, PLAINTEXT, @"Decrypted data mismatch");
 
     // ARMORED
-    NSData *encryptedDataArmored = [self.pgp encrypt:plainData usingKeys:@[keyToEncrypt] armored:YES error:&encryptError];
+    NSData *encryptedDataArmored = [ObjectivePGP encrypt:plainData usingKeys:@[keyToEncrypt] armored:YES error:&encryptError];
     XCTAssertNil(encryptError);
     XCTAssertNotNil(encryptedDataArmored);
 
     NSString *fileEncryptedArmored = [self.workingDirectory stringByAppendingPathComponent:@"plaintext.encrypted.armored"];
-    NSLog(@"%@", fileEncryptedArmored);
     status = [encryptedDataArmored writeToFile:fileEncryptedArmored atomically:YES];
     XCTAssertTrue(status);
 }
@@ -239,7 +238,7 @@
 
     // encrypt PLAINTEXT
     NSError *encryptError = nil;
-    NSData *encryptedData = [self.pgp encrypt:plainData usingKeys:@[keyToEncrypt1, keyToEncrypt2] armored:NO error:&encryptError];
+    NSData *encryptedData = [ObjectivePGP encrypt:plainData usingKeys:@[keyToEncrypt1, keyToEncrypt2] armored:NO error:&encryptError];
     XCTAssertNil(encryptError);
     XCTAssertNotNil(encryptedData);
 

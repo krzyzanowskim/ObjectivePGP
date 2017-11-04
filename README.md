@@ -101,16 +101,17 @@ NSData *armoredKeyData = [pgp exportKey:key armored:YES];
 ##### Sign data (or file)
 
 ```objective-c
-NSData *fileContent = [NSData dataWithContentsOfFile:@"/path/file/to/data.txt"];
-
 /* Choose a key to use to sign the data */
 PGPKey *key = [self.pgp findKeyWithIdentifier:@"979E4B03DFFE30C6"];
 
+// File to encrypt
+NSData *fileContent = [NSData dataWithContentsOfFile:@"/path/file/to/data.txt"];
+
 /* Sign and return only a signature data (detached = YES) */
-NSData *signature = [pgp sign:fileContent usingKey:key passphrase:nil detached:YES error:nil];
+NSData *signature = [ObjectivePGP sign:fileContent usingKey:key passphrase:nil detached:YES error:nil];
 
 /* Sign and return a data with the signature (detached = NO) */
-NSData *signedData = [pgp sign:fileContent usingSecretKey:key passphrase:nil detached:NO error:nil];
+NSData *signedData = [ObjectivePGP sign:fileContent usingSecretKey:key passphrase:nil detached:NO error:nil];
 ```
 
 ##### Verify signature from data (or file)
@@ -139,7 +140,7 @@ NSData *fileContent = [NSData dataWithContentsOfFile:@"/path/plaintext.txt"];
 PGPKey *key = [self.pgp findKeyWithIdentifier:@"979E4B03DFFE30C6"];
 
 /* Encrypt data. Armor output (ASCII file)  */
-NSData *encryptedData = [pgp encrypt:fileContent usingKeys:@[key] armored:YES error:nil];
+NSData *encryptedData = [ObjectivePGP encrypt:fileContent usingKeys:@[key] armored:YES error:nil];
 if (encryptedData) {
     // Success
 }
