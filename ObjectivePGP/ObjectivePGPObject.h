@@ -204,13 +204,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString *)passphrase verifyWithKey:(nullable PGPKey *)key signed:(nullable BOOL *)isSigned valid:(nullable BOOL *)isValid integrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError * __autoreleasing _Nullable *)error;
 
-
-/// Deprecated.
-- (NSSet<PGPKey *> *)importreadKeysFromData:(NSData *)data DEPRECATED_MSG_ATTRIBUTE("Use +[ObjectivePGP readKeysFromData:] instead");
-
-/// Deprecated.
-- (NSSet<PGPKey *> *)importKeysFromFile:(NSString *)path DEPRECATED_MSG_ATTRIBUTE("Use +[ObjectivePGP readKeysFromFile:] instead.");
-
 @end
 
 NS_ASSUME_NONNULL_END

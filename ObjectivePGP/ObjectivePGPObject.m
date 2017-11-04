@@ -889,20 +889,6 @@ NS_ASSUME_NONNULL_BEGIN
     return @[binRingData];
 }
 
-#pragma mark - Deprecated
-
-- (NSSet<PGPKey *> *)importreadKeysFromData:(NSData *)data {
-    let keys = [self.class readKeysFromData:data];
-    [self importKeys:keys];
-    return [NSSet setWithArray:keys];
-}
-
-- (NSSet<PGPKey *> *)importKeysFromFile:(NSString *)path {
-    let keys = [self.class readKeysFromFile:path];
-    [self importKeys:keys];
-    return [NSSet setWithArray:keys];
-}
-
 @end
 
 NS_ASSUME_NONNULL_END
