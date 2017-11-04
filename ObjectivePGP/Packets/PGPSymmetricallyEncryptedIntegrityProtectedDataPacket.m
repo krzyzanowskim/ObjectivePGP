@@ -171,7 +171,7 @@ NS_ASSUME_NONNULL_BEGIN
     position = position + blockSize + 2;
 
     // check if suffix match
-    if (![[prefixRandomFullData subdataWithRange:(NSRange){blockSize + 2 - 4, 2}] isEqualToData:[prefixRandomFullData subdataWithRange:(NSRange){blockSize + 2 - 2, 2}]]) {
+    if (!PGPEqualObjects([prefixRandomFullData subdataWithRange:(NSRange){blockSize + 2 - 4, 2}] ,[prefixRandomFullData subdataWithRange:(NSRange){blockSize + 2 - 2, 2}])) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Random suffix mismatch" }];
         }
@@ -204,7 +204,7 @@ NS_ASSUME_NONNULL_BEGIN
     [toMDCData appendBytes:&mdc_suffix length:2];
 
     let mdcHash = [toMDCData pgp_SHA1];
-    if (!mdcPacket || ![mdcHash isEqualToData:mdcPacket.hashData]) {
+    if (!mdcPacket || !PGPEqualObjects(mdcHash,mdcPacket.hashData)) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"MDC validation failed" }];
         }

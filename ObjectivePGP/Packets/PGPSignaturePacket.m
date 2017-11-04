@@ -211,7 +211,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable PGPMPI *)signatureMPI:(NSString *)identifier {
     for (PGPMPI *mpi in self.signatureMPIs) {
-        if ([mpi.identifier isEqualToString:identifier]) {
+        if (PGPEqualObjects(mpi.identifier, identifier)) {
             return mpi;
         }
     }
@@ -347,7 +347,7 @@ NS_ASSUME_NONNULL_BEGIN
         // Calculate hash value
         let calculatedHashValueData = [toHashData pgp_HashedWithAlgorithm:self.hashAlgoritm];
 
-        if (![self.signedHashValueData isEqualToData:[calculatedHashValueData subdataWithRange:(NSRange){0, 2}]]) {
+        if (!PGPEqualObjects(self.signedHashValueData, [calculatedHashValueData subdataWithRange:(NSRange){0, 2}])) {
             return NO;
         }
     }
@@ -360,13 +360,13 @@ NS_ASSUME_NONNULL_BEGIN
             let signatureMPI = self.signatureMPIs[0];
 
             // encoded m value
-            NSData *encryptedEmData = [signatureMPI bodyData];
+            let _Nullable encryptedEmData = [signatureMPI bodyData];
             // decrypted encoded m value
-            NSData *decryptedEmData = [PGPRSA publicDecrypt:encryptedEmData withPublicKeyPacket:signingKeyPacket];
+            let _Nullable decryptedEmData = [PGPRSA publicDecrypt:encryptedEmData withPublicKeyPacket:signingKeyPacket];
 
             // calculate EM and compare with decrypted EM. PKCS-emsa Encoded M.
-            NSData *emData = [PGPPKCSEmsa encode:self.hashAlgoritm message:toHashData encodedMessageLength:signingKeyPacket.keySize error:error];
-            if (![emData isEqualToData:decryptedEmData]) {
+            let emData = [PGPPKCSEmsa encode:self.hashAlgoritm message:toHashData encodedMessageLength:signingKeyPacket.keySize error:error];
+            if (!PGPEqualObjects(emData, decryptedEmData)) {
                 if (error) {
                     *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"em hash dont match" }];
                 }
@@ -567,7 +567,7 @@ NS_ASSUME_NONNULL_BEGIN
 
                 BOOL userIsValid = NO;
                 for (PGPUser *user in secretPartialKey.users) {
-                    if ([user.userID isEqualToString:PGPNN(userID)]) {
+                    if (PGPEqualObjects(user.userID, userID)) {
                         userIsValid = YES;
                     }
                 }

@@ -9,6 +9,7 @@
 #import "PGPArmor.h"
 #import "NSData+PGPUtils.h"
 #import "PGPMacros+Private.h"
+#import "PGPFoundation.h"
 #import "PGPPacket.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -111,8 +112,8 @@ NS_ASSUME_NONNULL_BEGIN
     // check header line
     NSString *headerLine = nil;
     [scanner scanUpToCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:&headerLine];
-    if (![headerLine isEqualToString:@"-----BEGIN PGP MESSAGE-----"] && ![headerLine isEqualToString:@"-----BEGIN PGP PUBLIC KEY BLOCK-----"] && ![headerLine isEqualToString:@"-----BEGIN PGP PRIVATE KEY BLOCK-----"] && ![headerLine isEqualToString:@"-----BEGIN PGP SECRET KEY BLOCK-----"] && // PGP 2.x generates the header "BEGIN PGP SECRET KEY BLOCK" instead of "BEGIN PGP PRIVATE KEY BLOCK"
-        ![headerLine isEqualToString:@"-----BEGIN PGP SIGNATURE-----"] && ![headerLine hasPrefix:@"-----BEGIN PGP MESSAGE, PART"]) {
+    if (!PGPEqualObjects(headerLine, @"-----BEGIN PGP MESSAGE-----") && !PGPEqualObjects(headerLine, @"-----BEGIN PGP PUBLIC KEY BLOCK-----") && !PGPEqualObjects(headerLine, @"-----BEGIN PGP PRIVATE KEY BLOCK-----") && !PGPEqualObjects(headerLine, @"-----BEGIN PGP SECRET KEY BLOCK-----") && // PGP 2.x generates the header "BEGIN PGP SECRET KEY BLOCK" instead of "BEGIN PGP PRIVATE KEY BLOCK"
+        !PGPEqualObjects(headerLine, @"-----BEGIN PGP SIGNATURE-----") && ![headerLine hasPrefix:@"-----BEGIN PGP MESSAGE, PART"]) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Invalid header" }];
         }
@@ -204,7 +205,7 @@ NS_ASSUME_NONNULL_BEGIN
     calculatedCRC24 = CFSwapInt32HostToBig(calculatedCRC24);
     calculatedCRC24 = calculatedCRC24 >> 8;
     NSData *calculatedCRC24Data = [NSData dataWithBytes:&calculatedCRC24 length:3];
-    if (![calculatedCRC24Data isEqualToData:readChecksumData]) {
+    if (!PGPEqualObjects(calculatedCRC24Data,readChecksumData)) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Checksum mismatch" }];
         }

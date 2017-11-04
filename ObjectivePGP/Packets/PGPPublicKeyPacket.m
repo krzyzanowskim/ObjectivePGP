@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable PGPMPI *)publicMPI:(NSString *)identifier {
     for (PGPMPI *mpi in self.publicMPIs) {
-        if ([mpi.identifier isEqualToString:identifier]) {
+        if (PGPEqualObjects(mpi.identifier, identifier)) {
             return mpi;
         }
     }
@@ -57,7 +57,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSUInteger)keySize {
     for (PGPMPI *mpi in self.publicMPIs) {
-        if ([mpi.identifier isEqualToString:PGPMPI_N]) {
+        if (PGPEqualObjects(mpi.identifier, PGPMPI_N)) {
             return (mpi.bigNum.bitsCount + 7) / 8; // ks
         }
     }

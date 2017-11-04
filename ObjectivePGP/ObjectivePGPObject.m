@@ -698,8 +698,8 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     let foundKey = [[loadedKeys pgp_objectsPassingTest:^BOOL(PGPKey *key, BOOL *stop) {
-        *stop = [key.publicKey.keyID.shortIdentifier.uppercaseString isEqualToString:keyIdentifier.uppercaseString] || [key.secretKey.keyID.shortIdentifier.uppercaseString isEqualToString:keyIdentifier.uppercaseString] ||
-                [key.publicKey.keyID.longIdentifier.uppercaseString isEqualToString:keyIdentifier.uppercaseString] || [key.secretKey.keyID.longIdentifier.uppercaseString isEqualToString:keyIdentifier.uppercaseString];
+        *stop = PGPEqualObjects(key.publicKey.keyID.shortIdentifier.uppercaseString, keyIdentifier.uppercaseString) || PGPEqualObjects(key.secretKey.keyID.shortIdentifier.uppercaseString, keyIdentifier.uppercaseString) ||
+                PGPEqualObjects(key.publicKey.keyID.longIdentifier.uppercaseString, keyIdentifier.uppercaseString) || PGPEqualObjects(key.secretKey.keyID.longIdentifier.uppercaseString, keyIdentifier.uppercaseString);
         return *stop;
 
     }] firstObject];
