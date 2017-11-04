@@ -158,7 +158,7 @@
 }
 
 - (void)testIssue35 {
-    let messagePath = [self.bundle pathForResource:@"issue35-message" ofType:@"asc"];
+    let messagePath = [PGPTestUtils pathToBundledFile:@"issue35-message.asc"];
     let keys = [PGPTestUtils readKeysFromFile:@"issue35-key.asc"];
     NSError *error = nil;
     [self.pgp decrypt:[NSData dataWithContentsOfFile:messagePath] usingKeys:keys passphrase:nil error:&error];
@@ -179,7 +179,7 @@
     let keyToSign = [self.pgp findKeyWithIdentifier:@"71180E514EF122E5"];
     XCTAssertNotNil(keyToSign);
 
-    let signatureData = [NSData dataWithContentsOfFile:[self.bundle pathForResource:@"issue44-keys" ofType:@"asc"]];
+    let signatureData = [NSData dataWithContentsOfFile:[PGPTestUtils pathToBundledFile:@"issue44-keys.asc"]];
     let signature = [self.pgp sign:signatureData usingKey:keyToSign passphrase:@"passphrase" detached:YES error:nil];
     XCTAssertNotNil(signature);
 }
@@ -189,7 +189,7 @@
     let keys = [self importKeysFromFile:@"issue62-keys.asc"];
     XCTAssertEqual(keys.count, (NSUInteger)1);
 
-    let data = [NSData dataWithContentsOfFile:[self.bundle pathForResource:@"issue62-message" ofType:@"asc"]];
+    let data = [NSData dataWithContentsOfFile:[PGPTestUtils pathToBundledFile:@"issue62-message.asc"]];
     NSError *error;
     let decryptedData = [self.pgp decrypt:data passphrase:nil error:&error];
     XCTAssertNil(error);

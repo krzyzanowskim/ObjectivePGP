@@ -216,7 +216,7 @@
     [self.pgp importKeys:keys2];
 
     NSError *error = nil;
-    NSString *encryptedPath = [self.bundle pathForResource:@"secring-test-plaintext-encrypted-message" ofType:@"asc"];
+    NSString *encryptedPath = [PGPTestUtils pathToBundledFile:@"secring-test-plaintext-encrypted-message.asc"];
     [self.pgp decrypt:[NSData dataWithContentsOfFile:encryptedPath] passphrase:nil error:&error];
 }
 
