@@ -231,7 +231,7 @@
 		756299BD1914DE1A00C5AD3B /* ObjectivePGP.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = ObjectivePGP.h; sourceTree = "<group>"; };
 		756299BF1914DE1A00C5AD3B /* ObjectivePGPObject.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ObjectivePGPObject.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		756299C51914DE1A00C5AD3B /* ObjectivePGPTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ObjectivePGPTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		756299D01914DE1A00C5AD3B /* ObjectivePGPTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "ObjectivePGPTests-Info.plist"; sourceTree = "<group>"; };
+		756299D01914DE1A00C5AD3B /* Tests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Tests-Info.plist"; sourceTree = "<group>"; };
 		756299D21914DE1A00C5AD3B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		756299D41914DE1A00C5AD3B /* PGPTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = PGPTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		7563356B19255C1A00414CCC /* PGPUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPUser.h; sourceTree = "<group>"; };
@@ -400,7 +400,7 @@
 				75BAFAC31F004E6000A956FC /* Config */,
 				756299BA1914DE1A00C5AD3B /* ObjectivePGP */,
 				75E2F34C1F9E53C5007DAE51 /* vendor */,
-				756299CE1914DE1A00C5AD3B /* ObjectivePGPTests */,
+				756299CE1914DE1A00C5AD3B /* Tests */,
 				756299B71914DE1A00C5AD3B /* Frameworks */,
 				756299B61914DE1A00C5AD3B /* Products */,
 			);
@@ -495,7 +495,7 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		756299CE1914DE1A00C5AD3B /* ObjectivePGPTests */ = {
+		756299CE1914DE1A00C5AD3B /* Tests */ = {
 			isa = PBXGroup;
 			children = (
 				756299D41914DE1A00C5AD3B /* PGPTests.m */,
@@ -506,14 +506,14 @@
 				75AB35091F881E3F00A1CDD6 /* PGPTestUtils.m */,
 				756299CF1914DE1A00C5AD3B /* Supporting Files */,
 			);
-			path = ObjectivePGPTests;
+			path = Tests;
 			sourceTree = "<group>";
 		};
 		756299CF1914DE1A00C5AD3B /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
 				75AB35051F88193B00A1CDD6 /* testfiles.bundle */,
-				756299D01914DE1A00C5AD3B /* ObjectivePGPTests-Info.plist */,
+				756299D01914DE1A00C5AD3B /* Tests-Info.plist */,
 				756299D11914DE1A00C5AD3B /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
@@ -870,7 +870,7 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				INFOPLIST_FILE = "ObjectivePGPTests/ObjectivePGPTests-Info.plist";
+				INFOPLIST_FILE = "Tests/Tests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks @loader_path/../Frameworks @executable_path/../Frameworks";
 				OTHER_LDFLAGS = (
 					"-ObjC",
@@ -888,7 +888,7 @@
 			buildSettings = {
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "ObjectivePGP/ObjectivePGP-Prefix.pch";
-				INFOPLIST_FILE = "ObjectivePGPTests/ObjectivePGPTests-Info.plist";
+				INFOPLIST_FILE = "Tests/Tests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks @loader_path/../Frameworks @executable_path/../Frameworks";
 				OTHER_LDFLAGS = (
 					"-ObjC",
