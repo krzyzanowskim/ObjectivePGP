@@ -159,10 +159,9 @@
 
 - (void)testIssue35 {
     let messagePath = [self.bundle pathForResource:@"issue35-message" ofType:@"asc"];
-    [self importKeysFromFile:@"issue35-key.asc"];
-
+    let keys = [PGPTestUtils readKeysFromFile:@"issue35-key.asc"];
     NSError *error = nil;
-    [self.pgp decrypt:[NSData dataWithContentsOfFile:messagePath] passphrase:nil error:&error];
+    [self.pgp decrypt:[NSData dataWithContentsOfFile:messagePath] usingKeys:keys passphrase:nil error:&error];
 }
 
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/53

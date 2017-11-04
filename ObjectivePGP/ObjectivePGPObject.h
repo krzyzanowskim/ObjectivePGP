@@ -168,14 +168,26 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /**
- Decrypt encrypted message data.
+ Decrypt PGP encrypted data.
 
- @param data Data to decrypt.
+ @param data data to decrypt.
  @param passphrase Optional. Passphrase for the key to decrypt.
- @param error Error.
- @return Decrypted data.
+ @param error Optional. Error.
+ @return Decrypted data, or `nil` if failed.
  */
 - (nullable NSData *)decrypt:(NSData *)data passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error;
+
+
+/**
+ Decrypt PGP encrypted data.
+
+ @param data data to decrypt.
+ @param keys private keys to use.
+ @param passphrase Optional. Key passphrase.
+ @param error Optional. Error.
+ @return Decrypted data, or `nil` if failed.
+ */
+- (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error;
 
 
 /**
@@ -190,7 +202,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error.
  @return Decrypted data.
  */
-- (nullable NSData *)decrypt:(NSData *)data passphrase:(nullable NSString *)passphrase verifyWithKey:(nullable PGPKey *)key signed:(nullable BOOL *)isSigned valid:(nullable BOOL *)isValid integrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError * __autoreleasing _Nullable *)error;
+- (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString *)passphrase verifyWithKey:(nullable PGPKey *)key signed:(nullable BOOL *)isSigned valid:(nullable BOOL *)isValid integrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError * __autoreleasing _Nullable *)error;
 
 
 /// Deprecated.

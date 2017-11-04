@@ -67,9 +67,13 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (nullable PGPKey *)findKeyWithKeyID:(PGPKeyID *)searchKeyID {
+    return [self findKeyWithKeyID:searchKeyID in:self.keys];
+}
+
+- (nullable PGPKey *)findKeyWithKeyID:(PGPKeyID *)searchKeyID in:(NSArray<PGPKey *> *)keys {
     PGPAssertClass(searchKeyID, PGPKeyID);
 
-    return [[self.keys pgp_objectsPassingTest:^BOOL(PGPKey *key, BOOL *stop) {
+    return [[keys pgp_objectsPassingTest:^BOOL(PGPKey *key, BOOL *stop) {
         // top-level keys
         __block BOOL found = (key.publicKey && PGPEqualObjects(key.publicKey.keyID, searchKeyID));
         if (!found) {
@@ -238,13 +242,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Encrypt & Decrypt
 
-- (nullable NSData *)decrypt:(NSData *)messageDataToDecrypt passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing *)error {
-    return [self decrypt:messageDataToDecrypt passphrase:passphrase verifyWithKey:nil signed:nil valid:nil integrityProtected:nil error:error];
+- (nullable NSData *)decrypt:(NSData *)data passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error {
+    return [self decrypt:data usingKeys:self.keys passphrase:passphrase error:error];
 }
 
-- (nullable NSData *)decrypt:(NSData *)messageDataToDecrypt passphrase:(nullable NSString *)passphrase verifyWithKey:(nullable PGPKey *)key signed:(nullable BOOL *)isSigned valid:(nullable BOOL *)isValid integrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError * __autoreleasing _Nullable *)error {
-    PGPAssertClass(messageDataToDecrypt, NSData);
-    let binaryMessages = [ObjectivePGP convertArmoredMessage2BinaryBlocksWhenNecessary:messageDataToDecrypt];
+- (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error {
+    return [self decrypt:data usingKeys:keys passphrase:passphrase verifyWithKey:nil signed:nil valid:nil integrityProtected:nil error:error];
+}
+
+- (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString *)passphrase verifyWithKey:(nullable PGPKey *)key signed:(nullable BOOL *)isSigned valid:(nullable BOOL *)isValid integrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError * __autoreleasing _Nullable *)error {
+    PGPAssertClass(data, NSData);
+    PGPAssertClass(keys, NSArray);
+
+    let binaryMessages = [ObjectivePGP convertArmoredMessage2BinaryBlocksWhenNecessary:data];
 
     // decrypt first message only
     let binaryMessageToDecrypt = binaryMessages.count > 0 ? binaryMessages.firstObject : nil;
@@ -266,7 +276,7 @@ NS_ASSUME_NONNULL_BEGIN
     for (PGPPacket *packet in packets) {
         if (packet.tag == PGPPublicKeyEncryptedSessionKeyPacketTag) {
             let pkESKPacket = PGPCast(packet, PGPPublicKeyEncryptedSessionKeyPacket);
-            let decryptionKey = [self findKeyWithKeyID:pkESKPacket.keyID];
+            let decryptionKey = [self findKeyWithKeyID:pkESKPacket.keyID in:keys];
             if (!decryptionKey.secretKey) {
                 continue;
             }
