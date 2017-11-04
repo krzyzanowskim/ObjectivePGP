@@ -451,9 +451,6 @@ NS_ASSUME_NONNULL_BEGIN
     // sign data if requested
     if (signKey) {
         content = [self sign:dataToEncrypt usingKey:signKey passphrase:passphrase hashAlgorithm:PGPHashSHA512 detached:NO error:error];
-        if (error && *error) {
-            return nil;
-        }
     } else {
         // Prepare literal packet
         let literalPacket = [PGPLiteralPacket literalPacket:PGPLiteralPacketBinary withData:dataToEncrypt];
@@ -469,9 +466,10 @@ NS_ASSUME_NONNULL_BEGIN
         //FIXME: do not use hardcoded value for compression type
         let compressedPacket = [[PGPCompressedPacket alloc] initWithData:literalPacketData type:PGPCompressionZLIB];
         content = [compressedPacket export:error];
-        if (error && *error) {
-            return nil;
-        }
+    }
+
+    if (!content || (error && *error)) {
+        return nil;
     }
 
     let symEncryptedDataPacket = [[PGPSymmetricallyEncryptedIntegrityProtectedDataPacket alloc] init];
