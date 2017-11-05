@@ -123,72 +123,7 @@ NS_ASSUME_NONNULL_BEGIN
     return data;
 }
 
-#pragma mark - Encryption
-
-- (nullable NSData *)pgp_encryptBlockWithSymmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm sessionKeyData:(NSData *)sessionKeyData {
-    PGPAssertClass(sessionKeyData, NSData);
-    NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:symmetricAlgorithm];
-
-    NSData *ret = nil;
-
-    switch (symmetricAlgorithm) {
-        case PGPSymmetricCAST5: {
-            CAST_KEY *encrypt_key = calloc(1, sizeof(CAST_KEY));
-            CAST_set_key(encrypt_key, (int)keySize, sessionKeyData.bytes);
-            UInt8 *outBuf = calloc(self.length, sizeof(UInt8));
-            CAST_ecb_encrypt(self.bytes, outBuf, encrypt_key, CAST_ENCRYPT);
-            ret = [NSData dataWithBytes:&outBuf length:self.length];
-
-            free(outBuf);
-            free(encrypt_key);
-        } break;
-        case PGPSymmetricAES256:
-        case PGPSymmetricAES128:
-        case PGPSymmetricAES192: {
-            AES_KEY *encrypt_key = calloc(1, sizeof(AES_KEY));
-            AES_set_encrypt_key(sessionKeyData.bytes, (int)(keySize * 8), encrypt_key);
-
-            UInt8 *outBuf = calloc(self.length, sizeof(UInt8));
-            AES_encrypt(self.bytes, outBuf, encrypt_key);
-            ret = [NSData dataWithBytes:&outBuf length:self.length];
-
-            free(outBuf);
-            free(encrypt_key);
-        } break;
-        case PGPSymmetricIDEA: {
-            IDEA_KEY_SCHEDULE *encrypt_key = calloc(1, sizeof(IDEA_KEY_SCHEDULE));
-            idea_set_encrypt_key(sessionKeyData.bytes, encrypt_key);
-
-            UInt8 *outBuf = calloc(self.length, sizeof(UInt8));
-            idea_ecb_encrypt(self.bytes, outBuf, encrypt_key);
-            ret = [NSData dataWithBytes:&outBuf length:self.length];
-
-            free(outBuf);
-            free(encrypt_key);
-        } break;
-        case PGPSymmetricTripleDES: {
-            // Very unsure if this is working, need some tests later
-            const void *key = sessionKeyData.bytes;
-
-            DES_key_schedule *keys3 = calloc(3, sizeof(DES_key_schedule));
-            for (int n = 0; n < 3; ++n) {
-                DES_set_key((DES_cblock *)(void *)(key + n * 8), &keys3[n]);
-            }
-
-            DES_cblock *outBuf = calloc(self.length, sizeof(DES_cblock));
-            DES_ecb3_encrypt((void *)(unsigned long)(const void *)(self.bytes), outBuf, &keys3[0], &keys3[1], &keys3[2], DES_ENCRYPT);
-            ret = [NSData dataWithBytes:&outBuf length:self.length];
-
-            free(outBuf);
-            free(keys3);
-        } break;
-        default:
-            [NSException raise:@"PGPNotSupported" format:@"Encryption unsupported, cant encrypt data"];
-            break;
-    }
-    return ret;
-}
-
 @end
 
 NS_ASSUME_NONNULL_END
+

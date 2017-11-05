@@ -1,3 +1,8 @@
+Version 0.9.5
+- Methods that get keys as parameter are now class methods, +[ObjectivePGP ...]
+- Adds decrypt:usingKeys:....
+- Adds Blowfish cipher support
+
 Version 0.9.4
 - Fixes generation subkeys with passphrase.
 - Improves memory usage when reading messages.

@@ -173,7 +173,7 @@ See [CHANGELOG](./CHANGELOG)
 
 Known limitations:
 
-- Blowfish, Twofish and Elgamal are not supported.
+- Twofish and Elgamal are not supported.
 - Missing external configuration for default values.
 
 ## The license

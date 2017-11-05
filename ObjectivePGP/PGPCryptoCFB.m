@@ -12,6 +12,7 @@
 #import "PGPS2K.h"
 #import "PGPTypes.h"
 #import "PGPMacros+Private.h"
+#import "PGPLogging.h"
 
 #import <CommonCrypto/CommonCrypto.h>
 #import <CommonCrypto/CommonCryptor.h>
@@ -132,8 +133,6 @@ NS_ASSUME_NONNULL_BEGIN
             CAST_KEY encrypt_key;
             CAST_set_key(&encrypt_key, MIN((unsigned int)keySize, (unsigned int)sessionKeyData.length), sessionKeyData.bytes);
 
-            // see __ops_decrypt_init block_encrypt siv,civ,iv comments. siv is needed for weird v3 resync,
-            // wtf civ ???
             // CAST_ecb_encrypt(in, out, encrypt_key, CAST_ENCRYPT);
             int num = 0; //	how much of the 64bit block we have used
             CAST_cfb64_encrypt(encryptedBytes, outBuffer, outBufferLength, &encrypt_key, iv, &num, decrypt ? CAST_DECRYPT : CAST_ENCRYPT);
@@ -141,13 +140,23 @@ NS_ASSUME_NONNULL_BEGIN
 
             memset(&encrypt_key, 0, sizeof(CAST_KEY));
         } break;
-        case PGPSymmetricBlowfish:
+        case PGPSymmetricBlowfish: {
+            BF_KEY encrypt_key;
+            BF_set_key(&encrypt_key, MIN((unsigned int)keySize, (unsigned int)sessionKeyData.length), sessionKeyData.bytes);
+
+            int num = 0; //    how much of the 64bit block we have used
+            BF_cfb64_encrypt(encryptedBytes, outBuffer, outBufferLength, &encrypt_key, iv, &num, decrypt ? BF_DECRYPT : BF_ENCRYPT);
+            decryptedData = [NSData dataWithBytes:outBuffer length:outBufferLength];
+
+            memset(&encrypt_key, 0, sizeof(BF_KEY));
+        } break;
         case PGPSymmetricTwofish256:
-            // TODO: implement blowfish and twofish
+            // TODO: implement Twofish
             [NSException raise:@"PGPNotSupported" format:@"Twofish not supported"];
             break;
         case PGPSymmetricPlaintext:
-            [NSException raise:@"PGPInconsistency" format:@"Can't decrypt plaintext"];
+            PGPLogWarning(@"Can't decrypt plaintext");
+            decryptedData = [NSData dataWithData:encryptedData];
             break;
         default:
             break;
