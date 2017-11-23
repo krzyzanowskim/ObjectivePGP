@@ -14,9 +14,9 @@
 
 #define PGP_NOESCAPE __attribute__((noescape))
 
-static NSString *const PGPErrorDomain = @"ObjectivePGP";
+static NSString *const PGPErrorDomain = @"com.objectivepgp";
 
-typedef NS_ENUM(NSInteger, PGPErrorCode) {
+typedef NS_ERROR_ENUM(PGPErrorDomain, PGPErrorCode) {
     PGPErrorGeneral = -1,
     PGPErrorPassphraseRequired = 5,
     PGPErrorPassphraseInvalid = 6
