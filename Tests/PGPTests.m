@@ -235,6 +235,26 @@
     XCTAssertEqualObjects(keys1, keys2);
 }
 
+- (void)testIssue88VerifyFromThunderbird {
+    let pubKeys = [PGPTestUtils readKeysFromFile:@"issue88-pub.asc"];
+    let secKeys = [PGPTestUtils readKeysFromFile:@"issue88-sec.asc"];
+
+    let pgp = [ObjectivePGP new];
+    [pgp importKeys:pubKeys];
+
+    let messagePath = [PGPTestUtils pathToBundledFile:@"issue88-message.asc"];
+    let messageData = [NSData dataWithContentsOfFile:messagePath];
+    NSError *verifyError = nil;
+    BOOL verified = [pgp verify:messageData error:&verifyError];
+    XCTAssertNotNil(verifyError);
+    XCTAssertFalse(verified);
+
+    [pgp importKeys:secKeys];
+    NSError *decryptError = nil;
+    [pgp decrypt:messageData passphrase:nil error:&decryptError];
+    XCTAssertNil(decryptError);
+}
+
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/84
 // Embedded signatures code seems to have broken reading keys
 - (void)testIssue84EmbeddedSignatures {

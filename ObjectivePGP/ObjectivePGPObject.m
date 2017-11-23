@@ -640,46 +640,46 @@ NS_ASSUME_NONNULL_BEGIN
     // this is propably not the best solution when it comes to memory consumption
     // because literal data is copied more than once (first at parse phase, then when is come to build signature packet data
     // I belive this is unecessary but require more work. Schedule to v2.0
+    // search for signature packet
+    let accumulatedPackets = [NSMutableArray<PGPPacket *> array];
+    NSUInteger offset = 0;
+    NSUInteger nextPacketOffset;
+
     @autoreleasepool {
-        // search for signature packet
-        let accumulatedPackets = [NSMutableArray<PGPPacket *> array];
-        NSUInteger offset = 0;
-        NSUInteger nextPacketOffset;
-        // TODO: dont parse data here, get raw data and pass to verify:withsignature:
+        // TODO: don't parse data here, get raw data and pass to verify:withsignature:
         while (offset < binarySignedData.length) {
             let packet = [PGPPacketFactory packetWithData:binarySignedData offset:offset nextPacketOffset:&nextPacketOffset];
             [accumulatedPackets pgp_addObject:packet];
 
             offset += nextPacketOffset;
         }
+    }
 
-        PGPSignaturePacket * _Nullable signaturePacket = nil;
-        PGPLiteralPacket * _Nullable literalDataPacket = nil;
+    PGPSignaturePacket * _Nullable signaturePacket = nil;
+    PGPLiteralPacket * _Nullable literalDataPacket = nil;
 
-        for (PGPPacket *packet in accumulatedPackets) {
-            if (packet.tag == PGPSignaturePacketTag) {
-                signaturePacket = PGPCast(packet, PGPSignaturePacket);
-            }
-            if (packet.tag == PGPLiteralDataPacketTag) {
-                literalDataPacket = PGPCast(packet, PGPLiteralPacket);
-            }
+    for (PGPPacket *packet in accumulatedPackets) {
+        if (packet.tag == PGPSignaturePacketTag) {
+            signaturePacket = PGPCast(packet, PGPSignaturePacket);
         }
-
-        NSAssert(signaturePacket && literalDataPacket, @"Missing signature packet or literal data packet");
-        if (!signaturePacket || !literalDataPacket) {
-            if (error) {
-                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing signature packet or literal data packet" }];
-            }
-            return NO;
+        if (packet.tag == PGPLiteralDataPacketTag) {
+            literalDataPacket = PGPCast(packet, PGPLiteralPacket);
         }
+    }
 
-        let signaturePacketData = [signaturePacket export:error];
-
-        if (signaturePacketData && literalDataPacket.literalRawData && (!error || (error && *error == nil))) {
-            return [self verify:PGPNN(literalDataPacket.literalRawData) withSignature:signaturePacketData error:error];
+    if (!signaturePacket || !literalDataPacket) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Message is not properly signed. Missing signature or literal data." }];
         }
         return NO;
     }
+
+    let signaturePacketData = [signaturePacket export:error];
+
+    if (signaturePacketData && literalDataPacket.literalRawData && (!error || (error && *error == nil))) {
+        return [self verify:PGPNN(literalDataPacket.literalRawData) withSignature:signaturePacketData error:error];
+    }
+    return NO;
 }
 
 #pragma mark - Parse keyring
