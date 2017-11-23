@@ -256,7 +256,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     let binaryMessages = [ObjectivePGP convertArmoredMessage2BinaryBlocksWhenNecessary:data];
 
-    // decrypt first message only
+    // TODO: Decrypt all messages
     let binaryMessageToDecrypt = binaryMessages.count > 0 ? binaryMessages.firstObject : nil;
     if (!binaryMessageToDecrypt) {
         if (error) {
@@ -581,22 +581,19 @@ NS_ASSUME_NONNULL_BEGIN
     PGPAssertClass(signedData, NSData);
     PGPAssertClass(signatureData, NSData);
 
+    let binarySignatureData = [ObjectivePGP convertArmoredMessage2BinaryBlocksWhenNecessary:signatureData].firstObject;
+
     // search for key in keys
-    let packet = [PGPPacketFactory packetWithData:signatureData offset:0 nextPacketOffset:NULL];
-    if (![packet isKindOfClass:PGPSignaturePacket.class]) {
+    let packet = [PGPPacketFactory packetWithData:binarySignatureData offset:0 nextPacketOffset:NULL];
+    let signaturePacket = PGPCast(packet, PGPSignaturePacket);
+    if (!signaturePacket) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing signature packet" }];
         }
         return NO;
     }
 
-    let signaturePacket = PGPCast(packet, PGPSignaturePacket);
-    if (!signaturePacket) {
-        return NO;
-    }
-
-    let issuerKeyID = [signaturePacket issuerKeyID];
-
+    let issuerKeyID = signaturePacket.issuerKeyID;
     let issuerKey = [self findKeyWithKeyID:issuerKeyID];
     if (!issuerKey) {
         if (error) {
@@ -605,34 +602,41 @@ NS_ASSUME_NONNULL_BEGIN
         return NO;
     }
 
-    return [ObjectivePGP verify:signedData withSignature:signatureData usingKey:issuerKey error:error];
+    return [ObjectivePGP verify:signedData withSignature:binarySignatureData usingKey:issuerKey error:error];
 }
 
 + (BOOL)verify:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPKey *)key error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(signedData, NSData);
-    PGPAssertClass(signedData, NSData);
+    PGPAssertClass(signatureData, NSData);
     PGPAssertClass(key, PGPKey);
 
-    let packet = [PGPPacketFactory packetWithData:signatureData offset:0 nextPacketOffset:NULL];
-    if (![packet isKindOfClass:[PGPSignaturePacket class]]) {
-        NSAssert(false, @"need signature");
+    let binarySignatureData = [ObjectivePGP convertArmoredMessage2BinaryBlocksWhenNecessary:signatureData].firstObject;
+
+    let packet = [PGPPacketFactory packetWithData:binarySignatureData offset:0 nextPacketOffset:NULL];
+    let signaturePacket = PGPCast(packet, PGPSignaturePacket);
+    if (!signaturePacket) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing signature" }];
         }
         return NO;
     }
 
-    let signaturePacket = PGPCast(packet, PGPSignaturePacket);
-    if (!signaturePacket) {
-        return NO;
-    }
-    BOOL verified = [signaturePacket verifyData:signedData withKey:key userID:nil error:error];
-
-    return verified;
+    return [signaturePacket verifyData:signedData withKey:key userID:nil error:error];
 }
 
 - (BOOL)verify:(NSData *)signedData error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(signedData, NSData);
+
+    let binaryMessages = [ObjectivePGP convertArmoredMessage2BinaryBlocksWhenNecessary:signedData];
+    // TODO: Process all messages
+    let binarySignedData = binaryMessages.count > 0 ? binaryMessages.firstObject : nil;
+    if (!binarySignedData) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Invalid input data" }];
+        }
+        return NO;
+    }
+
     // this is propably not the best solution when it comes to memory consumption
     // because literal data is copied more than once (first at parse phase, then when is come to build signature packet data
     // I belive this is unecessary but require more work. Schedule to v2.0
@@ -642,8 +646,8 @@ NS_ASSUME_NONNULL_BEGIN
         NSUInteger offset = 0;
         NSUInteger nextPacketOffset;
         // TODO: dont parse data here, get raw data and pass to verify:withsignature:
-        while (offset < signedData.length) {
-            let packet = [PGPPacketFactory packetWithData:signedData offset:offset nextPacketOffset:&nextPacketOffset];
+        while (offset < binarySignedData.length) {
+            let packet = [PGPPacketFactory packetWithData:binarySignedData offset:offset nextPacketOffset:&nextPacketOffset];
             [accumulatedPackets pgp_addObject:packet];
 
             offset += nextPacketOffset;
@@ -747,7 +751,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     for (NSData *data in binRingData) {
-        let readPartialKeys = [ObjectivePGP readPartialreadKeysFromData:data];
+        let readPartialKeys = [ObjectivePGP readPartialKeysFromData:data];
         for (PGPPartialKey *key in readPartialKeys) {
             keys = [ObjectivePGP addOrUpdatePartialKey:key inContainer:keys];
         }
@@ -814,7 +818,7 @@ NS_ASSUME_NONNULL_BEGIN
     return updatedContainer;
 }
 
-+ (NSArray<PGPPartialKey *> *)readPartialreadKeysFromData:(NSData *)messageData {
++ (NSArray<PGPPartialKey *> *)readPartialKeysFromData:(NSData *)messageData {
     let partialKeys = [NSMutableArray<PGPPartialKey *> array];
     let accumulatedPackets = [NSMutableArray<PGPPacket *> array];
     NSUInteger position = 0;
