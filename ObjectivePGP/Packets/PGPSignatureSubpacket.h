@@ -20,6 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) PGPSignatureSubpacketType type;
 @property (nonatomic, readonly, nullable, copy) id<NSObject, NSCopying> value;
 @property (nonatomic, readonly) NSUInteger length;
+/// If set, it denotes that the subpacket is one that is critical for the evaluator of the signature to recognize.
+@property (nonatomic, readonly, getter=isCritical) BOOL critical;
 
 PGP_EMPTY_INIT_UNAVAILABLE;
 

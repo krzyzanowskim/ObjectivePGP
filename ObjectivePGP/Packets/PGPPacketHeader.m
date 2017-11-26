@@ -28,25 +28,28 @@ NS_ASSUME_NONNULL_BEGIN
     return [NSString stringWithFormat:@"headerLength: %@, bodyLength: %@, isPartial: %@", @(self.headerLength), @(self.bodyLength), self.isPartialLength ? @"YES" : @"NO"];
 }
 
-+ (void)getLengthFromNewFormatOctets:(NSData *)lengthOctetsData bodyLength:(UInt32 *)bodyLength bytesCount:(UInt8 *)bytesCount isPartial:(BOOL *)isPartial {
++ (void)getLengthFromNewFormatOctets:(NSData *)lengthOctetsData bodyLength:(UInt32 *)bodyLength bytesCount:(UInt8 *)bytesCount isPartial:(nullable BOOL *)isPartial {
     const UInt8 *lengthOctets = lengthOctetsData.bytes;
+
+    // should check for partial? Is partial data expected?
+    BOOL isExpectingPartialData = isPartial ? YES : NO;
 
     if (lengthOctets[0] < 192) {
         // 4.2.2.1.  One-Octet Length
         // bodyLen = 1st_octet;
         *bodyLength = lengthOctets[0];
         *bytesCount = 1;
-    } else if (lengthOctets[0] >= 192 && lengthOctets[0] < 224) {
+    } else if ((isExpectingPartialData && lengthOctets[0] >= 192 && lengthOctets[0] < 224) || (!isExpectingPartialData && lengthOctets[0] >= 192 && lengthOctets[0] < 255)) {
         // 4.2.2.2.  Two-Octet Lengths
         // bodyLen = ((1st_octet - 192) << 8) + (2nd_octet) + 192
         *bodyLength = ((lengthOctets[0] - 192) << 8) + (lengthOctets[1]) + 192;
         *bytesCount = 2;
-    } else if (lengthOctets[0] >= 224 && lengthOctets[0] < 255) {
+    } else if (isExpectingPartialData && lengthOctets[0] >= 224 && lengthOctets[0] < 255) {
         // 4.2.2.4.  Partial Body Length
         // partialBodyLen = 1 << (1st_octet & 0x1F);
         *bodyLength = 1 << (lengthOctets[0] & 0x1F);
-        *isPartial = YES;
         *bytesCount = 1;
+        *isPartial = YES;
     } else if (lengthOctets[0] == 255) {
         // 4.2.2.3.  Five-Octet Length
         // bodyLen = (2nd_octet << 24) | (3rd_octet << 16) |
