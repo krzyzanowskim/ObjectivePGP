@@ -72,7 +72,6 @@
 		751373E31F6537490067A343 /* PGPTrustPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 751373B51F65373E0067A343 /* PGPTrustPacket.m */; };
 		751373E41F6537490067A343 /* PGPUserAttributePacket.h in Headers */ = {isa = PBXBuildFile; fileRef = 751373B61F65373E0067A343 /* PGPUserAttributePacket.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		751373E51F6537490067A343 /* PGPUserAttributePacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 751373B71F65373E0067A343 /* PGPUserAttributePacket.m */; };
-		751373E61F6537490067A343 /* PGPUserAttributeSubpacket.h in Headers */ = {isa = PBXBuildFile; fileRef = 751373B81F65373E0067A343 /* PGPUserAttributeSubpacket.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		751373E71F6537490067A343 /* PGPUserAttributeSubpacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 751373B91F65373E0067A343 /* PGPUserAttributeSubpacket.m */; };
 		751373E81F6537490067A343 /* PGPUserIDPacket.h in Headers */ = {isa = PBXBuildFile; fileRef = 751373BA1F65373E0067A343 /* PGPUserIDPacket.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		751373E91F6537490067A343 /* PGPUserIDPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 751373BB1F65373E0067A343 /* PGPUserIDPacket.m */; };
@@ -126,6 +125,9 @@
 		75C501E71F1233A500FEC874 /* PGPRSA.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C501E41F12337800FEC874 /* PGPRSA.m */; };
 		75D1E2601FCAE41800D55F60 /* PGPPacketHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D1E25E1FCAE41800D55F60 /* PGPPacketHeader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		75D1E2621FCAE60D00D55F60 /* PGPPacketHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = 75D1E25F1FCAE41800D55F60 /* PGPPacketHeader.m */; };
+		75D1E2651FCB823500D55F60 /* PGPUserAttributeImageSubpacket.h in Headers */ = {isa = PBXBuildFile; fileRef = 75D1E2631FCB823500D55F60 /* PGPUserAttributeImageSubpacket.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		75D1E2661FCB823500D55F60 /* PGPUserAttributeImageSubpacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 75D1E2641FCB823500D55F60 /* PGPUserAttributeImageSubpacket.m */; };
+		75D1E2671FCB82BF00D55F60 /* PGPUserAttributeSubpacket.h in Headers */ = {isa = PBXBuildFile; fileRef = 751373B81F65373E0067A343 /* PGPUserAttributeSubpacket.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		75E9AD0D1F7FF01C00B0559B /* PGPPartialSubKey+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 75E9AD0C1F7FF01C00B0559B /* PGPPartialSubKey+Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		75E9AD0F1F7FF10100B0559B /* PGPPartialKey+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 75E9AD0E1F7FF10100B0559B /* PGPPartialKey+Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		75F6BAAC1F8AED3B00A0B885 /* ObjectivePGP-Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 75F6BAAB1F8AED3500A0B885 /* ObjectivePGP-Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -276,6 +278,8 @@
 		75C501E51F12337800FEC874 /* PGPRSA.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPRSA.h; sourceTree = "<group>"; };
 		75D1E25E1FCAE41800D55F60 /* PGPPacketHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPPacketHeader.h; sourceTree = "<group>"; };
 		75D1E25F1FCAE41800D55F60 /* PGPPacketHeader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PGPPacketHeader.m; sourceTree = "<group>"; };
+		75D1E2631FCB823500D55F60 /* PGPUserAttributeImageSubpacket.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPUserAttributeImageSubpacket.h; sourceTree = "<group>"; };
+		75D1E2641FCB823500D55F60 /* PGPUserAttributeImageSubpacket.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PGPUserAttributeImageSubpacket.m; sourceTree = "<group>"; };
 		75DA135C191AE1D6004C9C76 /* PGPS2K.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPS2K.h; sourceTree = "<group>"; };
 		75DA135D191AE1D6004C9C76 /* PGPS2K.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPS2K.m; sourceTree = "<group>"; };
 		75E9AD0C1F7FF01C00B0559B /* PGPPartialSubKey+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PGPPartialSubKey+Private.h"; sourceTree = "<group>"; };
@@ -375,6 +379,8 @@
 				751373B71F65373E0067A343 /* PGPUserAttributePacket.m */,
 				751373B81F65373E0067A343 /* PGPUserAttributeSubpacket.h */,
 				751373B91F65373E0067A343 /* PGPUserAttributeSubpacket.m */,
+				75D1E2631FCB823500D55F60 /* PGPUserAttributeImageSubpacket.h */,
+				75D1E2641FCB823500D55F60 /* PGPUserAttributeImageSubpacket.m */,
 				751373BA1F65373E0067A343 /* PGPUserIDPacket.h */,
 				751373BB1F65373E0067A343 /* PGPUserIDPacket.m */,
 			);
@@ -572,6 +578,7 @@
 				751373D01F6537490067A343 /* PGPSecretKeyPacket.h in Headers */,
 				751373CB1F6537490067A343 /* PGPPublicKeyPacket.h in Headers */,
 				751373CD1F6537490067A343 /* PGPPublicSubKeyPacket.h in Headers */,
+				75D1E2651FCB823500D55F60 /* PGPUserAttributeImageSubpacket.h in Headers */,
 				751373851F6536310067A343 /* NSData+compression.h in Headers */,
 				751373D81F6537490067A343 /* PGPSignatureSubpacket.h in Headers */,
 				751373D21F6537490067A343 /* PGPSecretSubKeyPacket.h in Headers */,
@@ -586,13 +593,13 @@
 				751373E21F6537490067A343 /* PGPTrustPacket.h in Headers */,
 				751373DC1F6537490067A343 /* PGPSignatureSubpacketHeader.h in Headers */,
 				751373DA1F6537490067A343 /* PGPSignatureSubpacketCreationTime.h in Headers */,
+				75D1E2671FCB82BF00D55F60 /* PGPUserAttributeSubpacket.h in Headers */,
 				751373D51F6537490067A343 /* PGPSignaturePacket.h in Headers */,
 				751373C21F6537490067A343 /* PGPOnePassSignaturePacket.h in Headers */,
 				751373C81F6537490067A343 /* PGPPublicKeyEncryptedSessionKeyPacket.h in Headers */,
 				751373E01F6537490067A343 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h in Headers */,
 				751373C01F6537490067A343 /* PGPModificationDetectionCodePacket.h in Headers */,
 				751373DE1F6537490067A343 /* PGPSymmetricallyEncryptedDataPacket.h in Headers */,
-				751373E61F6537490067A343 /* PGPUserAttributeSubpacket.h in Headers */,
 				7537A6D51F0D739A00892829 /* PGPPKCSEmsa.h in Headers */,
 				7537A6D61F0D739A00892829 /* PGPPKCSEme.h in Headers */,
 				7537A6D81F0D739A00892829 /* PGPCryptoCFB.h in Headers */,
@@ -780,6 +787,7 @@
 				751373E31F6537490067A343 /* PGPTrustPacket.m in Sources */,
 				751373D11F6537490067A343 /* PGPSecretKeyPacket.m in Sources */,
 				750F89611F0D6EF100B99726 /* PGPPKCSEme.m in Sources */,
+				75D1E2661FCB823500D55F60 /* PGPUserAttributeImageSubpacket.m in Sources */,
 				750F89631F0D6EF100B99726 /* PGPCryptoCFB.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

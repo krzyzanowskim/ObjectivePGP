@@ -7,7 +7,22 @@
 //
 
 #import "PGPUserAttributeSubpacket.h"
+#import "PGPMacros+Private.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPUserAttributeSubpacket
 
+
+#pragma mark - NSCopying
+
+- (id)copyWithZone:(nullable NSZone *)zone {
+    let duplicate = [PGPUserAttributeSubpacket new];
+    duplicate.type = self.type;
+    duplicate.valueData = self.valueData;
+    return duplicate;
+}
+
 @end
+
+NS_ASSUME_NONNULL_END

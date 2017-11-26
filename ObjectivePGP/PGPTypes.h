@@ -55,6 +55,10 @@ typedef NS_ENUM(UInt8, PGPPacketTag) {
     PGPModificationDetectionCodePacketTag = 19,
 };
 
+typedef NS_ENUM(UInt8, PGPUserAttributeSubpacketType) {
+    PGPUserAttributeSubpacketImage = 0x01 // The only currently defined subpacket type is 1, signifying an image.
+};
+
 // 9.1.  Public-Key Algorithms
 typedef NS_ENUM(UInt8, PGPPublicKeyAlgorithm) {
     PGPPublicKeyAlgorithmRSA = 1,
