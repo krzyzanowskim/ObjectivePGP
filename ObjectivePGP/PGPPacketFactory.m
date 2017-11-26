@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
     UInt32 headerLength = 0;
     BOOL indeterminateLength = NO;
     let data = [packetData subdataWithRange:(NSRange){offset, packetData.length - offset}];
-    let packetBodyData = [PGPPacket parsePacketHeader:data headerLength:&headerLength nextPacketOffset:nextPacketOffset packetTag:&packetTag indeterminateLength:&indeterminateLength];
+    let packetBodyData = [PGPPacket readPacketBody:data headerLength:&headerLength nextPacketOffset:nextPacketOffset packetTag:&packetTag indeterminateLength:&indeterminateLength];
     let packetHeaderData = [packetData subdataWithRange:(NSRange){offset, headerLength}];
 
     if (packetHeaderData.length > 0) {

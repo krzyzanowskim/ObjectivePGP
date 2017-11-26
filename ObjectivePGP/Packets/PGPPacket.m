@@ -8,12 +8,11 @@
 
 #import "PGPPacket.h"
 #import "PGPPacket+Private.h"
+#import "PGPPacketHeader.h"
 #import "NSData+PGPUtils.h"
 
 #import "PGPLogging.h"
 #import "PGPMacros+Private.h"
-
-const UInt32 PGPUnknownLength = UINT32_MAX;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -80,195 +79,83 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Packet header
 
 // 4.2.  Packet Headers
-/**
- *  Parse header
- *
- *  @param data header data
- *
- *  @return Body data, headerLength, packetTag, nextPacketOffset and if body has indeterminateLength
- */
-+ (nullable NSData *)parsePacketHeader:(NSData *)data headerLength:(UInt32 *)headerLength nextPacketOffset:(nullable NSUInteger *)nextPacketOffset packetTag:(PGPPacketTag *)tag indeterminateLength:(BOOL *)indeterminateLength {
+/// Parse packet header and body, and return body. Parse packet header and read the followed data (packet body)
++ (nullable NSData *)readPacketBody:(NSData *)data headerLength:(UInt32 *)headerLength nextPacketOffset:(nullable NSUInteger *)nextPacketOffset packetTag:(nullable PGPPacketTag *)tag indeterminateLength:(nullable BOOL *)indeterminateLength {
     NSParameterAssert(headerLength);
-    NSParameterAssert(indeterminateLength);
 
     UInt8 headerByte = 0;
     [data getBytes:&headerByte range:(NSRange){0, 1}];
 
     BOOL isPGPHeader = !!(headerByte & PGPHeaderPacketTagAllwaysSet);
     BOOL isNewFormat = !!(headerByte & PGPHeaderPacketTagNewFormat);
-    BOOL isPartialBodyLength = NO;
 
     if (!isPGPHeader) {
         // not a valida data, skip the whole data.
-        if (nextPacketOffset) {
-            *nextPacketOffset = data.length;
-        }
+        if (nextPacketOffset) { *nextPacketOffset = data.length; }
         return nil;
     }
 
-    UInt32 bodyLength = 0;
+    PGPPacketHeader *header = nil;
     if (isNewFormat) {
-        *headerLength = [self parseNewFormatHeaderPacket:data bodyLength:&bodyLength packetTag:tag partialBodyLength:&isPartialBodyLength];
+        header = [PGPPacketHeader newFormatHeaderFromData:data];
     } else {
-        *headerLength = [self parseOldFormatHeaderPacket:data bodyLength:&bodyLength packetTag:tag];
+        header = [PGPPacketHeader oldFormatHeaderFromData:data];
     }
 
-    if (bodyLength == PGPUnknownLength) {
-        bodyLength = (UInt32)data.length - *headerLength;
-        *indeterminateLength = YES;
-    } else {
-        *indeterminateLength = NO;
+    if (header.isIndeterminateLength) {
+        // overwrite header body length
+        header.bodyLength = (UInt32)data.length - header.headerLength;
     }
 
-    if (nextPacketOffset) {
-        *nextPacketOffset = bodyLength + *headerLength;
+    *headerLength = header.headerLength;
+    if (tag) { *tag = header.packetTag; }
+    if (indeterminateLength) { *indeterminateLength = header.isIndeterminateLength; }
+    if (nextPacketOffset) { *nextPacketOffset = header.bodyLength + header.headerLength; }
+
+    if (header.isPartialLength && !header.isIndeterminateLength) {
+        // Partial data starts with length octets offset (right after the packet header byte)
+        let partialData = [data subdataWithRange:(NSRange){header.headerLength - 1, data.length - (header.headerLength - 1)}];
+        if (nextPacketOffset) { *nextPacketOffset = *nextPacketOffset + partialData.length; }
+        return [PGPPacket readPartialData:partialData];
     }
 
-    if (isPartialBodyLength && !*indeterminateLength) {
-        UInt32 offset = *headerLength;
-        let resultData = [NSMutableData dataWithData:[data subdataWithRange:(NSRange){offset, bodyLength}]];
-        offset += bodyLength;
-
-        do {
-            // assume new header format
-            PGPPacketTag nextTag = PGPInvalidPacketTag;
-            UInt32 packetBodyLength = 0;
-            UInt32 packetHeaderLength = [self parseNewFormatHeaderPacket:[data subdataWithRange:(NSRange){offset - 1, data.length - (offset - 1)}] bodyLength:&packetBodyLength packetTag:&nextTag partialBodyLength:&isPartialBodyLength] - 1;
-            offset += packetHeaderLength;
-            if (nextPacketOffset != NULL) {
-                *nextPacketOffset += packetHeaderLength + packetBodyLength;
-            }
-            [resultData appendData:[data subdataWithRange:(NSRange){offset, MIN(packetBodyLength, data.length - offset)}]];
-            offset += packetBodyLength;
-        } while (isPartialBodyLength);
-
-        return resultData;
-    }
-    return [data subdataWithRange:(NSRange){*headerLength, bodyLength}];
+    return [data subdataWithRange:(NSRange){header.headerLength, header.bodyLength}];
 }
 
-/**
- *  4.2.  Packet Headers
- *
- *  @param headerData Packet header
- *
- *  @return Header length
- */
-+ (UInt32)parseNewFormatHeaderPacket:(NSData *)headerData bodyLength:(UInt32 *)length packetTag:(PGPPacketTag *)tag partialBodyLength:(BOOL *)isPartialBodyLength {
-    NSParameterAssert(headerData);
+// Read partial data. Part by part and return concatenated body data
++ (nullable NSData *)readPartialData:(NSData *)data {
+    BOOL hasMoreData = YES;
+    UInt32 offset = 0;
+    let accumulatedData = [NSMutableData dataWithCapacity:data.length];
 
-    UInt8 headerByte = 0;
-    [headerData getBytes:&headerByte length:1];
-    // Bits 5-0 -- packet tag
-    UInt8 packetTag = (UInt8)(headerByte << 2);
-    packetTag = (packetTag >> 2);
+    while (hasMoreData) {
+        BOOL isPartial = NO;
+        UInt32 partBodyLength = 0;
+        UInt8  partLengthOctets = 0;
 
-    if (tag) {
-        *tag = packetTag;
-    }
+        // length + body
+        let partData = [data subdataWithRange:(NSRange){offset, data.length - offset}];
+        [PGPPacketHeader getLengthFromNewFormatOctets:partData bodyLength:&partBodyLength bytesCount:&partLengthOctets isPartial:&isPartial];
 
-    // body length
-    if (isPartialBodyLength) {
-        *isPartialBodyLength = NO;
-    }
-    UInt32 bodyLength = 0;
-    UInt32 headerLength = 2;
+        // the last Body Length header can be a zero-length header.
+        // in that case just skip it.
+        if (partBodyLength > 0) {
+            partBodyLength = MIN(partBodyLength, (UInt32)data.length - offset);
 
-    const UInt8 *lengthOctets = [headerData subdataWithRange:(NSRange){1, MIN((NSUInteger)5, headerData.length - 1)}].bytes;
-    UInt8 firstOctet = lengthOctets[0];
-
-    if (lengthOctets[0] < 192) {
-        // 4.2.2.1.  One-Octet Length
-        // bodyLen = 1st_octet;
-        bodyLength = lengthOctets[0];
-        headerLength = 1 + 1; // 2
-    } else if (lengthOctets[0] >= 192 && lengthOctets[0] < 224) {
-        // 4.2.2.2.  Two-Octet Lengths
-        // bodyLen = ((1st_octet - 192) << 8) + (2nd_octet) + 192
-        bodyLength = ((lengthOctets[0] - 192) << 8) + (lengthOctets[1]) + 192;
-        headerLength = 1 + 2;
-    } else if (lengthOctets[0] >= 224 && lengthOctets[0] < 255) {
-        // 4.2.2.4.  Partial Body Length
-        // partialBodyLen = 1 << (1st_octet & 0x1F);
-        UInt32 partianBodyLength = 1 << (lengthOctets[0] & 0x1F);
-        bodyLength = partianBodyLength;
-        headerLength = 1 + 1;
-        if (isPartialBodyLength) {
-            *isPartialBodyLength = YES;
+            // Append just body. Skip the length bytes.
+            let partBodyData = [data subdataWithRange:(NSRange){offset + partLengthOctets, partBodyLength}];
+            [accumulatedData appendData:partBodyData];
         }
-    } else if (firstOctet == 255) {
-        // 4.2.2.3.  Five-Octet Length
-        // bodyLen = (2nd_octet << 24) | (3rd_octet << 16) |
-        //           (4th_octet << 8)  | 5th_octet
-        bodyLength = (lengthOctets[1] << 24) | (lengthOctets[2] << 16) | (lengthOctets[3] << 8) | lengthOctets[4];
-        headerLength = 1 + 5;
-    } else {
-        // indeterminate length
-        bodyLength = PGPUnknownLength;
-        headerLength = 1;
+
+        // move to next part
+        offset = offset + partLengthOctets + partBodyLength;
+        hasMoreData = isPartial;
     }
 
-    if (length) {
-        *length = bodyLength;
-    }
-
-    return headerLength;
+    return accumulatedData;
 }
 
-// 4.2.  Packet Headers
-+ (UInt32)parseOldFormatHeaderPacket:(NSData *)headerData bodyLength:(UInt32 *)length packetTag:(PGPPacketTag *)tag {
-    NSParameterAssert(headerData);
-
-    UInt8 headerByte = 0;
-    [headerData getBytes:&headerByte length:1];
-    //  Bits 5-2 -- packet tag
-    UInt8 packetTag = (UInt8)(headerByte << 2);
-    packetTag = (packetTag >> 4);
-    if (tag) {
-        *tag = packetTag;
-    }
-    //  Bits 1-0 -- length-type
-    UInt8 bodyLengthType = (UInt8)(headerByte << 6);
-    bodyLengthType = bodyLengthType >> 6;
-
-    UInt32 headerLength = 1;
-    UInt32 bodyLength = 0;
-    switch (bodyLengthType) {
-        case 0: {
-            NSRange range = (NSRange){1, 1};
-            [headerData getBytes:&bodyLength range:range];
-            headerLength = (UInt32)(1 + range.length);
-        } break;
-        case 1: {
-            UInt16 bLen = 0;
-            NSRange range = (NSRange){1, 2};
-            [headerData getBytes:&bLen range:range];
-            // value of a two-octet scalar is ((n[0] << 8) + n[1]).
-            bodyLength = CFSwapInt16BigToHost(bLen);
-            headerLength = (UInt32)(1 + range.length);
-        } break;
-        case 2: {
-            NSRange range = (NSRange){1, 4};
-            [headerData getBytes:&bodyLength range:range];
-            bodyLength = CFSwapInt32BigToHost(bodyLength);
-            headerLength = (UInt32)(1 + range.length);
-        } break;
-        case 3: {
-            PGPLogWarning(@"(Old) The packet is of indeterminate length - partially supported");
-            bodyLength = PGPUnknownLength;
-            headerLength = 1;
-        } break;
-        default:
-            NSAssert(NO, @"Invalid packet length");
-            break;
-    }
-
-    if (length) {
-        *length = bodyLength;
-    }
-
-    return headerLength;
-}
+#pragma mark - Build
 
 + (NSData *)buildPacketOfType:(PGPPacketTag)tag withBody:(PGP_NOESCAPE NSData *(^)(void))body {
     return [self buildPacketOfType:tag isOld:NO withBody:body];

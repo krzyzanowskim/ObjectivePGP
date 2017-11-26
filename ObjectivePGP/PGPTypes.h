@@ -14,6 +14,7 @@
 
 #define PGP_NOESCAPE __attribute__((noescape))
 
+static const UInt32 PGPUnknownLength = UINT32_MAX;
 static NSString *const PGPErrorDomain = @"com.objectivepgp";
 
 typedef NS_ERROR_ENUM(PGPErrorDomain, PGPErrorCode) {

@@ -230,12 +230,12 @@ NS_ASSUME_NONNULL_BEGIN
 + (PGPSignatureSubpacketHeader *)subpacketHeaderFromData:(NSData *)headerData {
     NSUInteger position = 0;
 
-    const UInt8 *lengthOctets = [headerData subdataWithRange:NSMakeRange(position, MIN((NSUInteger)5, headerData.length))].bytes;
     UInt32 headerLength = 0;
     UInt32 subpacketLength = 0;
 
     //TODO: Use -[PGPPacket parseNewFormatHeaderPacket:]. headerLength is different size !?
     //      Its format is similar to the "new" format packet header lengths, but cannot have Partial Body Lengths.
+    const UInt8 *lengthOctets = [headerData subdataWithRange:NSMakeRange(position, MIN((NSUInteger)5, headerData.length))].bytes;
     if (lengthOctets[0] < 192) {
         // subpacketLen = 1st_octet;
         subpacketLength = lengthOctets[0];
@@ -255,7 +255,7 @@ NS_ASSUME_NONNULL_BEGIN
     // TODO: Bit 7 of the subpacket type is the "critical" bit.
     PGPSignatureSubpacketType subpacketType = PGPSignatureSubpacketTypeUnknown;
     [headerData getBytes:&subpacketType range:(NSRange){position, 1}];
-    headerLength = headerLength + 1;
+    headerLength += 1;
 
     // Note: "The length includes the type octet but not this length"
     // Example: 02 19 01
