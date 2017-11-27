@@ -2,6 +2,7 @@ Version 0.9.5
 - Methods that get keys as parameter are now class methods, +[ObjectivePGP ...]
 - Adds decrypt:usingKeys:....
 - Adds Blowfish cipher support.
+- Adds image user attribute support.
 - Improves verify calls to accept armored data.
 
 Version 0.9.4
