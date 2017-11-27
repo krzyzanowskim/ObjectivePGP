@@ -263,7 +263,7 @@
     XCTAssertEqual(keys.count, (NSUInteger)1);
 }
 
--(void)testSigningSubKey {
+- (void)testSigningSubKey {
     // subkey generated with GnuPG 2.1.18
     //
     // gpg --gen-key
@@ -283,6 +283,19 @@
     let data = [@"Hello World!" dataUsingEncoding:NSUTF8StringEncoding];
     let signature = [ObjectivePGP sign:data usingKey:keys[0] passphrase:@"12345678" detached:NO error:&error];
     XCTAssertNotNil(signature, @"Signing failed: %@", error);
+}
+
+- (void)testUserAttrributes {
+    let generator = [[PGPKeyGenerator alloc] init];
+    let key = [generator generateFor:@"marcin77@example.com" passphrase:@"test"];
+    let user = key.publicKey.users.firstObject;
+
+    let imagePath = [PGPTestUtils pathToBundledFile:@"jpeg.jpg"];
+    user.image = [NSData dataWithContentsOfFile:imagePath];
+
+    NSError *keyExportError;
+    let exportedKey = [key export:&keyExportError];
+    XCTAssertNotNil(exportedKey);
 }
 
 @end

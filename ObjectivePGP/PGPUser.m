@@ -49,6 +49,29 @@ NS_ASSUME_NONNULL_BEGIN
     return imageAttributeSubpacket.image;
 }
 
+- (void)setImage:(nullable NSData *)image {
+    // Replace image subpacket
+    if (!self.userAttribute) {
+        self.userAttribute = [[PGPUserAttributePacket alloc] init];
+    }
+
+    NSMutableArray<PGPUserAttributeSubpacket *> *subpackets = [self.userAttribute.subpackets mutableCopy];
+    let imageSubpacketIndex = [subpackets indexOfObjectPassingTest:^BOOL(PGPUserAttributeSubpacket * _Nonnull subpacket, NSUInteger idx, BOOL * _Nonnull stop) {
+        return subpacket.type == PGPUserAttributeSubpacketImage;
+    }];
+
+    if (imageSubpacketIndex != NSNotFound) {
+        [subpackets removeObjectAtIndex:imageSubpacketIndex];
+    }
+
+    let imageSubpacket = [PGPUserAttributeImageSubpacket new];
+    imageSubpacket.type = PGPUserAttributeSubpacketImage;
+    imageSubpacket.image = image;
+
+    [subpackets addObject:imageSubpacket];
+    self.userAttribute.subpackets = [subpackets copy];
+}
+
 - (NSString *)description {
     return [NSString stringWithFormat:@"%@ %@", [super description], self.userID];
 }

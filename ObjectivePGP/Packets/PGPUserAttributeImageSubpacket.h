@@ -11,7 +11,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PGPUserAttributeImageSubpacket : PGPUserAttributeSubpacket
 
-@property (nonatomic, readonly, nullable) NSData *image;
+@property (nonatomic, nullable) NSData *image;
 
 @end
 

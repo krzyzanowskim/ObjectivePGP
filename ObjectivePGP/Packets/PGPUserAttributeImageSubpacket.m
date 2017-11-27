@@ -14,6 +14,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPUserAttributeImageSubpacket
 
+@synthesize type = _type;
+
+- (instancetype)init {
+    if ((self = [super init])) {
+        _type = PGPUserAttributeSubpacketImage;
+    }
+    return self;
+}
+
 - (nullable NSData *)image {
     NSUInteger position = 0;
     // The first two octets of the image header contain the length of the image header.
@@ -54,6 +63,26 @@ NS_ASSUME_NONNULL_BEGIN
 
     // The rest of the image subpacket contains the image itself.
     return [self.valueData subdataWithRange:(NSRange){position, self.valueData.length - position}];
+}
+
+- (void)setImage:(nullable NSData *)image {
+    let valueData = [NSMutableData data];
+
+    let imageLength = CFSwapInt16HostToLittle((UInt16)image.length);
+    [valueData appendBytes:&imageLength length:2];
+
+    UInt8 headerVersion = 1;
+    [valueData appendBytes:&headerVersion length:1];
+
+    UInt8 encodingFormat = 1;
+    [valueData appendBytes:&encodingFormat length:1];
+
+    const UInt8 twelveBytes[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
+    [valueData appendBytes:&twelveBytes length:12];
+
+    [valueData appendData:image];
+
+    self.valueData = valueData;
 }
 
 @end

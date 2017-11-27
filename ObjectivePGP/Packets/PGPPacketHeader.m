@@ -156,6 +156,57 @@ NS_ASSUME_NONNULL_BEGIN
     return header;
 }
 
++ (NSData *)buildNewFormatLengthDataForData:(NSData *)bodyData {
+    let data = [NSMutableData data];
+    // write length octets
+    UInt64 bodyLength = bodyData.length;
+    if (bodyLength < 192) {
+        // 1 octet
+        [data appendBytes:&bodyLength length:1];
+    } else if (bodyLength >= 192 && bodyLength <= 8383) {
+        // 2 octet
+        UInt8 buf[2] = {0, 0};
+        UInt16 twoOctets = (UInt16)bodyLength;
+        buf[0] = (UInt8)((twoOctets - 192) >> 8) + 192;
+        buf[1] = (UInt8)(twoOctets - 192);
+        [data appendBytes:buf length:2];
+    } else {
+        // 5 octet
+        UInt64 fiveOctets = bodyLength;
+
+        UInt8 buf[5] = {0xFF, 0, 0, 0, 0};
+        buf[1] = (UInt8)(fiveOctets >> 24);
+        buf[2] = (UInt8)(fiveOctets >> 16);
+        buf[3] = (UInt8)(fiveOctets >> 8);
+        buf[4] = (UInt8)(fiveOctets);
+        [data appendBytes:buf length:5];
+    }
+    return data;
+}
+
++ (NSData *)buildOldFormatLengthDataForData:(NSData *)bodyData {
+    let data = [NSMutableData data];
+    UInt64 bodyLength = bodyData.length;
+    if (bodyLength < 0xFF) {
+        // 0 - The packet has a one-octet length.  The header is 2 octets long.
+        let bodyLengthBE = bodyLength;
+        [data appendBytes:&bodyLengthBE length:1];
+    } else if (bodyLength <= 0xFFFF) {
+        // 1 - The packet has a two-octet length.  The header is 3 octets long.
+        let bodyLengthBE = CFSwapInt16HostToBig((UInt16)bodyLength);
+        [data appendBytes:&bodyLengthBE length:2];
+    } else if (bodyLength <= 0xFFFFFFFF) {
+        // 2 - The packet has a four-octet length.  The header is 5 octets long.
+        let bodyLengthBE = CFSwapInt64HostToBig(bodyLength);
+        [data appendBytes:&bodyLengthBE length:4];
+    } else {
+        // 3 - The packet is of indeterminate length.
+        // In general, an implementation SHOULD NOT use indeterminate-length packets except where the end of the data will be clear from the context
+        NSAssert(NO, @"In general, an implementation SHOULD NOT use indeterminate-length packets");
+    }
+    return data;
+}
+
 @end
 
 NS_ASSUME_NONNULL_END

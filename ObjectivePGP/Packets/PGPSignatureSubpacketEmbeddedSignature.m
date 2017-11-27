@@ -10,6 +10,7 @@
 #import "PGPMacros+Private.h"
 #import "NSData+PGPUtils.h"
 #import "PGPPacket+Private.h"
+#import "PGPPacketHeader.h"
 #import "PGPFoundation.h"
 
 // PGPSignatureSubpacketTypeEmbeddedSignature
@@ -53,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
     [typedData appendData:signatureBody];
 
     let output = [NSMutableData data];
-    let length = [PGPPacket buildNewFormatLengthDataForData:typedData];
+    let length = [PGPPacketHeader buildNewFormatLengthDataForData:typedData];
     [output appendData:length];
     [output appendData:typedData];
     

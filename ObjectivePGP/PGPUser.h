@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 NS_SWIFT_NAME(User) @interface PGPUser : NSObject <NSCopying>
 
 @property (nonatomic, copy) NSString *userID;
-@property (nonatomic, nullable, readonly) NSData *image;
+@property (nonatomic, nullable) NSData *image;
 
 PGP_EMPTY_INIT_UNAVAILABLE
 

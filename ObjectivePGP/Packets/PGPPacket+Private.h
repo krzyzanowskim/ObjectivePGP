@@ -15,8 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL indeterminateLength; // should not be used, but gpg uses it
 @property (nonatomic, readwrite) PGPPacketTag tag;
 
-+ (NSData *)buildNewFormatLengthDataForData:(NSData *)bodyData;
-
 @end
 
 NS_ASSUME_NONNULL_END

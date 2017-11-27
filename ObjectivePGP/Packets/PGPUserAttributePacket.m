@@ -67,9 +67,23 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
-    // TODO: export
-    PGPLogDebug(@"Exporting %@ not implemented", NSStringFromClass(self.class));
-    return nil;
+    return [PGPPacket buildPacketOfType:PGPUserAttributePacketTag withBody:^NSData * {
+        let bodyData = [NSMutableData data];
+        for (PGPUserAttributeSubpacket *subpacket in self.subpackets) {
+            if (!subpacket.valueData) {
+                continue;
+            }
+
+            let subpacketType = subpacket.type;
+            let subBodyData = [NSMutableData dataWithBytes:&subpacketType length:1];
+            [subBodyData appendData:subpacket.valueData];
+
+            let lengthOctets = [PGPPacketHeader buildNewFormatLengthDataForData:subBodyData];
+            [bodyData appendData:lengthOctets];
+            [bodyData appendData:subBodyData];
+        }
+        return bodyData;
+    }];
 }
 
 #pragma mark - isEqual

@@ -24,6 +24,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (nullable PGPPacketHeader *)newFormatHeaderFromData:(NSData *)data;
 + (nullable PGPPacketHeader *)oldFormatHeaderFromData:(NSData *)data;
++ (NSData *)buildNewFormatLengthDataForData:(NSData *)bodyData;
++ (NSData *)buildOldFormatLengthDataForData:(NSData *)bodyData;
 
 + (void)getLengthFromNewFormatOctets:(NSData *)lengthOctetsData bodyLength:(UInt32 *)bodyLength bytesCount:(UInt8 *)bytesCount isPartial:(nullable BOOL *)isPartial;
 

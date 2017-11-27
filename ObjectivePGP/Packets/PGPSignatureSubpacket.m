@@ -410,7 +410,7 @@ NS_ASSUME_NONNULL_BEGIN
         // subpacket = length + tag(type) + body
         NSMutableData *subpacketData = [NSMutableData data];
         // the subpacket length (1, 2, or 5 octets),
-        let subpacketLengthData = [PGPPacket buildNewFormatLengthDataForData:data];
+        let subpacketLengthData = [PGPPacketHeader buildNewFormatLengthDataForData:data];
         [subpacketData pgp_appendData:subpacketLengthData]; // data with tag
         [subpacketData pgp_appendData:data];
         return subpacketData;
