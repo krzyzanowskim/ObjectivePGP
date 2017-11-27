@@ -29,13 +29,12 @@ NS_ASSUME_NONNULL_BEGIN
     return PGPUserAttributePacketTag;
 }
 
-// FIXME: handle image subtype. Somehow it's broken, so not supported.
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError * __autoreleasing _Nullable *)error {
     const NSUInteger startPosition = [super parsePacketBody:packetBody error:error];
     NSUInteger position = startPosition;
 
     // read subpackets
-    {
+    while (position < packetBody.length) {
         UInt32 bodyLength = 0;
         UInt8 lengthBytesCount = 0;
         let subPacketData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
@@ -64,8 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
         position = position + subPacketBodyData.length;
     }
 
-    // just skip whatever is not handled
-    return startPosition + packetBody.length;
+    return position;
 }
 
 - (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
