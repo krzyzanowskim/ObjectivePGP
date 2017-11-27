@@ -7,6 +7,12 @@
 
 #import <ObjectivePGP/ObjectivePGP-Private.h>
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface PGPUserAttributeImageSubpacket : PGPUserAttributeSubpacket
 
+@property (nonatomic, readonly, nullable) NSData *image;
+
 @end
+
+NS_ASSUME_NONNULL_END
