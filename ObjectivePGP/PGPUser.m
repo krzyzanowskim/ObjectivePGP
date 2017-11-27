@@ -26,7 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
     PGPAssertClass(userPacket, PGPUserIDPacket);
 
     if (self = [super init]) {
-        _userIDPacket = userPacket;
+        _userIDPacket = [userPacket copy];
         _otherSignatures = [NSArray<PGPSignaturePacket *> array];
         _revocationSignatures = [NSArray<PGPSignaturePacket *> array];
         _selfCertifications = [NSArray<PGPSignaturePacket *> array];
@@ -45,7 +45,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<PGPPacket *> *)allPackets {
     let arr = [NSMutableArray<PGPPacket *> array];
 
-    [arr pgp_addObject:self.userIDPacket]; // TODO: || [arr addObject:self.userAttribute]
+    [arr pgp_addObject:self.userIDPacket];
+    [arr pgp_addObject:self.userAttribute];
 
     for (id packet in self.revocationSignatures) {
         [arr addObject:packet];

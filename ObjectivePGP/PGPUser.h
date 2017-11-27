@@ -21,7 +21,7 @@ NS_SWIFT_NAME(User) @interface PGPUser : NSObject <NSCopying>
 @property (nonatomic, copy) NSArray<PGPSignaturePacket *> *otherSignatures;
 @property (nonatomic, copy) NSArray<PGPSignaturePacket *> *revocationSignatures;
 
-@property (nonatomic, readonly) PGPUserIDPacket *userIDPacket;
+@property (nonatomic, copy, readonly) PGPUserIDPacket *userIDPacket;
 @property (nonatomic, readonly) NSArray<PGPPacket *> *allPackets;
 
 PGP_EMPTY_INIT_UNAVAILABLE
