@@ -14,7 +14,6 @@ FOUNDATION_EXPORT double ObjectivePGPVersionNumber;
 FOUNDATION_EXPORT const unsigned char ObjectivePGPVersionString[];
 
 #import <ObjectivePGP/PGPMacros.h>
-#import <ObjectivePGP/PGPFoundation.h>
 #import <ObjectivePGP/PGPTypes.h>
 #import <ObjectivePGP/ObjectivePGPObject.h>
 #import <ObjectivePGP/PGPKeyGenerator.h>

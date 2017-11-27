@@ -1,3 +1,4 @@
+
 //
 //  Copyright (c) Marcin Krzyżanowski. All rights reserved.
 //
@@ -6,17 +7,17 @@
 //  This notice may not be removed from this file.
 //
 
-#import <ObjectivePGP/PGPMacros.h>
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-NS_SWIFT_NAME(User) @interface PGPUser : NSObject <NSCopying>
+#define PGPCast(obj, c) ((c * _Nullable) _pgp__cast(obj, c.class))
 
-@property (nonatomic, copy) NSString *userID;
-@property (nonatomic, nullable) NSData *image;
+id _Nullable _pgp__cast(id _Nullable obj, Class objClass);
 
-PGP_EMPTY_INIT_UNAVAILABLE
+BOOL PGPEqualObjects(id _Nullable obj1, id _Nullable obj2);
+
+@interface PGPFoundation : NSObject
 
 @end
 

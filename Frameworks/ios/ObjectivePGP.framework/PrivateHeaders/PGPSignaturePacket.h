@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// Two-octet field holding the left 16 bits of the signed hash value.
 /// Read from the key or set byt the call to `-[PGPSignaturePacket signData:usingKey:passphrase:userID:error]`
 @property (nonatomic, copy, nullable) NSData *signedHashValueData;
-@property (nonatomic, copy) NSArray<PGPMPI *> *signatureMPIArray;
+@property (nonatomic, copy) NSArray<PGPMPI *> *signatureMPIs;
 
 @property (nonatomic, readonly) BOOL canBeUsedToSign; // computed
 @property (nonatomic, readonly) BOOL canBeUsedToEncrypt; // computed
@@ -67,9 +67,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (BOOL)signData:(nullable NSData *)inputData withKey:(PGPKey *)key subKey:(nullable PGPKey *)subKey passphrase:(nullable NSString *)passphrase userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error;
 
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey error:(NSError * __autoreleasing *)error;
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error;
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError * __autoreleasing *)error;
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey error:(NSError * __autoreleasing _Nullable *)error;
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey userID:(nullable NSString *)userID error:(NSError * __autoreleasing _Nullable *)error;
+- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError * __autoreleasing _Nullable *)error;
 
 @end
 

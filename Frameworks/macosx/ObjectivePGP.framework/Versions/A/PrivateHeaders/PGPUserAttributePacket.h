@@ -6,16 +6,14 @@
 //  This notice may not be removed from this file.
 //
 
-#import "PGPPacket.h"
+#import <ObjectivePGP/PGPUserAttributeSubpacket.h>
+#import <ObjectivePGP/PGPPacket.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class PGPUserAttributeSubpacket;
-
 @interface PGPUserAttributePacket : PGPPacket <NSCopying>
 
-// array of PGPUserAttributeSubpacket
-@property (nonatomic) NSArray<PGPUserAttributeSubpacket *> *subpackets;
+@property (nonatomic, copy) NSArray<PGPUserAttributeSubpacket *> *subpackets;
 
 @end
 

@@ -6,8 +6,8 @@
 //  This notice may not be removed from this file.
 //
 
-#import "PGPBigNum.h"
-#import "PGPMacros.h"
+#import <ObjectivePGP/PGPBigNum.h>
+#import <ObjectivePGP/PGPMacros.h>
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN

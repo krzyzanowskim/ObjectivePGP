@@ -10,6 +10,6 @@
 
 @interface PGPPartialSubKey ()
 
-@property (nonatomic, nullable, copy, readwrite) PGPSignaturePacket *bindingSignature;
+@property (nonatomic, nullable, copy) PGPSignaturePacket *bindingSignature;
 
 @end

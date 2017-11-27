@@ -1,4 +1,3 @@
-//
 //  Copyright (c) Marcin Krzyżanowski. All rights reserved.
 //
 //  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY
@@ -6,17 +5,13 @@
 //  This notice may not be removed from this file.
 //
 
-#import <ObjectivePGP/PGPMacros.h>
-#import <Foundation/Foundation.h>
+#import <ObjectivePGP/ObjectivePGP-Private.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-NS_SWIFT_NAME(User) @interface PGPUser : NSObject <NSCopying>
+@interface PGPUserAttributeImageSubpacket : PGPUserAttributeSubpacket
 
-@property (nonatomic, copy) NSString *userID;
 @property (nonatomic, nullable) NSData *image;
-
-PGP_EMPTY_INIT_UNAVAILABLE
 
 @end
 

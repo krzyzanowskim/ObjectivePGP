@@ -21,7 +21,7 @@ extern const UInt32 PGPUnknownLength;
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 + (nullable instancetype)packetWithBody:(NSData *)bodyData;
 
-+ (nullable NSData *)parsePacketHeader:(NSData *)data headerLength:(UInt32 *)headerLength nextPacketOffset:(nullable NSUInteger *)nextPacketOffset packetTag:(PGPPacketTag *)tag indeterminateLength:(BOOL *)indeterminateLength;
++ (nullable NSData *)readPacketBody:(NSData *)data headerLength:(UInt32 *)headerLength nextPacketOffset:(nullable NSUInteger *)nextPacketOffset packetTag:(nullable PGPPacketTag *)tag indeterminateLength:(nullable BOOL *)indeterminateLength;
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError * __autoreleasing _Nullable *)error;
 
 + (NSData *)buildPacketOfType:(PGPPacketTag)tag withBody:(PGP_NOESCAPE NSData *(^)(void))body;

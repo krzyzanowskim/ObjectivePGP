@@ -6,7 +6,7 @@
 //  This notice may not be removed from this file.
 //
 
-#import "PGPKey.h"
+#import <ObjectivePGP/PGPKey.h>
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -109,7 +109,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error.
  @return Signed data, or `nil` if fail.
  */
-- (nullable NSData *)sign:(NSData *)data usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase detached:(BOOL)detached error:(NSError * __autoreleasing _Nullable *)error;
++ (nullable NSData *)sign:(NSData *)data usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase detached:(BOOL)detached error:(NSError * __autoreleasing _Nullable *)error;
 
 /**
  Verify signed data. Validates with the imported keys.
@@ -139,7 +139,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error.
  @return YES on success.
  */
-- (BOOL)verify:(NSData *)data withSignature:(NSData *)signature usingKey:(PGPKey *)key error:(NSError * __autoreleasing _Nullable *)error;
++ (BOOL)verify:(NSData *)data withSignature:(NSData *)signature usingKey:(PGPKey *)key error:(NSError * __autoreleasing _Nullable *)error;
 
 /**
  Encrypt data using given keys. Output in binary or ASCII format.
@@ -150,7 +150,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error.
  @return Encrypted data in requested format.
  */
-- (nullable NSData *)encrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys armored:(BOOL)armored error:(NSError * __autoreleasing _Nullable *)error;
++ (nullable NSData *)encrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys armored:(BOOL)armored error:(NSError * __autoreleasing _Nullable *)error;
 
 
 /**
@@ -164,18 +164,30 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error.
  @return Encrypted and signed data in requested format.
  */
-- (nullable NSData *)encrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys signWithKey:(nullable PGPKey *)signKey passphrase:(nullable NSString *)passphrase armored:(BOOL)armored error:(NSError * __autoreleasing _Nullable *)error;
++ (nullable NSData *)encrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys signWithKey:(nullable PGPKey *)signKey passphrase:(nullable NSString *)passphrase armored:(BOOL)armored error:(NSError * __autoreleasing _Nullable *)error;
 
 
 /**
- Decrypt encrypted message data.
+ Decrypt PGP encrypted data.
 
- @param data Data to decrypt.
+ @param data data to decrypt.
  @param passphrase Optional. Passphrase for the key to decrypt.
- @param error Error.
- @return Decrypted data.
+ @param error Optional. Error.
+ @return Decrypted data, or `nil` if failed.
  */
 - (nullable NSData *)decrypt:(NSData *)data passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error;
+
+
+/**
+ Decrypt PGP encrypted data.
+
+ @param data data to decrypt.
+ @param keys private keys to use.
+ @param passphrase Optional. Key passphrase.
+ @param error Optional. Error.
+ @return Decrypted data, or `nil` if failed.
+ */
++ (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error;
 
 
 /**
@@ -190,14 +202,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error.
  @return Decrypted data.
  */
-- (nullable NSData *)decrypt:(NSData *)data passphrase:(nullable NSString *)passphrase verifyWithKey:(nullable PGPKey *)key signed:(nullable BOOL *)isSigned valid:(nullable BOOL *)isValid integrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError * __autoreleasing _Nullable *)error;
-
-
-/// Deprecated.
-- (NSSet<PGPKey *> *)importreadKeysFromData:(NSData *)data DEPRECATED_MSG_ATTRIBUTE("Use +[ObjectivePGP readKeysFromData:] instead");
-
-/// Deprecated.
-- (NSSet<PGPKey *> *)importKeysFromFile:(NSString *)path DEPRECATED_MSG_ATTRIBUTE("Use +[ObjectivePGP readKeysFromFile:] instead.");
++ (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString *)passphrase verifyWithKey:(nullable PGPKey *)key signed:(nullable BOOL *)isSigned valid:(nullable BOOL *)isValid integrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError * __autoreleasing _Nullable *)error;
 
 @end
 

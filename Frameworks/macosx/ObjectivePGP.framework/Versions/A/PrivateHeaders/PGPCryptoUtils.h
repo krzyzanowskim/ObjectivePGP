@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSUInteger)keySizeOfSymmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm;
 + (NSUInteger)hashSizeOfHashAlhorithm:(PGPHashAlgorithm)hashAlgorithm;
 + (NSData *)randomData:(NSUInteger)length;
-+ (nullable NSData *)decryptData:(NSData *)data usingSecretKeyPacket:(PGPSecretKeyPacket *)keyPacket;
++ (nullable NSData *)decrypt:(NSData *)data usingSecretKeyPacket:(PGPSecretKeyPacket *)keyPacket;
 
 @end
 

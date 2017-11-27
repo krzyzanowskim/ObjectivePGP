@@ -14,9 +14,10 @@
 
 #define PGP_NOESCAPE __attribute__((noescape))
 
-static NSString *const PGPErrorDomain = @"ObjectivePGP";
+static const UInt32 PGPUnknownLength = UINT32_MAX;
+static NSString *const PGPErrorDomain = @"com.objectivepgp";
 
-typedef NS_ENUM(NSInteger, PGPErrorCode) {
+typedef NS_ERROR_ENUM(PGPErrorDomain, PGPErrorCode) {
     PGPErrorGeneral = -1,
     PGPErrorPassphraseRequired = 5,
     PGPErrorPassphraseInvalid = 6
@@ -52,6 +53,10 @@ typedef NS_ENUM(UInt8, PGPPacketTag) {
     PGPUserAttributePacketTag = 17,
     PGPSymmetricallyEncryptedIntegrityProtectedDataPacketTag = 18,
     PGPModificationDetectionCodePacketTag = 19,
+};
+
+typedef NS_ENUM(UInt8, PGPUserAttributeSubpacketType) {
+    PGPUserAttributeSubpacketImage = 0x01 // The only currently defined subpacket type is 1, signifying an image.
 };
 
 // 9.1.  Public-Key Algorithms
