@@ -16,6 +16,7 @@
 #import "PGPPublicSubKeyPacket.h"
 #import "PGPSecretSubKeyPacket.h"
 #import "PGPSignatureSubpacketEmbeddedSignature.h"
+#import "PGPUser+Private.h"
 #import "PGPUserIDPacket.h"
 #import "PGPCryptoHash.h"
 #import "PGPCryptoUtils.h"

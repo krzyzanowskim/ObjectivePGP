@@ -18,6 +18,7 @@
 #import "PGPPartialSubKey.h"
 #import "PGPPartialSubKey+Private.h"
 #import "PGPUser.h"
+#import "PGPUser+Private.h"
 #import "PGPUserAttributePacket.h"
 #import "PGPUserAttributeSubpacket.h"
 #import "PGPMacros+Private.h"

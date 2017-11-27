@@ -7,10 +7,12 @@
 //
 
 #import "PGPUser.h"
+#import "PGPUser+Private.h"
 #import "PGPPartialKey.h"
 #import "PGPPublicKeyPacket.h"
 #import "PGPSignaturePacket.h"
 #import "PGPUserAttributePacket.h"
+#import "PGPUserAttributeImageSubpacket.h"
 #import "PGPUserIDPacket.h"
 #import "PGPMacros+Private.h"
 #import "PGPFoundation.h"
@@ -36,6 +38,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSString *)userID {
     return self.userIDPacket.userID;
+}
+
+- (nullable NSData *)image {
+    // find image uset attribute
+    let imageAttributeSubpacket = PGPCast([[self.userAttribute.subpackets pgp_objectsPassingTest:^BOOL(PGPUserAttributeSubpacket * _Nonnull subpacket, BOOL * _Nonnull stop) {
+        return subpacket.type == PGPUserAttributeSubpacketImage;
+    }] firstObject], PGPUserAttributeImageSubpacket);
+
+    return imageAttributeSubpacket.image;
 }
 
 - (NSString *)description {
