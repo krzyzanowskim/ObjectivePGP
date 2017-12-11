@@ -1,3 +1,6 @@
+Version 0.9.6
+- Enable Symmetrically Encrypted Data Packet support. Fixes #91
+
 Version 0.9.5
 - Methods that get keys as parameter are now class methods, +[ObjectivePGP ...]
 - Adds decrypt:usingKeys:....
