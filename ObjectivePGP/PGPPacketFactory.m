@@ -88,9 +88,9 @@ NS_ASSUME_NONNULL_BEGIN
             case PGPCompressedDataPacketTag:
                 packet = [PGPCompressedPacket packetWithBody:packetBodyData];
                 break;
-//          case PGPSymmetricallyEncryptedDataPacketTag:
-//              packet = [PGPSymmetricallyEncryptedDataPacket packetWithData:packetBodyData];
-//              break;
+          case PGPSymmetricallyEncryptedDataPacketTag:
+                packet = [PGPSymmetricallyEncryptedDataPacket packetWithBody:packetBodyData];
+                break;
             case PGPSymmetricallyEncryptedIntegrityProtectedDataPacketTag:
                 packet = [PGPSymmetricallyEncryptedIntegrityProtectedDataPacket packetWithBody:packetBodyData];
                 break;

@@ -11,7 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class PGPSecretKeyPacket, PGPPublicKeyPacket;
+@class PGPSecretKeyPacket;
 
 @interface PGPSymmetricallyEncryptedIntegrityProtectedDataPacket : PGPSymmetricallyEncryptedDataPacket
 

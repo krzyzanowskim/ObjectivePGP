@@ -23,6 +23,7 @@
 #import "PGPSecretKeyPacket.h"
 #import "PGPSignaturePacket.h"
 #import "PGPPartialSubKey.h"
+#import "PGPSymmetricallyEncryptedDataPacket.h"
 #import "PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h"
 #import "PGPUser.h"
 #import "PGPUserIDPacket.h"
@@ -341,6 +342,10 @@ NS_ASSUME_NONNULL_BEGIN
                 let _Nullable symEncryptedDataPacket = PGPCast(packet, PGPSymmetricallyEncryptedIntegrityProtectedDataPacket);
                 packets = [symEncryptedDataPacket decryptWithSecretKeyPacket:PGPNN(decryptionSecretKeyPacket) sessionKeyAlgorithm:sessionKeyAlgorithm sessionKeyData:sessionKeyData isIntegrityProtected:isIntegrityProtected error:error];
             } break;
+            case PGPSymmetricallyEncryptedDataPacketTag: {
+                let _Nullable symEncryptedDataPacket = PGPCast(packet, PGPSymmetricallyEncryptedDataPacket);
+                packets = [symEncryptedDataPacket decryptWithSecretKeyPacket:PGPNN(decryptionSecretKeyPacket) sessionKeyAlgorithm:sessionKeyAlgorithm sessionKeyData:sessionKeyData error:error];
+            }
             default:
                 break;
         }

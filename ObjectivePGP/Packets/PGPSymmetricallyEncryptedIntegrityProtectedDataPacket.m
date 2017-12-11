@@ -92,48 +92,6 @@ NS_ASSUME_NONNULL_BEGIN
     }];
 }
 
-- (NSArray<PGPPacket *> *)readPacketsFromData:(NSData *)keyringData offset:(NSUInteger)offsetPosition mdcLength:(nullable NSUInteger *)mdcLength {
-    let accumulatedPackets = [NSMutableArray<PGPPacket *> array];
-    if (mdcLength) { *mdcLength = 0; }
-    NSInteger offset = offsetPosition;
-    NSUInteger nextPacketOffset = 0;
-    while (offset < (NSInteger)keyringData.length) {
-        let _Nullable packet = [PGPPacketFactory packetWithData:keyringData offset:offset nextPacketOffset:&nextPacketOffset];
-        if (packet) {
-            [accumulatedPackets addObject:packet];
-            if (packet.tag != PGPModificationDetectionCodePacketTag) {
-                if (mdcLength) {
-                    *mdcLength += nextPacketOffset;
-                }
-            }
-        }
-
-        // A compressed Packet contains more packets
-        let _Nullable compressedPacket = PGPCast(packet, PGPCompressedPacket);
-        if (compressedPacket) {
-            let packets = [self readPacketsFromData:compressedPacket.decompressedData offset:0 mdcLength:nil];
-            if (packets) {
-                [accumulatedPackets addObjectsFromArray:packets];
-            }
-        }
-
-        if (packet.indeterminateLength && accumulatedPackets.count > 0 && PGPCast(accumulatedPackets.firstObject, PGPCompressedPacket)) {
-            //FIXME: substract size of PGPModificationDetectionCodePacket in this very special case - TODO: fix this
-            offset -= 22;
-            if (mdcLength) {
-                *mdcLength -= 22;
-            }
-        }
-
-        // corrupted data. Move by one byte in hope we find some packet there, or EOF.
-        if (nextPacketOffset == 0) {
-            offset++;
-        }
-        offset = offset + (NSInteger)nextPacketOffset;
-    }
-    return accumulatedPackets;
-}
-
 // return array of packets
 - (NSArray<PGPPacket *> *)decryptWithSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData isIntegrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError * __autoreleasing _Nullable *)error {
     NSAssert(self.encryptedData, @"Missing encrypted data to decrypt");
