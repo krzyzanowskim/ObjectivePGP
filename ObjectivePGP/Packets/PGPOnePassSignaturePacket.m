@@ -46,7 +46,9 @@ NS_ASSUME_NONNULL_BEGIN
     self.keyID = [[PGPKeyID alloc] initWithLongKey:[packetBody subdataWithRange:(NSRange){position, 8}]];
     position = position + 8;
 
-    [packetBody getBytes:&_notNested range:(NSRange){position, 1}];
+    BOOL nestedValue;
+    [packetBody getBytes:&nestedValue range:(NSRange){position, 1}];
+    _isNested = nestedValue == 0 ? YES : NO;
     position = position + 1;
 
     return position;
@@ -68,7 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
            self.hashAlgorith == packet.hashAlgorith &&
            self.publicKeyAlgorithm == packet.publicKeyAlgorithm &&
            PGPEqualObjects(self.keyID, packet.keyID) &&
-           self.notNested == packet.notNested;
+           self.isNested == packet.isNested;
 }
 
 - (NSUInteger)hash {
@@ -79,7 +81,7 @@ NS_ASSUME_NONNULL_BEGIN
     result = prime * result + self.hashAlgorith;
     result = prime * result + self.publicKeyAlgorithm;
     result = prime * result + self.keyID.hash;
-    result = prime * result + self.notNested;
+    result = prime * result + self.isNested;
     return result;
 }
 
@@ -96,7 +98,7 @@ NS_ASSUME_NONNULL_BEGIN
     duplicate.hashAlgorith = self.hashAlgorith;
     duplicate.publicKeyAlgorithm = self.publicKeyAlgorithm;
     duplicate.keyID = self.keyID;
-    duplicate.notNested = self.notNested;
+    duplicate.isNested = self.isNested;
     return duplicate;
 }
 
@@ -116,7 +118,7 @@ NS_ASSUME_NONNULL_BEGIN
         [bodyData appendBytes:&self->_publicKeyAlgorithm length:1];
         [bodyData pgp_appendData:[self.keyID export:error]];
 
-        [bodyData appendBytes:&self->_notNested length:1];
+        [bodyData appendBytes:&self->_isNested length:1];
 
         return bodyData;
     }];

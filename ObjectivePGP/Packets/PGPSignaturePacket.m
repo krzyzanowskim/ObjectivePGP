@@ -299,12 +299,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Verify
 
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey error:(NSError * __autoreleasing _Nullable *)error {
-    return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey.publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:nil error:error];
+- (BOOL)verifyData:(NSData *)inputData publicKey:(PGPKey *)publicKey error:(NSError * __autoreleasing _Nullable *)error {
+    return [self verifyData:inputData publicKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey.publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:nil error:error];
 }
 
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey userID:(nullable NSString *)userID error:(NSError * __autoreleasing _Nullable *)error {
-    return [self verifyData:inputData withKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey.publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:userID error:error];
+- (BOOL)verifyData:(NSData *)inputData publicKey:(PGPKey *)publicKey userID:(nullable NSString *)userID error:(NSError * __autoreleasing _Nullable *)error {
+    return [self verifyData:inputData publicKey:publicKey signingKeyPacket:(PGPPublicKeyPacket *)[publicKey.publicKey signingKeyPacketWithKeyID:self.issuerKeyID] userID:userID error:error];
 }
 
 // Opposite to sign, with readed data (not produced)

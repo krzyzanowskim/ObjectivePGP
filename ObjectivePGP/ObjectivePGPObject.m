@@ -329,7 +329,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (!sessionKeyData) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Missing session key data" }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Missing session key" }];
         }
         return nil;
     }
@@ -358,6 +358,7 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
+    // Look for the expected packets (compression, signature and literal packets)
     PGPLiteralPacket * _Nullable literalPacket = nil;
     PGPSignaturePacket * _Nullable signaturePacket = nil;
     for (PGPPacket *packet in packets) {
@@ -374,7 +375,7 @@ NS_ASSUME_NONNULL_BEGIN
                 break;
             default:
                 if (error) {
-                    *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unknown packet (expected literal or compressed)" }];
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unexpected packet" }];
                 }
                 return nil;
         }
@@ -526,14 +527,14 @@ NS_ASSUME_NONNULL_BEGIN
     NSMutableData *signedMessage = [NSMutableData data];
     if (!detached) {
         // OnePass
-        PGPOnePassSignaturePacket *onePassPacket = [[PGPOnePassSignaturePacket alloc] init];
+        let onePassPacket = [[PGPOnePassSignaturePacket alloc] init];
         onePassPacket.signatureType = signaturePacket.type;
         onePassPacket.publicKeyAlgorithm = signaturePacket.publicKeyAlgorithm;
         onePassPacket.hashAlgorith = signaturePacket.hashAlgoritm;
 
         onePassPacket.keyID = PGPNN([signaturePacket issuerKeyID]);
 
-        onePassPacket.notNested = YES;
+        onePassPacket.isNested = YES;
         NSError * _Nullable onePassExportError = nil;
         [signedMessage pgp_appendData:[onePassPacket export:&onePassExportError]];
         if (onePassExportError) {
@@ -602,7 +603,7 @@ NS_ASSUME_NONNULL_BEGIN
     let issuerKey = [self findKeyWithKeyID:issuerKeyID];
     if (!issuerKey) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing issuer" }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing signature" }];
         }
         return NO;
     }
