@@ -59,40 +59,41 @@ NS_ASSUME_NONNULL_BEGIN
     let accumulatedPackets = [NSMutableArray<PGPPacket *> array];
     if (mdcLength) { *mdcLength = 0; }
     NSInteger offset = offsetPosition;
-    NSUInteger nextPacketOffset = 0;
+    NSUInteger consumedBytes = 0;
     while (offset < (NSInteger)keyringData.length) {
-        let _Nullable packet = [PGPPacketFactory packetWithData:keyringData offset:offset nextPacketOffset:&nextPacketOffset];
+        let packet = [PGPPacketFactory packetWithData:keyringData offset:offset consumedBytes:&consumedBytes];
         if (packet) {
             [accumulatedPackets addObject:packet];
             if (packet.tag != PGPModificationDetectionCodePacketTag) {
                 if (mdcLength) {
-                    *mdcLength += nextPacketOffset;
+                    *mdcLength += consumedBytes;
+                }
+            }
+
+            // A compressed Packet contains more packets
+            let _Nullable compressedPacket = PGPCast(packet, PGPCompressedPacket);
+            if (compressedPacket) {
+                let packets = [self readPacketsFromData:compressedPacket.decompressedData offset:0 mdcLength:nil];
+                if (packets) {
+                    [accumulatedPackets addObjectsFromArray:packets];
+                }
+            }
+
+            if (packet.indeterminateLength && accumulatedPackets.count > 0 && PGPCast(accumulatedPackets.firstObject, PGPCompressedPacket)) {
+                //FIXME: substract size of PGPModificationDetectionCodePacket in this very special case - TODO: fix this
+                offset -= 22;
+                if (mdcLength) {
+                    *mdcLength -= 22;
                 }
             }
         }
 
-        // A compressed Packet contains more packets
-        let _Nullable compressedPacket = PGPCast(packet, PGPCompressedPacket);
-        if (compressedPacket) {
-            let packets = [self readPacketsFromData:compressedPacket.decompressedData offset:0 mdcLength:nil];
-            if (packets) {
-                [accumulatedPackets addObjectsFromArray:packets];
-            }
-        }
-
-        if (packet.indeterminateLength && accumulatedPackets.count > 0 && PGPCast(accumulatedPackets.firstObject, PGPCompressedPacket)) {
-            //FIXME: substract size of PGPModificationDetectionCodePacket in this very special case - TODO: fix this
-            offset -= 22;
-            if (mdcLength) {
-                *mdcLength -= 22;
-            }
-        }
-
         // corrupted data. Move by one byte in hope we find some packet there, or EOF.
-        if (nextPacketOffset == 0) {
+        if (consumedBytes == 0) {
             offset++;
         }
-        offset = offset + (NSInteger)nextPacketOffset;
+
+        offset += consumedBytes;
     }
     return accumulatedPackets;
 }

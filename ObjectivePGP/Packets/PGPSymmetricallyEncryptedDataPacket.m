@@ -55,9 +55,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSArray<PGPPacket *> *)readPacketsFromData:(NSData *)keyringData offset:(NSUInteger)offsetPosition {
     let accumulatedPackets = [NSMutableArray<PGPPacket *> array];
     NSInteger offset = offsetPosition;
-    NSUInteger nextPacketOffset = 0;
+    NSUInteger consumedBytes = 0;
     while (offset < (NSInteger)keyringData.length) {
-        let packet = [PGPPacketFactory packetWithData:keyringData offset:offset nextPacketOffset:&nextPacketOffset];
+        let packet = [PGPPacketFactory packetWithData:keyringData offset:offset consumedBytes:&consumedBytes];
         [accumulatedPackets pgp_addObject:packet];
 
         // A compressed Packet contains more packets
@@ -68,10 +68,10 @@ NS_ASSUME_NONNULL_BEGIN
         }
 
         // corrupted data. Move by one byte in hope we find some packet there, or EOF.
-        if (nextPacketOffset == 0) {
+        if (consumedBytes == 0) {
             offset++;
         }
-        offset = offset + (NSInteger)nextPacketOffset;
+        offset += (NSInteger)consumedBytes;
     }
     return accumulatedPackets;
 }

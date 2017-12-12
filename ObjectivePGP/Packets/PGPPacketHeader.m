@@ -28,7 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
     return [NSString stringWithFormat:@"headerLength: %@, bodyLength: %@, isPartial: %@", @(self.headerLength), @(self.bodyLength), self.isPartialLength ? @"YES" : @"NO"];
 }
 
-+ (void)getLengthFromNewFormatOctets:(NSData *)lengthOctetsData bodyLength:(UInt32 *)bodyLength bytesCount:(UInt8 *)bytesCount isPartial:(nullable BOOL *)isPartial {
++ (void)getLengthFromNewFormatOctets:(NSData *)lengthOctetsData bodyLength:(NSUInteger *)bodyLength bytesCount:(UInt8 *)bytesCount isPartial:(nullable BOOL *)isPartial {
     const UInt8 *lengthOctets = lengthOctetsData.bytes;
 
     // should check for partial? Is partial data expected?
@@ -80,7 +80,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     // up to 5 bytes for length
     UInt8 lengthOctetsCount = 0;
-    UInt32 bodyLength = 0;
+    NSUInteger bodyLength = 0;
     BOOL isPartial = NO;
     let lengthOctets = [data subdataWithRange:(NSRange){1, MIN((NSUInteger)5, data.length - 1)}];
     [PGPPacketHeader getLengthFromNewFormatOctets:lengthOctets bodyLength:&bodyLength bytesCount:&lengthOctetsCount isPartial:&isPartial];

@@ -80,7 +80,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // 4.2.  Packet Headers
 /// Parse packet header and body, and return body. Parse packet header and read the followed data (packet body)
-+ (nullable NSData *)readPacketBody:(NSData *)data headerLength:(UInt32 *)headerLength nextPacketOffset:(nullable NSUInteger *)nextPacketOffset packetTag:(nullable PGPPacketTag *)tag indeterminateLength:(nullable BOOL *)indeterminateLength {
++ (nullable NSData *)readPacketBody:(NSData *)data headerLength:(UInt32 *)headerLength consumedBytes:(nullable NSUInteger *)consumedBytes packetTag:(nullable PGPPacketTag *)tag indeterminateLength:(nullable BOOL *)indeterminateLength {
     NSParameterAssert(headerLength);
 
     UInt8 headerByte = 0;
@@ -91,7 +91,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (!isPGPHeader) {
         // not a valida data, skip the whole data.
-        if (nextPacketOffset) { *nextPacketOffset = data.length; }
+        if (consumedBytes) { *consumedBytes = data.length; }
         return nil;
     }
 
@@ -110,27 +110,29 @@ NS_ASSUME_NONNULL_BEGIN
     *headerLength = header.headerLength;
     if (tag) { *tag = header.packetTag; }
     if (indeterminateLength) { *indeterminateLength = header.isIndeterminateLength; }
-    if (nextPacketOffset) { *nextPacketOffset = header.bodyLength + header.headerLength; }
 
     if (header.isPartialLength && !header.isIndeterminateLength) {
         // Partial data starts with length octets offset (right after the packet header byte)
         let partialData = [data subdataWithRange:(NSRange){header.headerLength - 1, data.length - (header.headerLength - 1)}];
-        if (nextPacketOffset) { *nextPacketOffset = *nextPacketOffset + partialData.length; }
-        return [PGPPacket readPartialData:partialData];
+        NSUInteger partialConsumedBytes = 0;
+        let concatenatedData = [PGPPacket readPartialData:partialData consumedBytes:&partialConsumedBytes];
+        if (consumedBytes) { *consumedBytes = partialConsumedBytes + 1; }
+        return concatenatedData;
     }
 
+    if (consumedBytes) { *consumedBytes = header.bodyLength + header.headerLength; }
     return [data subdataWithRange:(NSRange){header.headerLength, header.bodyLength}];
 }
 
 // Read partial data. Part by part and return concatenated body data
-+ (nullable NSData *)readPartialData:(NSData *)data {
++ (NSData *)readPartialData:(NSData *)data consumedBytes:(NSUInteger *)consumedBytes {
     BOOL hasMoreData = YES;
-    UInt32 offset = 0;
+    NSUInteger offset = 0;
     let accumulatedData = [NSMutableData dataWithCapacity:data.length];
 
     while (hasMoreData) {
         BOOL isPartial = NO;
-        UInt32 partBodyLength = 0;
+        NSUInteger partBodyLength = 0;
         UInt8  partLengthOctets = 0;
 
         // length + body
@@ -140,7 +142,7 @@ NS_ASSUME_NONNULL_BEGIN
         // the last Body Length header can be a zero-length header.
         // in that case just skip it.
         if (partBodyLength > 0) {
-            partBodyLength = MIN(partBodyLength, (UInt32)data.length - offset);
+            partBodyLength = MIN(partBodyLength, data.length - offset);
 
             // Append just body. Skip the length bytes.
             let partBodyData = [data subdataWithRange:(NSRange){offset + partLengthOctets, partBodyLength}];
@@ -152,6 +154,7 @@ NS_ASSUME_NONNULL_BEGIN
         hasMoreData = isPartial;
     }
 
+    *consumedBytes = offset;
     return accumulatedData;
 }
 

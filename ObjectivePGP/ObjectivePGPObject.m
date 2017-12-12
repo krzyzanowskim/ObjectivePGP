@@ -589,7 +589,7 @@ NS_ASSUME_NONNULL_BEGIN
     let binarySignatureData = [ObjectivePGP convertArmoredMessage2BinaryBlocksWhenNecessary:signatureData].firstObject;
 
     // search for key in keys
-    let packet = [PGPPacketFactory packetWithData:binarySignatureData offset:0 nextPacketOffset:NULL];
+    let packet = [PGPPacketFactory packetWithData:binarySignatureData offset:0 consumedBytes:nil];
     let signaturePacket = PGPCast(packet, PGPSignaturePacket);
     if (!signaturePacket) {
         if (error) {
@@ -617,7 +617,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     let binarySignatureData = [ObjectivePGP convertArmoredMessage2BinaryBlocksWhenNecessary:signatureData].firstObject;
 
-    let packet = [PGPPacketFactory packetWithData:binarySignatureData offset:0 nextPacketOffset:NULL];
+    let packet = [PGPPacketFactory packetWithData:binarySignatureData offset:0 consumedBytes:nil];
     let signaturePacket = PGPCast(packet, PGPSignaturePacket);
     if (!signaturePacket) {
         if (error) {
@@ -648,15 +648,15 @@ NS_ASSUME_NONNULL_BEGIN
     // search for signature packet
     let accumulatedPackets = [NSMutableArray<PGPPacket *> array];
     NSUInteger offset = 0;
-    NSUInteger nextPacketOffset;
+    NSUInteger consumedBytes = 0;
 
     @autoreleasepool {
         // TODO: don't parse data here, get raw data and pass to verify:withsignature:
         while (offset < binarySignedData.length) {
-            let packet = [PGPPacketFactory packetWithData:binarySignedData offset:offset nextPacketOffset:&nextPacketOffset];
+            let packet = [PGPPacketFactory packetWithData:binarySignedData offset:offset consumedBytes:&consumedBytes];
             [accumulatedPackets pgp_addObject:packet];
 
-            offset += nextPacketOffset;
+            offset += consumedBytes;
         }
     }
 
@@ -776,17 +776,17 @@ NS_ASSUME_NONNULL_BEGIN
 
     let accumulatedPackets = [NSMutableArray<PGPPacket *> array];
     NSUInteger offset = 0;
-    NSUInteger nextPacketOffset = 0;
+    NSUInteger consumedBytes = 0;
 
     while (offset < keyringData.length) {
-        let packet = [PGPPacketFactory packetWithData:keyringData offset:offset nextPacketOffset:&nextPacketOffset];
+        let packet = [PGPPacketFactory packetWithData:keyringData offset:offset consumedBytes:&consumedBytes];
         [accumulatedPackets pgp_addObject:packet];
 
         // corrupted data. Move by one byte in hope we find some packet there, or EOF.
-        if (nextPacketOffset == 0) {
+        if (consumedBytes == 0) {
             offset++;
         }
-        offset += nextPacketOffset;
+        offset += consumedBytes;
     }
 
     return accumulatedPackets;
@@ -827,13 +827,13 @@ NS_ASSUME_NONNULL_BEGIN
     let partialKeys = [NSMutableArray<PGPPartialKey *> array];
     let accumulatedPackets = [NSMutableArray<PGPPacket *> array];
     NSUInteger position = 0;
-    NSUInteger nextPacketPosition = 0;
+    NSUInteger consumedBytes = 0;
 
     while (position < messageData.length) {
         @autoreleasepool {
-            let packet = [PGPPacketFactory packetWithData:messageData offset:position nextPacketOffset:&nextPacketPosition];
+            let packet = [PGPPacketFactory packetWithData:messageData offset:position consumedBytes:&consumedBytes];
             if (!packet) {
-                position += (nextPacketPosition > 0) ? nextPacketPosition : 1;
+                position += (consumedBytes > 0) ? consumedBytes : 1;
                 continue;
             }
 
@@ -844,7 +844,7 @@ NS_ASSUME_NONNULL_BEGIN
             }
 
             [accumulatedPackets pgp_addObject:packet];
-            position += nextPacketPosition;
+            position += consumedBytes;
         }
     }
 

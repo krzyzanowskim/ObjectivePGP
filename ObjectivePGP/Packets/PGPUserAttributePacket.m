@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     // read subpackets
     while (position < packetBody.length) {
-        UInt32 bodyLength = 0;
+        NSUInteger bodyLength = 0;
         UInt8 lengthBytesCount = 0;
         let subPacketData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
         [PGPPacketHeader getLengthFromNewFormatOctets:subPacketData bodyLength:&bodyLength bytesCount:&lengthBytesCount isPartial:nil];

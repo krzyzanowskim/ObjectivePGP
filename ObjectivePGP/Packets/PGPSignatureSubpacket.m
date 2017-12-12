@@ -235,7 +235,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSUInteger position = 0;
 
     UInt8 lengthOctets = 0;
-    UInt32 subpacketLength = 0;
+    NSUInteger subpacketLength = 0;
 
     // The length includes the type octet but not this length.  Its format
     // is similar to the "new" format packet header lengths, but cannot have Partial Body Lengths.
