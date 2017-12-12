@@ -246,12 +246,14 @@
     let messageData = [NSData dataWithContentsOfFile:messagePath];
     NSError *verifyError = nil;
     BOOL verified = [pgp verify:messageData error:&verifyError];
-    XCTAssertNotNil(verifyError);
-    XCTAssertFalse(verified);
+    XCTAssertNil(verifyError);
+    XCTAssertTrue(verified);
 
     [pgp importKeys:secKeys];
     NSError *decryptError = nil;
-    [pgp decrypt:messageData passphrase:nil error:&decryptError];
+    let decrypted = [pgp decrypt:messageData passphrase:nil error:&decryptError];
+    let txt = [[NSString alloc] initWithData:decrypted encoding:NSUTF8StringEncoding];
+    NSLog(@"%@",txt);
     XCTAssertNil(decryptError);
 }
 
@@ -261,6 +263,23 @@
     // Input data is broken. Embeded signature has invalid data, ignore and load key anyway.
     let keys = [PGPTestUtils readKeysFromFile:@"issue84-key.asc"];
     XCTAssertEqual(keys.count, (NSUInteger)1);
+}
+
+// Symmetrically Encrypted Data Packet (Tag 9)
+- (void)testIssue91Tag9 {
+    let pubKeys = [PGPTestUtils readKeysFromFile:@"issue91-pub.asc"];
+    let secKeys = [PGPTestUtils readKeysFromFile:@"issue91-sec.asc"];
+
+    let messagePath = [PGPTestUtils pathToBundledFile:@"issue91-message.asc"];
+    let messageData = [NSData dataWithContentsOfFile:messagePath];
+
+    let pgp = [ObjectivePGP new];
+    [pgp importKeys:pubKeys];
+    [pgp importKeys:secKeys];
+    NSError *decryptError = nil;
+    let decrypted = [pgp decrypt:messageData passphrase:@"abcd" error:&decryptError];
+    XCTAssertNotNil(decrypted);
+    XCTAssertNil(decryptError);
 }
 
 - (void)testSigningSubKey {
