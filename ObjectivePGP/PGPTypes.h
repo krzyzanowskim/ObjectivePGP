@@ -151,8 +151,9 @@ typedef NS_ENUM(UInt8, PGPSignatureSubpacketType) {
     PGPSignatureSubpacketTypeSignerUserID = 28,
     PGPSignatureSubpacketTypeReasonForRevocation = 29,
     PGPSignatureSubpacketTypeFeatures = 30,
-    PGPSignatureSubpacketTypeSignatureTarget = 31, // TODO
-    PGPSignatureSubpacketTypeEmbeddedSignature = 32
+    PGPSignatureSubpacketTypeSignatureTarget = 31, // Seems unused at all
+    PGPSignatureSubpacketTypeEmbeddedSignature = 32,
+    PGPSignatureSubpacketTypeIssuerFingerprint = 33 // TODO: Experimental: Issuer fingerprint
 };
 
 // 5.2.3.21.  Key Flags

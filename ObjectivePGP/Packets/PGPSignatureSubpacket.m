@@ -223,10 +223,11 @@ NS_ASSUME_NONNULL_BEGIN
         } break;
         default:
             if (self.type & 0x80) {
-                PGPLogError(@"Unsupported critical subpacket type %d", self.type);
+                PGPLogWarning(@"Unsupported critical subpacket type %d", self.type);
             } else {
                 PGPLogDebug(@"Unsupported subpacket type %d", self.type);
             }
+            self.value = packetBodyData;
             break;
     }
 }
@@ -269,7 +270,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
     NSMutableData *data = [NSMutableData data];
-    BOOL unsupportedType = NO;
 
     // subpacket type
     PGPSignatureSubpacketType type = self.type;
@@ -398,25 +398,22 @@ NS_ASSUME_NONNULL_BEGIN
         } break;
         default:
             if (self.type & 0x80) {
-                PGPLogError(@"Unsupported critical subpacket type %d", self.type);
+                PGPLogDebug(@"Unsupported critical subpacket type %d", self.type);
             } else {
                 PGPLogDebug(@"Unsupported subpacket type %d", self.type);
             }
-            unsupportedType = YES;
+            let unsupportedValueData = PGPCast(self.value, NSData);
+            [data appendData:unsupportedValueData];
             break;
     }
 
-    if (!unsupportedType) {
-        // subpacket = length + tag(type) + body
-        NSMutableData *subpacketData = [NSMutableData data];
-        // the subpacket length (1, 2, or 5 octets),
-        let subpacketLengthData = [PGPPacketHeader buildNewFormatLengthDataForData:data];
-        [subpacketData pgp_appendData:subpacketLengthData]; // data with tag
-        [subpacketData pgp_appendData:data];
-        return subpacketData;
-
-    }
-    return nil;
+    // subpacket = length + tag(type) + body
+    NSMutableData *subpacketData = [NSMutableData data];
+    // the subpacket length (1, 2, or 5 octets),
+    let subpacketLengthData = [PGPPacketHeader buildNewFormatLengthDataForData:data];
+    [subpacketData pgp_appendData:subpacketLengthData]; // data with tag
+    [subpacketData pgp_appendData:data];
+    return subpacketData;
 }
 
 #pragma mark - isEqual
