@@ -73,6 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
             // A compressed Packet contains more packets
             let _Nullable compressedPacket = PGPCast(packet, PGPCompressedPacket);
             if (compressedPacket) {
+                // TODO: Compression should be moved outside, be more generic to handle compressed packet from anywhere
                 let packets = [self readPacketsFromData:compressedPacket.decompressedData offset:0 mdcLength:nil];
                 if (packets) {
                     [accumulatedPackets addObjectsFromArray:packets];
@@ -136,20 +137,20 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // return array of packets
-- (NSArray<PGPPacket *> *)decryptWithSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData isContentModified:(nullable BOOL *)checkIsContentModified error:(NSError * __autoreleasing _Nullable *)error {
+- (NSArray<PGPPacket *> *)decryptWithSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData error:(NSError * __autoreleasing _Nullable *)error {
     NSAssert(self.encryptedData, @"Missing encrypted data to decrypt");
     NSAssert(secretKeyPacket, @"Missing secret key");
 
     if (!self.encryptedData) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Missing encrypted data" }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Missing data to decrypt." }];
         }
         return @[];
     }
 
     if (secretKeyPacket.isEncryptedWithPassphrase) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Encrypted secret key used to decryption. Decrypt key first" }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt with the encrypted key. Decrypt key first." }];
         }
         return @[];
     }
@@ -169,7 +170,7 @@ NS_ASSUME_NONNULL_BEGIN
     // check if suffix match
     if (!PGPEqualObjects([prefixRandomFullData subdataWithRange:(NSRange){blockSize + 2 - 4, 2}] ,[prefixRandomFullData subdataWithRange:(NSRange){blockSize + 2 - 2, 2}])) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Random suffix mismatch" }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Validation failed. Random suffix mismatch." }];
         }
         return @[];
     }
@@ -180,11 +181,20 @@ NS_ASSUME_NONNULL_BEGIN
     let _Nullable lastPacket = PGPCast(packets.lastObject, PGPPacket);
     if (!lastPacket || lastPacket.tag != PGPModificationDetectionCodePacketTag) {
         // No Integrity Protected found, can't verify. Guess it's modified.
-        if (checkIsContentModified) { *checkIsContentModified = YES; }
-        return packets;
+        // if (checkIsContentModified) { *checkIsContentModified = YES; }
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Content modification detected." }];
+        }
+        return @[];
     }
 
     let _Nullable mdcPacket = PGPCast(lastPacket, PGPModificationDetectionCodePacket);
+    if (!mdcPacket) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Unexpected sequence of data (missing MDC)." }];
+        }
+        return @[];
+    }
 
     let toMDCData = [[NSMutableData alloc] init];
     // preamble
@@ -199,13 +209,11 @@ NS_ASSUME_NONNULL_BEGIN
     let mdcHash = [toMDCData pgp_SHA1];
     if (!mdcPacket || !PGPEqualObjects(mdcHash,mdcPacket.hashData)) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Modification detection validation failed" }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Validation failed. Content modification detected." }];
         }
-        if (checkIsContentModified) { *checkIsContentModified = YES; }
         return @[];
     }
 
-    if (checkIsContentModified) { *checkIsContentModified = NO; }
     return [packets subarrayWithRange:(NSRange){0, packets.count - 1}];
 }
 

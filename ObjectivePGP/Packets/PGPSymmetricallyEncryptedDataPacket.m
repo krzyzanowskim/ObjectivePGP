@@ -52,19 +52,20 @@ NS_ASSUME_NONNULL_BEGIN
     return self.encryptedData;
 }
 
-- (NSArray<PGPPacket *> *)readPacketsFromData:(NSData *)keyringData offset:(NSUInteger)offsetPosition {
+- (NSArray<PGPPacket *> *)readPacketsFromData:(NSData *)data offset:(NSUInteger)offsetPosition {
     let accumulatedPackets = [NSMutableArray<PGPPacket *> array];
     NSInteger offset = offsetPosition;
     NSUInteger consumedBytes = 0;
-    while (offset < (NSInteger)keyringData.length) {
-        let packet = [PGPPacketFactory packetWithData:keyringData offset:offset consumedBytes:&consumedBytes];
+    while (offset < (NSInteger)data.length) {
+        let packet = [PGPPacketFactory packetWithData:data offset:offset consumedBytes:&consumedBytes];
         [accumulatedPackets pgp_addObject:packet];
 
-        // A compressed Packet contains more packets
+        // A compressed Packet contains more packets.
+        // TODO: Compression should be moved outside, be more generic to handle compressed packet from anywhere
         let _Nullable compressedPacket = PGPCast(packet, PGPCompressedPacket);
         if (compressedPacket) {
-            let packets = [self readPacketsFromData:compressedPacket.decompressedData offset:0];
-            [accumulatedPackets addObjectsFromArray:packets ?: @[]];
+            let uncompressedPackets = [self readPacketsFromData:compressedPacket.decompressedData offset:0];
+            [accumulatedPackets addObjectsFromArray:uncompressedPackets ?: @[]];
         }
 
         // corrupted data. Move by one byte in hope we find some packet there, or EOF.
@@ -83,14 +84,14 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (!self.encryptedData) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Missing encrypted data" }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Missing data to decrypt." }];
         }
         return @[];
     }
 
     if (secretKeyPacket.isEncryptedWithPassphrase) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Encrypted secret key used to decryption. Decrypt key first" }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt with the encrypted key. Decrypt key first." }];
         }
         return @[];
     }
@@ -110,7 +111,7 @@ NS_ASSUME_NONNULL_BEGIN
     // check if suffix match
     if (!PGPEqualObjects([prefixRandomFullData subdataWithRange:(NSRange){blockSize + 2 - 4, 2}] ,[prefixRandomFullData subdataWithRange:(NSRange){blockSize + 2 - 2, 2}])) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Random suffix mismatch" }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Validation failed. Random suffix mismatch." }];
         }
         return @[];
     }

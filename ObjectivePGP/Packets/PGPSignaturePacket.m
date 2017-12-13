@@ -348,6 +348,9 @@ NS_ASSUME_NONNULL_BEGIN
         let calculatedHashValueData = [[toHashData pgp_HashedWithAlgorithm:self.hashAlgoritm] subdataWithRange:(NSRange){0, 2}];
 
         if (!PGPEqualObjects(self.signedHashValueData, calculatedHashValueData)) {
+            if (error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Verification failed. Signature hash validation failed." }];
+            }
             return NO;
         }
     }

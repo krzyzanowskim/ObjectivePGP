@@ -189,21 +189,6 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error;
 
-
-/**
- Decrypt encrypted message data, and verify the signature.
-
- @param data Data to decrypt.
- @param passphrase Optional. Passphrase for the key to decrypt.
- @param key Key to use to decrypt message.
- @param isSigned Whether message is signed.
- @param isValid whether message is valid.
- @param isIntegrityProtected Whether message integrity is protected;
- @param error Error.
- @return Decrypted data.
- */
-+ (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString *)passphrase isSigned:(nullable BOOL *)isSigned hasValidSignature:(nullable BOOL *)hasValidSignature isContentModified:(nullable BOOL *)isContentModified error:(NSError * __autoreleasing _Nullable *)error;
-
 @end
 
 NS_ASSUME_NONNULL_END
