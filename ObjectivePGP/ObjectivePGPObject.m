@@ -248,10 +248,10 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 + (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error {
-    return [self decrypt:data usingKeys:keys passphrase:passphrase verifyWithKey:nil signed:nil valid:nil integrityProtected:nil error:error];
+    return [self decrypt:data usingKeys:keys passphrase:passphrase isSigned:nil hasValidSignature:nil isContentModified:nil error:error];
 }
 
-+ (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString *)passphrase verifyWithKey:(nullable PGPKey *)key signed:(nullable BOOL *)isSigned valid:(nullable BOOL *)isValid integrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError * __autoreleasing _Nullable *)error {
++ (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString *)passphrase isSigned:(nullable BOOL *)checkIfSigned hasValidSignature:(nullable BOOL *)checkValidSignature isContentModified:(nullable BOOL *)isContentModified error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(data, NSData);
     PGPAssertClass(keys, NSArray);
 
@@ -340,7 +340,7 @@ NS_ASSUME_NONNULL_BEGIN
             case PGPSymmetricallyEncryptedIntegrityProtectedDataPacketTag: {
                 // decrypt PGPSymmetricallyEncryptedIntegrityProtectedDataPacket
                 let _Nullable symEncryptedDataPacket = PGPCast(packet, PGPSymmetricallyEncryptedIntegrityProtectedDataPacket);
-                packets = [symEncryptedDataPacket decryptWithSecretKeyPacket:PGPNN(decryptionSecretKeyPacket) sessionKeyAlgorithm:sessionKeyAlgorithm sessionKeyData:sessionKeyData isIntegrityProtected:isIntegrityProtected error:error];
+                packets = [symEncryptedDataPacket decryptWithSecretKeyPacket:PGPNN(decryptionSecretKeyPacket) sessionKeyAlgorithm:sessionKeyAlgorithm sessionKeyData:sessionKeyData isContentModified:isContentModified error:error];
             } break;
             case PGPSymmetricallyEncryptedDataPacketTag: {
                 let _Nullable symEncryptedDataPacket = PGPCast(packet, PGPSymmetricallyEncryptedDataPacket);
@@ -381,9 +381,6 @@ NS_ASSUME_NONNULL_BEGIN
         }
     }
 
-    BOOL dataIsSigned = signaturePacket != nil;
-    if (isSigned) { *isSigned = dataIsSigned; }
-
     // available if literalPacket is available
     let _Nullable plaintextData = literalPacket.literalRawData;
     if (!plaintextData) {
@@ -393,14 +390,20 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    BOOL dataIsValid = NO;
-    if (signaturePacket && key.publicKey) {
-        let signatureData = [signaturePacket export:error];
-        if (signatureData) {
-            dataIsValid = [self verify:plaintextData withSignature:signatureData usingKey:PGPNN(key) error:error];
+    BOOL dataIsSigned = signaturePacket != nil;
+    if (checkIfSigned) { *checkIfSigned = dataIsSigned; }
+
+    if (checkValidSignature && dataIsSigned) {
+        let issuerKey = [self findKeyWithKeyID:signaturePacket.issuerKeyID in:keys];
+        if (!issuerKey) {
+            if (error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Can't check signature: No public key" }];
+            }
+        } else {
+            let signatureData = [signaturePacket export:error];
+            *checkValidSignature = [self verify:plaintextData withSignature:signatureData usingKey:issuerKey error:error];
         }
     }
-    if (isValid) { *isValid = dataIsValid; }
 
     return plaintextData;
 }
@@ -627,7 +630,7 @@ NS_ASSUME_NONNULL_BEGIN
         return NO;
     }
 
-    return [signaturePacket verifyData:signedData withKey:key userID:nil error:error];
+    return [signaturePacket verifyData:signedData publicKey:key error:error];
 }
 
 - (BOOL)verify:(NSData *)signedData error:(NSError * __autoreleasing _Nullable *)error {
