@@ -190,10 +190,19 @@
     XCTAssertEqual(keys.count, (NSUInteger)1);
 
     let data = [NSData dataWithContentsOfFile:[PGPTestUtils pathToBundledFile:@"issue62-message.asc"]];
-    NSError *error;
-    let decryptedData = [self.pgp decrypt:data passphrase:nil error:&error];
-    XCTAssertNil(error);
+    NSError *decryptError1;
+    let decryptedData = [self.pgp decrypt:data passphrase:nil error:&decryptError1];
+    XCTAssertNil(decryptError1);
     XCTAssertNotNil(decryptedData);
+
+    BOOL isSigned = NO;
+    BOOL hasValidSignature = NO;
+    BOOL isContentModified = NO;
+    NSError *decryptError2;
+    [ObjectivePGP decrypt:data usingKeys:keys passphrase:nil isSigned:&isSigned hasValidSignature:&hasValidSignature isContentModified:&isContentModified error:&decryptError2];
+    XCTAssertTrue(isSigned);
+    XCTAssertFalse(hasValidSignature);
+    XCTAssertFalse(isContentModified);
 }
 
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/59

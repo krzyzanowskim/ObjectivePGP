@@ -206,7 +206,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"%@, sign: %@, encrypt: %@", super.description, @(self.canBeUsedToSign), @(self.canBeUsedToEncrypt)];
+    return [NSString stringWithFormat:@"%@, issuerKeyID: %@, canBeUsedToSign: %@, canBeUsedToEncrypt: %@", super.description, self.issuerKeyID,  @(self.canBeUsedToSign), @(self.canBeUsedToEncrypt)];
 }
 
 - (nullable PGPMPI *)signatureMPI:(NSString *)identifier {
@@ -308,7 +308,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // Opposite to sign, with readed data (not produced)
-- (BOOL)verifyData:(NSData *)inputData withKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError * __autoreleasing _Nullable *)error {
+- (BOOL)verifyData:(NSData *)inputData publicKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError * __autoreleasing _Nullable *)error {
     // no signing packet was found, this we have no valid signature
     PGPAssertClass(signingKeyPacket, PGPPublicKeyPacket);
 
@@ -341,13 +341,13 @@ NS_ASSUME_NONNULL_BEGIN
     [toHashData appendData:signedPartData];
     [toHashData appendData:trailerData];
 
-    // FIXME: propably will fail on V3 signature, need investigate how to handle V3 scenario here
+    // TODO: Investigate how to handle V3 scenario here
     // check signed hash value, should match
     if (self.version == 0x04) {
         // Calculate hash value
-        let calculatedHashValueData = [toHashData pgp_HashedWithAlgorithm:self.hashAlgoritm];
+        let calculatedHashValueData = [[toHashData pgp_HashedWithAlgorithm:self.hashAlgoritm] subdataWithRange:(NSRange){0, 2}];
 
-        if (!PGPEqualObjects(self.signedHashValueData, [calculatedHashValueData subdataWithRange:(NSRange){0, 2}])) {
+        if (!PGPEqualObjects(self.signedHashValueData, calculatedHashValueData)) {
             return NO;
         }
     }

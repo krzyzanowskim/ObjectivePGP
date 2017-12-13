@@ -136,14 +136,9 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // return array of packets
-- (NSArray<PGPPacket *> *)decryptWithSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData isIntegrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError * __autoreleasing _Nullable *)error {
+- (NSArray<PGPPacket *> *)decryptWithSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData isContentModified:(nullable BOOL *)checkIsContentModified error:(NSError * __autoreleasing _Nullable *)error {
     NSAssert(self.encryptedData, @"Missing encrypted data to decrypt");
     NSAssert(secretKeyPacket, @"Missing secret key");
-
-    // initialize if Packet isIntegrityProtected
-    if (isIntegrityProtected) {
-        *isIntegrityProtected = NO;
-    }
 
     if (!self.encryptedData) {
         if (error) {
@@ -184,12 +179,9 @@ NS_ASSUME_NONNULL_BEGIN
 
     let _Nullable lastPacket = PGPCast(packets.lastObject, PGPPacket);
     if (!lastPacket || lastPacket.tag != PGPModificationDetectionCodePacketTag) {
-        // Not Integrity Protected, isIntegrityProtected will be reported to NO (see initialization)
+        // No Integrity Protected found, can't verify. Guess it's modified.
+        if (checkIsContentModified) { *checkIsContentModified = YES; }
         return packets;
-    }
-    // indicate accordingly if packet was found (might still be invalid)
-    if (isIntegrityProtected) {
-        *isIntegrityProtected = YES;
     }
 
     let _Nullable mdcPacket = PGPCast(lastPacket, PGPModificationDetectionCodePacket);
@@ -207,11 +199,13 @@ NS_ASSUME_NONNULL_BEGIN
     let mdcHash = [toMDCData pgp_SHA1];
     if (!mdcPacket || !PGPEqualObjects(mdcHash,mdcPacket.hashData)) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"MDC validation failed" }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Modification detection validation failed" }];
         }
+        if (checkIsContentModified) { *checkIsContentModified = YES; }
         return @[];
     }
 
+    if (checkIsContentModified) { *checkIsContentModified = NO; }
     return [packets subarrayWithRange:(NSRange){0, packets.count - 1}];
 }
 
