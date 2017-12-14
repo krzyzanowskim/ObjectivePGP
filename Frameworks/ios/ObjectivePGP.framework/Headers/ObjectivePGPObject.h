@@ -114,32 +114,23 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Verify signed data. Validates with the imported keys.
 
- @param signedData Signed data.
+ @param data Signed data.
+ @param detachedSignature Detached signature data (Optional). If not provided, `data` is checked for the signature.
  @param error Error
  @return YES on success.
  */
-- (BOOL)verify:(NSData *)data error:(NSError * __autoreleasing _Nullable *)error;
-
-/**
- Verify signed data, with detached signature data.
-
- @param signedData Signed data.
- @param signatureData Detached signature data.
- @param error Error
- @return YES on success.
- */
-- (BOOL)verify:(NSData *)data withSignature:(NSData *)signature error:(NSError * __autoreleasing _Nullable *)error;
+- (BOOL)verify:(NSData *)data withSignature:(nullable NSData *)detachedSignature passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error;
 
 /**
  Verify signed data using given key.
 
- @param signedData Signed data.
- @param signatureData Detached signature data.
- @param key Key to use.
+ @param data Signed data.
+ @param detachedSignature Detached signature data (Optional). If not provided, `data` is checked for the signature.
+ @param keys Public keys needed to verify the data. The provided keys should match the used signatures. Keys have to be already decrypted (see: `-[PGPKey decryptedWithPassphrase:error:]`) if necessarily.
  @param error Error.
  @return YES on success.
  */
-+ (BOOL)verify:(NSData *)data withSignature:(NSData *)signature usingKey:(PGPKey *)key error:(NSError * __autoreleasing _Nullable *)error;
++ (BOOL)verify:(NSData *)data withSignature:(nullable NSData *)detachedSignature usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error;
 
 /**
  Encrypt data using given keys. Output in binary or ASCII format.
@@ -188,21 +179,6 @@ NS_ASSUME_NONNULL_BEGIN
  @return Decrypted data, or `nil` if failed.
  */
 + (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error;
-
-
-/**
- Decrypt encrypted message data, and verify the signature.
-
- @param data Data to decrypt.
- @param passphrase Optional. Passphrase for the key to decrypt.
- @param key Key to use to decrypt message.
- @param isSigned Whether message is signed.
- @param isValid whether message is valid.
- @param isIntegrityProtected Whether message integrity is protected;
- @param error Error.
- @return Decrypted data.
- */
-+ (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString *)passphrase verifyWithKey:(nullable PGPKey *)key signed:(nullable BOOL *)isSigned valid:(nullable BOOL *)isValid integrityProtected:(nullable BOOL *)isIntegrityProtected error:(NSError * __autoreleasing _Nullable *)error;
 
 @end
 

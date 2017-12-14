@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PGPPacketFactory : NSObject
 
-+ (nullable PGPPacket *)packetWithData:(NSData *)packetsData offset:(NSUInteger)offset nextPacketOffset:(nullable NSUInteger *)nextPacketOffset;
++ (nullable PGPPacket *)packetWithData:(NSData *)packetsData offset:(NSUInteger)offset consumedBytes:(nullable NSUInteger *)consumedBytes;
 
 @end
 

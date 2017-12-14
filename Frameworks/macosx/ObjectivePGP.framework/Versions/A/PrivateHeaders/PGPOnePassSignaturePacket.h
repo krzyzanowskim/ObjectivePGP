@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) PGPHashAlgorithm hashAlgorith;
 @property (nonatomic) PGPPublicKeyAlgorithm publicKeyAlgorithm;
 @property (nonatomic, copy) PGPKeyID *keyID; // 8
-@property (nonatomic) BOOL notNested;
+@property (nonatomic) BOOL isNested;
 
 @end
 

@@ -13,7 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface PGPPacketHeader : NSObject
 
 @property (nonatomic) UInt32 headerLength;
-@property (nonatomic) UInt32 bodyLength;
+@property (nonatomic) NSUInteger bodyLength;
 @property (nonatomic) PGPPacketTag packetTag;
 
 // New format only
@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSData *)buildNewFormatLengthDataForData:(NSData *)bodyData;
 + (NSData *)buildOldFormatLengthDataForData:(NSData *)bodyData;
 
-+ (void)getLengthFromNewFormatOctets:(NSData *)lengthOctetsData bodyLength:(UInt32 *)bodyLength bytesCount:(UInt8 *)bytesCount isPartial:(nullable BOOL *)isPartial;
++ (void)getLengthFromNewFormatOctets:(NSData *)lengthOctetsData bodyLength:(NSUInteger *)bodyLength bytesCount:(UInt8 *)bytesCount isPartial:(nullable BOOL *)isPartial;
 
 @end
 
