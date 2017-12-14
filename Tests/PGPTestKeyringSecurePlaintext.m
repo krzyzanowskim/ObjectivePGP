@@ -143,7 +143,7 @@
     // Verify
     let keyToValidateSign = [self.pgp findKeyWithIdentifier:@"25A233C2952E4E8B"];
     NSError *verifyError = nil;
-    status = [ObjectivePGP verify:dataToSign withSignature:signatureData usingKeys:@[keyToValidateSign] error:&verifyError];
+    status = [ObjectivePGP verify:dataToSign withSignature:signatureData usingKeys:@[keyToValidateSign] passphrase:nil error:&verifyError];
     XCTAssertTrue(status);
     XCTAssertNil(verifyError);
 
@@ -157,7 +157,7 @@
     XCTAssertTrue(status);
 
     // Verify
-    status = [self.pgp verify:signedData withSignature:nil error:&verifyError];
+    status = [self.pgp verify:signedData withSignature:nil passphrase:nil error:&verifyError];
     XCTAssertTrue(status);
     XCTAssertNil(verifyError);
 }
@@ -249,7 +249,7 @@
 
     // decrypt + validate decrypted message
     NSData *decryptedData = [self.pgp decrypt:encryptedData passphrase:nil error:&encryptError];
-    XCTAssertNil(encryptError);
+    XCTAssertNotNil(encryptError);
     XCTAssertNotNil(decryptedData);
     NSString *decryptedString = [[NSString alloc] initWithData:decryptedData encoding:NSASCIIStringEncoding];
     XCTAssertNotNil(decryptedString);

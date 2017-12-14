@@ -119,18 +119,18 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error
  @return YES on success.
  */
-- (BOOL)verify:(NSData *)data withSignature:(nullable NSData *)detachedSignature error:(NSError * __autoreleasing _Nullable *)error;
+- (BOOL)verify:(NSData *)data withSignature:(nullable NSData *)detachedSignature passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error;
 
 /**
  Verify signed data using given key.
 
  @param data Signed data.
  @param detachedSignature Detached signature data (Optional). If not provided, `data` is checked for the signature.
- @param keys Public keys needed to verify the data. The provided keys should match the used signatures.
+ @param keys Public keys needed to verify the data. The provided keys should match the used signatures. Keys have to be already decrypted (see: `-[PGPKey decryptedWithPassphrase:error:]`) if necessarily.
  @param error Error.
  @return YES on success.
  */
-+ (BOOL)verify:(NSData *)data withSignature:(nullable NSData *)detachedSignature usingKeys:(NSArray<PGPKey *> *)keys error:(NSError * __autoreleasing _Nullable *)error;
++ (BOOL)verify:(NSData *)data withSignature:(nullable NSData *)detachedSignature usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error;
 
 /**
  Encrypt data using given keys. Output in binary or ASCII format.

@@ -251,11 +251,9 @@ NS_ASSUME_NONNULL_BEGIN
     PGPAssertClass(data, NSData);
     PGPAssertClass(keys, NSArray);
 
-    let binaryMessages = [ObjectivePGP convertArmoredMessage2BinaryBlocksWhenNecessary:data];
-
     // TODO: Decrypt all messages
-    let binaryMessageToDecrypt = binaryMessages.count > 0 ? binaryMessages.firstObject : nil;
-    if (!binaryMessageToDecrypt) {
+    let binaryMessage = [ObjectivePGP convertArmoredMessage2BinaryBlocksWhenNecessary:data].firstObject;
+    if (!binaryMessage) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Invalid message to decrypt." }];
         }
@@ -263,9 +261,10 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // parse packets
-    var packets = [ObjectivePGP readPacketsFromData:binaryMessageToDecrypt];
+    var packets = [ObjectivePGP readPacketsFromData:binaryMessage];
     packets = [self decryptPackets:packets usingKeys:keys passphrase:passphrase error:error];
 
+    // Decryption should fail if can't be verified. Call the verification at the end.
     // DON'T VALIDATE SIGNATURE HERE. RETURN DECRYPTED PACKETS DUDE!
     // ----------------------------------------- below, move to the validate functions!
 
@@ -324,6 +323,13 @@ NS_ASSUME_NONNULL_BEGIN
 //            *checkValidSignature = [self verify:plaintextData withSignature:signatureData usingKey:issuerKey error:error];
 //        }
 //    }
+
+    // Verify
+    if (![self verify:binaryMessage withSignature:nil usingKeys:keys passphrase:passphrase error:error]) {
+        if (error && !*error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unable to verify." }];
+        }
+    }
 
     return plaintextData;
 }
@@ -595,11 +601,11 @@ NS_ASSUME_NONNULL_BEGIN
     return signedMessage;
 }
 
-- (BOOL)verify:(NSData *)signedData withSignature:(nullable NSData *)detachedSignature error:(NSError * __autoreleasing _Nullable *)error {
-    return [self.class verify:signedData withSignature:detachedSignature usingKeys:self.keys error:error];
+- (BOOL)verify:(NSData *)signedData withSignature:(nullable NSData *)detachedSignature passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error {
+    return [self.class verify:signedData withSignature:detachedSignature usingKeys:self.keys passphrase:passphrase error:error];
 }
 
-+ (BOOL)verify:(NSData *)signedData withSignature:(nullable NSData *)detachedSignature usingKeys:(NSArray<PGPKey *> *)keys error:(NSError * __autoreleasing _Nullable *)error {
++ (BOOL)verify:(NSData *)signedData withSignature:(nullable NSData *)detachedSignature usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(signedData, NSData);
 
     let binaryMessages = [ObjectivePGP convertArmoredMessage2BinaryBlocksWhenNecessary:signedData];
@@ -648,34 +654,70 @@ NS_ASSUME_NONNULL_BEGIN
         }
     }
 
-    //Try to decrypt first, in case of encrypted message inside
     //TODO: use a block to get the passphrase for decryption per key
-    NSError *decryptError = nil;
-    accumulatedPackets = [[self.class decryptPackets:accumulatedPackets usingKeys:keys passphrase:nil error:&decryptError] mutableCopy];
+    //Try to decrypt first, in case of encrypted message inside
+    //Not every message needs decryption though! Check for ESK to reason about it
+    BOOL isEncrypted = [[accumulatedPackets pgp_objectsPassingTest:^BOOL(PGPPacket *packet, BOOL *stop) {
+        BOOL found = packet.tag == PGPPublicKeyEncryptedSessionKeyPacketTag;
+        *stop = found;
+        return found;
+    }] firstObject] != nil;
 
-    PGPSignaturePacket * _Nullable signaturePacket = nil;
-    PGPLiteralPacket * _Nullable literalDataPacket = nil;
-    for (PGPPacket *packet in accumulatedPackets) {
-        if (packet.tag == PGPSignaturePacketTag) {
-            signaturePacket = PGPCast(packet, PGPSignaturePacket);
-        }
-        if (packet.tag == PGPLiteralDataPacketTag) {
-            literalDataPacket = PGPCast(packet, PGPLiteralPacket);
+    if (isEncrypted) {
+        NSError *decryptError = nil;
+        accumulatedPackets = [[self.class decryptPackets:accumulatedPackets usingKeys:keys passphrase:passphrase error:&decryptError] mutableCopy];
+        if (decryptError) {
+            if (error) {
+                *error = [decryptError copy];
+            }
+            return NO;
         }
     }
 
-    if (!signaturePacket || !literalDataPacket) {
+    PGPSignaturePacket * _Nullable signaturePacket = nil;
+    PGPLiteralPacket * _Nullable literalPacket = nil;
+    for (PGPPacket *packet in accumulatedPackets) {
+        switch (packet.tag) {
+            case PGPCompressedDataPacketTag:
+            case PGPOnePassSignaturePacketTag:
+                // ignore here
+                break;
+            case PGPLiteralDataPacketTag:
+                literalPacket = PGPCast(packet, PGPLiteralPacket);
+                break;
+            case PGPSignaturePacketTag:
+                signaturePacket = PGPCast(packet, PGPSignaturePacket);
+                break;
+            default:
+                break;
+        }
+    }
+
+    if (!signaturePacket) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Message is not properly signed. Missing signature or literal data." }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Message is not signed." }];
         }
         return NO;
     }
 
-    let signedLiteralData = literalDataPacket.literalRawData;
+    if (!literalPacket) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Message is not valid. Missing literal data." }];
+        }
+        return NO;
+    }
+
+    let signedLiteralData = literalPacket.literalRawData;
     if (signedLiteralData && (!error || (error && *error == nil))) {
         let issuerKeyID = signaturePacket.issuerKeyID;
         if (issuerKeyID) {
             let issuerKey = [self findKeyWithKeyID:issuerKeyID in:keys];
+            if (!issuerKey) {
+                if (error) {
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Unable to check signature. No public key." }];
+                }
+                return NO;
+            }
             return [signaturePacket verifyData:signedLiteralData publicKey:issuerKey error:error];
         }
     }

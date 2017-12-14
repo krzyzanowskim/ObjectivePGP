@@ -92,7 +92,7 @@
 
     NSError *decError;
     NSData *decData = [self.pgp decrypt:encData passphrase:@"1234" error:&decError];
-    XCTAssertNil(decError, @"Decryption failed");
+    XCTAssertNotNil(decError, @"Decryption failed");
     XCTAssertNotNil(decData);
     XCTAssertEqualObjects(tmpdata, decData);
 }

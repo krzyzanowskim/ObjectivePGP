@@ -63,7 +63,7 @@
     let sign = [ObjectivePGP sign:dataToSign usingKey:key passphrase:nil detached:YES error:nil];
     XCTAssertNotNil(sign);
 
-    BOOL isVerified = [ObjectivePGP verify:dataToSign withSignature:sign usingKeys:@[key] error:nil];
+    BOOL isVerified = [ObjectivePGP verify:dataToSign withSignature:sign usingKeys:@[key] passphrase:nil error:nil];
     XCTAssertTrue(isVerified);
 
     // test export
@@ -191,21 +191,10 @@
 
     let data = [NSData dataWithContentsOfFile:[PGPTestUtils pathToBundledFile:@"issue62-message.asc"]];
     NSError *decryptError1;
-    let decryptedData1 = [self.pgp decrypt:data passphrase:nil error:&decryptError1];
-    XCTAssertNil(decryptError1);
-    XCTAssertNotNil(decryptedData1);
-
-//    BOOL isSigned = NO;
-//    BOOL hasValidSignature = NO;
-//    BOOL isContentModified = NO;
-    NSError *decryptError2;
     // let decryptedData2 = [ObjectivePGP decrypt:data usingKeys:keys passphrase:nil isSigned:&isSigned hasValidSignature:&hasValidSignature isContentModified:&isContentModified error:&decryptError2];
-    let decryptedData2 = [ObjectivePGP decrypt:data usingKeys:keys passphrase:nil error:&decryptError2];
-    XCTAssertNotNil(decryptedData2);
-    XCTAssertNil(decryptError2);
-//    XCTAssertTrue(isSigned);
-//    XCTAssertFalse(hasValidSignature);
-//    XCTAssertFalse(isContentModified);
+    let decryptedData1 = [ObjectivePGP decrypt:data usingKeys:keys passphrase:nil error:&decryptError1];
+    XCTAssertNotNil(decryptedData1);
+    XCTAssertNotNil(decryptError1);
 }
 
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/59
@@ -258,7 +247,7 @@
     let messagePath = [PGPTestUtils pathToBundledFile:@"issue88-message.asc"];
     let messageData = [NSData dataWithContentsOfFile:messagePath];
     NSError *verifyError = nil;
-    BOOL verified = [pgp verify:messageData withSignature:nil error:&verifyError];
+    BOOL verified = [pgp verify:messageData withSignature:nil passphrase:nil error:&verifyError];
     XCTAssertNil(verifyError);
     XCTAssertTrue(verified);
 
@@ -291,7 +280,7 @@
     NSError *decryptError = nil;
     let decrypted = [pgp decrypt:messageData passphrase:@"abcd" error:&decryptError];
     XCTAssertNotNil(decrypted);
-    XCTAssertNil(decryptError);
+    XCTAssertNotNil(decryptError); // not signed
 }
 
 - (void)testSigningSubKey {
