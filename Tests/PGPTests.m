@@ -63,7 +63,7 @@
     let sign = [ObjectivePGP sign:dataToSign usingKey:key passphrase:nil detached:YES error:nil];
     XCTAssertNotNil(sign);
 
-    BOOL isVerified = [ObjectivePGP verify:dataToSign withSignature:sign usingKey:key error:nil];
+    BOOL isVerified = [ObjectivePGP verify:dataToSign withSignature:sign usingKeys:@[key] error:nil];
     XCTAssertTrue(isVerified);
 
     // test export
@@ -258,7 +258,7 @@
     let messagePath = [PGPTestUtils pathToBundledFile:@"issue88-message.asc"];
     let messageData = [NSData dataWithContentsOfFile:messagePath];
     NSError *verifyError = nil;
-    BOOL verified = [pgp verify:messageData error:&verifyError];
+    BOOL verified = [pgp verify:messageData withSignature:nil error:&verifyError];
     XCTAssertNil(verifyError);
     XCTAssertTrue(verified);
 

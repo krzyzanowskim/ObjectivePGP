@@ -595,54 +595,11 @@ NS_ASSUME_NONNULL_BEGIN
     return signedMessage;
 }
 
-- (BOOL)verify:(NSData *)signedData withSignature:(NSData *)signatureData error:(NSError * __autoreleasing _Nullable *)error {
-    PGPAssertClass(signedData, NSData);
-    PGPAssertClass(signatureData, NSData);
-
-    let binarySignatureData = [ObjectivePGP convertArmoredMessage2BinaryBlocksWhenNecessary:signatureData].firstObject;
-
-    // search for key in keys
-    let packet = [PGPPacketFactory packetWithData:binarySignatureData offset:0 consumedBytes:nil];
-    let signaturePacket = PGPCast(packet, PGPSignaturePacket);
-    if (!signaturePacket) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing signature packet" }];
-        }
-        return NO;
-    }
-
-    let issuerKeyID = signaturePacket.issuerKeyID;
-    let issuerKey = [self findKeyWithKeyID:issuerKeyID];
-    if (!issuerKey) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing signature" }];
-        }
-        return NO;
-    }
-
-    return [ObjectivePGP verify:signedData withSignature:binarySignatureData usingKey:issuerKey error:error];
+- (BOOL)verify:(NSData *)signedData withSignature:(nullable NSData *)detachedSignature error:(NSError * __autoreleasing _Nullable *)error {
+    return [self.class verify:signedData withSignature:detachedSignature usingKeys:self.keys error:error];
 }
 
-+ (BOOL)verify:(NSData *)signedData withSignature:(NSData *)signatureData usingKey:(PGPKey *)key error:(NSError * __autoreleasing _Nullable *)error {
-    PGPAssertClass(signedData, NSData);
-    PGPAssertClass(signatureData, NSData);
-    PGPAssertClass(key, PGPKey);
-
-    let binarySignatureData = [ObjectivePGP convertArmoredMessage2BinaryBlocksWhenNecessary:signatureData].firstObject;
-
-    let packet = [PGPPacketFactory packetWithData:binarySignatureData offset:0 consumedBytes:nil];
-    let signaturePacket = PGPCast(packet, PGPSignaturePacket);
-    if (!signaturePacket) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing signature" }];
-        }
-        return NO;
-    }
-
-    return [signaturePacket verifyData:signedData publicKey:key error:error];
-}
-
-- (BOOL)verify:(NSData *)signedData error:(NSError * __autoreleasing _Nullable *)error {
++ (BOOL)verify:(NSData *)signedData withSignature:(nullable NSData *)detachedSignature usingKeys:(NSArray<PGPKey *> *)keys error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(signedData, NSData);
 
     let binaryMessages = [ObjectivePGP convertArmoredMessage2BinaryBlocksWhenNecessary:signedData];
@@ -655,9 +612,28 @@ NS_ASSUME_NONNULL_BEGIN
         return NO;
     }
 
-    // this is propably not the best solution when it comes to memory consumption
-    // because literal data is copied more than once (first at parse phase, then when is come to build signature packet data
-    // I belive this is unecessary but require more work. Schedule to v2.0
+    // Use detached signature if provided.
+    // In that case treat input data as blob to be verified with the signature. Don't parse it.
+    if (detachedSignature) {
+        let binarydetachedSignature = [ObjectivePGP convertArmoredMessage2BinaryBlocksWhenNecessary:detachedSignature].firstObject;
+        if (binarydetachedSignature) {
+            let packet = [PGPPacketFactory packetWithData:binarydetachedSignature offset:0 consumedBytes:nil];
+            let signaturePacket = PGPCast(packet, PGPSignaturePacket);
+            let issuerKeyID = signaturePacket.issuerKeyID;
+            if (issuerKeyID) {
+                let issuerKey = [self findKeyWithKeyID:issuerKeyID in:keys];
+                return [signaturePacket verifyData:binarySignedData publicKey:issuerKey error:error];
+            }
+        }
+        return NO;
+    }
+
+    // Otherwise treat input data as PGP Message and process for literal data.
+
+    // Propably not the best solution when it comes to memory consumption.
+    // Literal data is copied more than once (first at parse phase, then when is come to build signature packet data.
+    // I belive this is unecessary but require more work. Schedule to v2.0.
+
     // search for signature packet
     var accumulatedPackets = [NSMutableArray<PGPPacket *> array];
     NSUInteger offset = 0;
@@ -668,7 +644,6 @@ NS_ASSUME_NONNULL_BEGIN
         while (offset < binarySignedData.length) {
             let packet = [PGPPacketFactory packetWithData:binarySignedData offset:offset consumedBytes:&consumedBytes];
             [accumulatedPackets pgp_addObject:packet];
-
             offset += consumedBytes;
         }
     }
@@ -676,11 +651,10 @@ NS_ASSUME_NONNULL_BEGIN
     //Try to decrypt first, in case of encrypted message inside
     //TODO: use a block to get the passphrase for decryption per key
     NSError *decryptError = nil;
-    accumulatedPackets = [[self.class decryptPackets:accumulatedPackets usingKeys:self.keys passphrase:nil error:&decryptError] mutableCopy];
+    accumulatedPackets = [[self.class decryptPackets:accumulatedPackets usingKeys:keys passphrase:nil error:&decryptError] mutableCopy];
 
     PGPSignaturePacket * _Nullable signaturePacket = nil;
     PGPLiteralPacket * _Nullable literalDataPacket = nil;
-
     for (PGPPacket *packet in accumulatedPackets) {
         if (packet.tag == PGPSignaturePacketTag) {
             signaturePacket = PGPCast(packet, PGPSignaturePacket);
@@ -697,10 +671,13 @@ NS_ASSUME_NONNULL_BEGIN
         return NO;
     }
 
-    let signaturePacketData = [signaturePacket export:error];
-
-    if (signaturePacketData && literalDataPacket.literalRawData && (!error || (error && *error == nil))) {
-        return [self verify:literalDataPacket.literalRawData withSignature:signaturePacketData error:error];
+    let signedLiteralData = literalDataPacket.literalRawData;
+    if (signedLiteralData && (!error || (error && *error == nil))) {
+        let issuerKeyID = signaturePacket.issuerKeyID;
+        if (issuerKeyID) {
+            let issuerKey = [self findKeyWithKeyID:issuerKeyID in:keys];
+            return [signaturePacket verifyData:signedLiteralData publicKey:issuerKey error:error];
+        }
     }
     return NO;
 }

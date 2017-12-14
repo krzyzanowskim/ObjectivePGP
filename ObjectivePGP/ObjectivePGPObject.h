@@ -114,32 +114,23 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Verify signed data. Validates with the imported keys.
 
- @param signedData Signed data.
+ @param data Signed data.
+ @param detachedSignature Detached signature data (Optional). If not provided, `data` is checked for the signature.
  @param error Error
  @return YES on success.
  */
-- (BOOL)verify:(NSData *)data error:(NSError * __autoreleasing _Nullable *)error;
-
-/**
- Verify signed data, with detached signature data.
-
- @param signedData Signed data.
- @param signatureData Detached signature data.
- @param error Error
- @return YES on success.
- */
-- (BOOL)verify:(NSData *)data withSignature:(NSData *)signature error:(NSError * __autoreleasing _Nullable *)error;
+- (BOOL)verify:(NSData *)data withSignature:(nullable NSData *)detachedSignature error:(NSError * __autoreleasing _Nullable *)error;
 
 /**
  Verify signed data using given key.
 
- @param signedData Signed data.
- @param signatureData Detached signature data.
- @param key Key to use.
+ @param data Signed data.
+ @param detachedSignature Detached signature data (Optional). If not provided, `data` is checked for the signature.
+ @param keys Public keys needed to verify the data. The provided keys should match the used signatures.
  @param error Error.
  @return YES on success.
  */
-+ (BOOL)verify:(NSData *)data withSignature:(NSData *)signature usingKey:(PGPKey *)key error:(NSError * __autoreleasing _Nullable *)error;
++ (BOOL)verify:(NSData *)data withSignature:(nullable NSData *)detachedSignature usingKeys:(NSArray<PGPKey *> *)keys error:(NSError * __autoreleasing _Nullable *)error;
 
 /**
  Encrypt data using given keys. Output in binary or ASCII format.
