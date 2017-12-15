@@ -60,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  5.2.3.1.  Signature Subpacket Specification
  *
- *  @param packetBody A single subpacket body data.
+ *  @param packetBodyData A single subpacket body data.
  */
 - (void)parseSubpacketBody:(NSData *)packetBodyData {
     switch (self.type & 0x7F) {

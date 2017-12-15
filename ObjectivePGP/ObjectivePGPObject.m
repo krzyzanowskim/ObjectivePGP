@@ -265,7 +265,9 @@ NS_ASSUME_NONNULL_BEGIN
     packets = [self decryptPackets:packets usingKeys:keys passphraseForKey:passphraseForKeyBlock error:error];
 
     let literalPacket = PGPCast([[packets pgp_objectsPassingTest:^BOOL(PGPPacket *packet, BOOL *stop) {
-        return packet.tag == PGPLiteralDataPacketTag;
+        BOOL found = packet.tag == PGPLiteralDataPacketTag;
+        *stop = found;
+        return found;
     }] firstObject], PGPLiteralPacket);
 
     // Plaintext is available if literalPacket is available
@@ -431,8 +433,8 @@ NS_ASSUME_NONNULL_BEGIN
     NSData *content;
     // sign data if requested
     if (signKey) {
-        let passphrase = passphraseForKeyBlock(signKey);
-        content = [self sign:dataToEncrypt usingKey:signKey passphrase:passphrase hashAlgorithm:PGPHashSHA512 detached:NO error:error];
+        let passphrase = passphraseForKeyBlock(PGPNN(signKey));
+        content = [self sign:dataToEncrypt usingKey:PGPNN(signKey) passphrase:passphrase hashAlgorithm:PGPHashSHA512 detached:NO error:error];
     } else {
         // Prepare literal packet
         let literalPacket = [PGPLiteralPacket literalPacket:PGPLiteralPacketBinary withData:dataToEncrypt];

@@ -43,7 +43,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSData *)image {
     // find image uset attribute
     let imageAttributeSubpacket = PGPCast([[self.userAttribute.subpackets pgp_objectsPassingTest:^BOOL(PGPUserAttributeSubpacket * _Nonnull subpacket, BOOL * _Nonnull stop) {
-        return subpacket.type == PGPUserAttributeSubpacketImage;
+        BOOL found = subpacket.type == PGPUserAttributeSubpacketImage;
+        *stop = found;
+        return found;
     }] firstObject], PGPUserAttributeImageSubpacket);
 
     return imageAttributeSubpacket.image;
@@ -57,7 +59,9 @@ NS_ASSUME_NONNULL_BEGIN
 
     NSMutableArray<PGPUserAttributeSubpacket *> *subpackets = [self.userAttribute.subpackets mutableCopy];
     let imageSubpacketIndex = [subpackets indexOfObjectPassingTest:^BOOL(PGPUserAttributeSubpacket * _Nonnull subpacket, NSUInteger idx, BOOL * _Nonnull stop) {
-        return subpacket.type == PGPUserAttributeSubpacketImage;
+        BOOL found = subpacket.type == PGPUserAttributeSubpacketImage;
+        *stop = found;
+        return found;
     }];
 
     if (imageSubpacketIndex != NSNotFound) {

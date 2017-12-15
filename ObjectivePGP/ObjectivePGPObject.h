@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Import key with given identifier
 
- @param keyIdentifier Short (8 characters) key identifier to load.
+ @param identifier Short (8 characters) key identifier to load.
  @param path Path to the file with the keys.
  @return YES on success.
  */
@@ -150,7 +150,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param data Data to encrypt and sign.
  @param keys Keys to use to encrypte `data`.
  @param signKey Key to use to sign `data`.
- @param passphrase Optional. Passphrase for signature key.
+ @param passphraseForKeyBlock Optional. Passphrase for signature key.
  @param armored Whether the output data should be armored (ASCII format) or not.
  @param error Error.
  @return Encrypted and signed data in requested format.
@@ -162,7 +162,7 @@ NS_ASSUME_NONNULL_BEGIN
  Decrypt PGP encrypted data.
 
  @param data data to decrypt.
- @param passphrase Optional. Passphrase for the key to decrypt.
+ @param passphraseForKeyBlock Optional. Passphrase for the key to decrypt.
  @param error Optional. Error.
  @return Decrypted data, or `nil` if failed.
  */
@@ -174,7 +174,7 @@ NS_ASSUME_NONNULL_BEGIN
 
  @param data data to decrypt.
  @param keys private keys to use.
- @param passphrase Optional. Key passphrase.
+ @param passphraseForKeyBlock Optional. Key passphrase.
  @param verifySignature `YES` if should verify the signature used during encryption, if message is encrypted and signed.
  @param error Optional. Error.
  @return Decrypted data, or `nil` if failed.

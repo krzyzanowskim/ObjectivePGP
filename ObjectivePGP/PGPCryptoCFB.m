@@ -131,7 +131,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPSymmetricCAST5: {
             // initialize
             CAST_KEY encrypt_key;
-            CAST_set_key(&encrypt_key, MIN((unsigned int)keySize, (unsigned int)sessionKeyData.length), sessionKeyData.bytes);
+            CAST_set_key(&encrypt_key, MIN((int)keySize, (int)sessionKeyData.length), sessionKeyData.bytes);
 
             // CAST_ecb_encrypt(in, out, encrypt_key, CAST_ENCRYPT);
             int num = 0; //	how much of the 64bit block we have used
@@ -142,7 +142,7 @@ NS_ASSUME_NONNULL_BEGIN
         } break;
         case PGPSymmetricBlowfish: {
             BF_KEY encrypt_key;
-            BF_set_key(&encrypt_key, MIN((unsigned int)keySize, (unsigned int)sessionKeyData.length), sessionKeyData.bytes);
+            BF_set_key(&encrypt_key, MIN((int)keySize, (int)sessionKeyData.length), sessionKeyData.bytes);
 
             int num = 0; //    how much of the 64bit block we have used
             BF_cfb64_encrypt(encryptedBytes, outBuffer, outBufferLength, &encrypt_key, iv, &num, decrypt ? BF_DECRYPT : BF_ENCRYPT);

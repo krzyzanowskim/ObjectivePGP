@@ -216,7 +216,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // decrypted PKCS emsa
-    NSData *decryptedEm = [NSData dataWithBytes:decrypted_em length:em_len];
+    let decryptedEm = [NSData dataWithBytes:decrypted_em length:em_len];
 
     rsa->n = rsa->e = NULL;
 

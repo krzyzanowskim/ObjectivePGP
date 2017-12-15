@@ -58,7 +58,7 @@
     } while (b != 0x00 && position < (m.length - 1));
 
     // last read is separator 0x00, so current position at start of M
-    NSData *emData = [m subdataWithRange:(NSRange){position, m.length - position}];
+    let emData = [m subdataWithRange:(NSRange){position, m.length - position}];
     return emData;
 }
 
