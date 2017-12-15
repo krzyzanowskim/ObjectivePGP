@@ -119,7 +119,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error
  @return YES on success.
  */
-- (BOOL)verify:(NSData *)data withSignature:(nullable NSData *)detachedSignature passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error;
+- (BOOL)verify:(NSData *)data withSignature:(nullable NSData *)detachedSignature passphraseForKey:(nullable NSString * _Nullable(^)(PGPKey *key))passphraseForKeyBlock error:(NSError * __autoreleasing _Nullable *)error;
 
 /**
  Verify signed data using given key.
@@ -130,7 +130,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error.
  @return YES on success.
  */
-+ (BOOL)verify:(NSData *)data withSignature:(nullable NSData *)detachedSignature usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error;
++ (BOOL)verify:(NSData *)data withSignature:(nullable NSData *)detachedSignature usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^)(PGPKey *key))passphraseForKeyBlock error:(NSError * __autoreleasing _Nullable *)error;
 
 /**
  Encrypt data using given keys. Output in binary or ASCII format.
@@ -141,7 +141,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error.
  @return Encrypted data in requested format.
  */
-+ (nullable NSData *)encrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys armored:(BOOL)armored error:(NSError * __autoreleasing _Nullable *)error;
++ (nullable NSData *)encrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^)(PGPKey *key))passphraseForKeyBlock armored:(BOOL)armored error:(NSError * __autoreleasing _Nullable *)error;
 
 
 /**
@@ -155,7 +155,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Error.
  @return Encrypted and signed data in requested format.
  */
-+ (nullable NSData *)encrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys signWithKey:(nullable PGPKey *)signKey passphrase:(nullable NSString *)passphrase armored:(BOOL)armored error:(NSError * __autoreleasing _Nullable *)error;
++ (nullable NSData *)encrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys signWithKey:(nullable PGPKey *)signKey passphraseForKey:(nullable NSString * _Nullable(^)(PGPKey *key))passphraseForKeyBlock armored:(BOOL)armored error:(NSError * __autoreleasing _Nullable *)error;
 
 
 /**
@@ -166,7 +166,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Optional. Error.
  @return Decrypted data, or `nil` if failed.
  */
-- (nullable NSData *)decrypt:(NSData *)data passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error;
+- (nullable NSData *)decrypt:(NSData *)data passphraseForKey:(nullable NSString * _Nullable(^)(PGPKey *key))passphraseForKeyBlock error:(NSError * __autoreleasing _Nullable *)error;
 
 
 /**
@@ -179,7 +179,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Optional. Error.
  @return Decrypted data, or `nil` if failed.
  */
-+ (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString *)passphrase verifySignature:(BOOL)verifySignature error:(NSError * __autoreleasing _Nullable *)error;
++ (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^)(PGPKey *key))passphraseForKeyBlock verifySignature:(BOOL)verifySignature error:(NSError * __autoreleasing _Nullable *)error;
 
 @end
 

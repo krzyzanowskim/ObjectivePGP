@@ -143,7 +143,7 @@
     // Verify
     let keyToValidateSign = [self.pgp findKeyWithIdentifier:@"25A233C2952E4E8B"];
     NSError *verifyError = nil;
-    status = [ObjectivePGP verify:dataToSign withSignature:signatureData usingKeys:@[keyToValidateSign] passphrase:nil error:&verifyError];
+    status = [ObjectivePGP verify:dataToSign withSignature:signatureData usingKeys:@[keyToValidateSign] passphraseForKey:nil error:&verifyError];
     XCTAssertTrue(status);
     XCTAssertNil(verifyError);
 
@@ -157,7 +157,7 @@
     XCTAssertTrue(status);
 
     // Verify
-    status = [self.pgp verify:signedData withSignature:nil passphrase:nil error:&verifyError];
+    status = [self.pgp verify:signedData withSignature:nil passphraseForKey:nil error:&verifyError];
     XCTAssertTrue(status);
     XCTAssertNil(verifyError);
 }
@@ -181,7 +181,7 @@
 
     // encrypt PLAINTEXT
     NSError *encryptError = nil;
-    NSData *encryptedData = [ObjectivePGP encrypt:plainData usingKeys:@[keyToEncrypt] armored:NO error:&encryptError];
+    NSData *encryptedData = [ObjectivePGP encrypt:plainData usingKeys:@[keyToEncrypt] passphraseForKey:nil armored:NO error:&encryptError];
     XCTAssertNil(encryptError);
     XCTAssertNotNil(encryptedData);
 
@@ -191,14 +191,14 @@
     XCTAssertTrue(status);
 
     // decrypt + validate decrypted message
-    NSData *decryptedData = [self.pgp decrypt:encryptedData passphrase:nil error:nil];
+    NSData *decryptedData = [self.pgp decrypt:encryptedData passphraseForKey:nil error:nil];
     XCTAssertNotNil(decryptedData);
     NSString *decryptedString = [[NSString alloc] initWithData:decryptedData encoding:NSASCIIStringEncoding];
     XCTAssertNotNil(decryptedString);
     XCTAssertEqualObjects(decryptedString, PLAINTEXT, @"Decrypted data mismatch");
 
     // ARMORED
-    NSData *encryptedDataArmored = [ObjectivePGP encrypt:plainData usingKeys:@[keyToEncrypt] armored:YES error:&encryptError];
+    NSData *encryptedDataArmored = [ObjectivePGP encrypt:plainData usingKeys:@[keyToEncrypt] passphraseForKey:nil armored:YES error:&encryptError];
     XCTAssertNil(encryptError);
     XCTAssertNotNil(encryptedDataArmored);
 
@@ -216,7 +216,7 @@
 
     NSError *error = nil;
     NSString *encryptedPath = [PGPTestUtils pathToBundledFile:@"secring-test-plaintext-encrypted-message.asc"];
-    [self.pgp decrypt:[NSData dataWithContentsOfFile:encryptedPath] passphrase:nil error:&error];
+    [self.pgp decrypt:[NSData dataWithContentsOfFile:encryptedPath] passphraseForKey:nil error:&error];
 }
 
 - (void)testEncryptWithMultipleRecipients {
@@ -238,7 +238,7 @@
 
     // encrypt PLAINTEXT
     NSError *encryptError = nil;
-    NSData *encryptedData = [ObjectivePGP encrypt:plainData usingKeys:@[keyToEncrypt1, keyToEncrypt2] armored:NO error:&encryptError];
+    NSData *encryptedData = [ObjectivePGP encrypt:plainData usingKeys:@[keyToEncrypt1, keyToEncrypt2] passphraseForKey:nil armored:NO error:&encryptError];
     XCTAssertNil(encryptError);
     XCTAssertNotNil(encryptedData);
 
@@ -248,7 +248,7 @@
     XCTAssertTrue(status);
 
     // decrypt + validate decrypted message
-    NSData *decryptedData = [self.pgp decrypt:encryptedData passphrase:nil error:&encryptError];
+    NSData *decryptedData = [self.pgp decrypt:encryptedData passphraseForKey:nil error:&encryptError];
     XCTAssertNotNil(encryptError);
     XCTAssertNotNil(decryptedData);
     NSString *decryptedString = [[NSString alloc] initWithData:decryptedData encoding:NSASCIIStringEncoding];

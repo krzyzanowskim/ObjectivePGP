@@ -272,7 +272,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  TODO: V3 support - partially supported, need testing.
  *  NOTE: Decrypted packet data should be released/forget after use
  */
-- (nullable PGPSecretKeyPacket *)decryptedWithPassphrase:(NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error {
+- (nullable PGPSecretKeyPacket *)decryptedWithPassphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(passphrase, NSString);
 
     if (!self.isEncryptedWithPassphrase) {

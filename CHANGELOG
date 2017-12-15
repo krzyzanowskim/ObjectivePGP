@@ -1,6 +1,7 @@
 Version 0.9.6
 - Enable Symmetrically Encrypted Data Packet support. Fixes #91
 - Fix partial length packets calculations.
+- Refactor validation API due to internal improvements.
 
 Version 0.9.5
 - Methods that get keys as parameter are now class methods, +[ObjectivePGP ...]

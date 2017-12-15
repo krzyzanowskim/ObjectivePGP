@@ -63,7 +63,7 @@
     let sign = [ObjectivePGP sign:dataToSign usingKey:key passphrase:nil detached:YES error:nil];
     XCTAssertNotNil(sign);
 
-    BOOL isVerified = [ObjectivePGP verify:dataToSign withSignature:sign usingKeys:@[key] passphrase:nil error:nil];
+    BOOL isVerified = [ObjectivePGP verify:dataToSign withSignature:sign usingKeys:@[key] passphraseForKey:nil error:nil];
     XCTAssertTrue(isVerified);
 
     // test export
@@ -161,7 +161,7 @@
     let messagePath = [PGPTestUtils pathToBundledFile:@"issue35-message.asc"];
     let keys = [PGPTestUtils readKeysFromFile:@"issue35-key.asc"];
     NSError *error = nil;
-    [ObjectivePGP decrypt:[NSData dataWithContentsOfFile:messagePath] usingKeys:keys passphrase:nil error:&error];
+    [ObjectivePGP decrypt:[NSData dataWithContentsOfFile:messagePath] usingKeys:keys passphraseForKey:nil verifySignature:YES error:&error];
 }
 
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/53
@@ -191,8 +191,7 @@
 
     let data = [NSData dataWithContentsOfFile:[PGPTestUtils pathToBundledFile:@"issue62-message.asc"]];
     NSError *decryptError1;
-    // let decryptedData2 = [ObjectivePGP decrypt:data usingKeys:keys passphrase:nil isSigned:&isSigned hasValidSignature:&hasValidSignature isContentModified:&isContentModified error:&decryptError2];
-    let decryptedData1 = [ObjectivePGP decrypt:data usingKeys:keys passphrase:nil error:&decryptError1];
+    let decryptedData1 = [ObjectivePGP decrypt:data usingKeys:keys passphraseForKey:nil verifySignature:YES error:&decryptError1];
     XCTAssertNotNil(decryptedData1);
     XCTAssertNotNil(decryptError1);
 }
@@ -218,15 +217,15 @@
     let message = [@"test message" dataUsingEncoding:NSUTF8StringEncoding];
 
     NSError *encryptError;
-    let encryptedMessage = [ObjectivePGP encrypt:message usingKeys:publicKeys armored:YES error:&encryptError];
+    let encryptedMessage = [ObjectivePGP encrypt:message usingKeys:publicKeys passphraseForKey:nil armored:YES error:&encryptError];
 
     NSError *decryptError1;
-    let decryptedMessage1 = [pgp decrypt:encryptedMessage passphrase:nil error:&decryptError1];
+    let decryptedMessage1 = [pgp decrypt:encryptedMessage passphraseForKey:nil error:&decryptError1];
     XCTAssertEqualObjects(decryptedMessage1, nil);
 
 
     NSError *decryptError2;
-    let decryptedMessage2 = [pgp decrypt:encryptedMessage passphrase:@"test" error:&decryptError2];
+    let decryptedMessage2 = [pgp decrypt:encryptedMessage passphraseForKey:^NSString * _Nullable(PGPKey *k) { return @"test"; } error:&decryptError2];
     XCTAssertEqualObjects(decryptedMessage2, message);
 }
 
@@ -247,12 +246,12 @@
     let messagePath = [PGPTestUtils pathToBundledFile:@"issue88-message.asc"];
     let messageData = [NSData dataWithContentsOfFile:messagePath];
     NSError *verifyError = nil;
-    BOOL verified = [pgp verify:messageData withSignature:nil passphrase:nil error:&verifyError];
+    BOOL verified = [pgp verify:messageData withSignature:nil passphraseForKey:nil error:&verifyError];
     XCTAssertNil(verifyError);
     XCTAssertTrue(verified);
 
     NSError *decryptError = nil;
-    let decrypted = [pgp decrypt:messageData passphrase:nil error:&decryptError];
+    let decrypted = [pgp decrypt:messageData passphraseForKey:nil error:&decryptError];
     // let txt = [[NSString alloc] initWithData:decrypted encoding:NSUTF8StringEncoding];
     XCTAssertNotNil(decrypted);
     XCTAssertNil(decryptError);
@@ -278,7 +277,7 @@
     [pgp importKeys:pubKeys];
     [pgp importKeys:secKeys];
     NSError *decryptError = nil;
-    let decrypted = [pgp decrypt:messageData passphrase:@"abcd" error:&decryptError];
+    let decrypted = [pgp decrypt:messageData passphraseForKey:^NSString * _Nullable(PGPKey *k) { return @"abcd"; } error:&decryptError];
     XCTAssertNotNil(decrypted);
     XCTAssertNotNil(decryptError); // not signed
 }
