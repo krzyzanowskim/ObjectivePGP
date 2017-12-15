@@ -255,7 +255,7 @@ NS_ASSUME_NONNULL_BEGIN
     let binaryMessage = [ObjectivePGP convertArmoredMessage2BinaryBlocksWhenNecessary:data].firstObject;
     if (!binaryMessage) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Invalid message to decrypt." }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Invalid message to decrypt." }];
         }
         return nil;
     }
@@ -285,7 +285,7 @@ NS_ASSUME_NONNULL_BEGIN
 //                break;
 //            default:
 //                if (error) {
-//                    *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unexpected packet" }];
+//                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Unexpected packet" }];
 //                }
 //                return nil;
 //        }
@@ -304,7 +304,7 @@ NS_ASSUME_NONNULL_BEGIN
     let plaintextData = literalPacket.literalRawData;
     if (!plaintextData) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Nothing to decrypt." }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Nothing to decrypt." }];
         }
         return nil;
     }
@@ -316,7 +316,7 @@ NS_ASSUME_NONNULL_BEGIN
 //        let issuerKey = [self findKeyWithKeyID:signaturePacket.issuerKeyID in:keys];
 //        if (!issuerKey) {
 //            if (error) {
-//                *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Can't check signature: No public key" }];
+//                *error = [NSError errorWithDomain:PGPErrorDomain code: userInfo:@{ NSLocalizedDescriptionKey: @"Can't check signature: No public key" }];
 //            }
 //        } else {
 //            let signatureData = [signaturePacket export:error];
@@ -378,7 +378,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (!eskPacket || !decryptionSecretKeyPacket) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Invalid message." }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Invalid message." }];
         }
         return encryptedPackets;
     }
@@ -389,7 +389,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (!sessionKeyData) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Missing session key" }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Missing session key" }];
         }
         return encryptedPackets;
     }
@@ -415,7 +415,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (packets.count == 0) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unable to find valid data to decrypt." }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Unable to find valid data to decrypt." }];
         }
         return encryptedPackets;
     }
@@ -613,7 +613,7 @@ NS_ASSUME_NONNULL_BEGIN
     let binarySignedData = binaryMessages.count > 0 ? binaryMessages.firstObject : nil;
     if (!binarySignedData) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Invalid input data" }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Invalid input data" }];
         }
         return NO;
     }
@@ -695,14 +695,14 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (!signaturePacket) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Message is not signed." }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorNotSigned userInfo:@{ NSLocalizedDescriptionKey: @"Message is not signed." }];
         }
         return NO;
     }
 
     if (!literalPacket) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Message is not valid. Missing literal data." }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"Message is not valid. Missing literal data." }];
         }
         return NO;
     }
@@ -714,7 +714,7 @@ NS_ASSUME_NONNULL_BEGIN
             let issuerKey = [self findKeyWithKeyID:issuerKeyID in:keys];
             if (!issuerKey) {
                 if (error) {
-                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Unable to check signature. No public key." }];
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"Unable to check signature. No public key." }];
                 }
                 return NO;
             }

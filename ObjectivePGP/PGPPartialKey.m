@@ -269,8 +269,8 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     for (PGPPartialSubKey *subKey in self.subKeys) {
-        let signaturePacket = subKey.bindingSignature;
-        if (signaturePacket.canBeUsedToEncrypt) {
+        let bindingSignature = subKey.bindingSignature;
+        if (bindingSignature.canBeUsedToEncrypt) {
             return subKey.primaryKeyPacket;
         }
     }

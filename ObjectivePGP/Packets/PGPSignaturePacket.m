@@ -314,7 +314,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (self.type == PGPSignatureBinaryDocument && inputData.length == 0) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Invalid signature packet type" }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"Invalid signature packet type" }];
         }
         return NO;
     }
@@ -325,7 +325,7 @@ NS_ASSUME_NONNULL_BEGIN
     let toSignData = [self buildDataToSignForType:self.type inputData:inputData key:publicKey subKey:nil keyPacket:signingKeyPacket userID:userID error:error];
     if (!toSignData) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Invalid signature." }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"Invalid signature." }];
         }
         return NO;
     }
@@ -349,7 +349,7 @@ NS_ASSUME_NONNULL_BEGIN
 
         if (!PGPEqualObjects(self.signedHashValueData, calculatedHashValueData)) {
             if (error) {
-                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Verification failed. Signature hash validation failed." }];
+                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"Verification failed. Signature hash validation failed." }];
             }
             return NO;
         }
@@ -371,7 +371,7 @@ NS_ASSUME_NONNULL_BEGIN
             let emData = [PGPPKCSEmsa encode:self.hashAlgoritm message:toHashData encodedMessageLength:signingKeyPacket.keySize error:error];
             if (!PGPEqualObjects(emData, decryptedEmData)) {
                 if (error) {
-                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"em hash dont match" }];
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"em hash dont match" }];
                 }
                 return NO;
             }
@@ -416,7 +416,7 @@ NS_ASSUME_NONNULL_BEGIN
         // As of PGP Desktop. The signing signature may be missing.
         PGPLogDebug(@"Missing signature for the secret key %@", key.secretKey.keyID);
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"No signing signature found" }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorMissingSignature userInfo:@{ NSLocalizedDescriptionKey: @"Missing signature for the secret key." }];
         }
         return NO;
     }
@@ -515,7 +515,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPSignatureBinaryDocument:
         case PGPSignatureCanonicalTextDocument: {
             if (!inputData) {
-                if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing input data" }]; }
+                if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Missing input data" }]; }
                 return nil;
             }
             [toSignData pgp_appendData:inputData];
@@ -680,7 +680,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (parsedVersion != 0x03) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Unexpected packed version. Expected version 3" }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Unexpected packed version. Expected version 3" }];
         }
         return position;
     }
@@ -788,7 +788,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (parsedVersion != 0x04) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Unexpected packed version. Expected version 4" }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Unexpected packed version. Expected version 4" }];
         }
         return position;
     }

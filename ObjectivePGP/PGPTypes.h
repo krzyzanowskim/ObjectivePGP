@@ -20,7 +20,14 @@ static NSString *const PGPErrorDomain = @"com.objectivepgp";
 typedef NS_ERROR_ENUM(PGPErrorDomain, PGPErrorCode) {
     PGPErrorGeneral = -1,
     PGPErrorPassphraseRequired = 5,
-    PGPErrorPassphraseInvalid = 6
+    PGPErrorPassphraseInvalid = 6,
+    /// Invalid signature. Signature is invalid or cannot be verified (eg. missing key)
+    PGPErrorInvalidSignature = 7,
+    /// The message is not signed.
+    PGPErrorNotSigned = 8,
+    /// Invalid PGP message. Invalid or corrupted data that can't be processed.
+    PGPErrorInvalidMessage = 9,
+    PGPErrorMissingSignature = 10
 };
 
 typedef NS_ENUM(NSInteger, PGPFormatType) {

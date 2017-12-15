@@ -115,7 +115,7 @@ NS_ASSUME_NONNULL_BEGIN
     if (!PGPEqualObjects(headerLine, @"-----BEGIN PGP MESSAGE-----") && !PGPEqualObjects(headerLine, @"-----BEGIN PGP PUBLIC KEY BLOCK-----") && !PGPEqualObjects(headerLine, @"-----BEGIN PGP PRIVATE KEY BLOCK-----") && !PGPEqualObjects(headerLine, @"-----BEGIN PGP SECRET KEY BLOCK-----") && // PGP 2.x generates the header "BEGIN PGP SECRET KEY BLOCK" instead of "BEGIN PGP PRIVATE KEY BLOCK"
         !PGPEqualObjects(headerLine, @"-----BEGIN PGP SIGNATURE-----") && ![headerLine hasPrefix:@"-----BEGIN PGP MESSAGE, PART"]) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Invalid header" }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Invalid header" }];
         }
         return nil;
     }
@@ -172,7 +172,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (!checksumString) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Missing checksum" }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Missing checksum" }];
         }
         return nil;
     }
@@ -190,7 +190,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (!footerMatchHeader) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Footer don't match to header" }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Footer don't match to header" }];
         }
         return nil;
     }

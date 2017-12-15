@@ -282,7 +282,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (!self.ivData) {
         PGPLogError(@"IV is missing...");
-        if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{NSLocalizedDescriptionKey: @"IV is missing" } ]; };
+        if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"IV is missing" } ]; };
         return nil;
     }
 

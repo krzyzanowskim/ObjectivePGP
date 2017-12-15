@@ -84,7 +84,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (!self.encryptedData) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Missing data to decrypt." }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing data to decrypt." }];
         }
         return @[];
     }
