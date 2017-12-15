@@ -244,10 +244,10 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Encrypt & Decrypt
 
 - (nullable NSData *)decrypt:(NSData *)data passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error {
-    return [ObjectivePGP decrypt:data usingKeys:self.keys passphrase:passphrase error:error];
+    return [ObjectivePGP decrypt:data usingKeys:self.keys passphrase:passphrase verifySignature:YES error:error];
 }
 
-+ (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error {
++ (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString *)passphrase verifySignature:(BOOL)verifySignature error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(data, NSData);
     PGPAssertClass(keys, NSArray);
 
@@ -264,38 +264,6 @@ NS_ASSUME_NONNULL_BEGIN
     var packets = [ObjectivePGP readPacketsFromData:binaryMessage];
     packets = [self decryptPackets:packets usingKeys:keys passphrase:passphrase error:error];
 
-    // Decryption should fail if can't be verified. Call the verification at the end.
-    // DON'T VALIDATE SIGNATURE HERE. RETURN DECRYPTED PACKETS DUDE!
-    // ----------------------------------------- below, move to the validate functions!
-
-    // Look for the expected packets (compression, signature and literal packets)
-//    PGPLiteralPacket * _Nullable literalPacket = nil;
-//    PGPSignaturePacket * _Nullable signaturePacket = nil;
-//    for (PGPPacket *packet in packets) {
-//        switch (packet.tag) {
-//            case PGPCompressedDataPacketTag:
-//            case PGPOnePassSignaturePacketTag:
-//                // ignore here
-//                break;
-//            case PGPLiteralDataPacketTag:
-//                literalPacket = PGPCast(packet, PGPLiteralPacket);
-//                break;
-//            case PGPSignaturePacketTag:
-//                signaturePacket = PGPCast(packet, PGPSignaturePacket);
-//                break;
-//            default:
-//                if (error) {
-//                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Unexpected packet" }];
-//                }
-//                return nil;
-//        }
-//    }
-
-//    let compressedPackets = PGPCast([packets pgp_objectsPassingTest:^BOOL(PGPPacket *packet, BOOL *stop) {
-//        return packet.tag == PGPCompressedDataPacketTag;
-//    }]);
-
-
     let literalPacket = PGPCast([[packets pgp_objectsPassingTest:^BOOL(PGPPacket *packet, BOOL *stop) {
         return packet.tag == PGPLiteralDataPacketTag;
     }] firstObject], PGPLiteralPacket);
@@ -309,25 +277,12 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-//    BOOL dataIsSigned = signaturePacket != nil;
-//    if (checkIfSigned) { *checkIfSigned = dataIsSigned; }
-//
-//    if (checkValidSignature && dataIsSigned) {
-//        let issuerKey = [self findKeyWithKeyID:signaturePacket.issuerKeyID in:keys];
-//        if (!issuerKey) {
-//            if (error) {
-//                *error = [NSError errorWithDomain:PGPErrorDomain code: userInfo:@{ NSLocalizedDescriptionKey: @"Can't check signature: No public key" }];
-//            }
-//        } else {
-//            let signatureData = [signaturePacket export:error];
-//            *checkValidSignature = [self verify:plaintextData withSignature:signatureData usingKey:issuerKey error:error];
-//        }
-//    }
-
     // Verify
-    if (![self verify:binaryMessage withSignature:nil usingKeys:keys passphrase:passphrase error:error]) {
-        if (error && !*error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unable to verify." }];
+    if (verifySignature) {
+        if (![self verify:binaryMessage withSignature:nil usingKeys:keys passphrase:passphrase error:error]) {
+            if (error && !*error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"Unable to verify." }];
+            }
         }
     }
 

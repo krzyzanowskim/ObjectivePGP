@@ -175,10 +175,11 @@ NS_ASSUME_NONNULL_BEGIN
  @param data data to decrypt.
  @param keys private keys to use.
  @param passphrase Optional. Key passphrase.
+ @param verifySignature `YES` if should verify the signature used during encryption, if message is encrypted and signed.
  @param error Optional. Error.
  @return Decrypted data, or `nil` if failed.
  */
-+ (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error;
++ (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString *)passphrase verifySignature:(BOOL)verifySignature error:(NSError * __autoreleasing _Nullable *)error;
 
 @end
 
