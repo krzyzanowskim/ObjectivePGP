@@ -60,7 +60,7 @@
     // test sign
     let dataToSign = [@"objectivepgp" dataUsingEncoding:NSUTF8StringEncoding];
 
-    let sign = [ObjectivePGP sign:dataToSign detached:YES usingKey:key passphrase:nil error:nil];
+    let sign = [ObjectivePGP sign:dataToSign detached:YES usingKeys:@[key] passphraseForKey:nil error:nil];
     XCTAssertNotNil(sign);
 
     BOOL isVerified = [ObjectivePGP verify:dataToSign withSignature:sign usingKeys:@[key] passphraseForKey:nil error:nil];
@@ -180,7 +180,7 @@
     XCTAssertNotNil(keyToSign);
 
     let signatureData = [NSData dataWithContentsOfFile:[PGPTestUtils pathToBundledFile:@"issue44-keys.asc"]];
-    let signature = [ObjectivePGP sign:signatureData detached:YES usingKey:keyToSign passphrase:@"passphrase" error:nil];
+    let signature = [ObjectivePGP sign:signatureData detached:YES usingKeys:@[keyToSign] passphraseForKey:^NSString * _Nullable(PGPKey *k) { return @"passphrase"; } error:nil];
     XCTAssertNotNil(signature);
 }
 
@@ -300,7 +300,7 @@
     
     NSError* error = nil;
     let data = [@"Hello World!" dataUsingEncoding:NSUTF8StringEncoding];
-    let signature = [ObjectivePGP sign:data detached:NO usingKey:keys[0] passphrase:@"12345678" error:&error];
+    let signature = [ObjectivePGP sign:data detached:NO usingKeys:keys passphraseForKey:^NSString * _Nullable(PGPKey *k) { return @"12345678"; } error:&error];
     XCTAssertNotNil(signature, @"Signing failed: %@", error);
 }
 

@@ -132,7 +132,7 @@
 
     // detached signature
     NSError *signatureError = nil;
-    NSData *signatureData = [ObjectivePGP sign:dataToSign detached:YES usingKey:keyToSign passphrase:nil error:&signatureError];
+    NSData *signatureData = [ObjectivePGP sign:dataToSign detached:YES usingKeys:@[keyToSign] passphraseForKey:nil error:&signatureError];
     XCTAssertNotNil(signatureData);
     XCTAssertNil(signatureError);
 
@@ -148,7 +148,7 @@
     XCTAssertNil(verifyError);
 
     // Signed data
-    NSData *signedData = [ObjectivePGP sign:dataToSign detached:NO usingKey:keyToSign passphrase:nil error:&signatureError];
+    NSData *signedData = [ObjectivePGP sign:dataToSign detached:NO usingKeys:@[keyToSign] passphraseForKey:nil error:&signatureError];
     XCTAssertNotNil(signedData);
     XCTAssertNil(signatureError);
 

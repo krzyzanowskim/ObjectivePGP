@@ -229,12 +229,9 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     NSData *content;
-    // sign data if requested
     if (shouldSign) {
-        // FIXME: Only first key signature is added. It is possible sign message with multiple keys
-        let signKey = keys.firstObject;
-        let passphrase = passphraseForKeyBlock ? passphraseForKeyBlock(PGPNN(signKey)) : nil;
-        content = [self sign:dataToEncrypt usingKey:PGPNN(signKey) passphrase:passphrase hashAlgorithm:PGPHashSHA512 detached:NO error:error];
+        // sign data if requested
+        content = [self sign:dataToEncrypt detached:NO usingKeys:keys passphraseForKey:passphraseForKeyBlock error:error];
     } else {
         // Prepare literal packet
         let literalPacket = [PGPLiteralPacket literalPacket:PGPLiteralPacketBinary withData:dataToEncrypt];
@@ -273,34 +270,52 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Sign & Verify
 
-+(nullable NSData *)sign:(NSData *)dataToSign detached:(BOOL)detached usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing *)error {
-    // TODO: configurable defaults for prefered hash
-    return [ObjectivePGP sign:dataToSign usingKey:key passphrase:passphrase hashAlgorithm:PGPHashSHA512 detached:detached error:error];
-}
-
-+ (nullable NSData *)sign:(NSData *)data usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase hashAlgorithm:(PGPHashAlgorithm)preferedHashAlgorithm detached:(BOOL)detached error:(NSError * __autoreleasing *)error {
++ (nullable NSData *)sign:(NSData *)data detached:(BOOL)detached usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(data, NSData);
-    PGPAssertClass(key, PGPKey);
+    PGPAssertClass(keys, NSArray);
 
-    let signaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureBinaryDocument hashAlgorithm:preferedHashAlgorithm];
-    if (![signaturePacket signData:data withKey:key subKey:nil passphrase:passphrase userID:nil error:error]) {
-        PGPLogDebug(@"Can't sign data");
-        return nil;
-    }
+    // TODO: Use prefered hash alhorithm for key
+    PGPHashAlgorithm preferedHashAlgorithm = PGPHashSHA512;
 
-    NSError *exportError = nil;
-    let _Nullable signaturePacketData = [signaturePacket export:&exportError];
-    if (exportError) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Error on export packet" }];
+    // Calculate signatures signatures
+    let signatures = [NSMutableArray<PGPSignaturePacket *> array];
+    for (PGPKey *key in keys) {
+        // Signed Message :- Signature Packet, Literal Message
+        let signaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureBinaryDocument hashAlgorithm:preferedHashAlgorithm];
+        let passphrase = passphraseBlock ? passphraseBlock(key) : nil;
+        if (![signaturePacket signData:data withKey:key subKey:nil passphrase:passphrase userID:nil error:error]) {
+            PGPLogDebug(@"Can't sign data");
+            continue;
         }
-        return nil;
+
+        [signatures pgp_addObject:signaturePacket];
     }
 
-    // Signed Message :- Signature Packet, Literal Message
-    NSMutableData *signedMessage = [NSMutableData data];
+    let outputData = [NSMutableData data];
 
-    if (!detached) {
+    // Detached - export only signatures
+    if (detached) {
+        for (PGPSignaturePacket *signaturePacket in signatures) {
+            NSError *exportError = nil;
+            let _Nullable signaturePacketData = [signaturePacket export:&exportError];
+            if (exportError) {
+                if (error) {
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Unable to sign. Can't create signature packet." }];
+                }
+                continue;
+            }
+            [outputData appendData:signaturePacketData];
+        }
+        // Detached return early with just signature packets.
+        return outputData;
+    }
+
+    // Otherwise create sequence of:
+    // OnePassSignature-Literal-Signature
+    // Order: 1,2,3-Literal-3,2,1
+
+    // Add One Pass Signature in order
+    for (PGPSignaturePacket *signaturePacket in signatures) {
         // One Pass signature
         let onePassPacket = [[PGPOnePassSignaturePacket alloc] init];
         onePassPacket.signatureType = signaturePacket.type;
@@ -309,53 +324,64 @@ NS_ASSUME_NONNULL_BEGIN
         onePassPacket.keyID = PGPNN(signaturePacket.issuerKeyID);
         onePassPacket.isNested = NO;
         NSError * _Nullable onePassExportError = nil;
-        [signedMessage pgp_appendData:[onePassPacket export:&onePassExportError]];
+        [outputData pgp_appendData:[onePassPacket export:&onePassExportError]];
         if (onePassExportError) {
             if (error) {
-                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing one passphrase data" }];
+                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing one signature passphrase data" }];
             }
             return nil;
         }
-
-        // Literal
-        let literalPacket = [PGPLiteralPacket literalPacket:PGPLiteralPacketBinary withData:data];
-        literalPacket.filename = nil;
-        literalPacket.timestamp = [NSDate date];
-
-        NSError *literalExportError = nil;
-        [signedMessage pgp_appendData:[literalPacket export:&literalExportError]];
-        if (literalExportError) {
-            if (error) {
-                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing literal data" }];
-            }
-            return nil;
-        }
-
-        //        // Compressed
-        //        NSError *literalExportError = nil;
-        //        PGPCompressedPacket *compressedPacket = [[PGPCompressedPacket alloc] initWithData:[literalPacket exportPacket:&literalExportError] type:PGPCompressionBZIP2];
-        //        NSAssert(!literalExportError, @"Missing literal data");
-        //        if (literalExportError) {
-        //            if (error) {
-        //                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Missing literal data"}];
-        //            }
-        //            return nil;
-        //        }
-        //
-        //        NSError *compressedExportError = nil;
-        //        [signedMessage pgp_appendData:[compressedPacket exportPacket:&compressedExportError]];
-        //        NSAssert(!compressedExportError, @"Missing compressed data");
-        //        if (compressedExportError) {
-        //            if (error) {
-        //                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Missing compressed data"}];
-        //            }
-        //            return nil;
-        //        }
     }
 
-    // Signature coresponding to One Pass signature
-    [signedMessage pgp_appendData:signaturePacketData];
-    return signedMessage;
+    // Literal
+    let literalPacket = [PGPLiteralPacket literalPacket:PGPLiteralPacketBinary withData:data];
+    literalPacket.filename = nil;
+    literalPacket.timestamp = [NSDate date];
+
+    NSError *literalExportError = nil;
+    [outputData pgp_appendData:[literalPacket export:&literalExportError]];
+    if (literalExportError) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing literal data" }];
+        }
+        return nil;
+    }
+
+//    // Compressed
+//    NSError *literalExportError = nil;
+//    PGPCompressedPacket *compressedPacket = [[PGPCompressedPacket alloc] initWithData:[literalPacket exportPacket:&literalExportError] type:PGPCompressionBZIP2];
+//    NSAssert(!literalExportError, @"Missing literal data");
+//    if (literalExportError) {
+//        if (error) {
+//            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Missing literal data"}];
+//        }
+//        return nil;
+//    }
+//
+//    NSError *compressedExportError = nil;
+//    [signedMessage pgp_appendData:[compressedPacket exportPacket:&compressedExportError]];
+//    NSAssert(!compressedExportError, @"Missing compressed data");
+//    if (compressedExportError) {
+//        if (error) {
+//            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Missing compressed data"}];
+//        }
+//        return nil;
+//    }
+
+    // Add in reversed-order
+    for (PGPSignaturePacket *signaturePacket in [[signatures reverseObjectEnumerator] allObjects]) {
+        // Signature coresponding to One Pass signature
+        NSError *exportError = nil;
+        let _Nullable signaturePacketData = [signaturePacket export:&exportError];
+        if (exportError) {
+            if (error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Unable to sign. Can't create signature packet." }];
+            }
+            return nil;
+        }
+        [outputData pgp_appendData:signaturePacketData];
+    }
+    return outputData;
 }
 
 + (BOOL)verify:(NSData *)signedData withSignature:(nullable NSData *)detachedSignature usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseForKeyBlock error:(NSError * __autoreleasing _Nullable *)error {
@@ -407,7 +433,6 @@ NS_ASSUME_NONNULL_BEGIN
         }
     }
 
-    // TODO: use a block to get the passphrase for decryption per key
     //Try to decrypt first, in case of encrypted message inside
     //Not every message needs decryption though! Check for ESK to reason about it
     BOOL isEncrypted = [[accumulatedPackets pgp_objectsPassingTest:^BOOL(PGPPacket *packet, BOOL *stop) {

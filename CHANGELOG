@@ -2,6 +2,7 @@ Version 0.9.6
 - Enable sSymmetrically Encrypted Data Packet support. Fixes #91
 - Fixes partial length packets calculations.
 - Improves decryption and signed messages validation.
+- Adds multikey signatures.
 - API: Refactor and simplyfy public API of `ObjectivePGP` due to internal improvements.
 - API: PGPPartialKeyPublic -> PGPKeyTypePublic
 - API: PGPPartialKeySecret -> PGPKeyTypeSecret

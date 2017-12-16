@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Optional. Error.
  @return Signed data, or `nil` if fail.
  */
-+ (nullable NSData *)sign:(NSData *)data detached:(BOOL)detached usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error;
++ (nullable NSData *)sign:(NSData *)data detached:(BOOL)detached usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error;
 
 /**
  Verify signed data using given key.
