@@ -38,13 +38,13 @@ NS_ASSUME_NONNULL_BEGIN
  If `detached` is true, output with the signature only. Otherwise, return signed data in PGP format.
 
  @param data Input data.
+ @param detached Whether result in only signature (not signed data)
  @param key Key to be used to sign.
  @param passphrase Optional. Passphrase for the `key`.
- @param detached Whether result in detached signature.
  @param error Optional. Error.
  @return Signed data, or `nil` if fail.
  */
-+ (nullable NSData *)sign:(NSData *)data usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase detached:(BOOL)detached error:(NSError * __autoreleasing _Nullable *)error;
++ (nullable NSData *)sign:(NSData *)data detached:(BOOL)detached usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error;
 
 /**
  Verify signed data using given key.
@@ -53,35 +53,29 @@ NS_ASSUME_NONNULL_BEGIN
  @param detached Detached signature data (Optional). If not provided, `data` is expected to be signed.
  @param keys Public keys. The provided keys should match the signatures.
  @param passphraseBlock Optional. Handler for passphrase protected keys. Return passphrase for a key in question.
- @param error Optiona. Check error code for details about the error.
+ @param error Optional. Check error code for details about the error.
  @return YES on success.
  */
 + (BOOL)verify:(NSData *)data withSignature:(nullable NSData *)detached usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error;
 
 /**
- Encrypt data using given keys. Output in binary or ASCII format.
+ Encrypt data using given keys. Output in binary.
 
  @param data Data to encrypt.
+ @param sign Whether message should be encrypte and signed.
  @param keys Keys to use to encrypte `data`
  @param passphraseBlock Optional. Handler for passphrase protected keys. Return passphrase for a key in question.
- @param armored Whether the output data should be armored (ASCII format) or not.
- @param error Error.
+ @param error Optional. Error.
  @return Encrypted data in requested format.
- */
-+ (nullable NSData *)encrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseBlock armored:(BOOL)armored error:(NSError * __autoreleasing _Nullable *)error;
 
-/**
- Encrypt and sign input data with the given keys. Output in binary or ASCII format.
+ @note Use `PGPArmor` to convert binary `data` format to the armored (ASCII) format:
 
- @param data Data to encrypt and sign.
- @param keys Keys to use to encrypte `data`.
- @param signKey Key to use to sign `data`.
- @param passphraseBlock Optional. Handler for passphrase protected keys. Return passphrase for a key in question.
- @param armored Whether the output data should be armored (ASCII format) or not.
- @param error Error.
- @return Encrypted and signed data in requested format.
+ ```
+ [[PGPArmor armored:data as:PGPArmorTypeMessage] dataUsingEncoding:NSUTF8StringEncoding];
+ ```
+
  */
-+ (nullable NSData *)encrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys signWithKey:(nullable PGPKey *)signKey passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseBlock armored:(BOOL)armored error:(NSError * __autoreleasing _Nullable *)error;
++ (nullable NSData *)encrypt:(NSData *)data addSignature:(BOOL)sign usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error;
 
 /**
  Decrypt PGP encrypted data.

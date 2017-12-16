@@ -30,6 +30,8 @@ NS_SWIFT_NAME(Armor) @interface PGPArmor : NSObject
 
 + (BOOL)isArmoredData:(NSData *)data;
 
++ (NSArray<NSData *> *)convertArmoredMessage2BinaryBlocksWhenNecessary:(NSData *)binOrArmorData;
+
 @end
 
 NS_ASSUME_NONNULL_END

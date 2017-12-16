@@ -154,7 +154,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     let modulusMPI = [publicKeyPacket publicMPI:PGPMPI_N];
     if (!modulusMPI) {
-        //TODO: add error message
+        // TODO: add error message
         return NO;
     }
 

@@ -241,7 +241,7 @@ NS_ASSUME_NONNULL_BEGIN
         return [self buildKeyBodyData:NO];
     }];
 
-    //TODO: to be removed when verified
+    // TODO: to be removed when verified
     //    let data = [NSMutableData data];
     //
     //    let bodyData = [self buildKeyBodyData:NO];

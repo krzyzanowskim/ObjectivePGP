@@ -7,10 +7,13 @@
 //
 
 #import "PGPArmor.h"
-#import "NSData+PGPUtils.h"
-#import "PGPMacros+Private.h"
-#import "PGPFoundation.h"
 #import "PGPPacket.h"
+
+#import "NSData+PGPUtils.h"
+#import "NSArray+PGPUtils.h"
+
+#import "PGPFoundation.h"
+#import "PGPMacros+Private.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -213,6 +216,45 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     return binaryData;
+}
+
++ (NSArray<NSData *> *)convertArmoredMessage2BinaryBlocksWhenNecessary:(NSData *)binOrArmorData {
+    let binRingData = binOrArmorData;
+    // detect if armored, check for string -----BEGIN PGP
+    if ([PGPArmor isArmoredData:binRingData]) {
+        NSError * _Nullable deadmorError = nil;
+        var armoredString = [[NSString alloc] initWithData:binRingData encoding:NSUTF8StringEncoding];
+
+        // replace \n to \r\n
+        // propably unecessary since armore code care about \r\n or \n as newline sentence
+        armoredString = [armoredString stringByReplacingOccurrencesOfString:@"\r\n" withString:@"\n"];
+        armoredString = [armoredString stringByReplacingOccurrencesOfString:@"\n" withString:@"\r\n"];
+
+        let extractedBlocks = [[NSMutableArray<NSString *> alloc] init];
+        let regex = [[NSRegularExpression alloc] initWithPattern:@"(-----)(BEGIN|END)[ ](PGP)[A-Z ]*(-----)" options:NSRegularExpressionDotMatchesLineSeparators error:nil];
+        __block NSInteger offset = 0;
+        [regex enumerateMatchesInString:armoredString options:NSMatchingReportCompletion range:NSMakeRange(0, armoredString.length) usingBlock:^(NSTextCheckingResult *_Nullable result, __unused NSMatchingFlags flags, __unused BOOL *stop) {
+            let substring = [armoredString substringWithRange:result.range];
+            if ([substring containsString:@"END"]) {
+                NSInteger endIndex = result.range.location + result.range.length;
+                [extractedBlocks addObject:[armoredString substringWithRange:NSMakeRange(offset, endIndex - offset)]];
+            } else if ([substring containsString:@"BEGIN"]) {
+                offset = result.range.location;
+            }
+        }];
+
+        let extractedData = [[NSMutableArray<NSData *> alloc] init];
+        for (NSString *extractedString in extractedBlocks) {
+            let armodedData = [PGPArmor readArmored:extractedString error:&deadmorError];
+            if (deadmorError) {
+                return @[];
+            }
+
+            [extractedData pgp_addObject:armodedData];
+        }
+        return extractedData;
+    }
+    return @[binRingData];
 }
 
 @end

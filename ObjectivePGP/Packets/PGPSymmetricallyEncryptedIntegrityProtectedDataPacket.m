@@ -81,7 +81,7 @@ NS_ASSUME_NONNULL_BEGIN
             }
 
             if (packet.indeterminateLength && accumulatedPackets.count > 0 && PGPCast(accumulatedPackets.firstObject, PGPCompressedPacket)) {
-                //FIXME: substract size of PGPModificationDetectionCodePacket in this very special case - TODO: fix this
+                // FIXME: substract size of PGPModificationDetectionCodePacket in this very special case - TODO: fix this
                 offset -= 22;
                 if (mdcLength) {
                     *mdcLength -= 22;
@@ -229,7 +229,7 @@ NS_ASSUME_NONNULL_BEGIN
     // The first block-size octets (for example, 8 octets for a 64-bit block length) are random,
     uint8_t buf[blockSize];
     if (SecRandomCopyBytes(kSecRandomDefault, blockSize, buf) == -1) {
-        //TODO: error
+        // TODO: error
         return NO;
     }
     let prefixRandomData = [NSMutableData dataWithBytes:buf length:blockSize];

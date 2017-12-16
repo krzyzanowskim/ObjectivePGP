@@ -154,7 +154,7 @@ NS_ASSUME_NONNULL_BEGIN
     // Fill MPIs
     [self fillMPIForPublic:publicSubKeyPacket andSecret:secretSubKeyPacket withKeyAlgorithm:self.keyAlgorithm bits:self.keyBitsLength];
 
-    //TODO: refactor duplicated code
+    // TODO: refactor duplicated code
     NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:secretSubKeyPacket.symmetricAlgorithm];
     if (!passphrase) {
         secretSubKeyPacket.s2kUsage = PGPS2KUsageNonEncrypted;

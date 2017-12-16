@@ -87,7 +87,7 @@
     // encrypt
     NSData *tmpdata = [@"this is test" dataUsingEncoding:NSUTF8StringEncoding];
     NSError *encError;
-    NSData *encData = [ObjectivePGP encrypt:tmpdata usingKeys:@[encKey] passphraseForKey:nil armored:NO error:&encError];
+    NSData *encData = [ObjectivePGP encrypt:tmpdata addSignature:NO usingKeys:@[encKey] passphraseForKey:nil error:&encError];
     XCTAssertNil(encError, @"Encryption failed");
 
     NSError *decError;
@@ -112,7 +112,7 @@
     // detached signature
     NSError *signatureError = nil;
     let data = [NSData dataWithContentsOfFile:fileToSignPath];
-    let signatureData = [ObjectivePGP sign:data usingKey:keyToSign passphrase:@"1234" detached:YES error:&signatureError];
+    let signatureData = [ObjectivePGP sign:data detached:YES usingKey:keyToSign passphrase:@"1234" error:&signatureError];
     XCTAssertNotNil(signatureData);
     XCTAssertNil(signatureError);
 

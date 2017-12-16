@@ -54,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
     PGPAssertClass(keys, NSArray);
 
     // TODO: Decrypt all messages
-    let binaryMessage = [ObjectivePGP convertArmoredMessage2BinaryBlocksWhenNecessary:data].firstObject;
+    let binaryMessage = [PGPArmor convertArmoredMessage2BinaryBlocksWhenNecessary:data].firstObject;
     if (!binaryMessage) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Invalid message to decrypt." }];
@@ -184,11 +184,7 @@ NS_ASSUME_NONNULL_BEGIN
     return packets;
 }
 
-+ (nullable NSData *)encrypt:(NSData *)dataToEncrypt usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseForKeyBlock armored:(BOOL)armored error:(NSError * __autoreleasing _Nullable *)error {
-    return [ObjectivePGP encrypt:dataToEncrypt usingKeys:keys signWithKey:nil passphraseForKey:passphraseForKeyBlock armored:armored error:error];
-}
-
-+ (nullable NSData *)encrypt:(NSData *)dataToEncrypt usingKeys:(NSArray<PGPKey *> *)keys signWithKey:(nullable PGPKey *)signKey passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseForKeyBlock armored:(BOOL)armored error:(NSError * __autoreleasing _Nullable *)error {
++ (nullable NSData *)encrypt:(NSData *)dataToEncrypt addSignature:(BOOL)shouldSign usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseForKeyBlock error:(NSError * __autoreleasing _Nullable *)error {
     let publicPartialKeys = [NSMutableArray<PGPPartialKey *> array];
     for (PGPKey *key in keys) {
         [publicPartialKeys pgp_addObject:key.publicKey];
@@ -229,12 +225,14 @@ NS_ASSUME_NONNULL_BEGIN
             return nil;
         }
 
-        //TODO: find the compression type most common to the used keys
+        // TODO: find the compression type most common to the used keys
     }
 
     NSData *content;
     // sign data if requested
-    if (signKey) {
+    if (shouldSign) {
+        // FIXME: Only first key signature is added. It is possible sign message with multiple keys
+        let signKey = keys.firstObject;
         let passphrase = passphraseForKeyBlock ? passphraseForKeyBlock(PGPNN(signKey)) : nil;
         content = [self sign:dataToEncrypt usingKey:PGPNN(signKey) passphrase:passphrase hashAlgorithm:PGPHashSHA512 detached:NO error:error];
     } else {
@@ -249,7 +247,7 @@ NS_ASSUME_NONNULL_BEGIN
             return nil;
         }
 
-        //FIXME: do not use hardcoded value for compression type
+        // FIXME: do not use hardcoded value for compression type
         let compressedPacket = [[PGPCompressedPacket alloc] initWithData:literalPacketData type:PGPCompressionZLIB];
         content = [compressedPacket export:error];
     }
@@ -270,31 +268,27 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    if (armored) {
-        return [[PGPArmor armored:encryptedMessage as:PGPArmorTypeMessage] dataUsingEncoding:NSUTF8StringEncoding];
-    }
-
     return encryptedMessage;
 }
 
 #pragma mark - Sign & Verify
 
-+(nullable NSData *)sign:(NSData *)dataToSign usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase detached:(BOOL)detached error:(NSError * __autoreleasing *)error {
++(nullable NSData *)sign:(NSData *)dataToSign detached:(BOOL)detached usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing *)error {
     // TODO: configurable defaults for prefered hash
     return [ObjectivePGP sign:dataToSign usingKey:key passphrase:passphrase hashAlgorithm:PGPHashSHA512 detached:detached error:error];
 }
 
-+ (nullable NSData *)sign:(NSData *)dataToSign usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase hashAlgorithm:(PGPHashAlgorithm)preferedHashAlgorithm detached:(BOOL)detached error:(NSError * __autoreleasing *)error {
-    PGPAssertClass(dataToSign, NSData);
++ (nullable NSData *)sign:(NSData *)data usingKey:(PGPKey *)key passphrase:(nullable NSString *)passphrase hashAlgorithm:(PGPHashAlgorithm)preferedHashAlgorithm detached:(BOOL)detached error:(NSError * __autoreleasing *)error {
+    PGPAssertClass(data, NSData);
     PGPAssertClass(key, PGPKey);
 
     let signaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureBinaryDocument hashAlgorithm:preferedHashAlgorithm];
-    if (![signaturePacket signData:dataToSign withKey:key subKey:nil passphrase:passphrase userID:nil error:error]) {
+    if (![signaturePacket signData:data withKey:key subKey:nil passphrase:passphrase userID:nil error:error]) {
         PGPLogDebug(@"Can't sign data");
         return nil;
     }
 
-    NSError * _Nullable exportError = nil;
+    NSError *exportError = nil;
     let _Nullable signaturePacketData = [signaturePacket export:&exportError];
     if (exportError) {
         if (error) {
@@ -305,16 +299,15 @@ NS_ASSUME_NONNULL_BEGIN
 
     // Signed Message :- Signature Packet, Literal Message
     NSMutableData *signedMessage = [NSMutableData data];
+
     if (!detached) {
-        // OnePass
+        // One Pass signature
         let onePassPacket = [[PGPOnePassSignaturePacket alloc] init];
         onePassPacket.signatureType = signaturePacket.type;
         onePassPacket.publicKeyAlgorithm = signaturePacket.publicKeyAlgorithm;
         onePassPacket.hashAlgorith = signaturePacket.hashAlgoritm;
-
-        onePassPacket.keyID = PGPNN([signaturePacket issuerKeyID]);
-
-        onePassPacket.isNested = YES;
+        onePassPacket.keyID = PGPNN(signaturePacket.issuerKeyID);
+        onePassPacket.isNested = NO;
         NSError * _Nullable onePassExportError = nil;
         [signedMessage pgp_appendData:[onePassPacket export:&onePassExportError]];
         if (onePassExportError) {
@@ -325,7 +318,7 @@ NS_ASSUME_NONNULL_BEGIN
         }
 
         // Literal
-        PGPLiteralPacket *literalPacket = [PGPLiteralPacket literalPacket:PGPLiteralPacketBinary withData:dataToSign];
+        let literalPacket = [PGPLiteralPacket literalPacket:PGPLiteralPacketBinary withData:data];
         literalPacket.filename = nil;
         literalPacket.timestamp = [NSDate date];
 
@@ -359,6 +352,8 @@ NS_ASSUME_NONNULL_BEGIN
         //            return nil;
         //        }
     }
+
+    // Signature coresponding to One Pass signature
     [signedMessage pgp_appendData:signaturePacketData];
     return signedMessage;
 }
@@ -366,7 +361,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (BOOL)verify:(NSData *)signedData withSignature:(nullable NSData *)detachedSignature usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseForKeyBlock error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(signedData, NSData);
 
-    let binaryMessages = [ObjectivePGP convertArmoredMessage2BinaryBlocksWhenNecessary:signedData];
+    let binaryMessages = [PGPArmor convertArmoredMessage2BinaryBlocksWhenNecessary:signedData];
     // TODO: Process all messages
     let binarySignedData = binaryMessages.count > 0 ? binaryMessages.firstObject : nil;
     if (!binarySignedData) {
@@ -379,7 +374,7 @@ NS_ASSUME_NONNULL_BEGIN
     // Use detached signature if provided.
     // In that case treat input data as blob to be verified with the signature. Don't parse it.
     if (detachedSignature) {
-        let binarydetachedSignature = [ObjectivePGP convertArmoredMessage2BinaryBlocksWhenNecessary:detachedSignature].firstObject;
+        let binarydetachedSignature = [PGPArmor convertArmoredMessage2BinaryBlocksWhenNecessary:detachedSignature].firstObject;
         if (binarydetachedSignature) {
             let packet = [PGPPacketFactory packetWithData:binarydetachedSignature offset:0 consumedBytes:nil];
             let signaturePacket = PGPCast(packet, PGPSignaturePacket);
@@ -412,7 +407,7 @@ NS_ASSUME_NONNULL_BEGIN
         }
     }
 
-    //TODO: use a block to get the passphrase for decryption per key
+    // TODO: use a block to get the passphrase for decryption per key
     //Try to decrypt first, in case of encrypted message inside
     //Not every message needs decryption though! Check for ESK to reason about it
     BOOL isEncrypted = [[accumulatedPackets pgp_objectsPassingTest:^BOOL(PGPPacket *packet, BOOL *stop) {
@@ -509,7 +504,7 @@ NS_ASSUME_NONNULL_BEGIN
         return keys;
     };
 
-    let binRingData = [ObjectivePGP convertArmoredMessage2BinaryBlocksWhenNecessary:fileData];
+    let binRingData = [PGPArmor convertArmoredMessage2BinaryBlocksWhenNecessary:fileData];
     if (!binRingData || binRingData.count == 0) {
         PGPLogError(@"Invalid input data");
         return keys;
@@ -584,45 +579,6 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     return partialKeys;
-}
-
-+ (NSArray<NSData *> *)convertArmoredMessage2BinaryBlocksWhenNecessary:(NSData *)binOrArmorData {
-    let binRingData = binOrArmorData;
-    // detect if armored, check for string -----BEGIN PGP
-    if ([PGPArmor isArmoredData:binRingData]) {
-        NSError * _Nullable deadmorError = nil;
-        var armoredString = [[NSString alloc] initWithData:binRingData encoding:NSUTF8StringEncoding];
-
-        // replace \n to \r\n
-        // propably unecessary since armore code care about \r\n or \n as newline sentence
-        armoredString = [armoredString stringByReplacingOccurrencesOfString:@"\r\n" withString:@"\n"];
-        armoredString = [armoredString stringByReplacingOccurrencesOfString:@"\n" withString:@"\r\n"];
-
-        let extractedBlocks = [[NSMutableArray<NSString *> alloc] init];
-        let regex = [[NSRegularExpression alloc] initWithPattern:@"(-----)(BEGIN|END)[ ](PGP)[A-Z ]*(-----)" options:NSRegularExpressionDotMatchesLineSeparators error:nil];
-        __block NSInteger offset = 0;
-        [regex enumerateMatchesInString:armoredString options:NSMatchingReportCompletion range:NSMakeRange(0, armoredString.length) usingBlock:^(NSTextCheckingResult *_Nullable result, __unused NSMatchingFlags flags, __unused BOOL *stop) {
-            let substring = [armoredString substringWithRange:result.range];
-            if ([substring containsString:@"END"]) {
-                NSInteger endIndex = result.range.location + result.range.length;
-                [extractedBlocks addObject:[armoredString substringWithRange:NSMakeRange(offset, endIndex - offset)]];
-            } else if ([substring containsString:@"BEGIN"]) {
-                offset = result.range.location;
-            }
-        }];
-
-        let extractedData = [[NSMutableArray<NSData *> alloc] init];
-        for (NSString *extractedString in extractedBlocks) {
-            let armodedData = [PGPArmor readArmored:extractedString error:&deadmorError];
-            if (deadmorError) {
-                return @[];
-            }
-
-            [extractedData pgp_addObject:armodedData];
-        }
-        return extractedData;
-    }
-    return @[binRingData];
 }
 
 @end

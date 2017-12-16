@@ -132,7 +132,7 @@
 
     // detached signature
     NSError *signatureError = nil;
-    NSData *signatureData = [ObjectivePGP sign:dataToSign usingKey:keyToSign passphrase:nil detached:YES error:&signatureError];
+    NSData *signatureData = [ObjectivePGP sign:dataToSign detached:YES usingKey:keyToSign passphrase:nil error:&signatureError];
     XCTAssertNotNil(signatureData);
     XCTAssertNil(signatureError);
 
@@ -148,7 +148,7 @@
     XCTAssertNil(verifyError);
 
     // Signed data
-    NSData *signedData = [ObjectivePGP sign:dataToSign usingKey:keyToSign passphrase:nil detached:NO error:&signatureError];
+    NSData *signedData = [ObjectivePGP sign:dataToSign detached:NO usingKey:keyToSign passphrase:nil error:&signatureError];
     XCTAssertNotNil(signedData);
     XCTAssertNil(signatureError);
 
@@ -181,7 +181,7 @@
 
     // encrypt PLAINTEXT
     NSError *encryptError = nil;
-    NSData *encryptedData = [ObjectivePGP encrypt:plainData usingKeys:@[keyToEncrypt] passphraseForKey:nil armored:NO error:&encryptError];
+    NSData *encryptedData = [ObjectivePGP encrypt:plainData addSignature:NO usingKeys:@[keyToEncrypt] passphraseForKey:nil error:&encryptError];
     XCTAssertNil(encryptError);
     XCTAssertNotNil(encryptedData);
 
@@ -198,7 +198,7 @@
     XCTAssertEqualObjects(decryptedString, PLAINTEXT, @"Decrypted data mismatch");
 
     // ARMORED
-    NSData *encryptedDataArmored = [ObjectivePGP encrypt:plainData usingKeys:@[keyToEncrypt] passphraseForKey:nil armored:YES error:&encryptError];
+    NSData *encryptedDataArmored = [ObjectivePGP encrypt:plainData addSignature:NO usingKeys:@[keyToEncrypt] passphraseForKey:nil error:&encryptError];
     XCTAssertNil(encryptError);
     XCTAssertNotNil(encryptedDataArmored);
 
@@ -238,7 +238,7 @@
 
     // encrypt PLAINTEXT
     NSError *encryptError = nil;
-    NSData *encryptedData = [ObjectivePGP encrypt:plainData usingKeys:@[keyToEncrypt1, keyToEncrypt2] passphraseForKey:nil armored:NO error:&encryptError];
+    NSData *encryptedData = [ObjectivePGP encrypt:plainData addSignature:NO usingKeys:@[keyToEncrypt1, keyToEncrypt2] passphraseForKey:nil error:&encryptError];
     XCTAssertNil(encryptError);
     XCTAssertNotNil(encryptedData);
 
