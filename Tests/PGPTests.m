@@ -67,9 +67,9 @@
     XCTAssertTrue(isVerified);
 
     // test export
-    let exportedPublicKeyData = [key export:PGPPartialKeyPublic error:nil];
+    let exportedPublicKeyData = [key export:PGPKeyTypePublic error:nil];
     XCTAssertNotNil(exportedPublicKeyData);
-    let exportedSecretKeyData = [key export:PGPPartialKeySecret error:nil];
+    let exportedSecretKeyData = [key export:PGPKeyTypeSecret error:nil];
     XCTAssertNotNil(exportedSecretKeyData);
 
     let importedKeys = [ObjectivePGP readKeysFromData:exportedPublicKeyData];
@@ -82,9 +82,9 @@
     let key = [keyGenerator generateFor:@"Marcin <marcin@example.com>" passphrase:@"1234567890"];
     XCTAssertNotNil(key);
 
-    let exportedPublicKeyData = [key export:PGPPartialKeyPublic error:nil];
+    let exportedPublicKeyData = [key export:PGPKeyTypePublic error:nil];
     XCTAssertNotNil(exportedPublicKeyData);
-    let exportedSecretKeyData = [key export:PGPPartialKeySecret error:nil];
+    let exportedSecretKeyData = [key export:PGPKeyTypeSecret error:nil];
     XCTAssertNotNil(exportedSecretKeyData);
 
     let importedPublicKeys = [ObjectivePGP readKeysFromData:exportedPublicKeyData];
@@ -206,8 +206,8 @@
     let generator = [[PGPKeyGenerator alloc] init];
     let key = [generator generateFor:@"marcin77@example.com" passphrase:@"test"];
     NSError *err;
-    let publicKeyData = [key export:PGPPartialKeyPublic error:&err];
-    let secretKeyData = [key export:PGPPartialKeySecret error:&err];
+    let publicKeyData = [key export:PGPKeyTypePublic error:&err];
+    let secretKeyData = [key export:PGPKeyTypeSecret error:&err];
 
     let pgp = [[ObjectivePGP alloc] init];
     let publicKeys = [ObjectivePGP readKeysFromData:publicKeyData];

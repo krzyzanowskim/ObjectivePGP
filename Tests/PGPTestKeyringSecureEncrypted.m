@@ -87,11 +87,11 @@
     // encrypt
     NSData *tmpdata = [@"this is test" dataUsingEncoding:NSUTF8StringEncoding];
     NSError *encError;
-    NSData *encData = [ObjectivePGP encrypt:tmpdata usingKeys:@[encKey] armored:NO error:&encError];
+    NSData *encData = [ObjectivePGP encrypt:tmpdata usingKeys:@[encKey] passphraseForKey:nil armored:NO error:&encError];
     XCTAssertNil(encError, @"Encryption failed");
 
     NSError *decError;
-    NSData *decData = [self.pgp decrypt:encData passphrase:@"1234" error:&decError];
+    NSData *decData = [self.pgp decrypt:encData passphraseForKey:^NSString * _Nullable(PGPKey * _Nonnull key) { return @"1234"; } error:&decError];
     XCTAssertNotNil(decError, @"Decryption failed");
     XCTAssertNotNil(decData);
     XCTAssertEqualObjects(tmpdata, decData);

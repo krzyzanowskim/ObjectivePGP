@@ -147,13 +147,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Save
 
-- (BOOL)exportKeysOfType:(PGPPartialKeyType)type toFile:(NSString *)path error:(NSError * __autoreleasing *)error {
+- (BOOL)exportKeysOfType:(PGPKeyType)type toFile:(NSString *)path error:(NSError * __autoreleasing *)error {
     let exportKeys = [NSMutableArray<PGPPartialKey *> array];
     for (PGPKey *key in self.keys) {
-        if (type == PGPPartialKeyPublic && key.publicKey) {
+        if (type == PGPKeyTypePublic && key.publicKey) {
             [exportKeys pgp_addObject:key.publicKey];
         }
-        if (type == PGPPartialKeySecret && key.secretKey) {
+        if (type == PGPKeyTypeSecret && key.secretKey) {
             [exportKeys pgp_addObject:key.secretKey];
         }
     }
@@ -806,13 +806,13 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     if (!foundCompoundKey) {
-        let compoundKey = [[PGPKey alloc] initWithSecretKey:(key.type == PGPPartialKeySecret ? key : nil) publicKey:(key.type == PGPPartialKeyPublic ? key : nil)];
+        let compoundKey = [[PGPKey alloc] initWithSecretKey:(key.type == PGPKeyTypeSecret ? key : nil) publicKey:(key.type == PGPKeyTypePublic ? key : nil)];
         [updatedContainer addObject:compoundKey];
     } else {
-        if (key.type == PGPPartialKeyPublic) {
+        if (key.type == PGPKeyTypePublic) {
             foundCompoundKey.publicKey = key;
         }
-        if (key.type == PGPPartialKeySecret) {
+        if (key.type == PGPKeyTypeSecret) {
             foundCompoundKey.secretKey = key;
         }
     }

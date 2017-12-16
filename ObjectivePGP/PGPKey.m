@@ -117,19 +117,19 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
     let exportData = [NSMutableData data];
     if (self.publicKey) {
-        [exportData pgp_appendData:[self export:PGPPartialKeyPublic error:error]];
+        [exportData pgp_appendData:[self export:PGPKeyTypePublic error:error]];
     }
 
     if (self.secretKey) {
-        [exportData pgp_appendData:[self export:PGPPartialKeySecret error:error]];
+        [exportData pgp_appendData:[self export:PGPKeyTypeSecret error:error]];
     }
 
     return exportData;
 }
 
-- (nullable NSData *)export:(PGPPartialKeyType)keyType error:(NSError * __autoreleasing _Nullable *)error {
+- (nullable NSData *)export:(PGPKeyType)keyType error:(NSError * __autoreleasing _Nullable *)error {
     switch (keyType) {
-        case PGPPartialKeyPublic: {
+        case PGPKeyTypePublic: {
             if (!self.publicKey) {
                 return nil;
             }
@@ -137,7 +137,7 @@ NS_ASSUME_NONNULL_BEGIN
             return [self.publicKey export:error];
         }
         break;
-        case PGPPartialKeySecret: {
+        case PGPKeyTypeSecret: {
             if (!self.secretKey) {
                 return nil;
             }

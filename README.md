@@ -88,7 +88,7 @@ PGPKey *key = [pgp findKeysForUserID:@"Name <email@example.com>"];
 
 ```objective-c
 /* Export all public keys to file */
-if ([pgp exportKeysOfType:PGPPartialKeyPublic toFile:@"pubring.gpg" error:nil]) {
+if ([pgp exportKeysOfType:PGPKeyTypePublic toFile:@"pubring.gpg" error:nil]) {
     // success
 }
 
@@ -163,8 +163,8 @@ if (decryptedData) {
 ```objective-c
 PGPKeyGenerator *generator = [[PGPKeyGenerator alloc] init];
 PGPKey *key = [generator generateFor:@"Marcin <marcin@example.com>" passphrase:nil];
-NSData *publicKeyData = [key export:PGPPartialKeyPublic error:nil];
-NSData *secretKeyData = [key export:PGPPartialKeySecret error:nil];
+NSData *publicKeyData = [key export:PGPKeyTypePublic error:nil];
+NSData *secretKeyData = [key export:PGPKeyTypeSecret error:nil];
 ```
 
 ## Changelog
