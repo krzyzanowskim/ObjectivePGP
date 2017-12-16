@@ -5,6 +5,7 @@ Version 0.9.6
 - API: Refactor validation API due to internal improvements.
 - API: PGPPartialKeyPublic -> PGPKeyTypePublic
 - API: PGPPartialKeySecret -> PGPKeyTypeSecret
+- API: Introduces PGPKeyring. ObjectivePGP uses `defaultKeyring` property to manage imported keys.
 
 Version 0.9.5
 - Methods that get keys as parameter are now class methods, +[ObjectivePGP ...]

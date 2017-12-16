@@ -39,16 +39,16 @@
 
 - (void)testMultipleKeys {
     let keys = [PGPTestUtils readKeysFromFile:@"multiple-keys.asc"];
-    [self.pgp importKeys:keys];
+    [self.pgp.defaultKeyring importKeys:keys];
     XCTAssertEqual(keys.count, (NSUInteger)3);
-    XCTAssertEqual(self.pgp.keys.count, (NSUInteger)3);
+    XCTAssertEqual(self.pgp.defaultKeyring.keys.count, (NSUInteger)3);
 }
 
 - (void)testArmorPublicKey {
     let keys = [PGPTestUtils readKeysFromFile:@"pubring-test-plaintext.gpg"];
-    [self.pgp importKeys:keys];
+    [self.pgp.defaultKeyring importKeys:keys];
 
-    PGPKey *key = self.pgp.keys.firstObject;
+    PGPKey *key = self.pgp.defaultKeyring.keys.firstObject;
 
     NSError *exportError = nil;
     NSData *keyData = [key.publicKey export:&exportError];
@@ -76,7 +76,7 @@
 
 //- (void) testEmbededArmoredData
 //{
-//    [self.pgp importKeysFromFile:self.pubKeyringPath];
+//    [self.pgp.defaultKeyring importKeysFromFile:self.pubKeyringPath];
 //
 //    PGPKey *key = self.pgp.keys[0];
 //

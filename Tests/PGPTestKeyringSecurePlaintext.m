@@ -52,52 +52,52 @@
 
 - (void)testLoadKeys {
     let keys = [self loadKeysFromFile:@"secring-test-plaintext.gpg"];
-    [self.pgp importKeys:keys];
-    XCTAssert(self.pgp.keys.count == 1, @"Should load 1 key");
+    [self.pgp.defaultKeyring importKeys:keys];
+    XCTAssert(self.pgp.defaultKeyring.keys.count == 1, @"Should load 1 key");
 
-    let foundKeys1 = [self.pgp findKeysForUserID:@"Marcin (test) <marcink@up-next.com>"];
+    let foundKeys1 = [self.pgp.defaultKeyring findKeysForUserID:@"Marcin (test) <marcink@up-next.com>"];
     XCTAssertTrue(foundKeys1.count == 1);
 
-    let foundKeys2 = [self.pgp findKeysForUserID:@"ERR Marcin (test) <marcink@up-next.com>"];
+    let foundKeys2 = [self.pgp.defaultKeyring findKeysForUserID:@"ERR Marcin (test) <marcink@up-next.com>"];
     XCTAssertTrue(foundKeys2.count == 0);
 
-    let key = [self.pgp findKeyWithIdentifier:@"952E4E8B"];
+    let key = [self.pgp.defaultKeyring findKeyWithIdentifier:@"952E4E8B"];
     XCTAssertNotNil(key, @"Key 952E4E8B not found");
 }
 
 - (void)testSaveSecretKeys {
     let keys = [self loadKeysFromFile:@"secring-test-plaintext.gpg"];
-    [self.pgp importKeys:keys];
-    XCTAssertTrue(self.pgp.keys.count > 0);
+    [self.pgp.defaultKeyring importKeys:keys];
+    XCTAssertTrue(self.pgp.defaultKeyring.keys.count > 0);
 
     // Save to file
     NSError *saveError = nil;
     NSString *exportSecretKeyringPath = [self.workingDirectory stringByAppendingPathComponent:@"export-secring-test-plaintext.gpg"];
-    XCTAssertTrue([self.pgp exportKeysOfType:PGPKeyTypeSecret toFile:exportSecretKeyringPath error:&saveError]);
+    XCTAssertTrue([self.pgp.defaultKeyring exportKeysOfType:PGPKeyTypeSecret toFile:exportSecretKeyringPath error:&saveError]);
     XCTAssertNil(saveError);
 
     // Check if can be loaded
     ObjectivePGP *checkPGP = [[ObjectivePGP alloc] init];
     let checkKeys = [ObjectivePGP readKeysFromFile:exportSecretKeyringPath];
-    [checkPGP importKeys:checkKeys];
+    [checkPGP.defaultKeyring importKeys:checkKeys];
     XCTAssertTrue(checkKeys.count > 0);
 
-    XCTAssert(self.pgp.keys.count > 0, @"Keys not loaded");
+    XCTAssert(self.pgp.defaultKeyring.keys.count > 0, @"Keys not loaded");
 
-    let key = checkPGP.keys.firstObject;
+    let key = checkPGP.defaultKeyring.keys.firstObject;
     XCTAssertFalse(key.isEncryptedWithPassword, @"Should not be encrypted");
     XCTAssertEqualObjects([key.keyID longIdentifier], @"25A233C2952E4E8B", @"Invalid key identifier");
 }
 
 - (void)testSavePublicKeys {
     let keys = [self loadKeysFromFile:@"pubring-test-plaintext.gpg"];
-    [self.pgp importKeys:keys];
-    XCTAssertTrue(self.pgp.keys.count > 0);
+    [self.pgp.defaultKeyring importKeys:keys];
+    XCTAssertTrue(self.pgp.defaultKeyring.keys.count > 0);
 
     NSString *exportPublicKeyringPath = [self.workingDirectory stringByAppendingPathComponent:@"export-pubring-test-plaintext.gpg"];
 
     NSError *psaveError = nil;
-    XCTAssertTrue([self.pgp exportKeysOfType:PGPKeyTypePublic toFile:exportPublicKeyringPath error:&psaveError]);
+    XCTAssertTrue([self.pgp.defaultKeyring exportKeysOfType:PGPKeyTypePublic toFile:exportPublicKeyringPath error:&psaveError]);
     XCTAssertNil(psaveError);
 
     NSLog(@"Created file %@", exportPublicKeyringPath);
@@ -105,20 +105,20 @@
 
 - (void)testPrimaryKey {
     let keys = [self loadKeysFromFile:@"secring-test-plaintext.gpg"];
-    [self.pgp importKeys:keys];
-    XCTAssertTrue(self.pgp.keys.count > 0);
+    [self.pgp.defaultKeyring importKeys:keys];
+    XCTAssertTrue(self.pgp.defaultKeyring.keys.count > 0);
 
-    let key = self.pgp.keys.firstObject;
+    let key = self.pgp.defaultKeyring.keys.firstObject;
     XCTAssertFalse(key.isEncryptedWithPassword, @"Should not be encrypted");
     XCTAssertEqualObjects([key.keyID longIdentifier], @"25A233C2952E4E8B", @"Invalid key identifier");
 }
 
 - (void)testSigning {
     let keys1 = [self loadKeysFromFile:@"pubring-test-plaintext.gpg"];
-    [self.pgp importKeys:keys1];
+    [self.pgp.defaultKeyring importKeys:keys1];
 
     let keys2 = [self loadKeysFromFile:@"secring-test-plaintext.gpg"];
-    [self.pgp importKeys:keys2];
+    [self.pgp.defaultKeyring importKeys:keys2];
 
     // file to sign
     NSString *fileToSignPath = [self.workingDirectory stringByAppendingPathComponent:@"signed_file.bin"];
@@ -126,7 +126,7 @@
     BOOL status = [[NSFileManager defaultManager] copyItemAtPath:secKeyringPath toPath:fileToSignPath error:nil];
     XCTAssertTrue(status);
 
-    let keyToSign = [self.pgp findKeyWithIdentifier:@"25A233C2952E4E8B"];
+    let keyToSign = [self.pgp.defaultKeyring findKeyWithIdentifier:@"25A233C2952E4E8B"];
     XCTAssertNotNil(keyToSign);
     let dataToSign = [NSData dataWithContentsOfFile:fileToSignPath];
 
@@ -141,7 +141,7 @@
     XCTAssertTrue(status);
 
     // Verify
-    let keyToValidateSign = [self.pgp findKeyWithIdentifier:@"25A233C2952E4E8B"];
+    let keyToValidateSign = [self.pgp.defaultKeyring findKeyWithIdentifier:@"25A233C2952E4E8B"];
     NSError *verifyError = nil;
     status = [ObjectivePGP verify:dataToSign withSignature:signatureData usingKeys:@[keyToValidateSign] passphraseForKey:nil error:&verifyError];
     XCTAssertTrue(status);
@@ -157,7 +157,7 @@
     XCTAssertTrue(status);
 
     // Verify
-    status = [self.pgp verify:signedData withSignature:nil passphraseForKey:nil error:&verifyError];
+    status = [ObjectivePGP verify:signedData withSignature:nil usingKeys:self.pgp.defaultKeyring.keys passphraseForKey:nil error:&verifyError];
     XCTAssertTrue(status);
     XCTAssertNil(verifyError);
 }
@@ -166,13 +166,13 @@
 
 - (void)testEncryption {
     let keys1 = [self loadKeysFromFile:@"pubring-test-plaintext.gpg"];
-    [self.pgp importKeys:keys1];
+    [self.pgp.defaultKeyring importKeys:keys1];
 
     let keys2 = [self loadKeysFromFile:@"secring-test-plaintext.gpg"];
-    [self.pgp importKeys:keys2];
+    [self.pgp.defaultKeyring importKeys:keys2];
 
     // Public key
-    let keyToEncrypt = [self.pgp findKeyWithIdentifier:@"25A233C2952E4E8B"];
+    let keyToEncrypt = [self.pgp.defaultKeyring findKeyWithIdentifier:@"25A233C2952E4E8B"];
 
     XCTAssertNotNil(keyToEncrypt);
 
@@ -191,7 +191,7 @@
     XCTAssertTrue(status);
 
     // decrypt + validate decrypted message
-    NSData *decryptedData = [self.pgp decrypt:encryptedData passphraseForKey:nil error:nil];
+    NSData *decryptedData = [ObjectivePGP decrypt:encryptedData usingKeys:self.pgp.defaultKeyring.keys passphraseForKey:nil verifySignature:YES error:nil];
     XCTAssertNotNil(decryptedData);
     NSString *decryptedString = [[NSString alloc] initWithData:decryptedData encoding:NSASCIIStringEncoding];
     XCTAssertNotNil(decryptedString);
@@ -209,26 +209,26 @@
 
 - (void)testGPGEncryptedMessage {
     let keys1 = [self loadKeysFromFile:@"pubring-test-plaintext.gpg"];
-    [self.pgp importKeys:keys1];
+    [self.pgp.defaultKeyring importKeys:keys1];
 
     let keys2 = [self loadKeysFromFile:@"secring-test-plaintext.gpg"];
-    [self.pgp importKeys:keys2];
+    [self.pgp.defaultKeyring importKeys:keys2];
 
     NSError *error = nil;
     NSString *encryptedPath = [PGPTestUtils pathToBundledFile:@"secring-test-plaintext-encrypted-message.asc"];
-    [self.pgp decrypt:[NSData dataWithContentsOfFile:encryptedPath] passphraseForKey:nil error:&error];
+    [ObjectivePGP decrypt:[NSData dataWithContentsOfFile:encryptedPath] usingKeys:self.pgp.defaultKeyring.keys passphraseForKey:nil verifySignature:YES error:&error];
 }
 
 - (void)testEncryptWithMultipleRecipients {
     let keys1 = [self loadKeysFromFile:@"pubring-test-plaintext.gpg"];
-    [self.pgp importKeys:keys1];
+    [self.pgp.defaultKeyring importKeys:keys1];
 
     let keys2 = [self loadKeysFromFile:@"secring-test-plaintext.gpg"];
-    [self.pgp importKeys:keys2];
+    [self.pgp.defaultKeyring importKeys:keys2];
 
     // Public key
-    let keyToEncrypt2 = [self.pgp findKeyWithIdentifier:@"66753341"];
-    let keyToEncrypt1 = [self.pgp findKeyWithIdentifier:@"952E4E8B"];
+    let keyToEncrypt2 = [self.pgp.defaultKeyring findKeyWithIdentifier:@"66753341"];
+    let keyToEncrypt1 = [self.pgp.defaultKeyring findKeyWithIdentifier:@"952E4E8B"];
 
     XCTAssertNotNil(keyToEncrypt1);
     XCTAssertNotNil(keyToEncrypt2);
@@ -248,7 +248,7 @@
     XCTAssertTrue(status);
 
     // decrypt + validate decrypted message
-    NSData *decryptedData = [self.pgp decrypt:encryptedData passphraseForKey:nil error:&encryptError];
+    NSData *decryptedData = [ObjectivePGP decrypt:encryptedData usingKeys:self.pgp.defaultKeyring.keys passphraseForKey:nil verifySignature:YES error:&encryptError];
     XCTAssertNotNil(encryptError);
     XCTAssertNotNil(decryptedData);
     NSString *decryptedString = [[NSString alloc] initWithData:decryptedData encoding:NSASCIIStringEncoding];

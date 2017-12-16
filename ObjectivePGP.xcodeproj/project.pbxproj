@@ -115,6 +115,9 @@
 		757183BB1F9A7D56004D7DF1 /* PGPSignatureSubpacketEmbeddedSignature.m in Sources */ = {isa = PBXBuildFile; fileRef = 757183B91F9A7D56004D7DF1 /* PGPSignatureSubpacketEmbeddedSignature.m */; };
 		7575BE5B1F00927800121BEA /* libbz2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7575BE5A1F00927800121BEA /* libbz2.tbd */; };
 		7575BE5D1F00927F00121BEA /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 7575BE5C1F00927F00121BEA /* libz.tbd */; };
+		757B54CB1FE5B68300E974CB /* PGPKeyring.h in Headers */ = {isa = PBXBuildFile; fileRef = 757B54C91FE5B68300E974CB /* PGPKeyring.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		757B54CC1FE5B68300E974CB /* PGPKeyring.m in Sources */ = {isa = PBXBuildFile; fileRef = 757B54CA1FE5B68300E974CB /* PGPKeyring.m */; };
+		757B54CE1FE5C81500E974CB /* PGPKeyring+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 757B54CD1FE5C81500E974CB /* PGPKeyring+Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		75AB35061F8819A600A1CDD6 /* testfiles.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 75AB35051F88193B00A1CDD6 /* testfiles.bundle */; };
 		75AB350A1F881E3F00A1CDD6 /* PGPTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AB35091F881E3F00A1CDD6 /* PGPTestUtils.m */; };
 		75BF43E21F504D0F004334DE /* PGPKeyGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 75BF43E01F504D0F004334DE /* PGPKeyGenerator.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -251,6 +254,9 @@
 		75734BDA191853DF00A54D6E /* PGPKeyID.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPKeyID.m; sourceTree = "<group>"; };
 		7575BE5A1F00927800121BEA /* libbz2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libbz2.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.0.sdk/usr/lib/libbz2.tbd; sourceTree = DEVELOPER_DIR; };
 		7575BE5C1F00927F00121BEA /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS11.0.sdk/usr/lib/libz.tbd; sourceTree = DEVELOPER_DIR; };
+		757B54C91FE5B68300E974CB /* PGPKeyring.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPKeyring.h; sourceTree = "<group>"; };
+		757B54CA1FE5B68300E974CB /* PGPKeyring.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PGPKeyring.m; sourceTree = "<group>"; };
+		757B54CD1FE5C81500E974CB /* PGPKeyring+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PGPKeyring+Private.h"; sourceTree = "<group>"; };
 		75804A241EED159300AC97BF /* PGPKey+Private.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PGPKey+Private.h"; sourceTree = "<group>"; };
 		758475E1195AF866003953B2 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		758514EA1EDF09C400CB313F /* PGPFoundation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPFoundation.h; sourceTree = "<group>"; };
@@ -455,6 +461,9 @@
 				75F6BAAB1F8AED3500A0B885 /* ObjectivePGP-Private.h */,
 				750F89641F0D701E00B99726 /* ObjectivePGPObject.h */,
 				756299BF1914DE1A00C5AD3B /* ObjectivePGPObject.m */,
+				757B54C91FE5B68300E974CB /* PGPKeyring.h */,
+				757B54CD1FE5C81500E974CB /* PGPKeyring+Private.h */,
+				757B54CA1FE5B68300E974CB /* PGPKeyring.m */,
 				751373EA1F65379C0067A343 /* PGPPacketFactory.h */,
 				751373EB1F65379D0067A343 /* PGPPacketFactory.m */,
 				752DE5BD1EEE3BE800637E38 /* PGPMacros.h */,
@@ -571,6 +580,7 @@
 				7513738C1F65366E0067A343 /* PGPCryptoUtils.h in Headers */,
 				75C501E61F1233A100FEC874 /* PGPRSA.h in Headers */,
 				75BF43E21F504D0F004334DE /* PGPKeyGenerator.h in Headers */,
+				757B54CB1FE5B68300E974CB /* PGPKeyring.h in Headers */,
 				7537A6CB1F0D739A00892829 /* PGPFingerprint.h in Headers */,
 				7537A6CC1F0D739A00892829 /* PGPS2K.h in Headers */,
 				7537A6CD1F0D739A00892829 /* PGPKeyID.h in Headers */,
@@ -622,6 +632,7 @@
 				751373D41F6537490067A343 /* PGPSignaturePacket+Private.h in Headers */,
 				7537A6D21F0D739A00892829 /* PGPKey+Private.h in Headers */,
 				751373ED1F65379F0067A343 /* PGPPacketFactory.h in Headers */,
+				757B54CE1FE5C81500E974CB /* PGPKeyring+Private.h in Headers */,
 				7537A6B51F0D739A00892829 /* PGPBigNum+Private.h in Headers */,
 				75E9AD0F1F7FF10100B0559B /* PGPPartialKey+Private.h in Headers */,
 				757183BA1F9A7D56004D7DF1 /* PGPSignatureSubpacketEmbeddedSignature.h in Headers */,
@@ -791,6 +802,7 @@
 				751373E31F6537490067A343 /* PGPTrustPacket.m in Sources */,
 				751373D11F6537490067A343 /* PGPSecretKeyPacket.m in Sources */,
 				750F89611F0D6EF100B99726 /* PGPPKCSEme.m in Sources */,
+				757B54CC1FE5B68300E974CB /* PGPKeyring.m in Sources */,
 				75D1E2661FCB823500D55F60 /* PGPUserAttributeImageSubpacket.m in Sources */,
 				750F89631F0D6EF100B99726 /* PGPCryptoCFB.m in Sources */,
 			);
