@@ -62,6 +62,7 @@ FOUNDATION_EXPORT const unsigned char ObjectivePGPVersionString[];
 #import <ObjectivePGP/PGPSignaturePacket+Private.h>
 #import <ObjectivePGP/PGPKey+Private.h>
 #import <ObjectivePGP/PGPPacketFactory.h>
+#import <ObjectivePGP/PGPKeyring+Private.h>
 #import <ObjectivePGP/PGPBigNum+Private.h>
 #import <ObjectivePGP/PGPPartialKey+Private.h>
 #import <ObjectivePGP/PGPSignatureSubpacketEmbeddedSignature.h>
