@@ -452,26 +452,43 @@ NS_ASSUME_NONNULL_BEGIN
         }
     }
 
-    PGPSignaturePacket * _Nullable signaturePacket = nil;
+    // PGPSignaturePacket * _Nullable signaturePacket = nil;
+    let signatures = [NSMutableArray<PGPSignaturePacket *> array];
     PGPLiteralPacket * _Nullable literalPacket = nil;
+
+    int onePassSignatureCount = 0;
+    int signatureCount = 0;
     for (PGPPacket *packet in accumulatedPackets) {
         switch (packet.tag) {
             case PGPCompressedDataPacketTag:
-            case PGPOnePassSignaturePacketTag:
                 // ignore here
+                break;
+            case PGPOnePassSignaturePacketTag:
+                // ignore here, but should check if the number of one-pass-sig is equal to attached signatures
+                onePassSignatureCount++;
                 break;
             case PGPLiteralDataPacketTag:
                 literalPacket = PGPCast(packet, PGPLiteralPacket);
                 break;
-            case PGPSignaturePacketTag:
-                signaturePacket = PGPCast(packet, PGPSignaturePacket);
-                break;
+            case PGPSignaturePacketTag: {
+                let signaturePacket = PGPCast(packet, PGPSignaturePacket);
+                [signatures pgp_addObject:signaturePacket];
+                signatureCount++;
+            }
+            break;
             default:
                 break;
         }
     }
 
-    if (!signaturePacket) {
+    if (onePassSignatureCount != signatureCount) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorMissingSignature userInfo:@{ NSLocalizedDescriptionKey: @"Message is not properly signed." }];
+        }
+        return NO;
+    }
+
+    if (signatures.count == 0) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorNotSigned userInfo:@{ NSLocalizedDescriptionKey: @"Message is not signed." }];
         }
@@ -485,21 +502,35 @@ NS_ASSUME_NONNULL_BEGIN
         return NO;
     }
 
-    let signedLiteralData = literalPacket.literalRawData;
-    if (signedLiteralData && (!error || (error && *error == nil))) {
-        let issuerKeyID = signaturePacket.issuerKeyID;
-        if (issuerKeyID) {
-            let issuerKey = [PGPKeyring findKeyWithKeyID:issuerKeyID in:keys];
-            if (!issuerKey) {
-                if (error) {
-                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"Unable to check signature. No public key." }];
+
+    // Validate signatures
+    BOOL isValid = YES;
+
+    for (PGPSignaturePacket *signaturePacket in signatures) {
+        if (!isValid) {
+            continue;
+        }
+
+        let signedLiteralData = literalPacket.literalRawData;
+        isValid = signedLiteralData && (!error || (error && *error == nil));
+        if (isValid) {
+            let issuerKeyID = signaturePacket.issuerKeyID;
+            isValid = issuerKeyID != nil;
+            if (isValid) {
+                let issuerKey = [PGPKeyring findKeyWithKeyID:issuerKeyID in:keys];
+                isValid = issuerKey != nil;
+                if (!isValid) {
+                    if (error) {
+                        *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"Unable to check signature. No public key." }];
+                    }
+                    continue;
                 }
-                return NO;
+                isValid = isValid && [signaturePacket verifyData:signedLiteralData publicKey:issuerKey error:error];
             }
-            return [signaturePacket verifyData:signedLiteralData publicKey:issuerKey error:error];
         }
     }
-    return NO;
+
+    return isValid;
 }
 
 + (NSArray<PGPKey *> *)readKeysFromFile:(NSString *)path {
