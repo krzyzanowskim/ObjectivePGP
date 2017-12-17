@@ -5,7 +5,6 @@
 //  INTERNATIONAL COPYRIGHT LAW. USAGE IS BOUND TO THE LICENSE AGREEMENT.
 //  This notice may not be removed from this file.
 //
-//  TODO: add support for ZIP and BZIP2
 
 #import "PGPCompressedPacket.h"
 #import "NSData+compression.h"
@@ -47,7 +46,6 @@ NS_ASSUME_NONNULL_BEGIN
     // - Compressed data, which makes up the remainder of the packet.
     let compressedData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
 
-    // TODO: for ZIP use AgileBits/objective-zip
     switch (self.compressionType) {
         case PGPCompressionZIP:
             self.decompressedData = [compressedData zipDecompressed:error];
