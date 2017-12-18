@@ -173,13 +173,6 @@ NS_ASSUME_NONNULL_BEGIN
         [scanner scanString:@"\n" intoString:nil];
     }
 
-    if (!checksumString) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Missing checksum" }];
-        }
-        return nil;
-    }
-
     // read footer
     BOOL footerMatchHeader = NO;
     [scanner scanUpToCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:&line];
@@ -201,20 +194,22 @@ NS_ASSUME_NONNULL_BEGIN
     // binary data from base64 part
     NSData *binaryData = [[NSData alloc] initWithBase64EncodedString:base64String options:NSDataBase64DecodingIgnoreUnknownCharacters];
 
+    // The checksum with its leading equal sign MAY appear on the first line after the base64 encoded data.
     // validate checksum
-    NSData *readChecksumData = [[NSData alloc] initWithBase64EncodedString:checksumString options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    if (checksumString) {
+        let readChecksumData = [[NSData alloc] initWithBase64EncodedString:checksumString options:NSDataBase64DecodingIgnoreUnknownCharacters];
 
-    UInt32 calculatedCRC24 = [binaryData pgp_CRC24];
-    calculatedCRC24 = CFSwapInt32HostToBig(calculatedCRC24);
-    calculatedCRC24 = calculatedCRC24 >> 8;
-    NSData *calculatedCRC24Data = [NSData dataWithBytes:&calculatedCRC24 length:3];
-    if (!PGPEqualObjects(calculatedCRC24Data,readChecksumData)) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Checksum mismatch" }];
+        UInt32 calculatedCRC24 = [binaryData pgp_CRC24];
+        calculatedCRC24 = CFSwapInt32HostToBig(calculatedCRC24);
+        calculatedCRC24 = calculatedCRC24 >> 8;
+        let calculatedCRC24Data = [NSData dataWithBytes:&calculatedCRC24 length:3];
+        if (!PGPEqualObjects(calculatedCRC24Data, readChecksumData)) {
+            if (error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Checksum mismatch" }];
+            }
+            return nil;
         }
-        return nil;
     }
-
     return binaryData;
 }
 
@@ -222,7 +217,6 @@ NS_ASSUME_NONNULL_BEGIN
     let binRingData = binOrArmorData;
     // detect if armored, check for string -----BEGIN PGP
     if ([PGPArmor isArmoredData:binRingData]) {
-        NSError * _Nullable deadmorError = nil;
         var armoredString = [[NSString alloc] initWithData:binRingData encoding:NSUTF8StringEncoding];
 
         // replace \n to \r\n
@@ -243,10 +237,11 @@ NS_ASSUME_NONNULL_BEGIN
             }
         }];
 
+        NSError * _Nullable readError = nil;
         let extractedData = [[NSMutableArray<NSData *> alloc] init];
         for (NSString *extractedString in extractedBlocks) {
-            let armodedData = [PGPArmor readArmored:extractedString error:&deadmorError];
-            if (deadmorError) {
+            let armodedData = [PGPArmor readArmored:extractedString error:&readError];
+            if (readError) {
                 return @[];
             }
 

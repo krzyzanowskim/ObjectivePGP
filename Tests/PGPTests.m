@@ -282,6 +282,14 @@
     XCTAssertNotNil(decryptError); // not signed
 }
 
+// https://github.com/krzyzanowskim/ObjectivePGP/issues/93
+// Public Key is invalid input data but key works in android bouncycastle
+// Armor checksum is optional.
+- (void)testIssue93OptionalChecksum {
+    let keys = [PGPTestUtils readKeysFromFile:@"issue93-keys.asc"];
+    XCTAssertEqual(keys.count, (NSUInteger)1);
+}
+
 - (void)testSigningSubKey {
     // subkey generated with GnuPG 2.1.18
     //
