@@ -173,7 +173,7 @@ See [CHANGELOG](./CHANGELOG)
 
 Known limitations:
 
-- Twofish and Elgamal are not supported.
+- Elgamal cipher is not supported.
 - Missing external configuration for default values.
 
 ## The license

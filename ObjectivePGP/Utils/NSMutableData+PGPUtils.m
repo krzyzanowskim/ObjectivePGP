@@ -19,6 +19,17 @@ NS_ASSUME_NONNULL_BEGIN
     }
 }
 
+- (void)XORWithData:(NSData *)data index:(NSUInteger)index {
+    uint8_t *dataPtr = (uint8_t *)self.mutableBytes;
+    const uint8_t *data2Ptr = (uint8_t *)data.bytes;
+
+    NSAssert(index < self.length, @"Invalid index");
+
+    for (NSUInteger i = 0; i < data.length && (i + index) < self.length; i++) {
+        dataPtr[i + index] = dataPtr[i + index] ^ data2Ptr[i];
+    }
+}
+
 @end
 
 NS_ASSUME_NONNULL_END

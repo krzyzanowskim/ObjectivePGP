@@ -8,6 +8,7 @@
 
 #import "PGPCryptoCFB.h"
 #import "NSData+PGPUtils.h"
+#import "NSMutableData+PGPUtils.h"
 #import "PGPCryptoUtils.h"
 #import "PGPS2K.h"
 #import "PGPTypes.h"
@@ -25,6 +26,8 @@
 #import <openssl/des.h>
 #import <openssl/idea.h>
 #import <openssl/sha.h>
+
+#import "twofish.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -150,10 +153,41 @@ NS_ASSUME_NONNULL_BEGIN
 
             memset(&encrypt_key, 0, sizeof(BF_KEY));
         } break;
-        case PGPSymmetricTwofish256:
-            // TODO: implement Twofish
-            [NSException raise:@"PGPNotSupported" format:@"Twofish not supported"];
-            break;
+        case PGPSymmetricTwofish256: {
+            static dispatch_once_t twoFishInit;
+            dispatch_once(&twoFishInit, ^{ Twofish_initialise(); });
+
+            Twofish_key xkey;
+            Twofish_prepare_key((uint8_t *)sessionKeyData.bytes, (int)sessionKeyData.length, &xkey);
+
+            // CFB
+            NSUInteger blockLength = ivData.length;
+            if (!decrypt) {
+                // encrypt
+                NSMutableData *encryptedOutMutableData = encryptedData.mutableCopy;
+                NSData *plaintext = ivData.copy;
+                for (NSUInteger index = 0; index < encryptedData.length; index += blockLength) {
+                    let ciphertext = [NSMutableData dataWithLength:blockLength];
+                    Twofish_encrypt(&xkey, (uint8_t *)plaintext.bytes, ciphertext.mutableBytes);
+                    [encryptedOutMutableData XORWithData:ciphertext index:index];
+                    plaintext = [encryptedOutMutableData subdataWithRange:(NSRange){index ,blockLength}]; // ciphertext.copy;
+                }
+                decryptedData = encryptedOutMutableData.copy;
+            } else {
+                // decrypt
+                NSMutableData *decryptedOutMutableData = encryptedData.mutableCopy;
+                NSData *ciphertext = ivData.copy;
+                for (NSUInteger index = 0; index < encryptedData.length; index += blockLength) {
+                    NSMutableData *plaintext = [NSMutableData dataWithLength:blockLength];
+                    Twofish_encrypt(&xkey, (uint8_t *)ciphertext.bytes, plaintext.mutableBytes);
+                    [decryptedOutMutableData XORWithData:plaintext index:index];
+                    ciphertext = [decryptedOutMutableData subdataWithRange:(NSRange){index ,blockLength}];
+                }
+                decryptedData = decryptedOutMutableData.copy;
+            }
+
+            memset(&xkey, 0, sizeof(Twofish_key));
+        } break;
         case PGPSymmetricPlaintext:
             PGPLogWarning(@"Can't decrypt plaintext");
             decryptedData = [NSData dataWithData:encryptedData];

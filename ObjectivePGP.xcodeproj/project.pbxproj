@@ -118,6 +118,8 @@
 		757B54CB1FE5B68300E974CB /* PGPKeyring.h in Headers */ = {isa = PBXBuildFile; fileRef = 757B54C91FE5B68300E974CB /* PGPKeyring.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		757B54CC1FE5B68300E974CB /* PGPKeyring.m in Sources */ = {isa = PBXBuildFile; fileRef = 757B54CA1FE5B68300E974CB /* PGPKeyring.m */; };
 		757B54CE1FE5C81500E974CB /* PGPKeyring+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 757B54CD1FE5C81500E974CB /* PGPKeyring+Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		759345561FE9C447004D5105 /* twofish.c in Sources */ = {isa = PBXBuildFile; fileRef = 759345541FE9C447004D5105 /* twofish.c */; };
+		759345571FE9C447004D5105 /* twofish.h in Headers */ = {isa = PBXBuildFile; fileRef = 759345551FE9C447004D5105 /* twofish.h */; };
 		75AB35061F8819A600A1CDD6 /* testfiles.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 75AB35051F88193B00A1CDD6 /* testfiles.bundle */; };
 		75AB350A1F881E3F00A1CDD6 /* PGPTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AB35091F881E3F00A1CDD6 /* PGPTestUtils.m */; };
 		75BF43E21F504D0F004334DE /* PGPKeyGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 75BF43E01F504D0F004334DE /* PGPKeyGenerator.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -263,6 +265,8 @@
 		758514EB1EDF09C400CB313F /* PGPFoundation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPFoundation.m; sourceTree = "<group>"; };
 		758514EE1EDF3D7100CB313F /* PGPKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPKey.h; sourceTree = "<group>"; };
 		758514EF1EDF3D7100CB313F /* PGPKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPKey.m; sourceTree = "<group>"; };
+		759345541FE9C447004D5105 /* twofish.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = twofish.c; sourceTree = "<group>"; };
+		759345551FE9C447004D5105 /* twofish.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = twofish.h; sourceTree = "<group>"; };
 		7597B79A192E9C7F003ABC65 /* PGPPKCSEmsa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPKCSEmsa.h; sourceTree = "<group>"; };
 		7597B79B192E9C7F003ABC65 /* PGPPKCSEmsa.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPPKCSEmsa.m; sourceTree = "<group>"; };
 		759DBA151915BC0400305549 /* PGPTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPTypes.h; sourceTree = "<group>"; };
@@ -398,6 +402,7 @@
 		75572E231ED2186300205871 /* CryptoBox */ = {
 			isa = PBXGroup;
 			children = (
+				759345531FE9C447004D5105 /* twofish */,
 				751373891F65366C0067A343 /* PGPCryptoUtils.h */,
 				7513738A1F65366C0067A343 /* PGPCryptoUtils.m */,
 				75572E281ED2193C00205871 /* PGPCryptoHash.h */,
@@ -543,6 +548,15 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		759345531FE9C447004D5105 /* twofish */ = {
+			isa = PBXGroup;
+			children = (
+				759345541FE9C447004D5105 /* twofish.c */,
+				759345551FE9C447004D5105 /* twofish.h */,
+			);
+			path = twofish;
+			sourceTree = "<group>";
+		};
 		75BAFAC31F004E6000A956FC /* Config */ = {
 			isa = PBXGroup;
 			children = (
@@ -630,6 +644,7 @@
 				751373CA1F6537490067A343 /* PGPPublicKeyPacket+Private.h in Headers */,
 				751373D71F6537490067A343 /* PGPSignatureSubpacket+Private.h in Headers */,
 				751373D41F6537490067A343 /* PGPSignaturePacket+Private.h in Headers */,
+				759345571FE9C447004D5105 /* twofish.h in Headers */,
 				7537A6D21F0D739A00892829 /* PGPKey+Private.h in Headers */,
 				751373ED1F65379F0067A343 /* PGPPacketFactory.h in Headers */,
 				757B54CE1FE5C81500E974CB /* PGPKeyring+Private.h in Headers */,
@@ -799,6 +814,7 @@
 				750F89601F0D6EF100B99726 /* PGPPKCSEmsa.m in Sources */,
 				751373DF1F6537490067A343 /* PGPSymmetricallyEncryptedDataPacket.m in Sources */,
 				757183BB1F9A7D56004D7DF1 /* PGPSignatureSubpacketEmbeddedSignature.m in Sources */,
+				759345561FE9C447004D5105 /* twofish.c in Sources */,
 				751373E31F6537490067A343 /* PGPTrustPacket.m in Sources */,
 				751373D11F6537490067A343 /* PGPSecretKeyPacket.m in Sources */,
 				750F89611F0D6EF100B99726 /* PGPPKCSEme.m in Sources */,
