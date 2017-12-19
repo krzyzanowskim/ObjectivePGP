@@ -12,10 +12,25 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-/// ObjectivePGP main class.
+/**
+ ObjectivePGP - The Leading OpenPGP Framework for iOS and macOS.
+ This is the configuration object for framework-global settings.
+
+ @note The ObjectivePGP shared object is a global, thread-safe key/value store.
+ Use `setValue:forKey:` and `valueForKey:` or the subscripted variants to set/get properties.
+ */
 @interface ObjectivePGP : NSObject
 
-@property (nonatomic, readonly) PGPKeyring *defaultKeyring;
+/**
+ The shared ObjectivePGP configuration instance.
+ @note This is the default instance.
+ */
+@property (class, atomic, readonly) ObjectivePGP *sharedInstance;
+
+/**
+ Default, shared keyring instance. Not used internally.
+ */
+@property (class, atomic, readonly) PGPKeyring *defaultKeyring;
 
 /**
  Read binary or armored (ASCII) PGP keys from the input.

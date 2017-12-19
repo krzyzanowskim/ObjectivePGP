@@ -450,7 +450,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Preferences
 
 - (PGPSymmetricAlgorithm)preferredSymmetricAlgorithm {
-    return [[self class] preferredSymmetricAlgorithmForKeys:@[self]];
+    return [self.class preferredSymmetricAlgorithmForKeys:@[self]];
 }
 
 + (PGPSymmetricAlgorithm)preferredSymmetricAlgorithmForKeys:(NSArray<PGPPartialKey *> *)keys {

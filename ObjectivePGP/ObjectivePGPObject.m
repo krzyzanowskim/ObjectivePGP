@@ -42,9 +42,27 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)init {
     if ((self = [super init])) {
-        _defaultKeyring = [[PGPKeyring alloc] init];
+        //
     }
     return self;
+}
+
++ (ObjectivePGP *)sharedInstance {
+    static ObjectivePGP *_ObjectivePGP;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _ObjectivePGP = [[ObjectivePGP alloc] init];
+    });
+    return _ObjectivePGP;
+}
+
++ (PGPKeyring *)defaultKeyring {
+    static PGPKeyring *_keyring;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        _keyring = [[PGPKeyring alloc] init];
+    });
+    return _keyring;
 }
 
 #pragma mark - Encrypt & Decrypt

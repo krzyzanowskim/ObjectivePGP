@@ -34,8 +34,8 @@
 }
 
 - (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
-    // TODO: export trust packet
-    //  (1 octet "level" (depth), 1 octet of trust amount)
+    // Don't export trust packets
+    // (1 octet "level" (depth), 1 octet of trust amount)
     return [self.data copy];
 }
 

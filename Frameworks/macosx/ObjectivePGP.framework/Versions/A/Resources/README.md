@@ -93,7 +93,7 @@ if ([pgp exportKeysOfType:PGPKeyTypePublic toFile:@"pubring.gpg" error:nil]) {
 }
 
 /* Export a key and save as armored (ASCII) file */
-PGPKey *key = [self.pgp.defaultKeyring findKeyWithIdentifier:@"979E4B03DFFE30C6"];
+PGPKey *key = [keyring findKeyWithIdentifier:@"979E4B03DFFE30C6"];
 NSData *armoredKeyData = [pgp exportKey:key armored:YES];
 [armoredKeyData writeToFile:@"pubkey.asc" atomically:YES];
 ```
@@ -102,7 +102,7 @@ NSData *armoredKeyData = [pgp exportKey:key armored:YES];
 
 ```objective-c
 /* Choose a key to use to sign the data */
-PGPKey *key = [self.pgp.defaultKeyring findKeyWithIdentifier:@"979E4B03DFFE30C6"];
+PGPKey *key = [keyring findKeyWithIdentifier:@"979E4B03DFFE30C6"];
 
 // File to encrypt
 NSData *fileContent = [NSData dataWithContentsOfFile:@"/path/file/to/data.txt"];
@@ -137,7 +137,7 @@ if ([pgp verify:dataContent withSignature:signatureContent error:nil]) {
 NSData *fileContent = [NSData dataWithContentsOfFile:@"/path/plaintext.txt"];
 
 /* Choose the public key to use to encrypt data. Must be imported previously */
-PGPKey *key = [self.pgp.defaultKeyring findKeyWithIdentifier:@"979E4B03DFFE30C6"];
+PGPKey *key = [keyring findKeyWithIdentifier:@"979E4B03DFFE30C6"];
 
 /* Encrypt data. Armor output (ASCII file)  */
 NSData *encryptedData = [ObjectivePGP encrypt:fileContent usingKeys:@[key] armored:YES error:nil];

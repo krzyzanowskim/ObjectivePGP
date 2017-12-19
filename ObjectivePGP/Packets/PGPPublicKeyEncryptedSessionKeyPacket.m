@@ -154,7 +154,9 @@ NS_ASSUME_NONNULL_BEGIN
 
     let modulusMPI = [publicKeyPacket publicMPI:PGPMPI_N];
     if (!modulusMPI) {
-        // TODO: add error message
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Cannot encrypt. Missing required MPI. Invalid key."}];
+        }
         return NO;
     }
 

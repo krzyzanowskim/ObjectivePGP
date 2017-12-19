@@ -229,7 +229,9 @@ NS_ASSUME_NONNULL_BEGIN
     // The first block-size octets (for example, 8 octets for a 64-bit block length) are random,
     uint8_t buf[blockSize];
     if (SecRandomCopyBytes(kSecRandomDefault, blockSize, buf) == -1) {
-        // TODO: error
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Encryption failed. Cannot prepare random data."}];
+        }
         return NO;
     }
     let prefixRandomData = [NSMutableData dataWithBytes:buf length:blockSize];

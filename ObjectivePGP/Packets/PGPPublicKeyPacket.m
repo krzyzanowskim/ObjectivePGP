@@ -240,29 +240,6 @@ NS_ASSUME_NONNULL_BEGIN
     return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
         return [self buildKeyBodyData:NO];
     }];
-
-    // TODO: to be removed when verified
-    //    let data = [NSMutableData data];
-    //
-    //    let bodyData = [self buildKeyBodyData:NO];
-    //    if (!self.bodyData) {
-    //        self.bodyData = bodyData;
-    //    }
-    //
-    //    let headerData = [self buildHeaderData:bodyData];
-    //    if (!self.headerData) {
-    //        self.headerData = headerData;
-    //    }
-    //    [data appendData:headerData];
-    //    [data appendData:bodyData];
-    //
-    //    // it wont match, because input data is OLD world, and we export in NEW world format
-    //    // NSAssert([headerData isEqualToData:self.headerData], @"Header not match");
-    //    if ([self class] == [PGPPublicKeyPacket class]) {
-    //        NSAssert([bodyData isEqualToData:self.bodyData], @"Body doesn't match");
-    //    }
-    //
-    //    return data;
 }
 
 #pragma mark - Encrypt & Decrypt
