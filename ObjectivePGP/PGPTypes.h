@@ -45,13 +45,13 @@ typedef NS_ENUM(UInt8, PGPPacketTag) {
     PGPInvalidPacketTag = 0,
     PGPPublicKeyEncryptedSessionKeyPacketTag = 1,
     PGPSignaturePacketTag = 2,
-    PGPSymetricKeyEncryptedSessionKeyPacketTag = 3, // TODO
+    PGPSymetricKeyEncryptedSessionKeyPacketTag = 3, // TODO: Not implemented
     PGPOnePassSignaturePacketTag = 4,
     PGPSecretKeyPacketTag = 5,
     PGPPublicKeyPacketTag = 6,
     PGPSecretSubkeyPacketTag = 7,
     PGPCompressedDataPacketTag = 8,
-    PGPSymmetricallyEncryptedDataPacketTag = 9, // TODO
+    PGPSymmetricallyEncryptedDataPacketTag = 9,
     PGPMarkerPacketTag = 10, // Ignored (Obsolete Literal Packet)
     PGPLiteralDataPacketTag = 11,
     PGPTrustPacketTag = 12,
@@ -76,7 +76,7 @@ typedef NS_ENUM(UInt8, PGPPublicKeyAlgorithm) {
     PGPPublicKeyAlgorithmElliptic = 18,
     PGPPublicKeyAlgorithmECDSA = 19,
     PGPPublicKeyAlgorithmElgamalEncryptorSign = 20, // Deprecated ?
-    PGPPublicKeyAlgorithmDiffieHellman = 21,
+    PGPPublicKeyAlgorithmDiffieHellman = 21, // TODO: Deprecated?
     PGPPublicKeyAlgorithmPrivate1 = 100,
     PGPPublicKeyAlgorithmPrivate2 = 101,
     PGPPublicKeyAlgorithmPrivate3 = 102,

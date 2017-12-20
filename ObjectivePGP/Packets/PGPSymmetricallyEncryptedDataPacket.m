@@ -33,6 +33,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPSymmetricallyEncryptedDataPacket
 
+- (PGPPacketTag)tag {
+    return PGPSymmetricallyEncryptedDataPacketTag; // 9
+}
+
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError * __autoreleasing _Nullable *)error {
     NSUInteger position = [super parsePacketBody:packetBody error:error];
 
