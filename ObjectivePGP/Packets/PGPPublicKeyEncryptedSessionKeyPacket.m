@@ -1,6 +1,11 @@
 //
-//  Copyright (c) 2014 Marcin Krzyżanowski. All rencryptedMPIPartDataights reserved.
+//  Copyright (c) Marcin Krzyżanowski. All rights reserved.
 //
+//  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY
+//  INTERNATIONAL COPYRIGHT LAW. USAGE IS BOUND TO THE LICENSE AGREEMENT.
+//  This notice may not be removed from this file.
+//
+
 //  5.1.  Public-Key Encrypted Session Key Packets (Tag 1)
 
 #import "PGPPublicKeyEncryptedSessionKeyPacket.h"
@@ -73,6 +78,46 @@ NS_ASSUME_NONNULL_BEGIN
     return position;
 }
 
+// encryption update self.encryptedMPIPartData
+- (BOOL)encrypt:(PGPPublicKeyPacket *)publicKeyPacket sessionKeyData:(NSData *)sessionKeyData sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm error:(NSError * __autoreleasing _Nullable *)error {
+    let mData = [NSMutableData data];
+
+    //    The value "m" in the above formulas is derived from the session key
+    //    as follows.  First, the session key is prefixed with a one-octet
+    //    algorithm identifier that specifies the symmetric encryption
+    //    algorithm used to encrypt the following Symmetrically Encrypted Data
+    //    Packet.  Then a two-octet checksum is appended, which is equal to the
+    //    sum of the preceding session key octets, not including the algorithm
+    //    identifier, modulo 65536.  This value is then encoded as described in
+    //    PKCS#1 block encoding EME-PKCS1-v1_5 in Section 7.2.1 of [RFC3447] to
+    //    form the "m" value used in the formulas above.  See Section 13.1 of
+    //    this document for notes on OpenPGP's use of PKCS#1.
+
+    [mData appendBytes:&sessionKeyAlgorithm length:1];
+
+    [mData appendData:sessionKeyData]; // keySize
+
+    UInt16 checksum = [sessionKeyData pgp_Checksum];
+    checksum = CFSwapInt16HostToBig(checksum);
+    [mData appendBytes:&checksum length:2];
+
+    let modulusMPI = [publicKeyPacket publicMPI:PGPMPI_N];
+    if (!modulusMPI) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Cannot encrypt. Missing required MPI. Invalid key."}];
+        }
+        return NO;
+    }
+
+    unsigned int k = (unsigned int)modulusMPI.bigNum.bytesCount;
+
+    let mEMEEncoded = [PGPPKCSEme encodeMessage:mData keyModulusLength:k error:error];
+    let encryptedData = [publicKeyPacket encryptData:mEMEEncoded withPublicKeyAlgorithm:self.publicKeyAlgorithm];
+    let mpiEncoded = [[PGPMPI alloc] initWithData:encryptedData identifier:PGPMPI_M];
+    self.encryptedMPI_M = mpiEncoded;
+    return YES;
+}
+
 - (nullable NSData *)decryptSessionKeyData:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm *)sessionKeyAlgorithm error:(NSError * __autoreleasing _Nullable *)error {
     NSAssert(!secretKeyPacket.isEncryptedWithPassphrase, @"Secret key can't be decrypted");
 
@@ -127,46 +172,6 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     return sessionKeyData;
-}
-
-// encryption update self.encryptedMPIPartData
-- (BOOL)encrypt:(PGPPublicKeyPacket *)publicKeyPacket sessionKeyData:(NSData *)sessionKeyData sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm error:(NSError * __autoreleasing _Nullable *)error {
-    let mData = [NSMutableData data];
-
-    //    The value "m" in the above formulas is derived from the session key
-    //    as follows.  First, the session key is prefixed with a one-octet
-    //    algorithm identifier that specifies the symmetric encryption
-    //    algorithm used to encrypt the following Symmetrically Encrypted Data
-    //    Packet.  Then a two-octet checksum is appended, which is equal to the
-    //    sum of the preceding session key octets, not including the algorithm
-    //    identifier, modulo 65536.  This value is then encoded as described in
-    //    PKCS#1 block encoding EME-PKCS1-v1_5 in Section 7.2.1 of [RFC3447] to
-    //    form the "m" value used in the formulas above.  See Section 13.1 of
-    //    this document for notes on OpenPGP's use of PKCS#1.
-
-    [mData appendBytes:&sessionKeyAlgorithm length:1];
-
-    [mData appendData:sessionKeyData]; // keySize
-
-    UInt16 checksum = [sessionKeyData pgp_Checksum];
-    checksum = CFSwapInt16HostToBig(checksum);
-    [mData appendBytes:&checksum length:2];
-
-    let modulusMPI = [publicKeyPacket publicMPI:PGPMPI_N];
-    if (!modulusMPI) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Cannot encrypt. Missing required MPI. Invalid key."}];
-        }
-        return NO;
-    }
-
-    unsigned int k = (unsigned int)modulusMPI.bigNum.bytesCount;
-
-    let mEMEEncoded = [PGPPKCSEme encodeMessage:mData keyModulusLength:k error:error];
-    let encryptedData = [publicKeyPacket encryptData:mEMEEncoded withPublicKeyAlgorithm:self.publicKeyAlgorithm];
-    let mpiEncoded = [[PGPMPI alloc] initWithData:encryptedData identifier:PGPMPI_M];
-    self.encryptedMPI_M = mpiEncoded;
-    return YES;
 }
 
 #pragma mark - PGPExportable

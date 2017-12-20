@@ -13,6 +13,7 @@
 #import "PGPModificationDetectionCodePacket.h"
 #import "PGPOnePassSignaturePacket.h"
 #import "PGPPublicKeyEncryptedSessionKeyPacket.h"
+#import "PGPSymetricKeyEncryptedSessionKeyPacket.h"
 #import "PGPPublicKeyPacket.h"
 #import "PGPPublicSubKeyPacket.h"
 #import "PGPSecretKeyPacket.h"
@@ -88,7 +89,7 @@ NS_ASSUME_NONNULL_BEGIN
             case PGPCompressedDataPacketTag:
                 packet = [PGPCompressedPacket packetWithBody:packetBodyData];
                 break;
-          case PGPSymmetricallyEncryptedDataPacketTag:
+            case PGPSymmetricallyEncryptedDataPacketTag:
                 packet = [PGPSymmetricallyEncryptedDataPacket packetWithBody:packetBodyData];
                 break;
             case PGPSymmetricallyEncryptedIntegrityProtectedDataPacketTag:
@@ -96,6 +97,9 @@ NS_ASSUME_NONNULL_BEGIN
                 break;
             case PGPPublicKeyEncryptedSessionKeyPacketTag:
                 packet = [PGPPublicKeyEncryptedSessionKeyPacket packetWithBody:packetBodyData];
+                break;
+            case PGPSymetricKeyEncryptedSessionKeyPacketTag:
+                packet = [PGPSymetricKeyEncryptedSessionKeyPacket packetWithBody:packetBodyData];
                 break;
             default:
                 PGPLogWarning(@"Packet tag %@ is not supported", @(packetTag));

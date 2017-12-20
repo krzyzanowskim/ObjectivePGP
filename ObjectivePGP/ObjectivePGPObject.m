@@ -14,11 +14,13 @@
 #import "PGPKey.h"
 #import "PGPLiteralPacket.h"
 #import "PGPMPI.h"
+#import "PGPS2K.h"
 #import "PGPModificationDetectionCodePacket.h"
 #import "PGPOnePassSignaturePacket.h"
 #import "PGPPacketFactory.h"
 #import "PGPPartialKey.h"
 #import "PGPPublicKeyEncryptedSessionKeyPacket.h"
+#import "PGPSymetricKeyEncryptedSessionKeyPacket.h"
 #import "PGPPublicKeyPacket.h"
 #import "PGPSecretKeyPacket.h"
 #import "PGPSignaturePacket.h"
@@ -67,7 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Encrypt & Decrypt
 
-+ (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseForKeyBlock verifySignature:(BOOL)verifySignature error:(NSError * __autoreleasing _Nullable *)error {
++ (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock verifySignature:(BOOL)verifySignature error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(data, NSData);
     PGPAssertClass(keys, NSArray);
 
@@ -82,7 +84,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     // parse packets
     var packets = [ObjectivePGP readPacketsFromData:binaryMessage];
-    packets = [self decryptPackets:packets usingKeys:keys passphraseForKey:passphraseForKeyBlock error:error];
+    packets = [self decryptPackets:packets usingKeys:keys passphrase:passphraseForKeyBlock error:error];
 
     let literalPacket = PGPCast([[packets pgp_objectsPassingTest:^BOOL(PGPPacket *packet, BOOL *stop) {
         BOOL found = packet.tag == PGPLiteralDataPacketTag;
@@ -111,43 +113,74 @@ NS_ASSUME_NONNULL_BEGIN
     return plaintextData;
 }
 
-+ (NSArray<PGPPacket *> *)decryptPackets:(NSArray<PGPPacket *> *)encryptedPackets usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseForKeyBlock error:(NSError * __autoreleasing _Nullable *)error {
-    PGPSecretKeyPacket * _Nullable decryptionSecretKeyPacket = nil; // last found secret key to used to decrypt
+// Decrypt packets. Passphrase may be related to the key or to the symmetric encrypted message (no key in that keys)
++ (NSArray<PGPPacket *> *)decryptPackets:(NSArray<PGPPacket *> *)encryptedPackets usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error {
+    // If the Symmetrically Encrypted Data packet is preceded by one or
+    // more Symmetric-Key Encrypted Session Key packets, each specifies a
+    // passphrase that may be used to decrypt the message.  This allows a
+    // message to be encrypted to a number of public keys, and also to one
+    // or more passphrases.
+    PGPSymmetricAlgorithm sessionKeyAlgorithm = UINT8_MAX;
     let packets = [NSMutableArray arrayWithArray:encryptedPackets];
 
     // 1. search for valid and known (do I have specified key?) ESK
-    PGPPublicKeyEncryptedSessionKeyPacket * _Nullable eskPacket = nil;
+    id <PGPEncryptedSessionKeyPacketProtocol> _Nullable eskPacket = nil;
+    NSData * _Nullable sessionKeyData = nil;
+
+    // Resolve session key: PGPSymetricKeyEncryptedSessionKeyPacket and/or PGPPublicKeyEncryptedSessionKeyPacket is expected
     for (PGPPacket *packet in packets) {
+        if (packet.tag == PGPSymetricKeyEncryptedSessionKeyPacketTag) {
+            let sESKPacket = PGPCast(packet, PGPSymetricKeyEncryptedSessionKeyPacket);
+            sessionKeyAlgorithm = sESKPacket.symmetricAlgorithm;
+            sessionKeyData = sESKPacket.encryptedSessionKey;
+
+            // The S2K algorithm applied to the passphrase produces the session key for decrypting the file
+            let passphrase = passphraseBlock ? passphraseBlock(nil) : nil;
+            if (passphrase && !sESKPacket.encryptedSessionKey) {
+                sessionKeyData = [sESKPacket.s2k produceSessionKeyWithPassphrase:passphrase symmetricAlgorithm:sESKPacket.symmetricAlgorithm];
+            }
+
+            eskPacket = sESKPacket;
+        }
+
         if (packet.tag == PGPPublicKeyEncryptedSessionKeyPacketTag) {
             let pkESKPacket = PGPCast(packet, PGPPublicKeyEncryptedSessionKeyPacket);
             let decryptionKey = [PGPKeyring findKeyWithKeyID:pkESKPacket.keyID in:keys];
             if (!decryptionKey.secretKey) {
+                // Can't proceed with this packet, but there may be other valid packet.
                 continue;
             }
 
-            decryptionSecretKeyPacket = PGPCast([decryptionKey.secretKey decryptionPacketForKeyID:pkESKPacket.keyID error:error], PGPSecretKeyPacket);
+            // Found (match) secret key is used to decrypt
+            PGPSecretKeyPacket * decryptionSecretKeyPacket = PGPCast([decryptionKey.secretKey decryptionPacketForKeyID:pkESKPacket.keyID error:error], PGPSecretKeyPacket);
             if (!decryptionSecretKeyPacket) {
+                // Can't proceed with this packet, but there may be other valid packet.
                 continue;
             }
 
             // decrypt key with passphrase if encrypted
             if (decryptionSecretKeyPacket && decryptionKey.isEncryptedWithPassword) {
-                let passphrase = passphraseForKeyBlock ? passphraseForKeyBlock(decryptionKey) : nil;
+                let passphrase = passphraseBlock ? passphraseBlock(decryptionKey) : nil;
                 if (!passphrase) {
+                    // This is the match but can't proceed with this packet due to missing passphrase.
                     if (error) {
-                        *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorPassphraseRequired userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Passphrase is required for a key." }];
+                        *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorPassphraseRequired userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt with the encrypted key. Decrypt key first." }];
                     }
-                    return encryptedPackets;
+                    PGPLogWarning(@"Can't use key \"%@\". Passphrase is required to decrypt.", decryptionSecretKeyPacket.fingerprint);
+                    return @[];
                 }
 
-                // ask for password for the key
                 decryptionSecretKeyPacket = [decryptionSecretKeyPacket decryptedWithPassphrase:passphrase error:error];
                 if (!decryptionSecretKeyPacket || (error && *error)) {
+                    PGPLogWarning(@"Can't use key \"%@\".", decryptionKey.secretKey.fingerprint);
                     decryptionSecretKeyPacket = nil;
                     continue;
                 }
             }
             eskPacket = pkESKPacket;
+
+            sessionKeyData = [pkESKPacket decryptSessionKeyData:PGPNN(decryptionSecretKeyPacket) sessionKeyAlgorithm:&sessionKeyAlgorithm error:error];
+            NSAssert(sessionKeyAlgorithm < PGPSymmetricMax, @"Invalid session key algorithm");
         }
     }
 
@@ -155,16 +188,12 @@ NS_ASSUME_NONNULL_BEGIN
         return @[];
     }
 
-    if (!eskPacket || !decryptionSecretKeyPacket) {
+    if (!eskPacket) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Invalid message." }];
         }
         return encryptedPackets;
     }
-
-    PGPSymmetricAlgorithm sessionKeyAlgorithm = PGPSymmetricPlaintext; // default
-    let sessionKeyData = [eskPacket decryptSessionKeyData:PGPNN(decryptionSecretKeyPacket) sessionKeyAlgorithm:&sessionKeyAlgorithm error:error];
-    NSAssert(sessionKeyAlgorithm < PGPSymmetricMax, @"Invalid session key algorithm");
 
     if (!sessionKeyData) {
         if (error) {
@@ -179,12 +208,12 @@ NS_ASSUME_NONNULL_BEGIN
             case PGPSymmetricallyEncryptedIntegrityProtectedDataPacketTag: {
                 // decrypt PGPSymmetricallyEncryptedIntegrityProtectedDataPacket
                 let symEncryptedDataPacket = PGPCast(packet, PGPSymmetricallyEncryptedIntegrityProtectedDataPacket);
-                let decryptedPackets = [symEncryptedDataPacket decryptWithSecretKeyPacket:PGPNN(decryptionSecretKeyPacket) sessionKeyAlgorithm:sessionKeyAlgorithm sessionKeyData:sessionKeyData error:error];
+                let decryptedPackets = [symEncryptedDataPacket decryptWithSessionKeyAlgorithm:sessionKeyAlgorithm sessionKeyData:sessionKeyData error:error];
                 [packets addObjectsFromArray:decryptedPackets];
             } break;
             case PGPSymmetricallyEncryptedDataPacketTag: {
                 let symEncryptedDataPacket = PGPCast(packet, PGPSymmetricallyEncryptedDataPacket);
-                let decryptedPackets = [symEncryptedDataPacket decryptWithSecretKeyPacket:PGPNN(decryptionSecretKeyPacket) sessionKeyAlgorithm:sessionKeyAlgorithm sessionKeyData:sessionKeyData error:error];
+                let decryptedPackets = [symEncryptedDataPacket decryptWithSessionKeyAlgorithm:sessionKeyAlgorithm sessionKeyData:sessionKeyData error:error];
                 [packets addObjectsFromArray:decryptedPackets];
             }
             default:
@@ -228,16 +257,15 @@ NS_ASSUME_NONNULL_BEGIN
             continue;
         }
 
-        // var pkESKeyPacket = new packet.PublicKeyEncryptedSessionKey();
-        let eskKeyPacket = [[PGPPublicKeyEncryptedSessionKeyPacket alloc] init];
-        eskKeyPacket.keyID = encryptionKeyPacket.keyID;
-        eskKeyPacket.publicKeyAlgorithm = encryptionKeyPacket.publicKeyAlgorithm;
-        BOOL encrypted = [eskKeyPacket encrypt:encryptionKeyPacket sessionKeyData:sessionKeyData sessionKeyAlgorithm:preferredSymmeticAlgorithm error:error];
+        let pkESKeyPacket = [[PGPPublicKeyEncryptedSessionKeyPacket alloc] init];
+        pkESKeyPacket.keyID = encryptionKeyPacket.keyID;
+        pkESKeyPacket.publicKeyAlgorithm = encryptionKeyPacket.publicKeyAlgorithm;
+        BOOL encrypted = [pkESKeyPacket encrypt:encryptionKeyPacket sessionKeyData:sessionKeyData sessionKeyAlgorithm:preferredSymmeticAlgorithm error:error];
         if (!encrypted || (error && *error)) {
             PGPLogDebug(@"Failed encrypt Symmetric-key Encrypted Session Key packet. Error: %@", error ? *error : @"Unknown");
             return nil;
         }
-        [encryptedMessage pgp_appendData:[eskKeyPacket export:error]];
+        [encryptedMessage pgp_appendData:[pkESKeyPacket export:error]];
         if (error && *error) {
             PGPLogDebug(@"Missing literal data. Error: %@", error ? *error : @"Unknown");
             return nil;
@@ -454,14 +482,14 @@ NS_ASSUME_NONNULL_BEGIN
     //Try to decrypt first, in case of encrypted message inside
     //Not every message needs decryption though! Check for ESK to reason about it
     BOOL isEncrypted = [[accumulatedPackets pgp_objectsPassingTest:^BOOL(PGPPacket *packet, BOOL *stop) {
-        BOOL found = packet.tag == PGPPublicKeyEncryptedSessionKeyPacketTag;
+        BOOL found = (packet.tag == PGPPublicKeyEncryptedSessionKeyPacketTag) || (packet.tag == PGPSymetricKeyEncryptedSessionKeyPacketTag);
         *stop = found;
         return found;
     }] firstObject] != nil;
 
     if (isEncrypted) {
         NSError *decryptError = nil;
-        accumulatedPackets = [[self.class decryptPackets:accumulatedPackets usingKeys:keys passphraseForKey:passphraseForKeyBlock error:&decryptError] mutableCopy];
+        accumulatedPackets = [[self.class decryptPackets:accumulatedPackets usingKeys:keys passphrase:passphraseForKeyBlock error:&decryptError] mutableCopy];
         if (decryptError) {
             if (error) {
                 *error = [decryptError copy];

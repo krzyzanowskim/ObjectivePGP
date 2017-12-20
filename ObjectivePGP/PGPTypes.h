@@ -45,7 +45,7 @@ typedef NS_ENUM(UInt8, PGPPacketTag) {
     PGPInvalidPacketTag = 0,
     PGPPublicKeyEncryptedSessionKeyPacketTag = 1,
     PGPSignaturePacketTag = 2,
-    PGPSymetricKeyEncryptedSessionKeyPacketTag = 3, // TODO: Not implemented
+    PGPSymetricKeyEncryptedSessionKeyPacketTag = 3,
     PGPOnePassSignaturePacketTag = 4,
     PGPSecretKeyPacketTag = 5,
     PGPPublicKeyPacketTag = 6,

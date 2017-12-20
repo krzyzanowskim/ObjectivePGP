@@ -1,7 +1,9 @@
 Version 0.9.6
-- Enables sSymmetrically Encrypted Data Packet support. Fixes #91
-- Improves decryption and signed messages validation.
+- Adds Symmetrically Encrypted Data Packet support. Fixes #91
 - Adds multikey signatures.
+- Adds TwoFish cipher.
+- Adds Symmetric-Key Encrypted Session Key Packets support.
+- Improves decryption and signed messages validation.
 - Fixes partial length packets calculations.
 - Fixes reading armored messages without checksum.
 - API: Refactor and simplyfy public API of `ObjectivePGP` due to internal improvements.

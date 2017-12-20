@@ -102,7 +102,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Optional. Error.
  @return Decrypted data, or `nil` if failed.
  */
-+ (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseBlock verifySignature:(BOOL)verifySignature error:(NSError * __autoreleasing _Nullable *)error;
++ (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseBlock verifySignature:(BOOL)verifySignature error:(NSError * __autoreleasing _Nullable *)error;
 
 @end
 

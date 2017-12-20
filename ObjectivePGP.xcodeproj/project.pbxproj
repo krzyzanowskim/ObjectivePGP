@@ -79,6 +79,9 @@
 		751373ED1F65379F0067A343 /* PGPPacketFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 751373EA1F65379C0067A343 /* PGPPacketFactory.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		751373F01F65382C0067A343 /* NSMutableData+PGPUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 751373EE1F65382C0067A343 /* NSMutableData+PGPUtils.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		751373F11F65382C0067A343 /* NSMutableData+PGPUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 751373EF1F65382C0067A343 /* NSMutableData+PGPUtils.m */; };
+		752725B01FEB021700301E98 /* PGPSymetricKeyEncryptedSessionKeyPacket.h in Headers */ = {isa = PBXBuildFile; fileRef = 752725AF1FEB021700301E98 /* PGPSymetricKeyEncryptedSessionKeyPacket.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		752725B21FEB022700301E98 /* PGPSymetricKeyEncryptedSessionKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 752725B11FEB022700301E98 /* PGPSymetricKeyEncryptedSessionKeyPacket.m */; };
+		752725B41FEB1B3C00301E98 /* PGPEncryptedSessionKeyPacketProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 752725B31FEB1B3C00301E98 /* PGPEncryptedSessionKeyPacketProtocol.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7537A6AD1F0D739A00892829 /* PGPCryptoHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 75572E281ED2193C00205871 /* PGPCryptoHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7537A6B21F0D739A00892829 /* PGPMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 752DE5BD1EEE3BE800637E38 /* PGPMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7537A6B31F0D739A00892829 /* PGPFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 758514EA1EDF09C400CB313F /* PGPFoundation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -218,6 +221,9 @@
 		751373EB1F65379D0067A343 /* PGPPacketFactory.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PGPPacketFactory.m; sourceTree = "<group>"; };
 		751373EE1F65382C0067A343 /* NSMutableData+PGPUtils.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSMutableData+PGPUtils.h"; sourceTree = "<group>"; };
 		751373EF1F65382C0067A343 /* NSMutableData+PGPUtils.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSMutableData+PGPUtils.m"; sourceTree = "<group>"; };
+		752725AF1FEB021700301E98 /* PGPSymetricKeyEncryptedSessionKeyPacket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPSymetricKeyEncryptedSessionKeyPacket.h; sourceTree = "<group>"; };
+		752725B11FEB022700301E98 /* PGPSymetricKeyEncryptedSessionKeyPacket.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPSymetricKeyEncryptedSessionKeyPacket.m; sourceTree = "<group>"; };
+		752725B31FEB1B3C00301E98 /* PGPEncryptedSessionKeyPacketProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPEncryptedSessionKeyPacketProtocol.h; sourceTree = "<group>"; };
 		752B3A791EC8EB9A003F6C22 /* PGPLogging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPLogging.h; sourceTree = "<group>"; };
 		752DE5BA1EEE26C200637E38 /* PGPExportableProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPExportableProtocol.h; sourceTree = "<group>"; };
 		752DE5BD1EEE3BE800637E38 /* PGPMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPMacros.h; sourceTree = "<group>"; };
@@ -359,6 +365,9 @@
 				751373981F65373E0067A343 /* PGPPacket.m */,
 				7513739A1F65373E0067A343 /* PGPPublicKeyEncryptedSessionKeyPacket.h */,
 				7513739B1F65373E0067A343 /* PGPPublicKeyEncryptedSessionKeyPacket.m */,
+				752725AF1FEB021700301E98 /* PGPSymetricKeyEncryptedSessionKeyPacket.h */,
+				752725B11FEB022700301E98 /* PGPSymetricKeyEncryptedSessionKeyPacket.m */,
+				752725B31FEB1B3C00301E98 /* PGPEncryptedSessionKeyPacketProtocol.h */,
 				7513739C1F65373E0067A343 /* PGPPublicKeyPacket+Private.h */,
 				7513739D1F65373E0067A343 /* PGPPublicKeyPacket.h */,
 				7513739E1F65373E0067A343 /* PGPPublicKeyPacket.m */,
@@ -602,6 +611,7 @@
 				7537A6CF1F0D739A00892829 /* PGPPartialSubKey.h in Headers */,
 				7561B68E1F65E121001D2AD6 /* NSArray+PGPUtils.h in Headers */,
 				751373E81F6537490067A343 /* PGPUserIDPacket.h in Headers */,
+				752725B01FEB021700301E98 /* PGPSymetricKeyEncryptedSessionKeyPacket.h in Headers */,
 				751373D01F6537490067A343 /* PGPSecretKeyPacket.h in Headers */,
 				751373CB1F6537490067A343 /* PGPPublicKeyPacket.h in Headers */,
 				751373CD1F6537490067A343 /* PGPPublicSubKeyPacket.h in Headers */,
@@ -627,6 +637,7 @@
 				751373C81F6537490067A343 /* PGPPublicKeyEncryptedSessionKeyPacket.h in Headers */,
 				751373E01F6537490067A343 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.h in Headers */,
 				751373C01F6537490067A343 /* PGPModificationDetectionCodePacket.h in Headers */,
+				752725B41FEB1B3C00301E98 /* PGPEncryptedSessionKeyPacketProtocol.h in Headers */,
 				751373DE1F6537490067A343 /* PGPSymmetricallyEncryptedDataPacket.h in Headers */,
 				7537A6D51F0D739A00892829 /* PGPPKCSEmsa.h in Headers */,
 				7537A6D61F0D739A00892829 /* PGPPKCSEme.h in Headers */,
@@ -771,6 +782,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				751373D61F6537490067A343 /* PGPSignaturePacket.m in Sources */,
+				752725B21FEB022700301E98 /* PGPSymetricKeyEncryptedSessionKeyPacket.m in Sources */,
 				751373BF1F6537490067A343 /* PGPLiteralPacket.m in Sources */,
 				750F893C1F0D6EF100B99726 /* PGPCryptoHash.m in Sources */,
 				75BF43E71F5076B9004334DE /* PGPKeyMaterial.m in Sources */,

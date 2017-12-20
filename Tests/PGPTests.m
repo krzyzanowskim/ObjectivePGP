@@ -326,4 +326,14 @@
     XCTAssertNotNil(exportedKey);
 }
 
+- (void)testSymmetricKeyEncryptedMessage {
+    let messagePath = [PGPTestUtils pathToBundledFile:@"symmetric-message1.gpg"];
+    let messageData = [NSData dataWithContentsOfFile:messagePath];
+    NSError *decryptError = nil;
+
+    let decrypted = [ObjectivePGP decrypt:messageData usingKeys:@[] passphraseForKey:^NSString * _Nullable(PGPKey * _Nullable k) { return @"1234"; } verifySignature:YES error:&decryptError];
+    XCTAssertEqualObjects(decrypted, [@"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus." dataUsingEncoding:NSUTF8StringEncoding]);
+    XCTAssertNotNil(decrypted);
+}
+
 @end
