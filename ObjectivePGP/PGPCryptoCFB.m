@@ -153,6 +153,7 @@ NS_ASSUME_NONNULL_BEGIN
 
             memset(&encrypt_key, 0, sizeof(BF_KEY));
         } break;
+        /*
         case PGPSymmetricTwofish256: {
             static dispatch_once_t twoFishInit;
             dispatch_once(&twoFishInit, ^{ Twofish_initialise(); });
@@ -160,6 +161,7 @@ NS_ASSUME_NONNULL_BEGIN
             Twofish_key xkey;
             Twofish_prepare_key((uint8_t *)sessionKeyData.bytes, (int)sessionKeyData.length, &xkey);
 
+            // FIXME: OpenPGP CFB Mode is different here
             // CFB
             NSUInteger blockLength = ivData.length;
             if (!decrypt) {
@@ -188,12 +190,14 @@ NS_ASSUME_NONNULL_BEGIN
 
             memset(&xkey, 0, sizeof(Twofish_key));
         } break;
+        */
         case PGPSymmetricPlaintext:
             PGPLogWarning(@"Can't decrypt plaintext");
             decryptedData = [NSData dataWithData:encryptedData];
             break;
         default:
-            break;
+            PGPLogWarning(@"Unsupported cipher.");
+            return nil;
     }
 
     return decryptedData;

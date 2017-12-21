@@ -108,6 +108,17 @@ NS_ASSUME_NONNULL_BEGIN
     });
 }
 
++ (NSData *)xor:(NSData *)d1 d2:(NSData *)d2 {
+    let output = [NSMutableData dataWithLength:d1.length];
+    let outputBuf = (uint8_t *)output.mutableBytes;
+    let d1buf = (uint8_t *)d1.bytes;
+    let d2buf = (uint8_t *)d2.bytes;
+    for (NSUInteger i = 0; i < d1.length; i++) {
+        outputBuf[i] = d1buf[i] ^ d2buf[i];
+    }
+    return output;
+}
+
 #pragma mark - NSValue
 
 + (NSData *)dataWithValue:(NSValue *)value {
