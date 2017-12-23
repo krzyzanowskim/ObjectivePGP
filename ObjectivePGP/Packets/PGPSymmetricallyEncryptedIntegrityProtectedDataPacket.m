@@ -154,7 +154,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     NSUInteger position = 0;
     // preamble + data + mdc
-    let decryptedData = [PGPCryptoCFB decryptData:self.encryptedData sessionKeyData:sessionKeyData symmetricAlgorithm:sessionKeyAlgorithm iv:ivData];
+    let decryptedData = [PGPCryptoCFB decryptData:self.encryptedData sessionKeyData:sessionKeyData symmetricAlgorithm:sessionKeyAlgorithm iv:ivData syncCFB:NO];
     // full prefix blockSize + 2
     let prefixRandomFullData = [decryptedData subdataWithRange:(NSRange){position, blockSize + 2}];
     position = position + blockSize + 2;
@@ -254,7 +254,7 @@ NS_ASSUME_NONNULL_BEGIN
     [toEncrypt appendData:prefixRandomFullData];
     [toEncrypt appendData:literalPacketData];
     [toEncrypt appendData:mdcPacketData];
-    let encrypted = [PGPCryptoCFB encryptData:toEncrypt sessionKeyData:sessionKeyData symmetricAlgorithm:sessionKeyAlgorithm iv:ivData];
+    let encrypted = [PGPCryptoCFB encryptData:toEncrypt sessionKeyData:sessionKeyData symmetricAlgorithm:sessionKeyAlgorithm iv:ivData syncCFB:NO];
 
     self.encryptedData = encrypted;
     return YES;

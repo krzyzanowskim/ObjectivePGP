@@ -17,12 +17,14 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable NSData *)decryptData:(NSData *)encryptedData
                   sessionKeyData:(NSData *)sessionKeyData // s2k produceSessionKeyWithPassphrase
               symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm
-                              iv:(NSData *)ivData;
+                              iv:(NSData *)ivData
+                         syncCFB:(BOOL)openpgpCFB;
 
 + (nullable NSData *)encryptData:(NSData *)encryptedData
                   sessionKeyData:(NSData *)sessionKeyData // s2k produceSessionKeyWithPassphrase
               symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm
-                              iv:(NSData *)ivData;
+                              iv:(NSData *)ivData
+                         syncCFB:(BOOL)openpgpCFB;
 
 @end
 

@@ -98,8 +98,8 @@ NS_ASSUME_NONNULL_BEGIN
     let ivData = [NSMutableData dataWithLength:blockSize];
 
     NSUInteger position = 0;
-    // preamble + data + mdc
-    let decryptedData = [PGPCryptoCFB decryptData:self.encryptedData sessionKeyData:sessionKeyData symmetricAlgorithm:sessionKeyAlgorithm iv:ivData];
+    // preamble + data
+    let decryptedData = [PGPCryptoCFB decryptData:self.encryptedData sessionKeyData:sessionKeyData symmetricAlgorithm:sessionKeyAlgorithm iv:ivData syncCFB:YES];
     // full prefix blockSize + 2
     let prefixRandomFullData = [decryptedData subdataWithRange:(NSRange){position, blockSize + 2}];
     position = position + blockSize + 2;

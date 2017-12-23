@@ -36,15 +36,19 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable NSData *)decryptData:(NSData *)encryptedData
                   sessionKeyData:(NSData *)sessionKeyData // s2k produceSessionKeyWithPassphrase
               symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm
-                              iv:(NSData *)ivData {
-    return [self manipulateData:encryptedData sessionKeyData:sessionKeyData symmetricAlgorithm:symmetricAlgorithm iv:ivData decrypt:YES];
+                              iv:(NSData *)ivData
+                         syncCFB:(BOOL)syncCFB
+{
+    return [self manipulateData:encryptedData sessionKeyData:sessionKeyData symmetricAlgorithm:symmetricAlgorithm iv:ivData syncCFB:syncCFB decrypt:YES];
 }
 
 + (nullable NSData *)encryptData:(NSData *)encryptedData
                   sessionKeyData:(NSData *)sessionKeyData // s2k produceSessionKeyWithPassphrase
               symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm
-                              iv:(NSData *)ivData {
-    return [self manipulateData:encryptedData sessionKeyData:sessionKeyData symmetricAlgorithm:symmetricAlgorithm iv:ivData decrypt:NO];
+                              iv:(NSData *)ivData
+                         syncCFB:(BOOL)syncCFB
+{
+    return [self manipulateData:encryptedData sessionKeyData:sessionKeyData symmetricAlgorithm:symmetricAlgorithm iv:ivData syncCFB:syncCFB decrypt:NO];
 }
 
 #pragma mark - Private
@@ -54,7 +58,9 @@ NS_ASSUME_NONNULL_BEGIN
                      sessionKeyData:(NSData *)sessionKeyData // s2k produceSessionKeyWithPassphrase
                  symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm
                                  iv:(NSData *)ivData
-                            decrypt:(BOOL)decrypt {
+                           syncCFB:(BOOL)syncCFB // weird OpenPGP CFB
+                            decrypt:(BOOL)decrypt
+{
     NSAssert(sessionKeyData.length > 0, @"Missing session key");
     NSAssert(encryptedData.length > 0, @"Missing data");
     NSAssert(ivData.length > 0, @"Missing IV");
@@ -64,27 +70,15 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:symmetricAlgorithm];
+    NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:symmetricAlgorithm];
     NSAssert(keySize <= 32, @"Invalid key size");
     NSAssert(sessionKeyData.length >= keySize, @"Invalid session key.");
 
-    unsigned char *iv = calloc(1, ivData.length);
-    pgp_defer { if (iv) { free(iv); } };
-    if (!iv) {
-        return nil;
-    }
-    memcpy(iv, ivData.bytes, ivData.length);
-
-    let encryptedBytes = encryptedData.bytes;
-    NSUInteger outBufferLength = encryptedData.length;
-    UInt8 *outBuffer = calloc(outBufferLength, sizeof(UInt8));
-    pgp_defer {
-        if (outBuffer) {
-            memset(outBuffer, 0, outBufferLength);
-            free(outBuffer);
-        }
-    };
-
-    NSData *decryptedData = nil;
+    let ivDataBytes = (uint8_t *)[NSMutableData dataWithData:ivData].mutableBytes;
+    let encryptedBytes = (const uint8_t *)encryptedData.bytes;
+    var decryptedData = [NSMutableData dataWithLength:encryptedData.length];
+    let outBuffer = (uint8_t *)decryptedData.mutableBytes;
+    let outBufferLength = decryptedData.length;
 
     // decrypt with CFB
     switch (symmetricAlgorithm) {
@@ -95,8 +89,7 @@ NS_ASSUME_NONNULL_BEGIN
             AES_set_encrypt_key(sessionKeyData.bytes, MIN((int)keySize * 8, (int)sessionKeyData.length * 8), &aes_key);
 
             int blocksNum = 0;
-            AES_cfb128_encrypt(encryptedBytes, outBuffer, outBufferLength, &aes_key, iv, &blocksNum, decrypt ? AES_DECRYPT : AES_ENCRYPT);
-            decryptedData = [NSData dataWithBytes:outBuffer length:outBufferLength];
+            AES_cfb128_encrypt(encryptedBytes, outBuffer, outBufferLength, &aes_key, ivDataBytes, &blocksNum, decrypt ? AES_DECRYPT : AES_ENCRYPT);
 
             memset(&aes_key, 0, sizeof(AES_KEY));
         } break;
@@ -108,8 +101,7 @@ NS_ASSUME_NONNULL_BEGIN
             idea_set_decrypt_key(&encrypt_key, &decrypt_key);
 
             int num = 0;
-            idea_cfb64_encrypt(encryptedBytes, outBuffer, outBufferLength, decrypt ? &decrypt_key : &encrypt_key, iv, &num, decrypt ? CAST_DECRYPT : CAST_ENCRYPT);
-            decryptedData = [NSData dataWithBytes:outBuffer length:outBufferLength];
+            idea_cfb64_encrypt(encryptedBytes, outBuffer, outBufferLength, decrypt ? &decrypt_key : &encrypt_key, ivDataBytes, &num, decrypt ? CAST_DECRYPT : CAST_ENCRYPT);
 
             memset(&encrypt_key, 0, sizeof(IDEA_KEY_SCHEDULE));
             memset(&decrypt_key, 0, sizeof(IDEA_KEY_SCHEDULE));
@@ -128,8 +120,7 @@ NS_ASSUME_NONNULL_BEGIN
             }
 
             int blocksNum = 0;
-            DES_ede3_cfb64_encrypt(encryptedBytes, outBuffer, outBufferLength, &keys[0], &keys[1], &keys[2], (DES_cblock *)(void *)iv, &blocksNum, decrypt ? DES_DECRYPT : DES_ENCRYPT);
-            decryptedData = [NSData dataWithBytes:outBuffer length:outBufferLength];
+            DES_ede3_cfb64_encrypt(encryptedBytes, outBuffer, outBufferLength, &keys[0], &keys[1], &keys[2], (DES_cblock *)(void *)ivDataBytes, &blocksNum, decrypt ? DES_DECRYPT : DES_ENCRYPT);
         } break;
         case PGPSymmetricCAST5: {
             // initialize
@@ -138,8 +129,7 @@ NS_ASSUME_NONNULL_BEGIN
 
             // CAST_ecb_encrypt(in, out, encrypt_key, CAST_ENCRYPT);
             int num = 0; //	how much of the 64bit block we have used
-            CAST_cfb64_encrypt(encryptedBytes, outBuffer, outBufferLength, &encrypt_key, iv, &num, decrypt ? CAST_DECRYPT : CAST_ENCRYPT);
-            decryptedData = [NSData dataWithBytes:outBuffer length:outBufferLength];
+            CAST_cfb64_encrypt(encryptedBytes, outBuffer, outBufferLength, &encrypt_key, ivDataBytes, &num, decrypt ? CAST_DECRYPT : CAST_ENCRYPT);
 
             memset(&encrypt_key, 0, sizeof(CAST_KEY));
         } break;
@@ -148,8 +138,7 @@ NS_ASSUME_NONNULL_BEGIN
             BF_set_key(&encrypt_key, MIN((int)keySize, (int)sessionKeyData.length), sessionKeyData.bytes);
 
             int num = 0; //    how much of the 64bit block we have used
-            BF_cfb64_encrypt(encryptedBytes, outBuffer, outBufferLength, &encrypt_key, iv, &num, decrypt ? BF_DECRYPT : BF_ENCRYPT);
-            decryptedData = [NSData dataWithBytes:outBuffer length:outBufferLength];
+            BF_cfb64_encrypt(encryptedBytes, outBuffer, outBufferLength, &encrypt_key, ivDataBytes, &num, decrypt ? BF_DECRYPT : BF_ENCRYPT);
 
             memset(&encrypt_key, 0, sizeof(BF_KEY));
         } break;
@@ -193,7 +182,7 @@ NS_ASSUME_NONNULL_BEGIN
         */
         case PGPSymmetricPlaintext:
             PGPLogWarning(@"Can't decrypt plaintext");
-            decryptedData = [NSData dataWithData:encryptedData];
+            decryptedData = [NSMutableData dataWithData:encryptedData];
             break;
         default:
             PGPLogWarning(@"Unsupported cipher.");

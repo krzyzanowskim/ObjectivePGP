@@ -300,7 +300,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // Decrypted MPIArray
-    let decryptedData = [PGPCryptoCFB decryptData:decryptedKeyPacket.encryptedMPIPartData sessionKeyData:sessionKeyData symmetricAlgorithm:encryptionSymmetricAlgorithm iv:decryptedKeyPacket.ivData];
+    let decryptedData = [PGPCryptoCFB decryptData:decryptedKeyPacket.encryptedMPIPartData sessionKeyData:sessionKeyData symmetricAlgorithm:encryptionSymmetricAlgorithm iv:decryptedKeyPacket.ivData syncCFB:NO];
 
     // now read mpis
     if (decryptedData) {
@@ -361,27 +361,6 @@ NS_ASSUME_NONNULL_BEGIN
     } else {
         PGPLogWarning(@"Cannot build secret key data. Missing secret MPIs....");
     }
-
-    // If the string-to-key usage octet is zero or 255, then a two-octet checksum of the plaintext of the algorithm-specific portion (sum of all octets, mod 65536).
-    // This checksum or hash is encrypted together with the algorithm-specific fields
-    // ---> is part of self.encryptedMPIPartData
-    // if (self.s2kUsage == PGPS2KUsageNonEncrypted || self.s2kUsage == PGPS2KUsageEncrypted) {
-    //    // Checksum
-    //    UInt16 checksum = CFSwapInt16HostToBig([data pgp_Checksum]);
-    //    [data appendBytes:&checksum length:2];
-    //} else if (self.s2kUsage == PGPS2KUsageEncryptedAndHashed) {
-    //    // If the string-to-key usage octet was 254, then a 20-octet SHA-1 hash of the plaintext of the algorithm-specific portion.
-    //    [data appendData:[data pgp_SHA1]];
-    //}
-
-    //    } else if (self.s2kUsage != PGPS2KUsageNonEncrypted) {
-    //        // this is version 3, looks just like a V4 simple hash
-    //        self.symmetricAlgorithm = (PGPSymmetricAlgorithm)self.s2kUsage; // this is tricky, but this is right. V3 algorithm is in place of s2kUsage of V4
-    //        self.s2kUsage = PGPS2KUsageEncrypted;
-    //
-    //        self.s2k = [[PGPS2K alloc] init]; // not really parsed s2k
-    //        self.s2k.specifier = PGPS2KSpecifierSimple;
-    //        self.s2k.algorithm = PGPHashMD5;
 
     return data;
 }
