@@ -66,7 +66,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPSymmetricAES256:
             return kCCKeySizeAES256;
         case PGPSymmetricTwofish256:
-            return 16; // 128bit (??or 32)
+            return 32;
         default:
             break;
     }
