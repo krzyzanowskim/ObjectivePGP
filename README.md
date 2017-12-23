@@ -174,7 +174,6 @@ See [CHANGELOG](./CHANGELOG)
 Known limitations:
 
 - Elgamal cipher is not supported.
-- Missing external configuration for default values.
 
 ## The license
 

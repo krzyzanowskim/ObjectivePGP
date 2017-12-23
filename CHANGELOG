@@ -2,6 +2,7 @@ Version 0.9.6
 - Adds Symmetrically Encrypted Data Packet support. Fixes #91
 - Adds multikey signatures.
 - Adds Symmetric-Key Encrypted Session Key Packets support.
+- Adds TwoFish cipher support.
 - Improves decryption and signed messages validation.
 - Fixes partial length packets calculations.
 - Fixes reading armored messages without checksum.
