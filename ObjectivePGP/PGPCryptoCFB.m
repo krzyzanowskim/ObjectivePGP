@@ -58,7 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
                      sessionKeyData:(NSData *)sessionKeyData // s2k produceSessionKeyWithPassphrase
                  symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm
                                  iv:(NSData *)ivData
-                           syncCFB:(BOOL)syncCFB // weird OpenPGP CFB
+                            syncCFB:(BOOL)syncCFB // weird OpenPGP CFB
                             decrypt:(BOOL)decrypt
 {
     NSAssert(sessionKeyData.length > 0, @"Missing session key");
@@ -142,7 +142,69 @@ NS_ASSUME_NONNULL_BEGIN
 
             memset(&encrypt_key, 0, sizeof(BF_KEY));
         } break;
-        /*
+            /*
+        case PGPSymmetricTwofish256: {
+            static dispatch_once_t twoFishInit;
+            dispatch_once(&twoFishInit, ^{ Twofish_initialise(); });
+
+            Twofish_key xkey;
+            Twofish_prepare_key((uint8_t *)sessionKeyData.bytes, (int)sessionKeyData.length, &xkey);
+            if (syncCFB) {
+                // resync CFB mode flow!
+                if (decrypt) {
+                    let text = outBuffer;
+                    let textLength = outBufferLength;
+                    NSUInteger j = 0;
+
+                    // skip 2 bytes
+                    let iblockData = [NSMutableData dataWithData:[encryptedData subdataWithRange:(NSRange){2, blockSize}]];
+                    let iblockDataBytes = (uint8_t *)iblockData.mutableBytes;
+
+                    for (NSUInteger n = blockSize + 2; n < encryptedData.length; n += blockSize) {
+                        let ablockData = [NSMutableData dataWithLength:blockSize];
+                        let ablockDataBytes = (uint8_t *)ablockData.mutableBytes;
+                        Twofish_encrypt(&xkey, iblockDataBytes, ablockDataBytes);
+                        for (NSUInteger i = 0; i < blockSize && i + n < encryptedData.length; i++) {
+                            iblockDataBytes[i] = encryptedBytes[n + i];
+                            if (j < textLength - blockSize) {
+                                text[j] = ablockDataBytes[i] ^ iblockDataBytes[i];
+                                j++;
+                            }
+                        }
+                    }
+
+                    // decryptedData = [NSData dataWithBytes:text length:textLength];
+                }
+            } else {
+                // normal CFB mode
+                if (decrypt) {
+                    let plaintextData = [NSMutableData dataWithLength:encryptedData.length - ivData.length];
+                    let plaintextBytes = (UInt8 *)plaintextData.mutableBytes;
+                    NSUInteger j = 0;
+
+                    let iblockData = [NSMutableData dataWithData:[encryptedData subdataWithRange:(NSRange){0, blockSize}]];
+                    let iblockDataBytes = (uint8_t *)iblockData.mutableBytes;
+
+                    for (NSUInteger n = blockSize; n < encryptedData.length; n += blockSize) {
+                        let ablockData = [NSMutableData dataWithLength:blockSize];
+                        let ablockDataBytes = (uint8_t *)ablockData.mutableBytes;
+                        Twofish_encrypt(&xkey, iblockDataBytes, ablockDataBytes);
+                        for (NSUInteger i = 0; i < blockSize && i + n < encryptedData.length; i++) {
+                            iblockDataBytes[i] = encryptedBytes[n + i];
+                            // xor and fill the output
+                            if (j < plaintextData.length) {
+                                plaintextBytes[j] = ablockDataBytes[i] ^ iblockDataBytes[i];
+                                j++;
+                            }
+                        }
+                    }
+
+                    // skip first 2 bytes
+                    decryptedData = [NSMutableData dataWithBytes:plaintextBytes + 2 length:plaintextData.length - 2];
+                }
+            }
+        } break;
+*/
         case PGPSymmetricTwofish256: {
             static dispatch_once_t twoFishInit;
             dispatch_once(&twoFishInit, ^{ Twofish_initialise(); });
@@ -150,36 +212,36 @@ NS_ASSUME_NONNULL_BEGIN
             Twofish_key xkey;
             Twofish_prepare_key((uint8_t *)sessionKeyData.bytes, (int)sessionKeyData.length, &xkey);
 
-            // FIXME: OpenPGP CFB Mode is different here
-            // CFB
-            NSUInteger blockLength = ivData.length;
-            if (!decrypt) {
-                // encrypt
-                NSMutableData *encryptedOutMutableData = encryptedData.mutableCopy;
-                NSData *plaintext = ivData.copy;
-                for (NSUInteger index = 0; index < encryptedData.length; index += blockLength) {
-                    let ciphertext = [NSMutableData dataWithLength:blockLength];
-                    Twofish_encrypt(&xkey, (uint8_t *)plaintext.bytes, ciphertext.mutableBytes);
-                    [encryptedOutMutableData XORWithData:ciphertext index:index];
-                    plaintext = [encryptedOutMutableData subdataWithRange:(NSRange){index ,blockLength}]; // ciphertext.copy;
-                }
-                decryptedData = encryptedOutMutableData.copy;
+            if (syncCFB) {
+                // TODO: OpenPGP CFB Mode is different here
             } else {
-                // decrypt
-                NSMutableData *decryptedOutMutableData = encryptedData.mutableCopy;
-                NSData *ciphertext = ivData.copy;
-                for (NSUInteger index = 0; index < encryptedData.length; index += blockLength) {
-                    NSMutableData *plaintext = [NSMutableData dataWithLength:blockLength];
-                    Twofish_encrypt(&xkey, (uint8_t *)ciphertext.bytes, plaintext.mutableBytes);
-                    [decryptedOutMutableData XORWithData:plaintext index:index];
-                    ciphertext = [decryptedOutMutableData subdataWithRange:(NSRange){index ,blockLength}];
+                if (decrypt) {
+                    // decrypt
+                    NSMutableData *decryptedOutMutableData = encryptedData.mutableCopy;
+                    var ciphertextBlock = [NSData dataWithData:ivData];
+                    let plaintextBlock = [NSMutableData dataWithLength:blockSize];
+                    for (NSUInteger index = 0; index < encryptedData.length; index += blockSize) {
+                        Twofish_encrypt(&xkey, (uint8_t *)ciphertextBlock.bytes, plaintextBlock.mutableBytes);
+                        ciphertextBlock = [encryptedData subdataWithRange:(NSRange){index, MIN(blockSize, decryptedOutMutableData.length - index)}];
+                        [decryptedOutMutableData XORWithData:plaintextBlock index:index];
+                    }
+                    decryptedData = decryptedOutMutableData;
+                } else {
+                    // encrypt
+                    NSMutableData *encryptedOutMutableData = encryptedData.mutableCopy;
+                    NSData *plaintext = ivData.copy;
+                    let ciphertext = [NSMutableData dataWithLength:blockSize];
+                    for (NSUInteger index = 0; index < encryptedData.length; index += blockSize) {
+                        Twofish_encrypt(&xkey, (uint8_t *)plaintext.bytes, ciphertext.mutableBytes);
+                        [encryptedOutMutableData XORWithData:ciphertext index:index];
+                        plaintext = [encryptedOutMutableData subdataWithRange:(NSRange){index, MIN(blockSize, encryptedOutMutableData.length - index)}]; // ciphertext.copy;
+                    }
+                    decryptedData = encryptedOutMutableData;
                 }
-                decryptedData = decryptedOutMutableData.copy;
             }
 
             memset(&xkey, 0, sizeof(Twofish_key));
         } break;
-        */
         case PGPSymmetricPlaintext:
             PGPLogWarning(@"Can't decrypt plaintext");
             decryptedData = [NSMutableData dataWithData:encryptedData];
