@@ -45,14 +45,13 @@ NS_SWIFT_NAME(Keyring) @interface PGPKeyring : NSObject <PGPExportable>
 - (void)deleteAll;
 
 /**
- Export, previously imported, keys of given type (public or secret) to the file at given path.
+ Export keys data, previously imported, keys of given type (public or secret) to the file at given path.
 
  @param type Keys type.
- @param path Full path to the destination file.
  @param error Error.
- @return YES on success.
+ @return Data on success.
  */
-- (BOOL)exportKeysOfType:(PGPKeyType)type toFile:(NSString *)path error:(NSError * __autoreleasing _Nullable *)error NS_SWIFT_NAME(export(type:to:));
+- (nullable NSData *)exportKeysOfType:(PGPKeyType)type error:(NSError * __autoreleasing _Nullable *)error;
 
 /**
  Export, previously imported, single key data.

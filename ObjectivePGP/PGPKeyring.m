@@ -148,33 +148,17 @@
     return nil;
 }
 
-- (BOOL)exportKeysOfType:(PGPKeyType)type toFile:(NSString *)path error:(NSError * __autoreleasing *)error {
-    let exportKeys = [NSMutableArray<PGPPartialKey *> array];
+- (nullable NSData *)exportKeysOfType:(PGPKeyType)type error:(NSError * __autoreleasing _Nullable *)error {
+    let output = [NSMutableData data];
     for (PGPKey *key in self.keys) {
         if (type == PGPKeyTypePublic && key.publicKey) {
-            [exportKeys pgp_addObject:key.publicKey];
+            [output pgp_appendData:[key.publicKey export:error]];
         }
         if (type == PGPKeyTypeSecret && key.secretKey) {
-            [exportKeys pgp_addObject:key.secretKey];
+            [output pgp_appendData:[key.secretKey export:error]];
         }
     }
-    return [self exportKeys:exportKeys toFile:path error:error];
-}
-
-- (BOOL)exportKeys:(NSArray<PGPPartialKey *> *)keys toFile:(NSString *)path error:(NSError * __autoreleasing *)error {
-    NSParameterAssert(keys);
-    PGPAssertClass(path, NSString);
-
-    if (keys.count == 0) {
-        return NO;
-    }
-
-    for (PGPPartialKey *key in keys) {
-        if (![self.class appendKey:key toKeyring:path error:error]) {
-            return NO;
-        }
-    }
-    return YES;
+    return output.length > 0 ? output : nil;
 }
 
 - (nullable NSData *)exportKey:(PGPKey *)key armored:(BOOL)armored {
