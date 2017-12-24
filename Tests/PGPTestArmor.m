@@ -57,7 +57,7 @@
     XCTAssertNil(exportError);
     XCTAssertNotNil(keyData);
 
-    var armoredString = [PGPArmor armored:keyData as:PGPArmorTypePublicKey];
+    var armoredString = [PGPArmor armored:keyData as:PGPArmorPublicKey];
     XCTAssertNotNil(armoredString);
 
     BOOL status = [[armoredString dataUsingEncoding:NSUTF8StringEncoding] writeToFile:[self.workingDirectory stringByAppendingPathComponent:@"pubkey.asc"] atomically:YES];
@@ -87,7 +87,7 @@
 //    XCTAssertNil(exportError);
 //    XCTAssertNotNil(keyData);
 //
-//    NSData *armoredData = [PGPArmor armoredData:keyData as:PGPArmorTypePublicKey];
+//    NSData *armoredData = [PGPArmor armoredData:keyData as:PGPArmorPublicKey];
 //    XCTAssertNotNil(armoredData);
 //
 //    NSFileHandle *fileHandle = [NSFileHandle fileHandleForWritingAtPath:[self.workingDirectory stringByAppendingPathComponent:@"pubkey.asc"]];

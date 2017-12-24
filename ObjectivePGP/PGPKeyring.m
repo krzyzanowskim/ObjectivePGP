@@ -172,7 +172,7 @@
     }
 
     if (armored) {
-        return [[PGPArmor armored:keyData as:PGPArmorTypePublicKey] dataUsingEncoding:NSUTF8StringEncoding];
+        return [[PGPArmor armored:keyData as:PGPArmorPublicKey] dataUsingEncoding:NSUTF8StringEncoding];
     } else {
         return keyData;
     }

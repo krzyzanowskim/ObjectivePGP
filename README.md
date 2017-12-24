@@ -81,23 +81,23 @@ Comment: For info see http://www.objectivepgp.org
 
 Class `PGPArmor` can be used to convert binary format to ASCII format
 ```objc
-NSString *armoredKey = [PGPArmor armoredData:encrypted as:PGPArmorTypePublicKey];
+NSString *armoredKey = [PGPArmor armoredData:encrypted as:PGPArmorPublicKey];
 ```
 
 ```swift
-let armoredKey = Armor.armored(Data(), as: .typePublicKey)
+let armoredKey = Armor.armored(Data(), as: .publicKey)
 ```
 
 When convert manually, it is important to use right `PGPArmorType` value that define the header. It may be a tricky part so here's the cheatsheet:
 
 | Type data  | PGPArmorType          | Example |
 | ---------- | --------------------- |-------- |
-| Encrypted  | `PGPArmorTypeMessage` | `Armor.armored(ObjectivePGP.encrypt(...), as: .typeMessage)` |
-| Decrypted  | `PGPArmorTypeMessage` | `Armor.armored(ObjectivePGP.decrypt(...), as: .typeMessage)` |
-| Pubic key  | `PGPArmorTypePublic`  | `Armor.armored(key.export(), as: .public)` |
-| Secret key | `PGPArmorTypeSecret`  | `Armor.armored(key.export(), as: .secret)` |
+| Encrypted  | `PGPArmorMessage` | `Armor.armored(ObjectivePGP.encrypt(...), as: .message)` |
+| Decrypted  | `PGPArmorMessage` | `Armor.armored(ObjectivePGP.decrypt(...), as: .message)` |
+| Pubic key  | `PGPArmorTypePublic`  | `Armor.armored(key.export(), as: .publicKey)` |
+| Secret key | `PGPArmorTypeSecret`  | `Armor.armored(key.export(), as: .secretKey)` |
 
-For any result of encryption the type is `PGPArmorTypeMessage`
+For any result of encryption the type is `PGPArmorMessage`
 
 ##### Keyring
 

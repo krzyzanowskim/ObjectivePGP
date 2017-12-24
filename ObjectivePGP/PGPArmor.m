@@ -40,27 +40,27 @@ NS_ASSUME_NONNULL_BEGIN
     NSMutableString *headerString = [NSMutableString stringWithString:@"-----"];
     NSMutableString *footerString = [NSMutableString stringWithString:@"-----"];
     switch (type) {
-        case PGPArmorTypePublicKey:
+        case PGPArmorPublicKey:
             [headerString appendString:@"BEGIN PGP PUBLIC KEY BLOCK"];
             [footerString appendString:@"END PGP PUBLIC KEY BLOCK"];
             break;
-        case PGPArmorTypeSecretKey:
+        case PGPArmorSecretKey:
             [headerString appendString:@"BEGIN PGP PRIVATE KEY BLOCK"];
             [footerString appendString:@"END PGP PRIVATE KEY BLOCK"];
             break;
-        case PGPArmorTypeSignature:
+        case PGPArmorSignature:
             [headerString appendString:@"BEGIN PGP SIGNATURE"];
             [footerString appendString:@"END PGP SIGNATURE"];
             break;
-        case PGPArmorTypeMessage:
+        case PGPArmorMessage:
             [headerString appendString:@"BEGIN PGP MESSAGE"];
             [footerString appendString:@"END PGP MESSAGE"];
             break;
-        case PGPArmorTypeMultipartMessagePartX:
+        case PGPArmorMultipartMessagePartX:
             [headerString appendFormat:@"BEGIN PGP MESSAGE, PART %@", @(part)];
             [footerString appendFormat:@"END PGP MESSAGE, PART %@", @(part)];
             break;
-        case PGPArmorTypeMultipartMessagePartXOfY:
+        case PGPArmorMultipartMessagePartXOfY:
             [headerString appendFormat:@"BEGIN PGP MESSAGE, PART %@/%@", @(part), @(ofParts)];
             [footerString appendFormat:@"END PGP MESSAGE, PART %@/%@", @(part), @(ofParts)];
             break;

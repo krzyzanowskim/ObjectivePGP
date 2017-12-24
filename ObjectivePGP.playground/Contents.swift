@@ -8,6 +8,6 @@ let key2 = KeyGenerator().generate(for: "fran@krzyzanowskim.com", passphrase: ni
 
 // Encrypt 5 bytes using selected key
 let encrypted = try ObjectivePGP.encrypt(Data(bytes: [1,2,3,4,5]), addSignature:false, using: [key1, key2], passphraseForKey:nil)
-let armored = Armor.armored(encrypted, as: PGPArmorType.typeMessage)
+let armored = Armor.armored(encrypted, as: .message)
 
 print(armored)

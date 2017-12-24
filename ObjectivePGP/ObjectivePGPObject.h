@@ -86,7 +86,7 @@ NS_ASSUME_NONNULL_BEGIN
  @note Use `PGPArmor` to convert binary `data` format to the armored (ASCII) format:
 
  ```
- [[PGPArmor armored:data as:PGPArmorTypeMessage] dataUsingEncoding:NSUTF8StringEncoding];
+ [[PGPArmor armored:data as:PGPArmorMessage] dataUsingEncoding:NSUTF8StringEncoding];
  ```
 
  */

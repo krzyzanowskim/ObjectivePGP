@@ -9,12 +9,12 @@
 #import <Foundation/Foundation.h>
 
 typedef NS_ENUM(NSUInteger, PGPArmorType) {
-    PGPArmorTypeMessage = 1,
-    PGPArmorTypePublicKey = 2,
-    PGPArmorTypeSecretKey = 3,
-    PGPArmorTypeMultipartMessagePartXOfY = 4,
-    PGPArmorTypeMultipartMessagePartX = 5,
-    PGPArmorTypeSignature = 6,
+    PGPArmorMessage = 1,
+    PGPArmorPublicKey = 2,
+    PGPArmorSecretKey = 3,
+    PGPArmorMultipartMessagePartXOfY = 4,
+    PGPArmorMultipartMessagePartX = 5,
+    PGPArmorSignature = 6,
     PGPArmorCleartextSignedMessage = 7, // TODO: -----BEGIN PGP SIGNED MESSAGE-----
 };
 
