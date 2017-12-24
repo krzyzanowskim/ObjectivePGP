@@ -14,6 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)pgp_appendData:(nullable NSData *)other;
 
+- (void)XORWithData:(NSData *)data index:(NSUInteger)index;
+
 @end
 
 NS_ASSUME_NONNULL_END

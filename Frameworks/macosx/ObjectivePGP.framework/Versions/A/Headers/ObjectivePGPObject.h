@@ -22,9 +22,15 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ObjectivePGP : NSObject
 
 /**
- Default keyring instance.
+ The shared ObjectivePGP configuration instance.
+ @note This is the default instance.
  */
-@property (class, nonatomic, readonly) PGPKeyring *defaultKeyring;
+@property (class, atomic, readonly) ObjectivePGP *sharedInstance;
+
+/**
+ Default, shared keyring instance. Not used internally.
+ */
+@property (class, atomic, readonly) PGPKeyring *defaultKeyring;
 
 /**
  Read binary or armored (ASCII) PGP keys from the input.
@@ -32,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param data Key data or keyring data.
  @return Array of read keys.
  */
-+ (NSArray<PGPKey *> *)readKeysFromData:(NSData *)data NS_SWIFT_NAME(readKeys(from:));
++ (nullable NSArray<PGPKey *> *)readKeysFromData:(NSData *)data error:(NSError * __autoreleasing _Nullable *)error;
 
 /**
  Read binary or armored (ASCII) PGP keys from the input.
@@ -40,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param path Path to the file with keys.
  @return Array of read keys.
  */
-+ (NSArray<PGPKey *> *)readKeysFromFile:(NSString *)path NS_SWIFT_NAME(readKeys(from:));
++ (nullable NSArray<PGPKey *> *)readKeysFromPath:(NSString *)path error:(NSError * __autoreleasing _Nullable *)error;
 
 /**
  Sign data using a given key. Use passphrase to unlock the key if needed.
@@ -48,8 +54,8 @@ NS_ASSUME_NONNULL_BEGIN
 
  @param data Input data.
  @param detached Whether result in only signature (not signed data)
- @param key Key to be used to sign.
- @param passphrase Optional. Passphrase for the `key`.
+ @param keys Keys to be used to sign.
+ @param passphraseBlock Optional. Handler for passphrase protected keys. Return passphrase for a key in question.
  @param error Optional. Error.
  @return Signed data, or `nil` if fail.
  */
@@ -80,7 +86,7 @@ NS_ASSUME_NONNULL_BEGIN
  @note Use `PGPArmor` to convert binary `data` format to the armored (ASCII) format:
 
  ```
- [[PGPArmor armored:data as:PGPArmorTypeMessage] dataUsingEncoding:NSUTF8StringEncoding];
+ [[PGPArmor armored:data as:PGPArmorMessage] dataUsingEncoding:NSUTF8StringEncoding];
  ```
 
  */
@@ -96,7 +102,13 @@ NS_ASSUME_NONNULL_BEGIN
  @param error Optional. Error.
  @return Decrypted data, or `nil` if failed.
  */
-+ (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseBlock verifySignature:(BOOL)verifySignature error:(NSError * __autoreleasing _Nullable *)error;
++ (nullable NSData *)decrypt:(NSData *)data andVerifySignature:(BOOL)verifySignature usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error;
+
+
+/**
+ Return list of key identifiers used in the given message. Determine keys that a message has been encrypted.
+ */
++ (nullable NSArray<PGPKeyID *> *)recipientsKeyIDForMessage:(NSData *)data error:(NSError * __autoreleasing _Nullable *)error;
 
 @end
 

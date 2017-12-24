@@ -1,5 +1,4 @@
-//
-//  Copyright (c) Marcin Krzyżanowski. All rights reserved.
+////  Copyright (c) Marcin Krzyżanowski. All rights reserved.
 //
 //  THIS SOURCE CODE AND ANY ACCOMPANYING DOCUMENTATION ARE PROTECTED BY
 //  INTERNATIONAL COPYRIGHT LAW. USAGE IS BOUND TO THE LICENSE AGREEMENT.
@@ -10,11 +9,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface NSMutableData (PGPUtils)
+@class PGPSecretKeyPacket;
 
-- (void)pgp_appendData:(nullable NSData *)other;
-
-- (void)XORWithData:(NSData *)data index:(NSUInteger)index;
+@protocol PGPEncryptedSessionKeyPacketProtocol <NSObject>
 
 @end
 

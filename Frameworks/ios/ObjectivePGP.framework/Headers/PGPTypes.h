@@ -27,7 +27,8 @@ typedef NS_ERROR_ENUM(PGPErrorDomain, PGPErrorCode) {
     PGPErrorNotSigned = 8,
     /// Invalid PGP message. Invalid or corrupted data that can't be processed.
     PGPErrorInvalidMessage = 9,
-    PGPErrorMissingSignature = 10
+    PGPErrorMissingSignature = 10,
+    PGPErrorNotFound = 11
 };
 
 typedef NS_ENUM(NSInteger, PGPFormatType) {
@@ -45,13 +46,13 @@ typedef NS_ENUM(UInt8, PGPPacketTag) {
     PGPInvalidPacketTag = 0,
     PGPPublicKeyEncryptedSessionKeyPacketTag = 1,
     PGPSignaturePacketTag = 2,
-    PGPSymetricKeyEncryptedSessionKeyPacketTag = 3, // TODO
+    PGPSymetricKeyEncryptedSessionKeyPacketTag = 3,
     PGPOnePassSignaturePacketTag = 4,
     PGPSecretKeyPacketTag = 5,
     PGPPublicKeyPacketTag = 6,
     PGPSecretSubkeyPacketTag = 7,
     PGPCompressedDataPacketTag = 8,
-    PGPSymmetricallyEncryptedDataPacketTag = 9, // TODO
+    PGPSymmetricallyEncryptedDataPacketTag = 9,
     PGPMarkerPacketTag = 10, // Ignored (Obsolete Literal Packet)
     PGPLiteralDataPacketTag = 11,
     PGPTrustPacketTag = 12,
@@ -76,7 +77,7 @@ typedef NS_ENUM(UInt8, PGPPublicKeyAlgorithm) {
     PGPPublicKeyAlgorithmElliptic = 18,
     PGPPublicKeyAlgorithmECDSA = 19,
     PGPPublicKeyAlgorithmElgamalEncryptorSign = 20, // Deprecated ?
-    PGPPublicKeyAlgorithmDiffieHellman = 21,
+    PGPPublicKeyAlgorithmDiffieHellman = 21, // TODO: Deprecated?
     PGPPublicKeyAlgorithmPrivate1 = 100,
     PGPPublicKeyAlgorithmPrivate2 = 101,
     PGPPublicKeyAlgorithmPrivate3 = 102,

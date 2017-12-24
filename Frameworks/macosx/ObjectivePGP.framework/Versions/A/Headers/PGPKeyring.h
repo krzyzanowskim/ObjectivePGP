@@ -12,7 +12,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// Keyring
-NS_SWIFT_NAME(Keyring) @interface PGPKeyring : NSObject
+NS_SWIFT_NAME(Keyring) @interface PGPKeyring : NSObject <PGPExportable>
 
 /// Keys in keyring.
 @property (strong, nonatomic, readonly) NSArray<PGPKey *> *keys;
@@ -31,7 +31,7 @@ NS_SWIFT_NAME(Keyring) @interface PGPKeyring : NSObject
  @param path Path to the file with the keys.
  @return YES on success.
  */
-- (BOOL)importKey:(NSString *)identifier fromFile:(NSString *)path NS_SWIFT_NAME(import(keyIdentifier:fromFile:));
+- (BOOL)importKey:(NSString *)identifier fromPath:(NSString *)path error:(NSError * __autoreleasing _Nullable *)error NS_SWIFT_NAME(import(keyIdentifier:fromPath:));
 
 /**
  Delete keys
@@ -40,15 +40,18 @@ NS_SWIFT_NAME(Keyring) @interface PGPKeyring : NSObject
  */
 - (void)deleteKeys:(NSArray<PGPKey *> *)keys NS_SWIFT_NAME(delete(keys:));
 
+
+/// Delete all keys;
+- (void)deleteAll;
+
 /**
- Export, previously imported, keys of given type (public or secret) to the file at given path.
+ Export keys data, previously imported, keys of given type (public or secret) to the file at given path.
 
  @param type Keys type.
- @param path Full path to the destination file.
  @param error Error.
- @return YES on success.
+ @return Data on success.
  */
-- (BOOL)exportKeysOfType:(PGPKeyType)type toFile:(NSString *)path error:(NSError * __autoreleasing _Nullable *)error NS_SWIFT_NAME(export(type:to:));
+- (nullable NSData *)exportKeysOfType:(PGPKeyType)type error:(NSError * __autoreleasing _Nullable *)error;
 
 /**
  Export, previously imported, single key data.
