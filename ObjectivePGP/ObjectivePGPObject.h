@@ -104,6 +104,12 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (nullable NSData *)decrypt:(NSData *)data andVerifySignature:(BOOL)verifySignature usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error;
 
+
+/**
+ Return list of key identifiers used in the given message. Determine keys that a message has been encrypted.
+ */
++ (nullable NSArray<PGPKeyID *> *)recipientsKeyIDForMessage:(NSData *)data error:(NSError * __autoreleasing _Nullable *)error;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -633,6 +633,34 @@ NS_ASSUME_NONNULL_BEGIN
     return keys;
 }
 
++ (nullable NSArray<PGPKeyID *> *)recipientsKeyIDForMessage:(NSData *)data error:(NSError * __autoreleasing _Nullable *)error {
+    PGPAssertClass(data, NSData);
+
+    // TODO: Decrypt all messages
+    let binaryMessage = [PGPArmor convertArmoredMessage2BinaryBlocksWhenNecessary:data error:error].firstObject;
+    if (!binaryMessage) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Invalid message to decrypt." }];
+        }
+        return nil;
+    }
+
+    // parse packets
+    let foundKeys = [NSMutableOrderedSet<PGPKeyID *> orderedSetWithCapacity:1];
+    var packets = [ObjectivePGP readPacketsFromData:binaryMessage];
+    for (PGPPacket *packet in packets) {
+        switch (packet.tag) {
+            case PGPPublicKeyEncryptedSessionKeyPacketTag: {
+                let publicKeyEncrypteSessionKey = PGPCast(packet, PGPPublicKeyEncryptedSessionKeyPacket);
+                [foundKeys addObject:publicKeyEncrypteSessionKey.keyID];
+            } break;
+            default:
+                break;
+        }
+    }
+    return foundKeys.count > 0 ? foundKeys.array : nil;
+}
+
 #pragma mark - Private
 
 + (NSArray<PGPPacket *> *)readPacketsFromData:(NSData *)keyringData {
