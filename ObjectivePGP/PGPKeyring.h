@@ -12,7 +12,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 /// Keyring
-NS_SWIFT_NAME(Keyring) @interface PGPKeyring : NSObject
+NS_SWIFT_NAME(Keyring) @interface PGPKeyring : NSObject <PGPExportable>
 
 /// Keys in keyring.
 @property (strong, nonatomic, readonly) NSArray<PGPKey *> *keys;

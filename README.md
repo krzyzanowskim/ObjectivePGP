@@ -82,6 +82,9 @@ NSArray<PGPKey *> *allKeys = keyring.keys;
 [keyring importKey:@"979E4B03DFFE30C6" fromPath:@"/path/to/secring.gpg"];
 PGPKey *key = [keyring findKeyWithIdentifier:@"979E4B03DFFE30C6"];
 NSArray<PGPKey *> keys = [pgp findKeysForUserID:@"Name <email@example.com>"];
+
+// Write keyring to file
+[[keyring export:error] writeToURL:[NSURL fileURLWithString:@"keyring.gpg"]];
 ```
 
 ```swift
@@ -99,6 +102,9 @@ if let key = keyring.findKey("979E4B03DFFE30C6") {
 keyring.findKeys("Name <email@example.com>").forEach(key) {
 	// process key
 }
+
+// Write keyring to file
+try keyring.export().write(to: URL(fileURLWithPath: "keyring.gpg"))
 ```
 
 ##### Export keys (private or public)

@@ -291,4 +291,15 @@
     return updatedContainer;
 }
 
+#pragma mark - PGPExportable
+
+- (NSData *)export:(NSError * _Nullable __autoreleasing *)error {
+    let output = [NSMutableData data];
+    for (PGPKey *key in self.keys) {
+        let keyData = [key export:error];
+        [output pgp_appendData:keyData];
+    }
+    return output;
+}
+
 @end
