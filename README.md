@@ -12,20 +12,20 @@ Here is the [blog post](http://blog.krzyzanowskim.com/2014/07/31/short-story-abo
 
 ## Installation
 
-### CocoaPods
+#### [CocoaPods](https://cocoapods.org/pods/ObjectivePGP)
 
 ```ruby
-target 'MyTargetName' do
+target 'TargetName' do
     use_frameworks!
     pod 'ObjectivePGP'
 end
 ```
 
-### Dynamic framework
+#### ObjectivePGP.framework
 
 ObjectivePGP comes with the [Frameworks](./Frameworks) for the latest release.
 
-1. Download [ObjectivePGP.framework](https://github.com/krzyzanowskim/ObjectivePGP/releases) or build a framework with the [build-frameworks.sh](./build-frameworks.sh) script.
+1. Download latest [ObjectivePGP.framework](https://github.com/krzyzanowskim/ObjectivePGP/releases) or build a framework with the [build-frameworks.sh](./build-frameworks.sh) script.
 1. Link framework with the target
     - Add `ObjectivePGP.framework` to "**Link Binary With Libraries**" list for the target.
     ![screen shot 2017-06-30 at 02 20 47](https://user-images.githubusercontent.com/758033/27715926-d79a4e3c-5d3a-11e7-8b1b-d8b5ddb8182e.png)
@@ -46,42 +46,59 @@ You are welcome to contribute. Please create [Pull Request](https://github.com/k
 
 ## Usage
 
-##### Initialization
+##### Import module
 
 ```objective-c
 #import <ObjectivePGP/ObjectivePGP.h>
-
-ObjectivePGP *pgp = [[ObjectivePGP alloc] init];
 ```
+
+```swift
+import ObjectivePGP
+```
+
 
 ##### Load keys (private or public)
 
 ```objective-c
-/* Load keys from a keyring file */
-NSArray *keys = [ObjectivePGP readKeysFromFile:@"/path/to/secring.gpg"];
-
-/* Load eys from a keys file */
-NSArray *keys = [ObjectivePGP readKeysFromFile:@"/path/to/key.asc"];
-
-/* Import keys */
-[pgp importKeys:keys];
-
-/* Import selected key from a keyring */
-[pgp importKey:@"979E4B03DFFE30C6" fromFile:@"/path/to/secring.gpg"];
-
+NSArray<PGPKey *> *keys = [ObjectivePGP readKeysFromPath:@"/path/to/key.asc" error:nil];
 ```
 
-##### Search for keys
+```swift
+let keys = try ObjectivePGP.readKeys(fromPath: "/path/to/key.asc")
+```
 
-```objective-c
-/* long identifier 979E4B03DFFE30C6 */
-PGPKey *key = [pgp findKeyWithIdentifier:@"979E4B03DFFE30C6"];
+##### Keyring
 
-/* Short identifier 979E4B03 (the same result as previous) */
-PGPKey *key = [pgp findKeyWithIdentifier:@"979E4B03"];
+Keyring is a storage (in memory or on disk) that keep all sorts of PGP keys.
 
-/* First key that match given user identifier string. */
-PGPKey *key = [pgp findKeysForUserID:@"Name <email@example.com>"];
+```objc
+PGPKeyring *keyring = ObjectivePGP.defaultKeyring;
+PGPKeyring *keyring = [[PGPKeyring alloc] init];
+
+NSArray<PGPKey *> *allKeys = keyring.keys;
+[keyring importKeys:@[key]];
+[keyring deleteKeys:@[key]];
+
+[keyring importKey:@"979E4B03DFFE30C6" fromPath:@"/path/to/secring.gpg"];
+PGPKey *key = [keyring findKeyWithIdentifier:@"979E4B03DFFE30C6"];
+NSArray<PGPKey *> keys = [pgp findKeysForUserID:@"Name <email@example.com>"];
+```
+
+```swift
+let keyring = Keyring()
+
+let allKeys = keyring.keys
+keyring.import(keys: [key])
+keyring.delete(keys: [key])
+
+keyring.import(keyIdentifier:"979E4B03DFFE30C6", fromPath:"/path/to/secring.gpg")
+if let key = keyring.findKey("979E4B03DFFE30C6") {
+	// key found in keyring
+}
+
+keyring.findKeys("Name <email@example.com>").forEach(key) {
+	// process key
+}
 ```
 
 ##### Export keys (private or public)
