@@ -113,7 +113,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     let packets = [self readPacketsFromData:decryptedData offset:position];
-    return [packets subarrayWithRange:(NSRange){0, packets.count - 1}];
+    return packets.count > 0 ? [packets subarrayWithRange:(NSRange){0, packets.count - 1}] : packets;
 }
 
 #pragma mark - isEqual

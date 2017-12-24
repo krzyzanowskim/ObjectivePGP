@@ -326,7 +326,7 @@
     XCTAssertNotNil(exportedKey);
 }
 
-- (void)testSymmetricKeyEncryptedMessage1 {
+- (void)testSymmetricKeyEncryptedMessageMDC {
     // AES
     let messagePath = [PGPTestUtils pathToBundledFile:@"symmetric-message1.gpg"];
     let messageData = [NSData dataWithContentsOfFile:messagePath];
