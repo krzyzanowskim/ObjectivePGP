@@ -24,12 +24,17 @@ NS_ASSUME_NONNULL_BEGIN
 NS_SWIFT_NAME(Armor) @interface PGPArmor : NSObject
 
 + (NSString *)armored:(NSData *)data as:(PGPArmorType)type part:(NSUInteger)part of:(NSUInteger)ofParts;
+
+/// Convert binary PGP message to ASCII armored format.
 + (NSString *)armored:(NSData *)data as:(PGPArmorType)type;
 
+/// Convert ASCII armored PGP message to binary format.
 + (nullable NSData *)readArmored:(NSString *)string error:(NSError * __autoreleasing _Nullable *)error;
 
+/// Whether the data is PGP ASCII armored message.
 + (BOOL)isArmoredData:(NSData *)data;
 
+/// Helper function to convert input data (ASCII or binary) to array of PGP messages.
 + (nullable NSArray<NSData *> *)convertArmoredMessage2BinaryBlocksWhenNecessary:(NSData *)binOrArmorData error:(NSError * __autoreleasing _Nullable *)error;
 
 @end

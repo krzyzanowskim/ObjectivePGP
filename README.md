@@ -56,7 +56,6 @@ You are welcome to contribute. Please create [Pull Request](https://github.com/k
 import ObjectivePGP
 ```
 
-
 ##### Load keys (private or public)
 
 ```objective-c
@@ -66,6 +65,39 @@ NSArray<PGPKey *> *keys = [ObjectivePGP readKeysFromPath:@"/path/to/key.asc" err
 ```swift
 let keys = try ObjectivePGP.readKeys(fromPath: "/path/to/key.asc")
 ```
+
+##### ASCII Armor
+
+ASCII armor is a binary-to-textual encoding converter. ASCII armor involves encasing encrypted messaging in ASCII so that they can be sent in a standard messaging format such as email.
+
+Example:
+```
+-----BEGIN PGP PUBLIC KEY BLOCK-----
+Comment: For info see http://www.objectivepgp.org
+
+[...]
+-----END PGP PUBLIC KEY BLOCK-----
+```
+
+Class `PGPArmor` can be used to convert binary format to ASCII format
+```objc
+NSString *armoredKey = [PGPArmor armoredData:encrypted as:PGPArmorTypePublicKey];
+```
+
+```swift
+let armoredKey = Armor.armored(Data(), as: .typePublicKey)
+```
+
+When convert manually, it is important to use right `PGPArmorType` value that define the header. It may be a tricky part so here's the cheatsheet:
+
+| Type data  | PGPArmorType          | Example |
+| ---------- | --------------------- |-------- |
+| Encrypted  | `PGPArmorTypeMessage` | `Armor.armored(ObjectivePGP.encrypt(...), as: .typeMessage)` |
+| Decrypted  | `PGPArmorTypeMessage` | `Armor.armored(ObjectivePGP.decrypt(...), as: .typeMessage)` |
+| Pubic key  | `PGPArmorTypePublic`  | `Armor.armored(key.export(), as: .public)` |
+| Secret key | `PGPArmorTypeSecret`  | `Armor.armored(key.export(), as: .secret)` |
+
+For any result of encryption the type is `PGPArmorTypeMessage`
 
 ##### Keyring
 
