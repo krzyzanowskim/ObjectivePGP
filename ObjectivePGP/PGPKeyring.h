@@ -31,7 +31,7 @@ NS_SWIFT_NAME(Keyring) @interface PGPKeyring : NSObject
  @param path Path to the file with the keys.
  @return YES on success.
  */
-- (BOOL)importKey:(NSString *)identifier fromFile:(NSString *)path NS_SWIFT_NAME(import(keyIdentifier:fromFile:));
+- (BOOL)importKey:(NSString *)identifier fromPath:(NSString *)path error:(NSError * __autoreleasing _Nullable *)error NS_SWIFT_NAME(import(keyIdentifier:fromPath:));
 
 /**
  Delete keys
@@ -39,6 +39,10 @@ NS_SWIFT_NAME(Keyring) @interface PGPKeyring : NSObject
  @param keys Keys to delete from the `keys` collection.
  */
 - (void)deleteKeys:(NSArray<PGPKey *> *)keys NS_SWIFT_NAME(delete(keys:));
+
+
+/// Delete all keys;
+- (void)deleteAll;
 
 /**
  Export, previously imported, keys of given type (public or secret) to the file at given path.

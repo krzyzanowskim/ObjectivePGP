@@ -27,7 +27,8 @@ typedef NS_ERROR_ENUM(PGPErrorDomain, PGPErrorCode) {
     PGPErrorNotSigned = 8,
     /// Invalid PGP message. Invalid or corrupted data that can't be processed.
     PGPErrorInvalidMessage = 9,
-    PGPErrorMissingSignature = 10
+    PGPErrorMissingSignature = 10,
+    PGPErrorNotFound = 11
 };
 
 typedef NS_ENUM(NSInteger, PGPFormatType) {

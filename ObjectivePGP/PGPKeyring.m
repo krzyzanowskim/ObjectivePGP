@@ -46,11 +46,11 @@
     }
 }
 
-- (BOOL)importKey:(NSString *)keyIdentifier fromFile:(NSString *)path {
+- (BOOL)importKey:(NSString *)keyIdentifier fromPath:(NSString *)path error:(NSError * __autoreleasing _Nullable *)error {
     let fullPath = [path stringByExpandingTildeInPath];
 
-    let loadedKeys = [self.class readKeysFromFile:fullPath];
-    if (loadedKeys.count == 0) {
+    let loadedKeys = [self.class readKeysFromPath:fullPath error:error];
+    if (loadedKeys.count == 0 || (error && *error)) {
         return NO;
     }
 
@@ -58,10 +58,12 @@
         *stop = PGPEqualObjects(key.publicKey.keyID.shortIdentifier.uppercaseString, keyIdentifier.uppercaseString) || PGPEqualObjects(key.secretKey.keyID.shortIdentifier.uppercaseString, keyIdentifier.uppercaseString) ||
         PGPEqualObjects(key.publicKey.keyID.longIdentifier.uppercaseString, keyIdentifier.uppercaseString) || PGPEqualObjects(key.secretKey.keyID.longIdentifier.uppercaseString, keyIdentifier.uppercaseString);
         return *stop;
-
     }] firstObject];
 
     if (!foundKey) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorNotFound userInfo:@{NSLocalizedDescriptionKey: @"Key not found."}];
+        }
         return NO;
     }
 
@@ -78,6 +80,10 @@
         [allKeys removeObject:key];
     }
     self.keys = allKeys;
+}
+
+- (void)deleteAll {
+    [self deleteKeys:self.keys];
 }
 
 - (NSArray<PGPKey *> *)findKeysForUserID:(nonnull NSString *)userID {

@@ -38,7 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param data Key data or keyring data.
  @return Array of read keys.
  */
-+ (NSArray<PGPKey *> *)readKeysFromData:(NSData *)data NS_SWIFT_NAME(readKeys(from:));
++ (nullable NSArray<PGPKey *> *)readKeysFromData:(NSData *)data error:(NSError * __autoreleasing _Nullable *)error;
 
 /**
  Read binary or armored (ASCII) PGP keys from the input.
@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
  @param path Path to the file with keys.
  @return Array of read keys.
  */
-+ (NSArray<PGPKey *> *)readKeysFromFile:(NSString *)path NS_SWIFT_NAME(readKeys(from:));
++ (nullable NSArray<PGPKey *> *)readKeysFromPath:(NSString *)path error:(NSError * __autoreleasing _Nullable *)error;
 
 /**
  Sign data using a given key. Use passphrase to unlock the key if needed.

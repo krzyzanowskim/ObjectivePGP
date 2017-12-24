@@ -35,13 +35,13 @@
 
 - (void)testLoadKeyring {
     let keyring = [[PGPKeyring alloc] init];
-    [keyring importKeys:[PGPTestUtils readKeysFromFile:@"secring-test-encrypted.gpg"]];
+    [keyring importKeys:[PGPTestUtils readKeysFromPath:@"secring-test-encrypted.gpg"]];
     XCTAssertEqual(keyring.keys.count, (NSUInteger)1);
 }
 
 - (void)testUsers {
     let keyring = [[PGPKeyring alloc] init];
-    [keyring importKeys:[PGPTestUtils readKeysFromFile:@"secring-test-encrypted.gpg"]];
+    [keyring importKeys:[PGPTestUtils readKeysFromPath:@"secring-test-encrypted.gpg"]];
 
     let key = keyring.keys.firstObject;
     XCTAssert(key.secretKey.users.count == 1, @"Invalid users count");
@@ -49,7 +49,7 @@
 
 - (void)testPrimaryKey {
     let keyring = [[PGPKeyring alloc] init];
-    [keyring importKeys:[PGPTestUtils readKeysFromFile:@"secring-test-encrypted.gpg"]];
+    [keyring importKeys:[PGPTestUtils readKeysFromPath:@"secring-test-encrypted.gpg"]];
 
     let key = keyring.keys.firstObject;
     XCTAssertTrue(key.isEncryptedWithPassword, @"Should be encrypted");
@@ -58,7 +58,7 @@
 
 - (void)testKeyDecryption {
     let keyring = [[PGPKeyring alloc] init];
-    [keyring importKeys:[PGPTestUtils readKeysFromFile:@"secring-test-encrypted.gpg"]];
+    [keyring importKeys:[PGPTestUtils readKeysFromPath:@"secring-test-encrypted.gpg"]];
     let key = keyring.keys.firstObject;
 
     XCTAssertTrue(key.isEncryptedWithPassword);
@@ -72,8 +72,8 @@
 
 - (void)testDataDecryption {
     let keyring = [[PGPKeyring alloc] init];
-    [keyring importKeys:[PGPTestUtils readKeysFromFile:@"secring-test-encrypted.gpg"]];
-    [keyring importKeys:[PGPTestUtils readKeysFromFile:@"pubring-test-encrypted.gpg"]];
+    [keyring importKeys:[PGPTestUtils readKeysFromPath:@"secring-test-encrypted.gpg"]];
+    [keyring importKeys:[PGPTestUtils readKeysFromPath:@"pubring-test-encrypted.gpg"]];
 
     let encKey = [keyring findKeyWithIdentifier:@"9528AAA17A9BC007"];
     // encrypt
@@ -91,7 +91,7 @@
 
 - (void)testEncryptedSignature {
     let keyring = [[PGPKeyring alloc] init];
-    [keyring importKeys:[PGPTestUtils readKeysFromFile:@"secring-test-encrypted.gpg"]];
+    [keyring importKeys:[PGPTestUtils readKeysFromPath:@"secring-test-encrypted.gpg"]];
     BOOL status;
 
     // file to sign

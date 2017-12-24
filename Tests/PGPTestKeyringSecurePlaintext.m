@@ -40,8 +40,8 @@
     [[NSFileManager defaultManager] copyItemAtPath:pubKeyringPath toPath:[self.workingDirectory stringByAppendingPathComponent:[pubKeyringPath lastPathComponent]] error:nil];
 }
 
-- (NSArray<PGPKey *> *)loadKeysFromFile:(NSString *)fileName {
-    return [PGPTestUtils readKeysFromFile:fileName];
+- (NSArray<PGPKey *> *)loadKeysfromPath:(NSString *)fileName {
+    return [PGPTestUtils readKeysFromPath:fileName];
 }
 
 - (void)tearDown {
@@ -52,7 +52,7 @@
 
 - (void)testLoadKeys {
     let keyring = [[PGPKeyring alloc] init];
-    let keys = [self loadKeysFromFile:@"secring-test-plaintext.gpg"];
+    let keys = [self loadKeysfromPath:@"secring-test-plaintext.gpg"];
     [keyring importKeys:keys];
     XCTAssert(keyring.keys.count == 1, @"Should load 1 key");
 
@@ -68,7 +68,7 @@
 
 - (void)testSaveSecretKeys {
     let keyring = [[PGPKeyring alloc] init];
-    let keys = [self loadKeysFromFile:@"secring-test-plaintext.gpg"];
+    let keys = [self loadKeysfromPath:@"secring-test-plaintext.gpg"];
     [keyring importKeys:keys];
     XCTAssertTrue(keyring.keys.count > 0);
 
@@ -80,7 +80,7 @@
 
     // Check if can be loaded
     let checkkeyring = [[PGPKeyring alloc] init];
-    let checkKeys = [ObjectivePGP readKeysFromFile:exportSecretKeyringPath];
+    let checkKeys = [ObjectivePGP readKeysFromPath:exportSecretKeyringPath error:nil];
     [checkkeyring importKeys:checkKeys];
     XCTAssertTrue(checkKeys.count > 0);
 
@@ -93,7 +93,7 @@
 
 - (void)testSavePublicKeys {
     let keyring = [[PGPKeyring alloc] init];
-    let keys = [self loadKeysFromFile:@"pubring-test-plaintext.gpg"];
+    let keys = [self loadKeysfromPath:@"pubring-test-plaintext.gpg"];
     [keyring importKeys:keys];
     XCTAssertTrue(keyring.keys.count > 0);
 
@@ -108,7 +108,7 @@
 
 - (void)testPrimaryKey {
     let keyring = [[PGPKeyring alloc] init];
-    let keys = [self loadKeysFromFile:@"secring-test-plaintext.gpg"];
+    let keys = [self loadKeysfromPath:@"secring-test-plaintext.gpg"];
     [keyring importKeys:keys];
     XCTAssertTrue(keyring.keys.count > 0);
 
@@ -119,10 +119,10 @@
 
 - (void)testSigning {
     let keyring = [[PGPKeyring alloc] init];
-    let keys1 = [self loadKeysFromFile:@"pubring-test-plaintext.gpg"];
+    let keys1 = [self loadKeysfromPath:@"pubring-test-plaintext.gpg"];
     [keyring importKeys:keys1];
 
-    let keys2 = [self loadKeysFromFile:@"secring-test-plaintext.gpg"];
+    let keys2 = [self loadKeysfromPath:@"secring-test-plaintext.gpg"];
     [keyring importKeys:keys2];
 
     // file to sign
@@ -171,10 +171,10 @@
 
 - (void)testEncryption {
     let keyring = [[PGPKeyring alloc] init];
-    let keys1 = [self loadKeysFromFile:@"pubring-test-plaintext.gpg"];
+    let keys1 = [self loadKeysfromPath:@"pubring-test-plaintext.gpg"];
     [keyring importKeys:keys1];
 
-    let keys2 = [self loadKeysFromFile:@"secring-test-plaintext.gpg"];
+    let keys2 = [self loadKeysfromPath:@"secring-test-plaintext.gpg"];
     [keyring importKeys:keys2];
 
     // Public key
@@ -215,10 +215,10 @@
 
 - (void)testGPGEncryptedMessage {
     let keyring = [[PGPKeyring alloc] init];
-    let keys1 = [self loadKeysFromFile:@"pubring-test-plaintext.gpg"];
+    let keys1 = [self loadKeysfromPath:@"pubring-test-plaintext.gpg"];
     [keyring importKeys:keys1];
 
-    let keys2 = [self loadKeysFromFile:@"secring-test-plaintext.gpg"];
+    let keys2 = [self loadKeysfromPath:@"secring-test-plaintext.gpg"];
     [keyring importKeys:keys2];
 
     NSError *error = nil;
@@ -228,10 +228,10 @@
 
 - (void)testEncryptWithMultipleRecipients {
     let keyring = [[PGPKeyring alloc] init];
-    let keys1 = [self loadKeysFromFile:@"pubring-test-plaintext.gpg"];
+    let keys1 = [self loadKeysfromPath:@"pubring-test-plaintext.gpg"];
     [keyring importKeys:keys1];
 
-    let keys2 = [self loadKeysFromFile:@"secring-test-plaintext.gpg"];
+    let keys2 = [self loadKeysfromPath:@"secring-test-plaintext.gpg"];
     [keyring importKeys:keys2];
 
     // Public key

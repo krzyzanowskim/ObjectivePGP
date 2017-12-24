@@ -74,7 +74,7 @@ NS_ASSUME_NONNULL_BEGIN
     PGPAssertClass(keys, NSArray);
 
     // TODO: Decrypt all messages
-    let binaryMessage = [PGPArmor convertArmoredMessage2BinaryBlocksWhenNecessary:data].firstObject;
+    let binaryMessage = [PGPArmor convertArmoredMessage2BinaryBlocksWhenNecessary:data error:error].firstObject;
     if (!binaryMessage) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Invalid message to decrypt." }];
@@ -114,7 +114,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // Decrypt packets. Passphrase may be related to the key or to the symmetric encrypted message (no key in that keys)
-+ (NSArray<PGPPacket *> *)decryptPackets:(NSArray<PGPPacket *> *)encryptedPackets usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error {
++ (nullable NSArray<PGPPacket *> *)decryptPackets:(NSArray<PGPPacket *> *)encryptedPackets usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error {
     // If the Symmetrically Encrypted Data packet is preceded by one or
     // more Symmetric-Key Encrypted Session Key packets, each specifies a
     // passphrase that may be used to decrypt the message.  This allows a
@@ -167,7 +167,7 @@ NS_ASSUME_NONNULL_BEGIN
                         *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorPassphraseRequired userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt with the encrypted key. Decrypt key first." }];
                     }
                     PGPLogWarning(@"Can't use key \"%@\". Passphrase is required to decrypt.", decryptionSecretKeyPacket.fingerprint);
-                    return @[];
+                    return nil;
                 }
 
                 decryptionSecretKeyPacket = [decryptionSecretKeyPacket decryptedWithPassphrase:passphrase error:error];
@@ -185,7 +185,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     if (error && *error) {
-        return @[];
+        return nil;
     }
 
     if (!eskPacket) {
@@ -433,7 +433,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (BOOL)verify:(NSData *)signedData withSignature:(nullable NSData *)detachedSignature usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseForKeyBlock error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(signedData, NSData);
 
-    let binaryMessages = [PGPArmor convertArmoredMessage2BinaryBlocksWhenNecessary:signedData];
+    let binaryMessages = [PGPArmor convertArmoredMessage2BinaryBlocksWhenNecessary:signedData error:error];
     // TODO: Process all messages
     let binarySignedData = binaryMessages.count > 0 ? binaryMessages.firstObject : nil;
     if (!binarySignedData) {
@@ -446,7 +446,7 @@ NS_ASSUME_NONNULL_BEGIN
     // Use detached signature if provided.
     // In that case treat input data as blob to be verified with the signature. Don't parse it.
     if (detachedSignature) {
-        let binarydetachedSignature = [PGPArmor convertArmoredMessage2BinaryBlocksWhenNecessary:detachedSignature].firstObject;
+        let binarydetachedSignature = [PGPArmor convertArmoredMessage2BinaryBlocksWhenNecessary:detachedSignature error:error].firstObject;
         if (binarydetachedSignature) {
             let packet = [PGPPacketFactory packetWithData:binarydetachedSignature offset:0 consumedBytes:nil];
             let signaturePacket = PGPCast(packet, PGPSignaturePacket);
@@ -579,36 +579,47 @@ NS_ASSUME_NONNULL_BEGIN
     return isValid;
 }
 
-+ (NSArray<PGPKey *> *)readKeysFromFile:(NSString *)path {
++ (nullable NSArray<PGPKey *> *)readKeysFromPath:(NSString *)path error:(NSError * __autoreleasing _Nullable *)error {
     NSString *fullPath = [path stringByExpandingTildeInPath];
 
     BOOL isDirectory = NO;
     if (![[NSFileManager defaultManager] fileExistsAtPath:fullPath isDirectory:&isDirectory] || isDirectory) {
-        return @[];
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{NSLocalizedDescriptionKey: @"Can't read keys. Invalid input."}];
+        }
+        return nil;
     }
 
-    NSError * _Nullable error = nil;
-    NSData *fileData = [NSData dataWithContentsOfFile:fullPath options:NSDataReadingMappedIfSafe | NSDataReadingUncached error:&error];
+    NSData *fileData = [NSData dataWithContentsOfFile:fullPath options:NSDataReadingMappedIfSafe | NSDataReadingUncached error:error];
     if (!fileData || error) {
-        return @[];
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{NSLocalizedDescriptionKey: @"Can't read keys. Invalid input."}];
+        }
+        return nil;
     }
 
-    return [self readKeysFromData:fileData];
+    return [self readKeysFromData:fileData error:error];
 }
 
-+ (NSArray<PGPKey *> *)readKeysFromData:(NSData *)fileData {
++ (nullable NSArray<PGPKey *> *)readKeysFromData:(NSData *)fileData error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(fileData, NSData);
 
     var keys = [NSArray<PGPKey *> array];
 
     if (fileData.length == 0) {
         PGPLogError(@"Empty input data");
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{NSLocalizedDescriptionKey: @"Can't read keys. Invalid input."}];
+        }
         return keys;
     };
 
-    let binRingData = [PGPArmor convertArmoredMessage2BinaryBlocksWhenNecessary:fileData];
+    let binRingData = [PGPArmor convertArmoredMessage2BinaryBlocksWhenNecessary:fileData error:error];
     if (!binRingData || binRingData.count == 0) {
         PGPLogError(@"Invalid input data");
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{NSLocalizedDescriptionKey: @"Can't read keys. Invalid input."}];
+        }
         return keys;
     }
 

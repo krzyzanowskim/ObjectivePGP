@@ -18,7 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (nullable NSBundle *)filesBundle;
 + (NSString *)pathToBundledFile:(NSString *)fileName;
-+ (NSArray<PGPKey *> *)readKeysFromFile:(NSString *)fileName;
++ (NSArray<PGPKey *> *)readKeysFromPath:(NSString *)fileName;
 
 @end
 

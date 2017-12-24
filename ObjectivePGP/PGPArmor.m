@@ -213,7 +213,7 @@ NS_ASSUME_NONNULL_BEGIN
     return binaryData;
 }
 
-+ (NSArray<NSData *> *)convertArmoredMessage2BinaryBlocksWhenNecessary:(NSData *)binOrArmorData {
++ (nullable NSArray<NSData *> *)convertArmoredMessage2BinaryBlocksWhenNecessary:(NSData *)binOrArmorData error:(NSError * __autoreleasing _Nullable *)error {
     let binRingData = binOrArmorData;
     // detect if armored, check for string -----BEGIN PGP
     if ([PGPArmor isArmoredData:binRingData]) {
@@ -237,12 +237,11 @@ NS_ASSUME_NONNULL_BEGIN
             }
         }];
 
-        NSError * _Nullable readError = nil;
         let extractedData = [[NSMutableArray<NSData *> alloc] init];
         for (NSString *extractedString in extractedBlocks) {
-            let armodedData = [PGPArmor readArmored:extractedString error:&readError];
-            if (readError) {
-                return @[];
+            let armodedData = [PGPArmor readArmored:extractedString error:error];
+            if (error && *error) {
+                return nil;
             }
 
             [extractedData pgp_addObject:armodedData];
