@@ -16,7 +16,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - NSCopying
 
-- (id)copyWithZone:(nullable NSZone *)zone {
+- (id)copyWithZone:(nullable NSZone * __unused)zone {
     let duplicate = [PGPUserAttributeSubpacket new];
     duplicate.type = self.type;
     duplicate.valueData = self.valueData;

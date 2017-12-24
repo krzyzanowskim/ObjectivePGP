@@ -58,7 +58,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     NSMutableArray<PGPUserAttributeSubpacket *> *subpackets = [self.userAttribute.subpackets mutableCopy];
-    let imageSubpacketIndex = [subpackets indexOfObjectPassingTest:^BOOL(PGPUserAttributeSubpacket * _Nonnull subpacket, NSUInteger idx, BOOL * _Nonnull stop) {
+    let imageSubpacketIndex = [subpackets indexOfObjectPassingTest:^BOOL(PGPUserAttributeSubpacket * _Nonnull subpacket, NSUInteger __unused idx, BOOL * _Nonnull stop) {
         BOOL found = subpacket.type == PGPUserAttributeSubpacketImage;
         *stop = found;
         return found;

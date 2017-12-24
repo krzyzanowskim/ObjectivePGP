@@ -54,8 +54,8 @@ NS_ASSUME_NONNULL_BEGIN
 
  @param data Input data.
  @param detached Whether result in only signature (not signed data)
- @param key Key to be used to sign.
- @param passphrase Optional. Passphrase for the `key`.
+ @param keys Keys to be used to sign.
+ @param passphraseBlock Optional. Handler for passphrase protected keys. Return passphrase for a key in question.
  @param error Optional. Error.
  @return Signed data, or `nil` if fail.
  */

@@ -443,7 +443,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - NSCopying
 
-- (instancetype)copyWithZone:(nullable NSZone *)zone {
+- (instancetype)copyWithZone:(nullable NSZone * __unused)zone {
     return [[PGPSignatureSubpacket alloc] initWithType:self.type andValue:self.value];
 }
 
