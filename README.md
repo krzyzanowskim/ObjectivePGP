@@ -113,7 +113,7 @@ let encrypted = try ObjectivePGP.encrypt(fileContent), addSignature: true, using
 let decrypted = try ObjectivePGP.decrypt(encrypted, andVerifySignature: true, using: [key1])
 ```
 
-##### Generate new key
+##### Generate new key pair
 
 ```objective-c
 PGPKeyGenerator *generator = [[PGPKeyGenerator alloc] init];
@@ -124,6 +124,8 @@ NSData *secretKeyData = [key export:PGPKeyTypeSecret error:nil];
 
 ```swift
 let key = KeyGenerator().generate(for: "marcin@example.com", passphrase: "password")
+let publicKey = try key.export(keyType: .public)
+let secretKey = try key.export(keyType: .secret)
 ```
 
 #### ASCII Armor
