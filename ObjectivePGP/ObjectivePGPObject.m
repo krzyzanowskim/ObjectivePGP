@@ -69,7 +69,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Encrypt & Decrypt
 
-+ (nullable NSData *)decrypt:(NSData *)data usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock verifySignature:(BOOL)verifySignature error:(NSError * __autoreleasing _Nullable *)error {
++ (nullable NSData *)decrypt:(NSData *)data andVerifySignature:(BOOL)verifySignature usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(data, NSData);
     PGPAssertClass(keys, NSArray);
 

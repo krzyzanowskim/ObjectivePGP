@@ -1,4 +1,4 @@
-Version 0.9.6
+Version 0.10.0
 - Adds Symmetrically Encrypted Data Packet support. Fixes #91
 - Adds multikey signatures.
 - Adds Symmetric-Key Encrypted Session Key Packets support.
@@ -9,7 +9,7 @@ Version 0.9.6
 - API: Refactor and simplyfy public API of `ObjectivePGP` due to internal improvements.
 - API: PGPPartialKeyPublic -> PGPKeyTypePublic
 - API: PGPPartialKeySecret -> PGPKeyTypeSecret
-- API: Introduces PGPKeyring. ObjectivePGP uses `defaultKeyring` property to manage imported keys.
+- API: Introduces PGPKeyring.
 
 Version 0.9.5
 - Methods that get keys as parameter are now class methods, +[ObjectivePGP ...]
