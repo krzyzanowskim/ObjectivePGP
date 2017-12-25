@@ -287,8 +287,10 @@
 // Public Key is invalid input data but key works in android bouncycastle
 // Armor checksum is optional.
 - (void)testIssue93OptionalChecksum {
-    let keys = [PGPTestUtils readKeysFromPath:@"issue93-keys.asc"];
-    XCTAssertEqual(keys.count, (NSUInteger)1);
+    let keys1 = [PGPTestUtils readKeysFromPath:@"issue93-keys1.asc"];
+    XCTAssertEqual(keys1.count, (NSUInteger)1);
+    let keys2 = [PGPTestUtils readKeysFromPath:@"issue93-keys2.asc"];
+    XCTAssertEqual(keys2.count, (NSUInteger)1);
 }
 
 - (void)testSigningSubKey {

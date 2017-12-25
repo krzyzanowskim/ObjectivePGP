@@ -591,7 +591,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     let fileData = [NSData dataWithContentsOfFile:fullPath options:NSDataReadingMappedIfSafe | NSDataReadingUncached error:error];
-    if (!fileData || error) {
+    if (!fileData || (error && *error)) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{NSLocalizedDescriptionKey: @"Can't read keys. Invalid input."}];
         }
