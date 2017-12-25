@@ -315,6 +315,18 @@
     XCTAssertNotNil(signature, @"Signing failed: %@", error);
 }
 
+- (void)testVerificationCase1 {
+    let keys = [PGPTestUtils readKeysFromPath:@"verification-test1-keys.asc"];
+    let signaturePath = [PGPTestUtils pathToBundledFile:@"verification-test1-signature.asc"];
+    let signatureData = [NSData dataWithContentsOfFile:signaturePath];
+
+    NSError* error = nil;
+    BOOL verified = [ObjectivePGP verifySignature:signatureData usingKeys:keys passphraseForKey:nil error:&error];
+    XCTAssertNil(error);
+    XCTAssertTrue(verified);
+
+}
+
 - (void)testUserAttrributes {
     let generator = [[PGPKeyGenerator alloc] init];
     let key = [generator generateFor:@"marcin77@example.com" passphrase:@"test"];

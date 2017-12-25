@@ -430,6 +430,29 @@ NS_ASSUME_NONNULL_BEGIN
     return outputData;
 }
 
++ (BOOL)verifySignature:(NSData *)signature usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error {
+    let binaryMessages = [PGPArmor convertArmoredMessage2BinaryBlocksWhenNecessary:signature error:error];
+    // TODO: Process all messages
+    let binarySignature = binaryMessages.count > 0 ? binaryMessages.firstObject : nil;
+    if (!binarySignature) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Invalid input data" }];
+        }
+        return NO;
+    }
+
+    // TODO: check expiration and revocation
+    let packet = [PGPPacketFactory packetWithData:binarySignature offset:0 consumedBytes:nil];
+    let signaturePacket = PGPCast(packet, PGPSignaturePacket);
+    let issuerKeyID = signaturePacket.issuerKeyID;
+    if (issuerKeyID) {
+        let issuerKey = [PGPKeyring findKeyWithKeyID:issuerKeyID in:keys];
+        return issuerKey != nil;
+    }
+
+    return NO;
+}
+
 + (BOOL)verify:(NSData *)signedData withSignature:(nullable NSData *)detachedSignature usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseForKeyBlock error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(signedData, NSData);
 
