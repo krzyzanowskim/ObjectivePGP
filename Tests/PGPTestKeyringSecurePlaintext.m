@@ -73,10 +73,12 @@
     XCTAssertTrue(keyring.keys.count > 0);
 
     // Save to file
-    NSError *saveError = nil;
     NSString *exportSecretKeyringPath = [self.workingDirectory stringByAppendingPathComponent:@"export-secring-test-plaintext.gpg"];
-    XCTAssertTrue([keyring exportKeysOfType:PGPKeyTypeSecret toFile:exportSecretKeyringPath error:&saveError]);
-    XCTAssertNil(saveError);
+    NSError *exportError = nil;
+    let keysData = [keyring exportKeysOfType:PGPKeyTypeSecret error:&exportError];
+    XCTAssertNotNil(keysData);
+    XCTAssertNil(exportError);
+    [keysData writeToFile:exportSecretKeyringPath atomically:YES];
 
     // Check if can be loaded
     let checkkeyring = [[PGPKeyring alloc] init];
@@ -99,9 +101,11 @@
 
     NSString *exportPublicKeyringPath = [self.workingDirectory stringByAppendingPathComponent:@"export-pubring-test-plaintext.gpg"];
 
-    NSError *psaveError = nil;
-    XCTAssertTrue([keyring exportKeysOfType:PGPKeyTypePublic toFile:exportPublicKeyringPath error:&psaveError]);
-    XCTAssertNil(psaveError);
+    NSError *exportError = nil;
+    let keysData = [keyring exportKeysOfType:PGPKeyTypePublic error:&exportError];
+    XCTAssertNotNil(keysData);
+    [keysData writeToFile:exportPublicKeyringPath atomically:YES];
+    XCTAssertNil(exportError);
 
     NSLog(@"Created file %@", exportPublicKeyringPath);
 }
@@ -197,7 +201,7 @@
     XCTAssertTrue(status);
 
     // decrypt + validate decrypted message
-    NSData *decryptedData = [ObjectivePGP decrypt:encryptedData usingKeys:keyring.keys passphraseForKey:nil verifySignature:YES error:nil];
+    NSData *decryptedData = [ObjectivePGP decrypt:encryptedData andVerifySignature:YES usingKeys:keyring.keys passphraseForKey:nil error:nil];
     XCTAssertNotNil(decryptedData);
     NSString *decryptedString = [[NSString alloc] initWithData:decryptedData encoding:NSASCIIStringEncoding];
     XCTAssertNotNil(decryptedString);
@@ -223,7 +227,7 @@
 
     NSError *error = nil;
     NSString *encryptedPath = [PGPTestUtils pathToBundledFile:@"secring-test-plaintext-encrypted-message.asc"];
-    [ObjectivePGP decrypt:[NSData dataWithContentsOfFile:encryptedPath] usingKeys:keyring.keys passphraseForKey:nil verifySignature:YES error:&error];
+    [ObjectivePGP decrypt:[NSData dataWithContentsOfFile:encryptedPath] andVerifySignature:YES usingKeys:keyring.keys passphraseForKey:nil error:&error];
 }
 
 - (void)testEncryptWithMultipleRecipients {
@@ -256,7 +260,7 @@
     XCTAssertTrue(status);
 
     // decrypt + validate decrypted message
-    NSData *decryptedData = [ObjectivePGP decrypt:encryptedData usingKeys:keyring.keys passphraseForKey:nil verifySignature:YES error:&encryptError];
+    NSData *decryptedData = [ObjectivePGP decrypt:encryptedData andVerifySignature:YES usingKeys:keyring.keys passphraseForKey:nil error:&encryptError];
     XCTAssertNotNil(encryptError);
     XCTAssertNotNil(decryptedData);
     NSString *decryptedString = [[NSString alloc] initWithData:decryptedData encoding:NSASCIIStringEncoding];

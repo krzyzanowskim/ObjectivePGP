@@ -83,7 +83,7 @@
     XCTAssertNil(encError, @"Encryption failed");
 
     NSError *decError;
-    NSData *decData = [ObjectivePGP decrypt:encData usingKeys:keyring.keys passphraseForKey:^NSString * _Nullable(PGPKey * _Nonnull key) { return @"1234"; } verifySignature:YES error:&decError];
+    NSData *decData = [ObjectivePGP decrypt:encData andVerifySignature:YES usingKeys:keyring.keys passphraseForKey:^NSString * _Nullable(PGPKey * _Nonnull key) { return @"1234"; } error:&decError];
     XCTAssertNotNil(decError, @"Decryption failed");
     XCTAssertNotNil(decData);
     XCTAssertEqualObjects(tmpdata, decData);

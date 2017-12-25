@@ -157,7 +157,7 @@
     let messagePath = [PGPTestUtils pathToBundledFile:@"issue35-message.asc"];
     let keys = [PGPTestUtils readKeysFromPath:@"issue35-key.asc"];
     NSError *error = nil;
-    [ObjectivePGP decrypt:[NSData dataWithContentsOfFile:messagePath] usingKeys:keys passphraseForKey:nil verifySignature:YES error:&error];
+    [ObjectivePGP decrypt:[NSData dataWithContentsOfFile:messagePath] andVerifySignature:YES usingKeys:keys passphraseForKey:nil error:&error];
 }
 
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/53
@@ -191,7 +191,7 @@
 
     let data = [NSData dataWithContentsOfFile:[PGPTestUtils pathToBundledFile:@"issue62-message.asc"]];
     NSError *decryptError1;
-    let decryptedData1 = [ObjectivePGP decrypt:data usingKeys:keyring.keys passphraseForKey:nil verifySignature:YES error:&decryptError1];
+    let decryptedData1 = [ObjectivePGP decrypt:data andVerifySignature:YES usingKeys:keyring.keys passphraseForKey:nil error:&decryptError1];
     XCTAssertNotNil(decryptedData1);
     XCTAssertNotNil(decryptError1);
 }
@@ -220,12 +220,12 @@
     let encryptedMessage = [ObjectivePGP encrypt:message addSignature:NO usingKeys:publicKeys passphraseForKey:nil error:&encryptError];
 
     NSError *decryptError1;
-    let decryptedMessage1 = [ObjectivePGP decrypt:encryptedMessage usingKeys:keyring.keys passphraseForKey:nil verifySignature:YES error:&decryptError1];
+    let decryptedMessage1 = [ObjectivePGP decrypt:encryptedMessage andVerifySignature:YES usingKeys:keyring.keys passphraseForKey:nil error:&decryptError1];
     XCTAssertEqualObjects(decryptedMessage1, nil);
 
 
     NSError *decryptError2;
-    let decryptedMessage2 = [ObjectivePGP decrypt:encryptedMessage usingKeys:keyring.keys passphraseForKey:^NSString * _Nullable(PGPKey *k) { return @"test"; } verifySignature:YES error:&decryptError2];
+    let decryptedMessage2 = [ObjectivePGP decrypt:encryptedMessage andVerifySignature:YES usingKeys:keyring.keys passphraseForKey:^NSString * _Nullable(PGPKey *k) { return @"test"; } error:&decryptError2];
     XCTAssertEqualObjects(decryptedMessage2, message);
 }
 
@@ -252,7 +252,7 @@
     XCTAssertTrue(verified);
 
     NSError *decryptError = nil;
-    let decrypted = [ObjectivePGP decrypt:messageData usingKeys:keyring.keys passphraseForKey:nil verifySignature:YES error:&decryptError];
+    let decrypted = [ObjectivePGP decrypt:messageData andVerifySignature:YES usingKeys:keyring.keys passphraseForKey:nil error:&decryptError];
     // let txt = [[NSString alloc] initWithData:decrypted encoding:NSUTF8StringEncoding];
     XCTAssertNotNil(decrypted);
     XCTAssertNil(decryptError);
@@ -278,7 +278,7 @@
     [keyring importKeys:pubKeys];
     [keyring importKeys:secKeys];
     NSError *decryptError = nil;
-    let decrypted = [ObjectivePGP decrypt:messageData usingKeys:keyring.keys passphraseForKey:^NSString * _Nullable(PGPKey *k) { return @"abcd"; } verifySignature:YES error:&decryptError];
+    let decrypted = [ObjectivePGP decrypt:messageData andVerifySignature:YES usingKeys:keyring.keys passphraseForKey:^NSString * _Nullable(PGPKey *k) { return @"abcd"; } error:&decryptError];
     XCTAssertNotNil(decrypted);
     XCTAssertNotNil(decryptError); // not signed
 }
@@ -332,7 +332,7 @@
     let messageData = [NSData dataWithContentsOfFile:messagePath];
     NSError *decryptError = nil;
 
-    let decrypted = [ObjectivePGP decrypt:messageData usingKeys:@[] passphraseForKey:^NSString * _Nullable(PGPKey * _Nullable k) { return @"1234"; } verifySignature:YES error:&decryptError];
+    let decrypted = [ObjectivePGP decrypt:messageData andVerifySignature:YES usingKeys:@[] passphraseForKey:^NSString * _Nullable(PGPKey * _Nullable k) { return @"1234"; } error:&decryptError];
     XCTAssertNotNil(decrypted);
     XCTAssertEqualObjects(decrypted, [@"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus." dataUsingEncoding:NSUTF8StringEncoding]);
 }
@@ -343,7 +343,7 @@
     let messageData = [NSData dataWithContentsOfFile:messagePath];
     NSError *decryptError = nil;
 
-    let decrypted = [ObjectivePGP decrypt:messageData usingKeys:@[] passphraseForKey:^NSString * _Nullable(PGPKey * _Nullable k) { return @"1234"; } verifySignature:YES error:&decryptError];
+    let decrypted = [ObjectivePGP decrypt:messageData andVerifySignature:YES usingKeys:@[] passphraseForKey:^NSString * _Nullable(PGPKey * _Nullable k) { return @"1234"; } error:&decryptError];
     XCTAssertNotNil(decrypted);
     XCTAssertEqualObjects(decrypted, [@"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus." dataUsingEncoding:NSUTF8StringEncoding]);
 }
