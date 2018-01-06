@@ -277,16 +277,13 @@ NS_ASSUME_NONNULL_BEGIN
     NSData *content;
     if (shouldSign) {
         // sign data if requested
-        // sign data if requested
         let signKeys = [NSMutableArray<PGPKey *> array];
         for (PGPKey* key in keys){
             if (key.secretKey && key.signingSecretKey != NULL){
                 [signKeys addObject:key];
             }
-            
         }
         content = [self sign:dataToEncrypt detached:NO usingKeys:signKeys passphraseForKey:passphraseForKeyBlock error:error];
-
     } else {
         // Prepare literal packet
         let literalPacket = [PGPLiteralPacket literalPacket:PGPLiteralPacketBinary withData:dataToEncrypt];
