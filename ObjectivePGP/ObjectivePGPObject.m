@@ -337,6 +337,13 @@ NS_ASSUME_NONNULL_BEGIN
         [signatures pgp_addObject:signaturePacket];
     }
 
+    if (signatures.count == 0) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Unable to sign. Can't create any signature for keys." }];
+            return nil;
+        }
+    }
+
     let outputData = [NSMutableData data];
 
     // Detached - export only signatures
