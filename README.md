@@ -178,6 +178,8 @@ end
 ObjectivePGP comes with the [Frameworks](./Frameworks) for the latest release.
 
 1. Download latest [ObjectivePGP.framework](https://github.com/krzyzanowskim/ObjectivePGP/releases) or build a framework with the [build-frameworks.sh](./build-frameworks.sh) script.
+1. Add a New Copy Files Phase by selecting the Add icon, highlighted in Figure 4. Set the Destination field to Frameworks, and add the framework to the list (see [Embedding Frameworks In An App](https://developer.apple.com/library/content/technotes/tn2435/_index.html)). Ensure Code Sign on Copy is checked.
+![Figure 4](https://user-images.githubusercontent.com/14152377/35073501-5b50bc50-fbe9-11e7-8d8a-3c8ce47c8e44.png)
 1. Link framework with the target
     - Add `ObjectivePGP.framework` to "**Link Binary With Libraries**" list for the target.
     ![screen shot 2017-06-30 at 02 20 47](https://user-images.githubusercontent.com/758033/27715926-d79a4e3c-5d3a-11e7-8b1b-d8b5ddb8182e.png)
@@ -185,6 +187,8 @@ ObjectivePGP comes with the [Frameworks](./Frameworks) for the latest release.
     1. Add `Security.framework` to "**Link Binary With Libraries**" list for the target. These are system libraries.
     1. Add `libz` and `libbz2` to "**Link Binary With Libraries**" list for the target. These are system libraries.
 1. In the Build Phases tab, click the + button at the top and select “New Run Script Phase”. Enter the following code into the script text field:
+
+
 
 ```sh
 bash "${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectivePGP.framework/strip-frameworks.sh"
