@@ -362,4 +362,28 @@
     XCTAssertEqualObjects(decrypted, [@"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent commodo cursus magna, vel scelerisque nisl consectetur et. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus." dataUsingEncoding:NSUTF8StringEncoding]);
 }
 
+// https://github.com/krzyzanowskim/ObjectivePGP/issues/99
+- (void)testIssue99 {
+    // Input data is broken. Embeded signature has invalid data, ignore and load key anyway.
+    let keyring = [[PGPKeyring alloc] init];
+    let pubKeys = [PGPTestUtils readKeysFromPath:@"issue99/public.asc"];
+    let secKeys = [PGPTestUtils readKeysFromPath:@"issue99/private.asc"];
+    [keyring importKeys:pubKeys];
+    [keyring importKeys:secKeys];
+
+    XCTAssertEqual(keyring.keys.count, (NSUInteger)1);
+
+    let messagePath = [PGPTestUtils pathToBundledFile:@"issue99/message.asc"];
+    let messageData = [NSData dataWithContentsOfFile:messagePath];
+    XCTAssertNotNil(messageData);
+
+    NSError *decryptError;
+    [ObjectivePGP decrypt:messageData andVerifySignature:NO usingKeys:keyring.keys passphraseForKey:^NSString * _Nullable(PGPKey * _Nullable key) {
+        return @"abcd";
+    } error:&decryptError];
+
+    XCTAssertNil(decryptError);
+}
+
+
 @end
