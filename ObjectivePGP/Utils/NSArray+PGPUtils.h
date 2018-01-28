@@ -13,7 +13,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface NSMutableArray <ObjectType> (PGPUtils)
 
 - (void)pgp_addObject:(nullable ObjectType)anObject;
-- (NSArray *)pgp_flatMap:(NS_NOESCAPE NSArray *_Nullable (^)(ObjectType obj))block;
 
 @end
 

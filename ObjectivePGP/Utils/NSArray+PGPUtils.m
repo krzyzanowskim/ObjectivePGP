@@ -36,7 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
     return result;
 }
 
-- (NSArray *)pgp_flatMap:(NSArray * _Nullable (^)(id _Nonnull))block {
+- (NSArray *)pgp_flatMap:(NS_NOESCAPE NSArray * _Nullable (^)(id _Nonnull))block {
     NSMutableArray *result = [NSMutableArray new];
     for (id obj in self) {
         NSArray *_Nullable array = block(obj);
