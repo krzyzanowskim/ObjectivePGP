@@ -150,7 +150,7 @@ extern void Twofish_prepare_key(
  * c        Place to store the ciphertext
  */
 extern void Twofish_encrypt( 
-                            Twofish_key * xkey,
+                            Twofish_key * const xkey,
                             Twofish_Byte p[16], 
                             Twofish_Byte c[16]
                             );
@@ -174,7 +174,7 @@ extern void Twofish_encrypt(
  * p        Place to store the plaintext
  */
 extern void Twofish_decrypt( 
-                            Twofish_key * xkey,
+                            Twofish_key * const xkey,
                             Twofish_Byte c[16], 
                             Twofish_Byte p[16]
                             );

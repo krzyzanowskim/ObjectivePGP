@@ -1639,7 +1639,7 @@ void Twofish_prepare_key( Byte key[], int key_len, Twofish_key * xkey )
  * p            16 bytes of plaintext
  * c            16 bytes in which to store the ciphertext
  */
-void Twofish_encrypt( Twofish_key * xkey, Byte p[16], Byte c[16])
+void Twofish_encrypt(Twofish_key * const xkey, Byte p[16], Byte c[16])
     {
     UInt32 A,B,C,D,T0,T1;       /* Working variables */
 
@@ -1662,7 +1662,7 @@ void Twofish_encrypt( Twofish_key * xkey, Byte p[16], Byte c[16])
  * p            16 bytes of plaintext
  * c            16 bytes in which to store the ciphertext
  */
-void Twofish_decrypt( Twofish_key * xkey, Byte c[16], Byte p[16])
+void Twofish_decrypt(Twofish_key * const xkey, Byte c[16], Byte p[16])
     {
     UInt32 A,B,C,D,T0,T1;       /* Working variables */
 

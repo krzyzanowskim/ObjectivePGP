@@ -363,7 +363,7 @@
 }
 
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/99
-- (void)testIssue99 {
+- (void)testIssue99OpenPGP_CFB {
     // Input data is broken. Embeded signature has invalid data, ignore and load key anyway.
     let keyring = [[PGPKeyring alloc] init];
     let pubKeys = [PGPTestUtils readKeysFromPath:@"issue99/public.asc"];
