@@ -27,6 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPCryptoUtils
 
+// Block size (octets)
 + (NSUInteger)blockSizeOfSymmetricAlhorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm {
     switch (symmetricAlgorithm) {
         case PGPSymmetricIDEA:
@@ -49,6 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
     return NSNotFound;
 }
 
+// Key size (octets)
 + (NSUInteger)keySizeOfSymmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm {
     switch (symmetricAlgorithm) {
         case PGPSymmetricIDEA:

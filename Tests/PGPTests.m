@@ -378,11 +378,15 @@
     XCTAssertNotNil(messageData);
 
     NSError *decryptError;
-    [ObjectivePGP decrypt:messageData andVerifySignature:NO usingKeys:keyring.keys passphraseForKey:^NSString * _Nullable(PGPKey * _Nullable key) {
+    let decryptedData = [ObjectivePGP decrypt:messageData andVerifySignature:NO usingKeys:keyring.keys passphraseForKey:^NSString * _Nullable(PGPKey * _Nullable key) {
         return @"abcd";
     } error:&decryptError];
 
     XCTAssertNil(decryptError);
+    XCTAssertNotNil(decryptedData);
+
+    let decryptedString = [[NSString alloc] initWithData:decryptedData encoding:NSUTF8StringEncoding];
+    XCTAssertEqualObjects(decryptedString, @"Test\n-- Sent from my Android device with Secure Email.\n");
 }
 
 
