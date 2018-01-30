@@ -4,6 +4,7 @@ Version 0.10.0
 - Adds Symmetric-Key Encrypted Session Key Packets support.
 - Adds TwoFish cipher support.
 - Adds ability to determine keys that a message has been encrypted.
+- Adds support for custom OpenPGP CFB mode used in Symmetrically Encrypted Data Packets. Fixes #99
 - Improves decryption and signed messages validation.
 - Fixes partial length packets calculations.
 - Fixes reading armored messages without checksum.
