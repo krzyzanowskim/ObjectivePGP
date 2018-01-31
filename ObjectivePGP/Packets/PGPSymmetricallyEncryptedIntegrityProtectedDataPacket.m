@@ -55,13 +55,13 @@ NS_ASSUME_NONNULL_BEGIN
     return PGPSymmetricallyEncryptedIntegrityProtectedDataPacketTag; // 18
 }
 
-- (NSArray<PGPPacket *> *)readPacketsFromData:(NSData *)keyringData offset:(NSUInteger)offsetPosition mdcLength:(nullable NSUInteger *)mdcLength {
+- (NSArray<PGPPacket *> *)readPacketsFromData:(NSData *)data offset:(NSUInteger)offsetPosition mdcLength:(nullable NSUInteger *)mdcLength {
     let accumulatedPackets = [NSMutableArray<PGPPacket *> array];
     if (mdcLength) { *mdcLength = 0; }
     NSInteger offset = offsetPosition;
     NSUInteger consumedBytes = 0;
-    while (offset < (NSInteger)keyringData.length) {
-        let packet = [PGPPacketFactory packetWithData:keyringData offset:offset consumedBytes:&consumedBytes];
+    while (offset < (NSInteger)data.length) {
+        let packet = [PGPPacketFactory packetWithData:data offset:offset consumedBytes:&consumedBytes];
         if (packet) {
             [accumulatedPackets addObject:packet];
             if (packet.tag != PGPModificationDetectionCodePacketTag) {
@@ -74,10 +74,8 @@ NS_ASSUME_NONNULL_BEGIN
             let _Nullable compressedPacket = PGPCast(packet, PGPCompressedPacket);
             if (compressedPacket) {
                 // TODO: Compression should be moved outside, be more generic to handle compressed packet from anywhere
-                let packets = [self readPacketsFromData:compressedPacket.decompressedData offset:0 mdcLength:nil];
-                if (packets) {
-                    [accumulatedPackets addObjectsFromArray:packets];
-                }
+                let uncompressedPackets = [self readPacketsFromData:compressedPacket.decompressedData offset:0 mdcLength:nil];
+                [accumulatedPackets addObjectsFromArray:uncompressedPackets ?: @[]];
             }
 
             if (packet.indeterminateLength && accumulatedPackets.count > 0 && PGPCast(accumulatedPackets.firstObject, PGPCompressedPacket)) {

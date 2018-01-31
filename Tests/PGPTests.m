@@ -364,7 +364,6 @@
 
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/99
 - (void)testIssue99OpenPGP_CFB {
-    // Input data is broken. Embeded signature has invalid data, ignore and load key anyway.
     let keyring = [[PGPKeyring alloc] init];
     let pubKeys = [PGPTestUtils readKeysFromPath:@"issue99/public.asc"];
     let secKeys = [PGPTestUtils readKeysFromPath:@"issue99/private.asc"];
@@ -387,6 +386,32 @@
 
     let decryptedString = [[NSString alloc] initWithData:decryptedData encoding:NSUTF8StringEncoding];
     XCTAssertEqualObjects(decryptedString, @"Test\n-- Sent from my Android device with Secure Email.\n");
+}
+
+// PGPSymmetricallyEncryptedDataPacket
+- (void)testIssue99OpenPGP_CFB_readPacketsFromData {
+    let keyring = [[PGPKeyring alloc] init];
+    let pubKeys = [PGPTestUtils readKeysFromPath:@"issue99-2/public.asc"];
+    let secKeys = [PGPTestUtils readKeysFromPath:@"issue99-2/private.asc"];
+    [keyring importKeys:pubKeys];
+    [keyring importKeys:secKeys];
+
+    XCTAssertEqual(keyring.keys.count, (NSUInteger)1);
+
+    let messagePath = [PGPTestUtils pathToBundledFile:@"issue99-2/message.asc"];
+    let messageData = [NSData dataWithContentsOfFile:messagePath];
+    XCTAssertNotNil(messageData);
+
+    NSError *decryptError;
+    let decryptedData = [ObjectivePGP decrypt:messageData andVerifySignature:NO usingKeys:keyring.keys passphraseForKey:^NSString * _Nullable(PGPKey * _Nullable key) {
+        return @"abcd";
+    } error:&decryptError];
+
+    XCTAssertNil(decryptError);
+    XCTAssertNotNil(decryptedData);
+
+    let decryptedString = [[NSString alloc] initWithData:decryptedData encoding:NSUTF8StringEncoding];
+    XCTAssertEqualObjects(decryptedString, @"Hello\n-- Sent from my Android device with Secure Email.\n");
 }
 
 

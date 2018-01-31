@@ -240,7 +240,7 @@ NS_ASSUME_NONNULL_BEGIN
  * https://tools.ietf.org/html/rfc4880#section-13.9
  * In order to support weird resyncing we have to implement CFB mode ourselves
  */
-+ (nullable NSData *)openPGP_CFB_decrypt:(NSData *)encryptedData blockSize:(NSUInteger)blockSize iv:(NSData *)ivData cipherEncrypt:(nullable NSData * _Nullable(^NS_NOESCAPE)(NSData *data))cipherEncrypt {
++ (nullable NSData *)openPGP_CFB_decrypt:(NSData *)data blockSize:(NSUInteger)blockSize iv:(NSData *)ivData cipherEncrypt:(nullable NSData * _Nullable(^NS_NOESCAPE)(NSData *data))cipherEncrypt {
     let BS = blockSize;
     // 1. The feedback register (FR) is set to the IV, which is all zeros.
     var FR = [NSData dataWithData:ivData];
@@ -248,26 +248,26 @@ NS_ASSUME_NONNULL_BEGIN
     // var FRE = [NSMutableData dataWithLength:FR.length];
     var FRE = cipherEncrypt(FR);
     // 4. FR is loaded with C[1] through C[BS].
-    FR = [encryptedData subdataWithRange:(NSRange){0,BS}];
+    FR = [data subdataWithRange:(NSRange){0,BS}];
     // 3. FRE is xored with the first BS octets of random data prefixed to the plaintext to produce C[1] through C[BS], the first BS octets of ciphertext.
     let prefix = [NSData xor:FRE d2:FR];
     // 5. FR is encrypted to produce FRE, the encryption of the first BS octets of ciphertext.
     FRE = cipherEncrypt(FR);
     // 6. The left two octets of FRE get xored with the next two octets of data that were prefixed to the plaintext. This produces C[BS+1] and C[BS+2], the next two octets of ciphertext.
-    if (![[prefix subdataWithRange:(NSRange){BS - 2, 2}] isEqual:[NSData xor:[FRE subdataWithRange:(NSRange){0, 2}] d2:[encryptedData subdataWithRange:(NSRange){BS, 2}]]]) {
+    if (![[prefix subdataWithRange:(NSRange){BS - 2, 2}] isEqual:[NSData xor:[FRE subdataWithRange:(NSRange){0, 2}] d2:[data subdataWithRange:(NSRange){BS, 2}]]]) {
         PGPLogDebug(@"Bad OpenPGP CFB check value");
         return nil;
     }
 
-    NSMutableData *plaintext = [NSMutableData dataWithCapacity:encryptedData.length];
+    var plaintext = [NSMutableData data];
     var x = 2;
-    while ((BS + x) < encryptedData.length) {
-        let chunk = [encryptedData subdataWithRange:(NSRange){x, BS}];
+    while ((x + BS) < data.length) {
+        let chunk = [data subdataWithRange:(NSRange){x, BS}];
         [plaintext appendData:[NSData xor:FRE d2:chunk]];
         FRE = cipherEncrypt(chunk);
         x += BS;
     }
-    [plaintext appendData:[NSData xor:FRE d2:[encryptedData subdataWithRange:(NSRange){x, MIN(BS,encryptedData.length - x)}]]];
+    [plaintext appendData:[NSData xor:FRE d2:[data subdataWithRange:(NSRange){x, MIN(BS, data.length - x)}]]];
     plaintext = [NSMutableData dataWithData:[plaintext subdataWithRange:(NSRange){BS, plaintext.length - BS}]];
 
     let result = [NSMutableData data];

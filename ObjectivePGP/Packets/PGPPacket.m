@@ -91,7 +91,9 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (!isPGPHeader) {
         // not a valida data, skip the whole data.
-        if (consumedBytes) { *consumedBytes = data.length; }
+        if (consumedBytes) {
+            *consumedBytes = data.length;
+        }
         return nil;
     }
 
@@ -116,11 +118,15 @@ NS_ASSUME_NONNULL_BEGIN
         let partialData = [data subdataWithRange:(NSRange){header.headerLength - 1, data.length - (header.headerLength - 1)}];
         NSUInteger partialConsumedBytes = 0;
         let concatenatedData = [PGPPacket readPartialData:partialData consumedBytes:&partialConsumedBytes];
-        if (consumedBytes) { *consumedBytes = partialConsumedBytes + 1; }
+        if (consumedBytes) {
+            *consumedBytes = partialConsumedBytes + 1;
+        }
         return concatenatedData;
     }
 
-    if (consumedBytes) { *consumedBytes = header.bodyLength + header.headerLength; }
+    if (consumedBytes) {
+        *consumedBytes = header.bodyLength + header.headerLength;
+    }
     return [data subdataWithRange:(NSRange){header.headerLength, header.bodyLength}];
 }
 

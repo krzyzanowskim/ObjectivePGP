@@ -108,12 +108,14 @@ NS_ASSUME_NONNULL_BEGIN
     });
 }
 
+// xor up to the last byte of the shorter data
 + (NSData *)xor:(NSData *)d1 d2:(NSData *)d2 {
-    let output = [NSMutableData dataWithLength:d1.length];
+    let outLen = MIN(d1.length, d2.length);
+    let output = [NSMutableData dataWithLength:outLen];
     let outputBuf = (uint8_t *)output.mutableBytes;
     let d1buf = (uint8_t *)d1.bytes;
     let d2buf = (uint8_t *)d2.bytes;
-    for (NSUInteger i = 0; i < d1.length; i++) {
+    for (NSUInteger i = 0; i < outLen; i++) {
         outputBuf[i] = d1buf[i] ^ d2buf[i];
     }
     return output;

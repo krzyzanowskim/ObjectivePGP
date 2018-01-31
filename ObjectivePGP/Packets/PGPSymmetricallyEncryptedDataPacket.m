@@ -102,10 +102,10 @@ NS_ASSUME_NONNULL_BEGIN
     let decryptedData = [PGPCryptoCFB decryptData:self.encryptedData sessionKeyData:sessionKeyData symmetricAlgorithm:sessionKeyAlgorithm iv:ivData syncCFB:YES];
     // full prefix blockSize + 2
     let prefixRandomFullData = [decryptedData subdataWithRange:(NSRange){position, blockSize + 2}];
-    position = position + blockSize + 2;
+    position += blockSize + 2;
 
     // check if suffix match
-    if (!PGPEqualObjects([prefixRandomFullData subdataWithRange:(NSRange){blockSize + 2 - 4, 2}] ,[prefixRandomFullData subdataWithRange:(NSRange){blockSize + 2 - 2, 2}])) {
+    if (!PGPEqualObjects([prefixRandomFullData subdataWithRange:(NSRange){blockSize - 2, 2}] ,[prefixRandomFullData subdataWithRange:(NSRange){blockSize, 2}])) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Validation failed. Random suffix mismatch." }];
         }

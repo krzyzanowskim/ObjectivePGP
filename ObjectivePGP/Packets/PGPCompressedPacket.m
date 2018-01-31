@@ -45,6 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     // - Compressed data, which makes up the remainder of the packet.
     let compressedData = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
+    position = position + compressedData.length;
 
     switch (self.compressionType) {
         case PGPCompressionZIP:
