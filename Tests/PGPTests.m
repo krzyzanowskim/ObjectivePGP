@@ -417,14 +417,14 @@
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/102
 - (void)testMemoryUsageIssue102 {
     // Temp large file
-//    NSMutableData *templatePath = [[@"/tmp/objectivepgp_test102" dataUsingEncoding:NSUTF8StringEncoding] mutableCopy];
-//    int fd = mkstemp(templatePath.mutableBytes);
-//    XCTAssertTrue(fd != -1);
-    let fileHandle = [NSFileHandle fileHandleForWritingAtPath:@"/tmp/objectivepgp_test102"];
+    let tmpFilePath = @"/tmp/objectivepgp_test102";
+    [[NSData data] writeToFile:tmpFilePath atomically:YES];
+    let fileHandle = [NSFileHandle fileHandleForUpdatingAtPath:tmpFilePath];
     [fileHandle truncateFileAtOffset:1024 * 1024 * 30]; // 30 MB
     [fileHandle closeFile];
 
-    let plaintextData = [NSData dataWithContentsOfURL:[NSURL fileURLWithPath:@"/tmp/objectivepgp_test102"]];
+    let plaintextData = [NSData dataWithContentsOfURL:[NSURL fileURLWithPath:tmpFilePath]];
+    NSLog(@"Size of Unencrypted Data (in MB): %@",@(plaintextData.length / 1024 / 1024));
 
     let generator = [[PGPKeyGenerator alloc] init];
     let key = [generator generateFor:@"test+mem@example.com" passphrase:nil];
@@ -432,9 +432,8 @@
     // encrypt data
     [ObjectivePGP encrypt:plaintextData addSignature:NO usingKeys:@[key] passphraseForKey:nil error:nil];
 
-    sleep(15);
     // cleanup
-    [NSFileManager.defaultManager removeItemAtPath:@"/tmp/objectivepgp_test102" error:nil];
+    [NSFileManager.defaultManager removeItemAtPath:tmpFilePath error:nil];
 }
 
 
