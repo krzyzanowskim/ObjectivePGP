@@ -190,7 +190,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (!eskPacket) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Invalid message." }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Invalid message or missing key to decrypt message." }];
         }
         return encryptedPackets;
     }
