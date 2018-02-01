@@ -69,40 +69,42 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
-    let bodyData = [NSMutableData data];
+    @autoreleasepool {
+        let bodyData = [NSMutableData data];
 
-    // - One octet that gives the algorithm used to compress the packet.
-    [bodyData appendBytes:&_compressionType length:sizeof(_compressionType)];
+        // - One octet that gives the algorithm used to compress the packet.
+        [bodyData appendBytes:&_compressionType length:sizeof(_compressionType)];
 
-    // - Compressed data, which makes up the remainder of the packet.
-    NSData * _Nullable compressedData = nil;
-    switch (self.compressionType) {
-        case PGPCompressionZIP:
-            compressedData = [self.decompressedData zipCompressed:error];
-            break;
-        case PGPCompressionZLIB:
-            compressedData = [self.decompressedData zlibCompressed:error];
-            break;
-        case PGPCompressionBZIP2:
-            compressedData = [self.decompressedData bzip2Compressed:error];
-            break;
-        default:
-            if (error) {
-                *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"This type of compression is not supported" }];
-            }
+        // - Compressed data, which makes up the remainder of the packet.
+        NSData * _Nullable compressedData = nil;
+        switch (self.compressionType) {
+            case PGPCompressionZIP:
+                compressedData = [self.decompressedData zipCompressed:error];
+                break;
+            case PGPCompressionZLIB:
+                compressedData = [self.decompressedData zlibCompressed:error];
+                break;
+            case PGPCompressionBZIP2:
+                compressedData = [self.decompressedData bzip2Compressed:error];
+                break;
+            default:
+                if (error) {
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"This type of compression is not supported" }];
+                }
+                return nil;
+                break;
+        }
+
+        if (error && *error) {
+            PGPLogDebug(@"Compression failed: %@", (*error).localizedDescription);
             return nil;
-            break;
-    }
+        }
+        [bodyData pgp_appendData:compressedData];
 
-    if (error && *error) {
-        PGPLogDebug(@"Compression failed: %@", (*error).localizedDescription);
-        return nil;
+        return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
+            return bodyData;
+        }];
     }
-    [bodyData pgp_appendData:compressedData];
-
-    return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
-        return bodyData;
-    }];
 }
 
 #pragma mark - isEqual

@@ -208,54 +208,56 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL)encrypt:(NSData *)literalPacketData symmetricAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm sessionKeyData:(NSData *)sessionKeyData error:(NSError * __autoreleasing _Nullable *)error {
-    // OpenPGP does symmetric encryption using a variant of Cipher Feedback mode (CFB mode).
-    NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:sessionKeyAlgorithm];
+    @autoreleasepool {
+        // OpenPGP does symmetric encryption using a variant of Cipher Feedback mode (CFB mode).
+        NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:sessionKeyAlgorithm];
 
-    // The Initial Vector (IV) is specified as all zeros.
-    let ivData = [NSMutableData dataWithLength:blockSize];
+        // The Initial Vector (IV) is specified as all zeros.
+        let ivData = [NSMutableData dataWithLength:blockSize];
 
-    // Prepare preamble
-    // Instead of using an IV, OpenPGP prefixes a string of length equal to the block size of the cipher plus two to the data before it is encrypted.
-    // The first block-size octets (for example, 8 octets for a 64-bit block length) are random,
-    uint8_t buf[blockSize];
-    if (SecRandomCopyBytes(kSecRandomDefault, blockSize, buf) == -1) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Encryption failed. Cannot prepare random data."}];
+        // Prepare preamble
+        // Instead of using an IV, OpenPGP prefixes a string of length equal to the block size of the cipher plus two to the data before it is encrypted.
+        // The first block-size octets (for example, 8 octets for a 64-bit block length) are random,
+        uint8_t buf[blockSize];
+        if (SecRandomCopyBytes(kSecRandomDefault, blockSize, buf) == -1) {
+            if (error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Encryption failed. Cannot prepare random data."}];
+            }
+            return NO;
         }
-        return NO;
+        let prefixRandomData = [NSMutableData dataWithBytes:buf length:blockSize];
+
+        // and the following two octets are copies of the last two octets of the IV.
+        let prefixRandomFullData = [NSMutableData dataWithData:prefixRandomData];
+        [prefixRandomFullData appendData:[prefixRandomData subdataWithRange:(NSRange){prefixRandomData.length - 2, 2}]];
+
+        // Prepare MDC Packet
+        let toMDCData = [[NSMutableData alloc] init];
+        // preamble
+        [toMDCData appendData:prefixRandomFullData];
+        // plaintext
+        [toMDCData appendData:literalPacketData];
+        // and then also includes two octets of values 0xD3, 0x14 (sha length)
+        UInt8 mdc_suffix[2] = {0xD3, 0x14};
+        [toMDCData appendBytes:&mdc_suffix length:2];
+
+        let mdcPacket = [[PGPModificationDetectionCodePacket alloc] initWithData:toMDCData];
+        let _Nullable mdcPacketData = [mdcPacket export:error];
+        if (!mdcPacketData || (error && *error)) {
+            return NO;
+        }
+
+        // Finally build encrypted packet data
+        // Encrypt at once (the same encrypt key) preamble + data + mdc
+        let toEncrypt = [NSMutableData data];
+        [toEncrypt appendData:prefixRandomFullData];
+        [toEncrypt appendData:literalPacketData];
+        [toEncrypt appendData:mdcPacketData];
+        let encrypted = [PGPCryptoCFB encryptData:toEncrypt sessionKeyData:sessionKeyData symmetricAlgorithm:sessionKeyAlgorithm iv:ivData syncCFB:NO];
+
+        self.encryptedData = encrypted;
+        return YES;
     }
-    let prefixRandomData = [NSMutableData dataWithBytes:buf length:blockSize];
-
-    // and the following two octets are copies of the last two octets of the IV.
-    let prefixRandomFullData = [NSMutableData dataWithData:prefixRandomData];
-    [prefixRandomFullData appendData:[prefixRandomData subdataWithRange:(NSRange){prefixRandomData.length - 2, 2}]];
-
-    // Prepare MDC Packet
-    let toMDCData = [[NSMutableData alloc] init];
-    // preamble
-    [toMDCData appendData:prefixRandomFullData];
-    // plaintext
-    [toMDCData appendData:literalPacketData];
-    // and then also includes two octets of values 0xD3, 0x14 (sha length)
-    UInt8 mdc_suffix[2] = {0xD3, 0x14};
-    [toMDCData appendBytes:&mdc_suffix length:2];
-
-    let mdcPacket = [[PGPModificationDetectionCodePacket alloc] initWithData:toMDCData];
-    let _Nullable mdcPacketData = [mdcPacket export:error];
-    if (!mdcPacketData || (error && *error)) {
-        return NO;
-    }
-
-    // Finally build encrypted packet data
-    // Encrypt at once (the same encrypt key) preamble + data + mdc
-    let toEncrypt = [NSMutableData data];
-    [toEncrypt appendData:prefixRandomFullData];
-    [toEncrypt appendData:literalPacketData];
-    [toEncrypt appendData:mdcPacketData];
-    let encrypted = [PGPCryptoCFB encryptData:toEncrypt sessionKeyData:sessionKeyData symmetricAlgorithm:sessionKeyAlgorithm iv:ivData syncCFB:NO];
-
-    self.encryptedData = encrypted;
-    return YES;
 }
 
 #pragma mark - isEqual

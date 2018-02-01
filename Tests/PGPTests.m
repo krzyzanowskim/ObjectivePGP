@@ -417,13 +417,9 @@
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/102
 - (void)testMemoryUsageIssue102 {
     // Temp large file
-    let tmpFilePath = @"/tmp/objectivepgp_test102";
-    [[NSData data] writeToFile:tmpFilePath atomically:YES];
-    let fileHandle = [NSFileHandle fileHandleForUpdatingAtPath:tmpFilePath];
-    [fileHandle truncateFileAtOffset:1024 * 1024 * 30]; // 30 MB
-    [fileHandle closeFile];
+    let filePath = [PGPTestUtils pathToBundledFile:@"LargeFile.pdf"];
+    let plaintextData = [NSData dataWithContentsOfFile:filePath];
 
-    let plaintextData = [NSData dataWithContentsOfURL:[NSURL fileURLWithPath:tmpFilePath]];
     NSLog(@"Size of Unencrypted Data (in MB): %@",@(plaintextData.length / 1024 / 1024));
 
     let generator = [[PGPKeyGenerator alloc] init];
@@ -431,9 +427,6 @@
 
     // encrypt data
     [ObjectivePGP encrypt:plaintextData addSignature:NO usingKeys:@[key] passphraseForKey:nil error:nil];
-
-    // cleanup
-    [NSFileManager.defaultManager removeItemAtPath:tmpFilePath error:nil];
 }
 
 

@@ -91,47 +91,49 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
-    if (!self.literalRawData) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Missing literal data" }];
+    @autoreleasepool {
+        if (!self.literalRawData) {
+            if (error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Missing literal data" }];
+            }
+            return nil;
         }
-        return nil;
+
+        let bodyData = [NSMutableData data];
+        [bodyData appendBytes:&_format length:1];
+
+        if (self.filename) {
+            UInt8 filenameLength = (UInt8)[self.filename lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+            [bodyData appendBytes:&filenameLength length:1];
+            [bodyData appendBytes:[self.filename cStringUsingEncoding:NSUTF8StringEncoding] length:filenameLength];
+        } else {
+            UInt8 zero[] = {0x00};
+            [bodyData appendBytes:&zero length:sizeof(zero)];
+        }
+
+        if (self.timestamp) {
+            UInt32 timestampBytes = (UInt32)[self.timestamp timeIntervalSince1970];
+            timestampBytes = CFSwapInt32HostToBig(timestampBytes);
+            [bodyData appendBytes:&timestampBytes length:4];
+        } else {
+            UInt8 zero4[] = {0, 0, 0, 0};
+            [bodyData appendBytes:&zero4 length:4];
+        }
+
+        switch (self.format) {
+            case PGPLiteralPacketText:
+            case PGPLiteralPacketTextUTF8:
+            case PGPLiteralPacketBinary:
+                [bodyData appendData:self.literalRawData];
+                break;
+            default:
+                break;
+        }
+
+        return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
+            return bodyData;
+        }];
     }
-
-    let bodyData = [NSMutableData data];
-    [bodyData appendBytes:&_format length:1];
-
-    if (self.filename) {
-        UInt8 filenameLength = (UInt8)[self.filename lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
-        [bodyData appendBytes:&filenameLength length:1];
-        [bodyData appendBytes:[self.filename cStringUsingEncoding:NSUTF8StringEncoding] length:filenameLength];
-    } else {
-        UInt8 zero[] = {0x00};
-        [bodyData appendBytes:&zero length:sizeof(zero)];
-    }
-
-    if (self.timestamp) {
-        UInt32 timestampBytes = (UInt32)[self.timestamp timeIntervalSince1970];
-        timestampBytes = CFSwapInt32HostToBig(timestampBytes);
-        [bodyData appendBytes:&timestampBytes length:4];
-    } else {
-        UInt8 zero4[] = {0, 0, 0, 0};
-        [bodyData appendBytes:&zero4 length:4];
-    }
-
-    switch (self.format) {
-        case PGPLiteralPacketText:
-        case PGPLiteralPacketTextUTF8:
-        case PGPLiteralPacketBinary:
-            [bodyData appendData:self.literalRawData];
-            break;
-        default:
-            break;
-    }
-
-    return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
-        return bodyData;
-    }];
 }
 
 #pragma mark - isEqual
