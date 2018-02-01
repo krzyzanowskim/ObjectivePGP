@@ -49,17 +49,19 @@ NS_ASSUME_NONNULL_BEGIN
 
     int ret = 0;
     do {
-        ret = deflate(&strm, Z_FINISH);
-        if (ret == Z_STREAM_ERROR) {
-            if (error) {
-                *error = [NSError errorWithDomain:PGPErrorDomain code:ret userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Deflate problem. %@", [NSString stringWithCString:strm.msg ?: "" encoding:NSASCIIStringEncoding]]}];
+        @autoreleasepool {
+            ret = deflate(&strm, Z_FINISH);
+            if (ret == Z_STREAM_ERROR) {
+                if (error) {
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:ret userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Deflate problem. %@", [NSString stringWithCString:strm.msg ?: "" encoding:NSASCIIStringEncoding]]}];
+                }
+                return nil;
             }
-            return nil;
+            // extend buffer
+            compressed.length = (NSUInteger)(compressed.length * 1.5f);
+            strm.avail_out = (uInt)(compressed.length - strm.total_out);
+            strm.next_out = compressed.mutableBytes + strm.total_out;
         }
-        // extend buffer
-        compressed.length = (NSUInteger)(compressed.length * 1.5f);
-        strm.avail_out = (uInt)(compressed.length - strm.total_out);
-        strm.next_out = compressed.mutableBytes + strm.total_out;
     } while (ret != Z_STREAM_END);
 
     compressed.length = strm.total_out;
