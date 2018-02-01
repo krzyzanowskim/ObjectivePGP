@@ -23,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSData *)pgp_SHA512;
 - (NSData *)pgp_RIPEMD160;
 
+// xor up to the last byte of the shorter data
 + (NSData *)xor:(NSData *)d1 d2:(NSData *)d2;
 
 + (NSData *)dataWithValue:(NSValue *)value;
