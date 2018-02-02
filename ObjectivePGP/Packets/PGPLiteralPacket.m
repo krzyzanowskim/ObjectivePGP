@@ -33,9 +33,8 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 + (PGPLiteralPacket *)literalPacket:(PGPLiteralPacketFormat)format withData:(NSData *)rawData {
-    let literalPacket = [[PGPLiteralPacket alloc] init];
+    let literalPacket = [[PGPLiteralPacket alloc] initWithData:rawData];
     literalPacket.format = format;
-    literalPacket.literalRawData = rawData;
     return literalPacket;
 }
 
@@ -99,38 +98,42 @@ NS_ASSUME_NONNULL_BEGIN
             return nil;
         }
 
-        let bodyData = [NSMutableData data];
-        [bodyData appendBytes:&_format length:1];
-
-        if (self.filename) {
-            UInt8 filenameLength = (UInt8)[self.filename lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
-            [bodyData appendBytes:&filenameLength length:1];
-            [bodyData appendBytes:[self.filename cStringUsingEncoding:NSUTF8StringEncoding] length:filenameLength];
-        } else {
-            UInt8 zero[] = {0x00};
-            [bodyData appendBytes:&zero length:sizeof(zero)];
-        }
-
-        if (self.timestamp) {
-            UInt32 timestampBytes = (UInt32)[self.timestamp timeIntervalSince1970];
-            timestampBytes = CFSwapInt32HostToBig(timestampBytes);
-            [bodyData appendBytes:&timestampBytes length:4];
-        } else {
-            UInt8 zero4[] = {0, 0, 0, 0};
-            [bodyData appendBytes:&zero4 length:4];
-        }
-
-        switch (self.format) {
-            case PGPLiteralPacketText:
-            case PGPLiteralPacketTextUTF8:
-            case PGPLiteralPacketBinary:
-                [bodyData appendData:self.literalRawData];
-                break;
-            default:
-                break;
-        }
-
+        pgpweakify(self);
         return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
+            pgpstrongify(self);
+
+            let bodyData = [NSMutableData data];
+            [bodyData appendBytes:&self->_format length:1];
+
+            if (self.filename) {
+                UInt8 filenameLength = (UInt8)[self.filename lengthOfBytesUsingEncoding:NSUTF8StringEncoding];
+                [bodyData appendBytes:&filenameLength length:1];
+                [bodyData appendBytes:[self.filename cStringUsingEncoding:NSUTF8StringEncoding] length:filenameLength];
+            } else {
+                UInt8 zero[] = {0x00};
+                [bodyData appendBytes:&zero length:1];
+            }
+
+            if (self.timestamp) {
+                UInt32 timestampBytes = (UInt32)[self.timestamp timeIntervalSince1970];
+                timestampBytes = CFSwapInt32HostToBig(timestampBytes);
+                [bodyData appendBytes:&timestampBytes length:4];
+            } else {
+                UInt8 zero4[] = {0, 0, 0, 0};
+                [bodyData appendBytes:&zero4 length:4];
+            }
+
+            switch (self.format) {
+                case PGPLiteralPacketText:
+                case PGPLiteralPacketTextUTF8:
+                case PGPLiteralPacketBinary: {
+                    [bodyData appendData:self.literalRawData];
+                }
+                    break;
+                default:
+                    break;
+            }
+
             return bodyData;
         }];
     }
