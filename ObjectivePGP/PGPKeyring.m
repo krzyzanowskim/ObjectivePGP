@@ -151,10 +151,10 @@
 - (nullable NSData *)exportKeysOfType:(PGPKeyType)type error:(NSError * __autoreleasing _Nullable *)error {
     let output = [NSMutableData data];
     for (PGPKey *key in self.keys) {
-        if (type == PGPKeyTypePublic && key.publicKey) {
+        if ((type & PGPKeyTypePublic) > 0 && key.publicKey) {
             [output pgp_appendData:[key.publicKey export:error]];
         }
-        if (type == PGPKeyTypeSecret && key.secretKey) {
+        if ((type & PGPKeyTypeSecret) > 0 && key.secretKey) {
             [output pgp_appendData:[key.secretKey export:error]];
         }
     }
