@@ -322,7 +322,7 @@ NS_ASSUME_NONNULL_BEGIN
     // 5.2.4.  Computing Signatures
 
     // build toSignData, toSign
-    let toSignData = [self buildDataToSignForType:self.type inputData:inputData key:publicKey subKey:nil keyPacket:signingKeyPacket userID:userID error:error];
+    let toSignData = [self buildDataToSignForType:self.type inputData:inputData key:publicKey subKey:nil userID:userID error:error];
     if (!toSignData) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"Invalid signature." }];
@@ -411,8 +411,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     PGPAssertClass(key.secretKey.primaryKeyPacket, PGPSecretKeyPacket); // Signing key packet not found
 
-    var signingKeyPacket = key.signingSecretKey;
-    if (!signingKeyPacket) {
+    if (!key.signingSecretKey) {
         // As of PGP Desktop. The signing signature may be missing.
         PGPLogDebug(@"Missing signature for the secret key %@", key.secretKey.keyID);
         if (error) {
@@ -422,21 +421,22 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // TODO: check it this is right ? setup public key algorithm from secret key packet
-    self.publicKeyAlgorithm = signingKeyPacket.publicKeyAlgorithm;
+    self.publicKeyAlgorithm = key.signingSecretKey.publicKeyAlgorithm;
 
-    if (signingKeyPacket.isEncryptedWithPassphrase && passphrase && passphrase.length > 0) {
+    if (key.signingSecretKey.isEncryptedWithPassphrase && passphrase && passphrase.length > 0) {
         NSError *decryptError;
         // Copy secret key instance, then decrypt on copy, not on the original (do not leave unencrypted instance around)
-        signingKeyPacket = [signingKeyPacket decryptedWithPassphrase:PGPNN(passphrase) error:&decryptError];
+        key = [key decryptedWithPassphrase:PGPNN(passphrase) error:&decryptError];
+        //signingKeyPacket = [signingKeyPacket decryptedWithPassphrase:PGPNN(passphrase) error:&decryptError];
         
         // When error can be passed back to caller, we want to avoid assertion, since there is no way to
         // know if packet can be decrypted and it is a typical user error to provide the wrong passhrase.
-        if(signingKeyPacket == nil && error != nil) {
+        if(key.signingSecretKey == nil && error != nil) {
             *error = decryptError;
             return NO;
         }
         
-        NSAssert(signingKeyPacket && !decryptError, @"decrypt error %@", decryptError);
+        NSAssert(key.signingSecretKey && !decryptError, @"decrypt error %@", decryptError);
     }
 
     // signed part data
@@ -452,7 +452,7 @@ NS_ASSUME_NONNULL_BEGIN
     let _Nullable trailerData = [self calculateTrailerFor:signedPartData];
 
     // build toSignData, toSign
-    let _Nullable toSignData = [self buildDataToSignForType:self.type inputData:inputData key:key subKey:subKey keyPacket:signingKeyPacket userID:userID error:error];
+    let _Nullable toSignData = [self buildDataToSignForType:self.type inputData:inputData key:key subKey:subKey userID:userID error:error];
     if (!toSignData) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Can't sign" }];
@@ -471,9 +471,9 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly: {
             // Encrypted m value (PKCS emsa encrypted)
-            NSData *em = [PGPPKCSEmsa encode:self.hashAlgoritm message:toHashData encodedMessageLength:signingKeyPacket.keySize error:nil];
+            NSData *em = [PGPPKCSEmsa encode:self.hashAlgoritm message:toHashData encodedMessageLength:key.signingSecretKey.keySize error:nil];
             NSData *encryptedEmData = nil;
-            encryptedEmData = [PGPRSA privateEncrypt:em withSecretKeyPacket:signingKeyPacket];
+            encryptedEmData = [PGPRSA privateEncrypt:em withSecretKeyPacket:key.signingSecretKey];
             if (!encryptedEmData) {
                 if (error) {
                     *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Sign Encryption failed" }];
@@ -495,7 +495,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (self.unhashedSubpackets.count == 0) {
         // add unhashed PGPSignatureSubpacketTypeIssuer subpacket - REQUIRED
-        let keyid = [[PGPKeyID alloc] initWithFingerprint:signingKeyPacket.fingerprint];
+        let keyid = [[PGPKeyID alloc] initWithFingerprint:key.signingSecretKey.fingerprint];
         PGPSignatureSubpacket *issuerSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeIssuerKeyID andValue:keyid];
         self.unhashedSubpackets = @[issuerSubpacket];
         PGPLogDebug(@"Signature without subpackets. Adding minimal set of subpackets.");
@@ -509,7 +509,7 @@ NS_ASSUME_NONNULL_BEGIN
     return YES;
 }
 
-- (nullable NSData *)buildDataToSignForType:(PGPSignatureType)type inputData:(nullable NSData *)inputData key:(nullable PGPKey *)key subKey:(nullable PGPKey *)subKey keyPacket:(nullable PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError * __autoreleasing _Nullable *)error {
+- (nullable NSData *)buildDataToSignForType:(PGPSignatureType)type inputData:(nullable NSData *)inputData key:(nullable PGPKey *)key subKey:(nullable PGPKey *)subKey userID:(nullable NSString *)userID error:(NSError * __autoreleasing _Nullable *)error {
     let toSignData = [NSMutableData data];
     switch (type) {
         case PGPSignatureBinaryDocument:
@@ -522,12 +522,12 @@ NS_ASSUME_NONNULL_BEGIN
         } break;
         case PGPSignatureSubkeyBinding: { // 0x18
             // the subkey using the same format as the main key (also using 0x99 as the first octet).
-            if (!signingKeyPacket || !subKey) {
+            if (!key.signingSecretKey || !subKey) {
                 if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing valid key packet." }]; }
                 return nil;
             }
 
-            let signingKeyData = [signingKeyPacket exportKeyPacketOldStyle];
+            let signingKeyData = [key.signingSecretKey exportKeyPacketOldStyle];
             [toSignData appendData:signingKeyData];
 
             let _Nullable signingSubKeyData = [PGPCast(subKey.publicKey.primaryKeyPacket, PGPPublicKeyPacket) exportKeyPacketOldStyle];
@@ -536,12 +536,12 @@ NS_ASSUME_NONNULL_BEGIN
         } break;
         case PGPSignaturePrimaryKeyBinding: { // 0x19
             // A primary key binding signature (type 0x19) then hashes
-            if (!signingKeyPacket) {
+            if (!key.signingSecretKey) {
                 if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing key packet." }]; }
                 return nil;
             }
 
-            let signingKeyData = [signingKeyPacket exportKeyPacketOldStyle];
+            let signingKeyData = [key.signingSecretKey exportKeyPacketOldStyle];
             [toSignData appendData:signingKeyData];
         } break;
         case PGPSignatureGenericCertificationUserIDandPublicKey: // 0x10
@@ -550,7 +550,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPSignaturePositiveCertificationUserIDandPublicKey: // 0x13
         case PGPSignatureCertificationRevocation: // 0x28
         {
-            if (!signingKeyPacket) {
+            if (!key.signingSecretKey) {
                 if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing key packet." }]; }
                 return nil;
             }
@@ -561,7 +561,7 @@ NS_ASSUME_NONNULL_BEGIN
             // of the key packet. (Note that this is an old-style packet header for
             // a key packet with two-octet length.)
 
-            let signingKeyData = [signingKeyPacket exportKeyPacketOldStyle];
+            let signingKeyData = [key.signingSecretKey exportKeyPacketOldStyle];
             [toSignData appendData:signingKeyData];
 
             if (key.secretKey) {

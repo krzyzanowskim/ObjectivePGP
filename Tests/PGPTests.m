@@ -420,13 +420,34 @@
     let filePath = [PGPTestUtils pathToBundledFile:@"LargeFile.pdf"];
     let plaintextData = [NSData dataWithContentsOfFile:filePath];
 
-    NSLog(@"Size of Unencrypted Data (in MB): %@",@(plaintextData.length / 1024 / 1024));
-
     let generator = [[PGPKeyGenerator alloc] init];
     let key = [generator generateFor:@"test+mem@example.com" passphrase:nil];
 
     // encrypt data
     [ObjectivePGP encrypt:plaintextData addSignature:NO usingKeys:@[key] passphraseForKey:nil error:nil];
+}
+
+- (void)testDSAKeyIssue106 {
+    let keys = [PGPTestUtils readKeysFromPath:@"issue106/keys.asc"];
+    XCTAssertEqual(keys.count, (NSUInteger)1);
+
+    let messagePath = [PGPTestUtils pathToBundledFile:@"issue106/keys.asc"];
+    let messageData = [NSData dataWithContentsOfFile:messagePath];
+
+    NSError *error;
+    let signedData = [ObjectivePGP sign:messageData detached:NO usingKeys:keys passphraseForKey:nil error:&error];
+    XCTAssertNotNil(signedData);
+    XCTAssertNil(error);
+
+    let keysWithPassword = [PGPTestUtils readKeysFromPath:@"issue106/keys-abcd.asc"];
+    XCTAssertEqual(keysWithPassword.count, (NSUInteger)1);
+
+    NSError *error2;
+    let signedData2 = [ObjectivePGP sign:messageData detached:NO usingKeys:keysWithPassword passphraseForKey:^NSString * _Nullable(PGPKey * _Nonnull key) {
+        return @"abcd";
+    } error:&error2];
+    XCTAssertNotNil(signedData2);
+    XCTAssertNil(error2);
 }
 
 
