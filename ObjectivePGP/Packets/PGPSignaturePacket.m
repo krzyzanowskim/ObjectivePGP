@@ -21,6 +21,7 @@
 #import "PGPSignatureSubpacketHeader.h"
 #import "PGPUser.h"
 #import "PGPUserIDPacket.h"
+#import "PGPS2K.h"
 #import "PGPFoundation.h"
 #import "NSMutableData+PGPUtils.h"
 #import "NSArray+PGPUtils.h"

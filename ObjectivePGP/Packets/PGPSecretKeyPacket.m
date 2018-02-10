@@ -125,7 +125,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     if (self.s2k.specifier == PGPS2KSpecifierGnuDummy) {
-        self.ivData = NSData.data;
+        self.ivData = nil;
     } else if (self.s2k.specifier == PGPS2KSpecifierDivertToCard) {
         self.ivData = NSData.data;
     } else if (self.s2kUsage != PGPS2KUsageNonEncrypted) {
@@ -275,8 +275,10 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable PGPSecretKeyPacket *)decryptedWithPassphrase:(nullable NSString *)passphrase error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(passphrase, NSString);
 
-    if (!self.isEncryptedWithPassphrase) {
-        // PGPLogDebug(@"No need to decrypt key.");
+    // gnu-dummy is encrypted but we can't decrypt it since the secret material is not available.
+    // the best we can do is the input key
+    if (!self.isEncryptedWithPassphrase || self.s2k.specifier == PGPS2KSpecifierGnuDummy) {
+        PGPLogDebug(@"No need to decrypt key.");
         return self;
     }
 
