@@ -11,15 +11,15 @@
 
 @interface PGPKeyMaterial: NSObject
 
-@property (nonatomic) PGPMPI *n;
-@property (nonatomic) PGPMPI *e;
-@property (nonatomic) PGPMPI *d;
-@property (nonatomic) PGPMPI *p;
-@property (nonatomic) PGPMPI *q;
-@property (nonatomic) PGPMPI *r;
-@property (nonatomic) PGPMPI *g;
-@property (nonatomic) PGPMPI *u;
-@property (nonatomic) PGPMPI *x;
-@property (nonatomic) PGPMPI *y;
+@property (nonatomic, copy) PGPMPI *n;
+@property (nonatomic, copy) PGPMPI *e;
+@property (nonatomic, copy) PGPMPI *d;
+@property (nonatomic, copy) PGPMPI *p;
+@property (nonatomic, copy) PGPMPI *q;
+@property (nonatomic, copy) PGPMPI *r;
+@property (nonatomic, copy) PGPMPI *g;
+@property (nonatomic, copy) PGPMPI *u;
+@property (nonatomic, copy) PGPMPI *x;
+@property (nonatomic, copy) PGPMPI *y;
 
 @end
