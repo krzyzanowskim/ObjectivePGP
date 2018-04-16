@@ -21,7 +21,7 @@ PGP_EMPTY_INIT_UNAVAILABLE
 
 + (PGPSignaturePacket *)signaturePacket:(PGPSignatureType)type hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm;
 
-- (nullable NSData *)buildDataToSignForType:(PGPSignatureType)type inputData:(nullable NSData *)inputData key:(nullable PGPKey *)key subKey:(nullable PGPKey *)subKey keyPacket:(nullable PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError * __autoreleasing _Nullable *)error;
+- (nullable NSData *)buildDataToSignForType:(PGPSignatureType)type inputData:(nullable NSData *)inputData key:(nullable PGPKey *)key subKey:(nullable PGPKey *)subKey userID:(nullable NSString *)userID error:(NSError * __autoreleasing _Nullable *)error;
 - (nullable NSData *)buildFullSignatureBodyData;
 - (nullable PGPMPI *)signatureMPI:(NSString *)identifier;
 

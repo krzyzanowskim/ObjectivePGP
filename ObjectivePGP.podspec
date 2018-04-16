@@ -1,10 +1,10 @@
 Pod::Spec.new do |s|
   s.name         = "ObjectivePGP"
-  s.version      = "0.10.0-beta3"
+  s.version      = "0.10.0"
   s.summary      = "OpenPGP for iOS and macOS"
   s.description  = "Native OpenPGP (RFC 4880) implementation for iOS and macOS."
   s.homepage     = "http://objectivepgp.com"
-  s.license	     = { :type => 'BSD', :file => 'LICENSE.txt' }
+  s.license	     = { :type => 'BSD for non-commercial use', :file => 'LICENSE.txt' }
   s.source       = { :git => "https://github.com/krzyzanowskim/ObjectivePGP.git", :tag => "#{s.version}" }
 
   s.authors      = {'Marcin Krzyżanowski' => 'marcin@krzyzanowskim.com'}
