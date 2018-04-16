@@ -326,6 +326,10 @@ NS_ASSUME_NONNULL_BEGIN
     // Calculate signatures signatures
     let signatures = [NSMutableArray<PGPSignaturePacket *> array];
     for (PGPKey *key in keys) {
+        // Sign with the signing keys only
+        if (!key.signingSecretKey) {
+            continue;
+        }
         // Signed Message :- Signature Packet, Literal Message
         let signaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureBinaryDocument hashAlgorithm:preferedHashAlgorithm];
         let passphrase = passphraseBlock ? passphraseBlock(key) : nil;
