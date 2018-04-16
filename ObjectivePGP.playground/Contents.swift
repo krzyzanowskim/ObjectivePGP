@@ -9,16 +9,14 @@ let key2 = KeyGenerator().generate(for: "fran@krzyzanowskim.com", passphrase: ni
 let plaintext = Data(bytes: [1,2,3,4,5])
 
 // Encrypt 5 bytes using selected key
-let encryptedBin = try ObjectivePGP.encrypt(plaintext, addSignature: false, using: [key1, key2])
-let encrypted = Armor.armored(encryptedBin, as: .message)
-print(encrypted)
 
-// Sign the encrypted binary
-let signatureBin = try ObjectivePGP.sign(encryptedBin, detached: true, using: [key1])
-let signature = Armor.armored(signatureBin, as: .signature)
-print(signature)
-
-try ObjectivePGP.verify(encryptedBin, withSignature: signatureBin, using: [key1])
-
-let decrypted = try ObjectivePGP.decrypt(encryptedBin, andVerifySignature: false, using: [key1])
-print("Decrypted : \(Array(decrypted))")
+if let pkData = try? key2.export(keyType: .public), let pk = try? ObjectivePGP.readKeys(from: pkData){
+    var keys = pk
+    keys.append(key1)
+    _ = try ObjectivePGP.encrypt(plaintext, addSignature: false, using: keys)
+    do{
+        _ = try ObjectivePGP.encrypt(plaintext, addSignature: true, using: keys)
+    } catch{
+        print(error)
+    }
+}
