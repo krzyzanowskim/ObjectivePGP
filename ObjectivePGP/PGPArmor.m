@@ -109,7 +109,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable NSData *)readArmored:(NSString *)string error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(string, NSString);
 
-    NSScanner *scanner = [[NSScanner alloc] initWithString:string];
+    let scanner = [[NSScanner alloc] initWithString:string];
     scanner.charactersToBeSkipped = nil;
 
     // check header line
@@ -144,18 +144,19 @@ NS_ASSUME_NONNULL_BEGIN
     [scanner scanCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:nil];
 
     // read base64 data
+    // The encoded stream must be represented in lines of no more than 76 characters each.
     BOOL base64Section = YES;
-    NSMutableString *base64String = [NSMutableString string];
+    let base64String = [NSMutableString string];
     while (base64Section && [scanner scanCharactersFromSet:[[NSCharacterSet newlineCharacterSet] invertedSet] intoString:&line]) {
         // consume newline
         [scanner scanString:@"\r" intoString:nil];
         [scanner scanString:@"\n" intoString:nil];
 
-        if ([line hasPrefix:@"="]) {
+        if ([line hasPrefix:@"="] || [line hasPrefix:@"-----"]) {
             scanner.scanLocation = scanner.scanLocation - (line.length + 2);
             base64Section = NO;
         } else {
-            [base64String appendFormat:@"%@\n", line];
+            [base64String appendString:line];
         }
     }
 
@@ -192,12 +193,12 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // binary data from base64 part
-    NSData *binaryData = [[NSData alloc] initWithBase64EncodedString:base64String options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    let binaryData = [[NSData alloc] initWithBase64EncodedString:base64String options:0];
 
     // The checksum with its leading equal sign MAY appear on the first line after the base64 encoded data.
     // validate checksum
     if (checksumString) {
-        let readChecksumData = [[NSData alloc] initWithBase64EncodedString:checksumString options:NSDataBase64DecodingIgnoreUnknownCharacters];
+        let readChecksumData = [[NSData alloc] initWithBase64EncodedString:checksumString options:0];
 
         UInt32 calculatedCRC24 = [binaryData pgp_CRC24];
         calculatedCRC24 = CFSwapInt32HostToBig(calculatedCRC24);

@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSString *path = [self pathToBundledFile:fileName];
     NSError *error;
     NSArray<PGPKey *> * keys = [ObjectivePGP readKeysFromPath:path error:&error];
-    NSAssert(error == nil, @"Can't rea");
+    NSAssert(error == nil, @"Can't read");
     return keys;
 }
 
