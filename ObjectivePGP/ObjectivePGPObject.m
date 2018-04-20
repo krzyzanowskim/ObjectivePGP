@@ -86,6 +86,8 @@ NS_ASSUME_NONNULL_BEGIN
     var packets = [ObjectivePGP readPacketsFromData:binaryMessage];
     packets = [self decryptPackets:packets usingKeys:keys passphrase:passphraseForKeyBlock error:error];
 
+    // If the packet list of a message contains multiple literal packets, the first literal packet should
+    // be considered as the correct one and any additional literal packets should be ignored.
     let literalPacket = PGPCast([[packets pgp_objectsPassingTest:^BOOL(PGPPacket *packet, BOOL *stop) {
         BOOL found = packet.tag == PGPLiteralDataPacketTag;
         *stop = found;
@@ -548,7 +550,10 @@ NS_ASSUME_NONNULL_BEGIN
                 onePassSignatureCount++;
                 break;
             case PGPLiteralDataPacketTag:
-                literalPacket = PGPCast(packet, PGPLiteralPacket);
+                // Only first literal packet is considered as correct
+                if (!literalPacket) {
+                    literalPacket = PGPCast(packet, PGPLiteralPacket);
+                }
                 break;
             case PGPSignaturePacketTag: {
                 let signaturePacket = PGPCast(packet, PGPSignaturePacket);
