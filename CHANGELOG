@@ -1,3 +1,9 @@
+Version 0.10.1
+- Fixes signature verification bypass (CM-02-003)
+- Fixes dearmoring ignores unknown characters (CM-02-004)
+- Fixes armored header-footer bug (CM-02-005)
+- Fixes handling of unexpected packets (CM-02-007)
+
 Version 0.10.0
 - Adds Symmetrically Encrypted Data Packet support. Fixes #91
 - Adds multikey signatures.
