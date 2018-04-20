@@ -97,7 +97,7 @@ NS_ASSUME_NONNULL_BEGIN
     [packetBody getBytes:&_version range:(NSRange){position, 1}];
     position = position + 1;
 
-    NSAssert(self.version >= 3, @"To old packet version");
+    NSAssert(self.version >= 3, @"Too old packet version");
 
     // A four-octet number denoting the time that the key was created.
     UInt32 timestamp = 0;

@@ -24,6 +24,7 @@
 #import "PGPTrustPacket.h"
 #import "PGPUserAttributePacket.h"
 #import "PGPUserIDPacket.h"
+#import "PGPMarkerPacket.h"
 
 #import "PGPLogging.h"
 #import "PGPMacros+Private.h"
@@ -34,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 /**
  *  Parse packet data and return packet object instance
- *cc
+ *
  *  @param packetData Data with all the packets. Packet sequence data. Keyring.
  *  @param offset     offset of current packet
  *
@@ -101,12 +102,28 @@ NS_ASSUME_NONNULL_BEGIN
             case PGPSymetricKeyEncryptedSessionKeyPacketTag:
                 packet = [PGPSymetricKeyEncryptedSessionKeyPacket packetWithBody:packetBodyData];
                 break;
-            default:
-                PGPLogWarning(@"Packet tag %@ is not supported", @(packetTag));
+            case PGPMarkerPacketTag:
+                // Such a packet MUST be ignored when received.
+                packet = [PGPMarkerPacket packetWithBody:packetBodyData];
+                break;
+            case PGPExperimentalPacketTag1:
+            case PGPExperimentalPacketTag2:
+            case PGPExperimentalPacketTag3:
+            case PGPExperimentalPacketTag4:
+                // Private or Experimental Values
                 packet = [PGPPacket packetWithBody:packetBodyData];
+                break;
+            case PGPInvalidPacketTag:
+                // Technical tag meaning the packet is invalid
+                break;
+            default:
+                // The message is invalid, no packet
                 break;
         }
 
+        if (!packet) {
+            PGPLogError(@"Invalid message.");
+        }
         PGPAssertClass(packet, PGPPacket);
 
         if (indeterminateLength) {
