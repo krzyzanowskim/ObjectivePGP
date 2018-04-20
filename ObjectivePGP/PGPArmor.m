@@ -115,8 +115,13 @@ NS_ASSUME_NONNULL_BEGIN
     // check header line
     NSString *headerLine = nil;
     [scanner scanUpToCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:&headerLine];
-    if (!PGPEqualObjects(headerLine, @"-----BEGIN PGP MESSAGE-----") && !PGPEqualObjects(headerLine, @"-----BEGIN PGP PUBLIC KEY BLOCK-----") && !PGPEqualObjects(headerLine, @"-----BEGIN PGP PRIVATE KEY BLOCK-----") && !PGPEqualObjects(headerLine, @"-----BEGIN PGP SECRET KEY BLOCK-----") && // PGP 2.x generates the header "BEGIN PGP SECRET KEY BLOCK" instead of "BEGIN PGP PRIVATE KEY BLOCK"
-        !PGPEqualObjects(headerLine, @"-----BEGIN PGP SIGNATURE-----") && ![headerLine hasPrefix:@"-----BEGIN PGP MESSAGE, PART"]) {
+    if (!PGPEqualObjects(headerLine, @"-----BEGIN PGP MESSAGE-----") &&
+        !PGPEqualObjects(headerLine, @"-----BEGIN PGP PUBLIC KEY BLOCK-----") &&
+        !PGPEqualObjects(headerLine, @"-----BEGIN PGP PRIVATE KEY BLOCK-----") &&
+        !PGPEqualObjects(headerLine, @"-----BEGIN PGP SECRET KEY BLOCK-----") && // PGP 2.x generates the header "BEGIN PGP SECRET KEY BLOCK" instead of "BEGIN PGP PRIVATE KEY BLOCK"
+        !PGPEqualObjects(headerLine, @"-----BEGIN PGP SIGNATURE-----") &&
+        ![headerLine hasPrefix:@"-----BEGIN PGP MESSAGE, PART"])
+    {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Invalid header" }];
         }
@@ -181,7 +186,7 @@ NS_ASSUME_NONNULL_BEGIN
     [scanner scanString:@"\r" intoString:nil];
     [scanner scanString:@"\n" intoString:nil];
 
-    if ([line hasSuffix:[headerLine substringFromIndex:12]]) {
+    if ([line isEqualToString:[NSString stringWithFormat:@"-----END %@",[headerLine substringFromIndex:11]]]) {
         footerMatchHeader = YES;
     }
 
