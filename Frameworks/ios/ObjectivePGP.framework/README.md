@@ -12,7 +12,8 @@ Here is the [blog post](http://blog.krzyzanowskim.com/2014/07/31/short-story-abo
 
 ## Contribution
 
-You are welcome to contribute. Please create [Pull Request](https://github.com/krzyzanowskim/ObjectivePGP/pulls) against `develop` branch.
+You are welcome to contribute. See [CONTRIBUTING.md](https://github.com/krzyzanowskim/ObjectivePGP/blob/master/CONTRIBUTING.md)  
+Please create [Pull Request](https://github.com/krzyzanowskim/ObjectivePGP/pulls) against `develop` branch. 
 
 ## Usage
 
@@ -133,9 +134,10 @@ let secretKey = try key.export(keyType: .secret)
 ASCII armor is a binary-to-textual encoding converter. ASCII armor involves encasing encrypted messaging in ASCII so that they can be sent in a standard messaging format such as email.
 
 Example:
+
 ```
 -----BEGIN PGP PUBLIC KEY BLOCK-----
-Comment: For info see http://www.objectivepgp.org
+Comment: For more info see http://www.objectivepgp.org
 
 [...]
 -----END PGP PUBLIC KEY BLOCK-----
@@ -177,7 +179,7 @@ end
 
 ObjectivePGP comes with the [Frameworks](./Frameworks) for the latest release.
 
-1. Download latest [ObjectivePGP.framework](https://github.com/krzyzanowskim/ObjectivePGP/releases) or build a framework with the [build-frameworks.sh](./build-frameworks.sh) script.
+1. Download latest [ObjectivePGP.framework](https://github.com/krzyzanowskim/ObjectivePGP/releases) or build a framework with the [build-frameworks.sh](./scripts/build-frameworks.sh) script.
 1. Add a New Copy Files Phase by selecting the Add icon, highlighted in Figure 4. Set the Destination field to Frameworks, and add the framework to the list (see [Embedding Frameworks In An App](https://developer.apple.com/library/content/technotes/tn2435/_index.html)). Ensure Code Sign on Copy is checked.
 ![Figure 4](https://user-images.githubusercontent.com/14152377/35073501-5b50bc50-fbe9-11e7-8d8a-3c8ce47c8e44.png)
 1. Link framework with the target
