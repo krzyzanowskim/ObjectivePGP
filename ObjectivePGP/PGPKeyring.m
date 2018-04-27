@@ -49,7 +49,7 @@
 - (BOOL)importKey:(NSString *)keyIdentifier fromPath:(NSString *)path error:(NSError * __autoreleasing _Nullable *)error {
     let fullPath = [path stringByExpandingTildeInPath];
 
-    let loadedKeys = [self.class readKeysFromPath:fullPath error:error];
+    let loadedKeys = [ObjectivePGP readKeysFromPath:fullPath error:error];
     if (loadedKeys.count == 0 || (error && *error)) {
         return NO;
     }
