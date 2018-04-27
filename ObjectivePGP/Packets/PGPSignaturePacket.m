@@ -311,6 +311,8 @@ NS_ASSUME_NONNULL_BEGIN
 // Opposite to sign, with readed data (not produced)
 - (BOOL)verifyData:(NSData *)inputData publicKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError * __autoreleasing _Nullable *)error {
     // no signing packet was found, this we have no valid signature
+    PGPAssertClass(inputData, NSData);
+    PGPAssertClass(publicKey, PGPKey);
     PGPAssertClass(signingKeyPacket, PGPPublicKeyPacket);
 
     if (self.type == PGPSignatureBinaryDocument && inputData.length == 0) {
