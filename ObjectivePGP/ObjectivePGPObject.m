@@ -489,6 +489,12 @@ NS_ASSUME_NONNULL_BEGIN
             let issuerKeyID = signaturePacket.issuerKeyID;
             if (issuerKeyID) {
                 let issuerKey = [PGPKeyring findKeyWithKeyID:issuerKeyID in:keys];
+                if (!issuerKey) {
+                    if (error) {
+                        *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"Unable to check signature. No public key." }];
+                    }
+                    return NO;
+                }
                 return [signaturePacket verifyData:binarySignedData publicKey:issuerKey error:error];
             }
         }
