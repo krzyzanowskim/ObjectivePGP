@@ -114,10 +114,26 @@ NS_ASSUME_NONNULL_BEGIN
             // return decrypted m
             return [PGPRSA privateDecrypt:data withSecretKeyPacket:keyPacket];
         } break;
-        default:
-            // TODO: add algorithms
+        case PGPPublicKeyAlgorithmElgamal:
+        case PGPPublicKeyAlgorithmDSA:
+        case PGPPublicKeyAlgorithmElliptic:
+        case PGPPublicKeyAlgorithmECDSA:
+        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
+        case PGPPublicKeyAlgorithmDiffieHellman:
+        case PGPPublicKeyAlgorithmPrivate1:
+        case PGPPublicKeyAlgorithmPrivate2:
+        case PGPPublicKeyAlgorithmPrivate3:
+        case PGPPublicKeyAlgorithmPrivate4:
+        case PGPPublicKeyAlgorithmPrivate5:
+        case PGPPublicKeyAlgorithmPrivate6:
+        case PGPPublicKeyAlgorithmPrivate7:
+        case PGPPublicKeyAlgorithmPrivate8:
+        case PGPPublicKeyAlgorithmPrivate9:
+        case PGPPublicKeyAlgorithmPrivate10:
+        case PGPPublicKeyAlgorithmPrivate11:
             [NSException raise:@"PGPNotSupported" format:@"Algorithm not supported"];
             break;
+
     }
     return nil;
 }

@@ -379,7 +379,7 @@ NS_ASSUME_NONNULL_BEGIN
         let onePassPacket = [[PGPOnePassSignaturePacket alloc] init];
         onePassPacket.signatureType = signaturePacket.type;
         onePassPacket.publicKeyAlgorithm = signaturePacket.publicKeyAlgorithm;
-        onePassPacket.hashAlgorith = signaturePacket.hashAlgoritm;
+        onePassPacket.hashAlgorithm = signaturePacket.hashAlgoritm;
         onePassPacket.keyID = PGPNN(signaturePacket.issuerKeyID);
         onePassPacket.isNested = NO;
         NSError * _Nullable onePassExportError = nil;

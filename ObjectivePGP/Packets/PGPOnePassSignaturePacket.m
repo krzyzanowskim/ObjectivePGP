@@ -37,7 +37,7 @@ NS_ASSUME_NONNULL_BEGIN
     [packetBody getBytes:&_signatureType range:(NSRange){position, 1}];
     position = position + 1;
 
-    [packetBody getBytes:&_hashAlgorith range:(NSRange){position, 1}];
+    [packetBody getBytes:&_hashAlgorithm range:(NSRange){position, 1}];
     position = position + 1;
 
     [packetBody getBytes:&_publicKeyAlgorithm range:(NSRange){position, 1}];
@@ -67,7 +67,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)isEqualToOnePassSignaturePacket:(PGPOnePassSignaturePacket *)packet {
     return self.version == packet.version &&
            self.signatureType == packet.signatureType &&
-           self.hashAlgorith == packet.hashAlgorith &&
+           self.hashAlgorithm == packet.hashAlgorithm &&
            self.publicKeyAlgorithm == packet.publicKeyAlgorithm &&
            PGPEqualObjects(self.keyID, packet.keyID) &&
            self.isNested == packet.isNested;
@@ -78,7 +78,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSUInteger result = [super hash];
     result = prime * result + self.version;
     result = prime * result + self.signatureType;
-    result = prime * result + self.hashAlgorith;
+    result = prime * result + self.hashAlgorithm;
     result = prime * result + self.publicKeyAlgorithm;
     result = prime * result + self.keyID.hash;
     result = prime * result + self.isNested;
@@ -95,7 +95,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     duplicate.version = self.version;
     duplicate.signatureType = self.signatureType;
-    duplicate.hashAlgorith = self.hashAlgorith;
+    duplicate.hashAlgorithm = self.hashAlgorithm;
     duplicate.publicKeyAlgorithm = self.publicKeyAlgorithm;
     duplicate.keyID = self.keyID;
     duplicate.isNested = self.isNested;
@@ -114,7 +114,7 @@ NS_ASSUME_NONNULL_BEGIN
 
         [bodyData appendBytes:&self->_version length:1];
         [bodyData appendBytes:&self->_signatureType length:1];
-        [bodyData appendBytes:&self->_hashAlgorith length:1];
+        [bodyData appendBytes:&self->_hashAlgorithm length:1];
         [bodyData appendBytes:&self->_publicKeyAlgorithm length:1];
         [bodyData pgp_appendData:[self.keyID export:error]];
 

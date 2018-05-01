@@ -180,6 +180,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL)canBeUsedToSign {
+    //TODO: Elgamal
     BOOL result = self.publicKeyAlgorithm == PGPPublicKeyAlgorithmDSA || self.publicKeyAlgorithm == PGPPublicKeyAlgorithmRSA || self.publicKeyAlgorithm == PGPPublicKeyAlgorithmRSASignOnly;
 
     if (result) {
@@ -383,9 +384,23 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmECDSA: {
             return [PGPDSA verify:toHashData signature:self withPublicKeyPacket:signingKeyPacket];
         } break;
-        default:
-            [NSException raise:@"PGPNotSupported" format:@"Algorith not supported"];
-            break;
+        case PGPPublicKeyAlgorithmElgamal:
+        case PGPPublicKeyAlgorithmElliptic:
+        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
+        case PGPPublicKeyAlgorithmDiffieHellman:
+        case PGPPublicKeyAlgorithmPrivate1:
+        case PGPPublicKeyAlgorithmPrivate2:
+        case PGPPublicKeyAlgorithmPrivate3:
+        case PGPPublicKeyAlgorithmPrivate4:
+        case PGPPublicKeyAlgorithmPrivate5:
+        case PGPPublicKeyAlgorithmPrivate6:
+        case PGPPublicKeyAlgorithmPrivate7:
+        case PGPPublicKeyAlgorithmPrivate8:
+        case PGPPublicKeyAlgorithmPrivate9:
+        case PGPPublicKeyAlgorithmPrivate10:
+        case PGPPublicKeyAlgorithmPrivate11:
+            [NSException raise:@"PGPNotSupported" format:@"Algorithm not supported"];
+        break;
     }
 
     return YES;
@@ -491,9 +506,23 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmECDSA: {
             self.signatureMPIs = [PGPDSA sign:toHashData key:key];
         } break;
-        default:
-            [NSException raise:@"PGPNotSupported" format:@"Algorith not supported"];
-            break;
+        case PGPPublicKeyAlgorithmElgamal:
+        case PGPPublicKeyAlgorithmElliptic:
+        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
+        case PGPPublicKeyAlgorithmDiffieHellman:
+        case PGPPublicKeyAlgorithmPrivate1:
+        case PGPPublicKeyAlgorithmPrivate2:
+        case PGPPublicKeyAlgorithmPrivate3:
+        case PGPPublicKeyAlgorithmPrivate4:
+        case PGPPublicKeyAlgorithmPrivate5:
+        case PGPPublicKeyAlgorithmPrivate6:
+        case PGPPublicKeyAlgorithmPrivate7:
+        case PGPPublicKeyAlgorithmPrivate8:
+        case PGPPublicKeyAlgorithmPrivate9:
+        case PGPPublicKeyAlgorithmPrivate10:
+        case PGPPublicKeyAlgorithmPrivate11:
+            [NSException raise:@"PGPNotSupported" format:@"Algorithm not supported"];
+        break;
     }
 
     if (self.unhashedSubpackets.count == 0) {
@@ -756,7 +785,21 @@ NS_ASSUME_NONNULL_BEGIN
 
             self.signatureMPIs = @[mpiG, mpiY];
         } break;
-        default:
+        case PGPPublicKeyAlgorithmElliptic:
+        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
+        case PGPPublicKeyAlgorithmDiffieHellman:
+        case PGPPublicKeyAlgorithmPrivate1:
+        case PGPPublicKeyAlgorithmPrivate2:
+        case PGPPublicKeyAlgorithmPrivate3:
+        case PGPPublicKeyAlgorithmPrivate4:
+        case PGPPublicKeyAlgorithmPrivate5:
+        case PGPPublicKeyAlgorithmPrivate6:
+        case PGPPublicKeyAlgorithmPrivate7:
+        case PGPPublicKeyAlgorithmPrivate8:
+        case PGPPublicKeyAlgorithmPrivate9:
+        case PGPPublicKeyAlgorithmPrivate10:
+        case PGPPublicKeyAlgorithmPrivate11:
+            // noop
             break;
     }
 

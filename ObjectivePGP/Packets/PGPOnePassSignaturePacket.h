@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic) UInt8 version; //  The current version is 3.
 @property (nonatomic) PGPSignatureType signatureType;
-@property (nonatomic) PGPHashAlgorithm hashAlgorith;
+@property (nonatomic) PGPHashAlgorithm hashAlgorithm;
 @property (nonatomic) PGPPublicKeyAlgorithm publicKeyAlgorithm;
 @property (nonatomic, copy) PGPKeyID *keyID; // 8
 @property (nonatomic) BOOL isNested;

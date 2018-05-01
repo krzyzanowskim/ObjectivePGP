@@ -171,11 +171,23 @@ NS_ASSUME_NONNULL_BEGIN
 
             self.publicMPIs = @[mpiP, mpiG, mpiY];
         } break;
-        default:
+        case PGPPublicKeyAlgorithmElliptic:
+        case PGPPublicKeyAlgorithmDiffieHellman:
+        case PGPPublicKeyAlgorithmPrivate1:
+        case PGPPublicKeyAlgorithmPrivate2:
+        case PGPPublicKeyAlgorithmPrivate3:
+        case PGPPublicKeyAlgorithmPrivate4:
+        case PGPPublicKeyAlgorithmPrivate5:
+        case PGPPublicKeyAlgorithmPrivate6:
+        case PGPPublicKeyAlgorithmPrivate7:
+        case PGPPublicKeyAlgorithmPrivate8:
+        case PGPPublicKeyAlgorithmPrivate9:
+        case PGPPublicKeyAlgorithmPrivate10:
+        case PGPPublicKeyAlgorithmPrivate11:
             if (error) {
                 *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Public key algorithm is not supported" }];
             }
-            break;
+        break;
     }
 
     return position;
@@ -244,6 +256,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Encrypt & Decrypt
 
+// data is mEMEEncoded
 - (nullable NSData *)encryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm {
     switch (publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSA:
@@ -252,10 +265,28 @@ NS_ASSUME_NONNULL_BEGIN
             // return ecnrypted m
             return [PGPRSA publicEncrypt:data withPublicKeyPacket:self];
         } break;
-        default:
-            // TODO: add algorithms
-            [NSException raise:@"PGPNotSupported" format:@"Algorith not supported"];
-            break;
+        case PGPPublicKeyAlgorithmElgamal: {
+            //TODO: Elgamal
+            // return [PGPElgamal publicEncrypt:data withPublicKeyPacket:self];
+        } break;
+        case PGPPublicKeyAlgorithmDSA:
+        case PGPPublicKeyAlgorithmElliptic:
+        case PGPPublicKeyAlgorithmECDSA:
+        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
+        case PGPPublicKeyAlgorithmDiffieHellman:
+        case PGPPublicKeyAlgorithmPrivate1:
+        case PGPPublicKeyAlgorithmPrivate2:
+        case PGPPublicKeyAlgorithmPrivate3:
+        case PGPPublicKeyAlgorithmPrivate4:
+        case PGPPublicKeyAlgorithmPrivate5:
+        case PGPPublicKeyAlgorithmPrivate6:
+        case PGPPublicKeyAlgorithmPrivate7:
+        case PGPPublicKeyAlgorithmPrivate8:
+        case PGPPublicKeyAlgorithmPrivate9:
+        case PGPPublicKeyAlgorithmPrivate10:
+        case PGPPublicKeyAlgorithmPrivate11:
+            [NSException raise:@"PGPNotSupported" format:@"Algorithm not supported"];
+        break;
     }
     return nil;
 }

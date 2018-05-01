@@ -204,7 +204,7 @@ See [CHANGELOG](./CHANGELOG)
 
 Known limitations:
 
-- Elgamal cipher is not supported.
+- Elgamal encryption/decryption is not supported.
 - Cleartext signature.
 
 ## The license
