@@ -420,6 +420,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Verification
 
+- (nullable PGPUser *)primaryUser {
+    return [[self primaryUserAndSelfCertificate:nil] copy];
+}
+
 // Returns primary user with self certificate
 - (nullable PGPUser *)primaryUserAndSelfCertificate:(PGPSignaturePacket *__autoreleasing _Nullable *)selfCertificateOut {
     PGPUser *foundUser = nil;
