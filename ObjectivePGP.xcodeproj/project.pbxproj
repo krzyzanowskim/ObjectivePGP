@@ -779,7 +779,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/bash;
-			shellScript = "export LANG=en_US.UTF-8\nexport LANGUAGE=en_US.UTF-8\nexport LC_ALL=en_US.UTF-8\n\n[[ -s \"$HOME/.rvm/scripts/rvm\" ]] && source \"$HOME/.rvm/scripts/rvm\"\n\n\"${PROJECT_DIR}/scripts/generate-umbrella-header.rb\" \"${PROJECT_FILE_PATH}\"";
+			shellScript = "export LANG=en_US.UTF-8\nexport LANGUAGE=en_US.UTF-8\nexport LC_ALL=en_US.UTF-8\n\n[[ -s \"$HOME/.rvm/scripts/rvm\" ]] && source \"$HOME/.rvm/scripts/rvm\"\n\nbundle exec \"${PROJECT_DIR}/scripts/generate-umbrella-header.rb\" \"${PROJECT_FILE_PATH}\"";
 		};
 /* End PBXShellScriptBuildPhase section */
 

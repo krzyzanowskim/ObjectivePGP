@@ -1,15 +1,17 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    CFPropertyList (2.3.6)
+    CFPropertyList (3.0.0)
+    atomos (0.1.2)
     claide (1.0.2)
     colored2 (3.1.2)
-    nanaimo (0.2.3)
-    xcodeproj (1.5.3)
-      CFPropertyList (~> 2.3.3)
+    nanaimo (0.2.5)
+    xcodeproj (1.5.8)
+      CFPropertyList (>= 2.3.3, < 4.0)
+      atomos (~> 0.1.2)
       claide (>= 1.0.2, < 2.0)
       colored2 (~> 3.1)
-      nanaimo (~> 0.2.3)
+      nanaimo (~> 0.2.5)
 
 PLATFORMS
   ruby
@@ -21,4 +23,4 @@ RUBY VERSION
    ruby 2.4.2p198
 
 BUNDLED WITH
-   1.16.0
+   1.16.1
