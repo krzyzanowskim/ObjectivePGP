@@ -115,6 +115,7 @@ NS_ASSUME_NONNULL_BEGIN
             return [PGPRSA privateDecrypt:data withSecretKeyPacket:keyPacket];
         } break;
         case PGPPublicKeyAlgorithmElgamal:
+            //TODO: Elgamal
         case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmElliptic:
         case PGPPublicKeyAlgorithmECDSA:

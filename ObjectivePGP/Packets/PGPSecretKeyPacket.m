@@ -246,14 +246,14 @@ NS_ASSUME_NONNULL_BEGIN
 
             self.secretMPIs = @[mpiX];
         } break;
-        case PGPPublicKeyAlgorithmElgamal:
-        case PGPPublicKeyAlgorithmElgamalEncryptorSign: {
+        case PGPPublicKeyAlgorithmElgamal: {
             // MPI of Elgamal secret exponent x.
             let mpiX = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPI_X atPosition:position];
             position = position + mpiX.packetLength;
 
             self.secretMPIs = @[mpiX];
         } break;
+        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
         case PGPPublicKeyAlgorithmElliptic:
         case PGPPublicKeyAlgorithmECDSA:
         case PGPPublicKeyAlgorithmDiffieHellman:

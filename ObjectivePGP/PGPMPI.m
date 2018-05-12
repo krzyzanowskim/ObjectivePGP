@@ -20,15 +20,15 @@ NS_ASSUME_NONNULL_BEGIN
 
 NSString * const PGPMPI_N = @"N";
 NSString * const PGPMPI_E = @"E";
-NSString * const PGPMPI_P = @"P";
-NSString * const PGPMPI_G = @"G";
+NSString * const PGPMPI_P = @"P"; // Prime
+NSString * const PGPMPI_G = @"G"; // Generator
 NSString * const PGPMPI_Q = @"Q";
 NSString * const PGPMPI_D = @"D";
 NSString * const PGPMPI_U = @"U";
-NSString * const PGPMPI_X = @"X";
+NSString * const PGPMPI_X = @"X"; // secret
 NSString * const PGPMPI_R = @"R";
 NSString * const PGPMPI_S = @"S";
-NSString * const PGPMPI_Y = @"Y";
+NSString * const PGPMPI_Y = @"Y"; // public key. For Elgamal public key value y (= g**x mod p where x is secret).
 NSString * const PGPMPI_M = @"M";
 
 @interface PGPMPI ()

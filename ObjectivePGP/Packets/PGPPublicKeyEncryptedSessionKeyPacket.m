@@ -30,7 +30,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Elgamal
 @property (nonatomic, copy) PGPMPI *encryptedMPI_G;
-@property (nonatomic, copy) PGPMPI *encryptedMPI_Y;
 
 @end
 
@@ -72,23 +71,42 @@ NS_ASSUME_NONNULL_BEGIN
     //   RSA 1 MPI
     //   Elgamal 2 MPI
 
-    NSAssert(self.publicKeyAlgorithm == PGPPublicKeyAlgorithmRSA || self.publicKeyAlgorithm == PGPPublicKeyAlgorithmElgamal, @"Not supported.");
-
     let encryptedMPI_Data = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
 
-    if (self.publicKeyAlgorithm == PGPPublicKeyAlgorithmRSA) {
-        // MPI of RSA encrypted value m**e mod n.
-        self.encryptedMPI_M = [[PGPMPI alloc] initWithMPIData:encryptedMPI_Data identifier:PGPMPI_M atPosition:0];
-        position = position + self.encryptedMPI_M.packetLength;
-    }
-
-    if (self.publicKeyAlgorithm == PGPPublicKeyAlgorithmElgamal) {
-        // MPI of Elgamal (Diffie-Hellman) value g**k mod p.
-        self.encryptedMPI_G = [[PGPMPI alloc] initWithMPIData:encryptedMPI_Data identifier:PGPMPI_G atPosition:0];
-        position = position + self.encryptedMPI_G.packetLength;
-        // MPI of Elgamal (Diffie-Hellman) value m * y**k mod p.
-        self.encryptedMPI_Y = [[PGPMPI alloc] initWithMPIData:encryptedMPI_Data identifier:PGPMPI_Y atPosition:0 + self.encryptedMPI_G.packetLength];
-        position = position + self.encryptedMPI_Y.packetLength;
+    switch (self.publicKeyAlgorithm) {
+        case PGPPublicKeyAlgorithmRSA:
+            // MPI of RSA encrypted value m**e mod n.
+            self.encryptedMPI_M = [[PGPMPI alloc] initWithMPIData:encryptedMPI_Data identifier:PGPMPI_M atPosition:0];
+            position = position + self.encryptedMPI_M.packetLength;
+            break;
+        case PGPPublicKeyAlgorithmDSA:
+        case PGPPublicKeyAlgorithmElgamal:
+            // MPI of Elgamal (Diffie-Hellman) value g**k mod p.
+            self.encryptedMPI_G = [[PGPMPI alloc] initWithMPIData:encryptedMPI_Data identifier:PGPMPI_G atPosition:0];
+            position = position + self.encryptedMPI_G.packetLength;
+            // MPI of Elgamal (Diffie-Hellman) value m * y**k mod p.
+            self.encryptedMPI_M = [[PGPMPI alloc] initWithMPIData:encryptedMPI_Data identifier:PGPMPI_M atPosition:0 + self.encryptedMPI_G.packetLength];
+            position = position + self.encryptedMPI_M.packetLength;
+            break;
+        case PGPPublicKeyAlgorithmRSAEncryptOnly:
+        case PGPPublicKeyAlgorithmRSASignOnly:
+        case PGPPublicKeyAlgorithmElliptic:
+        case PGPPublicKeyAlgorithmECDSA:
+        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
+        case PGPPublicKeyAlgorithmDiffieHellman:
+        case PGPPublicKeyAlgorithmPrivate1:
+        case PGPPublicKeyAlgorithmPrivate2:
+        case PGPPublicKeyAlgorithmPrivate3:
+        case PGPPublicKeyAlgorithmPrivate4:
+        case PGPPublicKeyAlgorithmPrivate5:
+        case PGPPublicKeyAlgorithmPrivate6:
+        case PGPPublicKeyAlgorithmPrivate7:
+        case PGPPublicKeyAlgorithmPrivate8:
+        case PGPPublicKeyAlgorithmPrivate9:
+        case PGPPublicKeyAlgorithmPrivate10:
+        case PGPPublicKeyAlgorithmPrivate11:
+            NSAssert(false, @"ESK has invalid format.");
+            break;
     }
 
     self.encryptedWithPassword = YES;
@@ -131,8 +149,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     let mEMEEncoded = [PGPPKCSEme encodeMessage:mData keyModulusLength:k error:error];
     let encryptedData = [publicKeyPacket encryptData:mEMEEncoded withPublicKeyAlgorithm:self.publicKeyAlgorithm];
-    let mpiEncoded = [[PGPMPI alloc] initWithData:encryptedData identifier:PGPMPI_M];
-    self.encryptedMPI_M = mpiEncoded;
+    self.encryptedMPI_M = [[PGPMPI alloc] initWithData:encryptedData identifier:PGPMPI_M];
     // TODO: Elgamal
     return YES;
 }
@@ -242,8 +259,7 @@ NS_ASSUME_NONNULL_BEGIN
            self.encryptedWithPassword == packet.encryptedWithPassword &&
            PGPEqualObjects(self.keyID, packet.keyID) &&
            PGPEqualObjects(self.encryptedMPI_M, packet.encryptedMPI_M) &&
-           PGPEqualObjects(self.encryptedMPI_G, packet.encryptedMPI_G) &&
-           PGPEqualObjects(self.encryptedMPI_Y, packet.encryptedMPI_Y);
+           PGPEqualObjects(self.encryptedMPI_G, packet.encryptedMPI_G);
 }
 
 - (NSUInteger)hash {
@@ -255,7 +271,6 @@ NS_ASSUME_NONNULL_BEGIN
     result = prime * result + self.encryptedWithPassword;
     result = prime * result + self.encryptedMPI_M.hash;
     result = prime * result + self.encryptedMPI_G.hash;
-    result = prime * result + self.encryptedMPI_Y.hash;
     return result;
 }
 
@@ -270,7 +285,6 @@ NS_ASSUME_NONNULL_BEGIN
     duplicate.keyID = self.keyID;
     duplicate.encryptedMPI_M = self.encryptedMPI_M;
     duplicate.encryptedMPI_G = self.encryptedMPI_G;
-    duplicate.encryptedMPI_Y = self.encryptedMPI_Y;
     return duplicate;
 }
 

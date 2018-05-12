@@ -774,19 +774,19 @@ NS_ASSUME_NONNULL_BEGIN
 
             self.signatureMPIs = @[mpiR, mpiS];
         } break;
-        case PGPPublicKeyAlgorithmElgamal: {
+        case PGPPublicKeyAlgorithmElgamalEncryptorSign: {
             // MPI of Elgamal (Diffie-Hellman) value g**k mod p.
-            PGPMPI *mpiG = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_G atPosition:position];
-            position = position + mpiG.packetLength;
+            PGPMPI *mpiR = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_R atPosition:position];
+            position = position + mpiR.packetLength;
 
             // MPI of Elgamal (Diffie-Hellman) value m * y**k mod p.
-            PGPMPI *mpiY = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_Y atPosition:position];
-            position = position + mpiY.packetLength;
+            PGPMPI *mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_S atPosition:position];
+            position = position + mpiS.packetLength;
 
-            self.signatureMPIs = @[mpiG, mpiY];
+            self.signatureMPIs = @[mpiR, mpiS];
         } break;
+        case PGPPublicKeyAlgorithmElgamal: // encrypt only. ignore.
         case PGPPublicKeyAlgorithmElliptic:
-        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
         case PGPPublicKeyAlgorithmDiffieHellman:
         case PGPPublicKeyAlgorithmPrivate1:
         case PGPPublicKeyAlgorithmPrivate2:
@@ -938,18 +938,32 @@ NS_ASSUME_NONNULL_BEGIN
 
             self.signatureMPIs = @[mpiR, mpiS];
         } break;
-        case PGPPublicKeyAlgorithmElgamal: {
+        case PGPPublicKeyAlgorithmElgamalEncryptorSign: {
             // MPI of Elgamal (Diffie-Hellman) value g**k mod p.
-            PGPMPI *mpiG = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_G atPosition:position];
-            position = position + mpiG.packetLength;
+            PGPMPI *mpiR = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_R atPosition:position];
+            position = position + mpiR.packetLength;
 
             // MPI of Elgamal (Diffie-Hellman) value m * y**k mod p.
-            PGPMPI *mpiY = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_Y atPosition:position];
-            position = position + mpiY.packetLength;
+            PGPMPI *mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_S atPosition:position];
+            position = position + mpiS.packetLength;
 
-            self.signatureMPIs = @[mpiG, mpiY];
+            self.signatureMPIs = @[mpiR, mpiS];
         } break;
-        default:
+        case PGPPublicKeyAlgorithmElgamal: // encrypt only. ignore.
+        case PGPPublicKeyAlgorithmElliptic:
+        case PGPPublicKeyAlgorithmDiffieHellman:
+        case PGPPublicKeyAlgorithmPrivate1:
+        case PGPPublicKeyAlgorithmPrivate2:
+        case PGPPublicKeyAlgorithmPrivate3:
+        case PGPPublicKeyAlgorithmPrivate4:
+        case PGPPublicKeyAlgorithmPrivate5:
+        case PGPPublicKeyAlgorithmPrivate6:
+        case PGPPublicKeyAlgorithmPrivate7:
+        case PGPPublicKeyAlgorithmPrivate8:
+        case PGPPublicKeyAlgorithmPrivate9:
+        case PGPPublicKeyAlgorithmPrivate10:
+        case PGPPublicKeyAlgorithmPrivate11:
+            // noop
             break;
     }
 
