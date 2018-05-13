@@ -35,7 +35,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)init {
     if (self = [super init]) {
         _version = 3;
-        _encryptedWithPassword = NO;
         _publicKeyAlgorithm = PGPPublicKeyAlgorithmRSA;
     }
     return self;
@@ -109,8 +108,6 @@ NS_ASSUME_NONNULL_BEGIN
             NSAssert(false, @"ESK has invalid format.");
             break;
     }
-
-    self.encryptedWithPassword = YES;
 
     return position;
 }
@@ -307,7 +304,6 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)isEqualToSessionKeyPacket:(PGPPublicKeyEncryptedSessionKeyPacket *)packet {
     return self.version == packet.version &&
            self.publicKeyAlgorithm == packet.publicKeyAlgorithm &&
-           self.encryptedWithPassword == packet.encryptedWithPassword &&
            PGPEqualObjects(self.keyID, packet.keyID) &&
            PGPEqualObjects(self.encryptedMPIs, packet.encryptedMPIs);
 }
@@ -318,7 +314,6 @@ NS_ASSUME_NONNULL_BEGIN
     result = prime * result + self.version;
     result = prime * result + self.publicKeyAlgorithm;
     result = prime * result + self.keyID.hash;
-    result = prime * result + self.encryptedWithPassword;
     result = prime * result + self.encryptedMPIs.hash;
     return result;
 }
@@ -330,7 +325,6 @@ NS_ASSUME_NONNULL_BEGIN
     PGPAssertClass(duplicate, PGPPublicKeyEncryptedSessionKeyPacket);
     duplicate.version = self.version;
     duplicate.publicKeyAlgorithm = self.publicKeyAlgorithm;
-    duplicate.encryptedWithPassword = self.encryptedWithPassword;
     duplicate.keyID = self.keyID;
     duplicate.encryptedMPIs = [[NSArray alloc] initWithArray:self.encryptedMPIs copyItems:YES];
     return duplicate;
