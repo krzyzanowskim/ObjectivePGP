@@ -1,3 +1,7 @@
+Version 0.12.0
+- Adds Elgamal support.
+- API: Exposes primaryUser for the key
+
 Version 0.11.0
 - Fixes signature verification bypass (CM-02-003)
 - Fixes dearmoring ignores unknown characters (CM-02-004)
