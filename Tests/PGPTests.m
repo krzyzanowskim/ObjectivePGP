@@ -472,4 +472,26 @@
     XCTAssertNil(decryptError, @"Decryption failed");
 }
 
+- (void)testElgamal2 {
+    let publicKeys = [PGPTestUtils readKeysFromPath:@"elgamal/elgamal-key2.asc"];
+    XCTAssertEqual(publicKeys.count, (NSUInteger)1);
+    let secretKeys = [PGPTestUtils readKeysFromPath:@"elgamal/elgamal-key2-secret.asc"];
+    XCTAssertEqual(secretKeys.count, (NSUInteger)1);
+
+    let messagePath = [PGPTestUtils pathToBundledFile:@"elgamal/elgamal-key2.asc"];
+    let plaintextData = [NSData dataWithContentsOfFile:messagePath];
+
+    NSError *encryptError;
+    NSData *encData = [ObjectivePGP encrypt:plaintextData addSignature:NO usingKeys:publicKeys passphraseForKey:nil error:&encryptError];
+    XCTAssertNotNil(encData);
+    XCTAssertNil(encryptError, @"Encryption failed");
+
+    NSError *decryptError;
+    let decData = [ObjectivePGP decrypt:encData andVerifySignature:NO usingKeys:secretKeys passphraseForKey:^NSString * _Nullable(PGPKey * _Nonnull key) {
+        return @"elgamal";
+    } error:&decryptError];
+    XCTAssertNotNil(decData);
+    XCTAssertNil(decryptError, @"Decryption failed");
+}
+
 @end
