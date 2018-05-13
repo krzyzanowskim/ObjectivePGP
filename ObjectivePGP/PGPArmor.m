@@ -24,10 +24,16 @@ NS_ASSUME_NONNULL_BEGIN
 
     // detect if armored, check for string -----BEGIN PGP
     NSString *str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    if (str && [str hasPrefix:@"-----BEGIN PGP"]) {
-        return YES;
+    if (!str) {
+        return NO;
     }
-    return NO;
+    NSString *stringValue;
+    let scanner = [NSScanner scannerWithString:str];
+    scanner.charactersToBeSkipped = nil;
+    if ([scanner scanUpToString:@"-----BEGIN PGP" intoString:&stringValue] && scanner.atEnd) {
+        return NO;
+    }
+    return YES;
 }
 
 + (NSString *)armored:(NSData *)data as:(PGPArmorType)type {
@@ -231,7 +237,7 @@ NS_ASSUME_NONNULL_BEGIN
         armoredString = [armoredString stringByReplacingOccurrencesOfString:@"\n" withString:@"\r\n"];
 
         let extractedBlocks = [[NSMutableArray<NSString *> alloc] init];
-        let regex = [[NSRegularExpression alloc] initWithPattern:@"(-----)(BEGIN|END)[ ](PGP)[A-Z ]*(-----)" options:NSRegularExpressionDotMatchesLineSeparators error:nil];
+        let regex = [[NSRegularExpression alloc] initWithPattern:@"-----(BEGIN|END) (PGP)[A-Z ]*-----" options:NSRegularExpressionDotMatchesLineSeparators error:nil];
         __block NSInteger offset = 0;
         [regex enumerateMatchesInString:armoredString options:NSMatchingReportCompletion range:NSMakeRange(0, armoredString.length) usingBlock:^(NSTextCheckingResult *_Nullable result, __unused NSMatchingFlags flags, __unused BOOL *stop) {
             let substring = [armoredString substringWithRange:result.range];
