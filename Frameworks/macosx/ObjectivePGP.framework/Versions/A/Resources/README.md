@@ -159,7 +159,7 @@ When convert manually, it is important to use right `PGPArmorType` value that de
 | ---------- | --------------------- |-------- |
 | Encrypted  | `PGPArmorMessage` | `Armor.armored(ObjectivePGP.encrypt(...), as: .message)` |
 | Decrypted  | `PGPArmorMessage` | `Armor.armored(ObjectivePGP.decrypt(...), as: .message)` |
-| Pubic key  | `PGPArmorTypePublic`  | `Armor.armored(key.export(), as: .publicKey)` |
+| Public key | `PGPArmorTypePublic`  | `Armor.armored(key.export(), as: .publicKey)` |
 | Secret key | `PGPArmorTypeSecret`  | `Armor.armored(key.export(), as: .secretKey)` |
 
 For any result of encryption the type is `PGPArmorMessage`
