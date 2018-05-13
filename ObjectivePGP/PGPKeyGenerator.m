@@ -59,12 +59,12 @@ NS_ASSUME_NONNULL_BEGIN
             publicKeyPacket.publicMPIs = @[keyMaterial.n, keyMaterial.e];
             secretKeyPacket.secretMPIs = @[keyMaterial.d, keyMaterial.p, keyMaterial.q, keyMaterial.u];
         } break;
-        case PGPPublicKeyAlgorithmDSA:
-        case PGPPublicKeyAlgorithmECDSA: {
+        case PGPPublicKeyAlgorithmDSA:{
             keyMaterial = [PGPDSA generateNewKeyMPIArray:bits];
             publicKeyPacket.publicMPIs = @[keyMaterial.p, keyMaterial.q, keyMaterial.g, keyMaterial.y];
             secretKeyPacket.secretMPIs = @[keyMaterial.x];
         } break;
+        case PGPPublicKeyAlgorithmECDSA:
         case PGPPublicKeyAlgorithmElgamal:
         case PGPPublicKeyAlgorithmElliptic:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:

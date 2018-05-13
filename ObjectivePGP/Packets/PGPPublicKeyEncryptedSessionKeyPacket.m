@@ -70,6 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
     let encryptedMPI_Data = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
 
     switch (self.publicKeyAlgorithm) {
+        case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSA: {
             // MPI of RSA encrypted value m**e mod n.
             let encryptedMPI_M = [[PGPMPI alloc] initWithMPIData:encryptedMPI_Data identifier:PGPMPI_M atPosition:0];
@@ -77,7 +78,7 @@ NS_ASSUME_NONNULL_BEGIN
 
             self.encryptedMPIs = @[encryptedMPI_M];
         } break;
-        case PGPPublicKeyAlgorithmDSA:
+        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
         case PGPPublicKeyAlgorithmElgamal: {
             // MPI of Elgamal (Diffie-Hellman) value g**k mod p.
             let MPI_G_K = [[PGPMPI alloc] initWithMPIData:encryptedMPI_Data identifier:PGPMPI_G atPosition:0];
@@ -88,11 +89,10 @@ NS_ASSUME_NONNULL_BEGIN
 
             self.encryptedMPIs = @[MPI_G_K, encryptedMPI_M];
         } break;
-        case PGPPublicKeyAlgorithmRSAEncryptOnly:
+        case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmRSASignOnly:
         case PGPPublicKeyAlgorithmElliptic:
         case PGPPublicKeyAlgorithmECDSA:
-        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
         case PGPPublicKeyAlgorithmDiffieHellman:
         case PGPPublicKeyAlgorithmPrivate1:
         case PGPPublicKeyAlgorithmPrivate2:

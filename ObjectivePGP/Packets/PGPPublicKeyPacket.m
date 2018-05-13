@@ -133,8 +133,7 @@ NS_ASSUME_NONNULL_BEGIN
 
             self.publicMPIs = @[mpiN, mpiE];
         } break;
-        case PGPPublicKeyAlgorithmDSA:
-        case PGPPublicKeyAlgorithmECDSA: {
+        case PGPPublicKeyAlgorithmDSA: {
             // - MPI of DSA prime p;
             let mpiP = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_P atPosition:position];
             position = position + mpiP.packetLength;
@@ -169,6 +168,7 @@ NS_ASSUME_NONNULL_BEGIN
 
             self.publicMPIs = @[mpiP, mpiG, mpiY];
         } break;
+        case PGPPublicKeyAlgorithmECDSA:
         case PGPPublicKeyAlgorithmElliptic:
         case PGPPublicKeyAlgorithmDiffieHellman:
         case PGPPublicKeyAlgorithmPrivate1:
