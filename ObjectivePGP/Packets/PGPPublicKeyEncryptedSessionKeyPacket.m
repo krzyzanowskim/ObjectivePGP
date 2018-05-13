@@ -10,6 +10,7 @@
 
 #import "PGPPublicKeyEncryptedSessionKeyPacket.h"
 #import "NSData+PGPUtils.h"
+#import "NSArray+PGPUtils.h"
 #import "PGPCryptoUtils.h"
 #import "PGPFingerprint.h"
 #import "PGPKeyID.h"
@@ -25,11 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface PGPPublicKeyEncryptedSessionKeyPacket ()
 
-// RSA
-@property (nonatomic, copy) PGPMPI *encryptedMPI_M;
-
-// Elgamal
-@property (nonatomic, copy) PGPMPI *encryptedMPI_G;
+@property (nonatomic, copy) NSArray <PGPMPI *> *encryptedMPIs;
 
 @end
 
@@ -74,20 +71,24 @@ NS_ASSUME_NONNULL_BEGIN
     let encryptedMPI_Data = [packetBody subdataWithRange:(NSRange){position, packetBody.length - position}];
 
     switch (self.publicKeyAlgorithm) {
-        case PGPPublicKeyAlgorithmRSA:
+        case PGPPublicKeyAlgorithmRSA: {
             // MPI of RSA encrypted value m**e mod n.
-            self.encryptedMPI_M = [[PGPMPI alloc] initWithMPIData:encryptedMPI_Data identifier:PGPMPI_M atPosition:0];
-            position = position + self.encryptedMPI_M.packetLength;
-            break;
+            let encryptedMPI_M = [[PGPMPI alloc] initWithMPIData:encryptedMPI_Data identifier:PGPMPI_M atPosition:0];
+            position = position + encryptedMPI_M.packetLength;
+
+            self.encryptedMPIs = @[encryptedMPI_M];
+        } break;
         case PGPPublicKeyAlgorithmDSA:
-        case PGPPublicKeyAlgorithmElgamal:
+        case PGPPublicKeyAlgorithmElgamal: {
             // MPI of Elgamal (Diffie-Hellman) value g**k mod p.
-            self.encryptedMPI_G = [[PGPMPI alloc] initWithMPIData:encryptedMPI_Data identifier:PGPMPI_G atPosition:0];
-            position = position + self.encryptedMPI_G.packetLength;
+            let MPI_G = [[PGPMPI alloc] initWithMPIData:encryptedMPI_Data identifier:PGPMPI_G atPosition:0];
+            position = position + MPI_G.packetLength;
             // MPI of Elgamal (Diffie-Hellman) value m * y**k mod p.
-            self.encryptedMPI_M = [[PGPMPI alloc] initWithMPIData:encryptedMPI_Data identifier:PGPMPI_M atPosition:0 + self.encryptedMPI_G.packetLength];
-            position = position + self.encryptedMPI_M.packetLength;
-            break;
+            let encryptedMPI_M = [[PGPMPI alloc] initWithMPIData:encryptedMPI_Data identifier:PGPMPI_M atPosition:0 + MPI_G.packetLength];
+            position = position + encryptedMPI_M.packetLength;
+
+            self.encryptedMPIs = @[MPI_G, encryptedMPI_M];
+        } break;
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly:
         case PGPPublicKeyAlgorithmElliptic:
@@ -114,7 +115,16 @@ NS_ASSUME_NONNULL_BEGIN
     return position;
 }
 
-// encryption update self.encryptedMPIPartData
+- (nullable PGPMPI *)encryptedMPI:(NSString *)identifier {
+    let mpi = [[self.encryptedMPIs pgp_objectsPassingTest:^BOOL(PGPMPI *obj, BOOL *stop) {
+        *stop = PGPEqualObjects(obj.identifier, identifier);
+        return *stop;
+    }] firstObject];
+
+    return mpi;
+}
+
+// encryption update self.encryptedMPIs
 - (BOOL)encrypt:(PGPPublicKeyPacket *)publicKeyPacket sessionKeyData:(NSData *)sessionKeyData sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm error:(NSError * __autoreleasing _Nullable *)error {
     let mData = [NSMutableData data];
 
@@ -137,7 +147,22 @@ NS_ASSUME_NONNULL_BEGIN
     checksum = CFSwapInt16HostToBig(checksum);
     [mData appendBytes:&checksum length:2];
 
-    let modulusMPI = [publicKeyPacket publicMPI:PGPMPI_N];
+
+    PGPMPI *modulusMPI = nil;
+    switch (self.publicKeyAlgorithm) {
+        case PGPPublicKeyAlgorithmRSAEncryptOnly:
+        case PGPPublicKeyAlgorithmRSASignOnly:
+        case PGPPublicKeyAlgorithmRSA:
+            modulusMPI = [publicKeyPacket publicMPI:PGPMPI_N];
+            break;
+        // case PGPPublicKeyAlgorithmDSA:
+        case PGPPublicKeyAlgorithmElgamal:
+            modulusMPI = [publicKeyPacket publicMPI:PGPMPI_P];
+            break;
+        default:
+            break;
+    }
+
     if (!modulusMPI) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Cannot encrypt. Missing required MPI. Invalid key."}];
@@ -146,11 +171,8 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     unsigned int k = (unsigned int)modulusMPI.bigNum.bytesCount;
-
-    let mEMEEncoded = [PGPPKCSEme encodeMessage:mData keyModulusLength:k error:error];
-    let encryptedData = [publicKeyPacket encryptData:mEMEEncoded withPublicKeyAlgorithm:self.publicKeyAlgorithm];
-    self.encryptedMPI_M = [[PGPMPI alloc] initWithData:encryptedData identifier:PGPMPI_M];
-    // TODO: Elgamal
+    let mEMEEncodedData = [PGPPKCSEme encodeMessage:mData keyModulusLength:k error:error];
+    self.encryptedMPIs = [publicKeyPacket encryptData:mEMEEncodedData withPublicKeyAlgorithm:self.publicKeyAlgorithm];
     return YES;
 }
 
@@ -166,7 +188,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // encrypted m value
-    let encryptedM = [self.encryptedMPI_M bodyData];
+    let encryptedM = [[self encryptedMPI:PGPMPI_M] bodyData];
     //TODO: Elgamal
 
     // decrypted m value
@@ -214,29 +236,58 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - PGPExportable
 
 - (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
-    //TODO: Elgamal
-    if (!self.encryptedMPI_M) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Cannot export session key packet"}];
-        }
-        return nil;
-    }
-
     let bodyData = [NSMutableData data];
 
     [bodyData appendBytes:&_version length:1]; // 1
     [bodyData appendData:[self.keyID export:nil]]; // 8
     [bodyData appendBytes:&_publicKeyAlgorithm length:1]; // 1
 
-    // TODO: Elgamal
-    let exportedMPI = [self.encryptedMPI_M exportMPI];
-    if (!exportedMPI) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Cannot export session key packet"}];
+    switch (self.publicKeyAlgorithm) {
+        case PGPPublicKeyAlgorithmRSA: {
+            let exportedMPIData = [[self encryptedMPI:PGPMPI_M] exportMPI];
+            if (!exportedMPIData) {
+                if (error) {
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Cannot export session key packet"}];
+                }
+                return nil;
+            }
+            [bodyData appendData:exportedMPIData]; // m
         }
-        return nil;
+        break;
+        case PGPPublicKeyAlgorithmElgamal: {
+            let exportedMPI_GData = [[self encryptedMPI:PGPMPI_G] exportMPI];
+            let exportedMPI_MData = [[self encryptedMPI:PGPMPI_M] exportMPI];
+            if (!exportedMPI_GData || !exportedMPI_MData) {
+                if (error) {
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Cannot export session key packet"}];
+                }
+                return nil;
+            }
+            [bodyData appendData:exportedMPI_GData]; // g
+            [bodyData appendData:exportedMPI_MData]; // m
+        }
+        break;
+        case PGPPublicKeyAlgorithmDSA:
+        case PGPPublicKeyAlgorithmRSAEncryptOnly:
+        case PGPPublicKeyAlgorithmRSASignOnly:
+        case PGPPublicKeyAlgorithmElliptic:
+        case PGPPublicKeyAlgorithmECDSA:
+        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
+        case PGPPublicKeyAlgorithmDiffieHellman:
+        case PGPPublicKeyAlgorithmPrivate1:
+        case PGPPublicKeyAlgorithmPrivate2:
+        case PGPPublicKeyAlgorithmPrivate3:
+        case PGPPublicKeyAlgorithmPrivate4:
+        case PGPPublicKeyAlgorithmPrivate5:
+        case PGPPublicKeyAlgorithmPrivate6:
+        case PGPPublicKeyAlgorithmPrivate7:
+        case PGPPublicKeyAlgorithmPrivate8:
+        case PGPPublicKeyAlgorithmPrivate9:
+        case PGPPublicKeyAlgorithmPrivate10:
+        case PGPPublicKeyAlgorithmPrivate11:
+            NSAssert(false, @"Cannot export ESK.");
+            break;
     }
-    [bodyData appendData:exportedMPI]; // m
 
     return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
         return bodyData;
@@ -258,8 +309,7 @@ NS_ASSUME_NONNULL_BEGIN
            self.publicKeyAlgorithm == packet.publicKeyAlgorithm &&
            self.encryptedWithPassword == packet.encryptedWithPassword &&
            PGPEqualObjects(self.keyID, packet.keyID) &&
-           PGPEqualObjects(self.encryptedMPI_M, packet.encryptedMPI_M) &&
-           PGPEqualObjects(self.encryptedMPI_G, packet.encryptedMPI_G);
+           PGPEqualObjects(self.encryptedMPIs, packet.encryptedMPIs);
 }
 
 - (NSUInteger)hash {
@@ -269,8 +319,7 @@ NS_ASSUME_NONNULL_BEGIN
     result = prime * result + self.publicKeyAlgorithm;
     result = prime * result + self.keyID.hash;
     result = prime * result + self.encryptedWithPassword;
-    result = prime * result + self.encryptedMPI_M.hash;
-    result = prime * result + self.encryptedMPI_G.hash;
+    result = prime * result + self.encryptedMPIs.hash;
     return result;
 }
 
@@ -283,8 +332,7 @@ NS_ASSUME_NONNULL_BEGIN
     duplicate.publicKeyAlgorithm = self.publicKeyAlgorithm;
     duplicate.encryptedWithPassword = self.encryptedWithPassword;
     duplicate.keyID = self.keyID;
-    duplicate.encryptedMPI_M = self.encryptedMPI_M;
-    duplicate.encryptedMPI_G = self.encryptedMPI_G;
+    duplicate.encryptedMPIs = [[NSArray alloc] initWithArray:self.encryptedMPIs copyItems:YES];
     return duplicate;
 }
 

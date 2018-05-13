@@ -218,9 +218,11 @@
 
     NSError *encryptError;
     let encryptedMessage = [ObjectivePGP encrypt:message addSignature:NO usingKeys:publicKeys passphraseForKey:nil error:&encryptError];
+    XCTAssertNil(encryptError);
 
     NSError *decryptError1;
     let decryptedMessage1 = [ObjectivePGP decrypt:encryptedMessage andVerifySignature:YES usingKeys:keyring.keys passphraseForKey:nil error:&decryptError1];
+    XCTAssertNotNil(decryptError1);
     XCTAssertEqualObjects(decryptedMessage1, nil);
 
 
@@ -448,6 +450,21 @@
     } error:&error2];
     XCTAssertNotNil(signedData2);
     XCTAssertNil(error2);
+}
+
+- (void)testElgamal1 {
+    let keys = [PGPTestUtils readKeysFromPath:@"elgamal/elgamal-key1.asc"];
+    XCTAssertEqual(keys.count, (NSUInteger)1);
+
+    let messagePath = [PGPTestUtils pathToBundledFile:@"elgamal/elgamal-key1.asc"];
+    let plaintextData = [NSData dataWithContentsOfFile:messagePath];
+
+    NSError *encryptError;
+    NSData *encData = [ObjectivePGP encrypt:plaintextData addSignature:NO usingKeys:keys passphraseForKey:nil error:&encryptError];
+    XCTAssertNotNil(encData);
+    XCTAssertNil(encryptError, @"Encryption failed");
+
+    // [encData writeToFile:@"/Users/marcinkrzyzanowski/Devel/ObjectivePGP/Tests/testfiles.bundle/elgamal/encrypted.asc" atomically:YES];
 }
 
 

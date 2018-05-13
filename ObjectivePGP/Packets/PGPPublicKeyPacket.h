@@ -13,7 +13,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class PGPMPI;
+@class PGPMPI, PGPBigNum;
 
 @interface PGPPublicKeyPacket : PGPPacket <NSCopying, PGPExportable>
 
@@ -31,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSData *)buildKeyBodyData:(BOOL)forceV4;
 
 - (nullable PGPMPI *)publicMPI:(NSString *)identifier;
-- (nullable NSData *)encryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm;
+- (nullable NSArray<PGPMPI *> *)encryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm;
 
 @end
 

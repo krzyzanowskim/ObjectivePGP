@@ -146,6 +146,8 @@
 		75F6BAAF1F8AF2CC00A0B885 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 758475E1195AF866003953B2 /* README.md */; };
 		75F74E481F4383C50054231C /* PGPDSA.h in Headers */ = {isa = PBXBuildFile; fileRef = 75F74E441F4382FF0054231C /* PGPDSA.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		75F74E4A1F4383F90054231C /* PGPDSA.m in Sources */ = {isa = PBXBuildFile; fileRef = 75F74E451F4382FF0054231C /* PGPDSA.m */; };
+		75FA4A4020A791F200A453EC /* PGPElgamal.h in Headers */ = {isa = PBXBuildFile; fileRef = 75FA4A3E20A791F200A453EC /* PGPElgamal.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		75FA4A4120A791F200A453EC /* PGPElgamal.m in Sources */ = {isa = PBXBuildFile; fileRef = 75FA4A3F20A791F200A453EC /* PGPElgamal.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -311,6 +313,8 @@
 		75F6BAAD1F8AF28100A0B885 /* LICENSE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE.txt; sourceTree = "<group>"; };
 		75F74E441F4382FF0054231C /* PGPDSA.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPDSA.h; sourceTree = "<group>"; };
 		75F74E451F4382FF0054231C /* PGPDSA.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PGPDSA.m; sourceTree = "<group>"; };
+		75FA4A3E20A791F200A453EC /* PGPElgamal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPElgamal.h; sourceTree = "<group>"; };
+		75FA4A3F20A791F200A453EC /* PGPElgamal.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PGPElgamal.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -428,6 +432,8 @@
 				75F74E451F4382FF0054231C /* PGPDSA.m */,
 				75BF43E41F5076B9004334DE /* PGPKeyMaterial.h */,
 				75BF43E51F5076B9004334DE /* PGPKeyMaterial.m */,
+				75FA4A3E20A791F200A453EC /* PGPElgamal.h */,
+				75FA4A3F20A791F200A453EC /* PGPElgamal.m */,
 			);
 			path = CryptoBox;
 			sourceTree = "<group>";
@@ -439,7 +445,6 @@
 				75F6BAAD1F8AF28100A0B885 /* LICENSE.txt */,
 				75BAFAC31F004E6000A956FC /* Config */,
 				756299BA1914DE1A00C5AD3B /* ObjectivePGP */,
-				75E2F34C1F9E53C5007DAE51 /* vendor */,
 				756299CE1914DE1A00C5AD3B /* Tests */,
 				756299B71914DE1A00C5AD3B /* Frameworks */,
 				756299B61914DE1A00C5AD3B /* Products */,
@@ -467,7 +472,7 @@
 				7547A6BF1F0068FB002C2145 /* Security.framework */,
 				756299B81914DE1A00C5AD3B /* Foundation.framework */,
 			);
-			name = Frameworks;
+			path = Frameworks;
 			sourceTree = "<group>";
 		};
 		756299BA1914DE1A00C5AD3B /* ObjectivePGP */ = {
@@ -583,13 +588,6 @@
 			path = Config;
 			sourceTree = "<group>";
 		};
-		75E2F34C1F9E53C5007DAE51 /* vendor */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = vendor;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -613,6 +611,7 @@
 				7537A6CB1F0D739A00892829 /* PGPFingerprint.h in Headers */,
 				7537A6CC1F0D739A00892829 /* PGPS2K.h in Headers */,
 				7537A6CD1F0D739A00892829 /* PGPKeyID.h in Headers */,
+				75FA4A4020A791F200A453EC /* PGPElgamal.h in Headers */,
 				7537A6CE1F0D739A00892829 /* PGPUser.h in Headers */,
 				7537A6CF1F0D739A00892829 /* PGPPartialSubKey.h in Headers */,
 				7561B68E1F65E121001D2AD6 /* NSArray+PGPUtils.h in Headers */,
@@ -821,6 +820,7 @@
 				751373F11F65382C0067A343 /* NSMutableData+PGPUtils.m in Sources */,
 				75C501E71F1233A500FEC874 /* PGPRSA.m in Sources */,
 				756BCC90208A837F001A8EC6 /* PGPMarkerPacket.m in Sources */,
+				75FA4A4120A791F200A453EC /* PGPElgamal.m in Sources */,
 				751373DB1F6537490067A343 /* PGPSignatureSubpacketCreationTime.m in Sources */,
 				751373E11F6537490067A343 /* PGPSymmetricallyEncryptedIntegrityProtectedDataPacket.m in Sources */,
 				751373D91F6537490067A343 /* PGPSignatureSubpacket.m in Sources */,

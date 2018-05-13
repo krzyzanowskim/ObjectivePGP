@@ -9,8 +9,10 @@
 #import "PGPPublicKeyPacket+Private.h"
 #import "PGPPacket+Private.h"
 #import "NSData+PGPUtils.h"
+#import "NSArray+PGPUtils.h"
 #import "PGPMPI.h"
 #import "PGPRSA.h"
+#import "PGPElgamal.h"
 #import "PGPTypes.h"
 #import "PGPFoundation.h"
 #import "NSMutableData+PGPUtils.h"
@@ -44,24 +46,20 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (nullable PGPMPI *)publicMPI:(NSString *)identifier {
-    for (PGPMPI *mpi in self.publicMPIs) {
-        if (PGPEqualObjects(mpi.identifier, identifier)) {
-            return mpi;
-        }
-    }
+    let mpi = [[self.publicMPIs pgp_objectsPassingTest:^BOOL(PGPMPI *obj, BOOL *stop) {
+        *stop = PGPEqualObjects(obj.identifier, identifier);
+        return *stop;
+    }] firstObject];
 
-    return nil;
+    return mpi;
 }
 
 #pragma mark - Properties
 
 - (NSUInteger)keySize {
-    for (PGPMPI *mpi in self.publicMPIs) {
-        if (PGPEqualObjects(mpi.identifier, PGPMPI_N)) {
-            return (mpi.bigNum.bitsCount + 7) / 8; // ks
-        }
-    }
-    return 0;
+    //TODO: Elgamal, how about elgamal?
+    let mpi = [self publicMPI:PGPMPI_N];
+    return (mpi.bigNum.bitsCount + 7) / 8; // ks;
 }
 
 /**
@@ -257,17 +255,21 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Encrypt & Decrypt
 
 // data is mEMEEncoded
-- (nullable NSData *)encryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm {
+- (nullable NSArray<PGPMPI *> *)encryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm {
     switch (publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly: {
-            // return ecnrypted m
-            return [PGPRSA publicEncrypt:data withPublicKeyPacket:self];
+            // return encrypted m
+            let encryptedMData = [PGPRSA publicEncrypt:data withPublicKeyPacket:self];
+            let m = [[PGPMPI alloc] initWithData:encryptedMData identifier:PGPMPI_M];
+            return @[m];
         } break;
         case PGPPublicKeyAlgorithmElgamal: {
-            //TODO: Elgamal
-            // return [PGPElgamal publicEncrypt:data withPublicKeyPacket:self];
+            let bigNums = [PGPElgamal publicEncrypt:data withPublicKeyPacket:self];
+            let g_k = [[PGPMPI alloc] initWithBigNum:bigNums[0] identifier:PGPMPI_G];
+            let m = [[PGPMPI alloc] initWithBigNum:bigNums[1] identifier:PGPMPI_M];
+            return @[g_k, m];
         } break;
         case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmElliptic:

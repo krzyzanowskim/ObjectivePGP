@@ -47,6 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     uint8_t *encrypted_em = calloc((size_t)BN_num_bytes(rsa->n) & SIZE_T_MAX, 1);
     pgp_defer { free(encrypted_em); };
+
     int em_len = RSA_public_encrypt(toEncrypt.length & INT_MAX, toEncrypt.bytes, encrypted_em, rsa, RSA_NO_PADDING);
     if (em_len == -1 || em_len != (publicKeyPacket.keySize & INT_MAX)) {
         ERR_load_crypto_strings();
@@ -59,11 +60,11 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    // decrypted encoded EME
-    NSData *encryptedEm = [NSData dataWithBytes:encrypted_em length:em_len];
+     // encrypted encoded EME
+     let encryptedEm = [NSData dataWithBytes:encrypted_em length:em_len];
 
-    rsa->n = rsa->e = NULL;
-    return encryptedEm;
+     rsa->n = rsa->e = NULL;
+     return encryptedEm;
 }
 
 // decrypt bytes
