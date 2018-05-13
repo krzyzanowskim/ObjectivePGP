@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readwrite) PGPSymmetricAlgorithm symmetricAlgorithm;
 @property (nonatomic, copy, nullable, readwrite) NSData *ivData;
 @property (nonatomic, copy) NSArray<PGPMPI *> *secretMPIs; // decrypted MPI
-@property (nonatomic, nullable, copy) NSData *encryptedMPIPartData; // after decrypt -> secretMPIArray
+@property (nonatomic, nullable, copy) NSData *encryptedMPIPartData; // after decrypt -> secretMPIs
 
 @end
 

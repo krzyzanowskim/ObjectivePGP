@@ -285,7 +285,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmPrivate9:
         case PGPPublicKeyAlgorithmPrivate10:
         case PGPPublicKeyAlgorithmPrivate11:
-            NSAssert(false, @"Cannot export ESK.");
+            NSAssert(false, @"Cannot export ESK. Invalid packet.");
             break;
     }
 

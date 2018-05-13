@@ -430,7 +430,7 @@ NS_ASSUME_NONNULL_BEGIN
     duplicate.s2k = self.s2k;
     duplicate.symmetricAlgorithm = self.symmetricAlgorithm;
     duplicate.ivData = self.ivData;
-    duplicate.secretMPIs = self.secretMPIs;
+    duplicate.secretMPIs = [[NSArray alloc] initWithArray:self.secretMPIs copyItems:YES];
     duplicate.encryptedMPIPartData = self.encryptedMPIPartData;;
     duplicate.wasDecrypted = self.wasDecrypted;
     return duplicate;
