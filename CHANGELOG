@@ -1,5 +1,6 @@
 Version 0.12.0
 - Adds Elgamal support.
+- Improves reading armored messages.
 - API: Exposes primaryUser for the key.
 
 Version 0.11.0

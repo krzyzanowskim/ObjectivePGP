@@ -470,9 +470,6 @@
     let decData = [ObjectivePGP decrypt:encData andVerifySignature:NO usingKeys:secretKeys passphraseForKey:nil error:&decryptError];
     XCTAssertNotNil(decData);
     XCTAssertNil(decryptError, @"Decryption failed");
-
-    // [encData writeToFile:@"/Users/marcinkrzyzanowski/Devel/ObjectivePGP/Tests/testfiles.bundle/elgamal/encrypted.asc" atomically:YES];
 }
-
 
 @end
