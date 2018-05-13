@@ -65,9 +65,43 @@ static int decide_k_bits(int p_bits) {
     BN_clear_free(yk);
     BN_clear_free(k);
     BN_clear_free(g);
+    BN_clear_free(p);
+    BN_clear_free(y);
+    BN_clear_free(m);
 
     return @[g_k, encm];
 }
+
++ (nullable NSData *)privateDecrypt:(NSData *)toDecrypt withSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket gk:(PGPMPI *)gkMPI {
+    let c2 = BN_bin2bn(toDecrypt.bytes, toDecrypt.length & INT_MAX, NULL);
+    let c1 = BN_dup([[gkMPI bigNum] bignumRef]);
+    let p = BN_dup([[[secretKeyPacket publicMPI:PGPMPI_P] bigNum] bignumRef]);
+    let x = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_X] bigNum] bignumRef]);
+
+
+    let c1x = BN_new();
+    let bndiv = BN_new();
+    let m = BN_new();
+    let tmp = BN_CTX_new();
+
+    BN_mod_exp(c1x, c1, x, p, tmp);
+    BN_mod_inverse(bndiv, c1x, p, tmp);
+    BN_mod_mul(m, c2, bndiv, p, tmp);
+
+    let decm = [[PGPBigNum alloc] initWithBIGNUM:m];
+
+    BN_CTX_free(tmp);
+    BN_clear_free(c1x);
+    BN_clear_free(bndiv);
+    BN_clear_free(m);
+    BN_clear_free(p);
+    BN_clear_free(x);
+    BN_clear_free(c1);
+    BN_clear_free(c2);
+
+    return [decm data];
+}
+
 
 @end
 

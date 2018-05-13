@@ -24,6 +24,7 @@ PGP_EMPTY_INIT_UNAVAILABLE;
 
 // encryption
 + (nullable NSArray<PGPBigNum *> *)publicEncrypt:(NSData *)toEncrypt withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket;
++ (nullable NSData *)privateDecrypt:(NSData *)toDecrypt withSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket gk:(PGPMPI *)gkMPI;
 
 
 @end

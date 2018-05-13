@@ -98,7 +98,7 @@ NS_ASSUME_NONNULL_BEGIN
     let plaintextData = literalPacket.literalRawData;
     if (!plaintextData) {
         if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Nothing to decrypt." }];
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Nothing to decrypt or missing private key." }];
         }
         return nil;
     }

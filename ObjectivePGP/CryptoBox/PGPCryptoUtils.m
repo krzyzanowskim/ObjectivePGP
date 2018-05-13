@@ -9,8 +9,11 @@
 #import "PGPCryptoUtils.h"
 #import "PGPRSA.h"
 #import "PGPDSA.h"
+#import "PGPElgamal.h"
+#import "NSArray+PGPUtils.h"
 #import "PGPSecretKeyPacket.h"
 #import "PGPMacros+Private.h"
+#import "PGPLogging.h"
 
 #import <CommonCrypto/CommonCrypto.h>
 #import <Security/Security.h>
@@ -104,22 +107,34 @@ NS_ASSUME_NONNULL_BEGIN
     return data;
 }
 
-+ (nullable NSData *)decrypt:(NSData *)data usingSecretKeyPacket:(PGPSecretKeyPacket *)keyPacket {
++ (nullable NSData *)decrypt:(NSData *)data usingSecretKeyPacket:(PGPSecretKeyPacket *)keyPacket encryptedMPIs:(NSArray <PGPMPI *> *)encryptedMPIs {
     PGPAssertClass(data, NSData);
 
     switch (keyPacket.publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
-        case PGPPublicKeyAlgorithmRSASignOnly: {
+        case PGPPublicKeyAlgorithmRSASignOnly:
             // return decrypted m
             return [PGPRSA privateDecrypt:data withSecretKeyPacket:keyPacket];
-        } break;
-        case PGPPublicKeyAlgorithmElgamal:
-            //TODO: Elgamal
+        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
+        case PGPPublicKeyAlgorithmElgamal: {
+            // return decrypted m
+            // encryptedMPIs has g^k as PGPMPI_G
+            let g_k_mpi = [[encryptedMPIs pgp_objectsPassingTest:^BOOL(PGPMPI *obj, BOOL *stop) {
+                *stop = [obj.identifier isEqual:PGPMPI_G];
+                return *stop;
+            }] firstObject];
+
+            if (!g_k_mpi) {
+                PGPLogWarning(@"Invalid key, can't decrypt. Missing g^k.");
+                return nil;
+            }
+
+            return [PGPElgamal privateDecrypt:data withSecretKeyPacket:keyPacket gk:g_k_mpi];
+       } break;
         case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmElliptic:
         case PGPPublicKeyAlgorithmECDSA:
-        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
         case PGPPublicKeyAlgorithmDiffieHellman:
         case PGPPublicKeyAlgorithmPrivate1:
         case PGPPublicKeyAlgorithmPrivate2:

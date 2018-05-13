@@ -80,13 +80,13 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmElgamal: {
             // MPI of Elgamal (Diffie-Hellman) value g**k mod p.
-            let MPI_G = [[PGPMPI alloc] initWithMPIData:encryptedMPI_Data identifier:PGPMPI_G atPosition:0];
-            position = position + MPI_G.packetLength;
+            let MPI_G_K = [[PGPMPI alloc] initWithMPIData:encryptedMPI_Data identifier:PGPMPI_G atPosition:0];
+            position = position + MPI_G_K.packetLength;
             // MPI of Elgamal (Diffie-Hellman) value m * y**k mod p.
-            let encryptedMPI_M = [[PGPMPI alloc] initWithMPIData:encryptedMPI_Data identifier:PGPMPI_M atPosition:0 + MPI_G.packetLength];
+            let encryptedMPI_M = [[PGPMPI alloc] initWithMPIData:encryptedMPI_Data identifier:PGPMPI_M atPosition:0 + MPI_G_K.packetLength];
             position = position + encryptedMPI_M.packetLength;
 
-            self.encryptedMPIs = @[MPI_G, encryptedMPI_M];
+            self.encryptedMPIs = @[MPI_G_K, encryptedMPI_M];
         } break;
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly:
@@ -186,10 +186,8 @@ NS_ASSUME_NONNULL_BEGIN
 
     // encrypted m value
     let encryptedM = [[self encryptedMPI:PGPMPI_M] bodyData];
-    //TODO: Elgamal
-
     // decrypted m value
-    let mEMEEncoded = [PGPCryptoUtils decrypt:encryptedM usingSecretKeyPacket:secretKeyPacket];
+    let mEMEEncoded = [PGPCryptoUtils decrypt:encryptedM usingSecretKeyPacket:secretKeyPacket encryptedMPIs:self.encryptedMPIs];
     let mData = [PGPPKCSEme decodeMessage:mEMEEncoded error:error];
     if (error && *error) {
         return nil;
