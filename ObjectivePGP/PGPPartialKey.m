@@ -284,6 +284,13 @@ NS_ASSUME_NONNULL_BEGIN
         }
     }
 
+    // v3 keys MUST NOT have subkeys
+    if (PGPCast(self.primaryKeyPacket, PGPPublicKeyPacket).version >= 0x04) {
+        // 5.5.1.2. If not specified otherwise,
+        // By convention, the subkeys provide encryption services.
+        return PGPCast(self.subKeys.firstObject.primaryKeyPacket, PGPPublicSubKeyPacket);;
+    }
+
     if (error) {
         *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Encryption key not found" }];
     }

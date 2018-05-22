@@ -197,7 +197,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)canBeUsedToEncrypt {
     BOOL result = NO;
-    PGPSignatureSubpacket *subpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeKeyFlags] firstObject];
+    let subpacket = PGPCast([[self subpacketsOfType:PGPSignatureSubpacketTypeKeyFlags] firstObject], PGPSignatureSubpacket);
     NSArray<NSNumber *> * _Nullable flags = PGPCast(subpacket.value, NSArray);
     if ([flags containsObject:@(PGPSignatureFlagAllowEncryptStorage)] || [flags containsObject:@(PGPSignatureFlagAllowEncryptCommunications)]) {
         result = YES;

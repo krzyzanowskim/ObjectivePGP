@@ -494,4 +494,14 @@
     XCTAssertNil(decryptError, @"Decryption failed");
 }
 
+- (void)testElgamal3 {
+    // Missing keys flags. Use conventions.
+    let keys = [PGPTestUtils readKeysFromPath:@"elgamal/E5ED9F41.asc"];
+    XCTAssertEqual(keys.count, (NSUInteger)1);
+    NSError *error = nil;
+    NSData *encrypted = [ObjectivePGP encrypt:NSData.new addSignature:false usingKeys:keys passphraseForKey:nil error:&error];
+    XCTAssertNil(error);
+    XCTAssertNotNil(encrypted);
+}
+
 @end
