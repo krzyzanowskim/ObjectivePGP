@@ -759,29 +759,29 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmRSASignOnly: {
             // multiprecision integer (MPI) of RSA signature value m**d mod n.
             // MPI of RSA public modulus n;
-            PGPMPI *mpiN = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_N atPosition:position];
+            let mpiN = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_N atPosition:position];
             position = position + mpiN.packetLength;
 
             self.signatureMPIs = @[mpiN];
         } break;
         case PGPPublicKeyAlgorithmDSA: {
             // MPI of DSA value r.
-            PGPMPI *mpiR = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_R atPosition:position];
+            let mpiR = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_R atPosition:position];
             position = position + mpiR.packetLength;
 
             // MPI of DSA value s.
-            PGPMPI *mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_S atPosition:position];
+            let mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_S atPosition:position];
             position = position + mpiS.packetLength;
 
             self.signatureMPIs = @[mpiR, mpiS];
         } break;
         case PGPPublicKeyAlgorithmElgamalEncryptorSign: {
             // MPI of Elgamal (Diffie-Hellman) value g**k mod p.
-            PGPMPI *mpiR = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_R atPosition:position];
+            let mpiR = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_R atPosition:position];
             position = position + mpiR.packetLength;
 
             // MPI of Elgamal (Diffie-Hellman) value m * y**k mod p.
-            PGPMPI *mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_S atPosition:position];
+            let mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_S atPosition:position];
             position = position + mpiS.packetLength;
 
             self.signatureMPIs = @[mpiR, mpiS];
