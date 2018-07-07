@@ -9,13 +9,13 @@ Pod::Spec.new do |s|
 
   s.authors      = {'Marcin Krzyżanowski' => 'marcin@krzyzanowskim.com'}
   s.social_media_url   = "https://twitter.com/krzyzanowskim"
-  
+
   s.ios.deployment_target = '8.0'
   s.osx.deployment_target = '10.9'
-  
+
   s.ios.vendored_frameworks = 'Frameworks/ios/ObjectivePGP.framework'
-  s.osx.vendored_frameworks = 'Frameworks/macosx/ObjectivePGP.framework'  
-  
+  s.osx.vendored_frameworks = 'Frameworks/macosx/ObjectivePGP.framework'
+
   s.pod_target_xcconfig = { 'OTHER_LDFLAGS' => '-lObjC' }
 
   s.weak_frameworks = 'Security'
