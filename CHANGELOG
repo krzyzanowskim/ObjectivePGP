@@ -1,5 +1,6 @@
 Version 0.12.1
 - By convention, the subkeys provide encryption services if flags doesn't specify otherwise.
+- Fixes multiple users keys certificates support. Fixes #113
 
 Version 0.12.0
 - Adds Elgamal support.
@@ -124,7 +125,7 @@ Version 0.5
 - ZIP compression support
 - Signature Verification: find the correct key by the issuerKeyID
 - Harden Signature verification
-- Support integrity protected status 
+- Support integrity protected status
 
 Version 0.4.2
 - Fix length header for some double-octet length

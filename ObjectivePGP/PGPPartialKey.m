@@ -106,9 +106,10 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)loadPackets:(NSArray<PGPPacket *> *)packets {
-    // based on packetlist2structure
     PGPKeyID *primaryKeyID;
     PGPPartialSubKey *subKey;
+
+    // Current "context" user. The last parsed user packet.
     PGPUser *user;
 
     for (PGPPacket *packet in packets) {
@@ -128,10 +129,8 @@ NS_ASSUME_NONNULL_BEGIN
                 user.userAttribute = PGPCast(packet, PGPUserAttributePacket);
                 break;
             case PGPUserIDPacketTag: {
-                let parsedUser = [[PGPUser alloc] initWithUserIDPacket:(PGPUserIDPacket *)packet];
-                if (!user) {
-                    user = parsedUser;
-                }
+                let parsedUser = [[PGPUser alloc] initWithUserIDPacket:PGPCast(packet, PGPUserIDPacket)];
+                user = parsedUser;
                 self.users = [self.users arrayByAddingObject:parsedUser];
             } break;
             case PGPPublicSubkeyPacketTag:

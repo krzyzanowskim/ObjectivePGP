@@ -429,6 +429,29 @@
     [ObjectivePGP encrypt:plaintextData addSignature:NO usingKeys:@[key] passphraseForKey:nil error:nil];
 }
 
+- (void)testIssue113PrimaryUserID {
+    // KeyMultipleUserIDsPublicUserID1Primary.asc
+    let pubKey1 = [[PGPTestUtils readKeysFromPath:@"issue113/KeyMultipleUserIDsPublicUserID1Primary.asc"] firstObject];
+    XCTAssertNotNil(pubKey1);
+    let pubKey1PrimaryUser = pubKey1.publicKey.primaryUser;
+    XCTAssertEqualObjects(pubKey1PrimaryUser.userID, @"UserID1 <userid1@key.de>");
+
+    let pubKey2 = [[PGPTestUtils readKeysFromPath:@"issue113/KeyMultipleUserIDsPublicUserID2Primary.asc"] firstObject];
+    XCTAssertNotNil(pubKey2);
+    let pubKey2PrimaryUser = pubKey2.publicKey.primaryUser;
+    XCTAssertEqualObjects(pubKey2PrimaryUser.userID, @"UserID2 <userid2@key.de>");
+
+    let secKey1 = [[PGPTestUtils readKeysFromPath:@"issue113/KeyMultipleUserIDsSecretUserID1Primary.asc"] firstObject];
+    XCTAssertNotNil(secKey1);
+    let secKey1PrimaryUser = secKey1.publicKey.primaryUser;
+    XCTAssertEqualObjects(secKey1PrimaryUser.userID, @"UserID1 <userid1@key.de>");
+
+    let secKey2 = [[PGPTestUtils readKeysFromPath:@"issue113/KeyMultipleUserIDsSecretUserID2Primary.asc"] firstObject];
+    XCTAssertNotNil(secKey2);
+    let secKey2PrimaryUser = secKey2.publicKey.primaryUser;
+    XCTAssertEqualObjects(secKey2PrimaryUser.userID, @"UserID2 <userid2@key.de>");
+}
+
 - (void)testDSAKeyIssue106 {
     let keys = [PGPTestUtils readKeysFromPath:@"issue106/keys.asc"];
     XCTAssertEqual(keys.count, (NSUInteger)1);

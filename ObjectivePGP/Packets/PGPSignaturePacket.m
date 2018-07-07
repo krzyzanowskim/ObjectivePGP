@@ -176,7 +176,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)isPrimaryUserID {
     PGPSignatureSubpacket *primaryUserIDSubpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypePrimaryUserID] firstObject];
-    return [(NSNumber *)primaryUserIDSubpacket.value boolValue];
+    return PGPCast(primaryUserIDSubpacket.value, NSNumber).boolValue;
 }
 
 - (BOOL)canBeUsedToSign {
