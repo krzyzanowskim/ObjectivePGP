@@ -10,6 +10,10 @@
 
 Here is the [blog post](http://blog.krzyzanowskim.com/2014/07/31/short-story-about-openpgp-for-ios-and-os-x-objectivepgp/) story.
 
+## How do I get involved?
+
+You want to help, great! Go ahead and fork our repo, make your changes and send us a pull request.
+
 ## Contribution
 
 You are welcome to contribute. See [CONTRIBUTING.md](https://github.com/krzyzanowskim/ObjectivePGP/blob/master/CONTRIBUTING.md)  
@@ -205,6 +209,10 @@ See [CHANGELOG](./CHANGELOG)
 Known limitations:
 
 - Cleartext signature.
+
+## Security Audit
+
+To date the ObjectivePGP code base has undergone a complete security audit from [Cure53](https://cure53.de/).
 
 ## The license
 
