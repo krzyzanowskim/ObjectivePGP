@@ -401,7 +401,8 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmPrivate9:
         case PGPPublicKeyAlgorithmPrivate10:
         case PGPPublicKeyAlgorithmPrivate11:
-            [NSException raise:@"PGPNotSupported" format:@"Algorithm not supported"];
+            PGPLogWarning(@"Algorithm %@ is not supported.", @(signingKeyPacket.publicKeyAlgorithm));
+            return NO;
         break;
     }
 
@@ -523,7 +524,11 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmPrivate9:
         case PGPPublicKeyAlgorithmPrivate10:
         case PGPPublicKeyAlgorithmPrivate11:
-            [NSException raise:@"PGPNotSupported" format:@"Algorithm not supported"];
+            PGPLogWarning(@"Algorithm %@ is not supported.", @(self.publicKeyAlgorithm));
+            if (error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Algorithm not supported" }];
+            }
+            return NO;
         break;
     }
 

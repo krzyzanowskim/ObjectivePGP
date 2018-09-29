@@ -147,7 +147,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmPrivate9:
         case PGPPublicKeyAlgorithmPrivate10:
         case PGPPublicKeyAlgorithmPrivate11:
-            [NSException raise:@"PGPNotSupported" format:@"Algorithm not supported"];
+            PGPLogWarning(@"Algorithm %@ is not supported.", @(keyPacket.publicKeyAlgorithm));
             break;
 
     }

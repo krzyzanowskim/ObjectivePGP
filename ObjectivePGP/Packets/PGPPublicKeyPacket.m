@@ -17,6 +17,7 @@
 #import "PGPFoundation.h"
 #import "NSMutableData+PGPUtils.h"
 #import "PGPMacros+Private.h"
+#import "PGPLogging.h"
 
 #import <CommonCrypto/CommonCrypto.h>
 #import <CommonCrypto/CommonCryptor.h>
@@ -287,7 +288,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmPrivate9:
         case PGPPublicKeyAlgorithmPrivate10:
         case PGPPublicKeyAlgorithmPrivate11:
-            [NSException raise:@"PGPNotSupported" format:@"Algorithm not supported"];
+            PGPLogWarning(@"Algorithm %@ is not supported.", @(publicKeyAlgorithm));
         break;
     }
     return nil;
