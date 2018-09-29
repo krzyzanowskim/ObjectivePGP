@@ -17,7 +17,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-NSData *_Nullable PGPCalculateHash(PGPHashAlgorithm algorithm, PGP_NOESCAPE PGPUpdateBlock update) {
+NSData *_Nullable PGPCalculateHash(PGPHashAlgorithm algorithm, NS_NOESCAPE PGPUpdateBlock update) {
     switch (algorithm) {
         case PGPHashMD5:
             return PGPmd5(update);
@@ -40,7 +40,7 @@ NSData *_Nullable PGPCalculateHash(PGPHashAlgorithm algorithm, PGP_NOESCAPE PGPU
 }
 
 #define commonHashImpl(name, INITfn, UPDATEfn, FINALfn, CTX, DIGEST_LENGTH) \
-    NSData *_Nullable PGP##name(PGP_NOESCAPE PGPUpdateBlock update) {       \
+    NSData *_Nullable PGP##name(NS_NOESCAPE PGPUpdateBlock update) {       \
         let ctx = calloc(1, sizeof(CTX));                                   \
         if (!ctx) {                                                         \
             return nil;                                                     \

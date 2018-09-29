@@ -119,7 +119,7 @@ static const unsigned int PGP_DEFAULT_ITERATIONS_COUNT = 215;
             [data pgp_appendData:passphrase];
 
             // passphrase
-            updateBlock = ^(PGP_NOESCAPE void (^update)(const void *data, int length)) {
+            updateBlock = ^(NS_NOESCAPE void (^update)(const void *data, int length)) {
                 update(data.bytes, (int)data.length);
             };
         } break;
@@ -132,7 +132,7 @@ static const unsigned int PGP_DEFAULT_ITERATIONS_COUNT = 215;
             [data appendData:salt];
             [data pgp_appendData:passphrase];
 
-            updateBlock = ^(PGP_NOESCAPE void (^update)(const void *data, int length)) {
+            updateBlock = ^(NS_NOESCAPE void (^update)(const void *data, int length)) {
                 update(data.bytes, (int)data.length);
             };
         } break;
@@ -141,7 +141,7 @@ static const unsigned int PGP_DEFAULT_ITERATIONS_COUNT = 215;
             let data = [NSMutableData dataWithData:salt];
             [data pgp_appendData:passphrase];
 
-            updateBlock = ^(PGP_NOESCAPE void (^update)(const void *data, int length)) {
+            updateBlock = ^(NS_NOESCAPE void (^update)(const void *data, int length)) {
                 // prefix first
                 update(prefix.bytes, (int)prefix.length);
 

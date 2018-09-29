@@ -22,7 +22,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation NSArray (PGPUtils)
 
-- (NSArray *)pgp_objectsPassingTest:(BOOL (^)(id obj, BOOL *stop))predicate {
+- (NSArray *)pgp_objectsPassingTest:(NS_NOESCAPE BOOL (^)(id obj, BOOL *stop))predicate {
     BOOL stop = NO;
     NSMutableArray *result = [NSMutableArray array];
     for (id object in self) {

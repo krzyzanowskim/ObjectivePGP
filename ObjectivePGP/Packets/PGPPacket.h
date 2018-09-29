@@ -24,7 +24,7 @@ extern const UInt32 PGPUnknownLength;
 + (nullable NSData *)readPacketBody:(NSData *)data headerLength:(UInt32 *)headerLength consumedBytes:(nullable NSUInteger *)consumedBytes packetTag:(nullable PGPPacketTag *)tag indeterminateLength:(nullable BOOL *)indeterminateLength;
 - (NSUInteger)parsePacketBody:(NSData *)packetBody error:(NSError * __autoreleasing _Nullable *)error;
 
-+ (NSData *)buildPacketOfType:(PGPPacketTag)tag withBody:(PGP_NOESCAPE NSData *(^)(void))body;
++ (NSData *)buildPacketOfType:(PGPPacketTag)tag withBody:(NS_NOESCAPE NSData *(^)(void))body;
 
 - (id)copyWithZone:(nullable NSZone *)zone NS_REQUIRES_SUPER;
 

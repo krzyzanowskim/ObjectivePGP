@@ -166,11 +166,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Build
 
-+ (NSData *)buildPacketOfType:(PGPPacketTag)tag withBody:(PGP_NOESCAPE NSData *(^)(void))body {
++ (NSData *)buildPacketOfType:(PGPPacketTag)tag withBody:(NS_NOESCAPE NSData *(^)(void))body {
     return [self buildPacketOfType:tag isOld:NO withBody:body];
 }
 
-+ (NSData *)buildPacketOfType:(PGPPacketTag)tag isOld:(BOOL)isOld withBody:(PGP_NOESCAPE NSData *(^)(void))body {
++ (NSData *)buildPacketOfType:(PGPPacketTag)tag isOld:(BOOL)isOld withBody:(NS_NOESCAPE NSData *(^)(void))body {
     // 4.2.2.  New Format Packet Lengths
     let data = [NSMutableData data];
     let bodyData = body();
