@@ -17,7 +17,17 @@ You want to help, great! Go ahead and fork our repo, make your changes and send 
 ## Contribution
 
 You are welcome to contribute. See [CONTRIBUTING.md](https://github.com/krzyzanowskim/ObjectivePGP/blob/master/CONTRIBUTING.md)  
-Please create [Pull Request](https://github.com/krzyzanowskim/ObjectivePGP/pulls) against `develop` branch. 
+Please create [Pull Request](https://github.com/krzyzanowskim/ObjectivePGP/pulls) against `develop` branch.
+
+## The license
+
+The ObjectivePGP stays under a dual license:
+
+- Free for non-commercial use, covered by the variant of BSD license. That means you have to mention Marcin Krzyżanowski as the original author of this code and reproduce the [LICENSE](./LICENSE.txt) text inside your app.
+
+- Commercial-use license to use in commercial products. Please bear in mind that some free products remain commercial products. Please contact me via [email](http://www.krzyzanowskim.com) for details.
+
+Not sure what to choose? check this [thread](https://twitter.com/krzyzanowskim/status/868481597204508672)
 
 ## Usage
 
@@ -213,16 +223,6 @@ Known limitations:
 ## Security Audit
 
 To date the ObjectivePGP code base has undergone a complete security audit from [Cure53](https://cure53.de/).
-
-## The license
-
-The ObjectivePGP stays under a dual license:
-
-- Free for non-commercial use, covered by the standard 2-clause BSD license. That means you have to mention Marcin Krzyżanowski as the original author of this code and reproduce the [LICENSE](./LICENSE.txt) text inside your app.
-
-- Commercial-use license to use in commercial products. Please bear in mind that some free products remain commercial products. Please contact me via [email](http://www.krzyzanowskim.com) for details.
-
-Not sure what to choose? check this [thread](https://twitter.com/krzyzanowskim/status/868481597204508672)
 
 ### Acknowledgment
 
