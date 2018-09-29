@@ -12,7 +12,14 @@
 #define NS_DESIGNATED_INITIALIZER
 #endif
 
-#define PGP_NOESCAPE __attribute__((noescape))
+#ifdef NS_NOESCAPE
+#undef NS_NOESCAPE
+#endif
+
+#ifndef NS_NOESCAPE
+#define NS_NOESCAPE __attribute__((noescape))
+#endif
+
 
 static const UInt32 PGPUnknownLength = UINT32_MAX;
 static NSString *const PGPErrorDomain = @"com.objectivepgp";
