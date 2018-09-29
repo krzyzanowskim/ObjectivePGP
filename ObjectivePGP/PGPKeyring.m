@@ -250,9 +250,9 @@
         return keys;
     }
 
-    NSMutableArray *updatedContainer = [NSMutableArray<PGPKey *> arrayWithArray:keys];
+    let updatedContainer = [NSMutableArray<PGPKey *> arrayWithArray:keys];
 
-    PGPKey *foundCompoundKey = nil;
+    PGPKey * _Nullable foundCompoundKey = nil;
     for (PGPKey *searchKey in keys) {
         if (PGPEqualObjects(searchKey.publicKey.keyID,key.keyID) || PGPEqualObjects(searchKey.secretKey.keyID,key.keyID)) {
             foundCompoundKey = searchKey;

@@ -656,7 +656,7 @@ NS_ASSUME_NONNULL_BEGIN
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{NSLocalizedDescriptionKey: @"Can't read keys. Invalid input."}];
         }
-        return keys;
+        return nil;
     };
 
     let binRingData = [PGPArmor convertArmoredMessage2BinaryBlocksWhenNecessary:fileData error:error];
@@ -665,7 +665,7 @@ NS_ASSUME_NONNULL_BEGIN
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{NSLocalizedDescriptionKey: @"Can't read keys. Invalid input."}];
         }
-        return keys;
+        return nil;
     }
 
     for (NSData *data in binRingData) {
