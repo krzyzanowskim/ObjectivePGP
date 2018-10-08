@@ -136,7 +136,7 @@ NS_ASSUME_NONNULL_BEGIN
             headerLength = (UInt32)(1 + range.length);
         } break;
         case 3: {
-            PGPLogWarning(@"(Old format) The packet is of indeterminate length");
+            PGPLogDebug(@"(Old format) The packet is of indeterminate length");
             bodyLength = PGPUnknownLength;
             headerLength = 1;
             isIndeterminateLength = YES;
