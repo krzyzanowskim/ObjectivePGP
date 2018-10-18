@@ -31,21 +31,20 @@ NS_ASSUME_NONNULL_BEGIN
 
 // encrypts the bytes
 + (nullable NSData *)publicEncrypt:(NSData *)toEncrypt withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket {
-    RSA *rsa = RSA_new();
+    let n = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_N] bigNum] bignumRef]);
+    let e = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_E] bigNum] bignumRef]);
+    if (!n || !e) {
+        return nil;
+    }
+
+    let rsa = RSA_new();
     if (!rsa) {
         return nil;
     }
     pgp_defer { RSA_free(rsa); };
+    RSA_set0_key(rsa, n, e, NULL);
 
-    rsa->n = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_N] bigNum] bignumRef]);
-    rsa->e = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_E] bigNum] bignumRef]);
-
-    NSAssert(rsa->n && rsa->e, @"Missing N or E");
-    if (!rsa->n || !rsa->e) {
-        return nil;
-    }
-
-    uint8_t *encrypted_em = calloc((size_t)BN_num_bytes(rsa->n) & SIZE_T_MAX, 1);
+    uint8_t *encrypted_em = calloc((size_t)BN_num_bytes(n) & SIZE_T_MAX, 1);
     pgp_defer { free(encrypted_em); };
 
     int em_len = RSA_public_encrypt(toEncrypt.length & INT_MAX, toEncrypt.bytes, encrypted_em, rsa, RSA_NO_PADDING);
@@ -62,29 +61,30 @@ NS_ASSUME_NONNULL_BEGIN
 
      // encrypted encoded EME
      let encryptedEm = [NSData dataWithBytes:encrypted_em length:em_len];
-
-     rsa->n = rsa->e = NULL;
      return encryptedEm;
 }
 
 // decrypt bytes
 + (nullable NSData *)privateDecrypt:(NSData *)toDecrypt withSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket {
-    RSA *rsa = RSA_new();
+    let rsa = RSA_new();
     if (!rsa) {
         return nil;
     }
     pgp_defer { RSA_free(rsa); };
 
-    rsa->n = BN_dup([[[secretKeyPacket publicMPI:PGPMPI_N] bigNum] bignumRef]);
-    rsa->e = BN_dup([[[secretKeyPacket publicMPI:PGPMPI_E] bigNum] bignumRef]);
+    let n = BN_dup([[[secretKeyPacket publicMPI:PGPMPI_N] bigNum] bignumRef]);
+    let e = BN_dup([[[secretKeyPacket publicMPI:PGPMPI_E] bigNum] bignumRef]);
 
-    rsa->d = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_D] bigNum] bignumRef]);
-    rsa->p = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_Q] bigNum] bignumRef]); /* p and q are round the other way in openssl */
-    rsa->q = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_P] bigNum] bignumRef]);
+    let d = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_D] bigNum] bignumRef]);
+    let p = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_Q] bigNum] bignumRef]); /* p and q are round the other way in openssl */
+    let q = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_P] bigNum] bignumRef]);
 
-    if (rsa->d == NULL) {
+    if (d == NULL) {
         return nil;
     }
+
+    RSA_set0_key(rsa, n, e, d);
+    RSA_set0_factors(rsa, p, q);
 
     if (RSA_check_key(rsa) != 1) {
         ERR_load_crypto_strings();
@@ -117,9 +117,6 @@ NS_ASSUME_NONNULL_BEGIN
 
     NSData *decryptedData = [NSData dataWithBytes:outbuf length:t];
     NSAssert(decryptedData, @"Missing data");
-
-    rsa->n = rsa->d = rsa->p = rsa->q = rsa->e = NULL;
-
     return decryptedData;
 }
 
@@ -131,11 +128,11 @@ NS_ASSUME_NONNULL_BEGIN
     }
     pgp_defer { RSA_free(rsa); };
 
-    rsa->n = BN_dup([[[secretKeyPacket publicMPI:PGPMPI_N] bigNum] bignumRef]);
-    rsa->d = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_D] bigNum] bignumRef]);
-    rsa->p = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_Q] bigNum] bignumRef]); /* p and q are round the other way in openssl */
-    rsa->q = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_P] bigNum] bignumRef]);
-    rsa->e = BN_dup([[[secretKeyPacket publicMPI:PGPMPI_E] bigNum] bignumRef]);
+    let n = BN_dup([[[secretKeyPacket publicMPI:PGPMPI_N] bigNum] bignumRef]);
+    let e = BN_dup([[[secretKeyPacket publicMPI:PGPMPI_E] bigNum] bignumRef]);
+    let d = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_D] bigNum] bignumRef]);
+    let p = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_Q] bigNum] bignumRef]); /* p and q are round the other way in openssl */
+    let q = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_P] bigNum] bignumRef]);
 
     if (toEncrypt.length > secretKeyPacket.keySize) {
         return nil;
@@ -143,9 +140,12 @@ NS_ASSUME_NONNULL_BEGIN
 
     /* If this isn't set, it's very likely that the programmer hasn't */
     /* decrypted the secret key. RSA_check_key segfaults in that case. */
-    if (rsa->d == NULL) {
+    if (d == NULL) {
         return nil;
     }
+
+    RSA_set0_key(rsa, n, e, d);
+    RSA_set0_factors(rsa, p, q);
 
     if (RSA_check_key(rsa) != 1) {
         ERR_load_crypto_strings();
@@ -179,27 +179,25 @@ NS_ASSUME_NONNULL_BEGIN
 
     NSData *encryptedData = [NSData dataWithBytes:outbuf length:t];
     NSAssert(encryptedData, @"Missing calculated data");
-
-    rsa->n = rsa->d = rsa->p = rsa->q = rsa->e = NULL;
-
     return encryptedData;
 }
 
 // recovers the message digest
 + (nullable NSData *)publicDecrypt:(NSData *)toDecrypt withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket {
-    RSA *rsa = RSA_new();
+    let rsa = RSA_new();
     if (!rsa) {
         return nil;
     }
     pgp_defer { RSA_free(rsa); };
 
-    rsa->n = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_N] bigNum] bignumRef]);
-    rsa->e = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_E] bigNum] bignumRef]);
+    let n = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_N] bigNum] bignumRef]);
+    let e = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_E] bigNum] bignumRef]);
 
-    NSAssert(rsa->n && rsa->e, @"Missing N or E");
-    if (!rsa->n || !rsa->e) {
+    if (!n || !e) {
         return nil;
     }
+
+    RSA_set0_key(rsa, n, e, NULL);
 
     uint8_t *decrypted_em = calloc(RSA_size(rsa) & SIZE_T_MAX, 1); // RSA_size(rsa) - 11
     pgp_defer { free(decrypted_em); };
@@ -218,9 +216,6 @@ NS_ASSUME_NONNULL_BEGIN
 
     // decrypted PKCS emsa
     let decryptedEm = [NSData dataWithBytes:decrypted_em length:em_len];
-
-    rsa->n = rsa->e = NULL;
-
     return decryptedEm;
 }
 
@@ -243,12 +238,14 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    let bigN = [[PGPBigNum alloc] initWithBIGNUM:rsa->n];
-    let bigE = [[PGPBigNum alloc] initWithBIGNUM:rsa->e];
-    let bigD = [[PGPBigNum alloc] initWithBIGNUM:rsa->d];
-    let bigP = [[PGPBigNum alloc] initWithBIGNUM:rsa->p];
-    let bigQ = [[PGPBigNum alloc] initWithBIGNUM:rsa->q];
-    let bigU = [[PGPBigNum alloc] initWithBIGNUM:BN_mod_inverse(NULL, rsa->p, rsa->q, ctx)];
+    RSA_get0_n(rsa);
+
+    let bigN = [[PGPBigNum alloc] initWithBIGNUM:BN_dup(RSA_get0_n(rsa))];
+    let bigE = [[PGPBigNum alloc] initWithBIGNUM:BN_dup(RSA_get0_e(rsa))];
+    let bigD = [[PGPBigNum alloc] initWithBIGNUM:BN_dup(RSA_get0_d(rsa))];
+    let bigP = [[PGPBigNum alloc] initWithBIGNUM:BN_dup(RSA_get0_p(rsa))];
+    let bigQ = [[PGPBigNum alloc] initWithBIGNUM:BN_dup(RSA_get0_q(rsa))];
+    let bigU = [[PGPBigNum alloc] initWithBIGNUM:BN_mod_inverse(NULL, RSA_get0_p(rsa), RSA_get0_q(rsa), ctx)];
 
     let mpiN = [[PGPMPI alloc] initWithBigNum:bigN identifier:PGPMPI_N];
     let mpiE = [[PGPMPI alloc] initWithBigNum:bigE identifier:PGPMPI_E];

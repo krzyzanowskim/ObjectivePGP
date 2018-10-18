@@ -34,32 +34,37 @@ NS_ASSUME_NONNULL_BEGIN
 @implementation PGPDSA
 
 + (BOOL)verify:(NSData *)toVerify signature:(PGPSignaturePacket *)signaturePacket withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket {
-    DSA_SIG *sig = DSA_SIG_new();
+    let sig = DSA_SIG_new();
     pgp_defer { if (sig) { DSA_SIG_free(sig); } };
     
-    DSA *dsa = DSA_new();
+    let dsa = DSA_new();
     pgp_defer { if (dsa) { DSA_free(dsa); } };
 
     if (!dsa || !sig) {
         return NO;
     }
 
-    dsa->p = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_P] bigNum] bignumRef]);
-    dsa->q = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_Q] bigNum] bignumRef]);
-    dsa->g = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_G] bigNum] bignumRef]);
-    dsa->pub_key = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_Y] bigNum] bignumRef]);
+    let p = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_P] bigNum] bignumRef]);
+    let q = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_Q] bigNum] bignumRef]);
+    let g = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_G] bigNum] bignumRef]);
+    let pub_key = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_Y] bigNum] bignumRef]);
 
-    sig->r = BN_dup([[[signaturePacket signatureMPI:PGPMPI_R] bigNum] bignumRef]);
-    sig->s = BN_dup([[[signaturePacket signatureMPI:PGPMPI_S] bigNum] bignumRef]);
+    DSA_set0_pqg(dsa, p, q, g);
+    DSA_set0_key(dsa, pub_key, NULL);
 
-    if (!dsa->p || !dsa->q || !dsa->g || !dsa->pub_key || sig->r || sig->s) {
+    let r = BN_dup([[[signaturePacket signatureMPI:PGPMPI_R] bigNum] bignumRef]);
+    let s = BN_dup([[[signaturePacket signatureMPI:PGPMPI_S] bigNum] bignumRef]);
+
+    DSA_SIG_set0(sig, r, s);
+
+    if (!p || !q || !g || !pub_key || r || s) {
         PGPLogError(@"Missing DSA values.");
         return NO;
     }
 
     var hashLen = toVerify.length;
     unsigned int qlen = 0;
-    if ((qlen = (unsigned int)BN_num_bytes(dsa->q)) < hashLen) {
+    if ((qlen = (unsigned int)BN_num_bytes(DSA_get0_q(dsa))) < hashLen) {
         hashLen = qlen;
     }
 
@@ -73,13 +78,11 @@ NS_ASSUME_NONNULL_BEGIN
         return NO;
     }
 
-    dsa->p = dsa->q = dsa->g = dsa->pub_key = NULL;
-    sig->r = sig->s = NULL;
     return YES;
 }
 
 + (NSArray<PGPMPI *> *)sign:(NSData *)toSign key:(PGPKey *)key {
-    DSA *dsa = DSA_new();
+    let dsa = DSA_new();
     pgp_defer { if (dsa) { DSA_free(dsa); } };
 
     if (!dsa) {
@@ -89,11 +92,14 @@ NS_ASSUME_NONNULL_BEGIN
     let signingKeyPacket = key.signingSecretKey;
     let publicKeyPacket = PGPCast(key.publicKey.primaryKeyPacket, PGPPublicKeyPacket);
 
-    dsa->p = BN_dup([publicKeyPacket publicMPI:PGPMPI_P].bigNum.bignumRef);
-    dsa->q = BN_dup([publicKeyPacket publicMPI:PGPMPI_Q].bigNum.bignumRef);
-    dsa->g = BN_dup([publicKeyPacket publicMPI:PGPMPI_G].bigNum.bignumRef);
-    dsa->pub_key = BN_dup([publicKeyPacket publicMPI:PGPMPI_Y].bigNum.bignumRef);
-    dsa->priv_key = BN_dup([signingKeyPacket secretMPI:PGPMPI_X].bigNum.bignumRef);
+    let p = BN_dup([publicKeyPacket publicMPI:PGPMPI_P].bigNum.bignumRef);
+    let q = BN_dup([publicKeyPacket publicMPI:PGPMPI_Q].bigNum.bignumRef);
+    let g = BN_dup([publicKeyPacket publicMPI:PGPMPI_G].bigNum.bignumRef);
+    let pub_key = BN_dup([publicKeyPacket publicMPI:PGPMPI_Y].bigNum.bignumRef);
+    let priv_key = BN_dup([signingKeyPacket secretMPI:PGPMPI_X].bigNum.bignumRef);
+
+    DSA_set0_pqg(dsa, p, q, g);
+    DSA_set0_key(dsa, pub_key, priv_key);
 
     DSA_SIG * _Nullable sig = DSA_do_sign(toSign.bytes, (int)toSign.length, dsa);
     if (!sig) {
@@ -106,10 +112,11 @@ NS_ASSUME_NONNULL_BEGIN
         return @[];
     }
 
-    let MPI_R = [[PGPMPI alloc] initWithBigNum:[[PGPBigNum alloc] initWithBIGNUM:sig->r] identifier:PGPMPI_R];
-    let MPI_S = [[PGPMPI alloc] initWithBigNum:[[PGPBigNum alloc] initWithBIGNUM:sig->s] identifier:PGPMPI_S];
-
-    dsa->p = dsa->q = dsa->g = dsa->pub_key = dsa->priv_key = NULL;
+    const BIGNUM *r;
+    const BIGNUM *s;
+    DSA_SIG_get0(sig, &r, &s);
+    let MPI_R = [[PGPMPI alloc] initWithBigNum:[[PGPBigNum alloc] initWithBIGNUM:BN_dup(r)] identifier:PGPMPI_R];
+    let MPI_S = [[PGPMPI alloc] initWithBigNum:[[PGPBigNum alloc] initWithBIGNUM:BN_dup(s)] identifier:PGPMPI_S];
 
     return @[MPI_R, MPI_S];
 }
@@ -118,9 +125,9 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Generate
 
 + (nullable PGPKeyMaterial *)generateNewKeyMPIArray:(const int)bits {    
-    BN_CTX *ctx = BN_CTX_new();
+    let ctx = BN_CTX_new();
     pgp_defer { if (ctx) { BN_CTX_free(ctx); } };
-    DSA *dsa = DSA_new();
+    let dsa = DSA_new();
     pgp_defer { if (dsa) { DSA_free(dsa); } };
 
     DSA_generate_parameters_ex(dsa, bits, NULL, 0, NULL, NULL, NULL);
@@ -128,17 +135,20 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    let bigP = [[PGPBigNum alloc] initWithBIGNUM:dsa->p];
-    let bigQ = [[PGPBigNum alloc] initWithBIGNUM:dsa->q];
-    let bigG = [[PGPBigNum alloc] initWithBIGNUM:dsa->g];
-    let bigR = [[PGPBigNum alloc] initWithBIGNUM:dsa->r];
-    let bigX = [[PGPBigNum alloc] initWithBIGNUM:dsa->priv_key];
-    let bigY = [[PGPBigNum alloc] initWithBIGNUM:dsa->pub_key];
+    const BIGNUM *pub_key;
+    const BIGNUM *priv_key;
+    DSA_get0_key(dsa, &pub_key, &priv_key);
+    let bigP = [[PGPBigNum alloc] initWithBIGNUM:BN_dup(DSA_get0_p(dsa))];
+    let bigQ = [[PGPBigNum alloc] initWithBIGNUM:BN_dup(DSA_get0_q(dsa))];
+    let bigG = [[PGPBigNum alloc] initWithBIGNUM:BN_dup(DSA_get0_g(dsa))];
+    // let bigR = [[PGPBigNum alloc] initWithBIGNUM:BN_dup(DSA_get0_r(dsa))];
+    let bigX = [[PGPBigNum alloc] initWithBIGNUM:BN_dup(priv_key)];
+    let bigY = [[PGPBigNum alloc] initWithBIGNUM:BN_dup(pub_key)];
 
     let mpiP = [[PGPMPI alloc] initWithBigNum:bigP identifier:PGPMPI_P];
     let mpiQ = [[PGPMPI alloc] initWithBigNum:bigQ identifier:PGPMPI_Q];
     let mpiG = [[PGPMPI alloc] initWithBigNum:bigG identifier:PGPMPI_G];
-    let mpiR = [[PGPMPI alloc] initWithBigNum:bigR identifier:PGPMPI_R];
+    // let mpiR = [[PGPMPI alloc] initWithBigNum:bigR identifier:PGPMPI_R];
     let mpiX = [[PGPMPI alloc] initWithBigNum:bigX identifier:PGPMPI_X];
     let mpiY = [[PGPMPI alloc] initWithBigNum:bigY identifier:PGPMPI_Y];
 
@@ -146,7 +156,7 @@ NS_ASSUME_NONNULL_BEGIN
     keyMaterial.p = mpiP;
     keyMaterial.q = mpiQ;
     keyMaterial.g = mpiG;
-    keyMaterial.r = mpiR;
+    // keyMaterial.r = mpiR;
     keyMaterial.x = mpiX;
     keyMaterial.y = mpiY;
 
