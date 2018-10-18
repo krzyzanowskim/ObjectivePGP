@@ -141,10 +141,10 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (nullable NSDate *)expirationDate {
-    PGPSignatureSubpacket *creationDateSubpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeSignatureCreationTime] firstObject];
-    PGPSignatureSubpacket *validityPeriodSubpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeSignatureExpirationTime] firstObject];
+    let creationDateSubpacket = PGPCast([self subpacketsOfType:PGPSignatureSubpacketTypeSignatureCreationTime].firstObject, PGPSignatureSubpacket);
+    var validityPeriodSubpacket = PGPCast([self subpacketsOfType:PGPSignatureSubpacketTypeSignatureExpirationTime].firstObject, PGPSignatureSubpacket);
     if (!validityPeriodSubpacket) {
-        validityPeriodSubpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeKeyExpirationTime] firstObject];
+        validityPeriodSubpacket = PGPCast([self subpacketsOfType:PGPSignatureSubpacketTypeKeyExpirationTime].firstObject, PGPSignatureSubpacket);
     }
 
     let creationDate = PGPCast(creationDateSubpacket.value, NSDate);

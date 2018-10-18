@@ -127,7 +127,7 @@ NS_ASSUME_NONNULL_BEGIN
 //};
 
 // Returns the most significant (latest valid) self signature of the user
-- (nullable PGPSignaturePacket *)validSelfCertificate {
+- (nullable PGPSignaturePacket *)latestSelfCertificate {
     if (self.selfCertifications.count == 0) {
         return nil;
     }
@@ -136,9 +136,6 @@ NS_ASSUME_NONNULL_BEGIN
     for (PGPSignaturePacket *signature in self.selfCertifications) {
         // TODO: check for revocation
 
-        if (signature.isExpired) {
-            continue;
-        }
         [certs addObject:signature];
         // This only worked as verify wasn't implemented correctly
         // TODO: find a better solution

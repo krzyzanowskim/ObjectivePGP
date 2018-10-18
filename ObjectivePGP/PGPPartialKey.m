@@ -439,7 +439,7 @@ NS_ASSUME_NONNULL_BEGIN
             continue;
         }
 
-        let selfCertificate = user.validSelfCertificate;
+        let selfCertificate = user.latestSelfCertificate;
         if (!selfCertificate) {
             continue;
         }
