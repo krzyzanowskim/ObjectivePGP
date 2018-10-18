@@ -35,7 +35,7 @@ make -j 8
 cd "${BASE_PWD}"
 mkdir -p "${BUILD_DIR}/macosx"
 cd "${BUILD_DIR}/macosx"
-../../openssl-src/Configure no-shared no-hw no-zlib-dynamic no-asm no-dso no-engine no-ssl2 no-ssl3 enable-ec_nistp_64_gcc_128 darwin64-x86_64-cc
+../../openssl-src/Configure no-shared no-hw no-zlib-dynamic no-asm no-dso no-engine no-ssl2 no-ssl3 enable-ec_nistp_64_gcc_128 -mmacosx-version-min=10.9 darwin64-x86_64-cc
 make -j 8
 
 cd "${BASE_PWD}"
