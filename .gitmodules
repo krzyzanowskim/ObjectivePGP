@@ -1,3 +1,0 @@
-[submodule "vendor/boringssl"]
-	path = vendor/boringssl
-	url = https://boringssl.googlesource.com/boringssl
