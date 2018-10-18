@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
-BORINGSSL_SRC_DIR="vendor/boringssl-src"
-BORINGSSL_BUILD_DIR="vendor/boringssl-build"
-LIBS_DIR="vendor/libs"
+BASE_PWD="$PWD"
+SCRIPT_DIR="$(dirname "$0")"
+
+BORINGSSL_SRC_DIR="${SCRIPT_DIR}/../vendor/boringssl-src"
+BORINGSSL_BUILD_DIR="${SCRIPT_DIR}/../vendor/boringssl-build"
+LIBS_DIR="${SCRIPT_DIR}/../vendor/libs"
 
 rm -rf "${BORINGSSL_SRC_DIR}"
 rm -rf "${BORINGSSL_BUILD_DIR}"
@@ -49,3 +52,6 @@ rm -rf "${BORINGSSL_BUILD_DIR}"
 # The file is later used by the UNEXPORTED_SYMBOLS_FILE to hide the symbols
 xcrun nm -gUj "${LIBS_DIR}/macosx/libcrypto.a" | grep -v "^$" | grep "^_" > "${LIBS_DIR}/macosx/symbols"
 xcrun nm -gUj "${LIBS_DIR}/ios/libcrypto.a" | grep -v "^$" | grep "^_" > "${LIBS_DIR}/ios/symbols"
+
+rm -rf "${BORINGSSL_SRC_DIR}"
+rm -rf "${BORINGSSL_BUILD_DIR}"
