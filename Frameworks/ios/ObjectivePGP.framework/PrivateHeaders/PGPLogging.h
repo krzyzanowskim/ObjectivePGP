@@ -10,24 +10,46 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-#define PGPLogMacro(_level, _tag, _message) NSLog(@"[%s] %@ %s/%tu %@", _tag, @(_level), __PRETTY_FUNCTION__, __LINE__, _message())
+#define PGP_NO_LOG          0x00
+#define PGP_ERROR_LEVEL     0x01
+#define PGP_WARNING_LEVEL   0x02
+#define PGP_DEBUG_LEVEL     0x03
 
-#ifdef DEBUG
+#ifndef PGP_LOG_LEVEL
+    #ifdef DEBUG
+        #define PGP_LOG_LEVEL PGP_DEBUG_LEVEL
+    #else
+        #define PGP_LOG_LEVEL PGP_WARNING_LEVEL
+    #endif
+#endif
+
+#define _PGPLogMacro(_level, _tag, _message) NSLog(@"[%s] %s: %s/%tu %@", _tag, _level, __PRETTY_FUNCTION__, __LINE__, _message())
+
+#if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
 #define PGPLogDebug(format, ...)                                                     \
-    PGPLogMacro(0, "ObjectivePGP", (^{                                               \
+    _PGPLogMacro("DEBUG", "ObjectivePGP", (^{                                               \
                     return [NSString stringWithFormat:(@"" format), ##__VA_ARGS__]; \
                 }))
 #else
 #define PGPLogDebug(format, ...)
 #endif
 
+#if PGP_LOG_LEVEL >= PGP_WARNING_LEVEL
 #define PGPLogWarning(format, ...)                                                   \
-    PGPLogMacro(1, "ObjectivePGP", (^{                                               \
+    _PGPLogMacro("WARNING", "ObjectivePGP", (^{                                               \
                     return [NSString stringWithFormat:(@"" format), ##__VA_ARGS__]; \
                 }))
+#else
+#define PGPLogWarning(format, ...)
+#endif
+
+#if PGP_LOG_LEVEL >= PGP_ERROR_LEVEL
 #define PGPLogError(format, ...)                                                     \
-    PGPLogMacro(2, "ObjectivePGP", (^{                                               \
+    _PGPLogMacro("ERROR", "ObjectivePGP", (^{                                               \
                     return [NSString stringWithFormat:(@"" format), ##__VA_ARGS__]; \
                 }))
+#else
+#define PGPLogError(format, ...)
+#endif
 
 NS_ASSUME_NONNULL_END
