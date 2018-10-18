@@ -1,3 +1,8 @@
+Version 0.13.0
+- Fixes issue where expirationData value was missing for expired keys. Fixes #120.
+- Improves logging setup by respecting PGP_LOG_LEVEL setting.
+- Updates cryptography engine.
+
 Version 0.12.3
 - No more NSException is returned. Check for error or or return status instead.
 - Use NS_NOESCAPE for Objective-C and Swift.

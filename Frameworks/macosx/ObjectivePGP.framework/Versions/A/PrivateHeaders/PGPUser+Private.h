@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithUserIDPacket:(PGPUserIDPacket *)userPacket NS_DESIGNATED_INITIALIZER;
 
-- (nullable PGPSignaturePacket *)validSelfCertificate;
+- (nullable PGPSignaturePacket *)latestSelfCertificate;
 
 @end
 
