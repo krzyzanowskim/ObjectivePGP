@@ -27,7 +27,8 @@ The ObjectivePGP stays under a dual license:
 
 - Commercial-use license to use in commercial products. Please bear in mind that some free products remain commercial products. Please contact me via [email](http://www.krzyzanowskim.com) for details.
 
-Not sure what to choose? check this [thread](https://twitter.com/krzyzanowskim/status/868481597204508672)
+
+Not sure what to choose? check [FAQ](https://github.com/krzyzanowskim/ObjectivePGP/wiki/FAQ)
 
 ## Usage
 
