@@ -69,22 +69,31 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Encrypt & Decrypt
 
-+ (nullable NSData *)decrypt:(NSData *)data andVerifySignature:(BOOL)verifySignature usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock error:(NSError * __autoreleasing _Nullable *)error {
++ (nullable NSData *)decrypt:(NSData *)data andVerifySignature:(BOOL)verifySignature usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error {
+    if (verifySignature) {
+        BOOL isVerified;
+        return [self decrypt:data verified:&isVerified usingKeys:keys passphraseForKey:passphraseBlock decryptionError:error verificationError:error];
+    } else {
+        return [self decrypt:data verified:nil usingKeys:keys passphraseForKey:passphraseBlock decryptionError:error verificationError:nil];
+    }
+}
+
++ (nullable NSData *)decrypt:(NSData *)data verified:(BOOL * _Nullable)verified usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock decryptionError:(NSError * __autoreleasing _Nullable *)decryptionError verificationError:(NSError * __autoreleasing _Nullable *)verificationError {
     PGPAssertClass(data, NSData);
     PGPAssertClass(keys, NSArray);
 
     // TODO: Decrypt all messages
-    let binaryMessage = [PGPArmor convertArmoredMessage2BinaryBlocksWhenNecessary:data error:error].firstObject;
+    let binaryMessage = [PGPArmor convertArmoredMessage2BinaryBlocksWhenNecessary:data error:decryptionError].firstObject;
     if (!binaryMessage) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Invalid message to decrypt." }];
+        if (decryptionError) {
+            *decryptionError = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Invalid message to decrypt." }];
         }
         return nil;
     }
 
     // parse packets
     var packets = [ObjectivePGP readPacketsFromData:binaryMessage];
-    packets = [self decryptPackets:packets usingKeys:keys passphrase:passphraseForKeyBlock error:error];
+    packets = [self decryptPackets:packets usingKeys:keys passphrase:passphraseForKeyBlock error:decryptionError];
 
     // If the packet list of a message contains multiple literal packets, the first literal packet should
     // be considered as the correct one and any additional literal packets should be ignored.
@@ -97,19 +106,16 @@ NS_ASSUME_NONNULL_BEGIN
     // Plaintext is available if literalPacket is available
     let plaintextData = literalPacket.literalRawData;
     if (!plaintextData) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Nothing to decrypt or missing private key." }];
+        if (decryptionError) {
+            *decryptionError = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Nothing to decrypt or missing private key." }];
         }
         return nil;
     }
 
     // Verify
-    if (verifySignature) {
-        if (![self verify:binaryMessage withSignature:nil usingKeys:keys passphraseForKey:passphraseForKeyBlock error:error]) {
-            if (error && !*error) {
-                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"Unable to verify." }];
-            }
-        }
+    BOOL isVerified = verified ? [self verifyPackets:packets usingKeys:keys passphraseForKey:passphraseForKeyBlock error:verificationError] : NO;
+    if (verified) {
+        *verified = isVerified;
     }
 
     return plaintextData;
@@ -540,6 +546,10 @@ NS_ASSUME_NONNULL_BEGIN
         }
     }
 
+    return [self verifyPackets:accumulatedPackets usingKeys:keys passphraseForKey:passphraseForKeyBlock error:error];
+}
+
++ (BOOL)verifyPackets:(NSArray *)accumulatedPackets usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseForKeyBlock error:(NSError * __autoreleasing _Nullable *)error {
     // PGPSignaturePacket * _Nullable signaturePacket = nil;
     let signatures = [NSMutableArray<PGPSignaturePacket *> array];
     PGPLiteralPacket * _Nullable literalPacket = nil;
@@ -566,7 +576,7 @@ NS_ASSUME_NONNULL_BEGIN
                 [signatures pgp_addObject:signaturePacket];
                 signatureCount++;
             }
-            break;
+                break;
             default:
                 break;
         }
