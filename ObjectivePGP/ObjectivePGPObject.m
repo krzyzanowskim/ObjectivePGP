@@ -94,6 +94,9 @@ NS_ASSUME_NONNULL_BEGIN
     // parse packets
     var packets = [ObjectivePGP readPacketsFromData:binaryMessage];
     packets = [self decryptPackets:packets usingKeys:keys passphrase:passphraseForKeyBlock error:decryptionError];
+    if (decryptionError && *decryptionError) {
+        return nil;
+    }
 
     // If the packet list of a message contains multiple literal packets, the first literal packet should
     // be considered as the correct one and any additional literal packets should be ignored.
@@ -113,9 +116,8 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // Verify
-    BOOL isVerified = verified ? [self verifyPackets:packets usingKeys:keys passphraseForKey:passphraseForKeyBlock error:verificationError] : NO;
     if (verified) {
-        *verified = isVerified;
+        *verified = [self verifyPackets:packets usingKeys:keys passphraseForKey:passphraseForKeyBlock error:verificationError];
     }
 
     return plaintextData;

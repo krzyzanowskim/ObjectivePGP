@@ -142,7 +142,7 @@ NS_ASSUME_NONNULL_BEGIN
     scanner.charactersToBeSkipped = nil;
     
     NSCharacterSet *newlineSet = [NSCharacterSet newlineCharacterSet];
-    NSCharacterSet *invertedSet = [[NSCharacterSet newlineCharacterSet] invertedSet];
+    NSCharacterSet *notNewlineSet = [[NSCharacterSet newlineCharacterSet] invertedSet];
 
     // check header line
     NSString *headerLine = nil;
@@ -168,8 +168,8 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (![scanner scanCharactersFromSet:newlineSet intoString:nil]) {
         // Scan headers (Optional)
-        [scanner scanUpToCharactersFromSet:invertedSet intoString:nil];
-        while ([scanner scanCharactersFromSet:invertedSet intoString:&line]) {
+        [scanner scanUpToCharactersFromSet:notNewlineSet intoString:nil];
+        while ([scanner scanCharactersFromSet:notNewlineSet intoString:&line]) {
             // consume newline
             [scanner scanString:@"\r" intoString:nil];
             [scanner scanString:@"\n" intoString:nil];
