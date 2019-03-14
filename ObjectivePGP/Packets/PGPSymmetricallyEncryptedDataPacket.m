@@ -61,22 +61,24 @@ NS_ASSUME_NONNULL_BEGIN
     NSInteger offset = offsetPosition;
     NSUInteger consumedBytes = 0;
     while (offset < (NSInteger)data.length) {
-        let packet = [PGPPacketFactory packetWithData:data offset:offset consumedBytes:&consumedBytes];
-        [accumulatedPackets pgp_addObject:packet];
-
-        // A compressed Packet contains more packets.
-        // TODO: Compression should be moved outside, be more generic to handle compressed packet from anywhere
-        let _Nullable compressedPacket = PGPCast(packet, PGPCompressedPacket);
-        if (compressedPacket) {
-            let uncompressedPackets = [self readPacketsFromData:compressedPacket.decompressedData offset:0];
-            [accumulatedPackets addObjectsFromArray:uncompressedPackets ?: @[]];
+        @autoreleasepool {
+            let packet = [PGPPacketFactory packetWithData:data offset:offset consumedBytes:&consumedBytes];
+            [accumulatedPackets pgp_addObject:packet];
+            
+            // A compressed Packet contains more packets.
+            // TODO: Compression should be moved outside, be more generic to handle compressed packet from anywhere
+            let _Nullable compressedPacket = PGPCast(packet, PGPCompressedPacket);
+            if (compressedPacket) {
+                let uncompressedPackets = [self readPacketsFromData:compressedPacket.decompressedData offset:0];
+                [accumulatedPackets addObjectsFromArray:uncompressedPackets ?: @[]];
+            }
+            
+            // corrupted data. Move by one byte in hope we find some packet there, or EOF.
+            if (consumedBytes == 0) {
+                offset++;
+            }
+            offset += (NSInteger)consumedBytes;
         }
-
-        // corrupted data. Move by one byte in hope we find some packet there, or EOF.
-        if (consumedBytes == 0) {
-            offset++;
-        }
-        offset += (NSInteger)consumedBytes;
     }
     return accumulatedPackets;
 }

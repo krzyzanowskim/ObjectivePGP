@@ -112,11 +112,37 @@ NS_ASSUME_NONNULL_BEGIN
     return armoredMessage;
 };
 
++ (nullable NSString *)readChecksum:(NSMutableString *)base64String {
+    NSString *checksumString = nil;
+    NSRange range; BOOL hasChecksum = YES;
+    
+    range = [base64String rangeOfString:@"\n" options:NSBackwardsSearch range:NSMakeRange(0, base64String.length)];
+    hasChecksum = range.location != NSNotFound;
+    
+    if (hasChecksum) {
+        range = [base64String rangeOfString:@"\n" options:NSBackwardsSearch range:NSMakeRange(0, range.location)];
+        hasChecksum = range.location != NSNotFound;
+    }
+    if (hasChecksum) {
+        NSString *lastLine = [base64String substringWithRange:NSMakeRange(range.location, base64String.length - range.location)];
+        lastLine = [lastLine stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+        hasChecksum = [lastLine hasPrefix:@"="];
+        if (hasChecksum) {
+            checksumString = [lastLine substringFromIndex:1];
+            [base64String deleteCharactersInRange:NSMakeRange(range.location, base64String.length - range.location)];
+        }
+    }
+    return checksumString;
+}
+
 + (nullable NSData *)readArmored:(NSString *)string error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(string, NSString);
 
     let scanner = [[NSScanner alloc] initWithString:string];
     scanner.charactersToBeSkipped = nil;
+    
+    NSCharacterSet *newlineSet = [NSCharacterSet newlineCharacterSet];
+    NSCharacterSet *notNewlineSet = [[NSCharacterSet newlineCharacterSet] invertedSet];
 
     // check header line
     NSString *headerLine = nil;
@@ -140,11 +166,10 @@ NS_ASSUME_NONNULL_BEGIN
 
     NSString *line = nil;
 
-    if (![scanner scanCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:nil]) {
+    if (![scanner scanCharactersFromSet:newlineSet intoString:nil]) {
         // Scan headers (Optional)
-        [scanner scanUpToCharactersFromSet:[[NSCharacterSet newlineCharacterSet] invertedSet] intoString:nil];
-
-        while ([scanner scanCharactersFromSet:[[NSCharacterSet newlineCharacterSet] invertedSet] intoString:&line]) {
+        [scanner scanUpToCharactersFromSet:notNewlineSet intoString:nil];
+        while ([scanner scanCharactersFromSet:notNewlineSet intoString:&line]) {
             // consume newline
             [scanner scanString:@"\r" intoString:nil];
             [scanner scanString:@"\n" intoString:nil];
@@ -152,42 +177,22 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // skip blank line
-    [scanner scanCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:nil];
-
-    // read base64 data
-    // The encoded stream must be represented in lines of no more than 76 characters each.
-    BOOL base64Section = YES;
-    let base64String = [NSMutableString string];
-    while (base64Section && [scanner scanCharactersFromSet:[[NSCharacterSet newlineCharacterSet] invertedSet] intoString:&line]) {
-        // consume newline
-        [scanner scanString:@"\r" intoString:nil];
-        [scanner scanString:@"\n" intoString:nil];
-
-        if ([line hasPrefix:@"="] || [line hasPrefix:@"-----"]) {
-            scanner.scanLocation = scanner.scanLocation - (line.length + 2);
-            base64Section = NO;
-        } else {
-            [base64String appendString:line];
-        }
-    }
-
-    // read checksum
+    [scanner scanCharactersFromSet:newlineSet intoString:nil];
+    // consume till footer
+    [scanner scanUpToString:@"-----" intoString:&line];
+    
+    // parse checksum + base64
+    let base64String = [NSMutableString stringWithString:line];
     NSString *checksumString = nil;
-    [scanner scanUpToCharactersFromSet:[[NSCharacterSet newlineCharacterSet] invertedSet] intoString:&line];
-    // consume newline
-    [scanner scanString:@"\r" intoString:nil];
-    [scanner scanString:@"\n" intoString:nil];
-
-    if ([scanner scanString:@"=" intoString:nil]) {
-        [scanner scanUpToCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:&checksumString];
-        // consume newline
-        [scanner scanString:@"\r" intoString:nil];
-        [scanner scanString:@"\n" intoString:nil];
+    @autoreleasepool {
+        [base64String replaceOccurrencesOfString:@"\r\n" withString:@"\n" options:0 range:NSMakeRange(0, base64String.length)];
+        checksumString = [self readChecksum:base64String];
+        [base64String replaceOccurrencesOfString:@"\n" withString:@"" options:0 range:NSMakeRange(0, base64String.length)];
     }
 
     // read footer
     BOOL footerMatchHeader = NO;
-    [scanner scanUpToCharactersFromSet:[NSCharacterSet newlineCharacterSet] intoString:&line];
+    [scanner scanUpToCharactersFromSet:newlineSet intoString:&line];
     // consume newline
     [scanner scanString:@"\r" intoString:nil];
     [scanner scanString:@"\n" intoString:nil];
@@ -229,34 +234,35 @@ NS_ASSUME_NONNULL_BEGIN
     let binRingData = binOrArmorData;
     // detect if armored, check for string -----BEGIN PGP
     if ([PGPArmor isArmoredData:binRingData]) {
-        var armoredString = [[NSString alloc] initWithData:binRingData encoding:NSUTF8StringEncoding];
-
-        // replace \n to \r\n
-        // propably unecessary since armore code care about \r\n or \n as newline sentence
-        armoredString = [armoredString stringByReplacingOccurrencesOfString:@"\r\n" withString:@"\n"];
-        armoredString = [armoredString stringByReplacingOccurrencesOfString:@"\n" withString:@"\r\n"];
+        var armoredString = [[NSMutableString alloc] initWithData:binRingData encoding:NSUTF8StringEncoding];
+        [armoredString replaceOccurrencesOfString:@"\r\n" withString:@"\n" options:0 range:NSMakeRange(0, armoredString.length)];
+        [armoredString replaceOccurrencesOfString:@"\n" withString:@"\r\n" options:0 range:NSMakeRange(0, armoredString.length)];
 
         let extractedBlocks = [[NSMutableArray<NSString *> alloc] init];
         let regex = [[NSRegularExpression alloc] initWithPattern:@"-----(BEGIN|END) (PGP)[A-Z ]*-----" options:NSRegularExpressionDotMatchesLineSeparators error:nil];
         __block NSInteger offset = 0;
         [regex enumerateMatchesInString:armoredString options:NSMatchingReportCompletion range:NSMakeRange(0, armoredString.length) usingBlock:^(NSTextCheckingResult *_Nullable result, __unused NSMatchingFlags flags, __unused BOOL *stop) {
-            let substring = [armoredString substringWithRange:result.range];
-            if ([substring containsString:@"END"]) {
-                NSInteger endIndex = result.range.location + result.range.length;
-                [extractedBlocks addObject:[armoredString substringWithRange:NSMakeRange(offset, endIndex - offset)]];
-            } else if ([substring containsString:@"BEGIN"]) {
-                offset = result.range.location;
+            @autoreleasepool {
+                let substring = [armoredString substringWithRange:result.range];
+                if ([substring containsString:@"END"]) {
+                    NSInteger endIndex = result.range.location + result.range.length;
+                    [extractedBlocks addObject:[armoredString substringWithRange:NSMakeRange(offset, endIndex - offset)]];
+                } else if ([substring containsString:@"BEGIN"]) {
+                    offset = result.range.location;
+                }
             }
         }];
 
         let extractedData = [[NSMutableArray<NSData *> alloc] init];
         for (NSString *extractedString in extractedBlocks) {
-            let armodedData = [PGPArmor readArmored:extractedString error:error];
-            if (error && *error) {
-                return nil;
+            @autoreleasepool {
+                let armodedData = [PGPArmor readArmored:extractedString error:error];
+                if (error && *error) {
+                    return nil;
+                }
+                
+                [extractedData pgp_addObject:armodedData];
             }
-
-            [extractedData pgp_addObject:armodedData];
         }
         return extractedData;
     }
