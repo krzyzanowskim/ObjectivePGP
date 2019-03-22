@@ -66,18 +66,28 @@ NS_ASSUME_NONNULL_BEGIN
     return NO;
 }
 
+// Key expiration date
 - (nullable NSDate *)expirationDate {
-    PGPSignaturePacket * _Nullable primaryUserSelfCertificate = nil;
-    [self primaryUserAndSelfCertificate:&primaryUserSelfCertificate];
+    let _Nullable primaryUserSelfCertificate = self.primaryUserSelfCertificate;
     if (primaryUserSelfCertificate && primaryUserSelfCertificate.expirationDate) {
         return primaryUserSelfCertificate.expirationDate;
     }
 
     for (PGPPartialSubKey *subKey in self.subKeys) {
-        if (PGPEqualObjects(subKey.keyID,self.keyID)) {
-            let _Nullable signaturePacket = subKey.bindingSignature;
-            if (signaturePacket && signaturePacket.expirationDate) {
-                return signaturePacket.expirationDate;
+        let _Nullable bindingSignaturePacket = subKey.bindingSignature;
+        if (!bindingSignaturePacket.isExpired && bindingSignaturePacket && PGPEqualObjects(bindingSignaturePacket.issuerKeyID,self.keyID)) {
+            // key expiration
+            // PGPSignatureSubpacketTypeKeyExpirationTime - This is found only on a self-signature.
+            // A self-signature is a binding signature made by the key to which the signature refers.
+            var validityPeriodSubpacket = PGPCast([bindingSignaturePacket subpacketsOfType:PGPSignatureSubpacketTypeKeyExpirationTime].lastObject, PGPSignatureSubpacket);
+            let validityPeriod = PGPCast(validityPeriodSubpacket.value, NSNumber);
+            if (!validityPeriod || validityPeriod.unsignedIntegerValue == 0) {
+                return nil;
+            }
+
+            let _Nullable keyPacket = PGPCast(self.primaryKeyPacket, PGPPublicKeyPacket);
+            if (keyPacket) {
+                return [keyPacket.createDate dateByAddingTimeInterval:validityPeriod.unsignedIntegerValue];
             }
         }
     }
@@ -218,12 +228,9 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // check primary user self certificates
-    PGPSignaturePacket *primaryUserSelfCertificate = nil;
-    [self primaryUserAndSelfCertificate:&primaryUserSelfCertificate];
-    if (primaryUserSelfCertificate) {
-        if (primaryUserSelfCertificate.canBeUsedToSign) {
-            return self.primaryKeyPacket;
-        }
+    let _Nullable primaryUserSelfCertificate = self.primaryUserSelfCertificate;
+    if (primaryUserSelfCertificate && primaryUserSelfCertificate.canBeUsedToSign) {
+        return self.primaryKeyPacket;
     }
 
     // By convention, the top-level key provides signature services
@@ -242,13 +249,10 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // check primary user self certificates
-    PGPSignaturePacket *primaryUserSelfCertificate = nil;
-    [self primaryUserAndSelfCertificate:&primaryUserSelfCertificate];
-    if (primaryUserSelfCertificate) {
-        if (PGPEqualObjects(self.keyID,keyID)) {
-            if (primaryUserSelfCertificate.canBeUsedToSign) {
-                return self.primaryKeyPacket;
-            }
+    let _Nullable primaryUserSelfCertificate = self.primaryUserSelfCertificate;
+    if (primaryUserSelfCertificate && PGPEqualObjects(self.keyID,keyID)) {
+        if (primaryUserSelfCertificate.canBeUsedToSign) {
+            return self.primaryKeyPacket;
         }
     }
 
@@ -275,12 +279,9 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // check primary user self certificates
-    PGPSignaturePacket *primaryUserSelfCertificate = nil;
-    [self primaryUserAndSelfCertificate:&primaryUserSelfCertificate];
-    if (primaryUserSelfCertificate) {
-        if (primaryUserSelfCertificate.canBeUsedToEncrypt) {
-            return self.primaryKeyPacket;
-        }
+    let _Nullable primaryUserSelfCertificate = self.primaryUserSelfCertificate;
+    if (primaryUserSelfCertificate && primaryUserSelfCertificate.canBeUsedToEncrypt) {
+        return self.primaryKeyPacket;
     }
 
     // v3 keys MUST NOT have subkeys
@@ -427,34 +428,37 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Verification
 
 - (nullable PGPUser *)primaryUser {
-    return [[self primaryUserAndSelfCertificate:nil] copy];
+    let _Nullable primaryUsers = [[self.users pgp_objectsPassingTest:^BOOL(PGPUser *user, BOOL *stop) {
+        return user.userID && user.userID.length > 0;
+    }] pgp_flatMap:^NSArray * _Nullable (PGPUser *user) {
+        let _Nullable latestSelfCertificate = user.latestSelfCertificate;
+        if (latestSelfCertificate && latestSelfCertificate.isPrimaryUserID) {
+            return @[user];
+        }
+        return nil;
+    }];
+
+    // no selected primary users here and only one user? that's the primary one
+    if (primaryUsers.count == 0 && self.users.count == 1) {
+        return self.users.firstObject;
+    }
+
+    // it is RECOMMENDED that priority be given to the User ID with the most recent self-signature
+    let sortedPrimaryUsers = [primaryUsers sortedArrayUsingComparator:^NSComparisonResult(PGPUser *lhs, PGPUser *rhs) {
+        let _Nullable LHSLatestSelfCertificateExpirationDate = lhs.latestSelfCertificate.expirationDate;
+        let _Nullable RHSLatestSelfCertificateExpirationDate = rhs.latestSelfCertificate.expirationDate;
+
+        if (LHSLatestSelfCertificateExpirationDate && RHSLatestSelfCertificateExpirationDate) {
+            return [PGPNN(LHSLatestSelfCertificateExpirationDate) compare:PGPNN(RHSLatestSelfCertificateExpirationDate)];
+        }
+        return NSOrderedSame;
+    }];
+
+    return sortedPrimaryUsers.lastObject;
 }
 
-// Returns primary user with self certificate
-- (nullable PGPUser *)primaryUserAndSelfCertificate:(PGPSignaturePacket *__autoreleasing _Nullable *)selfCertificateOut {
-    PGPUser *foundUser = nil;
-
-    for (PGPUser *user in self.users) {
-        if (!user.userID || user.userID.length == 0) {
-            continue;
-        }
-
-        let selfCertificate = user.latestSelfCertificate;
-        if (!selfCertificate) {
-            continue;
-        }
-
-        if (selfCertificate.isPrimaryUserID) {
-            foundUser = user;
-        } else if (!foundUser) {
-            foundUser = user;
-        }
-
-        if (selfCertificateOut) {
-            *selfCertificateOut = selfCertificate;
-        }
-    }
-    return foundUser;
+- (nullable PGPSignaturePacket *)primaryUserSelfCertificate {
+    return self.primaryUser.latestSelfCertificate;
 }
 
 #pragma mark - Preferences
@@ -471,10 +475,9 @@ NS_ASSUME_NONNULL_BEGIN
     for (PGPPartialKey *key in keys) {
         let keyAlgorithms = [NSMutableArray<NSNumber *> array];
 
-        PGPSignaturePacket *selfCertificate = nil;
-        let primaryUser = [key primaryUserAndSelfCertificate:&selfCertificate];
-        if (primaryUser && selfCertificate) {
-            let signatureSubpacket = [[selfCertificate subpacketsOfType:PGPSignatureSubpacketTypePreferredSymetricAlgorithm] firstObject];
+        let _Nullable primaryUserSelfCertificate = key.primaryUserSelfCertificate;
+        if (key.primaryUser && primaryUserSelfCertificate) {
+            let signatureSubpacket = [[primaryUserSelfCertificate subpacketsOfType:PGPSignatureSubpacketTypePreferredSymetricAlgorithm] firstObject];
             NSArray<NSNumber *> * _Nullable preferredSymetricAlgorithms = PGPCast(signatureSubpacket.value, NSArray);
             if (preferredSymetricAlgorithms) {
                 [keyAlgorithms addObjectsFromArray:PGPNN(preferredSymetricAlgorithms)];

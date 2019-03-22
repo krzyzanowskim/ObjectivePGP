@@ -79,7 +79,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPSignatureSubpacketTypeKeyExpirationTime: {
             //  5.2.3.10. Signature Expiration Time
             //  5.2.3.6.  Key Expiration Time
-            //   The validity period of the signature
+            //   The validity period of the signature or key
             UInt32 validityPeriodTime = 0;
             [packetBodyData getBytes:&validityPeriodTime length:4];
             validityPeriodTime = CFSwapInt32BigToHost(validityPeriodTime);

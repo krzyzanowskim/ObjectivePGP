@@ -527,4 +527,12 @@
     XCTAssertNotNil(encrypted);
 }
 
+/// https://github.com/krzyzanowskim/ObjectivePGP/issues/130
+- (void)testExpirationDate {
+    let key = [PGPTestUtils readKeysFromPath:@"issue130-espirationdate.asc"][0];
+    let expirationDate = key.expirationDate;
+    XCTAssertNotNil(expirationDate);
+    XCTAssertEqual(expirationDate.timeIntervalSince1970, 1607687540); // Fri Dec 11 11:52:20 2020 UTC
+}
+
 @end
