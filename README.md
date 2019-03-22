@@ -17,7 +17,7 @@ You want to help, great! Go ahead and fork our repo, make your changes and send 
 ## Contribution
 
 You are welcome to contribute. See [CONTRIBUTING.md](https://github.com/krzyzanowskim/ObjectivePGP/blob/master/CONTRIBUTING.md)  
-Please create [Pull Request](https://github.com/krzyzanowskim/ObjectivePGP/pulls) against `develop` branch.
+Please create [Pull Request](https://github.com/krzyzanowskim/ObjectivePGP/pulls).
 
 ## The license
 
