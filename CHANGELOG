@@ -1,3 +1,7 @@
+Version 0.14.0
+- Improve decryption memory usage.
+- Fixes key expiration dates.
+
 Version 0.13.0
 - Fixes issue where expirationData value was missing for expired keys. Fixes #120.
 - Improves logging setup by respecting PGP_LOG_LEVEL setting.

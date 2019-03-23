@@ -17,7 +17,7 @@ You want to help, great! Go ahead and fork our repo, make your changes and send 
 ## Contribution
 
 You are welcome to contribute. See [CONTRIBUTING.md](https://github.com/krzyzanowskim/ObjectivePGP/blob/master/CONTRIBUTING.md)  
-Please create [Pull Request](https://github.com/krzyzanowskim/ObjectivePGP/pulls) against `develop` branch.
+Please create [Pull Request](https://github.com/krzyzanowskim/ObjectivePGP/pulls).
 
 ## The license
 
@@ -27,7 +27,8 @@ The ObjectivePGP stays under a dual license:
 
 - Commercial-use license to use in commercial products. Please bear in mind that some free products remain commercial products. Please contact me via [email](http://www.krzyzanowskim.com) for details.
 
-Not sure what to choose? check this [thread](https://twitter.com/krzyzanowskim/status/868481597204508672)
+
+Not sure what to choose? check [FAQ](https://github.com/krzyzanowskim/ObjectivePGP/wiki/FAQ)
 
 ## Usage
 
