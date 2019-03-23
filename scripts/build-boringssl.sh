@@ -1,19 +1,18 @@
 #!/usr/bin/env bash
 
 BASE_PWD="$PWD"
-SCRIPT_DIR="$(dirname "$0")"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
-BORINGSSL_SRC_DIR="${SCRIPT_DIR}/../vendor/boringssl-src"
-BORINGSSL_BUILD_DIR="${SCRIPT_DIR}/../vendor/boringssl-build"
-LIBS_DIR="${SCRIPT_DIR}/../vendor/libs"
+TMP_DIR=$( mktemp -d )
+BORINGSSL_SRC_DIR=${TMP_DIR}/src
+BORINGSSL_BUILD_DIR=${TMP_DIR}/build
+LIBS_DIR=$( realpath ${SCRIPT_DIR}/../vendor/libs )
 
-rm -rf "${BORINGSSL_SRC_DIR}"
-rm -rf "${BORINGSSL_BUILD_DIR}"
+mkdir -p ${BORINGSSL_SRC_DIR}
+mkdir -p ${BORINGSSL_BUILD_DIR}
+mkdir -p ${LIBS_DIR}
 
-curl -Lk https://github.com/google/boringssl/archive/chromium-stable.zip -o vendor/boringssl-chromium-stable.zip
-unzip -q vendor/boringssl-chromium-stable.zip -d vendor/
-rm -f vendor/boringssl-chromium-stable.zip
-mv vendor/boringssl-chromium-stable "${BORINGSSL_SRC_DIR}"
+curl -Lk https://github.com/google/boringssl/archive/chromium-stable.zip | tar -xzp --strip-components=1 -C ${BORINGSSL_SRC_DIR}
 
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_SYSROOT=macosx          -DCMAKE_OSX_DEPLOYMENT_TARGET="10.10" -DCMAKE_OSX_ARCHITECTURES=x86_64 -H"${BORINGSSL_SRC_DIR}" -B"${BORINGSSL_BUILD_DIR}/macosx"
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_SYSROOT=iphoneos        -DCMAKE_OSX_DEPLOYMENT_TARGET="7.0" -DCMAKE_OSX_ARCHITECTURES=arm64 -H"${BORINGSSL_SRC_DIR}" -B"${BORINGSSL_BUILD_DIR}/iphoneos_arm64"
@@ -53,5 +52,4 @@ rm -rf "${BORINGSSL_BUILD_DIR}"
 xcrun nm -gUj "${LIBS_DIR}/macosx/libcrypto.a" | grep -v "^$" | grep "^_" > "${LIBS_DIR}/macosx/symbols"
 xcrun nm -gUj "${LIBS_DIR}/ios/libcrypto.a" | grep -v "^$" | grep "^_" > "${LIBS_DIR}/ios/symbols"
 
-rm -rf "${BORINGSSL_SRC_DIR}"
-rm -rf "${BORINGSSL_BUILD_DIR}"
+rm -rf ${TMP_DIR}
