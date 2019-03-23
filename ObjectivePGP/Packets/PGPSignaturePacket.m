@@ -140,15 +140,16 @@ NS_ASSUME_NONNULL_BEGIN
     return filteredSubpackets;
 }
 
+// Signature expiration date.
+// Note: this is not a key expiration date.
 - (nullable NSDate *)expirationDate {
-    let creationDateSubpacket = PGPCast([self subpacketsOfType:PGPSignatureSubpacketTypeSignatureCreationTime].firstObject, PGPSignatureSubpacket);
-    var validityPeriodSubpacket = PGPCast([self subpacketsOfType:PGPSignatureSubpacketTypeSignatureExpirationTime].firstObject, PGPSignatureSubpacket);
-    if (!validityPeriodSubpacket) {
-        validityPeriodSubpacket = PGPCast([self subpacketsOfType:PGPSignatureSubpacketTypeKeyExpirationTime].firstObject, PGPSignatureSubpacket);
+    let _Nullable creationDate = self.creationDate;
+    if (!creationDate) {
+        return nil;
     }
 
-    let creationDate = PGPCast(creationDateSubpacket.value, NSDate);
-    let validityPeriod = PGPCast(validityPeriodSubpacket.value, NSNumber);
+    let _Nullable validityPeriodSubpacket = PGPCast([self subpacketsOfType:PGPSignatureSubpacketTypeSignatureExpirationTime].firstObject, PGPSignatureSubpacket);
+    let _Nullable validityPeriod = PGPCast(validityPeriodSubpacket.value, NSNumber);
     if (!validityPeriod || validityPeriod.unsignedIntegerValue == 0) {
         return nil;
     }
@@ -158,7 +159,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)isExpired {
     // is no expiration date then signature never expires
-    let expirationDate = self.expirationDate;
+    let _Nullable expirationDate = self.expirationDate;
     if (!expirationDate) {
         return NO;
     }
@@ -170,12 +171,12 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (nullable NSDate *)creationDate {
-    PGPSignatureSubpacket *creationDateSubpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeSignatureCreationTime] lastObject];
+    let creationDateSubpacket = PGPCast([[self subpacketsOfType:PGPSignatureSubpacketTypeSignatureCreationTime] lastObject], PGPSignatureSubpacket);
     return PGPCast(creationDateSubpacket.value, NSDate);
 }
 
 - (BOOL)isPrimaryUserID {
-    PGPSignatureSubpacket *primaryUserIDSubpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypePrimaryUserID] firstObject];
+    let primaryUserIDSubpacket = PGPCast([[self subpacketsOfType:PGPSignatureSubpacketTypePrimaryUserID] firstObject], PGPSignatureSubpacket);
     return PGPCast(primaryUserIDSubpacket.value, NSNumber).boolValue;
 }
 

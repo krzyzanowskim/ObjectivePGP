@@ -101,32 +101,8 @@ NS_ASSUME_NONNULL_BEGIN
     return arr;
 }
 
-// TODO:
-// User.prototype.getValidSelfCertificate = function(primaryKey) {
-//    if (!this.selfCertifications) {
-//        return null;
-//    }
-//    var validCert = [];
-//    for (var i = 0; i < this.selfCertifications.length; i++) {
-//        if (this.isRevoked(this.selfCertifications[i], primaryKey)) {
-//            continue;
-//        }
-//        if (!this.selfCertifications[i].isExpired() &&
-//            (this.selfCertifications[i].verified ||
-//             this.selfCertifications[i].verify(primaryKey, {userid: this.userId || this.userAttribute, key: primaryKey}))) {
-//                validCert.push(this.selfCertifications[i]);
-//            }
-//    }
-//    // most recent first
-//    validCert = validCert.sort(function(a, b) {
-//        a = a.created;
-//        b = b.created;
-//        return a>b ? -1 : a<b ? 1 : 0;
-//    });
-//    return validCert[0];
-//};
-
-// Returns the most significant (latest valid) self signature of the user
+// Returns the most recent self-signature of the user.
+// Including expired certificates
 - (nullable PGPSignaturePacket *)latestSelfCertificate {
     if (self.selfCertifications.count == 0) {
         return nil;
