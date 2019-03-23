@@ -748,6 +748,7 @@ __bignum_ffdhe4096_p
 __bignum_ffdhe6144_p
 __bignum_ffdhe8192_p
 _BN_div
+_bn_div_fixed_top
 _ERR_load_BN_strings
 _BN_exp
 _BN_mod_exp
@@ -916,6 +917,8 @@ _BN_lshift
 _BN_lshift1
 _BN_rshift
 _BN_rshift1
+_bn_lshift_fixed_top
+_bn_rshift_fixed_top
 _BN_sqr
 _bn_sqr_fixed_top
 _bn_sqr_normal
@@ -1212,6 +1215,8 @@ _NCONF_new
 _OPENSSL_INIT_free
 _OPENSSL_INIT_new
 _OPENSSL_INIT_set_config_appname
+_OPENSSL_INIT_set_config_file_flags
+_OPENSSL_INIT_set_config_filename
 _OPENSSL_load_builtin_modules
 _CONF_get1_default_config_file
 _CONF_imodule_get_flags
@@ -1242,6 +1247,8 @@ _CRYPTO_memcmp
 _OPENSSL_cpuid_setup
 _OPENSSL_die
 _OPENSSL_ia32cap_P
+_OPENSSL_instrument_bus
+_OPENSSL_instrument_bus2
 _OPENSSL_isservice
 _OPENSSL_rdtsc
 _OPENSSL_showfatal
@@ -1814,6 +1821,7 @@ _EC_POINT_hex2point
 _EC_POINT_point2bn
 _EC_POINT_point2hex
 _ECDH_KDF_X9_62
+_ecdh_KDF_X9_63
 _ecdh_simple_compute_key
 _ossl_ecdh_compute_key
 _ossl_ecdsa_sign
@@ -1835,6 +1843,7 @@ _EC_KEY_print_fp
 _EC_GFp_mont_method
 _ec_GFp_mont_field_decode
 _ec_GFp_mont_field_encode
+_ec_GFp_mont_field_inv
 _ec_GFp_mont_field_mul
 _ec_GFp_mont_field_set_to_one
 _ec_GFp_mont_field_sqr
@@ -1885,6 +1894,7 @@ _ec_GFp_simple_add
 _ec_GFp_simple_blind_coordinates
 _ec_GFp_simple_cmp
 _ec_GFp_simple_dbl
+_ec_GFp_simple_field_inv
 _ec_GFp_simple_field_mul
 _ec_GFp_simple_field_sqr
 _ec_GFp_simple_get_Jprojective_coordinates_GFp
@@ -1951,6 +1961,7 @@ _ERR_set_error_data
 _ERR_set_mark
 _ERR_unload_strings
 _err_cleanup
+_err_clear_last_constant_time
 _err_delete_thread_state
 _err_free_strings_int
 _err_shelve_state
@@ -2471,6 +2482,7 @@ _CRYPTO_get_ex_new_index
 _CRYPTO_new_ex_data
 _CRYPTO_set_ex_data
 _crypto_cleanup_all_ex_data_int
+_ossl_safe_getenv
 _hmac_asn1_meth
 _hmac_pkey_meth
 _HMAC
@@ -3209,6 +3221,7 @@ _rand_drbg_cleanup_int
 _rand_drbg_enable_locking
 _rand_drbg_lock
 _rand_drbg_restart
+_rand_drbg_seedlen
 _rand_drbg_unlock
 _rand_meth
 _ERR_load_RAND_strings
@@ -3234,6 +3247,7 @@ _rand_fork_count
 _rand_pool_add
 _rand_pool_add_begin
 _rand_pool_add_end
+_rand_pool_attach
 _rand_pool_buffer
 _rand_pool_bytes_needed
 _rand_pool_bytes_remaining
@@ -3244,6 +3258,7 @@ _rand_pool_entropy_needed
 _rand_pool_free
 _rand_pool_length
 _rand_pool_new
+_rand_pool_reattach
 _rand_pool_acquire_entropy
 _rand_pool_add_additional_data
 _rand_pool_add_nonce_data
