@@ -8,7 +8,9 @@
 //  5.12.1.  The Image Attribute Subpacket
 
 #import "PGPUserAttributeImageSubpacket.h"
+#import "PGPTypes.h"
 #import "PGPLogging.h"
+#import "PGPMacros+Private.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
