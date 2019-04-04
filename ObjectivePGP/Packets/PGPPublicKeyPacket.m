@@ -275,11 +275,23 @@ NS_ASSUME_NONNULL_BEGIN
 
     [data appendBytes:&_publicKeyAlgorithm length:1];
 
+    if (self.publicKeyAlgorithm == PGPPublicKeyAlgorithmECDSA ||
+        self.publicKeyAlgorithm == PGPPublicKeyAlgorithmEdDSA ||
+        self.publicKeyAlgorithm == PGPPublicKeyAlgorithmECDH)
+    {
+        [data pgp_appendData:[self.oid export:nil]];
+    }
+
+    if (self.publicKeyAlgorithm == PGPPublicKeyAlgorithmECDH) {
+        // TODO: kdf
+    }
+
     // publicMPI is always available, no need to decrypt
     for (PGPMPI *mpi in self.publicMPIs) {
         let exportMPI = [mpi exportMPI];
         [data pgp_appendData:exportMPI];
     }
+
     return data;
 }
 

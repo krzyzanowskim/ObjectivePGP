@@ -9,12 +9,13 @@
 //
 
 #import <ObjectivePGP/PGPMacros.h>
-#import "PGPTypes.h"
+#import <ObjectivePGP/PGPExportableProtocol.h>
+#import <ObjectivePGP/PGPTypes.h>
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-NS_SWIFT_NAME(CurveOID) @interface PGPCurveOID : NSObject
+NS_SWIFT_NAME(CurveOID) @interface PGPCurveOID : NSObject <PGPExportable>
 
 @property (assign, nonatomic, readonly) PGPCurve curveKind;
 

@@ -10,6 +10,8 @@
 
 #import "PGPCurveOID.h"
 #import <ObjectivePGP/PGPMacros+Private.h>
+#import "NSArray+PGPUtils.h"
+#import "NSMutableData+PGPUtils.h"
 #import "PGPTypes.h"
 #import "PGPFoundation.h"
 
@@ -57,6 +59,50 @@ static UInt8 pgp_curve_identifier_curve25519[] = {0x2B, 0x06, 0x01, 0x04, 0x01, 
 
 - (NSString *)description {
     return [NSString stringWithFormat:@"%@. curveKind: %@", super.description, @(self.curveKind)];
+}
+
+- (nullable NSData *)export:(NSError * _Nullable __autoreleasing * _Nullable)error {
+    let bodyData = [NSMutableData data];
+
+    switch (self.curveKind) {
+        case PGPCurveP256: {
+            UInt8 length = (UInt8)sizeof(pgp_curve_identifier_p256);
+            [bodyData appendBytes:&length length:1];
+            [bodyData appendBytes:pgp_curve_identifier_p256 length:length];
+        } break;
+        case PGPCurveP384: {
+            UInt8 length = (UInt8)sizeof(pgp_curve_identifier_p384);
+            [bodyData appendBytes:&length length:1];
+            [bodyData appendBytes:pgp_curve_identifier_p384 length:length];
+        } break;
+        case PGPCurveP521: {
+            UInt8 length = (UInt8)sizeof(pgp_curve_identifier_p521);
+            [bodyData appendBytes:&length length:1];
+            [bodyData appendBytes:pgp_curve_identifier_p521 length:length];
+        } break;
+        case PGPCurveBrainpoolP256r1: {
+            UInt8 length = (UInt8)sizeof(pgp_curve_identifier_brainpoolP256r1);
+            [bodyData appendBytes:&length length:1];
+            [bodyData appendBytes:pgp_curve_identifier_brainpoolP256r1 length:length];
+        } break;
+        case PGPCurveBrainpoolP512r1: {
+            UInt8 length = (UInt8)sizeof(pgp_curve_identifier_brainpoolP512r1);
+            [bodyData appendBytes:&length length:1];
+            [bodyData appendBytes:pgp_curve_identifier_brainpoolP512r1 length:length];
+        } break;
+        case PGPCurveEd25519: {
+            UInt8 length = (UInt8)sizeof(pgp_curve_identifier_ed25519);
+            [bodyData appendBytes:&length length:1];
+            [bodyData appendBytes:pgp_curve_identifier_ed25519 length:length];
+        } break;
+        case PGPCurve25519: {
+            UInt8 length = (UInt8)sizeof(pgp_curve_identifier_curve25519);
+            [bodyData appendBytes:&length length:1];
+            [bodyData appendBytes:pgp_curve_identifier_curve25519 length:length];
+        } break;
+    }
+
+    return bodyData;
 }
 
 @end
