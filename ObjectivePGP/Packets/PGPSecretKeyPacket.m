@@ -248,9 +248,13 @@ NS_ASSUME_NONNULL_BEGIN
 
             self.secretMPIs = @[mpiX];
         } break;
-        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
-        case PGPPublicKeyAlgorithmECDH:
         case PGPPublicKeyAlgorithmECDSA:
+        case PGPPublicKeyAlgorithmEdDSA:
+        case PGPPublicKeyAlgorithmECDH: {
+            let mpiEC_S = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPI_EC_S atPosition:position];
+            position = position + mpiEC_S.packetLength;
+        } break;
+        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
         case PGPPublicKeyAlgorithmDiffieHellman:
         case PGPPublicKeyAlgorithmPrivate1:
         case PGPPublicKeyAlgorithmPrivate2:
