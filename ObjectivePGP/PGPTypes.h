@@ -38,18 +38,18 @@ typedef NS_ERROR_ENUM(PGPErrorDomain, PGPErrorCode) {
     PGPErrorNotFound = 11
 };
 
-typedef NS_ENUM(NSInteger, PGPFormatType) {
+typedef NS_CLOSED_ENUM(NSInteger, PGPFormatType) {
     PGPFormatUnknown = 0,
     PGPFormatOld = 1,
     PGPFormatNew = 2
 };
 
-typedef NS_ENUM(NSUInteger, PGPHeaderPacketTag) {
+typedef NS_CLOSED_ENUM(NSUInteger, PGPHeaderPacketTag) {
     PGPHeaderPacketTagNewFormat = 0x40,
     PGPHeaderPacketTagAllwaysSet = 0x80
 };
 
-typedef NS_ENUM(UInt8, PGPPacketTag) {
+typedef NS_CLOSED_ENUM(UInt8, PGPPacketTag) {
     PGPInvalidPacketTag = 0,
     PGPPublicKeyEncryptedSessionKeyPacketTag = 1,
     PGPSignaturePacketTag = 2,
@@ -74,12 +74,12 @@ typedef NS_ENUM(UInt8, PGPPacketTag) {
     PGPExperimentalPacketTag4 = 63
 };
 
-typedef NS_ENUM(UInt8, PGPUserAttributeSubpacketType) {
+typedef NS_CLOSED_ENUM(UInt8, PGPUserAttributeSubpacketType) {
     PGPUserAttributeSubpacketImage = 0x01 // The only currently defined subpacket type is 1, signifying an image.
 };
 
 // 9.1.  Public-Key Algorithms
-typedef NS_ENUM(UInt8, PGPPublicKeyAlgorithm) {
+typedef NS_CLOSED_ENUM(UInt8, PGPPublicKeyAlgorithm) {
     PGPPublicKeyAlgorithmRSA = 1,
     PGPPublicKeyAlgorithmRSAEncryptOnly = 2,
     PGPPublicKeyAlgorithmRSASignOnly = 3,
@@ -103,7 +103,7 @@ typedef NS_ENUM(UInt8, PGPPublicKeyAlgorithm) {
 };
 
 // 9.2.  Symmetric-Key Algorithms
-typedef NS_ENUM(UInt8, PGPSymmetricAlgorithm) {
+typedef NS_CLOSED_ENUM(UInt8, PGPSymmetricAlgorithm) {
     PGPSymmetricPlaintext = 0,
     PGPSymmetricIDEA = 1, // 8 bytes (64-bit) block size, key length: 2 bytes (16 bit)
     PGPSymmetricTripleDES = 2, // 8 bytes (64-bit) block size
@@ -117,7 +117,7 @@ typedef NS_ENUM(UInt8, PGPSymmetricAlgorithm) {
 };
 
 // 9.4.  Hash Algorithms
-typedef NS_ENUM(UInt8, PGPHashAlgorithm) {
+typedef NS_CLOSED_ENUM(UInt8, PGPHashAlgorithm) {
     PGPHashUnknown = 0,
     PGPHashMD5 = 1, // MD5  - deprecated
     PGPHashSHA1 = 2, // SHA1 - required
@@ -128,7 +128,7 @@ typedef NS_ENUM(UInt8, PGPHashAlgorithm) {
     PGPHashSHA224 = 11 // SHA224
 };
 
-typedef NS_ENUM(UInt8, PGPSignatureType) {
+typedef NS_CLOSED_ENUM(UInt8, PGPSignatureType) {
     PGPSignatureBinaryDocument = 0x00,
     PGPSignatureCanonicalTextDocument = 0x01,
     PGPSignatureStandalone = 0x02,
@@ -147,7 +147,7 @@ typedef NS_ENUM(UInt8, PGPSignatureType) {
     PGPSignatureUnknown = 0xFF
 };
 
-typedef NS_ENUM(UInt8, PGPSignatureSubpacketType) {
+typedef NS_CLOSED_ENUM(UInt8, PGPSignatureSubpacketType) {
     PGPSignatureSubpacketTypeUnknown = 0, // Unknown
     PGPSignatureSubpacketTypeSignatureCreationTime = 2,
     PGPSignatureSubpacketTypeSignatureExpirationTime = 3,
@@ -176,7 +176,7 @@ typedef NS_ENUM(UInt8, PGPSignatureSubpacketType) {
 };
 
 // 5.2.3.21.  Key Flags
-typedef NS_ENUM(UInt8, PGPSignatureFlags) {
+typedef NS_CLOSED_ENUM(UInt8, PGPSignatureFlags) {
     PGPSignatureFlagUnknown = 0x00,
     PGPSignatureFlagAllowCertifyOtherKeys = 0x01, // indicates that this key may be used to certify other keys
     PGPSignatureFlagAllowSignData = 0x02, // indicates that this key may be used to sign data.
@@ -188,19 +188,19 @@ typedef NS_ENUM(UInt8, PGPSignatureFlags) {
 };
 
 // 5.2.3.17.  Key Server Preferences
-typedef NS_ENUM(UInt8, PGPKeyServerPreferenceFlags) {
+typedef NS_CLOSED_ENUM(UInt8, PGPKeyServerPreferenceFlags) {
     PGPKeyServerPreferenceUnknown  = 0x00,
     PGPKeyServerPreferenceNoModify = 0x80 // No-modify
 };
 
 // 5.2.3.24.  Features
-typedef NS_ENUM(UInt8, PGPFeature) {
+typedef NS_CLOSED_ENUM(UInt8, PGPFeature) {
     PGPFeatureModificationUnknown   = 0x00,
     PGPFeatureModificationDetection = 0x01 // Modification Detection (packets 18 and 19)
 };
 
 // 3.7.1.  String-to-Key (S2K) Specifier Types
-typedef NS_ENUM(UInt8, PGPS2KSpecifier) {
+typedef NS_CLOSED_ENUM(UInt8, PGPS2KSpecifier) {
     PGPS2KSpecifierSimple = 0,
     PGPS2KSpecifierSalted = 1,
     PGPS2KSpecifierIteratedAndSalted = 3,
@@ -212,14 +212,14 @@ typedef NS_ENUM(UInt8, PGPS2KSpecifier) {
     PGPS2KSpecifierDivertToCard = 102
 };
 
-typedef NS_ENUM(UInt8, PGPS2KUsage) {
+typedef NS_CLOSED_ENUM(UInt8, PGPS2KUsage) {
     PGPS2KUsageNonEncrypted = 0, // no passphrase
     PGPS2KUsageEncryptedAndHashed = 254,
     PGPS2KUsageEncrypted = 255
 };
 
 // 9.3.  Compression Algorithms
-typedef NS_ENUM(UInt8, PGPCompressionAlgorithm) {
+typedef NS_CLOSED_ENUM(UInt8, PGPCompressionAlgorithm) {
     PGPCompressionUncompressed = 0,
     PGPCompressionZIP = 1,
     PGPCompressionZLIB = 2,
