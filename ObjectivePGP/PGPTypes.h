@@ -75,6 +75,7 @@ typedef NS_CLOSED_ENUM(UInt8, PGPPacketTag) {
 };
 
 typedef NS_CLOSED_ENUM(UInt8, PGPUserAttributeSubpacketType) {
+    PGPUserAttributeSubpacketUnknown = 0x00,
     PGPUserAttributeSubpacketImage = 0x01 // The only currently defined subpacket type is 1, signifying an image.
 };
 

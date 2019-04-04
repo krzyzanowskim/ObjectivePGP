@@ -212,6 +212,8 @@ NS_ASSUME_NONNULL_BEGIN
             let mpiEC = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_EC atPosition:position];
             position = position + mpiEC.packetLength;
 
+            //TODO: KDF is not stored anywhere
+            
             // a variable-length field containing KDF parameters
             UInt8 kdfSize = 0;
             [packetBody getBytes:&kdfSize range:(NSRange){position, 1}];

@@ -41,7 +41,7 @@ NS_ASSUME_NONNULL_BEGIN
         [PGPPacketHeader getLengthFromNewFormatOctets:subPacketData bodyLength:&bodyLength bytesCount:&lengthBytesCount isPartial:nil];
         position = position + lengthBytesCount;
 
-        PGPUserAttributeSubpacketType subpacketType = 0;
+        PGPUserAttributeSubpacketType subpacketType = PGPUserAttributeSubpacketUnknown;
         [subPacketData getBytes:&subpacketType range:(NSRange){position, 1}];
         position = position + 1;
 

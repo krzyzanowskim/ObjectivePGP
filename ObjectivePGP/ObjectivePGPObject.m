@@ -130,7 +130,7 @@ NS_ASSUME_NONNULL_BEGIN
     // passphrase that may be used to decrypt the message.  This allows a
     // message to be encrypted to a number of public keys, and also to one
     // or more passphrases.
-    PGPSymmetricAlgorithm sessionKeyAlgorithm = UINT8_MAX;
+    PGPSymmetricAlgorithm sessionKeyAlgorithm = PGPSymmetricPlaintext;
     let packets = [NSMutableArray arrayWithArray:encryptedPackets];
 
     // 1. search for valid and known (do I have specified key?) ESK
