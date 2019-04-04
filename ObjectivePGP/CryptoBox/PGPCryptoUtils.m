@@ -133,7 +133,7 @@ NS_ASSUME_NONNULL_BEGIN
             return [PGPElgamal privateDecrypt:data withSecretKeyPacket:keyPacket gk:g_k_mpi];
        } break;
         case PGPPublicKeyAlgorithmDSA:
-        case PGPPublicKeyAlgorithmElliptic:
+        case PGPPublicKeyAlgorithmECDH:
         case PGPPublicKeyAlgorithmECDSA:
         case PGPPublicKeyAlgorithmDiffieHellman:
         case PGPPublicKeyAlgorithmPrivate1:

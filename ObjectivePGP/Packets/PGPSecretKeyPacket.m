@@ -249,7 +249,7 @@ NS_ASSUME_NONNULL_BEGIN
             self.secretMPIs = @[mpiX];
         } break;
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:
-        case PGPPublicKeyAlgorithmElliptic:
+        case PGPPublicKeyAlgorithmECDH:
         case PGPPublicKeyAlgorithmECDSA:
         case PGPPublicKeyAlgorithmDiffieHellman:
         case PGPPublicKeyAlgorithmPrivate1:

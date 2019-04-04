@@ -170,7 +170,7 @@ NS_ASSUME_NONNULL_BEGIN
             self.publicMPIs = @[mpiP, mpiG, mpiY];
         } break;
         case PGPPublicKeyAlgorithmECDSA:
-        case PGPPublicKeyAlgorithmElliptic:
+        case PGPPublicKeyAlgorithmECDH:
         case PGPPublicKeyAlgorithmDiffieHellman:
         case PGPPublicKeyAlgorithmPrivate1:
         case PGPPublicKeyAlgorithmPrivate2:
@@ -273,7 +273,7 @@ NS_ASSUME_NONNULL_BEGIN
             return @[g_k, m];
         } break;
         case PGPPublicKeyAlgorithmDSA:
-        case PGPPublicKeyAlgorithmElliptic:
+        case PGPPublicKeyAlgorithmECDH:
         case PGPPublicKeyAlgorithmECDSA:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:
         case PGPPublicKeyAlgorithmDiffieHellman:
