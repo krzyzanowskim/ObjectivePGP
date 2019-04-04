@@ -24,6 +24,7 @@ OBJC_EXTERN NSString * const PGPMPI_R;
 OBJC_EXTERN NSString * const PGPMPI_S;
 OBJC_EXTERN NSString * const PGPMPI_Y;
 OBJC_EXTERN NSString * const PGPMPI_M;
+OBJC_EXTERN NSString * const PGPMPI_EC;
 
 @interface PGPMPI : NSObject <NSCopying>
 

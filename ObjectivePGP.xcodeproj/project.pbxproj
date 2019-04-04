@@ -123,6 +123,8 @@
 		757B54CB1FE5B68300E974CB /* PGPKeyring.h in Headers */ = {isa = PBXBuildFile; fileRef = 757B54C91FE5B68300E974CB /* PGPKeyring.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		757B54CC1FE5B68300E974CB /* PGPKeyring.m in Sources */ = {isa = PBXBuildFile; fileRef = 757B54CA1FE5B68300E974CB /* PGPKeyring.m */; };
 		757B54CE1FE5C81500E974CB /* PGPKeyring+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 757B54CD1FE5C81500E974CB /* PGPKeyring+Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		758C9AA522563B53005F0D19 /* PGPCurveOID.h in Headers */ = {isa = PBXBuildFile; fileRef = 758C9AA322563B53005F0D19 /* PGPCurveOID.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		758C9AA622563B53005F0D19 /* PGPCurveOID.m in Sources */ = {isa = PBXBuildFile; fileRef = 758C9AA422563B53005F0D19 /* PGPCurveOID.m */; };
 		759345561FE9C447004D5105 /* twofish.c in Sources */ = {isa = PBXBuildFile; fileRef = 759345541FE9C447004D5105 /* twofish.c */; };
 		759345571FE9C447004D5105 /* twofish.h in Headers */ = {isa = PBXBuildFile; fileRef = 759345551FE9C447004D5105 /* twofish.h */; };
 		75AB35061F8819A600A1CDD6 /* testfiles.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 75AB35051F88193B00A1CDD6 /* testfiles.bundle */; };
@@ -277,6 +279,8 @@
 		758514EB1EDF09C400CB313F /* PGPFoundation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPFoundation.m; sourceTree = "<group>"; };
 		758514EE1EDF3D7100CB313F /* PGPKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPKey.h; sourceTree = "<group>"; };
 		758514EF1EDF3D7100CB313F /* PGPKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPKey.m; sourceTree = "<group>"; };
+		758C9AA322563B53005F0D19 /* PGPCurveOID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPCurveOID.h; sourceTree = "<group>"; };
+		758C9AA422563B53005F0D19 /* PGPCurveOID.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PGPCurveOID.m; sourceTree = "<group>"; };
 		759345541FE9C447004D5105 /* twofish.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = twofish.c; sourceTree = "<group>"; };
 		759345551FE9C447004D5105 /* twofish.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = twofish.h; sourceTree = "<group>"; };
 		7597B79A192E9C7F003ABC65 /* PGPPKCSEmsa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPKCSEmsa.h; sourceTree = "<group>"; };
@@ -515,6 +519,8 @@
 				750EE3C21922C185009E818E /* PGPPartialKey.h */,
 				75E9AD0E1F7FF10100B0559B /* PGPPartialKey+Private.h */,
 				750EE3C31922C185009E818E /* PGPPartialKey.m */,
+				758C9AA322563B53005F0D19 /* PGPCurveOID.h */,
+				758C9AA422563B53005F0D19 /* PGPCurveOID.m */,
 				758514EE1EDF3D7100CB313F /* PGPKey.h */,
 				758514EF1EDF3D7100CB313F /* PGPKey.m */,
 				75804A241EED159300AC97BF /* PGPKey+Private.h */,
@@ -630,6 +636,7 @@
 				751373861F6536350067A343 /* NSData+PGPUtils.h in Headers */,
 				75D1E2691FCB939F00D55F60 /* PGPUser+Private.h in Headers */,
 				7537A6B61F0D739A00892829 /* PGPBigNum.h in Headers */,
+				758C9AA522563B53005F0D19 /* PGPCurveOID.h in Headers */,
 				75BF43E61F5076B9004334DE /* PGPKeyMaterial.h in Headers */,
 				7537A6CA1F0D739A00892829 /* PGPMPI.h in Headers */,
 				751373BE1F6537490067A343 /* PGPLiteralPacket.h in Headers */,
@@ -806,6 +813,7 @@
 				7513738B1F65366C0067A343 /* PGPCryptoUtils.m in Sources */,
 				751373E91F6537490067A343 /* PGPUserIDPacket.m in Sources */,
 				751373E71F6537490067A343 /* PGPUserAttributeSubpacket.m in Sources */,
+				758C9AA622563B53005F0D19 /* PGPCurveOID.m in Sources */,
 				751373C91F6537490067A343 /* PGPPublicKeyEncryptedSessionKeyPacket.m in Sources */,
 				751373CE1F6537490067A343 /* PGPPublicSubKeyPacket.m in Sources */,
 				751373881F65363C0067A343 /* NSData+PGPUtils.m in Sources */,

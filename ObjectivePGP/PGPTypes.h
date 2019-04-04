@@ -89,6 +89,7 @@ typedef NS_CLOSED_ENUM(UInt8, PGPPublicKeyAlgorithm) {
     PGPPublicKeyAlgorithmECDSA = 19,
     PGPPublicKeyAlgorithmElgamalEncryptorSign = 20, // Deprecated ?
     PGPPublicKeyAlgorithmDiffieHellman = 21, // TODO: Deprecated?
+    PGPPublicKeyAlgorithmEdDSA = 22,
     PGPPublicKeyAlgorithmPrivate1 = 100,
     PGPPublicKeyAlgorithmPrivate2 = 101,
     PGPPublicKeyAlgorithmPrivate3 = 102,
@@ -116,6 +117,17 @@ typedef NS_CLOSED_ENUM(UInt8, PGPSymmetricAlgorithm) {
     PGPSymmetricMax
 };
 
+// rfc4880bis 9.2.  ECC Curve OID
+typedef NS_CLOSED_ENUM(UInt8, PGPCurve) {
+    PGPCurveP256 = 0,
+    PGPCurveP384 = 1,
+    PGPCurveP521 = 2,
+    PGPCurveBrainpoolP256r1 = 3,
+    PGPCurveBrainpoolP512r1 = 4,
+    PGPCurveEd25519 = 5,
+    PGPCurve25519 = 6
+};
+
 // 9.4.  Hash Algorithms
 typedef NS_CLOSED_ENUM(UInt8, PGPHashAlgorithm) {
     PGPHashUnknown = 0,
@@ -125,7 +137,9 @@ typedef NS_CLOSED_ENUM(UInt8, PGPHashAlgorithm) {
     PGPHashSHA256 = 8, // SHA256
     PGPHashSHA384 = 9, // SHA384
     PGPHashSHA512 = 10, // SHA512
-    PGPHashSHA224 = 11 // SHA224
+    PGPHashSHA224 = 11, // SHA224
+    PGPHashSHA3_256 = 12, // SHA3-256
+    PGPHashSHA3_512 = 14 // SHA3-512
 };
 
 typedef NS_CLOSED_ENUM(UInt8, PGPSignatureType) {

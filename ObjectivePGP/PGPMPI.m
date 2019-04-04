@@ -30,6 +30,7 @@ NSString * const PGPMPI_R = @"R";
 NSString * const PGPMPI_S = @"S";
 NSString * const PGPMPI_Y = @"Y"; // public key. For Elgamal public key value y (= g**x mod p where x is secret).
 NSString * const PGPMPI_M = @"M";
+NSString * const PGPMPI_EC = @"EC"; // EC point
 
 @interface PGPMPI ()
 

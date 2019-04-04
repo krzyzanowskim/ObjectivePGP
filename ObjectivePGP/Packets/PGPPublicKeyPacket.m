@@ -10,6 +10,7 @@
 #import "PGPPacket+Private.h"
 #import "NSData+PGPUtils.h"
 #import "NSArray+PGPUtils.h"
+#import "PGPCurveOID.h"
 #import "PGPMPI.h"
 #import "PGPRSA.h"
 #import "PGPElgamal.h"
@@ -169,8 +170,66 @@ NS_ASSUME_NONNULL_BEGIN
 
             self.publicMPIs = @[mpiP, mpiG, mpiY];
         } break;
-        case PGPPublicKeyAlgorithmECDSA:
-        case PGPPublicKeyAlgorithmECDH:
+        case PGPPublicKeyAlgorithmECDSA: {
+            // a variable-length field containing a curve OID
+            UInt8 oidSize = 0;
+            [packetBody getBytes:&oidSize range:(NSRange){position, 1}];
+            position = position + 1;
+
+            let curveIdentifierData = [packetBody subdataWithRange:(NSRange){position, oidSize}];
+            self.oid = [[PGPCurveOID alloc] initWithIdentifierData: curveIdentifierData];
+            position = position + oidSize;
+
+            // MPI of an EC point representing a public key
+            let mpiEC = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_EC atPosition:position];
+            position = position + mpiEC.packetLength;
+        } break;
+        case PGPPublicKeyAlgorithmEdDSA: {
+            // a variable-length field containing a curve OID
+            UInt8 oidSize = 0;
+            [packetBody getBytes:&oidSize range:(NSRange){position, 1}];
+            position = position + 1;
+
+            let curveIdentifierData = [packetBody subdataWithRange:(NSRange){position, oidSize}];
+            self.oid = [[PGPCurveOID alloc] initWithIdentifierData: curveIdentifierData];
+            position = position + oidSize;
+
+            // MPI of an EC point representing a public key Q
+            let mpiEC = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_EC atPosition:position];
+            position = position + mpiEC.packetLength;
+        } break;
+        case PGPPublicKeyAlgorithmECDH: {
+            // a variable-length field containing a curve OID
+            UInt8 oidSize = 0;
+            [packetBody getBytes:&oidSize range:(NSRange){position, 1}];
+            position = position + 1;
+
+            let curveIdentifierData = [packetBody subdataWithRange:(NSRange){position, oidSize}];
+            self.oid = [[PGPCurveOID alloc] initWithIdentifierData: curveIdentifierData];
+            position = position + oidSize;
+
+            // a MPI of an EC point representing a public key;
+            let mpiEC = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_EC atPosition:position];
+            position = position + mpiEC.packetLength;
+
+            // a variable-length field containing KDF parameters
+            UInt8 kdfSize = 0;
+            [packetBody getBytes:&kdfSize range:(NSRange){position, 1}];
+            position = position + 1;
+
+            // a one-octet value 01, reserved for future extensions
+            position = position + 1;
+
+            // a one-octet hash function ID used with a KDF
+            PGPHashAlgorithm kdfHashFunctionID = 0;
+            [packetBody getBytes:&kdfHashFunctionID range:(NSRange){position, 1}];
+            position = position + 1;
+
+            // a one-octet algorithm ID for the symmetric algorithm used to wrap the symmetric key used for the message encryption;
+            PGPSymmetricAlgorithm symmetricAlgorithm = 0;
+            [packetBody getBytes:&symmetricAlgorithm range:(NSRange){position, 1}];
+            position = position + 1;
+        } break;
         case PGPPublicKeyAlgorithmDiffieHellman:
         case PGPPublicKeyAlgorithmPrivate1:
         case PGPPublicKeyAlgorithmPrivate2:
@@ -272,9 +331,9 @@ NS_ASSUME_NONNULL_BEGIN
             let m = [[PGPMPI alloc] initWithBigNum:bigNums[1] identifier:PGPMPI_M];
             return @[g_k, m];
         } break;
-        case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmECDH:
         case PGPPublicKeyAlgorithmECDSA:
+        case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:
         case PGPPublicKeyAlgorithmDiffieHellman:
         case PGPPublicKeyAlgorithmPrivate1:
