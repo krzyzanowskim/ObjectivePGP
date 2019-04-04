@@ -8,6 +8,7 @@
 
 #import "PGPPublicKeyPacket.h"
 #import "PGPCurveOID.h"
+#import "PGPCurveECDHParameters.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -19,7 +20,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readwrite) UInt16 V3validityPeriod;
 
 @property (nonatomic, copy) NSArray<PGPMPI *> *publicMPIs;
-@property (nonatomic, nullable) PGPCurveOID *oid; // Available for ECC key
+@property (nonatomic, nullable) PGPCurveOID *curveOID; // Available for ECC key
+@property (nonatomic, nullable) PGPCurveECDHParameters *edchParameters; // Available for ECC key
 @end
 
 NS_ASSUME_NONNULL_END

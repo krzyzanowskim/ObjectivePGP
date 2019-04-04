@@ -177,7 +177,7 @@ NS_ASSUME_NONNULL_BEGIN
             position = position + 1;
 
             let curveIdentifierData = [packetBody subdataWithRange:(NSRange){position, oidSize}];
-            self.oid = [[PGPCurveOID alloc] initWithIdentifierData: curveIdentifierData];
+            self.curveOID = [[PGPCurveOID alloc] initWithIdentifierData: curveIdentifierData];
             position = position + oidSize;
 
             // MPI of an EC point representing a public key
@@ -191,7 +191,7 @@ NS_ASSUME_NONNULL_BEGIN
             position = position + 1;
 
             let curveIdentifierData = [packetBody subdataWithRange:(NSRange){position, oidSize}];
-            self.oid = [[PGPCurveOID alloc] initWithIdentifierData: curveIdentifierData];
+            self.curveOID = [[PGPCurveOID alloc] initWithIdentifierData: curveIdentifierData];
             position = position + oidSize;
 
             // MPI of an EC point representing a public key Q
@@ -205,7 +205,7 @@ NS_ASSUME_NONNULL_BEGIN
             position = position + 1;
 
             let curveIdentifierData = [packetBody subdataWithRange:(NSRange){position, oidSize}];
-            self.oid = [[PGPCurveOID alloc] initWithIdentifierData: curveIdentifierData];
+            self.curveOID = [[PGPCurveOID alloc] initWithIdentifierData: curveIdentifierData];
             position = position + oidSize;
 
             // a MPI of an EC point representing a public key;
@@ -223,14 +223,16 @@ NS_ASSUME_NONNULL_BEGIN
             position = position + 1;
 
             // a one-octet hash function ID used with a KDF
-            PGPHashAlgorithm kdfHashFunctionID = 0;
-            [packetBody getBytes:&kdfHashFunctionID range:(NSRange){position, 1}];
+            PGPHashAlgorithm kdfHashAlgorithm = PGPHashUnknown;
+            [packetBody getBytes:&kdfHashAlgorithm range:(NSRange){position, 1}];
             position = position + 1;
 
             // a one-octet algorithm ID for the symmetric algorithm used to wrap the symmetric key used for the message encryption;
-            PGPSymmetricAlgorithm symmetricAlgorithm = 0;
-            [packetBody getBytes:&symmetricAlgorithm range:(NSRange){position, 1}];
+            PGPSymmetricAlgorithm kdfSymmetricAlgorithm = PGPSymmetricPlaintext;
+            [packetBody getBytes:&kdfSymmetricAlgorithm range:(NSRange){position, 1}];
             position = position + 1;
+
+            self.edchParameters = [[PGPCurveECDHParameters alloc] initWithHashAlgorithm:kdfHashAlgorithm symmetricAlgorithm:kdfSymmetricAlgorithm];
         } break;
         case PGPPublicKeyAlgorithmDiffieHellman:
         case PGPPublicKeyAlgorithmPrivate1:
@@ -279,7 +281,7 @@ NS_ASSUME_NONNULL_BEGIN
         self.publicKeyAlgorithm == PGPPublicKeyAlgorithmEdDSA ||
         self.publicKeyAlgorithm == PGPPublicKeyAlgorithmECDH)
     {
-        [data pgp_appendData:[self.oid export:nil]];
+        [data pgp_appendData:[self.curveOID export:nil]];
     }
 
     if (self.publicKeyAlgorithm == PGPPublicKeyAlgorithmECDH) {

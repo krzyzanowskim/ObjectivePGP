@@ -82,6 +82,8 @@
 		752725B01FEB021700301E98 /* PGPSymetricKeyEncryptedSessionKeyPacket.h in Headers */ = {isa = PBXBuildFile; fileRef = 752725AF1FEB021700301E98 /* PGPSymetricKeyEncryptedSessionKeyPacket.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		752725B21FEB022700301E98 /* PGPSymetricKeyEncryptedSessionKeyPacket.m in Sources */ = {isa = PBXBuildFile; fileRef = 752725B11FEB022700301E98 /* PGPSymetricKeyEncryptedSessionKeyPacket.m */; };
 		752725B41FEB1B3C00301E98 /* PGPEncryptedSessionKeyPacketProtocol.h in Headers */ = {isa = PBXBuildFile; fileRef = 752725B31FEB1B3C00301E98 /* PGPEncryptedSessionKeyPacketProtocol.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		753793172256860B0058D8A1 /* PGPCurveECDHParameters.h in Headers */ = {isa = PBXBuildFile; fileRef = 753793152256860B0058D8A1 /* PGPCurveECDHParameters.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		753793182256860B0058D8A1 /* PGPCurveECDHParameters.m in Sources */ = {isa = PBXBuildFile; fileRef = 753793162256860B0058D8A1 /* PGPCurveECDHParameters.m */; };
 		7537A6AD1F0D739A00892829 /* PGPCryptoHash.h in Headers */ = {isa = PBXBuildFile; fileRef = 75572E281ED2193C00205871 /* PGPCryptoHash.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		7537A6B21F0D739A00892829 /* PGPMacros.h in Headers */ = {isa = PBXBuildFile; fileRef = 752DE5BD1EEE3BE800637E38 /* PGPMacros.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7537A6B31F0D739A00892829 /* PGPFoundation.h in Headers */ = {isa = PBXBuildFile; fileRef = 758514EA1EDF09C400CB313F /* PGPFoundation.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -233,6 +235,8 @@
 		752B3A791EC8EB9A003F6C22 /* PGPLogging.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPLogging.h; sourceTree = "<group>"; };
 		752DE5BA1EEE26C200637E38 /* PGPExportableProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPExportableProtocol.h; sourceTree = "<group>"; };
 		752DE5BD1EEE3BE800637E38 /* PGPMacros.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPMacros.h; sourceTree = "<group>"; };
+		753793152256860B0058D8A1 /* PGPCurveECDHParameters.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPCurveECDHParameters.h; sourceTree = "<group>"; };
+		753793162256860B0058D8A1 /* PGPCurveECDHParameters.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PGPCurveECDHParameters.m; sourceTree = "<group>"; };
 		754351861ED268B400896236 /* PGPCryptoHash.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPCryptoHash.m; sourceTree = "<group>"; };
 		7547A6BF1F0068FB002C2145 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		7547A6C61F007EF6002C2145 /* PGPBigNum.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPBigNum.h; sourceTree = "<group>"; };
@@ -521,6 +525,8 @@
 				750EE3C31922C185009E818E /* PGPPartialKey.m */,
 				758C9AA322563B53005F0D19 /* PGPCurveOID.h */,
 				758C9AA422563B53005F0D19 /* PGPCurveOID.m */,
+				753793152256860B0058D8A1 /* PGPCurveECDHParameters.h */,
+				753793162256860B0058D8A1 /* PGPCurveECDHParameters.m */,
 				758514EE1EDF3D7100CB313F /* PGPKey.h */,
 				758514EF1EDF3D7100CB313F /* PGPKey.m */,
 				75804A241EED159300AC97BF /* PGPKey+Private.h */,
@@ -613,6 +619,7 @@
 				7513738C1F65366E0067A343 /* PGPCryptoUtils.h in Headers */,
 				75C501E61F1233A100FEC874 /* PGPRSA.h in Headers */,
 				75BF43E21F504D0F004334DE /* PGPKeyGenerator.h in Headers */,
+				753793172256860B0058D8A1 /* PGPCurveECDHParameters.h in Headers */,
 				757B54CB1FE5B68300E974CB /* PGPKeyring.h in Headers */,
 				7537A6CB1F0D739A00892829 /* PGPFingerprint.h in Headers */,
 				7537A6CC1F0D739A00892829 /* PGPS2K.h in Headers */,
@@ -826,6 +833,7 @@
 				750F895B1F0D6EF100B99726 /* PGPUser.m in Sources */,
 				750F895C1F0D6EF100B99726 /* PGPPartialSubKey.m in Sources */,
 				75BF43E31F504D0F004334DE /* PGPKeyGenerator.m in Sources */,
+				753793182256860B0058D8A1 /* PGPCurveECDHParameters.m in Sources */,
 				751373F11F65382C0067A343 /* NSMutableData+PGPUtils.m in Sources */,
 				75C501E71F1233A500FEC874 /* PGPRSA.m in Sources */,
 				756BCC90208A837F001A8EC6 /* PGPMarkerPacket.m in Sources */,
