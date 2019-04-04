@@ -212,8 +212,8 @@ NS_ASSUME_NONNULL_BEGIN
             let mpiEC = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_EC atPosition:position];
             position = position + mpiEC.packetLength;
 
-            //TODO: KDF is not stored anywhere
-            
+            // KDF parameters
+
             // a variable-length field containing KDF parameters
             UInt8 kdfSize = 0;
             [packetBody getBytes:&kdfSize range:(NSRange){position, 1}];
@@ -284,14 +284,14 @@ NS_ASSUME_NONNULL_BEGIN
         [data pgp_appendData:[self.curveOID export:nil]];
     }
 
-    if (self.publicKeyAlgorithm == PGPPublicKeyAlgorithmECDH) {
-        // TODO: kdf
-    }
-
     // publicMPI is always available, no need to decrypt
     for (PGPMPI *mpi in self.publicMPIs) {
         let exportMPI = [mpi exportMPI];
         [data pgp_appendData:exportMPI];
+    }
+
+    if (self.publicKeyAlgorithm == PGPPublicKeyAlgorithmECDH) {
+        [data pgp_appendData:[self.edchParameters export:nil]];
     }
 
     return data;

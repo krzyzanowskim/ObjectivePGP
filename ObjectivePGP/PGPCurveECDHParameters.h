@@ -9,12 +9,13 @@
 //
 
 #import <ObjectivePGP/PGPMacros.h>
+#import <ObjectivePGP/PGPExportableProtocol.h>
 #import <ObjectivePGP/PGPTypes.h>
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PGPCurveECDHParameters : NSObject
+@interface PGPCurveECDHParameters : NSObject <PGPExportable>
 
 @property (assign, nonatomic, readonly) PGPHashAlgorithm hashAlgorithm;
 @property (assign, nonatomic, readonly) PGPSymmetricAlgorithm symmetricAlgorithm;

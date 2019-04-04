@@ -9,6 +9,8 @@
 //
 
 #import "PGPCurveECDHParameters.h"
+#import <ObjectivePGP/PGPMacros+Private.h>
+#import "NSMutableData+PGPUtils.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -27,6 +29,19 @@ NS_ASSUME_NONNULL_BEGIN
         _symmetricAlgorithm = symmetricAlgorithm;
     }
     return self;
+}
+
+- (nullable NSData *)export:(NSError * _Nullable __autoreleasing * _Nullable)error {
+    let data = [NSMutableData data];
+
+    UInt8 length = 0x03;
+    [data appendBytes:&length length:1];
+    UInt8 reserved = 0x01;
+    [data appendBytes:&reserved length:1];
+    [data appendBytes:&_hashAlgorithm length:1];
+    [data appendBytes:&_symmetricAlgorithm length:1];
+
+    return data;
 }
 
 @end
