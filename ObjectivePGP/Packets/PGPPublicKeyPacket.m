@@ -183,6 +183,8 @@ NS_ASSUME_NONNULL_BEGIN
             // MPI of an EC point representing a public key
             let mpiEC = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_EC atPosition:position];
             position = position + mpiEC.packetLength;
+
+            self.publicMPIs = @[mpiEC];
         } break;
         case PGPPublicKeyAlgorithmEdDSA: {
             // a variable-length field containing a curve OID
@@ -197,6 +199,8 @@ NS_ASSUME_NONNULL_BEGIN
             // MPI of an EC point representing a public key Q
             let mpiEC = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_EC atPosition:position];
             position = position + mpiEC.packetLength;
+
+            self.publicMPIs = @[mpiEC];
         } break;
         case PGPPublicKeyAlgorithmECDH: {
             // a variable-length field containing a curve OID
@@ -212,6 +216,7 @@ NS_ASSUME_NONNULL_BEGIN
             let mpiEC = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_EC atPosition:position];
             position = position + mpiEC.packetLength;
 
+            self.publicMPIs = @[mpiEC];
             // KDF parameters
 
             // a variable-length field containing KDF parameters
@@ -232,7 +237,7 @@ NS_ASSUME_NONNULL_BEGIN
             [packetBody getBytes:&kdfSymmetricAlgorithm range:(NSRange){position, 1}];
             position = position + 1;
 
-            self.edchParameters = [[PGPCurveECDHParameters alloc] initWithHashAlgorithm:kdfHashAlgorithm symmetricAlgorithm:kdfSymmetricAlgorithm];
+            self.ecdhParameters = [[PGPCurveECDHParameters alloc] initWithHashAlgorithm:kdfHashAlgorithm symmetricAlgorithm:kdfSymmetricAlgorithm];
         } break;
         case PGPPublicKeyAlgorithmDiffieHellman:
         case PGPPublicKeyAlgorithmPrivate1:
@@ -291,9 +296,8 @@ NS_ASSUME_NONNULL_BEGIN
         [data pgp_appendData:exportMPI];
     }
 
-    // KDF
-    if (self.publicKeyAlgorithm == PGPPublicKeyAlgorithmECDH) {
-        [data pgp_appendData:[self.edchParameters export:nil]];
+    if (self.ecdhParameters) {
+        [data pgp_appendData:[self.ecdhParameters export:nil]];
     }
 
     return data;
@@ -413,6 +417,8 @@ NS_ASSUME_NONNULL_BEGIN
     duplicate.V3validityPeriod = self.V3validityPeriod;
     duplicate.createDate = self.createDate;
     duplicate.publicMPIs = [[NSArray alloc] initWithArray:self.publicMPIs copyItems:YES];
+    duplicate.curveOID = self.curveOID;
+    duplicate.ecdhParameters = self.ecdhParameters;
     return duplicate;
 }
 

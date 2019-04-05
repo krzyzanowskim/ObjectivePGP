@@ -21,7 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy) NSArray<PGPMPI *> *publicMPIs;
 @property (nonatomic, nullable) PGPCurveOID *curveOID; // Available for ECC key
-@property (nonatomic, nullable) PGPCurveECDHParameters *edchParameters; // Available for ECC key
+@property (nonatomic, nullable) PGPCurveECDHParameters *ecdhParameters; // Available for ECC key
 @end
 
 NS_ASSUME_NONNULL_END

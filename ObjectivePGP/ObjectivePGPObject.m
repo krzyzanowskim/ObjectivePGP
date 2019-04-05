@@ -87,8 +87,8 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    // parse packets
-    var allPackets = [ObjectivePGP readPacketsFromData:binaryMessage];
+    // Parse packets. Decrypt encrypted packages if needed
+    let allPackets = [ObjectivePGP readPacketsFromData:binaryMessage];
     let decryptedPackets = [self decryptPacketsIfNeeded:allPackets usingKeys:keys passphrase:passphraseForKeyBlock error:decryptionError];
     if (decryptionError && *decryptionError) {
         return nil;
@@ -97,9 +97,8 @@ NS_ASSUME_NONNULL_BEGIN
     // If the packet list of a message contains multiple literal packets, the first literal packet should
     // be considered as the correct one and any additional literal packets should be ignored.
     let literalPacket = PGPCast([[decryptedPackets pgp_objectsPassingTest:^BOOL(PGPPacket *packet, BOOL *stop) {
-        BOOL found = packet.tag == PGPLiteralDataPacketTag;
-        *stop = found;
-        return found;
+        *stop = packet.tag == PGPLiteralDataPacketTag;
+        return *stop;
     }] firstObject], PGPLiteralPacket);
 
     // Plaintext is available if literalPacket is available
