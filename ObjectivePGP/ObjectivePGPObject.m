@@ -88,15 +88,15 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // parse packets
-    var packets = [ObjectivePGP readPacketsFromData:binaryMessage];
-    packets = [self decryptPackets:packets usingKeys:keys passphrase:passphraseForKeyBlock error:decryptionError];
+    var allPackets = [ObjectivePGP readPacketsFromData:binaryMessage];
+    let decryptedPackets = [self decryptPacketsIfNeeded:allPackets usingKeys:keys passphrase:passphraseForKeyBlock error:decryptionError];
     if (decryptionError && *decryptionError) {
         return nil;
     }
 
     // If the packet list of a message contains multiple literal packets, the first literal packet should
     // be considered as the correct one and any additional literal packets should be ignored.
-    let literalPacket = PGPCast([[packets pgp_objectsPassingTest:^BOOL(PGPPacket *packet, BOOL *stop) {
+    let literalPacket = PGPCast([[decryptedPackets pgp_objectsPassingTest:^BOOL(PGPPacket *packet, BOOL *stop) {
         BOOL found = packet.tag == PGPLiteralDataPacketTag;
         *stop = found;
         return found;
@@ -104,7 +104,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     // Plaintext is available if literalPacket is available
     let plaintextData = literalPacket.literalRawData;
-    if (!plaintextData) {
+    if (!literalPacket || !plaintextData) {
         if (decryptionError) {
             *decryptionError = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Nothing to decrypt or missing private key." }];
         }
@@ -113,14 +113,14 @@ NS_ASSUME_NONNULL_BEGIN
 
     // Verify
     if (verified) {
-        *verified = [self verifyPackets:packets usingKeys:keys passphraseForKey:passphraseForKeyBlock error:verificationError];
+        *verified = [self verifyPackets:decryptedPackets usingKeys:keys passphraseForKey:passphraseForKeyBlock error:verificationError];
     }
 
     return plaintextData;
 }
 
 // Decrypt packets. Passphrase may be related to the key or to the symmetric encrypted message (no key in that keys)
-+ (nullable NSArray<PGPPacket *> *)decryptPackets:(NSArray<PGPPacket *> *)encryptedPackets usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error {
++ (nullable NSArray<PGPPacket *> *)decryptPacketsIfNeeded:(NSArray<PGPPacket *> *)encryptedPackets usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error {
     // If the Symmetrically Encrypted Data packet is preceded by one or
     // more Symmetric-Key Encrypted Session Key packets, each specifies a
     // passphrase that may be used to decrypt the message.  This allows a
@@ -158,7 +158,7 @@ NS_ASSUME_NONNULL_BEGIN
             }
 
             // Found (match) secret key is used to decrypt
-            PGPSecretKeyPacket * decryptionSecretKeyPacket = PGPCast([decryptionKey.secretKey decryptionPacketForKeyID:pkESKPacket.keyID error:error], PGPSecretKeyPacket);
+            var decryptionSecretKeyPacket = PGPCast([decryptionKey.secretKey decryptionPacketForKeyID:pkESKPacket.keyID error:error], PGPSecretKeyPacket);
             if (!decryptionSecretKeyPacket) {
                 // Can't proceed with this packet, but there may be other valid packet.
                 continue;
@@ -535,7 +535,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     if (isEncrypted) {
         NSError *decryptError = nil;
-        accumulatedPackets = [[self.class decryptPackets:accumulatedPackets usingKeys:keys passphrase:passphraseForKeyBlock error:&decryptError] mutableCopy];
+        accumulatedPackets = [[self.class decryptPacketsIfNeeded:accumulatedPackets usingKeys:keys passphrase:passphraseForKeyBlock error:&decryptError] mutableCopy];
         if (decryptError) {
             if (error) {
                 *error = [decryptError copy];
