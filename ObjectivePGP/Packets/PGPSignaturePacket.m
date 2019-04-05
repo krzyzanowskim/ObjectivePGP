@@ -181,11 +181,9 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL)canBeUsedToSign {
-    BOOL result = self.publicKeyAlgorithm == PGPPublicKeyAlgorithmDSA ||
-                  self.publicKeyAlgorithm == PGPPublicKeyAlgorithmRSA ||
-                  self.publicKeyAlgorithm == PGPPublicKeyAlgorithmRSASignOnly ||
-                  self.publicKeyAlgorithm == PGPPublicKeyAlgorithmECDH;
-                  // PGPPublicKeyAlgorithmElgamalEncryptorSign is deprecated that is not expected to be used here
+    BOOL result = self.publicKeyAlgorithm != PGPPublicKeyAlgorithmRSAEncryptOnly
+               && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmElgamal
+               && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmECDH;
 
     if (result) {
         PGPSignatureSubpacket *subpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeKeyFlags] firstObject];
@@ -198,17 +196,18 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL)canBeUsedToEncrypt {
-    BOOL result = NO;
-    let subpacket = PGPCast([[self subpacketsOfType:PGPSignatureSubpacketTypeKeyFlags] firstObject], PGPSignatureSubpacket);
-    NSArray<NSNumber *> * _Nullable flags = PGPCast(subpacket.value, NSArray);
-    if ([flags containsObject:@(PGPSignatureFlagAllowEncryptStorage)] || [flags containsObject:@(PGPSignatureFlagAllowEncryptCommunications)]) {
-        result = YES;
-    }
+    BOOL result = self.publicKeyAlgorithm != PGPPublicKeyAlgorithmRSASignOnly
+               && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmECDSA
+               && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmEdDSA;
+               // While it may be disputable if DSA should be included in the list: It shouldn't - DSA is not sign-only
 
-    result = result && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmRSASignOnly
-                    && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmElgamalEncryptorSign
-                    && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmECDSA
-                    && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmEdDSA;
+    if (result) {
+        let subpacket = PGPCast([[self subpacketsOfType:PGPSignatureSubpacketTypeKeyFlags] firstObject], PGPSignatureSubpacket);
+        NSArray<NSNumber *> * _Nullable flags = PGPCast(subpacket.value, NSArray);
+        if (flags && ([flags containsObject:@(PGPSignatureFlagAllowEncryptStorage)] || [flags containsObject:@(PGPSignatureFlagAllowEncryptCommunications)])) {
+            result = YES;
+        }
+    }
 
     return result;
 }
