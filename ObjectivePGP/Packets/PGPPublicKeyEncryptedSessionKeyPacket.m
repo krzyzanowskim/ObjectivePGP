@@ -89,10 +89,27 @@ NS_ASSUME_NONNULL_BEGIN
 
             self.encryptedMPIs = @[MPI_G_K, encryptedMPI_M];
         } break;
+        case PGPPublicKeyAlgorithmECDH: {
+            // Algorithm-Specific Fields for ECDH
+            // an MPI of an EC point representing an ephemeral public key
+            let MPI_EC = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_EC atPosition:position];
+            position = position + MPI_EC.packetLength;
+            self.encryptedMPIs = @[MPI_EC,];
+
+            // a one-octet size
+            UInt8 keySize = 0;
+            [packetBody getBytes:&keySize range:(NSRange){position, 1}];
+            position = position + 1;
+
+            // followed by an encoded symmetric key (encoding: https://tools.ietf.org/html/rfc6637#section-8)
+            // TODO: Use it
+            let encodedSymmetricKey = [packetBody subdataWithRange:(NSRange){position, keySize}];
+            position = position + keySize;
+        } break;
+        case PGPPublicKeyAlgorithmECDSA:
+        case PGPPublicKeyAlgorithmEdDSA:
         case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmRSASignOnly:
-        case PGPPublicKeyAlgorithmECDH:
-        case PGPPublicKeyAlgorithmECDSA:
         case PGPPublicKeyAlgorithmDiffieHellman:
         case PGPPublicKeyAlgorithmPrivate1:
         case PGPPublicKeyAlgorithmPrivate2:
@@ -184,45 +201,52 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    // encrypted m value
-    let encryptedM = [[self encryptedMPI:PGPMPI_M] bodyData];
-    // decrypted m value
-    let mEMEEncoded = [PGPCryptoUtils decrypt:encryptedM usingSecretKeyPacket:secretKeyPacket encryptedMPIs:self.encryptedMPIs];
-    let mData = [PGPPKCSEme decodeMessage:mEMEEncoded error:error];
-    if (error && *error) {
-        return nil;
-    }
-
-    NSUInteger position = 0;
-    PGPSymmetricAlgorithm sessionKeyAlgorithmRead = PGPSymmetricPlaintext;
-    [mData getBytes:&sessionKeyAlgorithmRead range:(NSRange){position, 1}];
-    NSAssert(sessionKeyAlgorithmRead < PGPSymmetricMax, @"Invalid algorithm");
-    if (sessionKeyAlgorithm) {
-        *sessionKeyAlgorithm = sessionKeyAlgorithmRead;
-    }
-    position = position + 1;
-
-    NSUInteger sessionKeySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:sessionKeyAlgorithmRead];
-    if (sessionKeySize == NSNotFound) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Invalid session key size" }];
+    NSData * _Nullable sessionKeyData = nil;
+    if (secretKeyPacket.publicKeyAlgorithm == PGPPublicKeyAlgorithmECDH) {
+        //TODO: ECC uses different encoding
+        NSAssert(NO, @"ECC Not implemented");
+    } else {
+        // encrypted m value
+        let encryptedM = [[self encryptedMPI:PGPMPI_M] bodyData];
+        // decrypted m value
+        let mEMEEncoded = [PGPCryptoUtils decrypt:encryptedM usingSecretKeyPacket:secretKeyPacket encryptedMPIs:self.encryptedMPIs];
+        let mData = [PGPPKCSEme decodeMessage:mEMEEncoded error:error];
+        if (error && *error) {
+            return nil;
         }
-        return nil;
-    }
-    let sessionKeyData = [mData subdataWithRange:(NSRange){position, sessionKeySize}];
-    position = position + sessionKeySize;
 
-    UInt16 checksum = 0;
-    [mData getBytes:&checksum range:(NSRange){position, 2}];
-    checksum = CFSwapInt16BigToHost(checksum);
-
-    // validate checksum
-    UInt16 calculatedChecksum = [sessionKeyData pgp_Checksum];
-    if (calculatedChecksum != checksum) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Invalid session key, checksum mismatch" }];
+        NSUInteger position = 0;
+        PGPSymmetricAlgorithm sessionKeyAlgorithmRead = PGPSymmetricPlaintext;
+        [mData getBytes:&sessionKeyAlgorithmRead range:(NSRange){position, 1}];
+        NSAssert(sessionKeyAlgorithmRead < PGPSymmetricMax, @"Invalid algorithm");
+        if (sessionKeyAlgorithm) {
+            *sessionKeyAlgorithm = sessionKeyAlgorithmRead;
         }
-        return nil;
+        position = position + 1;
+
+        NSUInteger sessionKeySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:sessionKeyAlgorithmRead];
+        if (sessionKeySize == NSNotFound) {
+            if (error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Invalid session key size" }];
+            }
+            return nil;
+        }
+
+        sessionKeyData = [mData subdataWithRange:(NSRange){position, sessionKeySize}];
+        position = position + sessionKeySize;
+
+        UInt16 checksum = 0;
+        [mData getBytes:&checksum range:(NSRange){position, 2}];
+        checksum = CFSwapInt16BigToHost(checksum);
+
+        // validate checksum
+        UInt16 calculatedChecksum = [sessionKeyData pgp_Checksum];
+        if (calculatedChecksum != checksum) {
+            if (error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Invalid session key, checksum mismatch" }];
+            }
+            return nil;
+        }
     }
 
     return sessionKeyData;
