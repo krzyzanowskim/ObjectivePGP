@@ -256,8 +256,12 @@ NS_ASSUME_NONNULL_BEGIN
         let extractedData = [[NSMutableArray<NSData *> alloc] init];
         for (NSString *extractedString in extractedBlocks) {
             @autoreleasepool {
-                let armodedData = [PGPArmor readArmored:extractedString error:error];
-                if (error && *error) {
+                NSError *armorError = nil;
+                let armodedData = [PGPArmor readArmored:extractedString error:&armorError];
+                if (armorError) {
+                    if (error) {
+                        *error = armorError;
+                    }
                     return nil;
                 }
                 
