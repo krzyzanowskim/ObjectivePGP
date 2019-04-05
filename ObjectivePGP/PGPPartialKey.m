@@ -306,7 +306,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable PGPSecretKeyPacket *)decryptionPacketForKeyID:(PGPKeyID *)keyID error:(NSError * __autoreleasing _Nullable *)error {
     NSAssert(self.type == PGPKeyTypeSecret, @"Need secret key to encrypt");
-    if (self.type == PGPKeyTypePublic) {
+    if (self.type != PGPKeyTypeSecret) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Wrong key type, require secret key" }];
         }
@@ -316,7 +316,9 @@ NS_ASSUME_NONNULL_BEGIN
 
     for (PGPPartialSubKey *subKey in self.subKeys) {
         let signaturePacket = subKey.bindingSignature;
-        if (signaturePacket.canBeUsedToEncrypt && PGPEqualObjects(PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket).keyID, keyID)) {
+        if (signaturePacket && signaturePacket.canBeUsedToEncrypt
+                            && PGPEqualObjects(PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket).keyID, keyID))
+        {
             return PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket);
         }
     }

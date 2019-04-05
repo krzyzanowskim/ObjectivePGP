@@ -85,7 +85,7 @@ typedef NS_CLOSED_ENUM(UInt8, PGPPublicKeyAlgorithm) {
     PGPPublicKeyAlgorithmRSAEncryptOnly = 2,
     PGPPublicKeyAlgorithmRSASignOnly = 3,
     PGPPublicKeyAlgorithmElgamal = 16, // Elgamal (Encrypt-Only)
-    PGPPublicKeyAlgorithmDSA = 17, // sign-only
+    PGPPublicKeyAlgorithmDSA = 17,
     PGPPublicKeyAlgorithmECDH = 18, // encrypt-only
     PGPPublicKeyAlgorithmECDSA = 19, // sign-only
     PGPPublicKeyAlgorithmElgamalEncryptorSign = 20, // Deprecated ?

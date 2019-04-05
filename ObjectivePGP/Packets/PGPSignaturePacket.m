@@ -207,7 +207,6 @@ NS_ASSUME_NONNULL_BEGIN
 
     result = result && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmRSASignOnly
                     && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmElgamalEncryptorSign
-                    && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmDSA
                     && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmECDSA
                     && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmEdDSA;
 
