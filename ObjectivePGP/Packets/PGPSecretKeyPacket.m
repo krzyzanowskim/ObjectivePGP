@@ -388,7 +388,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
     return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
         let secretKeyPacketData = [NSMutableData data];
-        [secretKeyPacketData appendData:[self buildKeyBodyData:YES]];
+        [secretKeyPacketData appendData:[self buildKeyBodyDataAndForceV4:YES]];
         [secretKeyPacketData appendData:[self buildSecretKeyDataAndForceV4:YES]];
         return secretKeyPacketData;
     }];

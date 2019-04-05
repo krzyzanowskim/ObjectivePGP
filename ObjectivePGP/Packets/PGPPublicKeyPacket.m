@@ -260,7 +260,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return public key data starting with version octet
  */
-- (NSData *)buildKeyBodyData:(BOOL)forceV4 {
+- (NSData *)buildKeyBodyDataAndForceV4:(BOOL)forceV4 {
     let data = [NSMutableData dataWithCapacity:128];
     [data appendBytes:&_version length:1];
 
@@ -304,7 +304,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSData *)exportKeyPacketOldStyle {
     let data = [NSMutableData data];
 
-    let keyData = [self buildKeyBodyData:NO];
+    let keyData = [self buildKeyBodyDataAndForceV4:NO];
 
     NSUInteger length = keyData.length;
     UInt8 upper = (UInt8)(length >> 8);
@@ -326,7 +326,7 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
     return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
-        return [self buildKeyBodyData:NO];
+        return [self buildKeyBodyDataAndForceV4:NO];
     }];
 }
 

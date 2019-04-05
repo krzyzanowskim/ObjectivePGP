@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) PGPKeyID *keyID;
 
 - (NSData *)exportKeyPacketOldStyle;
-- (NSData *)buildKeyBodyData:(BOOL)forceV4;
+- (NSData *)buildKeyBodyDataAndForceV4:(BOOL)forceV4;
 
 - (nullable PGPMPI *)publicMPI:(NSString *)identifier;
 - (nullable NSArray<PGPMPI *> *)encryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm;
