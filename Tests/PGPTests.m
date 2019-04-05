@@ -535,4 +535,33 @@
     XCTAssertEqual(expirationDate.timeIntervalSince1970, 1607687540); // Fri Dec 11 11:52:20 2020 UTC
 }
 
+// https://github.com/krzyzanowskim/ObjectivePGP/issues/118
+- (void)testReadEdDSASignatureIssue118 {
+    let key = [[PGPTestUtils readKeysFromPath:@"issue118-key.asc"] firstObject];
+    XCTAssertNotNil(key.publicKey);
+    XCTAssertNil(key.secretKey);
+    XCTAssertNotNil(key);
+}
+
+- (void)testECC1 {
+    let keyPub = [[PGPTestUtils readKeysFromPath:@"ecc-curve25519-pub1.asc"] firstObject];
+    XCTAssertNotNil(keyPub);
+
+    let keySec = [[PGPTestUtils readKeysFromPath:@"ecc-curve25519-sec1.asc"] firstObject];
+    XCTAssertNotNil(keySec);
+
+    // $ echo "test message" | gpg2 --armor --encrypt --recipient "Test ECC"
+    let encryptedMessage = @"-----BEGIN PGP MESSAGE-----\n\
+\n\
+hF4D4gFobDLlEAwSAQdA5IBiZ407PLrCbB9+IeQA9VUD7hfnZ1i8wkIhmTYtDA0w\n\
+BOico4LzPq63CGDjyD9tvYiuASWvrq9O5CEqhsIFaiZLnWIqmHMvEED8g8RKmaez\n\
+0kgBC2Orf6Y9B3xREBysBJk6K/3BPenIoBg/h3WBB7BuSrB2ldc2PSVq+L0/b9hw\n\
+9DHsx4lll4fSzhq0MWD6NtEWZ7nPapRGLgY=\n\
+=60RH\n\
+-----END PGP MESSAGE-----";
+
+    let decrypted = [ObjectivePGP decrypt:[encryptedMessage dataUsingEncoding:NSUTF8StringEncoding] andVerifySignature:NO usingKeys:@[keySec] passphraseForKey:nil error:nil];
+    XCTAssertNotNil(decrypted);
+}
+
 @end
