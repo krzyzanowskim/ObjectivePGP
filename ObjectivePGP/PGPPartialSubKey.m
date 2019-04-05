@@ -13,6 +13,8 @@
 #import "PGPPublicKeyPacket.h"
 #import "PGPFoundation.h"
 #import "PGPKeyID.h"
+#import "PGPPublicSubKeyPacket.h"
+#import "PGPSecretSubKeyPacket.h"
 #import "PGPMacros+Private.h"
 #import "NSArray+PGPUtils.h"
 
@@ -25,6 +27,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithPacket:(PGPPacket *)packet {
     if ((self = [super initWithPackets:@[]])) {
         self.primaryKeyPacket = packet;
+        if ([packet isKindOfClass:PGPPublicSubKeyPacket.class]) {
+            self.type = PGPKeyTypePublic;
+        } else if ([packet isKindOfClass:PGPSecretSubKeyPacket.class]) {
+            self.type = PGPKeyTypeSecret;
+        }
     }
     return self;
 }

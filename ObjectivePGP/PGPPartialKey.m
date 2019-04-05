@@ -127,10 +127,12 @@ NS_ASSUME_NONNULL_BEGIN
             case PGPPublicKeyPacketTag:
                 primaryKeyID = PGPCast(packet, PGPPublicKeyPacket).keyID;
                 self.primaryKeyPacket = packet;
+                self.type = PGPKeyTypePublic;
                 break;
             case PGPSecretKeyPacketTag:
                 primaryKeyID = PGPCast(packet, PGPPublicKeyPacket).keyID;
                 self.primaryKeyPacket = packet;
+                self.type = PGPKeyTypeSecret;
                 break;
             case PGPUserAttributePacketTag:
                 if (!user) {
@@ -144,6 +146,10 @@ NS_ASSUME_NONNULL_BEGIN
                 self.users = [self.users arrayByAddingObject:parsedUser];
             } break;
             case PGPPublicSubkeyPacketTag:
+                user = nil;
+                subKey = [[PGPPartialSubKey alloc] initWithPacket:packet];
+                self.subKeys = [self.subKeys arrayByAddingObject:subKey];
+                break;
             case PGPSecretSubkeyPacketTag:
                 user = nil;
                 subKey = [[PGPPartialSubKey alloc] initWithPacket:packet];
