@@ -130,7 +130,7 @@ NS_ASSUME_NONNULL_BEGIN
                 self.type = PGPKeyTypePublic;
                 break;
             case PGPSecretKeyPacketTag:
-                primaryKeyID = PGPCast(packet, PGPPublicKeyPacket).keyID;
+                primaryKeyID = PGPCast(packet, PGPSecretKeyPacket).keyID;
                 self.primaryKeyPacket = packet;
                 self.type = PGPKeyTypeSecret;
                 break;
