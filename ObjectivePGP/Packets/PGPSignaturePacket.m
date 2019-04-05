@@ -197,8 +197,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (BOOL)canBeUsedToEncrypt {
     BOOL result = self.publicKeyAlgorithm != PGPPublicKeyAlgorithmRSASignOnly
-               && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmECDSA
-               && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmEdDSA;
+               && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmElgamalEncryptorSign;
+               // && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmECDSA
+               // && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmEdDSA;
                // While it may be disputable if DSA should be included in the list: It shouldn't - DSA is not sign-only
 
     if (result) {

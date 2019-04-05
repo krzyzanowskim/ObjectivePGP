@@ -161,10 +161,8 @@ NS_ASSUME_NONNULL_BEGIN
             if (!decryptionSecretKeyPacket) {
                 // Can't proceed with this packet, but there may be other valid packet.
                 continue;
-            }
-
-            // decrypt key with passphrase if encrypted
-            if (decryptionSecretKeyPacket && decryptionKey.isEncryptedWithPassword) {
+            } else if (decryptionKey.isEncryptedWithPassword) {
+                // decrypt key with passphrase if encrypted
                 let passphrase = passphraseBlock ? passphraseBlock(decryptionKey) : nil;
                 if (!passphrase) {
                     // This is the match but can't proceed with this packet due to missing passphrase.

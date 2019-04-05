@@ -44,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"%@ %@", [super description], self.keyID];
+    return [NSString stringWithFormat:@"%@, algo: %@, keyID: %@", [super description], @(self.publicKeyAlgorithm), self.keyID];
 }
 
 - (nullable PGPMPI *)publicMPI:(NSString *)identifier {

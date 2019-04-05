@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"%@, Type %@, primary key: %@", [super description], self.type == PGPKeyTypePublic ? @"public" : @"secret", self.primaryKeyPacket];
+    return [NSString stringWithFormat:@"%@, primaryKeyPacket: %@", [super description], self.primaryKeyPacket];
 }
 
 #pragma mark - Properties
