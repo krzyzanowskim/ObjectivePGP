@@ -70,12 +70,8 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Encrypt & Decrypt
 
 + (nullable NSData *)decrypt:(NSData *)data andVerifySignature:(BOOL)verifySignature usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error {
-    if (verifySignature) {
-        BOOL isVerified;
-        return [self decrypt:data verified:&isVerified usingKeys:keys passphraseForKey:passphraseBlock decryptionError:error verificationError:error];
-    } else {
-        return [self decrypt:data verified:nil usingKeys:keys passphraseForKey:passphraseBlock decryptionError:error verificationError:nil];
-    }
+    BOOL isVerified;
+    return [self decrypt:data verified:(verifySignature ? &isVerified : nil) usingKeys:keys passphraseForKey:passphraseBlock decryptionError:error verificationError:error];
 }
 
 + (nullable NSData *)decrypt:(NSData *)data verified:(BOOL * _Nullable)verified usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock decryptionError:(NSError * __autoreleasing _Nullable *)decryptionError verificationError:(NSError * __autoreleasing _Nullable *)verificationError {
