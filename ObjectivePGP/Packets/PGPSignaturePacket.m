@@ -183,7 +183,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)canBeUsedToSign {
     BOOL result = self.publicKeyAlgorithm == PGPPublicKeyAlgorithmDSA ||
                   self.publicKeyAlgorithm == PGPPublicKeyAlgorithmRSA ||
-                  self.publicKeyAlgorithm == PGPPublicKeyAlgorithmRSASignOnly;
+                  self.publicKeyAlgorithm == PGPPublicKeyAlgorithmRSASignOnly ||
+                  self.publicKeyAlgorithm == PGPPublicKeyAlgorithmECDH;
                   // PGPPublicKeyAlgorithmElgamalEncryptorSign is deprecated that is not expected to be used here
 
     if (result) {
@@ -204,8 +205,11 @@ NS_ASSUME_NONNULL_BEGIN
         result = YES;
     }
 
-    // I'm not convinced if DSA is allowed here self.publicKeyAlgorithm != PGPPublicKeyAlgorithmDSA
-    result = result && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmRSASignOnly && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmElgamalEncryptorSign;
+    result = result && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmRSASignOnly
+                    && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmElgamalEncryptorSign
+                    && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmDSA
+                    && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmECDSA
+                    && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmEdDSA;
 
     return result;
 }

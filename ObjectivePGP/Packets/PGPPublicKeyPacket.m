@@ -277,6 +277,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     [data appendBytes:&_publicKeyAlgorithm length:1];
 
+    // Curve OID
     if (self.publicKeyAlgorithm == PGPPublicKeyAlgorithmECDSA ||
         self.publicKeyAlgorithm == PGPPublicKeyAlgorithmEdDSA ||
         self.publicKeyAlgorithm == PGPPublicKeyAlgorithmECDH)
@@ -290,6 +291,7 @@ NS_ASSUME_NONNULL_BEGIN
         [data pgp_appendData:exportMPI];
     }
 
+    // KDF
     if (self.publicKeyAlgorithm == PGPPublicKeyAlgorithmECDH) {
         [data pgp_appendData:[self.edchParameters export:nil]];
     }
