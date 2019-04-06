@@ -49,8 +49,6 @@ NS_ASSUME_NONNULL_BEGIN
 
     int em_len = RSA_public_encrypt(toEncrypt.length & INT_MAX, toEncrypt.bytes, encrypted_em, rsa, RSA_NO_PADDING);
     if (em_len == -1 || em_len != (publicKeyPacket.keySize & INT_MAX)) {
-        ERR_load_crypto_strings();
-
         unsigned long err_code = ERR_get_error();
         char *errBuf = calloc(512, sizeof(char));
         ERR_error_string(err_code, errBuf);
@@ -87,15 +85,11 @@ NS_ASSUME_NONNULL_BEGIN
     RSA_set0_factors(rsa, p, q);
 
     if (RSA_check_key(rsa) != 1) {
-        ERR_load_crypto_strings();
-
         unsigned long err_code = ERR_get_error();
         char *errBuf = calloc(512, sizeof(char));
         ERR_error_string(err_code, errBuf);
         PGPLogDebug(@"%@", [NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
         free(errBuf);
-
-        ERR_free_strings();
         return nil;
     }
 
@@ -103,15 +97,11 @@ NS_ASSUME_NONNULL_BEGIN
     pgp_defer { free(outbuf); };
     int t = RSA_private_decrypt(toDecrypt.length & INT_MAX, toDecrypt.bytes, outbuf, rsa, RSA_NO_PADDING);
     if (t == -1) {
-        ERR_load_crypto_strings();
-
         unsigned long err_code = ERR_get_error();
         char *errBuf = calloc(512, sizeof(char));
         ERR_error_string(err_code, errBuf);
         PGPLogDebug(@"%@", [NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
         free(errBuf);
-
-        ERR_free_strings();
         return nil;
     }
 
@@ -148,15 +138,11 @@ NS_ASSUME_NONNULL_BEGIN
     RSA_set0_factors(rsa, p, q);
 
     if (RSA_check_key(rsa) != 1) {
-        ERR_load_crypto_strings();
-
         unsigned long err_code = ERR_get_error();
         char *errBuf = calloc(512, sizeof(char));
         ERR_error_string(err_code, errBuf);
         PGPLogDebug(@"%@", [NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
         free(errBuf);
-
-        ERR_free_strings();
         return nil;
     }
 
@@ -165,15 +151,11 @@ NS_ASSUME_NONNULL_BEGIN
 
     int t = RSA_private_encrypt(toEncrypt.length & INT_MAX, (UInt8 *)toEncrypt.bytes, outbuf, rsa, RSA_NO_PADDING);
     if (t == -1) {
-        ERR_load_crypto_strings();
-
         unsigned long err_code = ERR_get_error();
         char *errBuf = calloc(512, sizeof(char));
         ERR_error_string(err_code, errBuf);
         PGPLogDebug(@"%@", [NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
         free(errBuf);
-
-        ERR_free_strings();
         return nil;
     }
 
@@ -203,8 +185,6 @@ NS_ASSUME_NONNULL_BEGIN
     pgp_defer { free(decrypted_em); };
     int em_len = RSA_public_decrypt(toDecrypt.length & INT_MAX, toDecrypt.bytes, decrypted_em, rsa, RSA_NO_PADDING);
     if (em_len == -1 || em_len != (publicKeyPacket.keySize & INT_MAX)) {
-        ERR_load_crypto_strings();
-
         unsigned long err_code = ERR_get_error();
         char *errBuf = calloc(512, sizeof(char));
         ERR_error_string(err_code, errBuf);

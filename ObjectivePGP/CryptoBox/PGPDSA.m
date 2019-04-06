@@ -69,7 +69,6 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     if (DSA_do_verify(toVerify.bytes, (int)hashLen, sig, dsa) < 0) {
-        ERR_load_crypto_strings();
         unsigned long err_code = ERR_get_error();
         char *errBuf = calloc(512, sizeof(char));
         pgp_defer { if (errBuf) { free(errBuf); } };
@@ -103,7 +102,6 @@ NS_ASSUME_NONNULL_BEGIN
 
     DSA_SIG * _Nullable sig = DSA_do_sign(toSign.bytes, (int)toSign.length, dsa);
     if (!sig) {
-        ERR_load_crypto_strings();
         unsigned long err_code = ERR_get_error();
         char *errBuf = calloc(512, sizeof(char));
         pgp_defer { if (errBuf) { free(errBuf); } };
