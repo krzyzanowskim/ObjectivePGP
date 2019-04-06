@@ -204,6 +204,15 @@ NS_ASSUME_NONNULL_BEGIN
     NSData * _Nullable sessionKeyData = nil;
     if (secretKeyPacket.publicKeyAlgorithm == PGPPublicKeyAlgorithmECDH) {
         //TODO: ECC uses different encoding
+        let encrypted = [[self encryptedMPI:PGPMPI_EC] bodyData];
+        // - decrypt
+        // iod?
+        // kdf
+        // V - encrypted
+        // C - encrypted
+        // d - key
+        let encoded = [PGPCryptoUtils decrypt:encrypted usingSecretKeyPacket:secretKeyPacket encryptedMPIs:self.encryptedMPIs];
+        // - decode (PKCS5)
         NSAssert(NO, @"ECC Not implemented");
     } else {
         // encrypted m value

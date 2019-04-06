@@ -11,8 +11,10 @@
 #import "PGPDSA.h"
 #import "PGPElgamal.h"
 #import "NSArray+PGPUtils.h"
+#import "PGPPublicKeyPacket+Private.h"
 #import "PGPSecretKeyPacket.h"
 #import "PGPMacros+Private.h"
+#import "PGPBigNum+Private.h"
 #import "PGPLogging.h"
 
 #import <CommonCrypto/CommonCrypto.h>
@@ -33,6 +35,8 @@ NS_ASSUME_NONNULL_BEGIN
 // Block size (octets)
 + (NSUInteger)blockSizeOfSymmetricAlhorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm {
     switch (symmetricAlgorithm) {
+        case PGPSymmetricPlaintext:
+            break;
         case PGPSymmetricIDEA:
             return IDEA_BLOCK;
         case PGPSymmetricTripleDES:
@@ -47,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
             return kCCBlockSizeAES128;
         case PGPSymmetricTwofish256:
             return 16; // 128bit
-        default:
+        case PGPSymmetricMax:
             break;
     }
     return NSNotFound;
