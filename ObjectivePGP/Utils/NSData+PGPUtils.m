@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @implementation NSData (PGPUtils)
 
 /**
- *  Calculates a 16bit sum of a string by adding each character * codes modulus 65535
+ *  Calculates a 16bit sum of all octets, mod 65536
  *
  *  @return checksum
  */
