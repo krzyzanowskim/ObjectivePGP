@@ -19,9 +19,11 @@
 #import "PGPPKCSEme.h"
 #import "PGPPublicKeyPacket.h"
 #import "PGPRSA.h"
+#import "PGPElgamal.h"
 #import "PGPSecretKeyPacket.h"
 #import "PGPMacros+Private.h"
 #import "PGPFoundation.h"
+#import "PGPLogging.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -218,15 +220,40 @@ NS_ASSUME_NONNULL_BEGIN
         // V - encrypted
         // C - encrypted
         // d - key
-        // let encoded = [PGPCryptoUtils decrypt:encrypted usingSecretKeyPacket:secretKeyPacket encryptedMPIs:self.encryptedMPIs];
+        // let encoded = [PGPCryptoUtils decrypt:encrypted usingSecretKeyPacket:secretKeyPacket encryptedMPIs:self.parameters.MPIs];
         // - decode (PKCS5)
         NSAssert(NO, @"ECC Not implemented");
     } else {
         // encrypted m value
         let encryptedM = [[self parameterMPI:PGPMPIdentifierM] bodyData];
         // decrypted m value
-        let MPIs = self.parameters.MPIs;
-        let mEMEEncoded = [PGPCryptoUtils decrypt:encryptedM usingSecretKeyPacket:secretKeyPacket encryptedMPIs:MPIs];
+        NSData * _Nullable mEMEEncoded = nil;
+        
+        switch (secretKeyPacket.publicKeyAlgorithm) {
+            case PGPPublicKeyAlgorithmRSA:
+            case PGPPublicKeyAlgorithmRSAEncryptOnly:
+            case PGPPublicKeyAlgorithmRSASignOnly: {
+                // return decrypted m
+                mEMEEncoded = [PGPRSA privateDecrypt:encryptedM withSecretKeyPacket:secretKeyPacket];
+            } break;
+            case PGPPublicKeyAlgorithmElgamalEncryptorSign:
+            case PGPPublicKeyAlgorithmElgamal: {
+                // return decrypted m
+                // encryptedMPIs has g^k as PGPMPIdentifierG
+                let g_k_mpi = [self parameterMPI:PGPMPIdentifierG];
+                if (!g_k_mpi) {
+                    PGPLogWarning(@"Invalid key, can't decrypt. Missing g^k.");
+                    return nil;
+                }
+
+                mEMEEncoded = [PGPElgamal privateDecrypt:encryptedM withSecretKeyPacket:secretKeyPacket gk:g_k_mpi];
+            } break;
+            default: {
+                PGPLogWarning(@"Algorithm %@ is not supported.", @(secretKeyPacket.publicKeyAlgorithm));
+                return nil;
+            }
+        }
+
         let mData = [PGPPKCSEme decodeMessage:mEMEEncoded error:error];
         if (error && *error) {
             return nil;

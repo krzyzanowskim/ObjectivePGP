@@ -114,53 +114,6 @@ NS_ASSUME_NONNULL_BEGIN
     return data;
 }
 
-+ (nullable NSData *)decrypt:(NSData *)data usingSecretKeyPacket:(PGPSecretKeyPacket *)keyPacket encryptedMPIs:(NSArray <PGPMPI *> *)encryptedMPIs {
-    PGPAssertClass(data, NSData);
-
-    switch (keyPacket.publicKeyAlgorithm) {
-        case PGPPublicKeyAlgorithmRSA:
-        case PGPPublicKeyAlgorithmRSAEncryptOnly:
-        case PGPPublicKeyAlgorithmRSASignOnly:
-            // return decrypted m
-            return [PGPRSA privateDecrypt:data withSecretKeyPacket:keyPacket];
-        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
-        case PGPPublicKeyAlgorithmElgamal: {
-            // return decrypted m
-            // encryptedMPIs has g^k as PGPMPIdentifierG
-            let g_k_mpi = [[encryptedMPIs pgp_objectsPassingTest:^BOOL(PGPMPI *obj, BOOL *stop) {
-                *stop = [obj.identifier isEqual:PGPMPIdentifierG];
-                return *stop;
-            }] firstObject];
-
-            if (!g_k_mpi) {
-                PGPLogWarning(@"Invalid key, can't decrypt. Missing g^k.");
-                return nil;
-            }
-
-            return [PGPElgamal privateDecrypt:data withSecretKeyPacket:keyPacket gk:g_k_mpi];
-       } break;
-        case PGPPublicKeyAlgorithmDSA:
-        case PGPPublicKeyAlgorithmECDH:
-        case PGPPublicKeyAlgorithmECDSA:
-        case PGPPublicKeyAlgorithmDiffieHellman:
-        case PGPPublicKeyAlgorithmPrivate1:
-        case PGPPublicKeyAlgorithmPrivate2:
-        case PGPPublicKeyAlgorithmPrivate3:
-        case PGPPublicKeyAlgorithmPrivate4:
-        case PGPPublicKeyAlgorithmPrivate5:
-        case PGPPublicKeyAlgorithmPrivate6:
-        case PGPPublicKeyAlgorithmPrivate7:
-        case PGPPublicKeyAlgorithmPrivate8:
-        case PGPPublicKeyAlgorithmPrivate9:
-        case PGPPublicKeyAlgorithmPrivate10:
-        case PGPPublicKeyAlgorithmPrivate11:
-            PGPLogWarning(@"Algorithm %@ is not supported.", @(keyPacket.publicKeyAlgorithm));
-            break;
-
-    }
-    return nil;
-}
-
 @end
 
 NS_ASSUME_NONNULL_END
