@@ -274,7 +274,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
     [data pgp_appendData:self.signedHashValueData];
 
-    // signed PGPMPI_M
+    // signed PGPMPIdentifierM
     if (self.signatureMPIs.count == 0) {
         PGPLogError(@"Missing MPI for the signature.");
         return nil;
@@ -507,7 +507,7 @@ NS_ASSUME_NONNULL_BEGIN
             }
 
             // store signature data as MPI
-            self.signatureMPIs = @[[[PGPMPI alloc] initWithData:encryptedEmData identifier:PGPMPI_M]];
+            self.signatureMPIs = @[[[PGPMPI alloc] initWithData:encryptedEmData identifier:PGPMPIdentifierM]];
         } break;
         case PGPPublicKeyAlgorithmDSA:
             self.signatureMPIs = [PGPDSA sign:toHashData key:key];
@@ -768,29 +768,29 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmRSASignOnly: {
             // multiprecision integer (MPI) of RSA signature value m**d mod n.
             // MPI of RSA public modulus n;
-            let mpiN = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_N atPosition:position];
+            let mpiN = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierN atPosition:position];
             position = position + mpiN.packetLength;
 
             self.signatureMPIs = @[mpiN];
         } break;
         case PGPPublicKeyAlgorithmDSA: {
             // MPI of DSA value r.
-            let mpiR = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_R atPosition:position];
+            let mpiR = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierR atPosition:position];
             position = position + mpiR.packetLength;
 
             // MPI of DSA value s.
-            let mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_S atPosition:position];
+            let mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierS atPosition:position];
             position = position + mpiS.packetLength;
 
             self.signatureMPIs = @[mpiR, mpiS];
         } break;
         case PGPPublicKeyAlgorithmElgamalEncryptorSign: {
             // MPI of Elgamal (Diffie-Hellman) value g**k mod p.
-            let mpiR = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_R atPosition:position];
+            let mpiR = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierR atPosition:position];
             position = position + mpiR.packetLength;
 
             // MPI of Elgamal (Diffie-Hellman) value m * y**k mod p.
-            let mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_S atPosition:position];
+            let mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierS atPosition:position];
             position = position + mpiS.packetLength;
 
             self.signatureMPIs = @[mpiR, mpiS];
@@ -932,29 +932,29 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmRSASignOnly: {
             // multiprecision integer (MPI) of RSA signature value m**d mod n.
             // MPI of RSA public modulus n;
-            PGPMPI *mpiN = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_N atPosition:position];
+            PGPMPI *mpiN = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierN atPosition:position];
             position = position + mpiN.packetLength;
 
             self.signatureMPIs = @[mpiN];
         } break;
         case PGPPublicKeyAlgorithmDSA: {
             // MPI of DSA value r.
-            PGPMPI *mpiR = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_R atPosition:position];
+            PGPMPI *mpiR = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierR atPosition:position];
             position = position + mpiR.packetLength;
 
             // MPI of DSA value s.
-            PGPMPI *mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_S atPosition:position];
+            PGPMPI *mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierS atPosition:position];
             position = position + mpiS.packetLength;
 
             self.signatureMPIs = @[mpiR, mpiS];
         } break;
         case PGPPublicKeyAlgorithmElgamalEncryptorSign: {
             // MPI of Elgamal (Diffie-Hellman) value g**k mod p.
-            PGPMPI *mpiR = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_R atPosition:position];
+            PGPMPI *mpiR = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierR atPosition:position];
             position = position + mpiR.packetLength;
 
             // MPI of Elgamal (Diffie-Hellman) value m * y**k mod p.
-            PGPMPI *mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_S atPosition:position];
+            PGPMPI *mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierS atPosition:position];
             position = position + mpiS.packetLength;
 
             self.signatureMPIs = @[mpiR, mpiS];

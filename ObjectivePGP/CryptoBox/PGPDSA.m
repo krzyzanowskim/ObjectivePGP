@@ -44,16 +44,16 @@ NS_ASSUME_NONNULL_BEGIN
         return NO;
     }
 
-    let p = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_P] bigNum] bignumRef]);
-    let q = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_Q] bigNum] bignumRef]);
-    let g = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_G] bigNum] bignumRef]);
-    let pub_key = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_Y] bigNum] bignumRef]);
+    let p = BN_dup([[[publicKeyPacket publicMPI:PGPMPIdentifierP] bigNum] bignumRef]);
+    let q = BN_dup([[[publicKeyPacket publicMPI:PGPMPIdentifierQ] bigNum] bignumRef]);
+    let g = BN_dup([[[publicKeyPacket publicMPI:PGPMPIdentifierG] bigNum] bignumRef]);
+    let pub_key = BN_dup([[[publicKeyPacket publicMPI:PGPMPIdentifierY] bigNum] bignumRef]);
 
     DSA_set0_pqg(dsa, p, q, g);
     DSA_set0_key(dsa, pub_key, NULL);
 
-    let r = BN_dup([[[signaturePacket signatureMPI:PGPMPI_R] bigNum] bignumRef]);
-    let s = BN_dup([[[signaturePacket signatureMPI:PGPMPI_S] bigNum] bignumRef]);
+    let r = BN_dup([[[signaturePacket signatureMPI:PGPMPIdentifierR] bigNum] bignumRef]);
+    let s = BN_dup([[[signaturePacket signatureMPI:PGPMPIdentifierS] bigNum] bignumRef]);
 
     DSA_SIG_set0(sig, r, s);
 
@@ -91,11 +91,11 @@ NS_ASSUME_NONNULL_BEGIN
     let signingKeyPacket = key.signingSecretKey;
     let publicKeyPacket = PGPCast(key.publicKey.primaryKeyPacket, PGPPublicKeyPacket);
 
-    let p = BN_dup([publicKeyPacket publicMPI:PGPMPI_P].bigNum.bignumRef);
-    let q = BN_dup([publicKeyPacket publicMPI:PGPMPI_Q].bigNum.bignumRef);
-    let g = BN_dup([publicKeyPacket publicMPI:PGPMPI_G].bigNum.bignumRef);
-    let pub_key = BN_dup([publicKeyPacket publicMPI:PGPMPI_Y].bigNum.bignumRef);
-    let priv_key = BN_dup([signingKeyPacket secretMPI:PGPMPI_X].bigNum.bignumRef);
+    let p = BN_dup([publicKeyPacket publicMPI:PGPMPIdentifierP].bigNum.bignumRef);
+    let q = BN_dup([publicKeyPacket publicMPI:PGPMPIdentifierQ].bigNum.bignumRef);
+    let g = BN_dup([publicKeyPacket publicMPI:PGPMPIdentifierG].bigNum.bignumRef);
+    let pub_key = BN_dup([publicKeyPacket publicMPI:PGPMPIdentifierY].bigNum.bignumRef);
+    let priv_key = BN_dup([signingKeyPacket secretMPI:PGPMPIdentifierX].bigNum.bignumRef);
 
     DSA_set0_pqg(dsa, p, q, g);
     DSA_set0_key(dsa, pub_key, priv_key);
@@ -113,8 +113,8 @@ NS_ASSUME_NONNULL_BEGIN
     const BIGNUM *r;
     const BIGNUM *s;
     DSA_SIG_get0(sig, &r, &s);
-    let MPI_R = [[PGPMPI alloc] initWithBigNum:[[PGPBigNum alloc] initWithBIGNUM:BN_dup(r)] identifier:PGPMPI_R];
-    let MPI_S = [[PGPMPI alloc] initWithBigNum:[[PGPBigNum alloc] initWithBIGNUM:BN_dup(s)] identifier:PGPMPI_S];
+    let MPI_R = [[PGPMPI alloc] initWithBigNum:[[PGPBigNum alloc] initWithBIGNUM:BN_dup(r)] identifier:PGPMPIdentifierR];
+    let MPI_S = [[PGPMPI alloc] initWithBigNum:[[PGPBigNum alloc] initWithBIGNUM:BN_dup(s)] identifier:PGPMPIdentifierS];
 
     return @[MPI_R, MPI_S];
 }
@@ -143,12 +143,12 @@ NS_ASSUME_NONNULL_BEGIN
     let bigX = [[PGPBigNum alloc] initWithBIGNUM:BN_dup(priv_key)];
     let bigY = [[PGPBigNum alloc] initWithBIGNUM:BN_dup(pub_key)];
 
-    let mpiP = [[PGPMPI alloc] initWithBigNum:bigP identifier:PGPMPI_P];
-    let mpiQ = [[PGPMPI alloc] initWithBigNum:bigQ identifier:PGPMPI_Q];
-    let mpiG = [[PGPMPI alloc] initWithBigNum:bigG identifier:PGPMPI_G];
-    // let mpiR = [[PGPMPI alloc] initWithBigNum:bigR identifier:PGPMPI_R];
-    let mpiX = [[PGPMPI alloc] initWithBigNum:bigX identifier:PGPMPI_X];
-    let mpiY = [[PGPMPI alloc] initWithBigNum:bigY identifier:PGPMPI_Y];
+    let mpiP = [[PGPMPI alloc] initWithBigNum:bigP identifier:PGPMPIdentifierP];
+    let mpiQ = [[PGPMPI alloc] initWithBigNum:bigQ identifier:PGPMPIdentifierQ];
+    let mpiG = [[PGPMPI alloc] initWithBigNum:bigG identifier:PGPMPIdentifierG];
+    // let mpiR = [[PGPMPI alloc] initWithBigNum:bigR identifier:PGPMPIdentifierR];
+    let mpiX = [[PGPMPI alloc] initWithBigNum:bigX identifier:PGPMPIdentifierX];
+    let mpiY = [[PGPMPI alloc] initWithBigNum:bigY identifier:PGPMPIdentifierY];
 
     let keyMaterial = [[PGPKeyMaterial alloc] init];
     keyMaterial.p = mpiP;

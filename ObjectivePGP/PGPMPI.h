@@ -12,20 +12,23 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-OBJC_EXTERN NSString * const PGPMPI_N;
-OBJC_EXTERN NSString * const PGPMPI_E;
-OBJC_EXTERN NSString * const PGPMPI_P;
-OBJC_EXTERN NSString * const PGPMPI_G;
-OBJC_EXTERN NSString * const PGPMPI_Q;
-OBJC_EXTERN NSString * const PGPMPI_D;
-OBJC_EXTERN NSString * const PGPMPI_U;
-OBJC_EXTERN NSString * const PGPMPI_X;
-OBJC_EXTERN NSString * const PGPMPI_R;
-OBJC_EXTERN NSString * const PGPMPI_S;
-OBJC_EXTERN NSString * const PGPMPI_Y;
-OBJC_EXTERN NSString * const PGPMPI_M;
-OBJC_EXTERN NSString * const PGPMPI_EC;
-OBJC_EXTERN NSString * const PGPMPI_EC_S;
+
+typedef NSString *PGPMPIdentifier NS_STRING_ENUM;
+OBJC_EXTERN PGPMPIdentifier const PGPMPIdentifierN;
+OBJC_EXTERN PGPMPIdentifier const PGPMPIdentifierE;
+OBJC_EXTERN PGPMPIdentifier const PGPMPIdentifierP;
+OBJC_EXTERN PGPMPIdentifier const PGPMPIdentifierG;
+OBJC_EXTERN PGPMPIdentifier const PGPMPIdentifierQ;
+OBJC_EXTERN PGPMPIdentifier const PGPMPIdentifierD;
+OBJC_EXTERN PGPMPIdentifier const PGPMPIdentifierU;
+OBJC_EXTERN PGPMPIdentifier const PGPMPIdentifierX;
+OBJC_EXTERN PGPMPIdentifier const PGPMPIdentifierR;
+OBJC_EXTERN PGPMPIdentifier const PGPMPIdentifierS;
+OBJC_EXTERN PGPMPIdentifier const PGPMPIdentifierY;
+OBJC_EXTERN PGPMPIdentifier const PGPMPIdentifierM;
+OBJC_EXTERN PGPMPIdentifier const PGPMPIdentifierV;
+OBJC_EXTERN PGPMPIdentifier const PGPMPIdentifierEC;
+OBJC_EXTERN PGPMPIdentifier const PGPMPIdentifierEC_S;
 
 @interface PGPMPI : NSObject <NSCopying>
 

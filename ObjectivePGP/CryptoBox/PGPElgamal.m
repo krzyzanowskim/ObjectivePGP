@@ -35,9 +35,9 @@ static int decide_k_bits(int p_bits) {
 // encrypt the bytes, returns encrypted m
 + (nullable NSArray<PGPBigNum *> *)publicEncrypt:(NSData *)toEncrypt withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket {
     let m = BN_bin2bn(toEncrypt.bytes, toEncrypt.length & INT_MAX, NULL);
-    let p = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_P] bigNum] bignumRef]);
-    let g = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_G] bigNum] bignumRef]);
-    let y = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_Y] bigNum] bignumRef]);
+    let p = BN_dup([[[publicKeyPacket publicMPI:PGPMPIdentifierP] bigNum] bignumRef]);
+    let g = BN_dup([[[publicKeyPacket publicMPI:PGPMPIdentifierG] bigNum] bignumRef]);
+    let y = BN_dup([[[publicKeyPacket publicMPI:PGPMPIdentifierY] bigNum] bignumRef]);
 
     let k = BN_new();
     let yk = BN_new();
@@ -75,8 +75,8 @@ static int decide_k_bits(int p_bits) {
 + (nullable NSData *)privateDecrypt:(NSData *)toDecrypt withSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket gk:(PGPMPI *)gkMPI {
     let c2 = BN_bin2bn(toDecrypt.bytes, toDecrypt.length & INT_MAX, NULL);
     let c1 = BN_dup([[gkMPI bigNum] bignumRef]);
-    let p = BN_dup([[[secretKeyPacket publicMPI:PGPMPI_P] bigNum] bignumRef]);
-    let x = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_X] bigNum] bignumRef]);
+    let p = BN_dup([[[secretKeyPacket publicMPI:PGPMPIdentifierP] bigNum] bignumRef]);
+    let x = BN_dup([[[secretKeyPacket secretMPI:PGPMPIdentifierX] bigNum] bignumRef]);
 
 
     let c1x = BN_new();

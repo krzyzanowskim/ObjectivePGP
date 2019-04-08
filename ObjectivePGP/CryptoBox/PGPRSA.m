@@ -31,8 +31,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 // encrypts the bytes
 + (nullable NSData *)publicEncrypt:(NSData *)toEncrypt withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket {
-    let n = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_N] bigNum] bignumRef]);
-    let e = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_E] bigNum] bignumRef]);
+    let n = BN_dup([[[publicKeyPacket publicMPI:PGPMPIdentifierN] bigNum] bignumRef]);
+    let e = BN_dup([[[publicKeyPacket publicMPI:PGPMPIdentifierE] bigNum] bignumRef]);
     if (!n || !e) {
         return nil;
     }
@@ -70,12 +70,12 @@ NS_ASSUME_NONNULL_BEGIN
     }
     pgp_defer { RSA_free(rsa); };
 
-    let n = BN_dup([[[secretKeyPacket publicMPI:PGPMPI_N] bigNum] bignumRef]);
-    let e = BN_dup([[[secretKeyPacket publicMPI:PGPMPI_E] bigNum] bignumRef]);
+    let n = BN_dup([[[secretKeyPacket publicMPI:PGPMPIdentifierN] bigNum] bignumRef]);
+    let e = BN_dup([[[secretKeyPacket publicMPI:PGPMPIdentifierE] bigNum] bignumRef]);
 
-    let d = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_D] bigNum] bignumRef]);
-    let p = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_Q] bigNum] bignumRef]); /* p and q are round the other way in openssl */
-    let q = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_P] bigNum] bignumRef]);
+    let d = BN_dup([[[secretKeyPacket secretMPI:PGPMPIdentifierD] bigNum] bignumRef]);
+    let p = BN_dup([[[secretKeyPacket secretMPI:PGPMPIdentifierQ] bigNum] bignumRef]); /* p and q are round the other way in openssl */
+    let q = BN_dup([[[secretKeyPacket secretMPI:PGPMPIdentifierP] bigNum] bignumRef]);
 
     if (d == NULL) {
         return nil;
@@ -118,11 +118,11 @@ NS_ASSUME_NONNULL_BEGIN
     }
     pgp_defer { RSA_free(rsa); };
 
-    let n = BN_dup([[[secretKeyPacket publicMPI:PGPMPI_N] bigNum] bignumRef]);
-    let e = BN_dup([[[secretKeyPacket publicMPI:PGPMPI_E] bigNum] bignumRef]);
-    let d = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_D] bigNum] bignumRef]);
-    let p = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_Q] bigNum] bignumRef]); /* p and q are round the other way in openssl */
-    let q = BN_dup([[[secretKeyPacket secretMPI:PGPMPI_P] bigNum] bignumRef]);
+    let n = BN_dup([[[secretKeyPacket publicMPI:PGPMPIdentifierN] bigNum] bignumRef]);
+    let e = BN_dup([[[secretKeyPacket publicMPI:PGPMPIdentifierE] bigNum] bignumRef]);
+    let d = BN_dup([[[secretKeyPacket secretMPI:PGPMPIdentifierD] bigNum] bignumRef]);
+    let p = BN_dup([[[secretKeyPacket secretMPI:PGPMPIdentifierQ] bigNum] bignumRef]); /* p and q are round the other way in openssl */
+    let q = BN_dup([[[secretKeyPacket secretMPI:PGPMPIdentifierP] bigNum] bignumRef]);
 
     if (toEncrypt.length > secretKeyPacket.keySize) {
         return nil;
@@ -172,8 +172,8 @@ NS_ASSUME_NONNULL_BEGIN
     }
     pgp_defer { RSA_free(rsa); };
 
-    let n = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_N] bigNum] bignumRef]);
-    let e = BN_dup([[[publicKeyPacket publicMPI:PGPMPI_E] bigNum] bignumRef]);
+    let n = BN_dup([[[publicKeyPacket publicMPI:PGPMPIdentifierN] bigNum] bignumRef]);
+    let e = BN_dup([[[publicKeyPacket publicMPI:PGPMPIdentifierE] bigNum] bignumRef]);
 
     if (!n || !e) {
         return nil;
@@ -227,12 +227,12 @@ NS_ASSUME_NONNULL_BEGIN
     let bigQ = [[PGPBigNum alloc] initWithBIGNUM:BN_dup(RSA_get0_q(rsa))];
     let bigU = [[PGPBigNum alloc] initWithBIGNUM:BN_mod_inverse(NULL, RSA_get0_p(rsa), RSA_get0_q(rsa), ctx)];
 
-    let mpiN = [[PGPMPI alloc] initWithBigNum:bigN identifier:PGPMPI_N];
-    let mpiE = [[PGPMPI alloc] initWithBigNum:bigE identifier:PGPMPI_E];
-    let mpiD = [[PGPMPI alloc] initWithBigNum:bigD identifier:PGPMPI_D];
-    let mpiP = [[PGPMPI alloc] initWithBigNum:bigP identifier:PGPMPI_P];
-    let mpiQ = [[PGPMPI alloc] initWithBigNum:bigQ identifier:PGPMPI_Q];
-    let mpiU = [[PGPMPI alloc] initWithBigNum:bigU identifier:PGPMPI_U];
+    let mpiN = [[PGPMPI alloc] initWithBigNum:bigN identifier:PGPMPIdentifierN];
+    let mpiE = [[PGPMPI alloc] initWithBigNum:bigE identifier:PGPMPIdentifierE];
+    let mpiD = [[PGPMPI alloc] initWithBigNum:bigD identifier:PGPMPIdentifierD];
+    let mpiP = [[PGPMPI alloc] initWithBigNum:bigP identifier:PGPMPIdentifierP];
+    let mpiQ = [[PGPMPI alloc] initWithBigNum:bigQ identifier:PGPMPIdentifierQ];
+    let mpiU = [[PGPMPI alloc] initWithBigNum:bigU identifier:PGPMPIdentifierU];
 
     let keyMaterial = [[PGPKeyMaterial alloc] init];
     keyMaterial.n = mpiN;

@@ -222,19 +222,19 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly: {
             // multiprecision integer (MPI) of RSA secret exponent d.
-            let mpiD = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPI_D atPosition:position];
+            let mpiD = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPIdentifierD atPosition:position];
             position = position + mpiD.packetLength;
 
             // MPI of RSA secret prime value p.
-            let mpiP = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPI_P atPosition:position];
+            let mpiP = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPIdentifierP atPosition:position];
             position = position + mpiP.packetLength;
 
             // MPI of RSA secret prime value q (p < q).
-            let mpiQ = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPI_Q atPosition:position];
+            let mpiQ = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPIdentifierQ atPosition:position];
             position = position + mpiQ.packetLength;
 
             // MPI of u, the multiplicative inverse of p, mod q.
-            let mpiU = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPI_U atPosition:position];
+            let mpiU = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPIdentifierU atPosition:position];
             position = position + mpiU.packetLength;
 
             self.secretMPIs = @[mpiD, mpiP, mpiQ, mpiU];
@@ -243,28 +243,28 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmElgamal: {
             // MPI of DSA secret exponent x.
             // MPI of Elgamal secret exponent x.
-            let mpiX = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPI_X atPosition:position];
+            let mpiX = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPIdentifierX atPosition:position];
             position = position + mpiX.packetLength;
 
             self.secretMPIs = @[mpiX];
         } break;
         case PGPPublicKeyAlgorithmECDSA: {
             // MPI of an EC point representing a public key
-            let mpiEC_S = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPI_EC_S atPosition:position];
+            let mpiEC_S = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPIdentifierEC_S atPosition:position];
             position = position + mpiEC_S.packetLength;
 
             self.secretMPIs = @[mpiEC_S];
         } break;
         case PGPPublicKeyAlgorithmEdDSA: {
             // MPI of an EC point representing a public key Q
-            let mpiEC_S = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPI_EC_S atPosition:position];
+            let mpiEC_S = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPIdentifierEC_S atPosition:position];
             position = position + mpiEC_S.packetLength;
 
             self.secretMPIs = @[mpiEC_S];
         } break;
         case PGPPublicKeyAlgorithmECDH: {
             // a MPI of an EC point representing a public key;
-            let mpiEC_S = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPI_EC_S atPosition:position];
+            let mpiEC_S = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPIdentifierEC_S atPosition:position];
             position = position + mpiEC_S.packetLength;
 
             self.secretMPIs = @[mpiEC_S];

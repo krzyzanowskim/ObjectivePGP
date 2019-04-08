@@ -126,9 +126,9 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:
         case PGPPublicKeyAlgorithmElgamal: {
             // return decrypted m
-            // encryptedMPIs has g^k as PGPMPI_G
+            // encryptedMPIs has g^k as PGPMPIdentifierG
             let g_k_mpi = [[encryptedMPIs pgp_objectsPassingTest:^BOOL(PGPMPI *obj, BOOL *stop) {
-                *stop = [obj.identifier isEqual:PGPMPI_G];
+                *stop = [obj.identifier isEqual:PGPMPIdentifierG];
                 return *stop;
             }] firstObject];
 
