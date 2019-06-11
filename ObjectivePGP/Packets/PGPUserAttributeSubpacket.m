@@ -8,6 +8,7 @@
 
 #import "PGPUserAttributeSubpacket.h"
 #import "PGPMacros+Private.h"
+#import "PGPFoundation.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -21,6 +22,26 @@ NS_ASSUME_NONNULL_BEGIN
     duplicate.type = self.type;
     duplicate.valueData = self.valueData;
     return duplicate;
+}
+
+#pragma mark - isEqual
+
+- (BOOL)isEqual:(id)other {
+    if (self == other) { return YES; }
+    if ([other isKindOfClass:self.class]) {
+        return [self isEqualToAttributeSubpacket:other];
+    }
+    return NO;
+}
+
+- (BOOL)isEqualToAttributeSubpacket:(PGPUserAttributeSubpacket *)packet {
+    return self.type == packet.type && PGPEqualObjects(self.valueData, packet.valueData);
+}
+
+- (NSUInteger)hash {
+    NSUInteger result = [super hash];
+    result = 31 * self.type + self.valueData.hash;
+    return result;
 }
 
 @end
