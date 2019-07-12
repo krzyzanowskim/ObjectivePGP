@@ -157,6 +157,17 @@ NS_ASSUME_NONNULL_BEGIN
     return [creationDate dateByAddingTimeInterval:validityPeriod.unsignedIntegerValue];
 }
 
+- (NSTimeInterval)keyExpirationTimeInterval {
+  let _Nullable validityPeriodSubpacket = PGPCast([self subpacketsOfType:PGPSignatureSubpacketTypeKeyExpirationTime].firstObject, PGPSignatureSubpacket);
+  let _Nullable validityPeriod = PGPCast(validityPeriodSubpacket.value, NSNumber);
+  if (!validityPeriod || validityPeriod.unsignedIntegerValue == 0) {
+    return NSNotFound;
+  }
+
+  return validityPeriod.doubleValue;
+}
+
+/// Checks signature expiration. NOT key expiration.
 - (BOOL)isExpired {
     // is no expiration date then signature never expires
     let _Nullable expirationDate = self.expirationDate;

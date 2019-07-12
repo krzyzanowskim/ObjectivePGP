@@ -532,13 +532,22 @@
     let key = [PGPTestUtils readKeysFromPath:@"issue130-espirationdate.asc"][0];
     let expirationDate = key.expirationDate;
     XCTAssertNotNil(expirationDate);
-    XCTAssertEqual(expirationDate.timeIntervalSince1970, 1607687540); // Fri Dec 11 11:52:20 2020 UTC
+    XCTAssertEqual(expirationDate.timeIntervalSince1970, 1607687539); // Fri Dec 11 11:52:20 2020 UTC
 }
 
 - (void)testMalformedHeaderIssue144 {
   let message = [@"€" dataUsingEncoding:NSUTF8StringEncoding];
   XCTAssertNotNil(message);
   [ObjectivePGP readKeysFromData:message error:nil];
+}
+
+- (void)testExpirationDateIssue146 {
+  let key = [[PGPTestUtils readKeysFromPath:@"issue146/keys.asc"] firstObject];
+  XCTAssertNotNil(key);
+  let users = [[key publicKey] users];
+  XCTAssertEqual(users.count, 2);
+  XCTAssertNotNil(key.expirationDate);
+  XCTAssertEqual(key.expirationDate.timeIntervalSince1970, 1610412042); // Tue Jan 12 01:40:42 2021 CET
 }
 
 @end
