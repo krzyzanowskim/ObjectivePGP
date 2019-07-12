@@ -535,4 +535,10 @@
     XCTAssertEqual(expirationDate.timeIntervalSince1970, 1607687540); // Fri Dec 11 11:52:20 2020 UTC
 }
 
+- (void)testMalformedHeaderIssue144 {
+  let message = [@"€" dataUsingEncoding:NSUTF8StringEncoding];
+  XCTAssertNotNil(message);
+  [ObjectivePGP readKeysFromData:message error:nil];
+}
+
 @end

@@ -109,6 +109,15 @@ NS_ASSUME_NONNULL_BEGIN
         header.bodyLength = (UInt32)data.length - header.headerLength;
     }
 
+    if (header.bodyLength + header.headerLength > data.length) {
+      PGPLogWarning(@"Invalid packet header.");
+      // not a valida data, skip the whole data.
+      if (consumedBytes) {
+        *consumedBytes = data.length;
+      }
+      return nil;
+    }
+
     *headerLength = header.headerLength;
     if (tag) { *tag = header.packetTag; }
     if (indeterminateLength) { *indeterminateLength = header.isIndeterminateLength; }

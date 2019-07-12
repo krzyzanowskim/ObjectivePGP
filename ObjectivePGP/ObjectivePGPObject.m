@@ -753,7 +753,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     while (position < messageData.length) {
         @autoreleasepool {
-            let packet = [PGPPacketFactory packetWithData:messageData offset:position consumedBytes:&consumedBytes];
+            let _Nullable packet = [PGPPacketFactory packetWithData:messageData offset:position consumedBytes:&consumedBytes];
             if (!packet) {
                 position += (consumedBytes > 0) ? consumedBytes : 1;
                 continue;
