@@ -444,7 +444,9 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // it is RECOMMENDED that priority be given to the User ID with the most recent self-signature
-    let sortedPrimaryUsers = [primaryUsers sortedArrayUsingComparator:^NSComparisonResult(PGPUser *lhs, PGPUser *rhs) {
+    // Sort the primary users, or all users if there's no primary user selected.
+    let users = primaryUsers.count > 0 ? primaryUsers : self.users;
+    let sortedPrimaryUsers = [users sortedArrayUsingComparator:^NSComparisonResult(PGPUser *lhs, PGPUser *rhs) {
         let _Nullable LHSLatestSelfCertificateExpirationDate = lhs.latestSelfCertificate.expirationDate;
         let _Nullable RHSLatestSelfCertificateExpirationDate = rhs.latestSelfCertificate.expirationDate;
 

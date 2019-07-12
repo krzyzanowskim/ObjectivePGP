@@ -139,7 +139,7 @@ NS_ASSUME_NONNULL_BEGIN
         return NSOrderedSame;
     }];
 
-    return [certs firstObject];
+    return certs.lastObject;
 }
 
 #pragma mark - isEqual
