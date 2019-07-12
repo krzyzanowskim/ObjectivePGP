@@ -8,10 +8,9 @@
 
 #import <Foundation/Foundation.h>
 #import <ObjectivePGP/PGPTypes.h>
+#import <ObjectivePGP/PGPKey.h>
 
 NS_ASSUME_NONNULL_BEGIN
-
-@class PGPKey;
 
 NS_SWIFT_NAME(KeyGenerator) @interface PGPKeyGenerator : NSObject
 

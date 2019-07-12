@@ -6,7 +6,7 @@
 //  This notice may not be removed from this file.
 //
 
-#import <ObjectivePGP/ObjectivePGP.h>
+#import "PGPPartialSubKey.h"
 
 @interface PGPPartialSubKey ()
 

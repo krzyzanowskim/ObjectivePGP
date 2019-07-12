@@ -23,7 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
     #endif
 #endif
 
-#define _PGPLogMacro(_level, _tag, _message) NSLog(@"[%s] %s: %s/%tu %@", _tag, _level, __PRETTY_FUNCTION__, __LINE__, _message())
+#define _PGPLogMacro(_level, _tag, _message) NSLog(@"[%s] %s: %s/%@ %@", _tag, _level, __PRETTY_FUNCTION__, @(__LINE__), _message())
 
 #if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
 #define PGPLogDebug(format, ...)                                                     \

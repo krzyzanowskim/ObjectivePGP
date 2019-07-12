@@ -5,7 +5,7 @@
 //  This notice may not be removed from this file.
 //
 
-#import <ObjectivePGP/ObjectivePGP-Private.h>
+#import "PGPUserAttributeSubpacket.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
