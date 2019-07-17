@@ -731,6 +731,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 			);
 			mainGroup = 756299AC1914DE1A00C5AD3B;
@@ -768,7 +769,7 @@
 /* Begin PBXShellScriptBuildPhase section */
 		75F6BAB01F8AF2E800A0B885 /* Generate umbrella headers */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 12;
+			buildActionMask = 8;
 			files = (
 			);
 			inputPaths = (
@@ -776,7 +777,7 @@
 			name = "Generate umbrella headers";
 			outputPaths = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/bash;
 			shellScript = "export LANG=en_US.UTF-8\nexport LANGUAGE=en_US.UTF-8\nexport LC_ALL=en_US.UTF-8\n\n[[ -s \"$HOME/.rvm/scripts/rvm\" ]] && source \"$HOME/.rvm/scripts/rvm\"\n\nbundle exec \"${PROJECT_DIR}/scripts/generate-umbrella-header.rb\" \"${PROJECT_FILE_PATH}\"\n";
 		};
