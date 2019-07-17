@@ -131,7 +131,9 @@ NS_ASSUME_NONNULL_BEGIN
     } else if (self.s2kUsage != PGPS2KUsageNonEncrypted) {
         // Initial Vector (IV) of the same length as the cipher's block size
         NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:self.symmetricAlgorithm];
-        NSAssert(blockSize <= 16, @"invalid blockSize");
+        if (blockSize > 16) {
+            return NO;
+        }
         self.ivData = [data subdataWithRange:(NSRange){position, blockSize}];
         position = position + blockSize;
     } else if (error) {
