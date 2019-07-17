@@ -550,4 +550,25 @@
   XCTAssertEqual(key.expirationDate.timeIntervalSince1970, 1610412042); // Tue Jan 12 01:40:42 2021 CET
 }
 
+- (void)testVerifyMailIssue150{
+    let keyring = [[PGPKeyring alloc] init];
+    [keyring importKeys:[PGPTestUtils readKeysFromPath:@"issue150/publicKey.asc"]];
+    [keyring importKeys:[PGPTestUtils readKeysFromPath:@"issue150/secretKey.asc"]];
+    XCTAssertEqual(keyring.keys.count, 2);
+    
+    // Try to decrypt and verify a mail from Thunderbird
+    let messagePath2 = [PGPTestUtils pathToBundledFile:@"issue150/encSignedMsg.txt"];
+    NSError *decryptError = nil;
+    let res = [ObjectivePGP decrypt:[NSData dataWithContentsOfFile: messagePath2]  andVerifySignature:YES usingKeys: keyring.keys passphraseForKey:nil error: &decryptError];
+    XCTAssertNil(decryptError);
+    XCTAssertNotNil(res);
+    
+    // Try to verify a mail from Thunderbird
+    let messagePath = [PGPTestUtils pathToBundledFile:@"issue150/signedMsg.txt"];
+    let signaturePath = [PGPTestUtils pathToBundledFile:@"issue150/signature.txt"];
+    BOOL isVerified = [ObjectivePGP verify:[NSData dataWithContentsOfFile:messagePath] withSignature:[NSData dataWithContentsOfFile:signaturePath] usingKeys:keyring.keys passphraseForKey:nil error:&decryptError];
+    XCTAssertTrue(isVerified);
+    XCTAssertNil(decryptError);
+}
+
 @end
