@@ -760,8 +760,11 @@ NS_ASSUME_NONNULL_BEGIN
             }
 
             if ((accumulatedPackets.count > 1) && ((packet.tag == PGPPublicKeyPacketTag) || (packet.tag == PGPSecretKeyPacketTag))) {
-                let partialKey = [[PGPPartialKey alloc] initWithPackets:accumulatedPackets];
-                [partialKeys addObject:partialKey];
+                PGPPublicKeyPacket *pubPacket = (PGPPublicKeyPacket*) packet;
+                if ((pubPacket.isSupported) ) {
+                    let partialKey = [[PGPPartialKey alloc] initWithPackets:accumulatedPackets];
+                    [partialKeys addObject:partialKey];
+                }
                 [accumulatedPackets removeAllObjects];
             }
 
@@ -771,8 +774,14 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     if (accumulatedPackets.count > 1) {
-        let key = [[PGPPartialKey alloc] initWithPackets:accumulatedPackets];
-        [partialKeys addObject:key];
+        for (PGPPacket *p in accumulatedPackets) {
+            if (p.tag == PGPPublicKeyPacketTag || p.tag == PGPSecretKeyPacketTag) {
+                PGPPublicKeyPacket *pubPacket = (PGPPublicKeyPacket*) p;
+                if ((pubPacket.isSupported) ) {
+                    let key = [[PGPPartialKey alloc] initWithPackets:accumulatedPackets];
+                    [partialKeys addObject:key];                }
+            }
+        }
         [accumulatedPackets removeAllObjects];
     }
 
