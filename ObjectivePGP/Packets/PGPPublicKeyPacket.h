@@ -27,6 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSUInteger keySize;
 @property (nonatomic, readonly) PGPFingerprint *fingerprint;
 @property (nonatomic, readonly) PGPKeyID *keyID;
+@property (nonatomic, readonly) BOOL isSupported;
 
 - (NSData *)exportKeyPacketOldStyle;
 - (NSData *)buildKeyBodyData:(BOOL)forceV4;
