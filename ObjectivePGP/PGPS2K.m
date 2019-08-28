@@ -64,8 +64,6 @@ static const unsigned int PGP_DEFAULT_ITERATIONS_COUNT = 215;
     [data getBytes:&_specifier range:(NSRange){position, 1}];
     position = position + 1;
 
-    NSAssert(_specifier == PGPS2KSpecifierIteratedAndSalted || _specifier == PGPS2KSpecifierSalted || _specifier == PGPS2KSpecifierSimple || _specifier == PGPS2KSpecifierGnuDummy ||  _specifier == PGPS2KSpecifierDivertToCard, @"Invalid s2k specifier");
-
     // this is not documented, but now I need to read S2K key specified by s2kSpecifier
     // 3.7.1.1.  Simple S2K
 

@@ -569,6 +569,16 @@
     BOOL isVerified = [ObjectivePGP verify:[NSData dataWithContentsOfFile:messagePath] withSignature:[NSData dataWithContentsOfFile:signaturePath] usingKeys:keyring.keys passphraseForKey:nil error:&decryptError];
     XCTAssertTrue(isVerified);
     XCTAssertNil(decryptError);
+- (void) testECCPublicKeyImportIssue141 {
+    let eccPub = [PGPTestUtils readKeysFromPath:@"issue141/eccPublicKey.asc"];
+    XCTAssertEqual(eccPub.count, 0);
+    let rsaPub = [PGPTestUtils readKeysFromPath:@"issue141/rsaPublicKey.asc"];
+    XCTAssertEqual(rsaPub.count, 1);
+}
+
+- (void) testECCSecretKeyImportIssue141 {
+    let eccSec = [PGPTestUtils readKeysFromPath:@"issue141/eccSecretKey.asc"];
+    XCTAssertEqual(eccSec.count, 0);
 }
 
 @end
