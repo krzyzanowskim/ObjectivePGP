@@ -126,6 +126,7 @@ NS_ASSUME_NONNULL_BEGIN
 
         if (!packet) {
             PGPLogError(@"Invalid message.");
+            return nil;
         }
 
         if (indeterminateLength) {
