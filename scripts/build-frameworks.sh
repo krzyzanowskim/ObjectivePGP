@@ -45,7 +45,7 @@ function build_framework {
 }
 
 # Build frameworks
-SDKs=(`xcrun xcodebuild -showsdks | grep -Eo "iphone.*|macos.*"`)
+SDKs=(`xcrun xcodebuild -showsdks | grep -Eo "iphone.*|macosx10.*"`)
 for sdk in "${SDKs[@]}"; do
     build_framework "${sdk}"
 done
