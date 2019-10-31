@@ -11,6 +11,8 @@
 
 #import <ObjectivePGP/ObjectivePGP.h>
 #import "PGPMacros+Private.h"
+#import <ObjectivePGP/PGPPartialKey+Private.h>
+#import <ObjectivePGP/PGPSignaturePacket.h>
 #import "PGPTestUtils.h"
 #import <XCTest/XCTest.h>
 
@@ -550,16 +552,37 @@
   XCTAssertEqual(key.expirationDate.timeIntervalSince1970, 1610412042); // Tue Jan 12 01:40:42 2021 CET
 }
 
-- (void) testECCPublicKeyImportIssue141 {
+- (void)testECCPublicKeyImportIssue141 {
     let eccPub = [PGPTestUtils readKeysFromPath:@"issue141/eccPublicKey.asc"];
     XCTAssertEqual(eccPub.count, 0);
     let rsaPub = [PGPTestUtils readKeysFromPath:@"issue141/rsaPublicKey.asc"];
     XCTAssertEqual(rsaPub.count, 1);
 }
 
-- (void) testECCSecretKeyImportIssue141 {
+- (void)testECCSecretKeyImportIssue141 {
     let eccSec = [PGPTestUtils readKeysFromPath:@"issue141/eccSecretKey.asc"];
     XCTAssertEqual(eccSec.count, 0);
+}
+
+// https://github.com/krzyzanowskim/ObjectivePGP/issues/158#issuecomment-533493519
+- (void)testMainKeyEncryptionIssue158 {
+  let publicKey = [[PGPTestUtils readKeysFromPath:@"issue158/pubkey.asc"] firstObject];
+  XCTAssertNotNil(publicKey);
+  XCTAssertNotNil(publicKey.publicKey.primaryUserSelfCertificate);
+  XCTAssertTrue(publicKey.publicKey.primaryUserSelfCertificate.canBeUsedToEncrypt);
+  let secretKeys = [PGPTestUtils readKeysFromPath:@"issue158/privkey.asc"];
+  XCTAssertEqual(secretKeys.count, (NSUInteger)1);
+
+  let data = [@"Hello, I'm here !" dataUsingEncoding:NSUTF8StringEncoding];
+  NSError *encryptError = nil;
+  let encryptedData = [ObjectivePGP encrypt:data addSignature:NO usingKeys:@[publicKey] passphraseForKey:nil error:&encryptError];
+  XCTAssertNil(encryptError);
+  XCTAssertNotNil(encryptedData);
+
+  let armoredEntryptedData = [PGPArmor armored:encryptedData as:PGPArmorMessage];
+  XCTAssertNotNil(armoredEntryptedData);
+  NSLog(@"%@",armoredEntryptedData);
+  XCTAssertGreaterThan(armoredEntryptedData.length, 234);
 }
 
 @end

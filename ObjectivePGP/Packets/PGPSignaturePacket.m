@@ -210,13 +210,22 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)canBeUsedToEncrypt {
     BOOL result = NO;
     let subpacket = PGPCast([[self subpacketsOfType:PGPSignatureSubpacketTypeKeyFlags] firstObject], PGPSignatureSubpacket);
-    NSArray<NSNumber *> * _Nullable flags = PGPCast(subpacket.value, NSArray);
-    if ([flags containsObject:@(PGPSignatureFlagAllowEncryptStorage)] || [flags containsObject:@(PGPSignatureFlagAllowEncryptCommunications)]) {
-        result = YES;
+    if (subpacket != nil) {
+      // Check if subpackets allows for encryption
+      NSArray<NSNumber *> * _Nullable subpacketFlags = PGPCast(subpacket.value, NSArray);
+      if ([subpacketFlags containsObject:@(PGPSignatureFlagAllowEncryptStorage)] || [subpacketFlags containsObject:@(PGPSignatureFlagAllowEncryptCommunications)]) {
+          result = YES;
+      }
+    } else {
+      // Check self flags for whether encryption for main key is allowed (by excluding known sign-only options because it's short list)
+      result = self.publicKeyAlgorithm != PGPPublicKeyAlgorithmRSASignOnly &&
+               self.publicKeyAlgorithm != PGPPublicKeyAlgorithmElgamalEncryptorSign &&
+               self.publicKeyAlgorithm != PGPPublicKeyAlgorithmDSA;
     }
 
     // I'm not convinced if DSA is allowed here self.publicKeyAlgorithm != PGPPublicKeyAlgorithmDSA
-    result = result && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmRSASignOnly && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmElgamalEncryptorSign;
+    result = result && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmRSASignOnly &&
+                       self.publicKeyAlgorithm != PGPPublicKeyAlgorithmElgamalEncryptorSign;
 
     return result;
 }
