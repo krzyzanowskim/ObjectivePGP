@@ -718,7 +718,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = PGP;
-				LastUpgradeCheck = 0910;
+				LastUpgradeCheck = 1110;
 				ORGANIZATIONNAME = "Marcin Krzyżanowski";
 				TargetAttributes = {
 					750F89331F0D6A3F00B99726 = {
@@ -728,11 +728,11 @@
 			};
 			buildConfigurationList = 756299B01914DE1A00C5AD3B /* Build configuration list for PBXProject "ObjectivePGP" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
+				Base,
 			);
 			mainGroup = 756299AC1914DE1A00C5AD3B;
 			productRefGroup = 756299B61914DE1A00C5AD3B /* Products */;
@@ -883,6 +883,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 75BAFAC61F0050A000A956FC /* Defaults-Debug.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -901,6 +902,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 75BAFAC51F0050A000A956FC /* Defaults-Release.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
 				CURRENT_PROJECT_VERSION = 1;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
