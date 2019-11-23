@@ -6,7 +6,7 @@
 //  This notice may not be removed from this file.
 //
 
-#import <ObjectivePGP/ObjectivePGP.h>
+#import "PGPPartialKey.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -18,6 +18,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, nullable, copy, readwrite) PGPSignaturePacket *revocationSignature;
 
 - (void)loadPackets:(NSArray<PGPPacket *> *)packets NS_REQUIRES_SUPER;
+
+- (nullable PGPSignaturePacket *)primaryUserSelfCertificate;
 
 @end
 

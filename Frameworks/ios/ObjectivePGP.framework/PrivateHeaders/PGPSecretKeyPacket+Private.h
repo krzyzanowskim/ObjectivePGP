@@ -9,7 +9,6 @@
 #import "PGPPublicKeyPacket+Private.h"
 #import "PGPS2K.h"
 #import "PGPSecretKeyPacket.h"
-#import <ObjectivePGP/ObjectivePGP.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

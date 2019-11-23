@@ -36,6 +36,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, nullable, readonly) PGPKeyID *issuerKeyID; // computed
 @property (nonatomic, copy, readonly) NSArray<PGPSignatureSubpacket *> *subpackets; // computed
 @property (nonatomic, nullable, readonly) NSDate *expirationDate; // computed
+/// Key expiration time interval. To be calculated since key creation date. NSNotFound if not specified.
+@property (nonatomic, assign, readonly) NSTimeInterval keyExpirationTimeInterval; // computed
 @property (nonatomic, readonly, readonly, getter=isExpired) BOOL expired; // computed
 @property (nonatomic, nullable, readonly) NSDate *creationDate; // computed
 @property (nonatomic, readonly, readonly, getter=isPrimaryUserID) BOOL primaryUserID; // computed

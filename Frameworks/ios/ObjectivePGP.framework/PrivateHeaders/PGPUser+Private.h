@@ -5,10 +5,10 @@
 //  This notice may not be removed from this file.
 //
 
-#import <ObjectivePGP/ObjectivePGP.h>
-#import <ObjectivePGP/PGPUserIDPacket.h>
-#import <ObjectivePGP/PGPUserAttributePacket.h>
-#import <ObjectivePGP/PGPSignaturePacket.h>
+#import "PGPUser.h"
+#import "PGPUserIDPacket.h"
+#import "PGPUserAttributePacket.h"
+#import "PGPSignaturePacket.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

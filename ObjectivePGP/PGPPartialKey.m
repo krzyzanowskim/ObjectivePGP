@@ -69,15 +69,18 @@ NS_ASSUME_NONNULL_BEGIN
 // Key expiration date
 - (nullable NSDate *)expirationDate {
     let _Nullable primaryUserSelfCertificate = self.primaryUserSelfCertificate;
-    if (primaryUserSelfCertificate && primaryUserSelfCertificate.expirationDate) {
-        return primaryUserSelfCertificate.expirationDate;
+    if (primaryUserSelfCertificate && primaryUserSelfCertificate.keyExpirationTimeInterval != NSNotFound && !primaryUserSelfCertificate.isExpired) {
+      let _Nullable keyPacket = PGPCast(self.primaryKeyPacket, PGPPublicKeyPacket);
+      if (keyPacket) {
+        return [keyPacket.createDate dateByAddingTimeInterval:primaryUserSelfCertificate.keyExpirationTimeInterval];
+      }
     }
 
     for (PGPPartialSubKey *subKey in self.subKeys) {
         let _Nullable bindingSignaturePacket = subKey.bindingSignature;
         if (!bindingSignaturePacket.isExpired && bindingSignaturePacket && PGPEqualObjects(bindingSignaturePacket.issuerKeyID,self.keyID)) {
             // key expiration
-            // PGPSignatureSubpacketTypeKeyExpirationTime - This is found only on a self-signature.
+            // PGPSignatureSubpacketTypeKeyExpirationTime - This can be found on a self-signature.
             // A self-signature is a binding signature made by the key to which the signature refers.
             var validityPeriodSubpacket = PGPCast([bindingSignaturePacket subpacketsOfType:PGPSignatureSubpacketTypeKeyExpirationTime].lastObject, PGPSignatureSubpacket);
             let validityPeriod = PGPCast(validityPeriodSubpacket.value, NSNumber);
@@ -452,12 +455,14 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     // it is RECOMMENDED that priority be given to the User ID with the most recent self-signature
-    let sortedPrimaryUsers = [primaryUsers sortedArrayUsingComparator:^NSComparisonResult(PGPUser *lhs, PGPUser *rhs) {
-        let _Nullable LHSLatestSelfCertificateExpirationDate = lhs.latestSelfCertificate.expirationDate;
-        let _Nullable RHSLatestSelfCertificateExpirationDate = rhs.latestSelfCertificate.expirationDate;
+    // Sort the primary users, or all users if there's no primary user selected.
+    let users = primaryUsers.count > 0 ? primaryUsers : self.users;
+    let sortedPrimaryUsers = [users sortedArrayUsingComparator:^NSComparisonResult(PGPUser *lhs, PGPUser *rhs) {
+        let _Nullable LHSLatestSelfCertificateCreationDate = lhs.latestSelfCertificate.creationDate;
+        let _Nullable RHSLatestSelfCertificateCreationDate = rhs.latestSelfCertificate.creationDate;
 
-        if (LHSLatestSelfCertificateExpirationDate && RHSLatestSelfCertificateExpirationDate) {
-            return [PGPNN(LHSLatestSelfCertificateExpirationDate) compare:PGPNN(RHSLatestSelfCertificateExpirationDate)];
+        if (LHSLatestSelfCertificateCreationDate && RHSLatestSelfCertificateCreationDate) {
+            return [PGPNN(LHSLatestSelfCertificateCreationDate) compare:PGPNN(RHSLatestSelfCertificateCreationDate)];
         }
         return NSOrderedSame;
     }];

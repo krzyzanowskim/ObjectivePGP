@@ -112,26 +112,25 @@ NS_ASSUME_NONNULL_BEGIN
     return armoredMessage;
 };
 
+/// Read Checksum and strip it from the input Base64 string
 + (nullable NSString *)readChecksum:(NSMutableString *)base64String {
-    NSString *checksumString = nil;
-    NSRange range; BOOL hasChecksum = YES;
-    
-    range = [base64String rangeOfString:@"\n" options:NSBackwardsSearch range:NSMakeRange(0, base64String.length)];
-    hasChecksum = range.location != NSNotFound;
-    
-    if (hasChecksum) {
-        range = [base64String rangeOfString:@"\n" options:NSBackwardsSearch range:NSMakeRange(0, range.location)];
-        hasChecksum = range.location != NSNotFound;
-    }
-    if (hasChecksum) {
-        NSString *lastLine = [base64String substringWithRange:NSMakeRange(range.location, base64String.length - range.location)];
-        lastLine = [lastLine stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-        hasChecksum = [lastLine hasPrefix:@"="];
-        if (hasChecksum) {
-            checksumString = [lastLine substringFromIndex:1];
-            [base64String deleteCharactersInRange:NSMakeRange(range.location, base64String.length - range.location)];
+    // 1. Find checksum at the last non-empty line
+    NSString * _Nullable checksumString = nil;
+
+    let lines = [base64String componentsSeparatedByCharactersInSet:[NSCharacterSet newlineCharacterSet]];
+    // 2. Find checksum line
+    let output = [[NSMutableString alloc] init];
+    for (NSString *line in [[lines reverseObjectEnumerator] allObjects]) {
+        if ([line hasPrefix:@"="]) {
+            checksumString = [line substringFromIndex:1];
+        } else {
+            // 3. re-build base64 string without checksum line
+            if ([line length] > 0) {
+                [output insertString:[NSString stringWithFormat:@"%@\n", line] atIndex:0];
+            }
         }
     }
+    [base64String setString:output];
     return checksumString;
 }
 
@@ -257,15 +256,15 @@ NS_ASSUME_NONNULL_BEGIN
         for (NSString *extractedString in extractedBlocks) {
             @autoreleasepool {
                 NSError *armorError = nil;
-                let armodedData = [PGPArmor readArmored:extractedString error:&armorError];
-                if (armorError) {
+                let armoredData = [PGPArmor readArmored:extractedString error:&armorError];
+                if (!armoredData || armorError) {
                     if (error) {
                         *error = armorError;
                     }
                     return nil;
                 }
                 
-                [extractedData pgp_addObject:armodedData];
+                [extractedData pgp_addObject:armoredData];
             }
         }
         return extractedData;

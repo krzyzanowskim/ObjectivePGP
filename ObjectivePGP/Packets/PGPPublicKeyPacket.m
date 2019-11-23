@@ -83,6 +83,33 @@ NS_ASSUME_NONNULL_BEGIN
     return [[PGPFingerprint alloc] initWithData:[self exportKeyPacketOldStyle]];
 }
 
+- (BOOL) isSupported {
+    switch (self.publicKeyAlgorithm) {
+        case PGPPublicKeyAlgorithmRSA:
+        case PGPPublicKeyAlgorithmRSAEncryptOnly:
+        case PGPPublicKeyAlgorithmRSASignOnly:
+        case PGPPublicKeyAlgorithmDSA:
+        case PGPPublicKeyAlgorithmElgamal:
+        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
+            return YES;
+        case PGPPublicKeyAlgorithmECDSA:
+        case PGPPublicKeyAlgorithmDiffieHellman:
+        case PGPPublicKeyAlgorithmPrivate1:
+        case PGPPublicKeyAlgorithmPrivate2:
+        case PGPPublicKeyAlgorithmPrivate3:
+        case PGPPublicKeyAlgorithmPrivate4:
+        case PGPPublicKeyAlgorithmPrivate5:
+        case PGPPublicKeyAlgorithmPrivate6:
+        case PGPPublicKeyAlgorithmPrivate7:
+        case PGPPublicKeyAlgorithmPrivate8:
+        case PGPPublicKeyAlgorithmPrivate9:
+        case PGPPublicKeyAlgorithmPrivate10:
+        case PGPPublicKeyAlgorithmPrivate11:
+        default:
+            return NO;
+    }
+}
+
 #pragma mark - Parse data
 
 /**

@@ -4,7 +4,6 @@
 // rfc1950 (zlib format)
 
 #import <Foundation/Foundation.h>
-#import <ObjectivePGP/ObjectivePGP.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

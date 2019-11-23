@@ -47,7 +47,10 @@ NS_ASSUME_NONNULL_BEGIN
     UInt32 headerLength = 0;
     BOOL indeterminateLength = NO;
     let data = [packetData subdataWithRange:(NSRange){offset, packetData.length - offset}];
-    let packetBodyData = [PGPPacket readPacketBody:data headerLength:&headerLength consumedBytes:consumedBytes packetTag:&packetTag indeterminateLength:&indeterminateLength];
+    let _Nullable packetBodyData = [PGPPacket readPacketBody:data headerLength:&headerLength consumedBytes:consumedBytes packetTag:&packetTag indeterminateLength:&indeterminateLength];
+    if (!packetBodyData) {
+      return nil;
+    }
     let packetHeaderData = [packetData subdataWithRange:(NSRange){offset, headerLength}];
 
     if (packetHeaderData.length > 0) {
@@ -124,7 +127,6 @@ NS_ASSUME_NONNULL_BEGIN
         if (!packet) {
             PGPLogError(@"Invalid message.");
         }
-        PGPAssertClass(packet, PGPPacket);
 
         if (indeterminateLength) {
             packet.indeterminateLength = YES;

@@ -157,6 +157,17 @@ NS_ASSUME_NONNULL_BEGIN
     return [creationDate dateByAddingTimeInterval:validityPeriod.unsignedIntegerValue];
 }
 
+- (NSTimeInterval)keyExpirationTimeInterval {
+  let _Nullable validityPeriodSubpacket = PGPCast([self subpacketsOfType:PGPSignatureSubpacketTypeKeyExpirationTime].firstObject, PGPSignatureSubpacket);
+  let _Nullable validityPeriod = PGPCast(validityPeriodSubpacket.value, NSNumber);
+  if (!validityPeriod || validityPeriod.unsignedIntegerValue == 0) {
+    return NSNotFound;
+  }
+
+  return validityPeriod.doubleValue;
+}
+
+/// Checks signature expiration. NOT key expiration.
 - (BOOL)isExpired {
     // is no expiration date then signature never expires
     let _Nullable expirationDate = self.expirationDate;
@@ -196,19 +207,28 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL)canBeUsedToEncrypt {
-    BOOL result = self.publicKeyAlgorithm != PGPPublicKeyAlgorithmRSASignOnly
-               && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmElgamalEncryptorSign;
-               // && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmECDSA
-               // && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmEdDSA;
+    BOOL result = NO;
+    let subpacket = PGPCast([[self subpacketsOfType:PGPSignatureSubpacketTypeKeyFlags] firstObject], PGPSignatureSubpacket);
+    if (subpacket != nil) {
+      // Check if subpackets allows for encryption
+      NSArray<NSNumber *> * _Nullable subpacketFlags = PGPCast(subpacket.value, NSArray);
+      if ([subpacketFlags containsObject:@(PGPSignatureFlagAllowEncryptStorage)] || [subpacketFlags containsObject:@(PGPSignatureFlagAllowEncryptCommunications)]) {
+          result = YES;
+      }
+    } else {
+      // Check self flags for whether encryption for main key is allowed (by excluding known sign-only options because it's short list)
+      result = self.publicKeyAlgorithm != PGPPublicKeyAlgorithmRSASignOnly &&
+               self.publicKeyAlgorithm != PGPPublicKeyAlgorithmElgamalEncryptorSign;
+               // self.publicKeyAlgorithm != PGPPublicKeyAlgorithmECDSA &&
+               // self.publicKeyAlgorithm != PGPPublicKeyAlgorithmEdDSA;
                // While it may be disputable if DSA should be included in the list: It shouldn't - DSA is not sign-only
-
-    if (result) {
-        let subpacket = PGPCast([[self subpacketsOfType:PGPSignatureSubpacketTypeKeyFlags] firstObject], PGPSignatureSubpacket);
-        NSArray<NSNumber *> * _Nullable flags = PGPCast(subpacket.value, NSArray);
-        if (flags && ([flags containsObject:@(PGPSignatureFlagAllowEncryptStorage)] || [flags containsObject:@(PGPSignatureFlagAllowEncryptCommunications)])) {
-            result = YES;
-        }
     }
+
+    result = result && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmRSASignOnly &&
+                       self.publicKeyAlgorithm != PGPPublicKeyAlgorithmElgamalEncryptorSign;
+                       // self.publicKeyAlgorithm != PGPPublicKeyAlgorithmECDSA &&
+                       // self.publicKeyAlgorithm != PGPPublicKeyAlgorithmEdDSA;
+                       // While it may be disputable if DSA should be included in the list: It shouldn't - DSA is not sign-only
 
     return result;
 }
