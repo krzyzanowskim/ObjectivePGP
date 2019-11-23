@@ -585,4 +585,11 @@
   XCTAssertGreaterThan(armoredEntryptedData.length, 234);
 }
 
+// https://github.com/krzyzanowskim/ObjectivePGP/issues/166
+- (void)testArmoredMessageIssue166 {
+    let keys = [PGPTestUtils readKeysFromPath:@"issue166/key.asc"];
+    XCTAssertNotNil(keys);
+    XCTAssertEqual(keys.count, 1);
+}
+
 @end
