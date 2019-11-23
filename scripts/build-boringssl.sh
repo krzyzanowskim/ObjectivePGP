@@ -22,13 +22,11 @@ cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_SYSROOT=macosx          -DBORINGSSL
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_SYSROOT=iphoneos        -DBORINGSSL_PREFIX=OBJECTIVEPGP -DCMAKE_OSX_DEPLOYMENT_TARGET="8.0" -DCMAKE_OSX_ARCHITECTURES=arm64 -H"${BORINGSSL_SRC_DIR}" -B"${BORINGSSL_BUILD_DIR}/iphoneos_arm64"
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_SYSROOT=iphoneos        -DBORINGSSL_PREFIX=OBJECTIVEPGP -DCMAKE_OSX_DEPLOYMENT_TARGET="8.0" -DCMAKE_OSX_ARCHITECTURES=armv7 -H"${BORINGSSL_SRC_DIR}" -B"${BORINGSSL_BUILD_DIR}/iphoneos_armv7"
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_SYSROOT=iphoneos        -DBORINGSSL_PREFIX=OBJECTIVEPGP -DCMAKE_OSX_DEPLOYMENT_TARGET="8.0" -DCMAKE_OSX_ARCHITECTURES=armv7s -H"${BORINGSSL_SRC_DIR}" -B"${BORINGSSL_BUILD_DIR}/iphoneos_armv7s"
-cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_SYSROOT=iphonesimulator -DBORINGSSL_PREFIX=OBJECTIVEPGP -DCMAKE_OSX_DEPLOYMENT_TARGET="8.0" -DCMAKE_OSX_ARCHITECTURES=i386 -H"${BORINGSSL_SRC_DIR}" -B"${BORINGSSL_BUILD_DIR}/iphonesimulator_i386"
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_SYSROOT=iphonesimulator -DBORINGSSL_PREFIX=OBJECTIVEPGP -DCMAKE_OSX_DEPLOYMENT_TARGET="8.0" -DCMAKE_OSX_ARCHITECTURES=x86_64 -H"${BORINGSSL_SRC_DIR}" -B"${BORINGSSL_BUILD_DIR}/iphonesimulator_x86_64"
 make -j 8 --quiet -C "${BORINGSSL_BUILD_DIR}/macosx" crypto
 make -j 8 --quiet -C "${BORINGSSL_BUILD_DIR}/iphoneos_arm64" crypto
 make -j 8 --quiet -C "${BORINGSSL_BUILD_DIR}/iphoneos_armv7" crypto
 make -j 8 --quiet -C "${BORINGSSL_BUILD_DIR}/iphoneos_armv7s" crypto
-make -j 8 --quiet -C "${BORINGSSL_BUILD_DIR}/iphonesimulator_i386" crypto
 make -j 8 --quiet -C "${BORINGSSL_BUILD_DIR}/iphonesimulator_x86_64" crypto
 
 lipo -create \
@@ -39,7 +37,6 @@ lipo -create \
      "${BORINGSSL_BUILD_DIR}/iphoneos_arm64/crypto/libcrypto.a" \
      "${BORINGSSL_BUILD_DIR}/iphoneos_armv7/crypto/libcrypto.a" \
      "${BORINGSSL_BUILD_DIR}/iphoneos_armv7s/crypto/libcrypto.a" \
-     "${BORINGSSL_BUILD_DIR}/iphonesimulator_i386/crypto/libcrypto.a" \
      "${BORINGSSL_BUILD_DIR}/iphonesimulator_x86_64/crypto/libcrypto.a" \
      -o "${LIBS_DIR}/ios/libcrypto.a"
 
