@@ -449,7 +449,9 @@
 				756299B71914DE1A00C5AD3B /* Frameworks */,
 				756299B61914DE1A00C5AD3B /* Products */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
 		};
 		756299B61914DE1A00C5AD3B /* Products */ = {
 			isa = PBXGroup;
