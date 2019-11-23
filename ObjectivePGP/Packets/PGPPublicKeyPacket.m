@@ -91,9 +91,11 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmElgamal:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:
-            return YES;
+        case PGPPublicKeyAlgorithmECDH:
         case PGPPublicKeyAlgorithmECDSA:
+        case PGPPublicKeyAlgorithmEdDSA:
         case PGPPublicKeyAlgorithmDiffieHellman:
+            return YES;
         case PGPPublicKeyAlgorithmPrivate1:
         case PGPPublicKeyAlgorithmPrivate2:
         case PGPPublicKeyAlgorithmPrivate3:
@@ -105,9 +107,10 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmPrivate9:
         case PGPPublicKeyAlgorithmPrivate10:
         case PGPPublicKeyAlgorithmPrivate11:
-        default:
             return NO;
     }
+
+    return NO;
 }
 
 #pragma mark - Parse data
