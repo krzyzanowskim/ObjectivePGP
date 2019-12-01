@@ -20,7 +20,7 @@ FOUNDATION_EXPORT const unsigned char ObjectivePGPVersionString[];
 #import <ObjectivePGP/PGPPacket+Private.h>
 #import <ObjectivePGP/PGPCryptoUtils.h>
 #import <ObjectivePGP/PGPRSA.h>
-#import <ObjectivePGP/PGPCurveECDHParameters.h>
+#import <ObjectivePGP/PGPCurveKDFParameters.h>
 #import <ObjectivePGP/PGPS2K.h>
 #import <ObjectivePGP/PGPElgamal.h>
 #import <ObjectivePGP/NSArray+PGPUtils.h>

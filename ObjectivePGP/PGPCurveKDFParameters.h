@@ -15,7 +15,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PGPCurveECDHParameters : NSObject <PGPExportable>
+@interface PGPCurveKDFParameters : NSObject <PGPExportable>
 
 @property (assign, nonatomic, readonly) PGPHashAlgorithm hashAlgorithm;
 @property (assign, nonatomic, readonly) PGPSymmetricAlgorithm symmetricAlgorithm;

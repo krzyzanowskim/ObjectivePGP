@@ -8,20 +8,20 @@
 //
 //
 
-#import "PGPCurveECDHParameters.h"
+#import "PGPCurveKDFParameters.h"
 #import <ObjectivePGP/PGPMacros+Private.h>
 #import "NSMutableData+PGPUtils.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PGPCurveECDHParameters ()
+@interface PGPCurveKDFParameters ()
 
 @property (assign, nonatomic, readwrite) PGPHashAlgorithm hashAlgorithm;
 @property (assign, nonatomic, readwrite) PGPSymmetricAlgorithm symmetricAlgorithm;
 
 @end
 
-@implementation PGPCurveECDHParameters
+@implementation PGPCurveKDFParameters
 
 - (instancetype)initWithHashAlgorithm:(PGPHashAlgorithm)hashAlgorithm symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm {
     if ((self = [super init])) {

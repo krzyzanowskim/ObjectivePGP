@@ -219,15 +219,11 @@ NS_ASSUME_NONNULL_BEGIN
       // Check self flags for whether encryption for main key is allowed (by excluding known sign-only options because it's short list)
       result = self.publicKeyAlgorithm != PGPPublicKeyAlgorithmRSASignOnly &&
                self.publicKeyAlgorithm != PGPPublicKeyAlgorithmElgamalEncryptorSign;
-               // self.publicKeyAlgorithm != PGPPublicKeyAlgorithmECDSA &&
-               // self.publicKeyAlgorithm != PGPPublicKeyAlgorithmEdDSA;
                // While it may be disputable if DSA should be included in the list: It shouldn't - DSA is not sign-only
     }
 
     result = result && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmRSASignOnly &&
                        self.publicKeyAlgorithm != PGPPublicKeyAlgorithmElgamalEncryptorSign;
-                       // self.publicKeyAlgorithm != PGPPublicKeyAlgorithmECDSA &&
-                       // self.publicKeyAlgorithm != PGPPublicKeyAlgorithmEdDSA;
                        // While it may be disputable if DSA should be included in the list: It shouldn't - DSA is not sign-only
 
     return result;

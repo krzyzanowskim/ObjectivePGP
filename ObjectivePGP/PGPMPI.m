@@ -31,8 +31,12 @@ PGPMPIdentifier const PGPMPIdentifierS = @"S";
 PGPMPIdentifier const PGPMPIdentifierY = @"Y"; // public key. For Elgamal public key value y (= g**x mod p where x is secret).
 PGPMPIdentifier const PGPMPIdentifierM = @"M";
 PGPMPIdentifier const PGPMPIdentifierV = @"V"; // EC point
-PGPMPIdentifier const PGPMPIdentifierEC = @"EC"; // EC point
-PGPMPIdentifier const PGPMPIdentifierEC_S = @"EC_S"; // EC scalar
+PGPMPIdentifier const PGPMPIdentifierEC = @"EC"; // EC public point
+PGPMPIdentifier const PGPMPIdentifierEC_S = @"EC_S"; // MPI of an integer representing
+                                                     // the secret key, which is a scalar of
+                                                     // the public EC point
+//EC public key R
+//EC shared point S
 
 @interface PGPMPI ()
 
