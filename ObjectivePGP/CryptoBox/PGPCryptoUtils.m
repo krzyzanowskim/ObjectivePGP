@@ -28,9 +28,6 @@
 #import <openssl/idea.h>
 #import <openssl/ripemd.h>
 
-
-#import <sodium.h>
-
 NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPCryptoUtils
