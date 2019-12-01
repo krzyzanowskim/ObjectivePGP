@@ -257,13 +257,13 @@ NS_ASSUME_NONNULL_BEGIN
 
             self.secretMPIs = @[mpiEC_S];
         } break;
-        case PGPPublicKeyAlgorithmEdDSA: {
-            // MPI of an EC point representing a public key Q
-            let mpiEC_S = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPIdentifierEC_S atPosition:position];
-            position = position + mpiEC_S.packetLength;
-
-            self.secretMPIs = @[mpiEC_S];
-        } break;
+//        case PGPPublicKeyAlgorithmEdDSA: {
+//            // MPI of an EC point representing a public key Q
+//            let mpiEC_S = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPIdentifierEC_S atPosition:position];
+//            position = position + mpiEC_S.packetLength;
+//
+//            self.secretMPIs = @[mpiEC_S];
+//        } break;
         case PGPPublicKeyAlgorithmECDH: {
             // a MPI of an EC point representing a public key;
             let mpiEC_S = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPIdentifierEC_S atPosition:position];
