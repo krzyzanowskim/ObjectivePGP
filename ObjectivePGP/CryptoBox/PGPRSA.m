@@ -218,14 +218,21 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    RSA_get0_n(rsa);
+    const BIGNUM *rsa_n = nil;
+    const BIGNUM *rsa_e = nil;
+    const BIGNUM *rsa_d = nil;
+    RSA_get0_key(rsa, &rsa_n, &rsa_e, &rsa_d);
 
-    let bigN = [[PGPBigNum alloc] initWithBIGNUM:BN_dup(RSA_get0_n(rsa))];
-    let bigE = [[PGPBigNum alloc] initWithBIGNUM:BN_dup(RSA_get0_e(rsa))];
-    let bigD = [[PGPBigNum alloc] initWithBIGNUM:BN_dup(RSA_get0_d(rsa))];
-    let bigP = [[PGPBigNum alloc] initWithBIGNUM:BN_dup(RSA_get0_p(rsa))];
-    let bigQ = [[PGPBigNum alloc] initWithBIGNUM:BN_dup(RSA_get0_q(rsa))];
-    let bigU = [[PGPBigNum alloc] initWithBIGNUM:BN_mod_inverse(NULL, RSA_get0_p(rsa), RSA_get0_q(rsa), ctx)];
+    const BIGNUM *rsa_p = nil;
+    const BIGNUM *rsa_q = nil;
+    RSA_get0_factors(rsa, &rsa_p, &rsa_q);
+
+    let bigN = [[PGPBigNum alloc] initWithBIGNUM:BN_dup(rsa_n)];
+    let bigE = [[PGPBigNum alloc] initWithBIGNUM:BN_dup(rsa_e)];
+    let bigD = [[PGPBigNum alloc] initWithBIGNUM:BN_dup(rsa_d)];
+    let bigP = [[PGPBigNum alloc] initWithBIGNUM:BN_dup(rsa_p)];
+    let bigQ = [[PGPBigNum alloc] initWithBIGNUM:BN_dup(rsa_q)];
+    let bigU = [[PGPBigNum alloc] initWithBIGNUM:BN_mod_inverse(NULL, rsa_p, rsa_q, ctx)];
 
     let mpiN = [[PGPMPI alloc] initWithBigNum:bigN identifier:PGPMPIdentifierN];
     let mpiE = [[PGPMPI alloc] initWithBigNum:bigE identifier:PGPMPIdentifierE];
