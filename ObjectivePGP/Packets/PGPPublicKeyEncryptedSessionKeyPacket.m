@@ -94,9 +94,10 @@ NS_ASSUME_NONNULL_BEGIN
             self.parameters.MPIs = @[MPI_G_K, encryptedMPI_M];
         } break;
         case PGPPublicKeyAlgorithmECDH: {
+            // https://tools.ietf.org/html/rfc6637#section-10
             // Algorithm-Specific Fields for ECDH
             // an MPI of an EC point representing an ephemeral public key
-            let MPI_V = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierV atPosition:position];
+            let MPI_V = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierEC_V atPosition:position];
             position = position + MPI_V.packetLength;
 
             // a one-octet size
@@ -211,7 +212,7 @@ NS_ASSUME_NONNULL_BEGIN
         // - const result = await crypto.publicKeyDecrypt(algo, key.params, this.encrypted, key.getFingerprintBytes());
         let algo = secretKeyPacket.publicKeyAlgorithm;
         // let keyParams = [type_mpi, type_ecdh_symkey];
-        let encrypted = [[self parameterMPI:PGPMPIdentifierV] bodyData];
+        let encrypted = [[self parameterMPI:PGPMPIdentifierEC_V] bodyData];
         let fingerprint = secretKeyPacket.fingerprint;
 
         // - decrypt
