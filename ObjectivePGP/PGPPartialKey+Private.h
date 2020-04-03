@@ -19,6 +19,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)loadPackets:(NSArray<PGPPacket *> *)packets NS_REQUIRES_SUPER;
 
+- (nullable PGPSignaturePacket *)primaryUserSelfCertificate;
+
 @end
 
 NS_ASSUME_NONNULL_END

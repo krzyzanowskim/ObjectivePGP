@@ -11,6 +11,8 @@
 
 #import <ObjectivePGP/ObjectivePGP.h>
 #import "PGPMacros+Private.h"
+#import <ObjectivePGP/PGPPartialKey+Private.h>
+#import <ObjectivePGP/PGPSignaturePacket.h>
 #import "PGPTestUtils.h"
 #import <XCTest/XCTest.h>
 
@@ -576,9 +578,37 @@
     XCTAssertEqual(rsaPub.count, 1);
 }
 
-- (void) testECCSecretKeyImportIssue141 {
+- (void)testECCSecretKeyImportIssue141 {
     let eccSec = [PGPTestUtils readKeysFromPath:@"issue141/eccSecretKey.asc"];
     XCTAssertEqual(eccSec.count, 0);
+}
+
+// https://github.com/krzyzanowskim/ObjectivePGP/issues/158#issuecomment-533493519
+- (void)testMainKeyEncryptionIssue158 {
+  let publicKey = [[PGPTestUtils readKeysFromPath:@"issue158/pubkey.asc"] firstObject];
+  XCTAssertNotNil(publicKey);
+  XCTAssertNotNil(publicKey.publicKey.primaryUserSelfCertificate);
+  XCTAssertTrue(publicKey.publicKey.primaryUserSelfCertificate.canBeUsedToEncrypt);
+  let secretKeys = [PGPTestUtils readKeysFromPath:@"issue158/privkey.asc"];
+  XCTAssertEqual(secretKeys.count, (NSUInteger)1);
+
+  let data = [@"Hello, I'm here !" dataUsingEncoding:NSUTF8StringEncoding];
+  NSError *encryptError = nil;
+  let encryptedData = [ObjectivePGP encrypt:data addSignature:NO usingKeys:@[publicKey] passphraseForKey:nil error:&encryptError];
+  XCTAssertNil(encryptError);
+  XCTAssertNotNil(encryptedData);
+
+  let armoredEntryptedData = [PGPArmor armored:encryptedData as:PGPArmorMessage];
+  XCTAssertNotNil(armoredEntryptedData);
+  NSLog(@"%@",armoredEntryptedData);
+  XCTAssertGreaterThan(armoredEntryptedData.length, 234);
+}
+
+// https://github.com/krzyzanowskim/ObjectivePGP/issues/166
+- (void)testArmoredMessageIssue166 {
+    let keys = [PGPTestUtils readKeysFromPath:@"issue166/key.asc"];
+    XCTAssertNotNil(keys);
+    XCTAssertEqual(keys.count, 1);
 }
 
 @end
