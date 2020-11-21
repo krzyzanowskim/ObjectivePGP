@@ -1,4 +1,4 @@
-Fixes #
+Fixes issue #
 
 Checklist:
 - [ ] I accept the [CONTRIBUTING.md](https://github.com/krzyzanowskim/ObjectivePGP/blob/master/CONTRIBUTING.md) terms.
