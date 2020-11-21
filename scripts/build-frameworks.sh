@@ -1,25 +1,19 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
+
+BASE_PWD="$PWD"
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
 PROJECT_NAME="ObjectivePGP"
 PROJECT_FILE_PATH="${PROJECT_NAME}.xcodeproj"
 TARGET_NAME="${PROJECT_NAME}"
 CONFIGURATION="Release"
-BUILD_DIR="/tmp/$(uuidgen).${PROJECT_NAME}"
+BUILD_DIR=$( mktemp -d )
 SYMROOT="${BUILD_DIR}/Debug"
 OBJROOT="${BUILD_DIR}/Intermediates"
 
 PGP_FRAMEWORKS_DIR="Frameworks"
-IPHONE_UNIVERSAL_LIB_DIR="${PGP_FRAMEWORKS_DIR}/ios"
-IPHONE_UNIVERSAL_FRAMEWORK_DIR="${IPHONE_UNIVERSAL_LIB_DIR}/${TARGET_NAME}.framework"
-
-
-function make_fat_library () {
-    # Will smash 2 static libs together
-    #     make_fat_library in1 in2 out
-    xcrun lipo -create "${1}" "${2}" -output "${3}"
-}
 
 function platform_from_sdk () {
     if [[ "${1}" =~ ([A-Za-z]+) ]]; then
@@ -41,31 +35,39 @@ function build_framework {
         SYMROOT="${SYMROOT}.${sdk}" \
         OBJROOT="${OBJROOT}.${sdk}" \
         PLATFORM_NAME="${PLATFORM_NAME}" \
-        build | xcpretty
+        build
 }
 
 # Build frameworks
-SDKs=(`xcrun xcodebuild -showsdks | grep -Eo "iphone.*|macosx10.*"`)
+SDKs=(`xcrun xcodebuild -showsdks | grep -Eo "iphone.*|macosx11.*"`)
 for sdk in "${SDKs[@]}"; do
     build_framework "${sdk}"
 done
 
-mkdir -p "${IPHONE_UNIVERSAL_LIB_DIR}"
-make_fat_library "${BUILD_DIR}/${CONFIGURATION}-iphoneos/${TARGET_NAME}.framework/${TARGET_NAME}" \
-                 "${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${TARGET_NAME}.framework/${TARGET_NAME}" \
-                 "${BUILD_DIR}/${CONFIGURATION}-iphoneos/${TARGET_NAME}.framework/${TARGET_NAME}.universal"
 
-rm "${BUILD_DIR}/${CONFIGURATION}-iphoneos/${TARGET_NAME}.framework/${TARGET_NAME}"
-mv "${BUILD_DIR}/${CONFIGURATION}-iphoneos/${TARGET_NAME}.framework/${TARGET_NAME}.universal" "${BUILD_DIR}/${CONFIGURATION}-iphoneos/${TARGET_NAME}.framework/${TARGET_NAME}"
+# Per platform .framework
+mkdir -p "${SCRIPT_DIR}/../Frameworks/iphoneos/"
+ditto "${BUILD_DIR}/${CONFIGURATION}-iphoneos/${TARGET_NAME}.framework"      "${SCRIPT_DIR}/../Frameworks/iphoneos/${TARGET_NAME}.xcframework"
+ditto "${BUILD_DIR}/${CONFIGURATION}-iphoneos/${TARGET_NAME}.framework.dSYM" "${SCRIPT_DIR}/../Frameworks/iphoneos/${TARGET_NAME}.xcframework.dSYM"
+mkdir -p "${SCRIPT_DIR}/../Frameworks/iphonesimulator/"
+ditto "${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${TARGET_NAME}.framework"      "${SCRIPT_DIR}/../Frameworks/iphonesimulator/${TARGET_NAME}.xcframework"
+ditto "${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${TARGET_NAME}.framework.dSYM" "${SCRIPT_DIR}/../Frameworks/iphonesimulator/${TARGET_NAME}.xcframework.dSYM"
+mkdir -p "${SCRIPT_DIR}/../Frameworks/macos/"
+ditto "${BUILD_DIR}/${CONFIGURATION}/${TARGET_NAME}.framework"      "${SCRIPT_DIR}/../Frameworks/macos/${TARGET_NAME}.xcframework"
+ditto "${BUILD_DIR}/${CONFIGURATION}/${TARGET_NAME}.framework.dSYM" "${SCRIPT_DIR}/../Frameworks/macos/${TARGET_NAME}.xcframework.dSYM"
 
-ditto "${BUILD_DIR}/${CONFIGURATION}-iphoneos/${TARGET_NAME}.framework"      "${IPHONE_UNIVERSAL_LIB_DIR}/${TARGET_NAME}.framework"
-ditto "${BUILD_DIR}/${CONFIGURATION}-iphoneos/${TARGET_NAME}.framework.dSYM" "${IPHONE_UNIVERSAL_LIB_DIR}/${TARGET_NAME}.framework.dSYM"
-ditto "${BUILD_DIR}/${CONFIGURATION}/${TARGET_NAME}.framework"      "${PGP_FRAMEWORKS_DIR}/macosx/${TARGET_NAME}.framework"
-ditto "${BUILD_DIR}/${CONFIGURATION}/${TARGET_NAME}.framework.dSYM" "${PGP_FRAMEWORKS_DIR}/macosx/${TARGET_NAME}.framework.dSYM"
+# XCFramework
+mkdir -p "${SCRIPT_DIR}/../Frameworks"
+rm -rf "${SCRIPT_DIR}/../Frameworks/${TARGET_NAME}.xcframework"
+xcrun xcodebuild -quiet -create-xcframework \
+	-framework "${BUILD_DIR}/${CONFIGURATION}-iphoneos/${TARGET_NAME}.framework" \
+	-framework "${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${TARGET_NAME}.framework" \
+	-framework "${BUILD_DIR}/${CONFIGURATION}/${TARGET_NAME}.framework" \
+	-output "${SCRIPT_DIR}/../Frameworks/${TARGET_NAME}.xcframework"
 
-cp "scripts/strip-frameworks.sh" "${IPHONE_UNIVERSAL_LIB_DIR}/${TARGET_NAME}.framework/strip-frameworks.sh"
-cp "scripts/strip-frameworks.sh" "${PGP_FRAMEWORKS_DIR}/macosx/${TARGET_NAME}.framework/Versions/A/Resources/strip-frameworks.sh"
+# No need to strip frameworks since no combined platforms in a single framework
+# cp "scripts/strip-frameworks.sh" "${IPHONE_UNIVERSAL_LIB_DIR}/${TARGET_NAME}.framework/strip-frameworks.sh"
+# cp "scripts/strip-frameworks.sh" "${PGP_FRAMEWORKS_DIR}/macosx/${TARGET_NAME}.framework/Versions/A/Resources/strip-frameworks.sh"
 
-
-echo "${BUILD_DIR}"
 rm -rf "${BUILD_DIR}"
+echo "done"

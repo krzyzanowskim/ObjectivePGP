@@ -1,10 +1,5 @@
-//
-//  Defaults.xcconfig
-//
-// https://developer.apple.com/library/mac/documentation/DeveloperTools/Reference/XcodeBuildSettingRef/1-Build_Setting_Reference/build_setting_ref.html
-// http://promisekit.org/news/2016/08/Multiplatform-Single-Scheme-Xcode-Projects/
-
 // We support iOS and macOS
+MARKETING_VERSION = 0.17.0
 SUPPORTED_PLATFORMS = macosx iphoneos iphonesimulator
 TARGETED_DEVICE_FAMILY = 1,2,3,4
 CODE_SIGNING_REQUIRED = NO
@@ -12,8 +7,6 @@ CODE_SIGNING_REQUIRED = NO
 // Deployment targets
 MACOSX_DEPLOYMENT_TARGET = 10.10
 IPHONEOS_DEPLOYMENT_TARGET = 9.0
-
-// FRAMEWORK_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)
 
 HEADER_SEARCH_PATHS[sdk=iphoneos*] = $(SRCROOT)/vendor/libs/iphoneos/include
 HEADER_SEARCH_PATHS[sdk=iphonesimulator*] = $(SRCROOT)/vendor/libs/iphonesimulator/include
@@ -42,6 +35,9 @@ PRELINK_LIBS[sdk=macosx*] = $(SRCROOT)/vendor/libs/macos/lib/libcrypto.a
 // Single-Object Prelink. This causes ld to be run with the "-r" flag.
 GENERATE_MASTER_OBJECT_FILE = YES
 
+/// Swift module stability
+BUILD_LIBRARY_FOR_DISTRIBUTION = YES
+
 // :MARK: -Hide symbols
 // Do not export linked symbols
 UNEXPORTED_SYMBOLS_FILE[sdk=iphoneos*] = $(SRCROOT)/vendor/libs/iphoneos/symbols
@@ -54,7 +50,8 @@ UNEXPORTED_SYMBOLS_FILE[sdk=macosx*] = $(SRCROOT)/vendor/libs/macos/symbols
 SDKROOT = 
 
 OTHER_LDFLAGS = -ObjC -lbz2 -lz
-ENABLE_BITCODE = NO
+ENABLE_BITCODE = YES
+ENABLE_BITCODE[sdk=macosx*] = NO
 
 // Boolean value. Specifies whether the generated object code is nonrelocatable (external references remain relocatable). Making code nonrelocatable results in faster function calls. This feature is appropriate in applications but not dynamic libraries.
 GCC_DYNAMIC_NO_PIC = NO
@@ -119,8 +116,7 @@ GCC_NO_COMMON_BLOCKS = YES
 COMBINE_HIDPI_IMAGES = YES
 
 // :MARK: -Swift
-SWIFT_VERSION = 4.2
-SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG
+SWIFT_VERSION = 5.0
 
 // Xcode 8.3+
 //OTHER_SWIFT_FLAGS[sdk=iphonesimulator10.3*] = -enable-bridging-pch
