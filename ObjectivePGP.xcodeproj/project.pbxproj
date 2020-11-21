@@ -720,7 +720,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = PGP;
-				LastUpgradeCheck = 1110;
+				LastUpgradeCheck = 1220;
 				ORGANIZATIONNAME = "Marcin Krzyżanowski";
 				TargetAttributes = {
 					750F89331F0D6A3F00B99726 = {
