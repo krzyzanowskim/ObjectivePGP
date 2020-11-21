@@ -46,7 +46,7 @@ dependencies: [
 pod 'ObjectivePGP'
 ````
 
-#### Frameworks
+### Frameworks
 
 ObjectivePGP comes with the [Frameworks](./Frameworks) for the latest release, you can copy and embed in your project:
 
@@ -55,10 +55,12 @@ ObjectivePGP comes with the [Frameworks](./Frameworks) for the latest release, y
 
 ## Usage
 
+Ojective-C
 ```objective-c
 #import <ObjectivePGP/ObjectivePGP.h>
 ```
 
+Swift
 ```swift
 import ObjectivePGP
 ```
