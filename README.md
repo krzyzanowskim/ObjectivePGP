@@ -194,7 +194,7 @@ dependencies: [
 ### CocoaPods
 
 ````
-pod 'ObjectigePGP'
+pod 'ObjectivePGP'
 ````
 
 #### Frameworks
