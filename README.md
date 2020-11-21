@@ -181,8 +181,6 @@ For any result of encryption the type is `PGPArmorMessage`
 
 ## Installation
 
-#### [CocoaPods](https://cocoapods.org/pods/ObjectivePGP)
-
 ### Swift Package Manager
 
 ```
