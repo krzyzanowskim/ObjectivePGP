@@ -55,7 +55,7 @@ ObjectivePGP comes with the [Frameworks](./Frameworks) for the latest release, y
 
 ## Usage
 
-Ojective-C
+Objective-C
 ```objective-c
 #import <ObjectivePGP/ObjectivePGP.h>
 ```
