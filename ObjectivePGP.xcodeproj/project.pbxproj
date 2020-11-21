@@ -149,7 +149,6 @@
 		75E9AD0F1F7FF10100B0559B /* PGPPartialKey+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 75E9AD0E1F7FF10100B0559B /* PGPPartialKey+Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		75F6BAAC1F8AED3B00A0B885 /* ObjectivePGP-Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 75F6BAAB1F8AED3500A0B885 /* ObjectivePGP-Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		75F6BAAE1F8AF29F00A0B885 /* LICENSE.txt in Resources */ = {isa = PBXBuildFile; fileRef = 75F6BAAD1F8AF28100A0B885 /* LICENSE.txt */; };
-		75F6BAAF1F8AF2CC00A0B885 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 758475E1195AF866003953B2 /* README.md */; };
 		75F74E481F4383C50054231C /* PGPDSA.h in Headers */ = {isa = PBXBuildFile; fileRef = 75F74E441F4382FF0054231C /* PGPDSA.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		75F74E4A1F4383F90054231C /* PGPDSA.m in Sources */ = {isa = PBXBuildFile; fileRef = 75F74E451F4382FF0054231C /* PGPDSA.m */; };
 		75FA4A4020A791F200A453EC /* PGPElgamal.h in Headers */ = {isa = PBXBuildFile; fileRef = 75FA4A3E20A791F200A453EC /* PGPElgamal.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -741,7 +740,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = PGP;
-				LastUpgradeCheck = 1120;
+				LastUpgradeCheck = 1220;
 				ORGANIZATIONNAME = "Marcin Krzyżanowski";
 				TargetAttributes = {
 					750F89331F0D6A3F00B99726 = {
@@ -773,7 +772,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				75F6BAAF1F8AF2CC00A0B885 /* README.md in Resources */,
 				75F6BAAE1F8AF29F00A0B885 /* LICENSE.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -801,8 +799,8 @@
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/bash;
-			shellScript = "export LANG=en_US.UTF-8\nexport LANGUAGE=en_US.UTF-8\nexport LC_ALL=en_US.UTF-8\n\n[[ -s \"$HOME/.rvm/scripts/rvm\" ]] && source \"$HOME/.rvm/scripts/rvm\"\n\nbundle exec \"${PROJECT_DIR}/scripts/generate-umbrella-header.rb\" \"${PROJECT_FILE_PATH}\"\n";
+			shellPath = "/usr/bin/env zsh";
+			shellScript = "export LANG=en_US.UTF-8\nexport LANGUAGE=en_US.UTF-8\nexport LC_ALL=en_US.UTF-8\n\n[ -s \"$HOME/.zshrc\" ] && . \"$HOME/.zshrc\"\n\nbundle exec \"${PROJECT_DIR}/scripts/generate-umbrella-header.rb\" \"${PROJECT_FILE_PATH}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -969,6 +967,7 @@
 				);
 				INFOPLIST_FILE = "Tests/Tests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks @loader_path/../Frameworks @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",
@@ -987,6 +986,7 @@
 				GCC_PREFIX_HEADER = "ObjectivePGP/ObjectivePGP-Prefix.pch";
 				INFOPLIST_FILE = "Tests/Tests-Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks @loader_path/../Frameworks @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-all_load",

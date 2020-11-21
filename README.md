@@ -1,8 +1,8 @@
 ![objectivepgp](https://user-images.githubusercontent.com/758033/27697465-a355ca34-5cf4-11e7-9470-ee1ee98eedd9.png)
 
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/ObjectivePGP.svg)](https://cocoapods.org/pods/ObjectivePGP)
-[![Platform](https://img.shields.io/cocoapods/p/ObjectivePGP.svg?style=flat)](http://cocoadocs.org/docsets/ObjectivePGP)
-[![Swift](https://img.shields.io/badge/swift-supported-brightgreen.svg?style=flat)](./ObjectivePGP.playground/Contents.swift)
+[![Swift Package Manager compatible](https://img.shields.io/badge/SPM-compatible-brightgreen.svg?style=flat&colorA=28a745&&colorB=4E4E4E)](https://github.com/apple/swift-package-manager)
+[![Platform](https://img.shields.io/badge/Platforms-iOS%20%7C%20macOS-4E4E4E.svg?colorA=28a745)](#installation)
 [![Twitter](https://img.shields.io/badge/twitter-@krzyzanowskim-blue.svg?style=flat)](http://twitter.com/krzyzanowskim)
 
 
@@ -30,12 +30,37 @@ The ObjectivePGP stays under a dual license:
 
 Not sure what to choose? check [FAQ](https://github.com/krzyzanowskim/ObjectivePGP/wiki/FAQ)
 
+## Installation
+
+### Swift Package Manager
+
+```
+dependencies: [
+    .package(url: "https://github.com/krzyzanowskim/ObjectivePGP.git", .upToNextMinor(from: "0.17.0"))
+]
+```
+
+### CocoaPods
+
+````
+pod 'ObjectivePGP'
+````
+
+### Frameworks
+
+ObjectivePGP comes with the [Frameworks](./Frameworks) for the latest release, you can copy and embed in your project:
+
+- [ObjectivePGP.framework](Frameworks/)
+- [ObjectivePGP.xcframework](Frameworks/)
+
 ## Usage
 
+Objective-C
 ```objective-c
 #import <ObjectivePGP/ObjectivePGP.h>
 ```
 
+Swift
 ```swift
 import ObjectivePGP
 ```
@@ -178,40 +203,6 @@ When convert manually, it is important to use right `PGPArmorType` value that de
 | Secret key | `PGPArmorTypeSecret`  | `Armor.armored(key.export(), as: .secretKey)` |
 
 For any result of encryption the type is `PGPArmorMessage`
-
-## Installation
-
-#### [CocoaPods](https://cocoapods.org/pods/ObjectivePGP)
-
-```ruby
-target 'TargetName' do
-    use_frameworks!
-    pod 'ObjectivePGP'
-end
-```
-
-#### ObjectivePGP.framework
-
-ObjectivePGP comes with the [Frameworks](./Frameworks) for the latest release.
-
-1. Download latest [ObjectivePGP.framework](https://github.com/krzyzanowskim/ObjectivePGP/releases) or build a framework with the [build-frameworks.sh](./scripts/build-frameworks.sh) script.
-1. Add a New Copy Files Phase by selecting the Add icon, highlighted in Figure 4. Set the Destination field to Frameworks, and add the framework to the list (see [Embedding Frameworks In An App](https://developer.apple.com/library/content/technotes/tn2435/_index.html)). Ensure Code Sign on Copy is checked.
-![Figure 4](https://user-images.githubusercontent.com/14152377/35073501-5b50bc50-fbe9-11e7-8d8a-3c8ce47c8e44.png)
-1. Link framework with the target
-    - Add `ObjectivePGP.framework` to "**Link Binary With Libraries**" list for the target.
-    ![screen shot 2017-06-30 at 02 20 47](https://user-images.githubusercontent.com/758033/27715926-d79a4e3c-5d3a-11e7-8b1b-d8b5ddb8182e.png)
-1. Link libraries and frameworks
-    1. Add `Security.framework` to "**Link Binary With Libraries**" list for the target. These are system libraries.
-    1. Add `libz` and `libbz2` to "**Link Binary With Libraries**" list for the target. These are system libraries.
-1. In the Build Phases tab, click the + button at the top and select “New Run Script Phase”. Enter the following code into the script text field:
-
-
-
-```sh
-bash "${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/ObjectivePGP.framework/strip-frameworks.sh"
-```
-
-(The last step, is required for working around an iOS App Store bug when archiving universal binaries.)
 
 ## Changelog
 

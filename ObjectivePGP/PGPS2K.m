@@ -146,15 +146,17 @@ static const unsigned int PGP_DEFAULT_ITERATIONS_COUNT = 215;
                 // then iterate
                 int iterations = 0;
                 while (iterations * data.length < codedCount) {
-                    let nextTotalLength = (iterations + 1) * data.length;
-                    if (nextTotalLength > codedCount) {
-                        let totalLength = iterations * data.length;
-                        let remainder = [data subdataWithRange:(NSRange){0, codedCount - totalLength}];
-                        update(remainder.bytes, (int)remainder.length);
-                    } else {
-                        update(data.bytes, (int)data.length);
+                    @autoreleasepool {
+                        let nextTotalLength = (iterations + 1) * data.length;
+                        if (nextTotalLength > codedCount) {
+                            let totalLength = iterations * data.length;
+                            let remainder = [data subdataWithRange:(NSRange){0, codedCount - totalLength}];
+                            update(remainder.bytes, (int)remainder.length);
+                        } else {
+                            update(data.bytes, (int)data.length);
+                        }
+                        iterations++;
                     }
-                    iterations++;
                 }
             };
         } break;

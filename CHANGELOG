@@ -1,3 +1,9 @@
+Version 0.17.0
+- macOS arm64 support
+- update dependencies
+- Swift Package Manager support
+- Available as XCFramework
+
 Version 0.16.0
 - Fixes detection whether message can be encrypted with a key. #115 #158
 

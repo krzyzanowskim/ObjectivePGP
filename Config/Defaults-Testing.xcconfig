@@ -1,10 +1,6 @@
-//
-//  Defaults-Testing.xcconfig
-//
-//  Additional defaults that are used for testing.
-//
-
 #include "Defaults.xcconfig"
+
+ENABLE_BITCODE = NO
 
 // Enable testability
 ENABLE_TESTABILITY = YES
