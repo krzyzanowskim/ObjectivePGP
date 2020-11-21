@@ -26,7 +26,6 @@ DEAD_CODE_STRIPPING = YES
 STRIP_STYLE = non-global
 
 // build all the architectures
-ONLY_ACTIVE_ARCH = NO
 ENABLE_TESTABILITY = NO
 VALIDATE_PRODUCT = YES
 

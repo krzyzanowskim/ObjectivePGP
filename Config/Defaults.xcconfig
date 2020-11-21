@@ -9,14 +9,11 @@ SUPPORTED_PLATFORMS = macosx iphoneos iphonesimulator
 TARGETED_DEVICE_FAMILY = 1,2,3,4
 CODE_SIGNING_REQUIRED = NO
 
-//VALID_ARCHS[sdk=iphoneos*] = arm64 armv7
-//VALID_ARCHS[sdk=iphonesimulator*] = x86_64
-//VALID_ARCHS[sdk=macosx*] = x86_64
+EXCLUDED_ARCHS = arm64
 
 // Deployment targets
 MACOSX_DEPLOYMENT_TARGET = 10.10
-// IPHONEOS_DEPLOYMENT_TARGET = 9.0
-IPHONEOS_DEPLOYMENT_TARGET = 12.0
+IPHONEOS_DEPLOYMENT_TARGET = 9.0
 
 // FRAMEWORK_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)
 
@@ -59,7 +56,6 @@ UNEXPORTED_SYMBOLS_FILE[sdk=macosx*] = $(SRCROOT)/vendor/libs/macosx/symbols
 SDKROOT = 
 
 OTHER_LDFLAGS = -ObjC -lbz2 -lz
-ONLY_ACTIVE_ARCH = YES
 ENABLE_BITCODE = NO
 
 // Boolean value. Specifies whether the generated object code is nonrelocatable (external references remain relocatable). Making code nonrelocatable results in faster function calls. This feature is appropriate in applications but not dynamic libraries.
