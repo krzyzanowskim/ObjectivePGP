@@ -9,21 +9,19 @@ SUPPORTED_PLATFORMS = macosx iphoneos iphonesimulator
 TARGETED_DEVICE_FAMILY = 1,2,3,4
 CODE_SIGNING_REQUIRED = NO
 
-EXCLUDED_ARCHS = arm64
-
 // Deployment targets
 MACOSX_DEPLOYMENT_TARGET = 10.10
 IPHONEOS_DEPLOYMENT_TARGET = 9.0
 
 // FRAMEWORK_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)
 
-HEADER_SEARCH_PATHS[sdk=iphoneos*] = $(SRCROOT)/vendor/libs/ios
-HEADER_SEARCH_PATHS[sdk=iphonesimulator*] = $(SRCROOT)/vendor/libs/ios
-HEADER_SEARCH_PATHS[sdk=macosx*] = $(SRCROOT)/vendor/libs/macosx
+HEADER_SEARCH_PATHS[sdk=iphoneos*] = $(SRCROOT)/vendor/libs/iphoneos/include
+HEADER_SEARCH_PATHS[sdk=iphonesimulator*] = $(SRCROOT)/vendor/libs/iphonesimulator/include
+HEADER_SEARCH_PATHS[sdk=macosx*] = $(SRCROOT)/vendor/libs/macos/include
 
-LIBRARY_SEARCH_PATHS[sdk=iphoneos*] = $(SRCROOT)/vendor/libs/ios
-LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*] = $(SRCROOT)/vendor/libs/ios
-LIBRARY_SEARCH_PATHS[sdk=macosx*] = $(SRCROOT)/vendor/libs/macosx
+LIBRARY_SEARCH_PATHS[sdk=iphoneos*] = $(SRCROOT)/vendor/libs/iphoneos/lib
+LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*] = $(SRCROOT)/vendor/libs/iphonesimulator/lib
+LIBRARY_SEARCH_PATHS[sdk=macosx*] = $(SRCROOT)/vendor/libs/macos/lib
 
 // We do not need to codesign tests for the simulator - disabling speeds up test compile (sign) time.
 CODE_SIGN_IDENTITY = iOS Developer
@@ -37,18 +35,18 @@ DEBUG_INFORMATION_FORMAT = dwarf-with-dsym;
 // :MARK: Linking
 // :MARK: -Prelink
 // Prelink OpenSSL crypto library
-PRELINK_LIBS[sdk=iphoneos*] = $(SRCROOT)/vendor/libs/ios/libcrypto.a
-PRELINK_LIBS[sdk=iphonesimulator*] = $(SRCROOT)/vendor/libs/ios/libcrypto.a
-PRELINK_LIBS[sdk=macosx*] = $(SRCROOT)/vendor/libs/macosx/libcrypto.a
+PRELINK_LIBS[sdk=iphoneos*] = $(SRCROOT)/vendor/libs/iphoneos/lib/libcrypto.a
+PRELINK_LIBS[sdk=iphonesimulator*] = $(SRCROOT)/vendor/libs/iphonesimulator/lib/libcrypto.a
+PRELINK_LIBS[sdk=macosx*] = $(SRCROOT)/vendor/libs/macos/lib/libcrypto.a
 
 // Single-Object Prelink. This causes ld to be run with the "-r" flag.
 GENERATE_MASTER_OBJECT_FILE = YES
 
 // :MARK: -Hide symbols
 // Do not export linked symbols
-UNEXPORTED_SYMBOLS_FILE[sdk=iphoneos*] = $(SRCROOT)/vendor/libs/ios/symbols
-UNEXPORTED_SYMBOLS_FILE[sdk=iphonesimulator*] = $(SRCROOT)/vendor/libs/ios/symbols
-UNEXPORTED_SYMBOLS_FILE[sdk=macosx*] = $(SRCROOT)/vendor/libs/macosx/symbols
+UNEXPORTED_SYMBOLS_FILE[sdk=iphoneos*] = $(SRCROOT)/vendor/libs/iphoneos/symbols
+UNEXPORTED_SYMBOLS_FILE[sdk=iphonesimulator*] = $(SRCROOT)/vendor/libs/iphonesimulator/symbols
+UNEXPORTED_SYMBOLS_FILE[sdk=macosx*] = $(SRCROOT)/vendor/libs/macos/symbols
 
 // :MARK: General Project Setup:
 // :MARK: -Toolchain
@@ -153,7 +151,7 @@ GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES
 GCC_WARN_SHADOW = YES
 CLANG_WARN_CONSTANT_CONVERSION = YES
 CLANG_WARN_BOOL_CONVERSION = YES
-CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES
+CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO
 GCC_WARN_64_TO_32_BIT_CONVERSION = YES
 CLANG_WARN_ENUM_CONVERSION = YES
 CLANG_WARN_INT_CONVERSION = YES

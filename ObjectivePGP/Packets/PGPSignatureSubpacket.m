@@ -54,7 +54,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Bit 7 of the subpacket type is the "critical" bit.
 - (BOOL)isCritical {
-    return (1 << 7) & self.type;
+    return ((1 << 7) & self.type) ? YES : NO;
 }
 
 /**
