@@ -30,6 +30,29 @@ The ObjectivePGP stays under a dual license:
 
 Not sure what to choose? check [FAQ](https://github.com/krzyzanowskim/ObjectivePGP/wiki/FAQ)
 
+## Installation
+
+### Swift Package Manager
+
+```
+dependencies: [
+    .package(url: "https://github.com/krzyzanowskim/ObjectivePGP.git", .upToNextMinor(from: "0.17.0"))
+]
+```
+
+### CocoaPods
+
+````
+pod 'ObjectivePGP'
+````
+
+#### Frameworks
+
+ObjectivePGP comes with the [Frameworks](./Frameworks) for the latest release, you can copy and embed in your project:
+
+- [ObjectivePGP.framework](Frameworks/)
+- [ObjectivePGP.xcframework](Frameworks/)
+
 ## Usage
 
 ```objective-c
@@ -178,29 +201,6 @@ When convert manually, it is important to use right `PGPArmorType` value that de
 | Secret key | `PGPArmorTypeSecret`  | `Armor.armored(key.export(), as: .secretKey)` |
 
 For any result of encryption the type is `PGPArmorMessage`
-
-## Installation
-
-### Swift Package Manager
-
-```
-dependencies: [
-    .package(url: "https://github.com/krzyzanowskim/ObjectivePGP.git", .upToNextMinor(from: "0.17.0"))
-]
-```
-
-### CocoaPods
-
-````
-pod 'ObjectivePGP'
-````
-
-#### Frameworks
-
-ObjectivePGP comes with the [Frameworks](./Frameworks) for the latest release, you can copy and embed in your project:
-
-- [ObjectivePGP.framework](Frameworks/)
-- [ObjectivePGP.xcframework](Frameworks/)
 
 ## Changelog
 
