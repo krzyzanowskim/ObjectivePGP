@@ -38,17 +38,9 @@
 #import "PGPLogging.h"
 #import "PGPMacros+Private.h"
 
-#import <openssl/err.h>
-#import <openssl/ssl.h>
-
 NS_ASSUME_NONNULL_BEGIN
 
 @implementation ObjectivePGP
-
-+ (void)load {
-    ERR_load_crypto_strings();
-    OpenSSL_add_all_algorithms();
-}
 
 - (instancetype)init {
     if ((self = [super init])) {
