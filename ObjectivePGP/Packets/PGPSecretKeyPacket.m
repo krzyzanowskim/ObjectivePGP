@@ -250,26 +250,18 @@ NS_ASSUME_NONNULL_BEGIN
 
             self.secretMPIs = @[mpiX];
         } break;
-        case PGPPublicKeyAlgorithmECDSA: {
-            // MPI of an EC point representing a public key
-            let mpiEC_S = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPIdentifierEC_S atPosition:position];
-            position = position + mpiEC_S.packetLength;
-
-            self.secretMPIs = @[mpiEC_S];
-        } break;
-//        case PGPPublicKeyAlgorithmEdDSA: {
-//            // MPI of an EC point representing a public key Q
-//            let mpiEC_S = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPIdentifierEC_S atPosition:position];
-//            position = position + mpiEC_S.packetLength;
-//
-//            self.secretMPIs = @[mpiEC_S];
-//        } break;
+        case PGPPublicKeyAlgorithmECDSA:
         case PGPPublicKeyAlgorithmECDH: {
-            // a MPI of an EC point representing a public key;
-            let mpiEC_S = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPIdentifierEC_S atPosition:position];
-            position = position + mpiEC_S.packetLength;
+            let mpiEC_D = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPIdentifierD atPosition:position];
+            position = position + mpiEC_D.packetLength;
 
-            self.secretMPIs = @[mpiEC_S];
+            self.secretMPIs = @[mpiEC_D];
+        } break;
+        case PGPPublicKeyAlgorithmEdDSA: {
+            let mpiEC_SEED = [[PGPMPI alloc] initWithMPIData:data identifier:PGPMPIdentifierD atPosition:position];
+            position = position + mpiEC_SEED.packetLength;
+
+            self.secretMPIs = @[mpiEC_SEED];
         } break;
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:
         case PGPPublicKeyAlgorithmDiffieHellman:

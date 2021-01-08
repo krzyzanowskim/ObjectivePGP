@@ -19,11 +19,24 @@
 #import "PGPPKCSEme.h"
 #import "PGPPublicKeyPacket.h"
 #import "PGPRSA.h"
+#import "PGPEC.h"
 #import "PGPElgamal.h"
 #import "PGPSecretKeyPacket.h"
+#import "PGPSecretKeyPacket+Private.h"
 #import "PGPMacros+Private.h"
 #import "PGPFoundation.h"
+#import "NSData+PGPUtils.h"
+#import "NSMutableData+PGPUtils.h"
 #import "PGPLogging.h"
+
+#import <openssl/err.h>
+#import <openssl/ssl.h>
+#import <openssl/evp.h>
+#import <openssl/aes.h>
+#import <openssl/ec.h>
+#import <openssl/ecdh.h>
+#import <openssl/ecdsa.h>
+#import <openssl/ecerr.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -97,7 +110,8 @@ NS_ASSUME_NONNULL_BEGIN
             // https://tools.ietf.org/html/rfc6637#section-10
             // Algorithm-Specific Fields for ECDH
             // an MPI of an EC point representing an ephemeral public key
-            let MPI_V = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierEC_V atPosition:position];
+            // MPI containing the ephemeral key used to establish the shared secret
+            let MPI_V = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierV atPosition:position];
             position = position + MPI_V.packetLength;
 
             // a one-octet size
@@ -106,6 +120,7 @@ NS_ASSUME_NONNULL_BEGIN
             position = position + 1;
 
             // followed by an encoded symmetric key (encoding: https://tools.ietf.org/html/rfc6637#section-8)
+            // ECDH Symmetric Key
             let encodedSymmetricKey = [packetBody subdataWithRange:(NSRange){position, keySize}];
             position = position + keySize;
 
@@ -113,7 +128,7 @@ NS_ASSUME_NONNULL_BEGIN
             self.parameters.symmetricKey = encodedSymmetricKey;
         } break;
         case PGPPublicKeyAlgorithmECDSA:
-        // case PGPPublicKeyAlgorithmEdDSA:
+        case PGPPublicKeyAlgorithmEdDSA:
         case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmRSASignOnly:
         case PGPPublicKeyAlgorithmDiffieHellman:
@@ -198,6 +213,13 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable NSData *)decryptSessionKeyData:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm *)sessionKeyAlgorithm error:(NSError * __autoreleasing _Nullable *)error {
     NSAssert(!secretKeyPacket.isEncryptedWithPassphrase, @"Secret key can't be decrypted");
 
+    if (secretKeyPacket.publicKeyAlgorithm != self.publicKeyAlgorithm) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: [NSString stringWithFormat:@"Decryption error (algorithm mismatch)"] }];
+        }
+        return nil;
+    }
+
     let _Nullable secretKeyKeyID = [[PGPKeyID alloc] initWithFingerprint:secretKeyPacket.fingerprint];
     if (!secretKeyKeyID || !PGPEqualObjects(self.keyID, secretKeyKeyID)) {
         if (error) {
@@ -208,21 +230,75 @@ NS_ASSUME_NONNULL_BEGIN
 
     NSData * _Nullable sessionKeyData = nil;
     if (secretKeyPacket.publicKeyAlgorithm == PGPPublicKeyAlgorithmECDH) {
-        //TODO: ECC uses different encoding
-        // - const result = await crypto.publicKeyDecrypt(algo, key.params, this.encrypted, key.getFingerprintBytes());
-        let algo = secretKeyPacket.publicKeyAlgorithm;
-        // let keyParams = [type_mpi, type_ecdh_symkey];
-        let encrypted = [[self parameterMPI:PGPMPIdentifierEC_V] bodyData];
-        let fingerprint = secretKeyPacket.fingerprint;
+        // ECC uses different encoding
 
-        // - decrypt
-        // iod?
-        // kdf
-        // V - encrypted
-        // C - encrypted
-        // d - key
-        // let encoded = [PGPCryptoUtils decrypt:encrypted usingSecretKeyPacket:secretKeyPacket encryptedMPIs:self.parameters.MPIs];
-        // - decode (PKCS5)
+        let algo = secretKeyPacket.publicKeyAlgorithm;
+        let C = self.parameters.symmetricKey; // C aka ECDH Symmetric Key
+        let V = [[self parameterMPI:PGPMPIdentifierV] bodyData]; // V aka encrypted
+
+        // - Generate ECDHE secret from private key and public part of ephemeral key
+        let sharedKey = [PGPEC generatePrivateEphemeralKeyWith:V andSecretKeyPacket:secretKeyPacket];
+
+        // - The KDF parameters https://datatracker.ietf.org/doc/html/rfc6637#section-8
+        let params = [NSMutableData data];
+        // one-octet size of the following field. the octets representing a curve OID
+        [params pgp_appendData:[secretKeyPacket.curveOID export:error]];
+        // one-octet public key algorithm ID
+        [params appendBytes:&algo length:1];
+        // KDF params
+        [params pgp_appendData:[secretKeyPacket.curveKDFParameters export:error]];
+        // 20 octets representing the UTF-8 encoding of the string "Anonymous Sender    "
+        const unsigned char anonymous_sender[] = {0x41, 0x6E, 0x6F, 0x6E, 0x79, 0x6D, 0x6F, 0x75, 0x73, 0x20, 0x53, 0x65, 0x6E, 0x64, 0x65, 0x72, 0x20, 0x20, 0x20, 0x20};
+        [params appendBytes:anonymous_sender length:20];
+        // 20 octets representing a recipient encryption subkey or a master key fingerprint
+        [params pgp_appendData:secretKeyPacket.fingerprint.hashedData];
+        {
+            // KDF produces a symmetric key that is used as a key-encryption key (KEK)
+            // https://datatracker.ietf.org/doc/html/rfc6637#section-7
+            const unsigned char prefix_bytes[] = {0x00, 0x00, 0x00, 0x01};
+            let input =  [NSMutableData dataWithBytes:prefix_bytes length:4];
+            [input pgp_appendData:sharedKey];
+            [input pgp_appendData:params];
+            // truncated KEK
+            let KEK = [[input pgp_HashedWithAlgorithm:secretKeyPacket.curveKDFParameters.hashAlgorithm] subdataWithRange:NSMakeRange(0, [PGPCryptoUtils keySizeOfSymmetricAlgorithm:secretKeyPacket.curveKDFParameters.symmetricAlgorithm])];
+            {
+                // Key Unwrap https://datatracker.ietf.org/doc/html/rfc3394#section-2.2.2
+                unsigned int unwrapped_length = (unsigned int)C.length - sizeof(UInt64);
+                if (unwrapped_length <= 0) {
+                    return nil;
+                }
+
+                unsigned char *unwrapped_buf = OPENSSL_secure_malloc(unwrapped_length);
+                pgp_defer {
+                    OPENSSL_secure_free(unwrapped_buf);
+                };
+
+                AES_KEY aes_key;
+                AES_set_decrypt_key(KEK.bytes, (int)KEK.length * sizeof(UInt64), &aes_key);
+
+                if (AES_unwrap_key(&aes_key, NULL, unwrapped_buf, C.bytes, (int)C.length) <= 0) {
+                    memset(&aes_key, 0, sizeof(AES_KEY));
+                    return nil;
+                }
+
+                let unwrapped = [NSData dataWithBytes:unwrapped_buf length:unwrapped_length];
+
+                // Remove PKCS5 padding
+                var unpadded = unwrapped;
+                let c = unwrapped_buf[unwrapped_length - 1];
+                if (c >= 1) {
+                    unpadded = [unwrapped subdataWithRange:NSMakeRange(0, unwrapped_length - c)];
+                }
+                memset(&aes_key, 0, sizeof(AES_KEY));
+
+                if (sessionKeyAlgorithm) {
+                    *sessionKeyAlgorithm = secretKeyPacket.curveKDFParameters.symmetricAlgorithm;
+                }
+
+                return unpadded;
+            }
+        }
+
         NSAssert(NO, @"ECC Not implemented");
     } else {
         // encrypted m value

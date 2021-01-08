@@ -26,9 +26,7 @@ OBJC_EXTERN PGPMPIdentifier const PGPMPIdentifierR;
 OBJC_EXTERN PGPMPIdentifier const PGPMPIdentifierS;
 OBJC_EXTERN PGPMPIdentifier const PGPMPIdentifierY;
 OBJC_EXTERN PGPMPIdentifier const PGPMPIdentifierM;
-OBJC_EXTERN PGPMPIdentifier const PGPMPIdentifierEC_V;
-OBJC_EXTERN PGPMPIdentifier const PGPMPIdentifierEC;
-OBJC_EXTERN PGPMPIdentifier const PGPMPIdentifierEC_S;
+OBJC_EXTERN PGPMPIdentifier const PGPMPIdentifierV;
 
 @interface PGPMPI : NSObject <NSCopying>
 

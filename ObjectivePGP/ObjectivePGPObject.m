@@ -766,13 +766,15 @@ NS_ASSUME_NONNULL_BEGIN
         }
     }
 
+    
     if (accumulatedPackets.count > 1) {
         for (PGPPacket *p in accumulatedPackets) {
             if (p.tag == PGPPublicKeyPacketTag || p.tag == PGPSecretKeyPacketTag) {
                 PGPPublicKeyPacket *pubPacket = (PGPPublicKeyPacket*) p;
                 if ((pubPacket.isSupported) ) {
                     let key = [[PGPPartialKey alloc] initWithPackets:accumulatedPackets];
-                    [partialKeys addObject:key];                }
+                    [partialKeys addObject:key];
+                }
             }
         }
         [accumulatedPackets removeAllObjects];

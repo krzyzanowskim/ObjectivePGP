@@ -554,14 +554,14 @@
 
 - (void)testECCPublicKeyImportIssue141 {
     let eccPub = [PGPTestUtils readKeysFromPath:@"issue141/eccPublicKey.asc"];
-    XCTAssertEqual(eccPub.count, 0);
+    XCTAssertEqual(eccPub.count, 1);
     let rsaPub = [PGPTestUtils readKeysFromPath:@"issue141/rsaPublicKey.asc"];
     XCTAssertEqual(rsaPub.count, 1);
 }
 
 - (void)testECCSecretKeyImportIssue141 {
     let eccSec = [PGPTestUtils readKeysFromPath:@"issue141/eccSecretKey.asc"];
-    XCTAssertEqual(eccSec.count, 0);
+    XCTAssertEqual(eccSec.count, 1);
 }
 
 // https://github.com/krzyzanowskim/ObjectivePGP/issues/158#issuecomment-533493519
@@ -603,9 +603,11 @@
 - (void)testECC1 {
     let keyPub = [[PGPTestUtils readKeysFromPath:@"ecc-curve25519-pub1.asc"] firstObject];
     XCTAssertNotNil(keyPub);
+    XCTAssertEqualObjects(keyPub.keyID.longIdentifier, @"753EC78567FE1231");
 
     let keySec = [[PGPTestUtils readKeysFromPath:@"ecc-curve25519-sec1.asc"] firstObject];
     XCTAssertNotNil(keySec);
+    XCTAssertEqualObjects(keySec.keyID.longIdentifier, @"753EC78567FE1231");
 
     // $ echo "test message" | gpg2 --armor --encrypt --recipient "Test ECC"
     let encryptedMessage = @"-----BEGIN PGP MESSAGE-----\n\

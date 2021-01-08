@@ -50,7 +50,7 @@ UNEXPORTED_SYMBOLS_FILE[sdk=macosx*] = $(SRCROOT)/vendor/libs/macos/symbols
 SDKROOT = 
 
 OTHER_LDFLAGS = -ObjC -lbz2 -lz
-ENABLE_BITCODE = YES
+ENABLE_BITCODE = NO
 ENABLE_BITCODE[sdk=macosx*] = NO
 
 // Boolean value. Specifies whether the generated object code is nonrelocatable (external references remain relocatable). Making code nonrelocatable results in faster function calls. This feature is appropriate in applications but not dynamic libraries.

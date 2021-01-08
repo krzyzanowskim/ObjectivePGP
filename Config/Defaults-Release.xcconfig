@@ -13,8 +13,6 @@ GCC_OPTIMIZATION_LEVEL = s
 // Without this set to yes, xcode only passes -fembed-bitcode-marker, not -fembed-bitcode to the compiler, when ENABLE_BITCODE is Yes
 DEPLOYMENT_POSTPROCESSING = YES
 
-// ENABLE_BITCODE[sdk=iphoneos*] = YES
-
 // Link-Time optimization reduces file size by quite a bit.
 LLVM_LTO = YES
 

@@ -8,17 +8,16 @@
 //
 //
 
+#import "PGPSecretKeyPacket.h"
 #import <Foundation/Foundation.h>
-#import "PGPMPI.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface PGPPublicKeyEncryptedSessionKeyParams : NSObject <NSCopying>
+@interface PGPEC : NSObject
 
-@property (nonatomic, copy) NSArray <PGPMPI *> *MPIs; // V
+PGP_EMPTY_INIT_UNAVAILABLE;
 
-/// Encoded symmetric key
-@property (nonatomic, copy, nullable) NSData *symmetricKey; // C
++ (nullable NSData *)generatePrivateEphemeralKeyWith:(NSData *)publicKeyEphemeralPart andSecretKeyPacket:(PGPSecretKeyPacket *)secretKeyPacket;
 
 @end
 

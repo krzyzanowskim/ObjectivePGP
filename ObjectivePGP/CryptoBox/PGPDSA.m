@@ -69,11 +69,8 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     if (DSA_do_verify(toVerify.bytes, (int)hashLen, sig, dsa) < 0) {
-        unsigned long err_code = ERR_get_error();
-        char *errBuf = calloc(512, sizeof(char));
-        pgp_defer { if (errBuf) { free(errBuf); } };
-        ERR_error_string(err_code, errBuf);
-        PGPLogDebug(@"%@", [NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
+        char *err_str = ERR_error_string(ERR_get_error(), NULL);
+        PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
         return NO;
     }
 
@@ -102,11 +99,8 @@ NS_ASSUME_NONNULL_BEGIN
 
     DSA_SIG * _Nullable sig = DSA_do_sign(toSign.bytes, (int)toSign.length, dsa);
     if (!sig) {
-        unsigned long err_code = ERR_get_error();
-        char *errBuf = calloc(512, sizeof(char));
-        pgp_defer { if (errBuf) { free(errBuf); } };
-        ERR_error_string(err_code, errBuf);
-        PGPLogDebug(@"%@", [NSString stringWithCString:errBuf encoding:NSASCIIStringEncoding]);
+        char *err_str = ERR_error_string(ERR_get_error(), NULL);
+        PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
         return @[];
     }
 

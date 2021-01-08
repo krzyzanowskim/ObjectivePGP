@@ -93,7 +93,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:
         case PGPPublicKeyAlgorithmECDH:
         case PGPPublicKeyAlgorithmECDSA:
-        // case PGPPublicKeyAlgorithmEdDSA:
+        case PGPPublicKeyAlgorithmEdDSA:
         case PGPPublicKeyAlgorithmDiffieHellman:
             return YES;
         case PGPPublicKeyAlgorithmPrivate1:
@@ -211,27 +211,27 @@ NS_ASSUME_NONNULL_BEGIN
             position = position + oidSize;
 
             // MPI of an EC point representing a public key
-            let mpiEC = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierEC atPosition:position];
-            position = position + mpiEC.packetLength;
+            let mpiQ = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierQ atPosition:position];
+            position = position + mpiQ.packetLength;
 
-            self.publicMPIs = @[mpiEC];
+            self.publicMPIs = @[mpiQ];
         } break;
-//        case PGPPublicKeyAlgorithmEdDSA: {
-//            // a variable-length field containing a curve OID
-//            UInt8 oidSize = 0;
-//            [packetBody getBytes:&oidSize range:(NSRange){position, 1}];
-//            position = position + 1;
-//
-//            let curveIdentifierData = [packetBody subdataWithRange:(NSRange){position, oidSize}];
-//            self.curveOID = [[PGPCurveOID alloc] initWithIdentifierData: curveIdentifierData];
-//            position = position + oidSize;
-//
-//            // MPI of an EC point representing a public key Q
-//            let mpiEC = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierEC atPosition:position];
-//            position = position + mpiEC.packetLength;
-//
-//            self.publicMPIs = @[mpiEC];
-//        } break;
+        case PGPPublicKeyAlgorithmEdDSA: {
+            // a variable-length field containing a curve OID
+            UInt8 oidSize = 0;
+            [packetBody getBytes:&oidSize range:(NSRange){position, 1}];
+            position = position + 1;
+
+            let curveIdentifierData = [packetBody subdataWithRange:(NSRange){position, oidSize}];
+            self.curveOID = [[PGPCurveOID alloc] initWithIdentifierData: curveIdentifierData];
+            position = position + oidSize;
+
+            // MPI of an EC point representing a public key Q
+            let mpiEC_Q = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierQ atPosition:position];
+            position = position + mpiEC_Q.packetLength;
+
+            self.publicMPIs = @[mpiEC_Q];
+        } break;
         case PGPPublicKeyAlgorithmECDH: {
             // a variable-length field containing a curve OID
 
@@ -246,10 +246,10 @@ NS_ASSUME_NONNULL_BEGIN
             position = position + oidSize;
 
             // MPI of an EC point representing a public key
-            let mpiEC = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierEC atPosition:position];
-            position = position + mpiEC.packetLength;
+            let mpiEC_Q = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierQ atPosition:position];
+            position = position + mpiEC_Q.packetLength;
 
-            self.publicMPIs = @[mpiEC];
+            self.publicMPIs = @[mpiEC_Q];
 
             // KDF parameters
             // a variable-length field containing KDF parameters, formatted as follows
@@ -319,7 +319,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     // Curve OID
     if (self.publicKeyAlgorithm == PGPPublicKeyAlgorithmECDSA ||
-        // self.publicKeyAlgorithm == PGPPublicKeyAlgorithmEdDSA ||
+        self.publicKeyAlgorithm == PGPPublicKeyAlgorithmEdDSA ||
         self.publicKeyAlgorithm == PGPPublicKeyAlgorithmECDH)
     {
         [data pgp_appendData:[self.curveOID export:nil]];
