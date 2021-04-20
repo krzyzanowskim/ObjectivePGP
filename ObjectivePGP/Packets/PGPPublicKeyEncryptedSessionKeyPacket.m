@@ -307,6 +307,7 @@ NS_ASSUME_NONNULL_BEGIN
     [bodyData appendBytes:&_publicKeyAlgorithm length:1]; // 1
 
     switch (self.publicKeyAlgorithm) {
+        case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSA: {
             let exportedMPIData = [[self parameterMPI:PGPMPIdentifierM] exportMPI];
             if (!exportedMPIData) {
@@ -332,7 +333,6 @@ NS_ASSUME_NONNULL_BEGIN
         }
         break;
         case PGPPublicKeyAlgorithmDSA:
-        case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly:
         case PGPPublicKeyAlgorithmECDH:
         case PGPPublicKeyAlgorithmECDSA:
