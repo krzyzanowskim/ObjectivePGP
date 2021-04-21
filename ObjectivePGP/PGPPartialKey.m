@@ -312,8 +312,8 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     for (PGPPartialSubKey *subKey in self.subKeys) {
-        let signaturePacket = subKey.bindingSignature;
-        if (signaturePacket.canBeUsedToEncrypt && PGPEqualObjects(PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket).keyID, keyID)) {
+        //Assume the primary key packet is always capable if if its a secret key packet
+        if (PGPEqualObjects(PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket).keyID, keyID)) {
             return PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket);
         }
     }
