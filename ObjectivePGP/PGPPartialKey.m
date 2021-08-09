@@ -326,7 +326,15 @@ NS_ASSUME_NONNULL_BEGIN
         }
     }
 
-    // assume primary key is always capable
+    // look for any subkey that can be used - assume there's one that can be used
+    for (PGPPartialSubKey *subKey in self.subKeys) {
+        if (PGPEqualObjects(PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket).keyID, keyID)) {
+            return PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket);
+        }
+    }
+
+
+    // last resort, assume primary key is always capable
     if (PGPEqualObjects(PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket).keyID, keyID)) {
         return PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket);
     }
