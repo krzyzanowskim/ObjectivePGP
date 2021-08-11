@@ -158,8 +158,7 @@ NS_ASSUME_NONNULL_BEGIN
     }] firstObject];
 }
 
-// encryption update self.encryptedMPIs
-- (BOOL)encrypt:(PGPPublicKeyPacket *)publicKeyPacket sessionKeyData:(NSData *)sessionKeyData sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm error:(NSError * __autoreleasing _Nullable *)error {
+- (nullable NSData *)encodeRSA:(PGPPublicKeyPacket *)publicKeyPacket sessionKeyData:(NSData *)sessionKeyData sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm error:(NSError * __autoreleasing _Nullable *)error {
     let decoded = [NSMutableData data];
 
     //    The value "m" in the above formulas is derived from the session key
@@ -180,32 +179,84 @@ NS_ASSUME_NONNULL_BEGIN
     checksum = CFSwapInt16HostToBig(checksum);
     [decoded appendBytes:&checksum length:2];
 
-    PGPMPI * _Nullable modulusMPI = nil;
+    let modulusMPI = [publicKeyPacket publicMPI:PGPMPIdentifierN];
+    if (!modulusMPI) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Cannot encrypt. Missing required MPI. Invalid key."}];
+        }
+        return nil;
+    }
+
+    unsigned int k = (unsigned int)modulusMPI.bigNum.bytesCount;
+    return [PGPPKCSEme encodeMessage:decoded keyModulusLength:k error:error];
+}
+
+- (nullable NSData *)encodeElgamal:(PGPPublicKeyPacket *)publicKeyPacket sessionKeyData:(NSData *)sessionKeyData sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm error:(NSError * __autoreleasing _Nullable *)error {
+    let decoded = [NSMutableData data];
+
+    //    The value "m" in the above formulas is derived from the session key
+    //    as follows.  First, the session key is prefixed with a one-octet
+    //    algorithm identifier that specifies the symmetric encryption
+    //    algorithm used to encrypt the following Symmetrically Encrypted Data
+    //    Packet.  Then a two-octet checksum is appended, which is equal to the
+    //    sum of the preceding session key octets, not including the algorithm
+    //    identifier, modulo 65536.  This value is then encoded as described in
+    //    PKCS#1 block encoding EME-PKCS1-v1_5 in Section 7.2.1 of [RFC3447] to
+    //    form the "m" value used in the formulas above.  See Section 13.1 of
+    //    this document for notes on OpenPGP's use of PKCS#1.
+
+    [decoded appendBytes:&sessionKeyAlgorithm length:1];
+    [decoded appendData:sessionKeyData]; // keySize
+
+    UInt16 checksum = [sessionKeyData pgp_Checksum];
+    checksum = CFSwapInt16HostToBig(checksum);
+    [decoded appendBytes:&checksum length:2];
+
+    let modulusMPI = [publicKeyPacket publicMPI:PGPMPIdentifierP];
+    if (!modulusMPI) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Cannot encrypt. Missing required MPI. Invalid key."}];
+        }
+        return nil;
+    }
+
+    unsigned int k = (unsigned int)modulusMPI.bigNum.bytesCount;
+    return [PGPPKCSEme encodeMessage:decoded keyModulusLength:k error:error];
+}
+
+- (nullable NSData *)encodeEC:(PGPPublicKeyPacket *)publicKeyPacket sessionKeyData:(NSData *)sessionKeyData sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm error:(NSError * __autoreleasing _Nullable *)error {
+    // TODO: todo
+    return nil;
+}
+
+// encryption update self.encryptedMPIs
+- (BOOL)encrypt:(PGPPublicKeyPacket *)publicKeyPacket sessionKeyData:(NSData *)sessionKeyData sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm error:(NSError * __autoreleasing _Nullable *)error {
+    NSData * _Nullable encoded = nil;
     switch (self.publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly:
         case PGPPublicKeyAlgorithmRSA:
-            modulusMPI = [publicKeyPacket publicMPI:PGPMPIdentifierN];
+            encoded = [self encodeRSA:publicKeyPacket sessionKeyData:sessionKeyData sessionKeyAlgorithm:sessionKeyAlgorithm error:error];
             break;
-        // case PGPPublicKeyAlgorithmDSA:
-        //TODO: case PGPPublicKeyAlgorithmECDH:
         case PGPPublicKeyAlgorithmElgamal:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:
-            modulusMPI = [publicKeyPacket publicMPI:PGPMPIdentifierP];
+            encoded = [self encodeElgamal:publicKeyPacket sessionKeyData:sessionKeyData sessionKeyAlgorithm:sessionKeyAlgorithm error:error];
+            break;
+        case PGPPublicKeyAlgorithmECDH:
+            encoded = [self encodeEC:publicKeyPacket sessionKeyData:sessionKeyData sessionKeyAlgorithm:sessionKeyAlgorithm error:error];
             break;
         default:
-            break;
+            NSAssert(NO, @"Not handled");
+            return NO;
     }
 
-    if (!modulusMPI) {
+    if (!encoded) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{NSLocalizedDescriptionKey: @"Cannot encrypt. Missing required MPI. Invalid key."}];
         }
         return NO;
     }
 
-    unsigned int k = (unsigned int)modulusMPI.bigNum.bytesCount;
-    let encoded = [PGPPKCSEme encodeMessage:decoded keyModulusLength:k error:error];
     self.parameters.MPIs = [publicKeyPacket encryptData:encoded withPublicKeyAlgorithm:self.publicKeyAlgorithm];
     return YES;
 }
@@ -230,7 +281,6 @@ NS_ASSUME_NONNULL_BEGIN
     return decoded;
 }
 
-
 - (nullable NSData *)decodeRSA:(PGPSecretKeyPacket *)secretKeyPacket error:(NSError * __autoreleasing _Nullable *)error {
     // encrypted m value
     let encryptedM = [[self parameterMPI:PGPMPIdentifierM] bodyData];
@@ -254,58 +304,56 @@ NS_ASSUME_NONNULL_BEGIN
     let sharedKey = [PGPEC generatePrivateEphemeralKeyWith:V andSecretKeyPacket:secretKeyPacket];
 
     // - The KDF parameters https://datatracker.ietf.org/doc/html/rfc6637#section-8
-    let params = [NSMutableData data];
+    let kdfParams = [NSMutableData data];
     // one-octet size of the following field. the octets representing a curve OID
-    [params pgp_appendData:[secretKeyPacket.curveOID export:error]];
+    [kdfParams pgp_appendData:[secretKeyPacket.curveOID export:error]];
     // one-octet public key algorithm ID
-    [params appendBytes:&keyAlgorithm length:1];
+    [kdfParams appendBytes:&keyAlgorithm length:1];
     // KDF params
-    [params pgp_appendData:[secretKeyPacket.curveKDFParameters export:error]];
+    [kdfParams pgp_appendData:[secretKeyPacket.curveKDFParameters export:error]];
     // 20 octets representing the UTF-8 encoding of the string "Anonymous Sender    "
     const unsigned char anonymous_sender[] = {0x41, 0x6E, 0x6F, 0x6E, 0x79, 0x6D, 0x6F, 0x75, 0x73, 0x20, 0x53, 0x65, 0x6E, 0x64, 0x65, 0x72, 0x20, 0x20, 0x20, 0x20};
-    [params appendBytes:anonymous_sender length:20];
+    [kdfParams appendBytes:anonymous_sender length:20];
     // 20 octets representing a recipient encryption subkey or a master key fingerprint
-    [params pgp_appendData:secretKeyPacket.fingerprint.hashedData];
+    [kdfParams pgp_appendData:secretKeyPacket.fingerprint.hashedData];
+    // KDF produces a symmetric key that is used as a key-encryption key (KEK)
+    // https://datatracker.ietf.org/doc/html/rfc6637#section-7
+    const unsigned char prefix_bytes[] = {0x00, 0x00, 0x00, 0x01};
+    let kdfInput =  [NSMutableData dataWithBytes:prefix_bytes length:4];
+    [kdfInput pgp_appendData:sharedKey];
+    [kdfInput pgp_appendData:kdfParams];
+    // truncated KEK
+    let KEK = [[kdfInput pgp_HashedWithAlgorithm:secretKeyPacket.curveKDFParameters.hashAlgorithm] subdataWithRange:NSMakeRange(0, [PGPCryptoUtils keySizeOfSymmetricAlgorithm:secretKeyPacket.curveKDFParameters.symmetricAlgorithm])];
     {
-        // KDF produces a symmetric key that is used as a key-encryption key (KEK)
-        // https://datatracker.ietf.org/doc/html/rfc6637#section-7
-        const unsigned char prefix_bytes[] = {0x00, 0x00, 0x00, 0x01};
-        let input =  [NSMutableData dataWithBytes:prefix_bytes length:4];
-        [input pgp_appendData:sharedKey];
-        [input pgp_appendData:params];
-        // truncated KEK
-        let KEK = [[input pgp_HashedWithAlgorithm:secretKeyPacket.curveKDFParameters.hashAlgorithm] subdataWithRange:NSMakeRange(0, [PGPCryptoUtils keySizeOfSymmetricAlgorithm:secretKeyPacket.curveKDFParameters.symmetricAlgorithm])];
-        {
-            // Key Unwrap https://datatracker.ietf.org/doc/html/rfc3394#section-2.2.2
-            unsigned int unwrapped_length = (unsigned int)C.length - sizeof(UInt64);
-            if (unwrapped_length <= 0) {
-                return nil;
-            }
-
-            unsigned char *unwrapped_buf = OPENSSL_secure_malloc(unwrapped_length);
-            pgp_defer {
-                OPENSSL_secure_free(unwrapped_buf);
-            };
-
-            AES_KEY aes_key;
-            AES_set_decrypt_key(KEK.bytes, (int)KEK.length * sizeof(UInt64), &aes_key);
-
-            if (AES_unwrap_key(&aes_key, NULL, unwrapped_buf, C.bytes, (int)C.length) <= 0) {
-                memset(&aes_key, 0, sizeof(AES_KEY));
-                return nil;
-            }
-
-            let decodedPadded = [NSData dataWithBytes:unwrapped_buf length:unwrapped_length];
-
-            // Remove PKCS5 padding
-            var decoded = decodedPadded;
-            let c = unwrapped_buf[unwrapped_length - 1];
-            if (c >= 1) {
-                decoded = [decodedPadded subdataWithRange:NSMakeRange(0, unwrapped_length - c)];
-            }
-            memset(&aes_key, 0, sizeof(AES_KEY));
-            return decoded;
+        // Key Unwrap https://datatracker.ietf.org/doc/html/rfc3394#section-2.2.2
+        unsigned int unwrapped_length = (unsigned int)C.length - sizeof(UInt64);
+        if (unwrapped_length <= 0) {
+            return nil;
         }
+
+        unsigned char *unwrapped_buf = OPENSSL_secure_malloc(unwrapped_length);
+        pgp_defer {
+            OPENSSL_secure_free(unwrapped_buf);
+        };
+
+        AES_KEY aes_key;
+        AES_set_decrypt_key(KEK.bytes, (int)KEK.length * sizeof(UInt64), &aes_key);
+
+        if (AES_unwrap_key(&aes_key, NULL, unwrapped_buf, C.bytes, (int)C.length) <= 0) {
+            memset(&aes_key, 0, sizeof(AES_KEY));
+            return nil;
+        }
+
+        let decodedPadded = [NSData dataWithBytes:unwrapped_buf length:unwrapped_length];
+
+        // Remove PKCS5 padding
+        var decoded = decodedPadded;
+        let c = unwrapped_buf[unwrapped_length - 1];
+        if (c >= 1) {
+            decoded = [decodedPadded subdataWithRange:NSMakeRange(0, unwrapped_length - c)];
+        }
+        memset(&aes_key, 0, sizeof(AES_KEY));
+        return decoded;
     }
     return nil;
 }
@@ -426,7 +474,7 @@ NS_ASSUME_NONNULL_BEGIN
 
             let keySize = self.parameters.symmetricKey.length;
             [bodyData appendBytes:&keySize length:1];
-            
+
             [bodyData pgp_appendData:self.parameters.symmetricKey];
         }
         break;
