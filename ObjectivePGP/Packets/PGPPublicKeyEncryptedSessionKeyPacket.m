@@ -191,6 +191,7 @@ NS_ASSUME_NONNULL_BEGIN
             break;
         // case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmElgamal:
+        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
             modulusMPI = [publicKeyPacket publicMPI:PGPMPIdentifierP];
             break;
         default:
@@ -208,6 +209,150 @@ NS_ASSUME_NONNULL_BEGIN
     let mEMEEncodedData = [PGPPKCSEme encodeMessage:mData keyModulusLength:k error:error];
     self.parameters.MPIs = [publicKeyPacket encryptData:mEMEEncodedData withPublicKeyAlgorithm:self.publicKeyAlgorithm];
     return YES;
+}
+
+- (nullable NSData *)decryptECCSessionKeyData:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm *)sessionKeyAlgorithm error:(NSError * __autoreleasing _Nullable *)error {
+    // ECC uses different encoding
+    let algo = secretKeyPacket.publicKeyAlgorithm;
+    let C = self.parameters.symmetricKey; // C aka ECDH Symmetric Key
+    let V = [[self parameterMPI:PGPMPIdentifierV] bodyData]; // V aka encrypted
+
+    // - Generate ECDHE secret from private key and public part of ephemeral key
+    let sharedKey = [PGPEC generatePrivateEphemeralKeyWith:V andSecretKeyPacket:secretKeyPacket];
+
+    // - The KDF parameters https://datatracker.ietf.org/doc/html/rfc6637#section-8
+    let params = [NSMutableData data];
+    // one-octet size of the following field. the octets representing a curve OID
+    [params pgp_appendData:[secretKeyPacket.curveOID export:error]];
+    // one-octet public key algorithm ID
+    [params appendBytes:&algo length:1];
+    // KDF params
+    [params pgp_appendData:[secretKeyPacket.curveKDFParameters export:error]];
+    // 20 octets representing the UTF-8 encoding of the string "Anonymous Sender    "
+    const unsigned char anonymous_sender[] = {0x41, 0x6E, 0x6F, 0x6E, 0x79, 0x6D, 0x6F, 0x75, 0x73, 0x20, 0x53, 0x65, 0x6E, 0x64, 0x65, 0x72, 0x20, 0x20, 0x20, 0x20};
+    [params appendBytes:anonymous_sender length:20];
+    // 20 octets representing a recipient encryption subkey or a master key fingerprint
+    [params pgp_appendData:secretKeyPacket.fingerprint.hashedData];
+    {
+        // KDF produces a symmetric key that is used as a key-encryption key (KEK)
+        // https://datatracker.ietf.org/doc/html/rfc6637#section-7
+        const unsigned char prefix_bytes[] = {0x00, 0x00, 0x00, 0x01};
+        let input =  [NSMutableData dataWithBytes:prefix_bytes length:4];
+        [input pgp_appendData:sharedKey];
+        [input pgp_appendData:params];
+        // truncated KEK
+        let KEK = [[input pgp_HashedWithAlgorithm:secretKeyPacket.curveKDFParameters.hashAlgorithm] subdataWithRange:NSMakeRange(0, [PGPCryptoUtils keySizeOfSymmetricAlgorithm:secretKeyPacket.curveKDFParameters.symmetricAlgorithm])];
+        {
+            // Key Unwrap https://datatracker.ietf.org/doc/html/rfc3394#section-2.2.2
+            unsigned int unwrapped_length = (unsigned int)C.length - sizeof(UInt64);
+            if (unwrapped_length <= 0) {
+                return nil;
+            }
+
+            unsigned char *unwrapped_buf = OPENSSL_secure_malloc(unwrapped_length);
+            pgp_defer {
+                OPENSSL_secure_free(unwrapped_buf);
+            };
+
+            AES_KEY aes_key;
+            AES_set_decrypt_key(KEK.bytes, (int)KEK.length * sizeof(UInt64), &aes_key);
+
+            if (AES_unwrap_key(&aes_key, NULL, unwrapped_buf, C.bytes, (int)C.length) <= 0) {
+                memset(&aes_key, 0, sizeof(AES_KEY));
+                return nil;
+            }
+
+            let unwrapped = [NSData dataWithBytes:unwrapped_buf length:unwrapped_length];
+
+            // Remove PKCS5 padding
+            var unpadded = unwrapped;
+            let c = unwrapped_buf[unwrapped_length - 1];
+            if (c >= 1) {
+                unpadded = [unwrapped subdataWithRange:NSMakeRange(0, unwrapped_length - c)];
+            }
+            memset(&aes_key, 0, sizeof(AES_KEY));
+
+            if (sessionKeyAlgorithm) {
+                *sessionKeyAlgorithm = secretKeyPacket.curveKDFParameters.symmetricAlgorithm;
+            }
+
+            return unpadded;
+        }
+    }
+
+    return nil;
+}
+
+- (nullable NSData *)decryptRSAElgamalSessionKeyData:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm *)sessionKeyAlgorithm error:(NSError * __autoreleasing _Nullable *)error {
+    NSData * _Nullable sessionKeyData = nil;
+    // encrypted m value
+    let encryptedM = [[self parameterMPI:PGPMPIdentifierM] bodyData];
+    // decrypted m value
+    NSData * _Nullable mEMEEncoded = nil;
+
+    switch (secretKeyPacket.publicKeyAlgorithm) {
+        case PGPPublicKeyAlgorithmRSA:
+        case PGPPublicKeyAlgorithmRSAEncryptOnly:
+        case PGPPublicKeyAlgorithmRSASignOnly: {
+            // return decrypted m
+            mEMEEncoded = [PGPRSA privateDecrypt:encryptedM withSecretKeyPacket:secretKeyPacket];
+        } break;
+        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
+        case PGPPublicKeyAlgorithmElgamal: {
+            // return decrypted m
+            // encryptedMPIs has g^k as PGPMPIdentifierG
+            let g_k_mpi = [self parameterMPI:PGPMPIdentifierG];
+            if (!g_k_mpi) {
+                PGPLogWarning(@"Invalid key, can't decrypt. Missing g^k.");
+                return nil;
+            }
+
+            mEMEEncoded = [PGPElgamal privateDecrypt:encryptedM withSecretKeyPacket:secretKeyPacket gk:g_k_mpi];
+        } break;
+        default: {
+            PGPLogWarning(@"Algorithm %@ is not supported.", @(secretKeyPacket.publicKeyAlgorithm));
+            return nil;
+        }
+    }
+
+    let mData = [PGPPKCSEme decodeMessage:mEMEEncoded error:error];
+    if (error && *error) {
+        return nil;
+    }
+
+    NSUInteger position = 0;
+    PGPSymmetricAlgorithm sessionKeyAlgorithmRead = PGPSymmetricPlaintext;
+    [mData getBytes:&sessionKeyAlgorithmRead range:(NSRange){position, 1}];
+    NSAssert(sessionKeyAlgorithmRead < PGPSymmetricMax, @"Invalid algorithm");
+    if (sessionKeyAlgorithm) {
+        *sessionKeyAlgorithm = sessionKeyAlgorithmRead;
+    }
+    position = position + 1;
+
+    NSUInteger sessionKeySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:sessionKeyAlgorithmRead];
+    if (sessionKeySize == NSNotFound) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Invalid session key size" }];
+        }
+        return nil;
+    }
+
+    sessionKeyData = [mData subdataWithRange:(NSRange){position, sessionKeySize}];
+    position = position + sessionKeySize;
+
+    UInt16 checksum = 0;
+    [mData getBytes:&checksum range:(NSRange){position, 2}];
+    checksum = CFSwapInt16BigToHost(checksum);
+
+    // validate checksum
+    UInt16 calculatedChecksum = [sessionKeyData pgp_Checksum];
+    if (calculatedChecksum != checksum) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Invalid session key, checksum mismatch" }];
+        }
+        return nil;
+    }
+    return sessionKeyData;
 }
 
 - (nullable NSData *)decryptSessionKeyData:(PGPSecretKeyPacket *)secretKeyPacket sessionKeyAlgorithm:(PGPSymmetricAlgorithm *)sessionKeyAlgorithm error:(NSError * __autoreleasing _Nullable *)error {
@@ -228,149 +373,19 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    NSData * _Nullable sessionKeyData = nil;
-    if (secretKeyPacket.publicKeyAlgorithm == PGPPublicKeyAlgorithmECDH) {
-        // ECC uses different encoding
-
-        let algo = secretKeyPacket.publicKeyAlgorithm;
-        let C = self.parameters.symmetricKey; // C aka ECDH Symmetric Key
-        let V = [[self parameterMPI:PGPMPIdentifierV] bodyData]; // V aka encrypted
-
-        // - Generate ECDHE secret from private key and public part of ephemeral key
-        let sharedKey = [PGPEC generatePrivateEphemeralKeyWith:V andSecretKeyPacket:secretKeyPacket];
-
-        // - The KDF parameters https://datatracker.ietf.org/doc/html/rfc6637#section-8
-        let params = [NSMutableData data];
-        // one-octet size of the following field. the octets representing a curve OID
-        [params pgp_appendData:[secretKeyPacket.curveOID export:error]];
-        // one-octet public key algorithm ID
-        [params appendBytes:&algo length:1];
-        // KDF params
-        [params pgp_appendData:[secretKeyPacket.curveKDFParameters export:error]];
-        // 20 octets representing the UTF-8 encoding of the string "Anonymous Sender    "
-        const unsigned char anonymous_sender[] = {0x41, 0x6E, 0x6F, 0x6E, 0x79, 0x6D, 0x6F, 0x75, 0x73, 0x20, 0x53, 0x65, 0x6E, 0x64, 0x65, 0x72, 0x20, 0x20, 0x20, 0x20};
-        [params appendBytes:anonymous_sender length:20];
-        // 20 octets representing a recipient encryption subkey or a master key fingerprint
-        [params pgp_appendData:secretKeyPacket.fingerprint.hashedData];
-        {
-            // KDF produces a symmetric key that is used as a key-encryption key (KEK)
-            // https://datatracker.ietf.org/doc/html/rfc6637#section-7
-            const unsigned char prefix_bytes[] = {0x00, 0x00, 0x00, 0x01};
-            let input =  [NSMutableData dataWithBytes:prefix_bytes length:4];
-            [input pgp_appendData:sharedKey];
-            [input pgp_appendData:params];
-            // truncated KEK
-            let KEK = [[input pgp_HashedWithAlgorithm:secretKeyPacket.curveKDFParameters.hashAlgorithm] subdataWithRange:NSMakeRange(0, [PGPCryptoUtils keySizeOfSymmetricAlgorithm:secretKeyPacket.curveKDFParameters.symmetricAlgorithm])];
-            {
-                // Key Unwrap https://datatracker.ietf.org/doc/html/rfc3394#section-2.2.2
-                unsigned int unwrapped_length = (unsigned int)C.length - sizeof(UInt64);
-                if (unwrapped_length <= 0) {
-                    return nil;
-                }
-
-                unsigned char *unwrapped_buf = OPENSSL_secure_malloc(unwrapped_length);
-                pgp_defer {
-                    OPENSSL_secure_free(unwrapped_buf);
-                };
-
-                AES_KEY aes_key;
-                AES_set_decrypt_key(KEK.bytes, (int)KEK.length * sizeof(UInt64), &aes_key);
-
-                if (AES_unwrap_key(&aes_key, NULL, unwrapped_buf, C.bytes, (int)C.length) <= 0) {
-                    memset(&aes_key, 0, sizeof(AES_KEY));
-                    return nil;
-                }
-
-                let unwrapped = [NSData dataWithBytes:unwrapped_buf length:unwrapped_length];
-
-                // Remove PKCS5 padding
-                var unpadded = unwrapped;
-                let c = unwrapped_buf[unwrapped_length - 1];
-                if (c >= 1) {
-                    unpadded = [unwrapped subdataWithRange:NSMakeRange(0, unwrapped_length - c)];
-                }
-                memset(&aes_key, 0, sizeof(AES_KEY));
-
-                if (sessionKeyAlgorithm) {
-                    *sessionKeyAlgorithm = secretKeyPacket.curveKDFParameters.symmetricAlgorithm;
-                }
-
-                return unpadded;
-            }
-        }
-
-        NSAssert(NO, @"ECC Not implemented");
-    } else {
-        // encrypted m value
-        let encryptedM = [[self parameterMPI:PGPMPIdentifierM] bodyData];
-        // decrypted m value
-        NSData * _Nullable mEMEEncoded = nil;
-        
-        switch (secretKeyPacket.publicKeyAlgorithm) {
-            case PGPPublicKeyAlgorithmRSA:
-            case PGPPublicKeyAlgorithmRSAEncryptOnly:
-            case PGPPublicKeyAlgorithmRSASignOnly: {
-                // return decrypted m
-                mEMEEncoded = [PGPRSA privateDecrypt:encryptedM withSecretKeyPacket:secretKeyPacket];
-            } break;
-            case PGPPublicKeyAlgorithmElgamalEncryptorSign:
-            case PGPPublicKeyAlgorithmElgamal: {
-                // return decrypted m
-                // encryptedMPIs has g^k as PGPMPIdentifierG
-                let g_k_mpi = [self parameterMPI:PGPMPIdentifierG];
-                if (!g_k_mpi) {
-                    PGPLogWarning(@"Invalid key, can't decrypt. Missing g^k.");
-                    return nil;
-                }
-
-                mEMEEncoded = [PGPElgamal privateDecrypt:encryptedM withSecretKeyPacket:secretKeyPacket gk:g_k_mpi];
-            } break;
-            default: {
-                PGPLogWarning(@"Algorithm %@ is not supported.", @(secretKeyPacket.publicKeyAlgorithm));
-                return nil;
-            }
-        }
-
-        let mData = [PGPPKCSEme decodeMessage:mEMEEncoded error:error];
-        if (error && *error) {
+    switch (self.publicKeyAlgorithm) {
+        case PGPPublicKeyAlgorithmECDH:
+            return [self decryptECCSessionKeyData:secretKeyPacket sessionKeyAlgorithm:sessionKeyAlgorithm error:error];
+        case PGPPublicKeyAlgorithmRSA:
+        case PGPPublicKeyAlgorithmRSASignOnly:
+        case PGPPublicKeyAlgorithmRSAEncryptOnly:
+        case PGPPublicKeyAlgorithmElgamal:
+        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
+            return [self decryptRSAElgamalSessionKeyData:secretKeyPacket sessionKeyAlgorithm:sessionKeyAlgorithm error:error];
+        default:
+            NSAssert(NO, @"Unsupported. Unexpected.");
             return nil;
-        }
-
-        NSUInteger position = 0;
-        PGPSymmetricAlgorithm sessionKeyAlgorithmRead = PGPSymmetricPlaintext;
-        [mData getBytes:&sessionKeyAlgorithmRead range:(NSRange){position, 1}];
-        NSAssert(sessionKeyAlgorithmRead < PGPSymmetricMax, @"Invalid algorithm");
-        if (sessionKeyAlgorithm) {
-            *sessionKeyAlgorithm = sessionKeyAlgorithmRead;
-        }
-        position = position + 1;
-
-        NSUInteger sessionKeySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:sessionKeyAlgorithmRead];
-        if (sessionKeySize == NSNotFound) {
-            if (error) {
-                *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Invalid session key size" }];
-            }
-            return nil;
-        }
-
-        sessionKeyData = [mData subdataWithRange:(NSRange){position, sessionKeySize}];
-        position = position + sessionKeySize;
-
-        UInt16 checksum = 0;
-        [mData getBytes:&checksum range:(NSRange){position, 2}];
-        checksum = CFSwapInt16BigToHost(checksum);
-
-        // validate checksum
-        UInt16 calculatedChecksum = [sessionKeyData pgp_Checksum];
-        if (calculatedChecksum != checksum) {
-            if (error) {
-                *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Invalid session key, checksum mismatch" }];
-            }
-            return nil;
-        }
     }
-
-    return sessionKeyData;
 }
 
 #pragma mark - PGPExportable
