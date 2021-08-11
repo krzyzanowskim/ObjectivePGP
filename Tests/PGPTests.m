@@ -623,4 +623,42 @@ BOico4LzPq63CGDjyD9tvYiuASWvrq9O5CEqhsIFaiZLnWIqmHMvEED8g8RKmaez\n\
     XCTAssertNotNil(decrypted);
 }
 
+- (void)testECC2 {
+    let privateKey = [@"-----BEGIN PGP PRIVATE KEY BLOCK-----\n\
+\n\
+xVgEX8+jfBYJKwYBBAHaRw8BAQdA9GbdDjprR0sWf0R5a5IpulUauc0FsmzJ\
+mOYCfoowt8EAAP9UwaqC0LWWQ5RlX7mps3728vFa/If1KBVwAjk7Uqhi2BKL\
+zQ90ZXN0MiA8YkBhLmNvbT7CjAQQFgoAHQUCX8+jfAQLCQcIAxUICgQWAgEA\
+AhkBAhsDAh4BACEJEG464aV2od77FiEEIcg441MtKnyJnPDRbjrhpXah3vuR\
+gQD+Il6Gw2oIok4/ANyDDLBYZtKqRrMv4NcfF9DHYuAFcP4BAPhFOffyP3qU\
+AEZb7QPrWdLfhn8/FeSFZxJvnmupQ9sDx10EX8+jfBIKKwYBBAGXVQEFAQEH\
+QOSzo9cX1U2esGFClprOt0QWXNJ97228R5tKFxo6/0NoAwEIBwAA/0n4sq2i\
+N6/jE+6rVO4o/7LW0xahxpV1tTA6qv1Op9TwFIDCeAQYFggACQUCX8+jfAIb\
+DAAhCRBuOuGldqHe+xYhBCHIOONTLSp8iZzw0W464aV2od773XcA/jlmX8/c\
+1/zIotEkyMZB4mI+GAg3FQ6bIACFBH1sz0MzAP9Snri0P4FRZ8D5THRCJoUm\
+GBgpBmrf6IVv484jBswGDA==\n\
+=8rBO\n\
+-----END PGP PRIVATE KEY BLOCK-----" dataUsingEncoding:NSUTF8StringEncoding];
+    let keys = [ObjectivePGP readKeysFromData:privateKey error:nil];
+    XCTAssertNotNil(keys);
+    XCTAssertEqual(keys.count, 1);
+
+    let encrypted = [@"-----BEGIN PGP MESSAGE-----\n\
+\n\
+wV4DWlRRjuYiLSsSAQdAWwDKQLN4ZUS5fqiwFtAMrRfZZe9J4SgClhG6avEe\
+AEowkSZwWRT+8Hy8aBIb4oPehYUFXXZ7BtlJCyd7LOTUtqyc00OE0721PC3M\
+v0+zird60sACATlDmTwweR5GFtEAjHVheIL5rbkOBRD+oSqB8z+IovNg83Pz\
+FVwsFZnCLtECoYgpF2MJdopuC/bPHcrvf4ndwmD11uXtms4Rq4y25QyqApbn\
+Hj/hljufk0OkavUXxrNKjGQtxLHMpa3Nsi0MHWY8JguxOKFKpAIMP32CD1e+\
+j+GItrR+QbbN13ODlcR3hf66cwjLLsJCx5VcBaRspKF05O3ix/u9KVjJqtbi\
+Ie6jnY0zP2ldtS4JmhKBa43qmOHCxHc=\n\
+=7B58\n\
+-----END PGP MESSAGE-----" dataUsingEncoding:NSUTF8StringEncoding];
+
+    let decrypted = [ObjectivePGP decrypt:encrypted andVerifySignature:NO usingKeys:keys passphraseForKey:nil error:nil];
+    XCTAssertNotNil(decrypted);
+}
+
+
+
 @end
