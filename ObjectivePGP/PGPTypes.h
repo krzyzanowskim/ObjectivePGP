@@ -185,9 +185,12 @@ typedef NS_CLOSED_ENUM(UInt8, PGPSignatureSubpacketType) {
     PGPSignatureSubpacketTypeSignerUserID = 28,
     PGPSignatureSubpacketTypeReasonForRevocation = 29,
     PGPSignatureSubpacketTypeFeatures = 30,
-    PGPSignatureSubpacketTypeSignatureTarget = 31, // Seems unused at all
+    PGPSignatureSubpacketTypeSignatureTarget = 31, // Seems unused at all, https://datatracker.ietf.org/doc/html/draft-ietf-openpgp-rfc4880bis-10#section-5.2.3.26
     PGPSignatureSubpacketTypeEmbeddedSignature = 32,
-    PGPSignatureSubpacketTypeIssuerFingerprint = 33 // TODO: Experimental: Issuer fingerprint
+    PGPSignatureSubpacketTypeIssuerFingerprint = 33, // TODO: https://datatracker.ietf.org/doc/html/draft-ietf-openpgp-rfc4880bis-10#section-5.2.3.28
+    PGPSignatureSubpacketTypeIntendedRecipientFingerprint = 35, //TODO: https://datatracker.ietf.org/doc/html/draft-ietf-openpgp-rfc4880bis-10#section-5.2.3.29
+    PGPSignatureSubpacketTypeAttestedCertifications = 37, // TODO: https://datatracker.ietf.org/doc/html/draft-ietf-openpgp-rfc4880bis-10#section-5.2.3.30
+    PGPSignatureSubpacketTypeKeyBlock = 38 // TODO: https://datatracker.ietf.org/doc/html/draft-ietf-openpgp-rfc4880bis-10#section-5.2.3.31
 };
 
 // 5.2.3.21.  Key Flags
