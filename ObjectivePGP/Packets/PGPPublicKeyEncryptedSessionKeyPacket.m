@@ -160,7 +160,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // encryption update self.encryptedMPIs
 - (BOOL)encrypt:(PGPPublicKeyPacket *)publicKeyPacket sessionKeyData:(NSData *)sessionKeyData sessionKeyAlgorithm:(PGPSymmetricAlgorithm)sessionKeyAlgorithm error:(NSError * __autoreleasing _Nullable *)error {
-    let mData = [NSMutableData data];
+    let decoded = [NSMutableData data];
 
     //    The value "m" in the above formulas is derived from the session key
     //    as follows.  First, the session key is prefixed with a one-octet
@@ -173,16 +173,14 @@ NS_ASSUME_NONNULL_BEGIN
     //    form the "m" value used in the formulas above.  See Section 13.1 of
     //    this document for notes on OpenPGP's use of PKCS#1.
 
-    [mData appendBytes:&sessionKeyAlgorithm length:1];
-
-    [mData appendData:sessionKeyData]; // keySize
+    [decoded appendBytes:&sessionKeyAlgorithm length:1];
+    [decoded appendData:sessionKeyData]; // keySize
 
     UInt16 checksum = [sessionKeyData pgp_Checksum];
     checksum = CFSwapInt16HostToBig(checksum);
-    [mData appendBytes:&checksum length:2];
+    [decoded appendBytes:&checksum length:2];
 
-
-    PGPMPI *modulusMPI = nil;
+    PGPMPI * _Nullable modulusMPI = nil;
     switch (self.publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly:
@@ -190,6 +188,7 @@ NS_ASSUME_NONNULL_BEGIN
             modulusMPI = [publicKeyPacket publicMPI:PGPMPIdentifierN];
             break;
         // case PGPPublicKeyAlgorithmDSA:
+        //TODO: case PGPPublicKeyAlgorithmECDH:
         case PGPPublicKeyAlgorithmElgamal:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:
             modulusMPI = [publicKeyPacket publicMPI:PGPMPIdentifierP];
@@ -206,8 +205,8 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     unsigned int k = (unsigned int)modulusMPI.bigNum.bytesCount;
-    let mEMEEncodedData = [PGPPKCSEme encodeMessage:mData keyModulusLength:k error:error];
-    self.parameters.MPIs = [publicKeyPacket encryptData:mEMEEncodedData withPublicKeyAlgorithm:self.publicKeyAlgorithm];
+    let encoded = [PGPPKCSEme encodeMessage:decoded keyModulusLength:k error:error];
+    self.parameters.MPIs = [publicKeyPacket encryptData:encoded withPublicKeyAlgorithm:self.publicKeyAlgorithm];
     return YES;
 }
 
@@ -245,7 +244,6 @@ NS_ASSUME_NONNULL_BEGIN
 
     return decoded;
 }
-
 
 - (nullable NSData *)decodeECC:(PGPSecretKeyPacket *)secretKeyPacket error:(NSError * __autoreleasing _Nullable *)error {
     let keyAlgorithm = secretKeyPacket.publicKeyAlgorithm;
@@ -395,6 +393,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     switch (self.publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
+        case PGPPublicKeyAlgorithmRSASignOnly:
         case PGPPublicKeyAlgorithmRSA: {
             let exportedMPIData = [[self parameterMPI:PGPMPIdentifierM] exportMPI];
             if (!exportedMPIData) {
@@ -419,13 +418,21 @@ NS_ASSUME_NONNULL_BEGIN
             [bodyData appendData:exportedMPI_MData]; // m
         }
         break;
-        case PGPPublicKeyAlgorithmDSA:
-        case PGPPublicKeyAlgorithmRSASignOnly:
         case PGPPublicKeyAlgorithmECDH:
-        case PGPPublicKeyAlgorithmECDSA:
+        case PGPPublicKeyAlgorithmEdDSA:
+        case PGPPublicKeyAlgorithmECDSA: {
+            let exportedMPI_VData = [[self parameterMPI:PGPMPIdentifierV] exportMPI];
+            [bodyData appendData:exportedMPI_VData]; // v
+
+            let keySize = self.parameters.symmetricKey.length;
+            [bodyData appendBytes:&keySize length:1];
+            
+            [bodyData pgp_appendData:self.parameters.symmetricKey];
+        }
+        break;
+        case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:
         case PGPPublicKeyAlgorithmDiffieHellman:
-        // case PGPPublicKeyAlgorithmEdDSA:
         case PGPPublicKeyAlgorithmPrivate1:
         case PGPPublicKeyAlgorithmPrivate2:
         case PGPPublicKeyAlgorithmPrivate3:
@@ -437,7 +444,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmPrivate9:
         case PGPPublicKeyAlgorithmPrivate10:
         case PGPPublicKeyAlgorithmPrivate11:
-            NSAssert(false, @"Cannot export ESK. Invalid packet.");
+            NSAssert(false, @"Cannot export ESK. Invalid or unsupported.");
             break;
     }
 
