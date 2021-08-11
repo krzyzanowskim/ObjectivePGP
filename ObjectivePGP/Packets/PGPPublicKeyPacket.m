@@ -59,9 +59,25 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Properties
 
 - (NSUInteger)keySize {
-    //TODO: Elgamal, how about elgamal?
-    let mpi = [self publicMPI:PGPMPIdentifierN];
-    return (mpi.bigNum.bitsCount + 7) / 8; // ks;
+    switch (_publicKeyAlgorithm) {
+        case PGPPublicKeyAlgorithmElgamal:
+        case PGPPublicKeyAlgorithmElgamalEncryptorSign: {
+            let mpi = [self publicMPI:PGPMPIdentifierP];
+            return (mpi.bigNum.bitsCount + 7) / 8; // ks;
+        } break;
+        case PGPPublicKeyAlgorithmDSA: {
+            let mpi = [self publicMPI:PGPMPIdentifierP];
+            return (mpi.bigNum.bitsCount + 7) / 8; // ks;
+        } break;
+        case PGPPublicKeyAlgorithmRSA:
+        case PGPPublicKeyAlgorithmRSASignOnly:
+        case PGPPublicKeyAlgorithmRSAEncryptOnly: {
+            let mpi = [self publicMPI:PGPMPIdentifierN];
+            return (mpi.bigNum.bitsCount + 7) / 8; // ks;
+        } break;
+        default:
+            return 0;
+    }
 }
 
 /**
