@@ -17,8 +17,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, copy) NSArray <PGPMPI *> *MPIs; // V
 
-/// Encoded symmetric key
-@property (nonatomic, copy, nullable) NSData *symmetricKey; // C
+/// Encoded symmetric key (ECDH)
+@property (nonatomic, copy, nullable) NSData *ECDH_encodedSymmetricKey; // C
 
 @end
 

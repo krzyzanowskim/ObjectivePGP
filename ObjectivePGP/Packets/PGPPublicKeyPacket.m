@@ -75,9 +75,9 @@ NS_ASSUME_NONNULL_BEGIN
             let mpi = [self publicMPI:PGPMPIdentifierN];
             return (mpi.bigNum.bitsCount + 7) / 8; // ks;
         } break;
-        default:
-            return 0;
     }
+
+    return 0;
 }
 
 /**

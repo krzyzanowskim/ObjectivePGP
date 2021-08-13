@@ -108,6 +108,14 @@ NS_ASSUME_NONNULL_BEGIN
     });
 }
 
+- (NSData *)pgp_reversed {
+    let reversed = [[NSMutableData alloc] initWithCapacity:self.length];
+    for (int i = (int)self.length - 1; i >= 0; i--) {
+        [reversed appendBytes:&self.bytes[i] length:1];
+    }
+    return reversed;
+}
+
 // xor up to the last byte of the shorter data
 + (NSData *)xor:(NSData *)d1 d2:(NSData *)d2 {
     let outLen = MIN(d1.length, d2.length);

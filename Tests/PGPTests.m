@@ -600,7 +600,7 @@
     XCTAssertNotNil(key);
 }
 
-- (void)testECC1 {
+- (void)testECC_decrypt1 {
     let keyPub = [[PGPTestUtils readKeysFromPath:@"ecc-curve25519-pub1.asc"] firstObject];
     XCTAssertNotNil(keyPub);
     XCTAssertEqualObjects(keyPub.keyID.longIdentifier, @"753EC78567FE1231");
@@ -621,9 +621,11 @@ BOico4LzPq63CGDjyD9tvYiuASWvrq9O5CEqhsIFaiZLnWIqmHMvEED8g8RKmaez\n\
 
     let decrypted = [ObjectivePGP decrypt:[encryptedMessage dataUsingEncoding:NSUTF8StringEncoding] andVerifySignature:NO usingKeys:@[keySec] passphraseForKey:nil error:nil];
     XCTAssertNotNil(decrypted);
+    let decryptedString = [[NSString alloc] initWithData:decrypted encoding:NSUTF8StringEncoding];
+    XCTAssertEqualObjects(decryptedString, @"test message");
 }
 
-- (void)testECC2 {
+- (void)testECC_decrypt2 {
     let privateKey = [@"-----BEGIN PGP PRIVATE KEY BLOCK-----\n\
 \n\
 xVgEX8+jfBYJKwYBBAHaRw8BAQdA9GbdDjprR0sWf0R5a5IpulUauc0FsmzJ\
@@ -657,8 +659,29 @@ Ie6jnY0zP2ldtS4JmhKBa43qmOHCxHc=\n\
 
     let decrypted = [ObjectivePGP decrypt:encrypted andVerifySignature:NO usingKeys:keys passphraseForKey:nil error:nil];
     XCTAssertNotNil(decrypted);
+    let decryptedString = [[NSString alloc] initWithData:decrypted encoding:NSUTF8StringEncoding];
+    XCTAssertEqualObjects(decryptedString, @"hello");
 }
 
+- (void)testECC_encrypt1 {
+    let keyPub = [[PGPTestUtils readKeysFromPath:@"ecc-curve25519-pub1.asc"] firstObject];
+    XCTAssertNotNil(keyPub);
+    XCTAssertEqualObjects(keyPub.keyID.longIdentifier, @"753EC78567FE1231");
+
+    let keySec = [[PGPTestUtils readKeysFromPath:@"ecc-curve25519-sec1.asc"] firstObject];
+    XCTAssertNotNil(keySec);
+    XCTAssertEqualObjects(keySec.keyID.longIdentifier, @"753EC78567FE1231");
+
+    let data = [@"test message" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *encryptError;
+    let encryptedData = [ObjectivePGP encrypt:data addSignature:NO usingKeys:@[keyPub] passphraseForKey:nil error:&encryptError];
+    XCTAssertNil(encryptError);
+    XCTAssertNotNil(encryptedData);
+
+    let decrypted = [ObjectivePGP decrypt:encryptedData andVerifySignature:NO usingKeys:@[keyPub, keySec] passphraseForKey:nil error:nil];
+    XCTAssertNil(decrypted);
+
+}
 
 
 @end
