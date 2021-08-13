@@ -287,27 +287,34 @@ NS_ASSUME_NONNULL_BEGIN
     // truncated KEK
     let KEK = [[kdfInput pgp_HashedWithAlgorithm:publicKeyPacket.curveKDFParameters.hashAlgorithm] subdataWithRange:NSMakeRange(0, [PGPCryptoUtils keySizeOfSymmetricAlgorithm:publicKeyPacket.curveKDFParameters.symmetricAlgorithm])];
     {
-        // TODO: add pkcs5 session key data
-        // let c = 8 - (sessionKeyData.length % 8);
+        // Add PKCS5 padding
+        let padding_len = 8 - (sessionKeyData.length % 8);
         let paddedSessionKeyData = [NSMutableData dataWithData:sessionKeyData];
-        //unsigned char *padding = OPENSSL_malloc(sessionKeyData.length + c);
+        let padding_buf = OPENSSL_malloc(padding_len);
+        pgp_defer {
+            OPENSSL_free(padding_buf);
+        };
+        memset(padding_buf, padding_len, padding_len);
+        [paddedSessionKeyData appendBytes:padding_buf length:padding_len];
 
         // Key wrap
-        AES_KEY aes_key;
-        AES_set_encrypt_key(KEK.bytes, (int)KEK.length * sizeof(UInt64), &aes_key);
+        AES_KEY *aes_key = OPENSSL_secure_malloc(sizeof(AES_KEY));
+        pgp_defer {
+            OPENSSL_secure_clear_free(aes_key, sizeof(AES_KEY));
+        };
+        AES_set_encrypt_key(KEK.bytes, (int)KEK.length * sizeof(UInt64), aes_key);
 
         unsigned long wrapped_buf_length = paddedSessionKeyData.length + sizeof(UInt64);
         unsigned char *wrapped_buf = OPENSSL_secure_malloc(wrapped_buf_length);
         pgp_defer {
             OPENSSL_secure_free(wrapped_buf);
         };
-        if (AES_wrap_key(&aes_key, NULL, wrapped_buf, paddedSessionKeyData.bytes, (int)paddedSessionKeyData.length) <= 0) {
-            memset(&aes_key, 0, sizeof(AES_KEY));
+
+        if (AES_wrap_key(aes_key, NULL, wrapped_buf, paddedSessionKeyData.bytes, (int)paddedSessionKeyData.length) <= 0) {
             return nil;
         }
 
         let encoded = [NSData dataWithBytes:wrapped_buf length:wrapped_buf_length];
-        memset(&aes_key, 0, sizeof(AES_KEY));
         return encoded;
     }
     return nil;
