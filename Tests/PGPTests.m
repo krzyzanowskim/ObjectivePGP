@@ -622,7 +622,7 @@ BOico4LzPq63CGDjyD9tvYiuASWvrq9O5CEqhsIFaiZLnWIqmHMvEED8g8RKmaez\n\
     let decrypted = [ObjectivePGP decrypt:[encryptedMessage dataUsingEncoding:NSUTF8StringEncoding] andVerifySignature:NO usingKeys:@[keySec] passphraseForKey:nil error:nil];
     XCTAssertNotNil(decrypted);
     let decryptedString = [[NSString alloc] initWithData:decrypted encoding:NSUTF8StringEncoding];
-    XCTAssertEqualObjects(decryptedString, @"test message");
+    XCTAssertEqualObjects(decryptedString, @"test message\n");
 }
 
 - (void)testECC_decrypt2 {

@@ -448,6 +448,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable PGPUser *)primaryUser {
     let _Nullable primaryUsers = [[self.users pgp_objectsPassingTest:^BOOL(PGPUser *user, BOOL *stop) {
+        *stop = NO;
         return user.userID && user.userID.length > 0;
     }] pgp_flatMap:^NSArray * _Nullable (PGPUser *user) {
         let _Nullable latestSelfCertificate = user.latestSelfCertificate;
