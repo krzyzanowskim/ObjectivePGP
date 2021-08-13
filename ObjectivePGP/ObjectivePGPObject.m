@@ -218,7 +218,7 @@ NS_ASSUME_NONNULL_BEGIN
                 let symEncryptedDataPacket = PGPCast(packet, PGPSymmetricallyEncryptedDataPacket);
                 let decryptedPackets = [symEncryptedDataPacket decryptWithSessionKeyAlgorithm:sessionKeyAlgorithm sessionKeyData:sessionKeyData error:error];
                 [packets addObjectsFromArray:decryptedPackets];
-            }
+            } break;
             default:
                 break;
         }
