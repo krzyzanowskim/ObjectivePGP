@@ -672,15 +672,17 @@ Ie6jnY0zP2ldtS4JmhKBa43qmOHCxHc=\n\
     XCTAssertNotNil(keySec);
     XCTAssertEqualObjects(keySec.keyID.longIdentifier, @"753EC78567FE1231");
 
-    let data = [@"test message" dataUsingEncoding:NSUTF8StringEncoding];
+    let plaintext = [@"test message" dataUsingEncoding:NSUTF8StringEncoding];
     NSError *encryptError;
-    let encryptedData = [ObjectivePGP encrypt:data addSignature:NO usingKeys:@[keyPub] passphraseForKey:nil error:&encryptError];
+    let encryptedData = [ObjectivePGP encrypt:plaintext addSignature:NO usingKeys:@[keyPub] passphraseForKey:nil error:&encryptError];
     XCTAssertNil(encryptError);
     XCTAssertNotNil(encryptedData);
 
-    let decrypted = [ObjectivePGP decrypt:encryptedData andVerifySignature:NO usingKeys:@[keyPub, keySec] passphraseForKey:nil error:nil];
-    XCTAssertNil(decrypted);
-
+    NSError *decryptError = nil;
+    let decrypted = [ObjectivePGP decrypt:encryptedData andVerifySignature:NO usingKeys:@[keySec] passphraseForKey:nil error:&decryptError];
+    XCTAssertNil(decryptError);
+    XCTAssertNotNil(decrypted);
+    XCTAssertEqualObjects(plaintext, decrypted);
 }
 
 

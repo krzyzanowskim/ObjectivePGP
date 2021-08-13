@@ -116,6 +116,19 @@ NS_ASSUME_NONNULL_BEGIN
     return reversed;
 }
 
+- (NSData *)pgp_PKCS5Padded {
+    // Add PKCS5 padding
+    let padding_len = 8 - (self.length % 8);
+    let paddedData = [NSMutableData dataWithData:self];
+    let padding_buf = calloc(padding_len, 1);
+    pgp_defer {
+        free(padding_buf);
+    };
+    memset(padding_buf, padding_len, padding_len);
+    [paddedData appendBytes:padding_buf length:padding_len];
+    return paddedData;
+}
+
 // xor up to the last byte of the shorter data
 + (NSData *)xor:(NSData *)d1 d2:(NSData *)d2 {
     let outLen = MIN(d1.length, d2.length);
