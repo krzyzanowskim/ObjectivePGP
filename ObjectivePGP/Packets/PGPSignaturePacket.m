@@ -405,12 +405,14 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmDSA:{
             return [PGPDSA verify:toHashData signature:self withPublicKeyPacket:signingKeyPacket];
         } break;
-        case PGPPublicKeyAlgorithmElgamal:
+        case PGPPublicKeyAlgorithmEdDSA:
+            // TODO:
+            // PGPEC verify:...
         case PGPPublicKeyAlgorithmECDH:
+        case PGPPublicKeyAlgorithmElgamal:
         case PGPPublicKeyAlgorithmECDSA:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:
         case PGPPublicKeyAlgorithmDiffieHellman:
-        // case PGPPublicKeyAlgorithmEdDSA:
         case PGPPublicKeyAlgorithmPrivate1:
         case PGPPublicKeyAlgorithmPrivate2:
         case PGPPublicKeyAlgorithmPrivate3:
@@ -529,12 +531,14 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmDSA:
             self.signatureMPIs = [PGPDSA sign:toHashData key:key];
         break;
-        case PGPPublicKeyAlgorithmElgamal:
+        case PGPPublicKeyAlgorithmEdDSA:
+            // TODO
+            // self.signatureMPIs =
         case PGPPublicKeyAlgorithmECDH:
+        case PGPPublicKeyAlgorithmElgamal:
         case PGPPublicKeyAlgorithmECDSA:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:
         case PGPPublicKeyAlgorithmDiffieHellman:
-        // case PGPPublicKeyAlgorithmEdDSA:
         case PGPPublicKeyAlgorithmPrivate1:
         case PGPPublicKeyAlgorithmPrivate2:
         case PGPPublicKeyAlgorithmPrivate3:
@@ -813,11 +817,13 @@ NS_ASSUME_NONNULL_BEGIN
 
             self.signatureMPIs = @[mpiR, mpiS];
         } break;
-        case PGPPublicKeyAlgorithmElgamal: // encrypt only. ignore.
+        case PGPPublicKeyAlgorithmEdDSA:
+            // TODO
+            // self.signatureMPIs =
         case PGPPublicKeyAlgorithmECDH:
+        case PGPPublicKeyAlgorithmElgamal: // encrypt only. ignore.
         case PGPPublicKeyAlgorithmECDSA:
         case PGPPublicKeyAlgorithmDiffieHellman:
-        // case PGPPublicKeyAlgorithmEdDSA:
         case PGPPublicKeyAlgorithmPrivate1:
         case PGPPublicKeyAlgorithmPrivate2:
         case PGPPublicKeyAlgorithmPrivate3:
@@ -978,11 +984,13 @@ NS_ASSUME_NONNULL_BEGIN
 
             self.signatureMPIs = @[mpiR, mpiS];
         } break;
-        case PGPPublicKeyAlgorithmElgamal: // encrypt only. ignore.
+        case PGPPublicKeyAlgorithmEdDSA:
+            // TODO
+            // self.signatureMPIs =
         case PGPPublicKeyAlgorithmECDH:
+        case PGPPublicKeyAlgorithmElgamal: // encrypt only. ignore.
         case PGPPublicKeyAlgorithmECDSA:
         case PGPPublicKeyAlgorithmDiffieHellman:
-        // case PGPPublicKeyAlgorithmEdDSA:
         case PGPPublicKeyAlgorithmPrivate1:
         case PGPPublicKeyAlgorithmPrivate2:
         case PGPPublicKeyAlgorithmPrivate3:
