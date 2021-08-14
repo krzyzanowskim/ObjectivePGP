@@ -679,7 +679,7 @@ Ie6jnY0zP2ldtS4JmhKBa43qmOHCxHc=\n\
     XCTAssertNotNil(encryptedData);
 
     NSError *decryptError = nil;
-    let decrypted = [ObjectivePGP decrypt:encryptedData andVerifySignature:NO usingKeys:@[keySec] passphraseForKey:nil error:&decryptError];
+    let decrypted = [ObjectivePGP decrypt:encryptedData andVerifySignature:NO usingKeys:@[keyPub, keySec] passphraseForKey:nil error:&decryptError];
     XCTAssertNil(decryptError);
     XCTAssertNotNil(decrypted);
     XCTAssertEqualObjects(plaintext, decrypted);

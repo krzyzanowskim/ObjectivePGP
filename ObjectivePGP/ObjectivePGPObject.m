@@ -150,7 +150,7 @@ NS_ASSUME_NONNULL_BEGIN
 
         if (packet.tag == PGPPublicKeyEncryptedSessionKeyPacketTag) {
             let pkESKPacket = PGPCast(packet, PGPPublicKeyEncryptedSessionKeyPacket);
-            let decryptionKey = [PGPKeyring findKeyWithKeyID:pkESKPacket.keyID in:keys];
+            let decryptionKey = [PGPKeyring findKeyWithKeyID:pkESKPacket.keyID type:PGPKeyTypeSecret in:keys];
             if (!decryptionKey.secretKey) {
                 // Can't proceed with this packet, but there may be other valid packet.
                 continue;
@@ -460,7 +460,7 @@ NS_ASSUME_NONNULL_BEGIN
     let signaturePacket = PGPCast(packet, PGPSignaturePacket);
     let issuerKeyID = signaturePacket.issuerKeyID;
     if (issuerKeyID) {
-        let issuerKey = [PGPKeyring findKeyWithKeyID:issuerKeyID in:keys];
+        let issuerKey = [PGPKeyring findKeyWithKeyID:issuerKeyID type:PGPKeyTypePublic in:keys];
         return issuerKey != nil;
     }
 
@@ -489,7 +489,7 @@ NS_ASSUME_NONNULL_BEGIN
             let signaturePacket = PGPCast(packet, PGPSignaturePacket);
             let issuerKeyID = signaturePacket.issuerKeyID;
             if (issuerKeyID) {
-                let issuerKey = [PGPKeyring findKeyWithKeyID:issuerKeyID in:keys];
+                let issuerKey = [PGPKeyring findKeyWithKeyID:issuerKeyID type:PGPKeyTypePublic in:keys];
                 if (!issuerKey) {
                     if (error) {
                         *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"Unable to check signature. No public key." }];
@@ -613,7 +613,7 @@ NS_ASSUME_NONNULL_BEGIN
             let issuerKeyID = signaturePacket.issuerKeyID;
             isValid = issuerKeyID != nil;
             if (isValid) {
-                let issuerKey = [PGPKeyring findKeyWithKeyID:issuerKeyID in:keys];
+                let issuerKey = [PGPKeyring findKeyWithKeyID:issuerKeyID type:PGPKeyTypePublic in:keys];
                 isValid = issuerKey != nil;
                 if (!isValid) {
                     if (error) {
