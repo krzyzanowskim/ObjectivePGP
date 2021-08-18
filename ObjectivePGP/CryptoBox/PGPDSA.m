@@ -125,7 +125,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Generate
 
 + (nullable PGPKeyMaterial *)generateNewKeyMPIArray:(const int)bits {    
-    let ctx = BN_CTX_new();
+    let ctx = BN_CTX_secure_new();
     pgp_defer { if (ctx) { BN_CTX_free(ctx); } };
     let dsa = DSA_new();
     pgp_defer { if (dsa) { DSA_free(dsa); } };

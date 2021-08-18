@@ -207,9 +207,9 @@ NS_ASSUME_NONNULL_BEGIN
         return;
     }
 
-    unsigned char *public_key_buffer = OPENSSL_malloc(public_key_buf_length);
+    unsigned char *public_key_buffer = OPENSSL_secure_malloc(public_key_buf_length);
     pgp_defer {
-        OPENSSL_free(public_key_buffer);
+        OPENSSL_secure_clear_free(public_key_buffer, public_key_buf_length);
     };
 
     if (EVP_PKEY_get_raw_public_key(pkey_private_key, public_key_buffer, &public_key_buf_length) == 0) {
@@ -393,7 +393,7 @@ NS_ASSUME_NONNULL_BEGIN
 
         AES_KEY *aes_key = OPENSSL_secure_malloc(sizeof(AES_KEY));
         pgp_defer {
-            OPENSSL_clear_free(aes_key, sizeof(AES_KEY));
+            OPENSSL_secure_clear_free(aes_key, sizeof(AES_KEY));
         };
         AES_set_decrypt_key(KEK.bytes, (int)KEK.length * sizeof(UInt64), aes_key);
 

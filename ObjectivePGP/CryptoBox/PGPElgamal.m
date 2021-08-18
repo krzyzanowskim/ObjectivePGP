@@ -39,11 +39,11 @@ static int decide_k_bits(int p_bits) {
     let g = BN_dup([[[publicKeyPacket publicMPI:PGPMPIdentifierG] bigNum] bignumRef]);
     let y = BN_dup([[[publicKeyPacket publicMPI:PGPMPIdentifierY] bigNum] bignumRef]);
 
-    let k = BN_new();
-    let yk = BN_new();
-    let c1 = BN_new();
-    let c2 = BN_new();
-    let tmp = BN_CTX_new();
+    let k = BN_secure_new();
+    let yk = BN_secure_new();
+    let c1 = BN_secure_new();
+    let c2 = BN_secure_new();
+    let tmp = BN_CTX_secure_new();
 
     // k
     let k_bits = decide_k_bits(BN_num_bits(p));
@@ -79,10 +79,10 @@ static int decide_k_bits(int p_bits) {
     let x = BN_dup([[[secretKeyPacket secretMPI:PGPMPIdentifierX] bigNum] bignumRef]);
 
 
-    let c1x = BN_new();
-    let bndiv = BN_new();
-    let m = BN_new();
-    let tmp = BN_CTX_new();
+    let c1x = BN_secure_new();
+    let bndiv = BN_secure_new();
+    let m = BN_secure_new();
+    let tmp = BN_CTX_secure_new();
 
     BN_mod_exp(c1x, c1, x, p, tmp);
     BN_mod_inverse(bndiv, c1x, p, tmp);

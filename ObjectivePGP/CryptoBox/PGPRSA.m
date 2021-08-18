@@ -183,9 +183,9 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Generate
 
 + (nullable PGPKeyMaterial *)generateNewKeyMPIArray:(const int)bits {
-    BN_CTX *ctx = BN_CTX_new();
+    BN_CTX *ctx = BN_CTX_secure_new();
     RSA *rsa = RSA_new();
-    BIGNUM *e = BN_new();
+    BIGNUM *e = BN_secure_new();
 
     pgp_defer {
         BN_CTX_free(ctx);

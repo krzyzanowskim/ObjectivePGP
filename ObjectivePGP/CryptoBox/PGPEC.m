@@ -139,7 +139,11 @@ NS_ASSUME_NONNULL_BEGIN
             pgp_defer {
                 OPENSSL_clear_free(sigret, siglen);
             };
-            EVP_DigestSign(ctx, sigret, &siglen, toSign.bytes, toSign.length);
+            if (EVP_DigestSign(ctx, sigret, &siglen, toSign.bytes, toSign.length) <= 0) {
+                char *err_str = ERR_error_string(ERR_get_error(), NULL);
+                PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+                return @[];
+            }
             let sigData = [NSData dataWithBytes:sigret length:siglen];
             // Is this even right?
             let RData = [sigData subdataWithRange:NSMakeRange(0, 32)];
@@ -149,13 +153,19 @@ NS_ASSUME_NONNULL_BEGIN
             return @[rMPI, sMPI];
         } break;
         case PGPPublicKeyAlgorithmECDSA: {
-            // Reject x25519 and ed25519
-            if (key.signingSecretKey.curveOID.curveKind != PGPCurve25519 && key.signingSecretKey.curveOID.curveKind != PGPCurveEd25519) {
-                PGPLogWarning(@"Unsupported curve %@ kind for ECDSA algorithm", @(key.signingSecretKey.curveOID.curveKind));
-                return @[];
+            switch (key.signingSecretKey.curveOID.curveKind) {
+                case PGPCurve25519:
+                case PGPCurveEd25519:
+                    // Not compatible with ECDSA
+                    return @[];
+                case PGPCurveP256:
+                case PGPCurveP384:
+                case PGPCurveP521:
+                case PGPCurveBrainpoolP256r1:
+                case PGPCurveBrainpoolP512r1:
+                    // TODO: Implement ECDSA verification
+                    break;
             }
-
-            // TODO: Implement ECDSA verification
         } break;
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
