@@ -17,10 +17,7 @@ LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*] = $(SRCROOT)/vendor/libs/iphonesimula
 LIBRARY_SEARCH_PATHS[sdk=macosx*] = $(SRCROOT)/vendor/libs/macos/lib
 
 // We do not need to codesign tests for the simulator - disabling speeds up test compile (sign) time.
-CODE_SIGN_IDENTITY = iOS Developer
-CODE_SIGN_IDENTITY[sdk=iphoneos*] =
-CODE_SIGN_IDENTITY[sdk=iphonesimulator*] =
-CODE_SIGN_IDENTITY[sdk=macosx*] = 
+CODE_SIGN_IDENTITY =
 
 // Generating dSYM files is slow ;-(
 DEBUG_INFORMATION_FORMAT = dwarf-with-dsym;
