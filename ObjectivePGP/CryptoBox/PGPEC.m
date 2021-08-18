@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPCurveBrainpoolP256r1:
         case PGPCurveBrainpoolP512r1:
         case PGPCurveEd25519: {
-            NSAssert(NO, @"Curve %@ is not handled.", @(curveKind));
+            NSAssert(NO, @"Curve %@ support not implemented.", @(curveKind));
             return nil;
         }
         case PGPCurve25519:
@@ -153,7 +153,30 @@ NS_ASSUME_NONNULL_BEGIN
                 PGPLogWarning(@"Unsupported curve %@ kind for ECDSA algorithm", @(key.signingSecretKey.curveOID.curveKind));
                 return @[];
             }
+
+            // TODO: Implement ECDSA verification
         } break;
+        case PGPPublicKeyAlgorithmRSA:
+        case PGPPublicKeyAlgorithmRSAEncryptOnly:
+        case PGPPublicKeyAlgorithmRSASignOnly:
+        case PGPPublicKeyAlgorithmElgamal:
+        case PGPPublicKeyAlgorithmDSA:
+        case PGPPublicKeyAlgorithmECDH:
+        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
+        case PGPPublicKeyAlgorithmDiffieHellman:
+        case PGPPublicKeyAlgorithmPrivate1:
+        case PGPPublicKeyAlgorithmPrivate2:
+        case PGPPublicKeyAlgorithmPrivate3:
+        case PGPPublicKeyAlgorithmPrivate4:
+        case PGPPublicKeyAlgorithmPrivate5:
+        case PGPPublicKeyAlgorithmPrivate6:
+        case PGPPublicKeyAlgorithmPrivate7:
+        case PGPPublicKeyAlgorithmPrivate8:
+        case PGPPublicKeyAlgorithmPrivate9:
+        case PGPPublicKeyAlgorithmPrivate10:
+        case PGPPublicKeyAlgorithmPrivate11:
+            PGPLogDebug(@"EC Sign unsupported algorithm %@", @(key.signingSecretKey.publicKeyAlgorithm));
+        break;
     }
 
     return @[];
@@ -162,7 +185,6 @@ NS_ASSUME_NONNULL_BEGIN
 + (BOOL)verify:(NSData *)toVerify signature:(PGPSignaturePacket *)signaturePacket withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket {
     switch (publicKeyPacket.publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmEdDSA: {
-
             if (publicKeyPacket.curveOID.curveKind != PGPCurveEd25519) {
                 PGPLogWarning(@"Unsupported curve %@ kind for EdDSA algorithm", @(publicKeyPacket.curveOID.curveKind));
                 return NO;
@@ -209,7 +231,32 @@ NS_ASSUME_NONNULL_BEGIN
             }
 
         } break;
+        case PGPPublicKeyAlgorithmECDSA:
+            // TODO: Implement ECDSA verification
+        case PGPPublicKeyAlgorithmRSA:
+        case PGPPublicKeyAlgorithmRSAEncryptOnly:
+        case PGPPublicKeyAlgorithmRSASignOnly:
+        case PGPPublicKeyAlgorithmElgamal:
+        case PGPPublicKeyAlgorithmDSA:
+        case PGPPublicKeyAlgorithmECDH:
+        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
+        case PGPPublicKeyAlgorithmDiffieHellman:
+        case PGPPublicKeyAlgorithmPrivate1:
+        case PGPPublicKeyAlgorithmPrivate2:
+        case PGPPublicKeyAlgorithmPrivate3:
+        case PGPPublicKeyAlgorithmPrivate4:
+        case PGPPublicKeyAlgorithmPrivate5:
+        case PGPPublicKeyAlgorithmPrivate6:
+        case PGPPublicKeyAlgorithmPrivate7:
+        case PGPPublicKeyAlgorithmPrivate8:
+        case PGPPublicKeyAlgorithmPrivate9:
+        case PGPPublicKeyAlgorithmPrivate10:
+        case PGPPublicKeyAlgorithmPrivate11:
+            PGPLogDebug(@"EC Verify unsupported algorithm %@", @(publicKeyPacket.publicKeyAlgorithm));
+            return NO;
+        break;
     }
+
     return NO;
 }
 
