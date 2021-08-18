@@ -44,12 +44,13 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPCurveP521:
         case PGPCurveBrainpoolP256r1:
         case PGPCurveBrainpoolP512r1:
+            // TODO: Implement missing curves?
+            return nil;
         case PGPCurveEd25519: {
             NSAssert(NO, @"Curve %@ support not implemented.", @(curveKind));
             return nil;
-        }
-        case PGPCurve25519:
-        {
+        } break;
+        case PGPCurve25519: {
             // secret_key = reverse D bytes
             let secret_key = [privateKeyData pgp_reversed];
             let pkey_private_key_D = EVP_PKEY_new_raw_private_key(EVP_PKEY_X25519, NULL, secret_key.bytes, secret_key.length);
@@ -77,6 +78,11 @@ NS_ASSUME_NONNULL_BEGIN
             size_t derived_keylen = 32;
             let shared_key = OPENSSL_secure_malloc(derived_keylen);
             let ctx = EVP_PKEY_CTX_new(pkey_private_key_D, NULL);
+            pgp_defer {
+                OPENSSL_secure_clear_free(shared_key, derived_keylen);
+                EVP_PKEY_CTX_free(ctx);
+            };
+            
             if (!ctx || EVP_PKEY_derive_init(ctx) <= 0
                 || EVP_PKEY_derive_set_peer(ctx, pkey_public_key_V) <= 0
                 || EVP_PKEY_derive(ctx, shared_key, &derived_keylen) <= 0)
@@ -85,14 +91,9 @@ NS_ASSUME_NONNULL_BEGIN
                 PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
                 return nil;
             }
-            pgp_defer {
-                OPENSSL_secure_free(shared_key);
-                EVP_PKEY_CTX_free(ctx);
-            };
 
             return [NSData dataWithBytes:shared_key length:derived_keylen];
-        }
-        break;
+        } break;
     }
 }
 

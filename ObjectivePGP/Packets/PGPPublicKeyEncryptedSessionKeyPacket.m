@@ -186,6 +186,7 @@ NS_ASSUME_NONNULL_BEGIN
     self.parameters.MPIs = [publicKeyPacket encryptData:encoded withPublicKeyAlgorithm:self.publicKeyAlgorithm];
 }
 
+// ECDH only
 - (void)encodeAndEncryptECC:(PGPPublicKeyPacket *)publicKeyPacket data:(NSData *)data error:(NSError * __autoreleasing _Nullable *)error {
     // Q = dG
     let private_key_d = [PGPCryptoUtils randomData:32];
@@ -267,7 +268,7 @@ NS_ASSUME_NONNULL_BEGIN
     unsigned long wrapped_buf_length = paddedData.length + sizeof(UInt64);
     unsigned char *wrapped_buf = OPENSSL_secure_malloc(wrapped_buf_length);
     pgp_defer {
-        OPENSSL_secure_free(wrapped_buf);
+        OPENSSL_secure_clear_free(wrapped_buf, wrapped_buf_length);
     };
 
     if (AES_wrap_key(aes_key, NULL, wrapped_buf, paddedData.bytes, (int)paddedData.length) <= 0) {
@@ -387,14 +388,16 @@ NS_ASSUME_NONNULL_BEGIN
 
         unsigned char *unwrapped_buf = OPENSSL_secure_malloc(unwrapped_buf_length);
         pgp_defer {
-            OPENSSL_secure_free(unwrapped_buf);
+            OPENSSL_secure_clear_free(unwrapped_buf, unwrapped_buf_length);
         };
 
-        AES_KEY aes_key;
-        AES_set_decrypt_key(KEK.bytes, (int)KEK.length * sizeof(UInt64), &aes_key);
+        AES_KEY *aes_key = OPENSSL_secure_malloc(sizeof(AES_KEY));
+        pgp_defer {
+            OPENSSL_clear_free(aes_key, sizeof(AES_KEY));
+        };
+        AES_set_decrypt_key(KEK.bytes, (int)KEK.length * sizeof(UInt64), aes_key);
 
-        if (AES_unwrap_key(&aes_key, NULL, unwrapped_buf, C.bytes, (int)C.length) <= 0) {
-            memset(&aes_key, 0, sizeof(AES_KEY));
+        if (AES_unwrap_key(aes_key, NULL, unwrapped_buf, C.bytes, (int)C.length) <= 0) {
             return nil;
         }
 
@@ -406,7 +409,6 @@ NS_ASSUME_NONNULL_BEGIN
         if (c >= 1) {
             decoded = [decodedPadded subdataWithRange:NSMakeRange(0, unwrapped_buf_length - c)];
         }
-        memset(&aes_key, 0, sizeof(AES_KEY));
         return decoded;
     }
     return nil;
