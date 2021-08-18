@@ -35,14 +35,16 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (BOOL)verify:(NSData *)toVerify signature:(PGPSignaturePacket *)signaturePacket withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket {
     let sig = DSA_SIG_new();
-    pgp_defer { if (sig) { DSA_SIG_free(sig); } };
-    
-    let dsa = DSA_new();
-    pgp_defer { if (dsa) { DSA_free(dsa); } };
-
-    if (!dsa || !sig) {
+    if (!sig) {
         return NO;
     }
+    pgp_defer { DSA_SIG_free(sig); };
+    
+    let dsa = DSA_new();
+    if (!dsa) {
+        return NO;
+    }
+    pgp_defer { DSA_free(dsa); };
 
     let p = BN_dup([[[publicKeyPacket publicMPI:PGPMPIdentifierP] bigNum] bignumRef]);
     let q = BN_dup([[[publicKeyPacket publicMPI:PGPMPIdentifierQ] bigNum] bignumRef]);
@@ -68,22 +70,28 @@ NS_ASSUME_NONNULL_BEGIN
         hashLen = qlen;
     }
 
-    if (DSA_do_verify(toVerify.bytes, (int)hashLen, sig, dsa) < 0) {
+    let ret = DSA_do_verify(toVerify.bytes, (int)hashLen, sig, dsa);
+    if (ret < 0) {
         char *err_str = ERR_error_string(ERR_get_error(), NULL);
         PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
         return NO;
     }
 
-    return YES;
+    if (ret == 1) {
+        return YES;
+    }
+
+    return NO;
 }
 
 + (NSArray<PGPMPI *> *)sign:(NSData *)toSign key:(PGPKey *)key {
     let dsa = DSA_new();
-    pgp_defer { if (dsa) { DSA_free(dsa); } };
-
     if (!dsa) {
         return @[];
     }
+    pgp_defer {
+        DSA_free(dsa);
+    };
 
     let signingKeyPacket = key.signingSecretKey;
     let publicKeyPacket = PGPCast(key.publicKey.primaryKeyPacket, PGPPublicKeyPacket);

@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)init {
     if ((self = [super init])) {
         _MPIs = @[];
-        _ECDH_encodedSymmetricKey = nil;
+        _EC_encodedSymmetricKey = nil;
     }
     return self;
 }
@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (nonnull id)copyWithZone:(nullable NSZone *)zone {
     PGPPublicKeyEncryptedSessionKeyParams *duplicate = [[self.class alloc] init];
     duplicate.MPIs = self.MPIs;
-    duplicate.ECDH_encodedSymmetricKey = self.ECDH_encodedSymmetricKey;
+    duplicate.EC_encodedSymmetricKey = self.EC_encodedSymmetricKey;
     return duplicate;
 }
 

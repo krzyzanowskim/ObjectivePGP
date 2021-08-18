@@ -386,9 +386,6 @@ NS_ASSUME_NONNULL_BEGIN
     } else {
         PGPLogWarning(@"Cannot build secret key data. Missing secret MPIs....");
     }
-
-    // TODO: Verify ECC support!
-
     return data;
 }
 

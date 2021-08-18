@@ -125,7 +125,7 @@ NS_ASSUME_NONNULL_BEGIN
             position = position + keySize;
 
             self.parameters.MPIs = @[MPI_V];
-            self.parameters.ECDH_encodedSymmetricKey = encodedSymmetricKey;
+            self.parameters.EC_encodedSymmetricKey = encodedSymmetricKey;
         } break;
         case PGPPublicKeyAlgorithmECDSA:
         case PGPPublicKeyAlgorithmEdDSA:
@@ -187,8 +187,6 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)encodeAndEncryptECC:(PGPPublicKeyPacket *)publicKeyPacket data:(NSData *)data error:(NSError * __autoreleasing _Nullable *)error {
-    // TODO: todo. revert decodeECC
-
     // Q = dG
     let private_key_d = [PGPCryptoUtils randomData:32];
     let secret_key = [private_key_d pgp_reversed];
@@ -279,7 +277,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     let encoded = [NSData dataWithBytes:wrapped_buf length:wrapped_buf_length];
     self.parameters.MPIs = @[[[PGPMPI alloc] initWithData:public_key identifier:PGPMPIdentifierV]];
-    self.parameters.ECDH_encodedSymmetricKey = encoded;
+    self.parameters.EC_encodedSymmetricKey = encoded;
 }
 
 // encryption update self.encryptedMPIs
@@ -352,7 +350,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (nullable NSData *)decryptAndDecodeECC:(PGPSecretKeyPacket *)secretKeyPacket error:(NSError * __autoreleasing _Nullable *)error {
-    let C = self.parameters.ECDH_encodedSymmetricKey; // C aka ECDH Symmetric Key
+    let C = self.parameters.EC_encodedSymmetricKey; // C aka ECDH Symmetric Key
     let V = [[self parameterMPI:PGPMPIdentifierV] bodyData]; // V aka public encrypted
 
     // - Generate ECDHE secret from private key and public part of ephemeral key
@@ -528,10 +526,10 @@ NS_ASSUME_NONNULL_BEGIN
             let exportedMPI_VData = [[self parameterMPI:PGPMPIdentifierV] exportMPI];
             [bodyData appendData:exportedMPI_VData]; // v
 
-            let keySize = self.parameters.ECDH_encodedSymmetricKey.length;
+            let keySize = self.parameters.EC_encodedSymmetricKey.length;
             [bodyData appendBytes:&keySize length:1];
 
-            [bodyData pgp_appendData:self.parameters.ECDH_encodedSymmetricKey];
+            [bodyData pgp_appendData:self.parameters.EC_encodedSymmetricKey];
         }
         break;
         case PGPPublicKeyAlgorithmDSA:

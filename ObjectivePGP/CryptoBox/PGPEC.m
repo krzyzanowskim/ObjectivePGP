@@ -11,6 +11,8 @@
 #import "PGPSecretKeyPacket.h"
 #import "PGPSecretKeyPacket+Private.h"
 #import "PGPPublicKeyPacket+Private.h"
+#import "PGPSignaturePacket+Private.h"
+#import "PGPKey.h"
 #import "PGPBigNum+Private.h"
 #import "PGPCryptoUtils.h"
 #import "NSData+PGPUtils.h"
@@ -18,6 +20,7 @@
 
 #import "PGPLogging.h"
 #import "PGPMacros+Private.h"
+#import "PGPFoundation.h"
 
 #import <openssl/err.h>
 #import <openssl/ssl.h>
@@ -92,6 +95,124 @@ NS_ASSUME_NONNULL_BEGIN
         break;
     }
 }
+
+
++ (NSArray<PGPMPI *> *)sign:(NSData *)toSign key:(PGPKey *)key {
+    switch (key.signingSecretKey.publicKeyAlgorithm) {
+        case PGPPublicKeyAlgorithmEdDSA: {
+            if (key.signingSecretKey.curveOID.curveKind != PGPCurveEd25519) {
+                PGPLogWarning(@"Unsupported curve %@ kind for EdDSA algorithm", @(key.signingSecretKey.curveOID.curveKind));
+                return @[];
+            }
+
+            let SEED = [[key.signingSecretKey secretMPI:PGPMPIdentifierD] bodyData]; //
+            let pkey = EVP_PKEY_new_raw_private_key(EVP_PKEY_ED25519, NULL, SEED.bytes, SEED.length);
+            if (!pkey) {
+                char *err_str = ERR_error_string(ERR_get_error(), NULL);
+                PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+                return @[];
+            }
+            pgp_defer {
+                EVP_PKEY_free(pkey);
+            };
+
+            let ctx = EVP_MD_CTX_new();
+            pgp_defer {
+                EVP_MD_CTX_free(ctx);
+            };
+
+            if (EVP_DigestSignInit(ctx, NULL, NULL, NULL, pkey) <= 0) {
+                char *err_str = ERR_error_string(ERR_get_error(), NULL);
+                PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+                return @[];
+            }
+
+            size_t siglen = 0;
+            if (EVP_DigestSign(ctx, NULL, &siglen, toSign.bytes, toSign.length) <= 0) {
+                char *err_str = ERR_error_string(ERR_get_error(), NULL);
+                PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+                return @[];
+            }
+
+            unsigned char *sigret = OPENSSL_malloc(siglen);
+            pgp_defer {
+                OPENSSL_clear_free(sigret, siglen);
+            };
+            EVP_DigestSign(ctx, sigret, &siglen, toSign.bytes, toSign.length);
+            let sigData = [NSData dataWithBytes:sigret length:siglen];
+            // Is this even right?
+            let RData = [sigData subdataWithRange:NSMakeRange(0, 32)];
+            let SData = [sigData subdataWithRange:NSMakeRange(32, 32)];
+            let rMPI = [[PGPMPI alloc] initWithData:RData identifier:PGPMPIdentifierR];
+            let sMPI = [[PGPMPI alloc] initWithData:SData identifier:PGPMPIdentifierS];
+            return @[rMPI, sMPI];
+        } break;
+        case PGPPublicKeyAlgorithmECDSA: {
+            // Reject x25519 and ed25519
+            if (key.signingSecretKey.curveOID.curveKind != PGPCurve25519 && key.signingSecretKey.curveOID.curveKind != PGPCurveEd25519) {
+                PGPLogWarning(@"Unsupported curve %@ kind for ECDSA algorithm", @(key.signingSecretKey.curveOID.curveKind));
+                return @[];
+            }
+        } break;
+    }
+
+    return @[];
+}
+
++ (BOOL)verify:(NSData *)toVerify signature:(PGPSignaturePacket *)signaturePacket withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket {
+    switch (publicKeyPacket.publicKeyAlgorithm) {
+        case PGPPublicKeyAlgorithmEdDSA: {
+
+            if (publicKeyPacket.curveOID.curveKind != PGPCurveEd25519) {
+                PGPLogWarning(@"Unsupported curve %@ kind for EdDSA algorithm", @(publicKeyPacket.curveOID.curveKind));
+                return NO;
+            }
+
+            let Q = [[publicKeyPacket publicMPI:PGPMPIdentifierQ] bodyData]; // public key
+            let publicKey = [Q subdataWithRange:NSMakeRange(1, Q.length - 1)];
+            let pkey = EVP_PKEY_new_raw_public_key(EVP_PKEY_ED25519, NULL, publicKey.bytes, publicKey.length);
+            if (!pkey) {
+                char *err_str = ERR_error_string(ERR_get_error(), NULL);
+                PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+                return NO;
+            }
+            pgp_defer {
+                EVP_PKEY_free(pkey);
+            };
+
+            let ctx = EVP_MD_CTX_new();
+            pgp_defer {
+                EVP_MD_CTX_free(ctx);
+            };
+
+            if (EVP_DigestVerifyInit(ctx, NULL, NULL, NULL, pkey) <= 0) {
+                char *err_str = ERR_error_string(ERR_get_error(), NULL);
+                PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+                return NO;
+            }
+
+            let r = [[signaturePacket signatureMPI:PGPMPIdentifierR] bodyData];
+            let s = [[signaturePacket signatureMPI:PGPMPIdentifierS] bodyData];
+            let signatureData = [NSMutableData data];
+            [signatureData appendData:r];
+            [signatureData appendData:s];
+
+            let ret = EVP_DigestVerify(ctx, signatureData.bytes, signatureData.length, toVerify.bytes, toVerify.length);
+            if (ret < 0) {
+                char *err_str = ERR_error_string(ERR_get_error(), NULL);
+                PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+                return NO;
+            }
+
+            if (ret == 1) {
+                return YES;
+            }
+
+        } break;
+    }
+    return NO;
+}
+
 
 @end
 
