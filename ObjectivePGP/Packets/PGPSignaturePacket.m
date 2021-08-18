@@ -395,7 +395,8 @@ NS_ASSUME_NONNULL_BEGIN
             let _Nullable decryptedEmData = [PGPRSA publicDecrypt:encryptedEmData withPublicKeyPacket:signingKeyPacket];
 
             // calculate EM and compare with decrypted EM. PKCS-emsa Encoded M.
-            let emData = [PGPPKCSEmsa encode:self.hashAlgoritm message:toHashData encodedMessageLength:signingKeyPacket.keySize error:error];
+            let keySize = ([signingKeyPacket publicMPI:PGPMPIdentifierN].bigNum.bitsCount + 7) / 8; // ks;
+            let emData = [PGPPKCSEmsa encode:self.hashAlgoritm message:toHashData encodedMessageLength:keySize error:error];
             if (!PGPEqualObjects(emData, decryptedEmData)) {
                 if (error) {
                     *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"em hash dont match" }];
@@ -516,7 +517,8 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly: {
             // Encrypted m value (PKCS emsa encrypted)
-            let em = [PGPPKCSEmsa encode:self.hashAlgoritm message:toHashData encodedMessageLength:key.signingSecretKey.keySize error:nil];
+            let keySize = ([key.signingSecretKey publicMPI:PGPMPIdentifierN].bigNum.bitsCount + 7) / 8; // ks;
+            let em = [PGPPKCSEmsa encode:self.hashAlgoritm message:toHashData encodedMessageLength:keySize error:nil];
             let encryptedEmData = [PGPRSA privateEncrypt:em withSecretKeyPacket:key.signingSecretKey];
             if (!encryptedEmData) {
                 if (error) {

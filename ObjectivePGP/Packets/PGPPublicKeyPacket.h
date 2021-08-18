@@ -24,7 +24,6 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) PGPPublicKeyAlgorithm publicKeyAlgorithm;
 
 // generated properties
-@property (nonatomic, readonly) NSUInteger keySize;
 @property (nonatomic, readonly) PGPFingerprint *fingerprint;
 @property (nonatomic, readonly) PGPKeyID *keyID;
 @property (nonatomic, readonly) BOOL isSupported;

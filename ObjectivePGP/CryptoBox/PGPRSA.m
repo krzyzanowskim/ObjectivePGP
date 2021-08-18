@@ -37,6 +37,8 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
+    let keySize = ([publicKeyPacket publicMPI:PGPMPIdentifierN].bigNum.bitsCount + 7) / 8; // ks;
+
     let rsa = RSA_new();
     if (!rsa) {
         return nil;
@@ -48,7 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
     pgp_defer { free(encrypted_em); };
 
     int em_len = RSA_public_encrypt(toEncrypt.length & INT_MAX, toEncrypt.bytes, encrypted_em, rsa, RSA_NO_PADDING);
-    if (em_len == -1 || em_len != (publicKeyPacket.keySize & INT_MAX)) {
+    if (em_len == -1 || em_len != (keySize & INT_MAX)) {
         char *err_str = ERR_error_string(ERR_get_error(), NULL);
         PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
         return nil;
@@ -115,7 +117,9 @@ NS_ASSUME_NONNULL_BEGIN
     let p = BN_dup([[[secretKeyPacket secretMPI:PGPMPIdentifierQ] bigNum] bignumRef]); /* p and q are round the other way in openssl */
     let q = BN_dup([[[secretKeyPacket secretMPI:PGPMPIdentifierP] bigNum] bignumRef]);
 
-    if (toEncrypt.length > secretKeyPacket.keySize) {
+    NSUInteger keySize = ([secretKeyPacket publicMPI:PGPMPIdentifierN].bigNum.bitsCount + 7) / 8; // ks;
+
+    if (toEncrypt.length > keySize) {
         return nil;
     }
 
@@ -164,12 +168,16 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
+    NSUInteger keySize = ([publicKeyPacket publicMPI:PGPMPIdentifierN].bigNum.bitsCount + 7) / 8; // ks;
+
     RSA_set0_key(rsa, n, e, NULL);
 
-    uint8_t *decrypted_em = calloc(RSA_size(rsa) & SIZE_T_MAX, 1); // RSA_size(rsa) - 11
-    pgp_defer { free(decrypted_em); };
+    uint8_t *decrypted_em = OPENSSL_secure_malloc(RSA_size(rsa) & SIZE_T_MAX); // RSA_size(rsa) - 11
+    pgp_defer {
+        OPENSSL_secure_clear_free(decrypted_em, RSA_size(rsa) & SIZE_T_MAX);
+    };
     int em_len = RSA_public_decrypt(toDecrypt.length & INT_MAX, toDecrypt.bytes, decrypted_em, rsa, RSA_NO_PADDING);
-    if (em_len == -1 || em_len != (publicKeyPacket.keySize & INT_MAX)) {
+    if (em_len == -1 || em_len != (keySize & INT_MAX)) {
         char *err_str = ERR_error_string(ERR_get_error(), NULL);
         PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
         return nil;
