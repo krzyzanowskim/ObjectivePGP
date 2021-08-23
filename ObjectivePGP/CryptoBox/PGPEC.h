@@ -13,13 +13,16 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-@class PGPKey, PGPSignaturePacket;
+@class PGPKey, PGPSignaturePacket, PGPBigNum;
 
 @interface PGPEC : NSObject
 
 PGP_EMPTY_INIT_UNAVAILABLE;
 
 + (nullable NSData *)generatePrivateEphemeralKeyWith:(NSData *)publicKeyEphemeralPart curveKind:(PGPCurve)curveKind privateKey:(NSData *)privateKey;
+
++ (BOOL)publicEncrypt:(nonnull NSData *)data withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket publicKey:(NSData * __autoreleasing _Nullable * _Nullable)publicKey encodedSymmetricKey:(NSData * __autoreleasing _Nullable * _Nullable)encodedSymmetricKey;
+
 + (NSArray<PGPMPI *> *)sign:(NSData *)toSign key:(PGPKey *)key;
 + (BOOL)verify:(NSData *)toVerify signature:(PGPSignaturePacket *)signaturePacket withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket;
 

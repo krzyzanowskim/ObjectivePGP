@@ -14,6 +14,8 @@
 #import "PGPMPI.h"
 #import "PGPRSA.h"
 #import "PGPElgamal.h"
+#import "PGPEC.h"
+#import "PGPCryptoUtils.h"
 #import "PGPTypes.h"
 #import "PGPFoundation.h"
 #import "NSMutableData+PGPUtils.h"
@@ -23,6 +25,11 @@
 #import <CommonCrypto/CommonCrypto.h>
 #import <CommonCrypto/CommonCryptor.h>
 #import <CommonCrypto/CommonDigest.h>
+
+#import <openssl/err.h>
+#import <openssl/ssl.h>
+#import <openssl/evp.h>
+#import <openssl/aes.h>
 
 #import <objc/runtime.h>
 
@@ -366,7 +373,7 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark - Encrypt & Decrypt
 
 // data is mEMEEncoded
-- (nullable NSArray<PGPMPI *> *)encryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm {
+- (nullable NSArray<PGPMPI *> *)encryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm encodedSymmetricKey:(NSData * __autoreleasing _Nullable *)encodedSymmetricKey {
     switch (publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
@@ -382,7 +389,13 @@ NS_ASSUME_NONNULL_BEGIN
             let m = [[PGPMPI alloc] initWithBigNum:bigNums[1] identifier:PGPMPIdentifierM];
             return @[g_k, m];
         } break;
-        case PGPPublicKeyAlgorithmECDH:
+        case PGPPublicKeyAlgorithmECDH: {
+            NSData *publicKey = nil; // V
+            if (![PGPEC publicEncrypt:data withPublicKeyPacket:self publicKey:&publicKey encodedSymmetricKey:encodedSymmetricKey]) {
+                return nil;
+            }
+            return @[[[PGPMPI alloc] initWithData:publicKey identifier:PGPMPIdentifierV]];
+        } break;
         case PGPPublicKeyAlgorithmECDSA:
         case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:
