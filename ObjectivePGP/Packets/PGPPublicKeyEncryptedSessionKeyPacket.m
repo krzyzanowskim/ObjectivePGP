@@ -187,7 +187,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // ECDH only
-- (void)encodeAndEncryptECC:(PGPPublicKeyPacket *)publicKeyPacket data:(NSData *)data error:(NSError * __autoreleasing _Nullable *)error {
+- (void)encodeAndEncryptECDH:(PGPPublicKeyPacket *)publicKeyPacket data:(NSData *)data error:(NSError * __autoreleasing _Nullable *)error {
     // Q = dG
     let private_key_d = [PGPCryptoUtils randomData:32];
     let secret_key = [private_key_d pgp_reversed];
@@ -302,7 +302,7 @@ NS_ASSUME_NONNULL_BEGIN
             [self encodeAndEncryptElgamal:publicKeyPacket data:data error:error];
             break;
         case PGPPublicKeyAlgorithmECDH: {
-            [self encodeAndEncryptECC:publicKeyPacket data:data error:error];
+            [self encodeAndEncryptECDH:publicKeyPacket data:data error:error];
         } break;
         default:
             NSAssert(NO, @"Not handled");
@@ -350,7 +350,7 @@ NS_ASSUME_NONNULL_BEGIN
     return decoded;
 }
 
-- (nullable NSData *)decryptAndDecodeECC:(PGPSecretKeyPacket *)secretKeyPacket error:(NSError * __autoreleasing _Nullable *)error {
+- (nullable NSData *)decryptAndDecodeECDH:(PGPSecretKeyPacket *)secretKeyPacket error:(NSError * __autoreleasing _Nullable *)error {
     let C = self.parameters.EC_encodedSymmetricKey; // C aka ECDH Symmetric Key
     let V = [[self parameterMPI:PGPMPIdentifierV] bodyData]; // V aka public encrypted
 
@@ -435,7 +435,7 @@ NS_ASSUME_NONNULL_BEGIN
     NSData * _Nullable decoded = nil;
     switch (self.publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmECDH:
-            decoded = [self decryptAndDecodeECC:secretKeyPacket error:error];
+            decoded = [self decryptAndDecodeECDH:secretKeyPacket error:error];
             break;
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSASignOnly:
