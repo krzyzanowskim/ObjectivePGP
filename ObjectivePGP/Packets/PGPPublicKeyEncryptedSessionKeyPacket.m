@@ -268,7 +268,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     // - Generate ECDHE secret from private key and public part of ephemeral key
     let D = [[secretKeyPacket secretMPI: PGPMPIdentifierD] bodyData]; // private key
-    let sharedKey = [PGPEC generatePrivateEphemeralKeyWith:V curveKind:secretKeyPacket.curveOID.curveKind privateKey:D];
+    let sharedKey = [PGPEC generate25519PrivateEphemeralKeyWith:V curveKind:secretKeyPacket.curveOID.curveKind privateKey:D];
 
     // - The KDF parameters https://datatracker.ietf.org/doc/html/rfc6637#section-8
     let kdfParam = [NSMutableData data];

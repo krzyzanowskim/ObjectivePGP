@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 PGP_EMPTY_INIT_UNAVAILABLE;
 
-+ (nullable NSData *)generatePrivateEphemeralKeyWith:(NSData *)publicKeyEphemeralPart curveKind:(PGPCurve)curveKind privateKey:(NSData *)privateKey;
++ (nullable NSData *)generate25519PrivateEphemeralKeyWith:(NSData *)publicKeyEphemeralPart curveKind:(PGPCurve)curveKind privateKey:(NSData *)privateKey;
 
 + (BOOL)publicEncrypt:(nonnull NSData *)data withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket publicKey:(NSData * __autoreleasing _Nullable * _Nullable)publicKey encodedSymmetricKey:(NSData * __autoreleasing _Nullable * _Nullable)encodedSymmetricKey;
 
