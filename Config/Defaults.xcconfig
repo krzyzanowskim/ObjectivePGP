@@ -17,10 +17,7 @@ LIBRARY_SEARCH_PATHS[sdk=iphonesimulator*] = $(SRCROOT)/vendor/libs/iphonesimula
 LIBRARY_SEARCH_PATHS[sdk=macosx*] = $(SRCROOT)/vendor/libs/macos/lib
 
 // We do not need to codesign tests for the simulator - disabling speeds up test compile (sign) time.
-CODE_SIGN_IDENTITY = iOS Developer
-CODE_SIGN_IDENTITY[sdk=iphoneos*] =
-CODE_SIGN_IDENTITY[sdk=iphonesimulator*] =
-CODE_SIGN_IDENTITY[sdk=macosx*] = 
+CODE_SIGN_IDENTITY =
 
 // Generating dSYM files is slow ;-(
 DEBUG_INFORMATION_FORMAT = dwarf-with-dsym;
@@ -50,7 +47,7 @@ UNEXPORTED_SYMBOLS_FILE[sdk=macosx*] = $(SRCROOT)/vendor/libs/macos/symbols
 SDKROOT = 
 
 OTHER_LDFLAGS = -ObjC -lbz2 -lz
-ENABLE_BITCODE = YES
+ENABLE_BITCODE = NO
 ENABLE_BITCODE[sdk=macosx*] = NO
 
 // Boolean value. Specifies whether the generated object code is nonrelocatable (external references remain relocatable). Making code nonrelocatable results in faster function calls. This feature is appropriate in applications but not dynamic libraries.
@@ -140,8 +137,9 @@ PGP_PREPROCESSOR_DEFINITIONS_COMMON = $(inherited) PGP_APP_EXPORT_SYMBOLS=1
 GCC_PREPROCESSOR_DEFINITIONS = $(PGP_PREPROCESSOR_DEFINITIONS_COMMON)
 
 // :MARK: - Reset Diagnostics:
+WARNING_CFLAGS = -Wimplicit-fallthrough
 ENABLE_STRICT_OBJC_MSGSEND = YES
-// CLANG_WARN_DOCUMENTATION_COMMENTS = YES
+CLANG_WARN_DOCUMENTATION_COMMENTS = YES
 CLANG_WARN_EMPTY_BODY = YES
 GCC_WARN_FOUR_CHARACTER_CONSTANTS = YES
 GCC_WARN_SHADOW = YES
@@ -167,7 +165,8 @@ GCC_WARN_UNKNOWN_PRAGMAS = YES
 CLANG_WARN_UNREACHABLE_CODE = YES
 GCC_WARN_UNUSED_FUNCTION = YES
 GCC_WARN_UNUSED_LABEL = YES
-// GCC_WARN_UNUSED_PARAMETER = YES
+CLANG_WARN_DOCUMENTATION_COMMENTS = YES
+GCC_WARN_UNUSED_PARAMETER = YES
 GCC_WARN_UNUSED_VARIABLE = YES
 CLANG_WARN__EXIT_TIME_DESTRUCTORS = YES
 GCC_WARN_NON_VIRTUAL_DESTRUCTOR = YES

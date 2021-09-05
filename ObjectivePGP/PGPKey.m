@@ -46,7 +46,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"%@, publicKey: %@, secretKey: %@", super.description, self.publicKey.keyID, self.secretKey.keyID];
+    return [NSString stringWithFormat:@"%@\npublicKey: (%@)\nsecretKey: (%@)", super.description, self.publicKey, self.secretKey];
 }
 
 - (nullable NSDate *)expirationDate {

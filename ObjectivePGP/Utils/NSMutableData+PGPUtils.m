@@ -19,6 +19,10 @@ NS_ASSUME_NONNULL_BEGIN
     }
 }
 
+- (void)pgp_appendByte:(UInt8)value {
+    [self appendBytes:&value length:sizeof(UInt8)];
+}
+
 - (void)XORWithData:(NSData *)data index:(NSUInteger)index {
     uint8_t *dataPtr = (uint8_t *)self.mutableBytes;
     const uint8_t *data2Ptr = (uint8_t *)data.bytes;

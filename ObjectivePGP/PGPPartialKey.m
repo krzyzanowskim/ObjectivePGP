@@ -42,7 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"%@, Type %@, primary key: %@", [super description], self.type == PGPKeyTypePublic ? @"public" : @"secret", self.primaryKeyPacket];
+    return [NSString stringWithFormat:@"%@, primaryKeyPacket: %@", [super description], self.primaryKeyPacket];
 }
 
 #pragma mark - Properties
@@ -130,10 +130,12 @@ NS_ASSUME_NONNULL_BEGIN
             case PGPPublicKeyPacketTag:
                 primaryKeyID = PGPCast(packet, PGPPublicKeyPacket).keyID;
                 self.primaryKeyPacket = packet;
+                self.type = PGPKeyTypePublic;
                 break;
             case PGPSecretKeyPacketTag:
-                primaryKeyID = PGPCast(packet, PGPPublicKeyPacket).keyID;
+                primaryKeyID = PGPCast(packet, PGPSecretKeyPacket).keyID;
                 self.primaryKeyPacket = packet;
+                self.type = PGPKeyTypeSecret;
                 break;
             case PGPUserAttributePacketTag:
                 if (!user) {
@@ -147,6 +149,10 @@ NS_ASSUME_NONNULL_BEGIN
                 self.users = [self.users arrayByAddingObject:parsedUser];
             } break;
             case PGPPublicSubkeyPacketTag:
+                user = nil;
+                subKey = [[PGPPartialSubKey alloc] initWithPacket:packet];
+                self.subKeys = [self.subKeys arrayByAddingObject:subKey];
+                break;
             case PGPSecretSubkeyPacketTag:
                 user = nil;
                 subKey = [[PGPPartialSubKey alloc] initWithPacket:packet];
@@ -303,7 +309,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable PGPSecretKeyPacket *)decryptionPacketForKeyID:(PGPKeyID *)keyID error:(NSError * __autoreleasing _Nullable *)error {
     NSAssert(self.type == PGPKeyTypeSecret, @"Need secret key to encrypt");
-    if (self.type == PGPKeyTypePublic) {
+    if (self.type != PGPKeyTypeSecret) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:0 userInfo:@{ NSLocalizedDescriptionKey: @"Wrong key type, require secret key" }];
         }
@@ -313,12 +319,22 @@ NS_ASSUME_NONNULL_BEGIN
 
     for (PGPPartialSubKey *subKey in self.subKeys) {
         let signaturePacket = subKey.bindingSignature;
-        if (signaturePacket.canBeUsedToEncrypt && PGPEqualObjects(PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket).keyID, keyID)) {
+        if (signaturePacket && signaturePacket.canBeUsedToEncrypt
+                            && PGPEqualObjects(PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket).keyID, keyID))
+        {
             return PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket);
         }
     }
 
-    // assume primary key is always capable
+    // look for any subkey that can be used - assume there's one that can be used
+    for (PGPPartialSubKey *subKey in self.subKeys) {
+        if (PGPEqualObjects(PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket).keyID, keyID)) {
+            return PGPCast(subKey.primaryKeyPacket, PGPSecretKeyPacket);
+        }
+    }
+
+
+    // last resort, assume primary key is always capable
     if (PGPEqualObjects(PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket).keyID, keyID)) {
         return PGPCast(self.primaryKeyPacket, PGPSecretKeyPacket);
     }
@@ -432,6 +448,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable PGPUser *)primaryUser {
     let _Nullable primaryUsers = [[self.users pgp_objectsPassingTest:^BOOL(PGPUser *user, BOOL *stop) {
+        *stop = NO;
         return user.userID && user.userID.length > 0;
     }] pgp_flatMap:^NSArray * _Nullable (PGPUser *user) {
         let _Nullable latestSelfCertificate = user.latestSelfCertificate;

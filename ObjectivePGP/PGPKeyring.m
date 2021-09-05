@@ -101,7 +101,11 @@
 }
 
 - (nullable PGPKey *)findKeyWithKeyID:(PGPKeyID *)searchKeyID {
-    return [self.class findKeyWithKeyID:searchKeyID in:self.keys];
+    var key = [self.class findKeyWithKeyID:searchKeyID type:PGPKeyTypePublic in:self.keys];
+    if (!key) {
+        key = [self.class findKeyWithKeyID:searchKeyID type:PGPKeyTypeSecret in:self.keys];
+    }
+    return key;
 }
 
 - (nullable PGPKey *)findKeyWithIdentifier:(NSString *)keyIdentifier {
@@ -214,25 +218,25 @@
     return result;
 }
 
-+ (nullable PGPKey *)findKeyWithKeyID:(PGPKeyID *)searchKeyID in:(NSArray<PGPKey *> *)keys {
++ (nullable PGPKey *)findKeyWithKeyID:(PGPKeyID *)searchKeyID type:(PGPKeyType)type in:(NSArray<PGPKey *> *)keys {
     PGPAssertClass(searchKeyID, PGPKeyID);
 
     return [[keys pgp_objectsPassingTest:^BOOL(PGPKey *key, BOOL *stop) {
         // top-level keys
-        __block BOOL found = (key.publicKey && PGPEqualObjects(key.publicKey.keyID, searchKeyID));
+        __block BOOL found = (type == PGPKeyTypePublic && key.publicKey && PGPEqualObjects(key.publicKey.keyID, searchKeyID));
         if (!found) {
-            found = (key.secretKey && PGPEqualObjects(key.secretKey.keyID,searchKeyID));
+            found = (type == PGPKeyTypeSecret && key.secretKey && PGPEqualObjects(key.secretKey.keyID,searchKeyID));
         }
 
         // subkeys
-        if (!found && key.publicKey.subKeys.count > 0) {
+        if (!found && type == PGPKeyTypePublic && key.publicKey.subKeys.count > 0) {
             found = [key.publicKey.subKeys indexOfObjectPassingTest:^BOOL(PGPPartialSubKey *subkey, __unused NSUInteger idx, BOOL *stop2) {
                 *stop2 = PGPEqualObjects(subkey.keyID,searchKeyID);
                 return *stop2;
             }] != NSNotFound;
         }
 
-        if (!found && key.secretKey.subKeys.count > 0) {
+        if (!found && type == PGPKeyTypeSecret && key.secretKey.subKeys.count > 0) {
             found = [key.secretKey.subKeys indexOfObjectPassingTest:^BOOL(PGPPartialSubKey *subkey, __unused NSUInteger idx, BOOL *stop2) {
                 *stop2 = PGPEqualObjects(subkey.keyID,searchKeyID);
                 return *stop2;

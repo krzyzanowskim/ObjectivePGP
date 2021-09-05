@@ -15,6 +15,7 @@
 #import "PGPPartialKey.h"
 #import "PGPRSA.h"
 #import "PGPDSA.h"
+#import "PGPEC.h"
 #import "PGPSecretKeyPacket.h"
 #import "PGPSignatureSubpacket.h"
 #import "PGPSignatureSubpacket+Private.h"
@@ -192,10 +193,9 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL)canBeUsedToSign {
-    BOOL result = self.publicKeyAlgorithm == PGPPublicKeyAlgorithmDSA ||
-                  self.publicKeyAlgorithm == PGPPublicKeyAlgorithmRSA ||
-                  self.publicKeyAlgorithm == PGPPublicKeyAlgorithmRSASignOnly;
-                  // PGPPublicKeyAlgorithmElgamalEncryptorSign is deprecated that is not expected to be used here
+    BOOL result = self.publicKeyAlgorithm != PGPPublicKeyAlgorithmRSAEncryptOnly
+               && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmElgamal
+               && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmECDH;
 
     if (result) {
         PGPSignatureSubpacket *subpacket = [[self subpacketsOfType:PGPSignatureSubpacketTypeKeyFlags] firstObject];
@@ -219,13 +219,13 @@ NS_ASSUME_NONNULL_BEGIN
     } else {
       // Check self flags for whether encryption for main key is allowed (by excluding known sign-only options because it's short list)
       result = self.publicKeyAlgorithm != PGPPublicKeyAlgorithmRSASignOnly &&
-               self.publicKeyAlgorithm != PGPPublicKeyAlgorithmElgamalEncryptorSign &&
-               self.publicKeyAlgorithm != PGPPublicKeyAlgorithmDSA;
+               self.publicKeyAlgorithm != PGPPublicKeyAlgorithmElgamalEncryptorSign;
+               // While it may be disputable if DSA should be included in the list: It shouldn't - DSA is not sign-only
     }
 
-    // I'm not convinced if DSA is allowed here self.publicKeyAlgorithm != PGPPublicKeyAlgorithmDSA
     result = result && self.publicKeyAlgorithm != PGPPublicKeyAlgorithmRSASignOnly &&
                        self.publicKeyAlgorithm != PGPPublicKeyAlgorithmElgamalEncryptorSign;
+                       // While it may be disputable if DSA should be included in the list: It shouldn't - DSA is not sign-only
 
     return result;
 }
@@ -291,7 +291,7 @@ NS_ASSUME_NONNULL_BEGIN
     }
     [data pgp_appendData:self.signedHashValueData];
 
-    // signed PGPMPI_M
+    // signed PGPMPIdentifierM
     if (self.signatureMPIs.count == 0) {
         PGPLogError(@"Missing MPI for the signature.");
         return nil;
@@ -395,7 +395,8 @@ NS_ASSUME_NONNULL_BEGIN
             let _Nullable decryptedEmData = [PGPRSA publicDecrypt:encryptedEmData withPublicKeyPacket:signingKeyPacket];
 
             // calculate EM and compare with decrypted EM. PKCS-emsa Encoded M.
-            let emData = [PGPPKCSEmsa encode:self.hashAlgoritm message:toHashData encodedMessageLength:signingKeyPacket.keySize error:error];
+            let keySize = ([signingKeyPacket publicMPI:PGPMPIdentifierN].bigNum.bitsCount + 7) / 8; // ks;
+            let emData = [PGPPKCSEmsa encode:self.hashAlgoritm message:toHashData encodedMessageLength:keySize error:error];
             if (!PGPEqualObjects(emData, decryptedEmData)) {
                 if (error) {
                     *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"em hash dont match" }];
@@ -406,9 +407,12 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmDSA:{
             return [PGPDSA verify:toHashData signature:self withPublicKeyPacket:signingKeyPacket];
         } break;
-        case PGPPublicKeyAlgorithmECDSA:
+        case PGPPublicKeyAlgorithmEdDSA: {
+            return [PGPEC verify:toHashData signature:self withPublicKeyPacket:signingKeyPacket];
+        } break;
+        case PGPPublicKeyAlgorithmECDH:
         case PGPPublicKeyAlgorithmElgamal:
-        case PGPPublicKeyAlgorithmElliptic:
+        case PGPPublicKeyAlgorithmECDSA:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:
         case PGPPublicKeyAlgorithmDiffieHellman:
         case PGPPublicKeyAlgorithmPrivate1:
@@ -462,7 +466,7 @@ NS_ASSUME_NONNULL_BEGIN
         return NO;
     }
 
-    // TODO: check it this is right ? setup public key algorithm from secret key packet
+    // it this is right? set public key algorithm from secret key packet
     self.publicKeyAlgorithm = key.signingSecretKey.publicKeyAlgorithm;
 
     if (key.signingSecretKey.isEncryptedWithPassphrase && passphrase && passphrase.length > 0) {
@@ -513,9 +517,9 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly: {
             // Encrypted m value (PKCS emsa encrypted)
-            NSData *em = [PGPPKCSEmsa encode:self.hashAlgoritm message:toHashData encodedMessageLength:key.signingSecretKey.keySize error:nil];
-            NSData *encryptedEmData = nil;
-            encryptedEmData = [PGPRSA privateEncrypt:em withSecretKeyPacket:key.signingSecretKey];
+            let keySize = ([key.signingSecretKey publicMPI:PGPMPIdentifierN].bigNum.bitsCount + 7) / 8; // ks;
+            let em = [PGPPKCSEmsa encode:self.hashAlgoritm message:toHashData encodedMessageLength:keySize error:nil];
+            let encryptedEmData = [PGPRSA privateEncrypt:em withSecretKeyPacket:key.signingSecretKey];
             if (!encryptedEmData) {
                 if (error) {
                     *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Sign Encryption failed" }];
@@ -524,14 +528,37 @@ NS_ASSUME_NONNULL_BEGIN
             }
 
             // store signature data as MPI
-            self.signatureMPIs = @[[[PGPMPI alloc] initWithData:encryptedEmData identifier:PGPMPI_M]];
+            self.signatureMPIs = @[[[PGPMPI alloc] initWithData:encryptedEmData identifier:PGPMPIdentifierM]];
         } break;
-        case PGPPublicKeyAlgorithmDSA:
-            self.signatureMPIs = [PGPDSA sign:toHashData key:key];
-        break;
-        case PGPPublicKeyAlgorithmECDSA:
+        case PGPPublicKeyAlgorithmDSA: {
+            let mpis = [PGPDSA sign:toHashData key:key];
+            if (mpis.count == 0) {
+                if (error) {
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Sign Encryption failed" }];
+                }
+                return NO;
+            }
+            self.signatureMPIs = mpis;
+        } break;
+        case PGPPublicKeyAlgorithmEdDSA: {
+            if (self.hashAlgoritm < PGPHashSHA256) {
+                if (error) {
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Hash algorithm too weak: sha256 or stronger is required for EdDSA." }];
+                }
+                return NO;
+            }
+            let mpis = [PGPEC sign:toHashData key:key];
+            if (mpis.count == 0) {
+                if (error) {
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Sign Encryption failed" }];
+                }
+                return NO;
+            }
+            self.signatureMPIs = mpis;
+        } break;
+        case PGPPublicKeyAlgorithmECDH:
         case PGPPublicKeyAlgorithmElgamal:
-        case PGPPublicKeyAlgorithmElliptic:
+        case PGPPublicKeyAlgorithmECDSA:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:
         case PGPPublicKeyAlgorithmDiffieHellman:
         case PGPPublicKeyAlgorithmPrivate1:
@@ -785,36 +812,40 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmRSASignOnly: {
             // multiprecision integer (MPI) of RSA signature value m**d mod n.
             // MPI of RSA public modulus n;
-            let mpiN = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_N atPosition:position];
+            let mpiN = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierN atPosition:position];
             position = position + mpiN.packetLength;
 
             self.signatureMPIs = @[mpiN];
         } break;
-        case PGPPublicKeyAlgorithmDSA: {
+        case PGPPublicKeyAlgorithmDSA:
+        case PGPPublicKeyAlgorithmECDSA:
+        {
             // MPI of DSA value r.
-            let mpiR = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_R atPosition:position];
+            let mpiR = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierR atPosition:position];
             position = position + mpiR.packetLength;
 
             // MPI of DSA value s.
-            let mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_S atPosition:position];
+            let mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierS atPosition:position];
             position = position + mpiS.packetLength;
 
             self.signatureMPIs = @[mpiR, mpiS];
+        } break;
+        case PGPPublicKeyAlgorithmEdDSA: {
+            NSAssert(NO, @"A version 3 signature MUST NOT be created and MUST NOT be used with EdDSA");
         } break;
         case PGPPublicKeyAlgorithmElgamalEncryptorSign: {
             // MPI of Elgamal (Diffie-Hellman) value g**k mod p.
-            let mpiR = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_R atPosition:position];
+            let mpiR = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierR atPosition:position];
             position = position + mpiR.packetLength;
 
             // MPI of Elgamal (Diffie-Hellman) value m * y**k mod p.
-            let mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_S atPosition:position];
+            let mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierS atPosition:position];
             position = position + mpiS.packetLength;
 
             self.signatureMPIs = @[mpiR, mpiS];
         } break;
-        case PGPPublicKeyAlgorithmECDSA:
+        case PGPPublicKeyAlgorithmECDH:
         case PGPPublicKeyAlgorithmElgamal: // encrypt only. ignore.
-        case PGPPublicKeyAlgorithmElliptic:
         case PGPPublicKeyAlgorithmDiffieHellman:
         case PGPPublicKeyAlgorithmPrivate1:
         case PGPPublicKeyAlgorithmPrivate2:
@@ -949,36 +980,47 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmRSASignOnly: {
             // multiprecision integer (MPI) of RSA signature value m**d mod n.
             // MPI of RSA public modulus n;
-            PGPMPI *mpiN = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_N atPosition:position];
+            PGPMPI *mpiN = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierN atPosition:position];
             position = position + mpiN.packetLength;
 
             self.signatureMPIs = @[mpiN];
         } break;
-        case PGPPublicKeyAlgorithmDSA: {
+        case PGPPublicKeyAlgorithmDSA:
+        case PGPPublicKeyAlgorithmECDSA: {
             // MPI of DSA value r.
-            PGPMPI *mpiR = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_R atPosition:position];
+            PGPMPI *mpiR = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierR atPosition:position];
             position = position + mpiR.packetLength;
 
             // MPI of DSA value s.
-            PGPMPI *mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_S atPosition:position];
+            PGPMPI *mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierS atPosition:position];
+            position = position + mpiS.packetLength;
+
+            self.signatureMPIs = @[mpiR, mpiS];
+        } break;
+        case PGPPublicKeyAlgorithmEdDSA: {
+            // MPI of an EC point r.
+            let mpiR = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierR atPosition:position];
+            position = position + mpiR.packetLength;
+
+            // EdDSA value s, in MPI, in the little endian representation
+            let mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierS atPosition:position];
             position = position + mpiS.packetLength;
 
             self.signatureMPIs = @[mpiR, mpiS];
         } break;
         case PGPPublicKeyAlgorithmElgamalEncryptorSign: {
             // MPI of Elgamal (Diffie-Hellman) value g**k mod p.
-            PGPMPI *mpiR = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_R atPosition:position];
+            PGPMPI *mpiR = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierR atPosition:position];
             position = position + mpiR.packetLength;
 
             // MPI of Elgamal (Diffie-Hellman) value m * y**k mod p.
-            PGPMPI *mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_S atPosition:position];
+            PGPMPI *mpiS = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierS atPosition:position];
             position = position + mpiS.packetLength;
 
             self.signatureMPIs = @[mpiR, mpiS];
         } break;
-        case PGPPublicKeyAlgorithmECDSA:
+        case PGPPublicKeyAlgorithmECDH:
         case PGPPublicKeyAlgorithmElgamal: // encrypt only. ignore.
-        case PGPPublicKeyAlgorithmElliptic:
         case PGPPublicKeyAlgorithmDiffieHellman:
         case PGPPublicKeyAlgorithmPrivate1:
         case PGPPublicKeyAlgorithmPrivate2:

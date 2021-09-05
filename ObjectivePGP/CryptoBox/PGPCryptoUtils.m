@@ -11,8 +11,10 @@
 #import "PGPDSA.h"
 #import "PGPElgamal.h"
 #import "NSArray+PGPUtils.h"
+#import "PGPPublicKeyPacket+Private.h"
 #import "PGPSecretKeyPacket.h"
 #import "PGPMacros+Private.h"
+#import "PGPBigNum+Private.h"
 #import "PGPLogging.h"
 
 #import <CommonCrypto/CommonCrypto.h>
@@ -33,6 +35,8 @@ NS_ASSUME_NONNULL_BEGIN
 // Block size (octets)
 + (NSUInteger)blockSizeOfSymmetricAlhorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm {
     switch (symmetricAlgorithm) {
+        case PGPSymmetricPlaintext:
+            break;
         case PGPSymmetricIDEA:
             return IDEA_BLOCK;
         case PGPSymmetricTripleDES:
@@ -47,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
             return kCCBlockSizeAES128;
         case PGPSymmetricTwofish256:
             return 16; // 128bit
-        default:
+        case PGPSymmetricMax:
             break;
     }
     return NSNotFound;
@@ -105,53 +109,6 @@ NS_ASSUME_NONNULL_BEGIN
     int status = SecRandomCopyBytes(kSecRandomDefault, length, data.mutableBytes);
     NSAssert(status == errSecSuccess, @"Failed to generate secure random bytes");
     return data;
-}
-
-+ (nullable NSData *)decrypt:(NSData *)data usingSecretKeyPacket:(PGPSecretKeyPacket *)keyPacket encryptedMPIs:(NSArray <PGPMPI *> *)encryptedMPIs {
-    PGPAssertClass(data, NSData);
-
-    switch (keyPacket.publicKeyAlgorithm) {
-        case PGPPublicKeyAlgorithmRSA:
-        case PGPPublicKeyAlgorithmRSAEncryptOnly:
-        case PGPPublicKeyAlgorithmRSASignOnly:
-            // return decrypted m
-            return [PGPRSA privateDecrypt:data withSecretKeyPacket:keyPacket];
-        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
-        case PGPPublicKeyAlgorithmElgamal: {
-            // return decrypted m
-            // encryptedMPIs has g^k as PGPMPI_G
-            let g_k_mpi = [[encryptedMPIs pgp_objectsPassingTest:^BOOL(PGPMPI *obj, BOOL *stop) {
-                *stop = [obj.identifier isEqual:PGPMPI_G];
-                return *stop;
-            }] firstObject];
-
-            if (!g_k_mpi) {
-                PGPLogWarning(@"Invalid key, can't decrypt. Missing g^k.");
-                return nil;
-            }
-
-            return [PGPElgamal privateDecrypt:data withSecretKeyPacket:keyPacket gk:g_k_mpi];
-       } break;
-        case PGPPublicKeyAlgorithmDSA:
-        case PGPPublicKeyAlgorithmElliptic:
-        case PGPPublicKeyAlgorithmECDSA:
-        case PGPPublicKeyAlgorithmDiffieHellman:
-        case PGPPublicKeyAlgorithmPrivate1:
-        case PGPPublicKeyAlgorithmPrivate2:
-        case PGPPublicKeyAlgorithmPrivate3:
-        case PGPPublicKeyAlgorithmPrivate4:
-        case PGPPublicKeyAlgorithmPrivate5:
-        case PGPPublicKeyAlgorithmPrivate6:
-        case PGPPublicKeyAlgorithmPrivate7:
-        case PGPPublicKeyAlgorithmPrivate8:
-        case PGPPublicKeyAlgorithmPrivate9:
-        case PGPPublicKeyAlgorithmPrivate10:
-        case PGPPublicKeyAlgorithmPrivate11:
-            PGPLogWarning(@"Algorithm %@ is not supported.", @(keyPacket.publicKeyAlgorithm));
-            break;
-
-    }
-    return nil;
 }
 
 @end

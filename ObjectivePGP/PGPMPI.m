@@ -18,18 +18,21 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-NSString * const PGPMPI_N = @"N";
-NSString * const PGPMPI_E = @"E";
-NSString * const PGPMPI_P = @"P"; // Prime
-NSString * const PGPMPI_G = @"G"; // Generator
-NSString * const PGPMPI_Q = @"Q";
-NSString * const PGPMPI_D = @"D";
-NSString * const PGPMPI_U = @"U";
-NSString * const PGPMPI_X = @"X"; // secret
-NSString * const PGPMPI_R = @"R";
-NSString * const PGPMPI_S = @"S";
-NSString * const PGPMPI_Y = @"Y"; // public key. For Elgamal public key value y (= g**x mod p where x is secret).
-NSString * const PGPMPI_M = @"M";
+PGPMPIdentifier const PGPMPIdentifierN = @"N";
+PGPMPIdentifier const PGPMPIdentifierE = @"E";
+PGPMPIdentifier const PGPMPIdentifierP = @"P"; // Prime
+PGPMPIdentifier const PGPMPIdentifierG = @"G"; // Generator
+PGPMPIdentifier const PGPMPIdentifierQ = @"Q"; // ECC public key
+PGPMPIdentifier const PGPMPIdentifierD = @"D"; // ECC secret key
+PGPMPIdentifier const PGPMPIdentifierU = @"U";
+PGPMPIdentifier const PGPMPIdentifierX = @"X"; // secret
+PGPMPIdentifier const PGPMPIdentifierR = @"R";
+PGPMPIdentifier const PGPMPIdentifierS = @"S";
+PGPMPIdentifier const PGPMPIdentifierY = @"Y"; // public key. For Elgamal public key value y (= g**x mod p where x is secret).
+PGPMPIdentifier const PGPMPIdentifierM = @"M";
+PGPMPIdentifier const PGPMPIdentifierV = @"V"; // EC public point
+//EC public key R
+//EC shared point S
 
 @interface PGPMPI ()
 

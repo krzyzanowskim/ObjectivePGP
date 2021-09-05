@@ -10,9 +10,12 @@
 #import "PGPPacket+Private.h"
 #import "NSData+PGPUtils.h"
 #import "NSArray+PGPUtils.h"
+#import "PGPCurveOID.h"
 #import "PGPMPI.h"
 #import "PGPRSA.h"
 #import "PGPElgamal.h"
+#import "PGPEC.h"
+#import "PGPCryptoUtils.h"
 #import "PGPTypes.h"
 #import "PGPFoundation.h"
 #import "NSMutableData+PGPUtils.h"
@@ -22,6 +25,11 @@
 #import <CommonCrypto/CommonCrypto.h>
 #import <CommonCrypto/CommonCryptor.h>
 #import <CommonCrypto/CommonDigest.h>
+
+#import <openssl/err.h>
+#import <openssl/ssl.h>
+#import <openssl/evp.h>
+#import <openssl/aes.h>
 
 #import <objc/runtime.h>
 
@@ -43,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (NSString *)description {
-    return [NSString stringWithFormat:@"%@ %@", [super description], self.keyID];
+    return [NSString stringWithFormat:@"%@, algo: %@, keyID: %@", [super description], @(self.publicKeyAlgorithm), self.keyID];
 }
 
 - (nullable PGPMPI *)publicMPI:(NSString *)identifier {
@@ -56,12 +64,6 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 #pragma mark - Properties
-
-- (NSUInteger)keySize {
-    //TODO: Elgamal, how about elgamal?
-    let mpi = [self publicMPI:PGPMPI_N];
-    return (mpi.bigNum.bitsCount + 7) / 8; // ks;
-}
 
 /**
  *  12.2.  Key IDs and Fingerprints
@@ -90,10 +92,11 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmElgamal:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:
-            return YES;
+        case PGPPublicKeyAlgorithmECDH:
         case PGPPublicKeyAlgorithmECDSA:
-        case PGPPublicKeyAlgorithmElliptic:
+        case PGPPublicKeyAlgorithmEdDSA:
         case PGPPublicKeyAlgorithmDiffieHellman:
+            return YES;
         case PGPPublicKeyAlgorithmPrivate1:
         case PGPPublicKeyAlgorithmPrivate2:
         case PGPPublicKeyAlgorithmPrivate3:
@@ -105,9 +108,10 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmPrivate9:
         case PGPPublicKeyAlgorithmPrivate10:
         case PGPPublicKeyAlgorithmPrivate11:
-        default:
             return NO;
     }
+
+    return NO;
 }
 
 #pragma mark - Parse data
@@ -153,30 +157,30 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmRSASignOnly: {
             // Algorithm-Specific Fields for RSA public keys:
             // MPI of RSA public modulus n;
-            let mpiN = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_N atPosition:position];
+            let mpiN = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierN atPosition:position];
             position = position + mpiN.packetLength;
 
             // MPI of RSA public encryption exponent e.
-            let mpiE = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_E atPosition:position];
+            let mpiE = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierE atPosition:position];
             position = position + mpiE.packetLength;
 
             self.publicMPIs = @[mpiN, mpiE];
         } break;
         case PGPPublicKeyAlgorithmDSA: {
             // - MPI of DSA prime p;
-            let mpiP = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_P atPosition:position];
+            let mpiP = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierP atPosition:position];
             position = position + mpiP.packetLength;
 
             // - MPI of DSA group order q (q is a prime divisor of p-1);
-            let mpiQ = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_Q atPosition:position];
+            let mpiQ = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierQ atPosition:position];
             position = position + mpiQ.packetLength;
 
             // - MPI of DSA group generator g;
-            let mpiG = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_G atPosition:position];
+            let mpiG = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierG atPosition:position];
             position = position + mpiG.packetLength;
 
             // - MPI of DSA public-key value y (= g**x mod p where x is secret).
-            let mpiY = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_Y atPosition:position];
+            let mpiY = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierY atPosition:position];
             position = position + mpiY.packetLength;
 
             self.publicMPIs = @[mpiP, mpiQ, mpiG, mpiY];
@@ -184,21 +188,93 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmElgamal:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign: {
             // - MPI of Elgamal prime p;
-            let mpiP = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_P atPosition:position];
+            let mpiP = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierP atPosition:position];
             position = position + mpiP.packetLength;
 
             // - MPI of Elgamal group generator g;
-            let mpiG = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_G atPosition:position];
+            let mpiG = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierG atPosition:position];
             position = position + mpiG.packetLength;
 
             // - MPI of Elgamal public key value y (= g**x mod p where x is secret).
-            let mpiY = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPI_Y atPosition:position];
+            let mpiY = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierY atPosition:position];
             position = position + mpiY.packetLength;
 
             self.publicMPIs = @[mpiP, mpiG, mpiY];
         } break;
-        case PGPPublicKeyAlgorithmECDSA:
-        case PGPPublicKeyAlgorithmElliptic:
+        case PGPPublicKeyAlgorithmECDSA: {
+            // a variable-length field containing a curve OID
+            UInt8 oidSize = 0;
+            [packetBody getBytes:&oidSize range:(NSRange){position, 1}];
+            position = position + 1;
+
+            let curveIdentifierData = [packetBody subdataWithRange:(NSRange){position, oidSize}];
+            self.curveOID = [[PGPCurveOID alloc] initWithIdentifierData: curveIdentifierData];
+            position = position + oidSize;
+
+            // MPI of an EC point representing a public key
+            let mpiQ = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierQ atPosition:position];
+            position = position + mpiQ.packetLength;
+
+            self.publicMPIs = @[mpiQ];
+        } break;
+        case PGPPublicKeyAlgorithmEdDSA: {
+            // a variable-length field containing a curve OID
+            UInt8 oidSize = 0;
+            [packetBody getBytes:&oidSize range:(NSRange){position, 1}];
+            position = position + 1;
+
+            let curveIdentifierData = [packetBody subdataWithRange:(NSRange){position, oidSize}];
+            self.curveOID = [[PGPCurveOID alloc] initWithIdentifierData: curveIdentifierData];
+            position = position + oidSize;
+
+            // MPI of an EC point representing a public key Q
+            let mpiEC_Q = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierQ atPosition:position];
+            position = position + mpiEC_Q.packetLength;
+
+            self.publicMPIs = @[mpiEC_Q];
+        } break;
+        case PGPPublicKeyAlgorithmECDH: {
+            // a variable-length field containing a curve OID
+
+            // - a one-octet size of the following field; values 0 and 0xFF are reserved for future extensions
+            UInt8 oidSize = 0;
+            [packetBody getBytes:&oidSize range:(NSRange){position, 1}];
+            position = position + 1;
+
+            // - octets representing a curve OID
+            let curveIdentifierData = [packetBody subdataWithRange:(NSRange){position, oidSize}];
+            self.curveOID = [[PGPCurveOID alloc] initWithIdentifierData:curveIdentifierData];
+            position = position + oidSize;
+
+            // MPI of an EC point representing a public key
+            let mpiEC_Q = [[PGPMPI alloc] initWithMPIData:packetBody identifier:PGPMPIdentifierQ atPosition:position];
+            position = position + mpiEC_Q.packetLength;
+
+            self.publicMPIs = @[mpiEC_Q];
+
+            // KDF parameters
+            // a variable-length field containing KDF parameters, formatted as follows
+
+            // - a one-octet size of the following fields; values 0 and 0xff are reserved for future extensions
+            UInt8 kdfSize = 0;
+            [packetBody getBytes:&kdfSize range:(NSRange){position, 1}];
+            position = position + 1;
+
+            // - a one-octet value 01, reserved for future extensions
+            position = position + 1;
+
+            // - a one-octet hash function ID used with a KDF
+            PGPHashAlgorithm kdfHashAlgorithm = PGPHashUnknown;
+            [packetBody getBytes:&kdfHashAlgorithm range:(NSRange){position, 1}];
+            position = position + 1;
+
+            // - a one-octet algorithm ID for the symmetric algorithm used to wrap the symmetric key used for the message encryption;
+            PGPSymmetricAlgorithm kdfSymmetricAlgorithm = PGPSymmetricPlaintext;
+            [packetBody getBytes:&kdfSymmetricAlgorithm range:(NSRange){position, 1}];
+            position = position + 1;
+
+            self.curveKDFParameters = [[PGPCurveKDFParameters alloc] initWithHashAlgorithm:kdfHashAlgorithm symmetricAlgorithm:kdfSymmetricAlgorithm];
+        } break;
         case PGPPublicKeyAlgorithmDiffieHellman:
         case PGPPublicKeyAlgorithmPrivate1:
         case PGPPublicKeyAlgorithmPrivate2:
@@ -225,7 +301,7 @@ NS_ASSUME_NONNULL_BEGIN
  *
  *  @return public key data starting with version octet
  */
-- (NSData *)buildKeyBodyData:(BOOL)forceV4 {
+- (NSData *)buildKeyBodyDataAndForceV4:(BOOL)forceV4 {
     let data = [NSMutableData dataWithCapacity:128];
     [data appendBytes:&_version length:1];
 
@@ -242,11 +318,24 @@ NS_ASSUME_NONNULL_BEGIN
 
     [data appendBytes:&_publicKeyAlgorithm length:1];
 
+    // Curve OID
+    if (self.publicKeyAlgorithm == PGPPublicKeyAlgorithmECDSA ||
+        self.publicKeyAlgorithm == PGPPublicKeyAlgorithmEdDSA ||
+        self.publicKeyAlgorithm == PGPPublicKeyAlgorithmECDH)
+    {
+        [data pgp_appendData:[self.curveOID export:nil]];
+    }
+
     // publicMPI is always available, no need to decrypt
     for (PGPMPI *mpi in self.publicMPIs) {
         let exportMPI = [mpi exportMPI];
         [data pgp_appendData:exportMPI];
     }
+
+    if (self.curveKDFParameters) {
+        [data pgp_appendData:[self.curveKDFParameters export:nil]];
+    }
+
     return data;
 }
 
@@ -255,7 +344,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSData *)exportKeyPacketOldStyle {
     let data = [NSMutableData data];
 
-    let keyData = [self buildKeyBodyData:NO];
+    let keyData = [self buildKeyBodyDataAndForceV4:NO];
 
     NSUInteger length = keyData.length;
     UInt8 upper = (UInt8)(length >> 8);
@@ -277,34 +366,41 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (nullable NSData *)export:(NSError * __autoreleasing _Nullable *)error {
     return [PGPPacket buildPacketOfType:self.tag withBody:^NSData * {
-        return [self buildKeyBodyData:NO];
+        return [self buildKeyBodyDataAndForceV4:NO];
     }];
 }
 
 #pragma mark - Encrypt & Decrypt
 
 // data is mEMEEncoded
-- (nullable NSArray<PGPMPI *> *)encryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm {
+- (nullable NSArray<PGPMPI *> *)encryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm encodedSymmetricKey:(NSData * __autoreleasing _Nullable *)encodedSymmetricKey {
     switch (publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmRSA:
         case PGPPublicKeyAlgorithmRSAEncryptOnly:
         case PGPPublicKeyAlgorithmRSASignOnly: {
             // return encrypted m
             let encryptedMData = [PGPRSA publicEncrypt:data withPublicKeyPacket:self];
-            let m = [[PGPMPI alloc] initWithData:encryptedMData identifier:PGPMPI_M];
+            let m = [[PGPMPI alloc] initWithData:encryptedMData identifier:PGPMPIdentifierM];
             return @[m];
         } break;
         case PGPPublicKeyAlgorithmElgamal: {
             let bigNums = [PGPElgamal publicEncrypt:data withPublicKeyPacket:self];
-            let g_k = [[PGPMPI alloc] initWithBigNum:bigNums[0] identifier:PGPMPI_G];
-            let m = [[PGPMPI alloc] initWithBigNum:bigNums[1] identifier:PGPMPI_M];
+            let g_k = [[PGPMPI alloc] initWithBigNum:bigNums[0] identifier:PGPMPIdentifierG];
+            let m = [[PGPMPI alloc] initWithBigNum:bigNums[1] identifier:PGPMPIdentifierM];
             return @[g_k, m];
         } break;
-        case PGPPublicKeyAlgorithmDSA:
-        case PGPPublicKeyAlgorithmElliptic:
+        case PGPPublicKeyAlgorithmECDH: {
+            NSData *publicKey = nil; // V
+            if (![PGPEC publicEncrypt:data withPublicKeyPacket:self publicKey:&publicKey encodedSymmetricKey:encodedSymmetricKey]) {
+                return nil;
+            }
+            return @[[[PGPMPI alloc] initWithData:publicKey identifier:PGPMPIdentifierV]];
+        } break;
         case PGPPublicKeyAlgorithmECDSA:
+        case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:
         case PGPPublicKeyAlgorithmDiffieHellman:
+        // case PGPPublicKeyAlgorithmEdDSA:
         case PGPPublicKeyAlgorithmPrivate1:
         case PGPPublicKeyAlgorithmPrivate2:
         case PGPPublicKeyAlgorithmPrivate3:
@@ -364,6 +460,8 @@ NS_ASSUME_NONNULL_BEGIN
     duplicate.V3validityPeriod = self.V3validityPeriod;
     duplicate.createDate = self.createDate;
     duplicate.publicMPIs = [[NSArray alloc] initWithArray:self.publicMPIs copyItems:YES];
+    duplicate.curveOID = self.curveOID;
+    duplicate.curveKDFParameters = self.curveKDFParameters;
     return duplicate;
 }
 

@@ -27,7 +27,7 @@ NS_ASSUME_NONNULL_BEGIN
 @implementation NSData (PGPUtils)
 
 /**
- *  Calculates a 16bit sum of a string by adding each character * codes modulus 65535
+ *  Calculates a 16bit sum of all octets, mod 65536
  *
  *  @return checksum
  */
@@ -106,6 +106,27 @@ NS_ASSUME_NONNULL_BEGIN
     return PGPCalculateHash(hashAlgorithm, ^(void (^update)(const void *, int)) {
         update(self.bytes, (int)self.length);
     });
+}
+
+- (NSData *)pgp_reversed {
+    let reversed = [[NSMutableData alloc] initWithCapacity:self.length];
+    for (int i = (int)self.length - 1; i >= 0; i--) {
+        [reversed appendBytes:&self.bytes[i] length:1];
+    }
+    return reversed;
+}
+
+- (NSData *)pgp_PKCS5Padded {
+    // Add PKCS5 padding
+    let padding_len = 8 - (self.length % 8);
+    let paddedData = [NSMutableData dataWithData:self];
+    let padding_buf = calloc(padding_len, 1);
+    pgp_defer {
+        free(padding_buf);
+    };
+    memset(padding_buf, padding_len, padding_len);
+    [paddedData appendBytes:padding_buf length:padding_len];
+    return paddedData;
 }
 
 // xor up to the last byte of the shorter data

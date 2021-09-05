@@ -10,9 +10,11 @@ GCC_PREPROCESSOR_DEFINITIONS = $(PGP_PREPROCESSOR_DEFINITIONS_COMMON) CI=$(CI) D
 
 // Don't precompile headers for test
 GCC_PRECOMPILE_PREFIX_HEADER = NO
+ONLY_ACTIVE_ARCH = YES
 
 // Enable extra validation
 VALIDATE_PRODUCT = YES
+GCC_WARN_UNUSED_PARAMETER = NO
 
 // from https://github.com/WebKit/webkit/blob/master/Tools/asan/asan.xcconfig
 // This should allow us to get better stack traces on errors
