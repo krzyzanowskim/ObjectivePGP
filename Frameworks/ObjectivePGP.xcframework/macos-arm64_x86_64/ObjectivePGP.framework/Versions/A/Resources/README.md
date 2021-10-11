@@ -187,7 +187,7 @@ For any result of encryption the type is `PGPArmorMessage`
 
 ```
 dependencies: [
-    .package(url: "https://github.com/krzyzanowskim/ObjectivePGP.git", .upToNextMinor(from: "0.17.0"))
+    .package(url: "https://github.com/krzyzanowskim/ObjectivePGP.git", .upToNextMinor(from: "0.9.0"))
 ]
 ```
 
