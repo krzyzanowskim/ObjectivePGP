@@ -400,7 +400,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmDSA:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:
         case PGPPublicKeyAlgorithmDiffieHellman:
-        // case PGPPublicKeyAlgorithmEdDSA:
+        case PGPPublicKeyAlgorithmEdDSA:
         case PGPPublicKeyAlgorithmPrivate1:
         case PGPPublicKeyAlgorithmPrivate2:
         case PGPPublicKeyAlgorithmPrivate3:

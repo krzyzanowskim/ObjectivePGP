@@ -17,6 +17,7 @@
 #import "PGPSecretSubKeyPacket.h"
 #import "PGPSignatureSubpacketEmbeddedSignature.h"
 #import "PGPUser+Private.h"
+#import "PGPLogging.h"
 #import "PGPUserIDPacket.h"
 #import "PGPCryptoHash.h"
 #import "PGPCryptoUtils.h"
@@ -69,7 +70,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmECDSA:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:
         case PGPPublicKeyAlgorithmDiffieHellman:
-        // case PGPPublicKeyAlgorithmEdDSA:
+        case PGPPublicKeyAlgorithmEdDSA:
         case PGPPublicKeyAlgorithmPrivate1:
         case PGPPublicKeyAlgorithmPrivate2:
         case PGPPublicKeyAlgorithmPrivate3:
@@ -81,7 +82,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmPrivate9:
         case PGPPublicKeyAlgorithmPrivate10:
         case PGPPublicKeyAlgorithmPrivate11:
-            NSAssert(NO, @"Not supported");
+            PGPLogWarning(@"Not supported");
             break;
     }
 
