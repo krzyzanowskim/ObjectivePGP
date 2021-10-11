@@ -1,7 +1,7 @@
 //
 //  ObjectivePGP
 //
-//  Copyright © Marcin Krzyżanowski. All rights reserved.
+//  Copyright Marcin Krzyzanowski. All rights reserved.
 //
 //  DO NOT MODIFY. FILE GENERATED AUTOMATICALLY.
 

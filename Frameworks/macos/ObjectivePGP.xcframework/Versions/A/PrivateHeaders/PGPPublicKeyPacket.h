@@ -24,16 +24,15 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) PGPPublicKeyAlgorithm publicKeyAlgorithm;
 
 // generated properties
-@property (nonatomic, readonly) NSUInteger keySize;
 @property (nonatomic, readonly) PGPFingerprint *fingerprint;
 @property (nonatomic, readonly) PGPKeyID *keyID;
 @property (nonatomic, readonly) BOOL isSupported;
 
 - (NSData *)exportKeyPacketOldStyle;
-- (NSData *)buildKeyBodyData:(BOOL)forceV4;
+- (NSData *)buildKeyBodyDataAndForceV4:(BOOL)forceV4;
 
 - (nullable PGPMPI *)publicMPI:(NSString *)identifier;
-- (nullable NSArray<PGPMPI *> *)encryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm;
+- (nullable NSArray<PGPMPI *> *)encryptData:(NSData *)data withPublicKeyAlgorithm:(PGPPublicKeyAlgorithm)publicKeyAlgorithm encodedSymmetricKey:(NSData * __autoreleasing _Nullable * _Nullable)encodedSymmetricKey;
 
 @end
 

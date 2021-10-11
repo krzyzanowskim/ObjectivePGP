@@ -13,6 +13,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface NSMutableData (PGPUtils)
 
 - (void)pgp_appendData:(nullable NSData *)other;
+- (void)pgp_appendByte:(UInt8)value;
 
 - (void)XORWithData:(NSData *)data index:(NSUInteger)index;
 

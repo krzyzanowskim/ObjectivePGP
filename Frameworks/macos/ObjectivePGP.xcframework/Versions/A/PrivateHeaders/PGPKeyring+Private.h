@@ -15,7 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface PGPKeyring ()
 
 // Private
-+ (nullable PGPKey *)findKeyWithKeyID:(PGPKeyID *)searchKeyID in:(NSArray<PGPKey *> *)keys;
++ (nullable PGPKey *)findKeyWithKeyID:(PGPKeyID *)searchKeyID type:(PGPKeyType)type in:(NSArray<PGPKey *> *)keys;
 + (NSArray<PGPKey *> *)addOrUpdatePartialKey:(nullable PGPPartialKey *)key inContainer:(NSArray<PGPKey *> *)keys;
 
 @end

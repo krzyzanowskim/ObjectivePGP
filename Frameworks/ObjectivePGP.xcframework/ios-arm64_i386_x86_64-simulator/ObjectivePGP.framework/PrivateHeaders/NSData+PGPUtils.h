@@ -30,6 +30,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSData *)pgp_HashedWithAlgorithm:(PGPHashAlgorithm)hashAlgorithm;
 
+- (NSData *)pgp_reversed;
+- (NSData *)pgp_PKCS5Padded;
+
 @end
 
 NS_ASSUME_NONNULL_END

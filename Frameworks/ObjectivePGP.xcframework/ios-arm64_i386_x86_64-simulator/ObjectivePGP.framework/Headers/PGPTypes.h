@@ -38,18 +38,18 @@ typedef NS_ERROR_ENUM(PGPErrorDomain, PGPErrorCode) {
     PGPErrorNotFound = 11
 };
 
-typedef NS_ENUM(NSInteger, PGPFormatType) {
+typedef NS_CLOSED_ENUM(NSInteger, PGPFormatType) {
     PGPFormatUnknown = 0,
     PGPFormatOld = 1,
     PGPFormatNew = 2
 };
 
-typedef NS_ENUM(NSUInteger, PGPHeaderPacketTag) {
+typedef NS_CLOSED_ENUM(NSUInteger, PGPHeaderPacketTag) {
     PGPHeaderPacketTagNewFormat = 0x40,
     PGPHeaderPacketTagAllwaysSet = 0x80
 };
 
-typedef NS_ENUM(UInt8, PGPPacketTag) {
+typedef NS_CLOSED_ENUM(UInt8, PGPPacketTag) {
     PGPInvalidPacketTag = 0,
     PGPPublicKeyEncryptedSessionKeyPacketTag = 1,
     PGPSignaturePacketTag = 2,
@@ -74,21 +74,23 @@ typedef NS_ENUM(UInt8, PGPPacketTag) {
     PGPExperimentalPacketTag4 = 63
 };
 
-typedef NS_ENUM(UInt8, PGPUserAttributeSubpacketType) {
+typedef NS_CLOSED_ENUM(UInt8, PGPUserAttributeSubpacketType) {
+    PGPUserAttributeSubpacketUnknown = 0x00,
     PGPUserAttributeSubpacketImage = 0x01 // The only currently defined subpacket type is 1, signifying an image.
 };
 
 // 9.1.  Public-Key Algorithms
-typedef NS_ENUM(UInt8, PGPPublicKeyAlgorithm) {
+typedef NS_CLOSED_ENUM(UInt8, PGPPublicKeyAlgorithm) {
     PGPPublicKeyAlgorithmRSA = 1,
     PGPPublicKeyAlgorithmRSAEncryptOnly = 2,
     PGPPublicKeyAlgorithmRSASignOnly = 3,
     PGPPublicKeyAlgorithmElgamal = 16, // Elgamal (Encrypt-Only)
     PGPPublicKeyAlgorithmDSA = 17,
-    PGPPublicKeyAlgorithmElliptic = 18,
-    PGPPublicKeyAlgorithmECDSA = 19,
+    PGPPublicKeyAlgorithmECDH = 18, // encrypt-only
+    PGPPublicKeyAlgorithmECDSA = 19, // sign-only
     PGPPublicKeyAlgorithmElgamalEncryptorSign = 20, // Deprecated ?
     PGPPublicKeyAlgorithmDiffieHellman = 21, // TODO: Deprecated?
+    PGPPublicKeyAlgorithmEdDSA = 22, // sign-only
     PGPPublicKeyAlgorithmPrivate1 = 100,
     PGPPublicKeyAlgorithmPrivate2 = 101,
     PGPPublicKeyAlgorithmPrivate3 = 102,
@@ -103,7 +105,7 @@ typedef NS_ENUM(UInt8, PGPPublicKeyAlgorithm) {
 };
 
 // 9.2.  Symmetric-Key Algorithms
-typedef NS_ENUM(UInt8, PGPSymmetricAlgorithm) {
+typedef NS_CLOSED_ENUM(UInt8, PGPSymmetricAlgorithm) {
     PGPSymmetricPlaintext = 0,
     PGPSymmetricIDEA = 1, // 8 bytes (64-bit) block size, key length: 2 bytes (16 bit)
     PGPSymmetricTripleDES = 2, // 8 bytes (64-bit) block size
@@ -116,8 +118,19 @@ typedef NS_ENUM(UInt8, PGPSymmetricAlgorithm) {
     PGPSymmetricMax
 };
 
+// rfc4880bis 9.2.  ECC Curve OID
+typedef NS_CLOSED_ENUM(UInt8, PGPCurve) {
+    PGPCurveP256 = 0,
+    PGPCurveP384 = 1,
+    PGPCurveP521 = 2,
+    PGPCurveBrainpoolP256r1 = 3,
+    PGPCurveBrainpoolP512r1 = 4,
+    PGPCurveEd25519 = 5,
+    PGPCurve25519 = 6
+};
+
 // 9.4.  Hash Algorithms
-typedef NS_ENUM(UInt8, PGPHashAlgorithm) {
+typedef NS_CLOSED_ENUM(UInt8, PGPHashAlgorithm) {
     PGPHashUnknown = 0,
     PGPHashMD5 = 1, // MD5  - deprecated
     PGPHashSHA1 = 2, // SHA1 - required
@@ -125,10 +138,12 @@ typedef NS_ENUM(UInt8, PGPHashAlgorithm) {
     PGPHashSHA256 = 8, // SHA256
     PGPHashSHA384 = 9, // SHA384
     PGPHashSHA512 = 10, // SHA512
-    PGPHashSHA224 = 11 // SHA224
+    PGPHashSHA224 = 11, // SHA224
+    PGPHashSHA3_256 = 12, // SHA3-256
+    PGPHashSHA3_512 = 14 // SHA3-512
 };
 
-typedef NS_ENUM(UInt8, PGPSignatureType) {
+typedef NS_CLOSED_ENUM(UInt8, PGPSignatureType) {
     PGPSignatureBinaryDocument = 0x00,
     PGPSignatureCanonicalTextDocument = 0x01,
     PGPSignatureStandalone = 0x02,
@@ -147,7 +162,7 @@ typedef NS_ENUM(UInt8, PGPSignatureType) {
     PGPSignatureUnknown = 0xFF
 };
 
-typedef NS_ENUM(UInt8, PGPSignatureSubpacketType) {
+typedef NS_CLOSED_ENUM(UInt8, PGPSignatureSubpacketType) {
     PGPSignatureSubpacketTypeUnknown = 0, // Unknown
     PGPSignatureSubpacketTypeSignatureCreationTime = 2,
     PGPSignatureSubpacketTypeSignatureExpirationTime = 3,
@@ -170,13 +185,16 @@ typedef NS_ENUM(UInt8, PGPSignatureSubpacketType) {
     PGPSignatureSubpacketTypeSignerUserID = 28,
     PGPSignatureSubpacketTypeReasonForRevocation = 29,
     PGPSignatureSubpacketTypeFeatures = 30,
-    PGPSignatureSubpacketTypeSignatureTarget = 31, // Seems unused at all
+    PGPSignatureSubpacketTypeSignatureTarget = 31, // Seems unused at all, https://datatracker.ietf.org/doc/html/draft-ietf-openpgp-rfc4880bis-10#section-5.2.3.26
     PGPSignatureSubpacketTypeEmbeddedSignature = 32,
-    PGPSignatureSubpacketTypeIssuerFingerprint = 33 // TODO: Experimental: Issuer fingerprint
+    PGPSignatureSubpacketTypeIssuerFingerprint = 33, // TODO: https://datatracker.ietf.org/doc/html/draft-ietf-openpgp-rfc4880bis-10#section-5.2.3.28
+    PGPSignatureSubpacketTypeIntendedRecipientFingerprint = 35, //TODO: https://datatracker.ietf.org/doc/html/draft-ietf-openpgp-rfc4880bis-10#section-5.2.3.29
+    PGPSignatureSubpacketTypeAttestedCertifications = 37, // TODO: https://datatracker.ietf.org/doc/html/draft-ietf-openpgp-rfc4880bis-10#section-5.2.3.30
+    PGPSignatureSubpacketTypeKeyBlock = 38 // TODO: https://datatracker.ietf.org/doc/html/draft-ietf-openpgp-rfc4880bis-10#section-5.2.3.31
 };
 
 // 5.2.3.21.  Key Flags
-typedef NS_ENUM(UInt8, PGPSignatureFlags) {
+typedef NS_CLOSED_ENUM(UInt8, PGPSignatureFlags) {
     PGPSignatureFlagUnknown = 0x00,
     PGPSignatureFlagAllowCertifyOtherKeys = 0x01, // indicates that this key may be used to certify other keys
     PGPSignatureFlagAllowSignData = 0x02, // indicates that this key may be used to sign data.
@@ -188,19 +206,19 @@ typedef NS_ENUM(UInt8, PGPSignatureFlags) {
 };
 
 // 5.2.3.17.  Key Server Preferences
-typedef NS_ENUM(UInt8, PGPKeyServerPreferenceFlags) {
+typedef NS_CLOSED_ENUM(UInt8, PGPKeyServerPreferenceFlags) {
     PGPKeyServerPreferenceUnknown  = 0x00,
     PGPKeyServerPreferenceNoModify = 0x80 // No-modify
 };
 
 // 5.2.3.24.  Features
-typedef NS_ENUM(UInt8, PGPFeature) {
+typedef NS_CLOSED_ENUM(UInt8, PGPFeature) {
     PGPFeatureModificationUnknown   = 0x00,
     PGPFeatureModificationDetection = 0x01 // Modification Detection (packets 18 and 19)
 };
 
 // 3.7.1.  String-to-Key (S2K) Specifier Types
-typedef NS_ENUM(UInt8, PGPS2KSpecifier) {
+typedef NS_CLOSED_ENUM(UInt8, PGPS2KSpecifier) {
     PGPS2KSpecifierSimple = 0,
     PGPS2KSpecifierSalted = 1,
     PGPS2KSpecifierIteratedAndSalted = 3,
@@ -212,14 +230,14 @@ typedef NS_ENUM(UInt8, PGPS2KSpecifier) {
     PGPS2KSpecifierDivertToCard = 102
 };
 
-typedef NS_ENUM(UInt8, PGPS2KUsage) {
+typedef NS_CLOSED_ENUM(UInt8, PGPS2KUsage) {
     PGPS2KUsageNonEncrypted = 0, // no passphrase
     PGPS2KUsageEncryptedAndHashed = 254,
     PGPS2KUsageEncrypted = 255
 };
 
 // 9.3.  Compression Algorithms
-typedef NS_ENUM(UInt8, PGPCompressionAlgorithm) {
+typedef NS_CLOSED_ENUM(UInt8, PGPCompressionAlgorithm) {
     PGPCompressionUncompressed = 0,
     PGPCompressionZIP = 1,
     PGPCompressionZLIB = 2,

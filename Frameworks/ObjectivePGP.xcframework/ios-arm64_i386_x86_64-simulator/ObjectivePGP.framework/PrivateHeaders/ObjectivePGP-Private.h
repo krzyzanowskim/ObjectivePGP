@@ -1,7 +1,7 @@
 //
 //  ObjectivePGP
 //
-//  Copyright © Marcin Krzyżanowski. All rights reserved.
+//  Copyright Marcin Krzyzanowski. All rights reserved.
 //
 //  DO NOT MODIFY. FILE GENERATED AUTOMATICALLY.
 
@@ -20,6 +20,7 @@ FOUNDATION_EXPORT const unsigned char ObjectivePGPVersionString[];
 #import <ObjectivePGP/PGPPacket+Private.h>
 #import <ObjectivePGP/PGPCryptoUtils.h>
 #import <ObjectivePGP/PGPRSA.h>
+#import <ObjectivePGP/PGPCurveKDFParameters.h>
 #import <ObjectivePGP/PGPS2K.h>
 #import <ObjectivePGP/PGPElgamal.h>
 #import <ObjectivePGP/NSArray+PGPUtils.h>
@@ -38,8 +39,10 @@ FOUNDATION_EXPORT const unsigned char ObjectivePGPVersionString[];
 #import <ObjectivePGP/NSData+PGPUtils.h>
 #import <ObjectivePGP/PGPUser+Private.h>
 #import <ObjectivePGP/PGPBigNum.h>
+#import <ObjectivePGP/PGPCurveOID.h>
 #import <ObjectivePGP/PGPKeyMaterial.h>
 #import <ObjectivePGP/PGPMPI.h>
+#import <ObjectivePGP/PGPPublicKeyEncryptedSessionKeyParams.h>
 #import <ObjectivePGP/PGPLiteralPacket.h>
 #import <ObjectivePGP/PGPTrustPacket.h>
 #import <ObjectivePGP/PGPSignatureSubpacketHeader.h>
@@ -53,6 +56,7 @@ FOUNDATION_EXPORT const unsigned char ObjectivePGPVersionString[];
 #import <ObjectivePGP/PGPEncryptedSessionKeyPacketProtocol.h>
 #import <ObjectivePGP/PGPSymmetricallyEncryptedDataPacket.h>
 #import <ObjectivePGP/PGPMarkerPacket.h>
+#import <ObjectivePGP/PGPEC.h>
 #import <ObjectivePGP/PGPPKCSEmsa.h>
 #import <ObjectivePGP/PGPPKCSEme.h>
 #import <ObjectivePGP/PGPCryptoCFB.h>
