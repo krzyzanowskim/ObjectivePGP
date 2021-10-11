@@ -1,3 +1,10 @@
+Version 0.9.0
+- Elliptic-Curves support (RFC6637 https://datatracker.ietf.org/doc/html/rfc6637). #141
+    - Elliptic-curve Diffie–Hellman.
+    - Elliptic Curve Digital Signature Algorithm.
+- Enabling encrypt-only algorithms to encrypt. #187
+- Other fixes and improvements.
+
 Version 0.17.0
 - macOS arm64 support
 - update dependencies
