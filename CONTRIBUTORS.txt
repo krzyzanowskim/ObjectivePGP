@@ -7,6 +7,7 @@ organizations who have contributed source code to ObjectivePGP.
 - Blake Jakopovic <wakoinc@gmail.com>
 - Bob Sun <bob@mssun.me>
 - Dev Sanghani <devsanghani@gmail.com>
+- Fábio Bernardo <mantyftw@gmail.com>
 - James Pang <james.pang@tigerspike.com>
 - James Smith <james@immedia.co.za>
 - Marcin Krzyzanowski <marcin.krzyzanowski@gmail.com>
