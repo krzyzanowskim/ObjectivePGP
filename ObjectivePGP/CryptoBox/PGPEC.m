@@ -45,8 +45,10 @@ NS_ASSUME_NONNULL_BEGIN
     let secret_key = [privateKeyData pgp_reversed];
     let pkey_private_key_D = EVP_PKEY_new_raw_private_key(EVP_PKEY_X25519, NULL, secret_key.bytes, secret_key.length);
     if (!pkey_private_key_D) {
+        #if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
         char *err_str = ERR_error_string(ERR_get_error(), NULL);
         PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+        #endif
         return nil;
     }
     pgp_defer {
@@ -56,8 +58,10 @@ NS_ASSUME_NONNULL_BEGIN
     let V = [publicPartEphemeralKey subdataWithRange:NSMakeRange(1, publicPartEphemeralKey.length - 1)]; // public key
     let pkey_public_key_V = EVP_PKEY_new_raw_public_key(EVP_PKEY_X25519, NULL, V.bytes , V.length);
     if (!pkey_public_key_V) {
+        #if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
         char *err_str = ERR_error_string(ERR_get_error(), NULL);
         PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+        #endif
         return nil;
     }
     pgp_defer {
@@ -77,8 +81,10 @@ NS_ASSUME_NONNULL_BEGIN
         || EVP_PKEY_derive_set_peer(ctx, pkey_public_key_V) <= 0
         || EVP_PKEY_derive(ctx, shared_key, &derived_keylen) <= 0)
     {
+        #if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
         char *err_str = ERR_error_string(ERR_get_error(), NULL);
         PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+        #endif
         return nil;
     }
 
@@ -226,8 +232,10 @@ NS_ASSUME_NONNULL_BEGIN
             let SEED = [[key.signingSecretKey secretMPI:PGPMPIdentifierD] bodyData]; //
             let pkey = EVP_PKEY_new_raw_private_key(EVP_PKEY_ED25519, NULL, SEED.bytes, SEED.length);
             if (!pkey) {
+                #if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
                 char *err_str = ERR_error_string(ERR_get_error(), NULL);
                 PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+                #endif
                 return @[];
             }
             pgp_defer {
@@ -240,15 +248,19 @@ NS_ASSUME_NONNULL_BEGIN
             };
 
             if (EVP_DigestSignInit(ctx, NULL, NULL, NULL, pkey) <= 0) {
+                #if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
                 char *err_str = ERR_error_string(ERR_get_error(), NULL);
                 PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+                #endif
                 return @[];
             }
 
             size_t siglen = 0;
             if (EVP_DigestSign(ctx, NULL, &siglen, toSign.bytes, toSign.length) <= 0) {
+#if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
                 char *err_str = ERR_error_string(ERR_get_error(), NULL);
                 PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+#endif
                 return @[];
             }
 
@@ -257,8 +269,10 @@ NS_ASSUME_NONNULL_BEGIN
                 OPENSSL_clear_free(sigret, siglen);
             };
             if (EVP_DigestSign(ctx, sigret, &siglen, toSign.bytes, toSign.length) <= 0) {
+#if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
                 char *err_str = ERR_error_string(ERR_get_error(), NULL);
                 PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+#endif
                 return @[];
             }
             let sigData = [NSData dataWithBytes:sigret length:siglen];
@@ -322,8 +336,10 @@ NS_ASSUME_NONNULL_BEGIN
             let publicKey = [Q subdataWithRange:NSMakeRange(1, Q.length - 1)];
             let pkey = EVP_PKEY_new_raw_public_key(EVP_PKEY_ED25519, NULL, publicKey.bytes, publicKey.length);
             if (!pkey) {
+#if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
                 char *err_str = ERR_error_string(ERR_get_error(), NULL);
                 PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+#endif
                 return NO;
             }
             pgp_defer {
@@ -336,8 +352,10 @@ NS_ASSUME_NONNULL_BEGIN
             };
 
             if (EVP_DigestVerifyInit(ctx, NULL, NULL, NULL, pkey) <= 0) {
+#if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
                 char *err_str = ERR_error_string(ERR_get_error(), NULL);
                 PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+#endif
                 return NO;
             }
 
@@ -349,8 +367,10 @@ NS_ASSUME_NONNULL_BEGIN
 
             let ret = EVP_DigestVerify(ctx, signatureData.bytes, signatureData.length, toVerify.bytes, toVerify.length);
             if (ret < 0) {
+#if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
                 char *err_str = ERR_error_string(ERR_get_error(), NULL);
                 PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+#endif
                 return NO;
             }
 

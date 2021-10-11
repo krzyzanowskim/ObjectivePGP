@@ -51,8 +51,10 @@ NS_ASSUME_NONNULL_BEGIN
 
     int em_len = RSA_public_encrypt(toEncrypt.length & INT_MAX, toEncrypt.bytes, encrypted_em, rsa, RSA_NO_PADDING);
     if (em_len == -1 || em_len != (keySize & INT_MAX)) {
+        #if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
         char *err_str = ERR_error_string(ERR_get_error(), NULL);
         PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+        #endif
         return nil;
     }
 
@@ -84,8 +86,10 @@ NS_ASSUME_NONNULL_BEGIN
     RSA_set0_factors(rsa, p, q);
 
     if (RSA_check_key(rsa) != 1) {
+        #if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
         char *err_str = ERR_error_string(ERR_get_error(), NULL);
         PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+        #endif
         return nil;
     }
 
@@ -93,8 +97,10 @@ NS_ASSUME_NONNULL_BEGIN
     pgp_defer { free(outbuf); };
     int t = RSA_private_decrypt(toDecrypt.length & INT_MAX, toDecrypt.bytes, outbuf, rsa, RSA_NO_PADDING);
     if (t == -1) {
+        #if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
         char *err_str = ERR_error_string(ERR_get_error(), NULL);
         PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+        #endif
         return nil;
     }
 
@@ -133,8 +139,10 @@ NS_ASSUME_NONNULL_BEGIN
     RSA_set0_factors(rsa, p, q);
 
     if (RSA_check_key(rsa) != 1) {
+        #if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
         char *err_str = ERR_error_string(ERR_get_error(), NULL);
         PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+        #endif
         return nil;
     }
 
@@ -143,8 +151,10 @@ NS_ASSUME_NONNULL_BEGIN
 
     int t = RSA_private_encrypt(toEncrypt.length & INT_MAX, (UInt8 *)toEncrypt.bytes, outbuf, rsa, RSA_NO_PADDING);
     if (t == -1) {
+        #if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
         char *err_str = ERR_error_string(ERR_get_error(), NULL);
         PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+        #endif
         return nil;
     }
 
@@ -178,8 +188,10 @@ NS_ASSUME_NONNULL_BEGIN
     };
     int em_len = RSA_public_decrypt(toDecrypt.length & INT_MAX, toDecrypt.bytes, decrypted_em, rsa, RSA_NO_PADDING);
     if (em_len == -1 || em_len != (keySize & INT_MAX)) {
+        #if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
         char *err_str = ERR_error_string(ERR_get_error(), NULL);
         PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+        #endif
         return nil;
     }
 

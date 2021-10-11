@@ -72,8 +72,10 @@ NS_ASSUME_NONNULL_BEGIN
 
     let ret = DSA_do_verify(toVerify.bytes, (int)hashLen, sig, dsa);
     if (ret < 0) {
+        #if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
         char *err_str = ERR_error_string(ERR_get_error(), NULL);
         PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+        #endif
         return NO;
     }
 
@@ -107,8 +109,10 @@ NS_ASSUME_NONNULL_BEGIN
 
     DSA_SIG * _Nullable sig = DSA_do_sign(toSign.bytes, (int)toSign.length, dsa);
     if (!sig) {
+#if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
         char *err_str = ERR_error_string(ERR_get_error(), NULL);
         PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
+#endif
         return @[];
     }
 
