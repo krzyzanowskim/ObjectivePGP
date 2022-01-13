@@ -255,8 +255,10 @@ NS_ASSUME_NONNULL_BEGIN
                 return @[];
             }
 
+            NSData* hash = [toSign pgp_SHA512];
             size_t siglen = 0;
-            if (EVP_DigestSign(ctx, NULL, &siglen, toSign.bytes, toSign.length) <= 0) {
+            
+            if (EVP_DigestSign(ctx, NULL, &siglen, hash.bytes, hash.length) <= 0) {
 #if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
                 char *err_str = ERR_error_string(ERR_get_error(), NULL);
                 PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
@@ -268,7 +270,7 @@ NS_ASSUME_NONNULL_BEGIN
             pgp_defer {
                 OPENSSL_clear_free(sigret, siglen);
             };
-            if (EVP_DigestSign(ctx, sigret, &siglen, toSign.bytes, toSign.length) <= 0) {
+            if (EVP_DigestSign(ctx, sigret, &siglen, hash.bytes, hash.length) <= 0) {
 #if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
                 char *err_str = ERR_error_string(ERR_get_error(), NULL);
                 PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
@@ -350,7 +352,7 @@ NS_ASSUME_NONNULL_BEGIN
             pgp_defer {
                 EVP_MD_CTX_free(ctx);
             };
-
+            
             if (EVP_DigestVerifyInit(ctx, NULL, NULL, NULL, pkey) <= 0) {
 #if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
                 char *err_str = ERR_error_string(ERR_get_error(), NULL);
@@ -364,8 +366,9 @@ NS_ASSUME_NONNULL_BEGIN
             let signatureData = [NSMutableData data];
             [signatureData appendData:r];
             [signatureData appendData:s];
-
-            let ret = EVP_DigestVerify(ctx, signatureData.bytes, signatureData.length, toVerify.bytes, toVerify.length);
+            NSData* hash = [toVerify pgp_SHA512];
+            //let ret = EVP_DigestVerify(ctx, signatureData.bytes, signatureData.length, toVerify.bytes, toVerify.length);
+            let ret = EVP_DigestVerify(ctx, signatureData.bytes, signatureData.length, hash.bytes, hash.length);
             if (ret < 0) {
 #if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
                 char *err_str = ERR_error_string(ERR_get_error(), NULL);
