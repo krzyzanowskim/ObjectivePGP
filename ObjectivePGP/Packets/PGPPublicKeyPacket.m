@@ -65,6 +65,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Properties
 
+
+- (NSUInteger)keySize {
+    //TODO: Elgamal, how about elgamal?
+    let mpi = [self publicMPI:PGPMPIdentifierN];
+    return (mpi.bigNum.bitsCount + 7) / 8; // ks;
+}
+
 /**
  *  12.2.  Key IDs and Fingerprints
  *

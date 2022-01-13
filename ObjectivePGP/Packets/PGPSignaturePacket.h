@@ -72,6 +72,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)verifyData:(NSData *)inputData publicKey:(PGPKey *)publicKey error:(NSError * __autoreleasing _Nullable *)error;
 - (BOOL)verifyData:(NSData *)inputData publicKey:(PGPKey *)publicKey userID:(nullable NSString *)userID error:(NSError * __autoreleasing _Nullable *)error;
 - (BOOL)verifyData:(NSData *)inputData publicKey:(PGPKey *)publicKey signingKeyPacket:(PGPPublicKeyPacket *)signingKeyPacket userID:(nullable NSString *)userID error:(NSError * __autoreleasing _Nullable *)error;
+- (BOOL)verifyCertificateSignature:(PGPKey*)publicKey rootCert:(PGPKey*)rootKey userID:(nullable NSString*)userID error:(NSError* __autoreleasing _Nullable*) error;
 
 @end
 

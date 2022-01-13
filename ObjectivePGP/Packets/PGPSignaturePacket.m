@@ -434,6 +434,96 @@ NS_ASSUME_NONNULL_BEGIN
     return YES;
 }
 
+- (BOOL)verifyCertificateSignature:(PGPKey*)publicKey rootCert:(PGPKey*)rootKey userID:(nullable NSString*)userID error:(NSError* __autoreleasing _Nullable*) error {
+    
+    let signingKeyPacket = (PGPPublicKeyPacket*)[rootKey.publicKey signingKeyPacketWithKeyID:rootKey.publicKey.keyID];
+    
+    let toSignData = [self buildDataToVerifyForType:self.type key:publicKey userID:userID error:error];
+    if (!toSignData) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"Invalid signature." }];
+        }
+        return NO;
+    }
+    
+    /// Calculate hash to compare
+    // signedPartData
+    let signedPartData = [self buildSignedPart:self.hashedSubpackets];
+    // calculate trailer
+    let trailerData = [self calculateTrailerFor:signedPartData];
+    
+    // toHash = toSignData + signedPartData + trailerData;
+    let toHashData = [NSMutableData dataWithData:toSignData];
+    [toHashData appendData:signedPartData];
+    [toHashData appendData:trailerData];
+    
+    // TODO: Investigate how to handle V3 scenario here
+    // check signed hash value, should match
+    if (self.version == 0x04) {
+        // Calculate hash value
+        let calculatedHashValueData = [[toHashData pgp_HashedWithAlgorithm:self.hashAlgoritm] subdataWithRange:(NSRange){0, 2}];
+        
+        if (!PGPEqualObjects(self.signedHashValueData, calculatedHashValueData)) {
+            if (error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"Verification failed. Signature hash validation failed." }];
+            }
+            return NO;
+        }
+    }
+    
+    switch (signingKeyPacket.publicKeyAlgorithm) {
+        case PGPPublicKeyAlgorithmRSA:
+        case PGPPublicKeyAlgorithmRSASignOnly:
+        case PGPPublicKeyAlgorithmRSAEncryptOnly: {
+            // convert mpi data to binary signature_bn_bin
+            let signatureMPI = self.signatureMPIs[0];
+            
+            // encoded m value
+            let _Nullable encryptedEmData = [signatureMPI bodyData];
+            // decrypted encoded m value
+            let _Nullable decryptedEmData = [PGPRSA publicDecrypt:encryptedEmData withPublicKeyPacket:signingKeyPacket];
+            
+            // calculate EM and compare with decrypted EM. PKCS-emsa Encoded M.
+            let emData = [PGPPKCSEmsa encode:self.hashAlgoritm message:toHashData encodedMessageLength:signingKeyPacket.keySize error:error];
+            if (!PGPEqualObjects(emData, decryptedEmData)) {
+                if (error) {
+                    *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"em hash dont match" }];
+                }
+                return NO;
+            }
+        } break;
+        case PGPPublicKeyAlgorithmDSA:{
+            return [PGPDSA verify:toHashData signature:self withPublicKeyPacket:signingKeyPacket];
+        } break;
+        case PGPPublicKeyAlgorithmECDSA:
+        case PGPPublicKeyAlgorithmEdDSA:
+        case PGPPublicKeyAlgorithmElgamal:
+        case PGPPublicKeyAlgorithmECDH:
+        case PGPPublicKeyAlgorithmElgamalEncryptorSign:
+        case PGPPublicKeyAlgorithmDiffieHellman:
+        case PGPPublicKeyAlgorithmPrivate1:
+        case PGPPublicKeyAlgorithmPrivate2:
+        case PGPPublicKeyAlgorithmPrivate3:
+        case PGPPublicKeyAlgorithmPrivate4:
+        case PGPPublicKeyAlgorithmPrivate5:
+        case PGPPublicKeyAlgorithmPrivate6:
+        case PGPPublicKeyAlgorithmPrivate7:
+        case PGPPublicKeyAlgorithmPrivate8:
+        case PGPPublicKeyAlgorithmPrivate9:
+        case PGPPublicKeyAlgorithmPrivate10:
+        case PGPPublicKeyAlgorithmPrivate11:
+            PGPLogWarning(@"Algorithm %@ is not supported.", @(signingKeyPacket.publicKeyAlgorithm));
+            return NO;
+            break;
+    }
+    
+    
+    
+    return YES;
+    
+}
+
+
 #pragma mark - Sign
 
 // 5.2.4.  Computing Signatures
@@ -595,6 +685,82 @@ NS_ASSUME_NONNULL_BEGIN
     self.signedHashValueData = hashValueData;
     return YES;
 }
+
+- (nullable NSData *)buildDataToVerifyForType:(PGPSignatureType)type key:(nullable PGPKey *)key userID:(nullable NSString *)userID error:(NSError * __autoreleasing _Nullable *)error {
+    let toSignData = [NSMutableData data];
+    switch (type) {
+        
+        case PGPSignatureGenericCertificationUserIDandPublicKey: // 0x10
+        case PGPSignaturePersonalCertificationUserIDandPublicKey: // 0x11
+        case PGPSignatureCasualCertificationUserIDandPublicKey: // 0x12
+        case PGPSignaturePositiveCertificationUserIDandPublicKey: // 0x13
+        case PGPSignatureCertificationRevocation: // 0x28
+        {
+            if (!key.publicKey) {
+                if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing key packet." }]; }
+                return nil;
+            }
+            // A certification signature (type 0x10 through 0x13)
+            
+            // When a signature is made over a key, the hash data starts with the
+            // octet 0x99, followed by a two-octet length of the key, and then body
+            // of the key packet. (Note that this is an old-style packet header for
+            // a key packet with two-octet length.)
+            
+            PGPPublicKeyPacket *publicKey = PGPCast(key.publicKey.primaryKeyPacket, PGPPublicKeyPacket);
+            let signingKeyData = [publicKey exportKeyPacketOldStyle];
+            [toSignData appendData:signingKeyData];
+            
+            if (key.publicKey) {
+                let secretPartialKey = key.publicKey;
+                NSAssert(secretPartialKey.users.count > 0, @"Need at least one user for the key.");
+                
+                BOOL userIsValid = NO;
+                for (PGPUser *user in secretPartialKey.users) {
+                    if (PGPEqualObjects(user.userID, userID)) {
+                        userIsValid = YES;
+                    }
+                }
+                
+                if (!userIsValid) {
+                    PGPLogDebug(@"Invalid user id");
+                    if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Invalid user id" }]; }
+                    return nil;
+                }
+            }
+            
+            if (userID.length > 0) {
+                let _Nullable userIDData = [userID dataUsingEncoding:NSUTF8StringEncoding];
+                if (!userIDData) {
+                    if (error) { *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Invalid user id" }]; }
+                    return nil;
+                }
+                
+                if (self.version == 0x04) {
+                    // constant tag (1)
+                    UInt8 userIDConstant = 0xB4;
+                    [toSignData appendBytes:&userIDConstant length:1];
+                    
+                    // length (4)
+                    UInt32 userIDLength = (UInt32)userIDData.length;
+                    userIDLength = CFSwapInt32HostToBig(userIDLength);
+                    [toSignData appendBytes:&userIDLength length:4];
+                }
+                // data
+                [toSignData pgp_appendData:userIDData];
+            }
+            // TODO user attributes alternative
+            // UInt8 userAttributeConstant = 0xD1;
+            //[data appendBytes:&userAttributeConstant length:sizeof(userAttributeConstant)];
+            
+        } break;
+        default:
+            
+            break;
+    }
+    return toSignData;
+}
+
 
 - (nullable NSData *)buildDataToSignForType:(PGPSignatureType)type inputData:(nullable NSData *)inputData key:(nullable PGPKey *)key subKey:(nullable PGPKey *)subKey userID:(nullable NSString *)userID error:(NSError * __autoreleasing _Nullable *)error {
     let toSignData = [NSMutableData data];
