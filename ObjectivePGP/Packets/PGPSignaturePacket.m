@@ -724,6 +724,7 @@ NS_ASSUME_NONNULL_BEGIN
                 for (PGPUser *user in secretPartialKey.users) {
                     if (PGPEqualObjects(user.userID, userID)) {
                         userIsValid = YES;
+                        break;
                     }
                 }
                 
