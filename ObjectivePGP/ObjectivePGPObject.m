@@ -644,7 +644,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 + (BOOL)verifyCertification:(PGPKey*)issuerKey usingKeys:(NSArray<PGPKey *> *)keys error:(NSError * __autoreleasing _Nullable *)error {
-    BOOL isValid = true;
+    BOOL isValid = YES;
     // Add additional signature check
     PGPUser* user = PGPCast(issuerKey.publicKey.users[0], PGPUser);
                    
