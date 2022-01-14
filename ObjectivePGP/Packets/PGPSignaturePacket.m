@@ -435,6 +435,9 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (BOOL)verifyCertificateSignature:(PGPKey*)publicKey rootCert:(PGPKey*)rootKey userID:(nullable NSString*)userID error:(NSError* __autoreleasing _Nullable*) error {
+    PGPAssertClass(publicKey, PGPKey);
+    PGPAssertClass(rootKey, PGPKey);
+    PGPAssertClass(userID, NSString);
     
     let signingKeyPacket = (PGPPublicKeyPacket*)[rootKey.publicKey signingKeyPacketWithKeyID:rootKey.publicKey.keyID];
     
@@ -484,7 +487,8 @@ NS_ASSUME_NONNULL_BEGIN
             let _Nullable decryptedEmData = [PGPRSA publicDecrypt:encryptedEmData withPublicKeyPacket:signingKeyPacket];
             
             // calculate EM and compare with decrypted EM. PKCS-emsa Encoded M.
-            let emData = [PGPPKCSEmsa encode:self.hashAlgoritm message:toHashData encodedMessageLength:signingKeyPacket.keySize error:error];
+            let keySize = ([signingKeyPacket publicMPI:PGPMPIdentifierN].bigNum.bitsCount + 7) / 8; // ks;
+            let emData = [PGPPKCSEmsa encode:self.hashAlgoritm message:toHashData encodedMessageLength:keySize error:error];
             if (!PGPEqualObjects(emData, decryptedEmData)) {
                 if (error) {
                     *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"em hash dont match" }];
@@ -497,6 +501,7 @@ NS_ASSUME_NONNULL_BEGIN
         } break;
         case PGPPublicKeyAlgorithmECDSA:
         case PGPPublicKeyAlgorithmEdDSA:
+            return [PGPEC verify:toHashData signature:self withPublicKeyPacket:signingKeyPacket];
         case PGPPublicKeyAlgorithmElgamal:
         case PGPPublicKeyAlgorithmECDH:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:

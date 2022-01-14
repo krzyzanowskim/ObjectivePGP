@@ -228,7 +228,7 @@ NS_ASSUME_NONNULL_BEGIN
                 PGPLogWarning(@"Unsupported curve %@ kind for EdDSA algorithm", @(key.signingSecretKey.curveOID.curveKind));
                 return @[];
             }
-
+        
             let SEED = [[key.signingSecretKey secretMPI:PGPMPIdentifierD] bodyData]; //
             let pkey = EVP_PKEY_new_raw_private_key(EVP_PKEY_ED25519, NULL, SEED.bytes, SEED.length);
             if (!pkey) {
@@ -376,7 +376,7 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
                 return NO;
             }
-
+            
             if (ret == 1) {
                 return YES;
             }
