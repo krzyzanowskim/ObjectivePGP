@@ -387,7 +387,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmRSASignOnly:
         case PGPPublicKeyAlgorithmRSAEncryptOnly: {
             // convert mpi data to binary signature_bn_bin
-            let signatureMPI = [self signatureMPI:PGPMPIdentifierM];
+            let signatureMPI = self.signatureMPIs[0];
 
             // encoded m value
             let _Nullable encryptedEmData = [signatureMPI bodyData];
@@ -408,7 +408,7 @@ NS_ASSUME_NONNULL_BEGIN
             return [PGPDSA verify:toHashData signature:self withPublicKeyPacket:signingKeyPacket];
         } break;
         case PGPPublicKeyAlgorithmEdDSA: {
-            return [PGPEC verify:toHashData signature:self withPublicKeyPacket:signingKeyPacket];
+            return [PGPEC verify:toHashData signature:self withPublicKeyPacket:signingKeyPacket withHashAlgorithm:self.hashAlgoritm];
         } break;
         case PGPPublicKeyAlgorithmECDH:
         case PGPPublicKeyAlgorithmElgamal:
@@ -501,7 +501,7 @@ NS_ASSUME_NONNULL_BEGIN
         } break;
         case PGPPublicKeyAlgorithmECDSA:
         case PGPPublicKeyAlgorithmEdDSA:
-            return [PGPEC verify:toHashData signature:self withPublicKeyPacket:signingKeyPacket];
+            return [PGPEC verify:toHashData signature:self withPublicKeyPacket:signingKeyPacket withHashAlgorithm:self.hashAlgoritm];
         case PGPPublicKeyAlgorithmElgamal:
         case PGPPublicKeyAlgorithmECDH:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:
@@ -642,7 +642,7 @@ NS_ASSUME_NONNULL_BEGIN
                 }
                 return NO;
             }
-            let mpis = [PGPEC sign:toHashData key:key];
+            let mpis = [PGPEC sign:toHashData key:key withHashAlgorithm:self.hashAlgoritm];
             if (mpis.count == 0) {
                 if (error) {
                     *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Sign Encryption failed" }];

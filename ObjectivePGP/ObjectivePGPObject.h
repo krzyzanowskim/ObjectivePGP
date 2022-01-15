@@ -117,9 +117,9 @@ NS_ASSUME_NONNULL_BEGIN
  @param data data to decrypt.
  @param verified Verification result code. It is 0 if success, else the verification error code.
  @param keys private keys to use.
- @param passphraseBlock Optional. Handler for passphrase protected keys. Return passphrase for a key in question.
- @param verifySignature `YES` if should verify the signature used during encryption, if message is encrypted and signed.
- @param error Optional. Error.
+ @param passphraseForKeyBlock Optional. Handler for passphrase protected keys. Return passphrase for a key in question.
+ @param decryptionError Optional. Error of decryption phase.
+ @param verificationError Optional. Error of verification phase..
  @return Decrypted data, or `nil` if failed.
  */
 + (nullable NSData *)decrypt:(NSData *)data verified:(int * _Nullable)verified usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock decryptionError:(NSError * __autoreleasing _Nullable *)decryptionError verificationError:(NSError * __autoreleasing _Nullable *)verificationError;
@@ -131,9 +131,9 @@ NS_ASSUME_NONNULL_BEGIN
  @param verified Verification result code. It is 0 if success, else the verification error code.
  @param certifyWithRootKey `YES` if signer key should verify with a root key.
  @param keys private keys to use.
- @param passphraseBlock Optional. Handler for passphrase protected keys. Return passphrase for a key in question.
- @param verifySignature `YES` if should verify the signature used during encryption, if message is encrypted and signed.
- @param error Optional. Error.
+ @param passphraseForKeyBlock Optional. Handler for passphrase protected keys. Return passphrase for a key in question.
+ @param decryptionError Optional. Error of decryption phase.
+ @param verificationError Optional. Error of verification phase..
  @return Decrypted data, or `nil` if failed.
  */
 

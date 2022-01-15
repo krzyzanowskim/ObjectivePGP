@@ -123,7 +123,12 @@ NS_ASSUME_NONNULL_BEGIN
     // Verify
     if (verified) {
         if (![self verifyPackets:decryptedPackets usingKeys:keys certifyWithRootKey:certifyWithRootKey passphraseForKey:passphraseForKeyBlock error:verificationError]) {
-            *verified = (int)((*verificationError).code);
+            if (verificationError) {
+                *verified = (int)((*verificationError).code);
+            }
+            else {
+                *verified = PGPErrorInvalidSignature;
+            }
         }
         else {
             *verified = 0;

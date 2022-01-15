@@ -221,7 +221,7 @@ NS_ASSUME_NONNULL_BEGIN
     return NO;
 }
 
-+ (NSArray<PGPMPI *> *)sign:(NSData *)toSign key:(PGPKey *)key {
++ (NSArray<PGPMPI *> *)sign:(NSData *)toSign key:(PGPKey *)key withHashAlgorithm:(PGPHashAlgorithm)hashAlgorithm {
     switch (key.signingSecretKey.publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmEdDSA: {
             if (key.signingSecretKey.curveOID.curveKind != PGPCurveEd25519) {
@@ -254,9 +254,7 @@ NS_ASSUME_NONNULL_BEGIN
                 #endif
                 return @[];
             }
-            // 4th byte of toSign contains hashAlgorithm
-            PGPHashAlgorithm hashAlgorithm = PGPHashSHA512;
-            [toSign getBytes:&hashAlgorithm range:(NSRange){3, 1}];
+            
             NSData* hash = [toSign pgp_HashedWithAlgorithm:hashAlgorithm];
             size_t siglen = 0;
             
@@ -328,7 +326,7 @@ NS_ASSUME_NONNULL_BEGIN
     return @[];
 }
 
-+ (BOOL)verify:(NSData *)toVerify signature:(PGPSignaturePacket *)signaturePacket withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket {
++ (BOOL)verify:(NSData *)toVerify signature:(PGPSignaturePacket *)signaturePacket withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket withHashAlgorithm:(PGPHashAlgorithm)hashAlgorithm {
     switch (publicKeyPacket.publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmEdDSA: {
             if (publicKeyPacket.curveOID.curveKind != PGPCurveEd25519) {
@@ -369,9 +367,6 @@ NS_ASSUME_NONNULL_BEGIN
             [signatureData appendData:r];
             [signatureData appendData:s];
             
-            // 4th byte of toVerify contains hashAlgorithm
-            PGPHashAlgorithm hashAlgorithm = PGPHashSHA512;
-            [toVerify getBytes:&hashAlgorithm range:(NSRange){3, 1}];
             NSData* hash = [toVerify pgp_HashedWithAlgorithm:hashAlgorithm];
             
             //let ret = EVP_DigestVerify(ctx, signatureData.bytes, signatureData.length, toVerify.bytes, toVerify.length);

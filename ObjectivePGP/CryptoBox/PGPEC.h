@@ -23,8 +23,8 @@ PGP_EMPTY_INIT_UNAVAILABLE;
 
 + (BOOL)publicEncrypt:(nonnull NSData *)data withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket publicKey:(NSData * __autoreleasing _Nullable * _Nullable)publicKey encodedSymmetricKey:(NSData * __autoreleasing _Nullable * _Nullable)encodedSymmetricKey;
 
-+ (NSArray<PGPMPI *> *)sign:(NSData *)toSign key:(PGPKey *)key;
-+ (BOOL)verify:(NSData *)toVerify signature:(PGPSignaturePacket *)signaturePacket withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket;
++ (NSArray<PGPMPI *> *)sign:(NSData *)toSign key:(PGPKey *)key withHashAlgorithm:(PGPHashAlgorithm)hashAlgorithm;
++ (BOOL)verify:(NSData *)toVerify signature:(PGPSignaturePacket *)signaturePacket withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket withHashAlgorithm:(PGPHashAlgorithm)hashAlgorithm;
 
 @end
 
