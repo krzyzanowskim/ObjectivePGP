@@ -707,5 +707,81 @@ Ie6jnY0zP2ldtS4JmhKBa43qmOHCxHc=\n\
     XCTAssertEqualObjects(plaintext, decrypted);
 }
 
+- (void)testED25519_sign_verify {
+    let keyPub = [[PGPTestUtils readKeysFromPath:@"ecc-curve25519-pub1.asc"] firstObject];
+    XCTAssertNotNil(keyPub);
+    XCTAssertEqualObjects(keyPub.keyID.longIdentifier, @"753EC78567FE1231");
+
+    let keySec = [[PGPTestUtils readKeysFromPath:@"ecc-curve25519-sec1.asc"] firstObject];
+    XCTAssertNotNil(keySec);
+    XCTAssertEqualObjects(keySec.keyID.longIdentifier, @"753EC78567FE1231");
+    
+    let plaintext = [@"test message" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *signError;
+    
+    let signature = [ObjectivePGP sign:plaintext detached:YES usingKeys:@[keyPub, keySec] passphraseForKey:nil error:&signError];
+    XCTAssertNil(signError);
+    XCTAssertNotNil(signature);
+    
+    NSError *verifyError = nil;
+    let verified = [ObjectivePGP verifySignature:signature usingKeys:@[keyPub, keySec] passphraseForKey:nil error:&verifyError];
+    XCTAssertNil(verifyError);
+    XCTAssertTrue(verified);
+}
+
+- (void)testVerifyCertification {
+    let keyPub = [[PGPTestUtils readKeysFromPath:@"ecc-test-verifycert.asc"] firstObject];
+    XCTAssertNotNil(keyPub);
+    XCTAssertEqualObjects(keyPub.keyID.longIdentifier, @"ECC5DDD50E73FA0D");
+    
+    let keySec = [[PGPTestUtils readKeysFromPath:@"ecc-test-verifycert_secret.asc"] firstObject];
+    XCTAssertNotNil(keySec);
+    XCTAssertEqualObjects(keySec.keyID.longIdentifier, @"ECC5DDD50E73FA0D");
+
+    let caKey = [[PGPTestUtils readKeysFromPath:@"ecc_testca.asc"] firstObject];
+    XCTAssertNotNil(caKey);
+    XCTAssertEqualObjects(caKey.keyID.longIdentifier, @"D0E0A61F89B29423");
+    
+    let plaintext = [@"test message" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *signError;
+    
+    let signedData = [ObjectivePGP sign:plaintext detached:NO usingKeys:@[keyPub, keySec] passphraseForKey:^NSString * _Nullable(PGPKey *k) { return @"1234567890"; } error:&signError];
+    XCTAssertNil(signError);
+    XCTAssertNotNil(signedData);
+    
+    NSError *verifyError = nil;
+    
+    let verified = [ObjectivePGP verify:signedData withSignature:nil usingKeys:@[keyPub, keySec, caKey] certifyWithRootKey:YES passphraseForKey:^NSString * _Nullable(PGPKey *k) { return @"1234567890"; } error:&verifyError];
+    XCTAssertNil(verifyError);
+    XCTAssertTrue(verified);
+}
+
+- (void)testMissingRootCAVerifyCertification {
+    let keyPub = [[PGPTestUtils readKeysFromPath:@"ecc-test-verifycert.asc"] firstObject];
+    XCTAssertNotNil(keyPub);
+    XCTAssertEqualObjects(keyPub.keyID.longIdentifier, @"ECC5DDD50E73FA0D");
+    
+    let keySec = [[PGPTestUtils readKeysFromPath:@"ecc-test-verifycert_secret.asc"] firstObject];
+    XCTAssertNotNil(keySec);
+    XCTAssertEqualObjects(keySec.keyID.longIdentifier, @"ECC5DDD50E73FA0D");
+
+    let caKey = [[PGPTestUtils readKeysFromPath:@"ecc_testca.asc"] firstObject];
+    XCTAssertNotNil(caKey);
+    XCTAssertEqualObjects(caKey.keyID.longIdentifier, @"D0E0A61F89B29423");
+    
+    let plaintext = [@"test message" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *signError;
+    
+    let signedData = [ObjectivePGP sign:plaintext detached:NO usingKeys:@[keyPub, keySec] passphraseForKey:^NSString * _Nullable(PGPKey *k) { return @"1234567890"; } error:&signError];
+    XCTAssertNil(signError);
+    XCTAssertNotNil(signedData);
+    
+    NSError *verifyError = nil;
+    
+    let verified = [ObjectivePGP verify:signedData withSignature:nil usingKeys:@[keyPub, keySec] certifyWithRootKey:YES passphraseForKey:^NSString * _Nullable(PGPKey *k) { return @"1234567890"; } error:&verifyError];
+    XCTAssertNotNil(verifyError);
+    XCTAssertEqual(verifyError.code, PGPErrorMissingRootPublicKey);
+    XCTAssertFalse(verified);
+}
 
 @end
