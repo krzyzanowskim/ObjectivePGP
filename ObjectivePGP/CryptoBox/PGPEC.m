@@ -254,8 +254,10 @@ NS_ASSUME_NONNULL_BEGIN
                 #endif
                 return @[];
             }
-
-            NSData* hash = [toSign pgp_SHA512];
+            // 4th byte of toSign contains hashAlgorithm
+            PGPHashAlgorithm hashAlgorithm = PGPHashSHA512;
+            [toSign getBytes:&hashAlgorithm range:(NSRange){3, 1}];
+            NSData* hash = [toSign pgp_HashedWithAlgorithm:hashAlgorithm];
             size_t siglen = 0;
             
             if (EVP_DigestSign(ctx, NULL, &siglen, hash.bytes, hash.length) <= 0) {
@@ -366,7 +368,12 @@ NS_ASSUME_NONNULL_BEGIN
             let signatureData = [NSMutableData data];
             [signatureData appendData:r];
             [signatureData appendData:s];
-            NSData* hash = [toVerify pgp_SHA512];
+            
+            // 4th byte of toVerify contains hashAlgorithm
+            PGPHashAlgorithm hashAlgorithm = PGPHashSHA512;
+            [toVerify getBytes:&hashAlgorithm range:(NSRange){3, 1}];
+            NSData* hash = [toVerify pgp_HashedWithAlgorithm:hashAlgorithm];
+            
             //let ret = EVP_DigestVerify(ctx, signatureData.bytes, signatureData.length, toVerify.bytes, toVerify.length);
             let ret = EVP_DigestVerify(ctx, signatureData.bytes, signatureData.length, hash.bytes, hash.length);
             if (ret < 0) {

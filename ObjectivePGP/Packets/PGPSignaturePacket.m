@@ -387,7 +387,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmRSASignOnly:
         case PGPPublicKeyAlgorithmRSAEncryptOnly: {
             // convert mpi data to binary signature_bn_bin
-            let signatureMPI = self.signatureMPIs[0];
+            let signatureMPI = [self signatureMPI:PGPMPIdentifierM];
 
             // encoded m value
             let _Nullable encryptedEmData = [signatureMPI bodyData];
@@ -756,6 +756,7 @@ NS_ASSUME_NONNULL_BEGIN
                 [toSignData pgp_appendData:userIDData];
             }
             // TODO user attributes alternative
+            // https://datatracker.ietf.org/doc/html/rfc4880#section-5.2.4
             // UInt8 userAttributeConstant = 0xD1;
             //[data appendBytes:&userAttributeConstant length:sizeof(userAttributeConstant)];
             
