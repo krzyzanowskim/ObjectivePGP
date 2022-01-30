@@ -387,7 +387,7 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmRSASignOnly:
         case PGPPublicKeyAlgorithmRSAEncryptOnly: {
             // convert mpi data to binary signature_bn_bin
-            let signatureMPI = self.signatureMPIs[0];
+            let signatureMPI = [self signatureMPI:PGPMPIdentifierN]; // self.signatureMPIs[0];
 
             // encoded m value
             let _Nullable encryptedEmData = [signatureMPI bodyData];
@@ -479,7 +479,8 @@ NS_ASSUME_NONNULL_BEGIN
         case PGPPublicKeyAlgorithmRSASignOnly:
         case PGPPublicKeyAlgorithmRSAEncryptOnly: {
             // convert mpi data to binary signature_bn_bin
-            let signatureMPI = self.signatureMPIs[0];
+            let signatureMPI = [self signatureMPI:PGPMPIdentifierN];
+            //let signatureMPI = self.signatureMPIs[0];
             
             // encoded m value
             let _Nullable encryptedEmData = [signatureMPI bodyData];
