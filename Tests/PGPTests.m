@@ -83,7 +83,29 @@
     let importedPublicKeys = [ObjectivePGP readKeysFromData:exportedPublicKeyData error:nil];
     XCTAssert(importedPublicKeys.count == 1);
 
-    let importedSecretKeys = [ObjectivePGP readKeysFromData:exportedPublicKeyData error:nil];
+    let importedSecretKeys = [ObjectivePGP readKeysFromData:exportedSecretKeyData error:nil];
+    XCTAssert(importedSecretKeys.count == 1);
+    
+    NSString *armPub = [PGPArmor armored:exportedPublicKeyData as:PGPArmorPublicKey];
+    NSString *armPriv = [PGPArmor armored:exportedSecretKeyData as:PGPArmorSecretKey];
+    NSLog(armPub);
+    NSLog(armPriv);
+}
+
+- (void)testGenerateNewECKeyWithPassphrase {
+    let keyGenerator = [[PGPKeyGenerator alloc] initWithAlgorithm:PGPPublicKeyAlgorithmEdDSA keyBitsLength:0 cipherAlgorithm:PGPSymmetricAES256 hashAlgorithm:PGPHashSHA512];
+    let key = [keyGenerator generateFor:@"Peter <peter@example.com>" passphrase:@"1234567890"];
+    XCTAssertNotNil(key);
+
+    let exportedPublicKeyData = [key export:PGPKeyTypePublic error:nil];
+    XCTAssertNotNil(exportedPublicKeyData);
+    let exportedSecretKeyData = [key export:PGPKeyTypeSecret error:nil];
+    XCTAssertNotNil(exportedSecretKeyData);
+
+    let importedPublicKeys = [ObjectivePGP readKeysFromData:exportedPublicKeyData error:nil];
+    XCTAssert(importedPublicKeys.count == 1);
+
+    let importedSecretKeys = [ObjectivePGP readKeysFromData:exportedSecretKeyData error:nil];
     XCTAssert(importedSecretKeys.count == 1);
 }
 
@@ -685,6 +707,40 @@ Ie6jnY0zP2ldtS4JmhKBa43qmOHCxHc=\n\
     XCTAssertEqualObjects(plaintext, decrypted);
 }
 
+- (void)testECC_encrypt2 {
+    let keyGenerator = [[PGPKeyGenerator alloc] initWithAlgorithm:PGPPublicKeyAlgorithmEdDSA keyBitsLength:0 cipherAlgorithm:PGPSymmetricAES256 hashAlgorithm:PGPHashSHA512];
+    let key = [keyGenerator generateFor:@"Peter <peter@example.com>" passphrase:@"1234567890"];
+    XCTAssertNotNil(key);
+
+    let exportedPublicKeyData = [key export:PGPKeyTypePublic error:nil];
+    XCTAssertNotNil(exportedPublicKeyData);
+    let exportedSecretKeyData = [key export:PGPKeyTypeSecret error:nil];
+    XCTAssertNotNil(exportedSecretKeyData);
+
+    let keyPub = [ObjectivePGP readKeysFromData:exportedPublicKeyData error:nil];
+    XCTAssert(keyPub.count == 1);
+
+    let keySec = [ObjectivePGP readKeysFromData:exportedSecretKeyData error:nil];
+    XCTAssert(keySec.count == 1);
+    
+    NSString *armPub = [PGPArmor armored:exportedPublicKeyData as:PGPArmorPublicKey];
+    NSString *armPriv = [PGPArmor armored:exportedSecretKeyData as:PGPArmorSecretKey];
+    NSLog(armPub);
+    NSLog(armPriv);
+    
+    let plaintext = [@"test message" dataUsingEncoding:NSUTF8StringEncoding];
+    NSError *encryptError;
+    let encryptedData = [ObjectivePGP encrypt:plaintext addSignature:YES usingKeys:@[keyPub[0], keySec[0]] passphraseForKey:^NSString * _Nullable(PGPKey * _Nonnull key) { return @"1234567890"; } error:&encryptError];
+    XCTAssertNil(encryptError);
+    XCTAssertNotNil(encryptedData);
+
+    NSError *decryptError = nil;
+    let decrypted = [ObjectivePGP decrypt:encryptedData andVerifySignature:YES usingKeys:@[keyPub[0], keySec[0]] passphraseForKey:^NSString * _Nullable(PGPKey * _Nonnull key) { return @"1234567890"; } error:&decryptError];
+    XCTAssertNil(decryptError);
+    XCTAssertNotNil(decrypted);
+    XCTAssertEqualObjects(plaintext, decrypted);
+}
+
 - (void)testECC_encrypt_sign {
     let keyPub = [[PGPTestUtils readKeysFromPath:@"ecc-curve25519-pub1.asc"] firstObject];
     XCTAssertNotNil(keyPub);
@@ -734,11 +790,11 @@ Ie6jnY0zP2ldtS4JmhKBa43qmOHCxHc=\n\
     XCTAssertNotNil(keyPub);
     XCTAssertEqualObjects(keyPub.keyID.longIdentifier, @"ECC5DDD50E73FA0D");
     
-    let keySec = [[PGPTestUtils readKeysFromPath:@"ecc-test-verifycert_secret.asc"] firstObject];
+    let keySec = [[PGPTestUtils readKeysFromPath:@"ecc-test-verifycert-sec.asc"] firstObject];
     XCTAssertNotNil(keySec);
     XCTAssertEqualObjects(keySec.keyID.longIdentifier, @"ECC5DDD50E73FA0D");
 
-    let caKey = [[PGPTestUtils readKeysFromPath:@"ecc_testca.asc"] firstObject];
+    let caKey = [[PGPTestUtils readKeysFromPath:@"ecc-testca.asc"] firstObject];
     XCTAssertNotNil(caKey);
     XCTAssertEqualObjects(caKey.keyID.longIdentifier, @"D0E0A61F89B29423");
     
@@ -761,11 +817,11 @@ Ie6jnY0zP2ldtS4JmhKBa43qmOHCxHc=\n\
     XCTAssertNotNil(keyPub);
     XCTAssertEqualObjects(keyPub.keyID.longIdentifier, @"ECC5DDD50E73FA0D");
     
-    let keySec = [[PGPTestUtils readKeysFromPath:@"ecc-test-verifycert_secret.asc"] firstObject];
+    let keySec = [[PGPTestUtils readKeysFromPath:@"ecc-test-verifycert-sec.asc"] firstObject];
     XCTAssertNotNil(keySec);
     XCTAssertEqualObjects(keySec.keyID.longIdentifier, @"ECC5DDD50E73FA0D");
 
-    let caKey = [[PGPTestUtils readKeysFromPath:@"ecc_testca.asc"] firstObject];
+    let caKey = [[PGPTestUtils readKeysFromPath:@"ecc-testca.asc"] firstObject];
     XCTAssertNotNil(caKey);
     XCTAssertEqualObjects(caKey.keyID.longIdentifier, @"D0E0A61F89B29423");
     

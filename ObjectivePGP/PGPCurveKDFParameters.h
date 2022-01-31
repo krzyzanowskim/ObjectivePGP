@@ -24,6 +24,8 @@ PGP_EMPTY_INIT_UNAVAILABLE
 
 - (instancetype)initWithHashAlgorithm:(PGPHashAlgorithm)hashAlgorithm symmetricAlgorithm:(PGPSymmetricAlgorithm)symmetricAlgorithm;
 
++ (instancetype)defaultParameters;
+
 @end
 
 NS_ASSUME_NONNULL_END

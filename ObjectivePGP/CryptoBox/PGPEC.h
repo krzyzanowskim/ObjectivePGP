@@ -9,6 +9,7 @@
 //
 
 #import "PGPSecretKeyPacket.h"
+#import "PGPKeyMaterial.h"
 #import <Foundation/Foundation.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -25,6 +26,9 @@ PGP_EMPTY_INIT_UNAVAILABLE;
 
 + (NSArray<PGPMPI *> *)sign:(NSData *)toSign key:(PGPKey *)key withHashAlgorithm:(PGPHashAlgorithm)hashAlgorithm;
 + (BOOL)verify:(NSData *)toVerify signature:(PGPSignaturePacket *)signaturePacket withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket withHashAlgorithm:(PGPHashAlgorithm)hashAlgorithm;
+
+//new keys
++ (nullable PGPKeyMaterial *)generateNewKeyMPIArray:(PGPCurve)curve;
 
 @end
 
