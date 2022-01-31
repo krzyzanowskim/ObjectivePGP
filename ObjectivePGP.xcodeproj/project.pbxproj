@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		3590CA6527A80F6100FE5542 /* PGPKeySpec.h in Headers */ = {isa = PBXBuildFile; fileRef = 3590CA6327A80F6000FE5542 /* PGPKeySpec.h */; };
+		3590CA6527A80F6100FE5542 /* PGPKeySpec.h in Headers */ = {isa = PBXBuildFile; fileRef = 3590CA6327A80F6000FE5542 /* PGPKeySpec.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3590CA6627A80F6100FE5542 /* PGPKeySpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 3590CA6427A80F6000FE5542 /* PGPKeySpec.m */; };
 		75040AB21926BB35000CEA93 /* PGPTestArmor.m in Sources */ = {isa = PBXBuildFile; fileRef = 75040AB11926BB35000CEA93 /* PGPTestArmor.m */; };
 		750F52C01F5C833400DA7DE4 /* PGPMacros+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 750F52BF1F5C832500DA7DE4 /* PGPMacros+Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -132,7 +132,7 @@
 		758C9AA522563B53005F0D19 /* PGPCurveOID.h in Headers */ = {isa = PBXBuildFile; fileRef = 758C9AA322563B53005F0D19 /* PGPCurveOID.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		758C9AA622563B53005F0D19 /* PGPCurveOID.m in Sources */ = {isa = PBXBuildFile; fileRef = 758C9AA422563B53005F0D19 /* PGPCurveOID.m */; };
 		759345561FE9C447004D5105 /* twofish.c in Sources */ = {isa = PBXBuildFile; fileRef = 759345541FE9C447004D5105 /* twofish.c */; };
-		759345571FE9C447004D5105 /* twofish.h in Headers */ = {isa = PBXBuildFile; fileRef = 759345551FE9C447004D5105 /* twofish.h */; };
+		759345571FE9C447004D5105 /* twofish.h in Headers */ = {isa = PBXBuildFile; fileRef = 759345551FE9C447004D5105 /* twofish.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		75AB35061F8819A600A1CDD6 /* testfiles.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 75AB35051F88193B00A1CDD6 /* testfiles.bundle */; };
 		75AB350A1F881E3F00A1CDD6 /* PGPTestUtils.m in Sources */ = {isa = PBXBuildFile; fileRef = 75AB35091F881E3F00A1CDD6 /* PGPTestUtils.m */; };
 		75BF43E21F504D0F004334DE /* PGPKeyGenerator.h in Headers */ = {isa = PBXBuildFile; fileRef = 75BF43E01F504D0F004334DE /* PGPKeyGenerator.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -754,7 +754,7 @@
 			isa = PBXProject;
 			attributes = {
 				CLASSPREFIX = PGP;
-				LastUpgradeCheck = 1300;
+				LastUpgradeCheck = 1320;
 				ORGANIZATIONNAME = "Marcin Krzyżanowski";
 				TargetAttributes = {
 					750F89331F0D6A3F00B99726 = {

@@ -19,6 +19,7 @@ organizations who have contributed source code to ObjectivePGP.
 - Stefano Dissegna <stefano.dissegna@gmail.com>
 - Steve Simpson <steve@leeson.co.nz>
 - ghaarsma <ghaarsma@gmail.com>
+- p-barabas <48322346+p-barabas@users.noreply.github.com>
 
 **Updating this list**
 

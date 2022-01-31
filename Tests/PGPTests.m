@@ -88,8 +88,8 @@
     
     NSString *armPub = [PGPArmor armored:exportedPublicKeyData as:PGPArmorPublicKey];
     NSString *armPriv = [PGPArmor armored:exportedSecretKeyData as:PGPArmorSecretKey];
-    NSLog(armPub);
-    NSLog(armPriv);
+    XCTAssertNotNil(armPub);
+    XCTAssertNotNil(armPriv);
 }
 
 - (void)testGenerateNewECKeyWithPassphrase {
@@ -722,20 +722,15 @@ Ie6jnY0zP2ldtS4JmhKBa43qmOHCxHc=\n\
 
     let keySec = [ObjectivePGP readKeysFromData:exportedSecretKeyData error:nil];
     XCTAssert(keySec.count == 1);
-    
-    NSString *armPub = [PGPArmor armored:exportedPublicKeyData as:PGPArmorPublicKey];
-    NSString *armPriv = [PGPArmor armored:exportedSecretKeyData as:PGPArmorSecretKey];
-    NSLog(armPub);
-    NSLog(armPriv);
-    
+
     let plaintext = [@"test message" dataUsingEncoding:NSUTF8StringEncoding];
     NSError *encryptError;
-    let encryptedData = [ObjectivePGP encrypt:plaintext addSignature:YES usingKeys:@[keyPub[0], keySec[0]] passphraseForKey:^NSString * _Nullable(PGPKey * _Nonnull key) { return @"1234567890"; } error:&encryptError];
+    let encryptedData = [ObjectivePGP encrypt:plaintext addSignature:YES usingKeys:@[keyPub[0], keySec[0]] passphraseForKey:^NSString * _Nullable(PGPKey * _Nonnull keyy) { return @"1234567890"; } error:&encryptError];
     XCTAssertNil(encryptError);
     XCTAssertNotNil(encryptedData);
 
     NSError *decryptError = nil;
-    let decrypted = [ObjectivePGP decrypt:encryptedData andVerifySignature:YES usingKeys:@[keyPub[0], keySec[0]] passphraseForKey:^NSString * _Nullable(PGPKey * _Nonnull key) { return @"1234567890"; } error:&decryptError];
+    let decrypted = [ObjectivePGP decrypt:encryptedData andVerifySignature:YES usingKeys:@[keyPub[0], keySec[0]] passphraseForKey:^NSString * _Nullable(PGPKey * _Nonnull keyy) { return @"1234567890"; } error:&decryptError];
     XCTAssertNil(decryptError);
     XCTAssertNotNil(decrypted);
     XCTAssertEqualObjects(plaintext, decrypted);
