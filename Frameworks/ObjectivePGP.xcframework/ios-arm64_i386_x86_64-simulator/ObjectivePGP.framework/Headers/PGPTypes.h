@@ -35,7 +35,12 @@ typedef NS_ERROR_ENUM(PGPErrorDomain, PGPErrorCode) {
     /// Invalid PGP message. Invalid or corrupted data that can't be processed.
     PGPErrorInvalidMessage = 9,
     PGPErrorMissingSignature = 10,
-    PGPErrorNotFound = 11
+    PGPErrorNotFound = 11,
+    // for check signature with rootCA
+    PGPErrorMissingPublicKeySignature = 12,
+    PGPErrorMissingRootPublicKey = 13,
+    PGPErrorInvalidRootPublicKey = 14
+
 };
 
 typedef NS_CLOSED_ENUM(NSInteger, PGPFormatType) {

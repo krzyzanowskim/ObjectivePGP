@@ -22,6 +22,7 @@ NS_SWIFT_NAME(CurveOID) @interface PGPCurveOID : NSObject <PGPExportable>
 PGP_EMPTY_INIT_UNAVAILABLE;
 
 - (nullable instancetype)initWithIdentifierData:(NSData *)identifierData NS_DESIGNATED_INITIALIZER;
+- (nullable instancetype)initWithCurveKind:(PGPCurve)kind;
 
 @end
 

@@ -8,7 +8,7 @@
 
 **ObjectivePGP** is an implementation of [OpenPGP](https://en.wikipedia.org/wiki/Pretty_Good_Privacy#OpenPGP) protocol for iOS and macOS. OpenPGP is the most widely used email encryption standard. It is defined by the OpenPGP Working Group of the Internet Engineering Task Force (IETF).
 
-Here is the [blog post](http://blog.krzyzanowskim.com/2014/07/31/short-story-about-openpgp-for-ios-and-os-x-objectivepgp/) story.
+Here is the [blog post](https://blog.krzyzanowskim.com/2014/07/31/short-story-about-openpgp-for-ios-and-os-x-objectivepgp/) story.
 
 ## How do I get involved?
 
@@ -25,7 +25,7 @@ The ObjectivePGP stays under a dual license:
 
 - Free for non-commercial use, covered by the variant of BSD license. That means you have to mention Marcin Krzyżanowski as the original author of this code and reproduce the [LICENSE](./LICENSE.txt) text inside your app.
 
-- Commercial-use license to use in commercial products. Please bear in mind that some free products remain commercial products. Please contact me via [email](http://www.krzyzanowskim.com) for details.
+- Commercial-use license to use in commercial products. Please bear in mind that some free products remain commercial products. Please contact me via [email](https://www.krzyzanowskim.com) for details.
 
 
 Not sure what to choose? check [FAQ](https://github.com/krzyzanowskim/ObjectivePGP/wiki/FAQ)
@@ -36,7 +36,7 @@ Not sure what to choose? check [FAQ](https://github.com/krzyzanowskim/ObjectiveP
 
 ```
 dependencies: [
-    .package(url: "https://github.com/krzyzanowskim/ObjectivePGP.git", .upToNextMinor(from: "0.99.0"))
+    .package(url: "https://github.com/krzyzanowskim/ObjectivePGP.git", .upToNextMinor(from: "0.99.1"))
 ]
 ```
 
@@ -177,7 +177,7 @@ Example:
 
 ```
 -----BEGIN PGP PUBLIC KEY BLOCK-----
-Comment: For more info see http://www.objectivepgp.org
+Comment: For more info see https://www.objectivepgp.org
 
 [...]
 -----END PGP PUBLIC KEY BLOCK-----
@@ -218,8 +218,8 @@ To date the ObjectivePGP code base has undergone a complete security audit from 
 
 ### Acknowledgment
 
-This product uses software developed by the [OpenSSL](http://www.openssl.org/) Project for use in the OpenSSL Toolkit. (http://www.openssl.org/)
+This product uses software developed by the [OpenSSL](https://www.openssl.org/) Project for use in the OpenSSL Toolkit. (http://www.openssl.org/)
 
 ### Author
 
-[Marcin Krzyżanowski](http://krzyzanowskim.com)
+[Marcin Krzyżanowski](https://krzyzanowskim.com)

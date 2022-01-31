@@ -10,7 +10,7 @@
 		</data>
 		<key>Headers/ObjectivePGPObject.h</key>
 		<data>
-		JTGF3ql5JEmopphOzR2GqpmOxHQ=
+		dB1F+X/bH3CctatS4jpoMTVUQpQ=
 		</data>
 		<key>Headers/PGPArmor.h</key>
 		<data>
@@ -22,7 +22,7 @@
 		</data>
 		<key>Headers/PGPFingerprint.h</key>
 		<data>
-		/h1q4w11v6qeCewXj64wOw0wqw8=
+		ip2tu1CNvn73FzTMSGUxeEzCFrs=
 		</data>
 		<key>Headers/PGPKey.h</key>
 		<data>
@@ -30,7 +30,7 @@
 		</data>
 		<key>Headers/PGPKeyGenerator.h</key>
 		<data>
-		5BbCiitR5LR5rp97NAKqLMDS7S8=
+		sqvWAeapFe5fwCE4zu3LX0zSApY=
 		</data>
 		<key>Headers/PGPKeyID.h</key>
 		<data>
@@ -54,7 +54,7 @@
 		</data>
 		<key>Headers/PGPTypes.h</key>
 		<data>
-		ZtIOeCePMxsSoUkY0XEndhhfqbY=
+		LaaGJshRQURU4zgiIRQIJ/GnJEc=
 		</data>
 		<key>Headers/PGPUser.h</key>
 		<data>
@@ -62,7 +62,7 @@
 		</data>
 		<key>Info.plist</key>
 		<data>
-		/JLAvmGVBahp19Zh1ePTzQQF264=
+		WDSPYLfT4OdOKr/mTBVM0QV++Lo=
 		</data>
 		<key>LICENSE.txt</key>
 		<data>
@@ -90,7 +90,7 @@
 		</data>
 		<key>PrivateHeaders/ObjectivePGP-Private.h</key>
 		<data>
-		bec36eJQFS36yZd0fuaCgZlm3I8=
+		V2lH/0Ulk8+9rMhgcgaOKk6ueAI=
 		</data>
 		<key>PrivateHeaders/PGPBigNum+Private.h</key>
 		<data>
@@ -118,11 +118,11 @@
 		</data>
 		<key>PrivateHeaders/PGPCurveKDFParameters.h</key>
 		<data>
-		IJ7olsZPY85dhbsit2Dr+AT7IKE=
+		Wbuj6bnTRspiSO7O1uB+KvsjUrc=
 		</data>
 		<key>PrivateHeaders/PGPCurveOID.h</key>
 		<data>
-		6g3z9rEv7LMUo5/UEqSy2ekDbic=
+		Bb7nm5YzhzDbM93zywYu+C7ua5c=
 		</data>
 		<key>PrivateHeaders/PGPDSA.h</key>
 		<data>
@@ -130,7 +130,7 @@
 		</data>
 		<key>PrivateHeaders/PGPEC.h</key>
 		<data>
-		jGfVPrwnPMMocsQypYJ/8FIhJoI=
+		CnaHHdIJm1W30LbDNkEGefKK6Oc=
 		</data>
 		<key>PrivateHeaders/PGPElgamal.h</key>
 		<data>
@@ -151,6 +151,10 @@
 		<key>PrivateHeaders/PGPKeyMaterial.h</key>
 		<data>
 		OwYQ9ICvx8daxULLpVEnnCZ3y34=
+		</data>
+		<key>PrivateHeaders/PGPKeySpec.h</key>
+		<data>
+		10/ApFfEwv0D9oycvTZFpJfYbFo=
 		</data>
 		<key>PrivateHeaders/PGPKeyring+Private.h</key>
 		<data>
@@ -262,7 +266,7 @@
 		</data>
 		<key>PrivateHeaders/PGPSignaturePacket.h</key>
 		<data>
-		WfmidlDve8/gAEsb5YhXlsvCjT4=
+		YQ7YJfIcOXyk3KQtiWvR9t8uLAI=
 		</data>
 		<key>PrivateHeaders/PGPSignatureSubpacket+Private.h</key>
 		<data>
@@ -320,6 +324,10 @@
 		<data>
 		upX5e4bPM/kUNnr4EHoIrIfxV7w=
 		</data>
+		<key>PrivateHeaders/twofish.h</key>
+		<data>
+		AMY0FaRQ7Zxid0/gi181bmY3ivU=
+		</data>
 	</dict>
 	<key>files2</key>
 	<dict>
@@ -338,11 +346,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			JTGF3ql5JEmopphOzR2GqpmOxHQ=
+			dB1F+X/bH3CctatS4jpoMTVUQpQ=
 			</data>
 			<key>hash2</key>
 			<data>
-			fSjxSLgEas9L42c8OZ/S4e3Lo8/V/PUr+Imt5wPGezM=
+			aNHRbAD9N83l/bOELz4BGmEftms5UC4RsjzDhrzN3ho=
 			</data>
 		</dict>
 		<key>Headers/PGPArmor.h</key>
@@ -371,11 +379,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			/h1q4w11v6qeCewXj64wOw0wqw8=
+			ip2tu1CNvn73FzTMSGUxeEzCFrs=
 			</data>
 			<key>hash2</key>
 			<data>
-			fv1i0BKJ3JQ4tSTAVreCvBFkfOoanEwO15FA/zlZtdg=
+			2xgaFFdiU2NjRRLYopUjmBCQYPf2ze2RdDAc4Y2/JLM=
 			</data>
 		</dict>
 		<key>Headers/PGPKey.h</key>
@@ -393,11 +401,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			5BbCiitR5LR5rp97NAKqLMDS7S8=
+			sqvWAeapFe5fwCE4zu3LX0zSApY=
 			</data>
 			<key>hash2</key>
 			<data>
-			D/rjZ9NiJYO6qJS/h5rFCcq/j5CvmLU5SDYzB6mVnps=
+			xxp3XEvoowgWI8fdaDrcm4y1xY9wZ5tp8wCCVHb+cO8=
 			</data>
 		</dict>
 		<key>Headers/PGPKeyID.h</key>
@@ -459,11 +467,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			ZtIOeCePMxsSoUkY0XEndhhfqbY=
+			LaaGJshRQURU4zgiIRQIJ/GnJEc=
 			</data>
 			<key>hash2</key>
 			<data>
-			Hi4naSUMPpPb4rXrHtCT0VwF5eUULKGZT37PA3JfHdA=
+			WBm9B0onpOH4HioFtwu2R9112Giko3Kx5DCDpFtpHQE=
 			</data>
 		</dict>
 		<key>Headers/PGPUser.h</key>
@@ -547,11 +555,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			bec36eJQFS36yZd0fuaCgZlm3I8=
+			V2lH/0Ulk8+9rMhgcgaOKk6ueAI=
 			</data>
 			<key>hash2</key>
 			<data>
-			RtYS2RN9eZryT3qSJe6P68ShaeB+m+V+iuhYLytzmKs=
+			d981qTB7Cy31OoxqacdUa/6gnGijL37SxSogX0ntF2A=
 			</data>
 		</dict>
 		<key>PrivateHeaders/PGPBigNum+Private.h</key>
@@ -624,22 +632,22 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			IJ7olsZPY85dhbsit2Dr+AT7IKE=
+			Wbuj6bnTRspiSO7O1uB+KvsjUrc=
 			</data>
 			<key>hash2</key>
 			<data>
-			0uXzn7KE+0Fk9OHZsYQ1S6VSJM/ehgqEH6dEHbtqVv4=
+			PRPRNvJPwdpO5t/8loX0KGYbwmSFyCKsF2Uh4o8q2aU=
 			</data>
 		</dict>
 		<key>PrivateHeaders/PGPCurveOID.h</key>
 		<dict>
 			<key>hash</key>
 			<data>
-			6g3z9rEv7LMUo5/UEqSy2ekDbic=
+			Bb7nm5YzhzDbM93zywYu+C7ua5c=
 			</data>
 			<key>hash2</key>
 			<data>
-			tccGtIlrO9WBmZC+fqXJ+2yLsnbSf7RwbXjR/OjfU1w=
+			qYKf+w2W6tcbb/nOy5aARNxoEuf3yQCHXy20qwrBbdY=
 			</data>
 		</dict>
 		<key>PrivateHeaders/PGPDSA.h</key>
@@ -657,11 +665,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			jGfVPrwnPMMocsQypYJ/8FIhJoI=
+			CnaHHdIJm1W30LbDNkEGefKK6Oc=
 			</data>
 			<key>hash2</key>
 			<data>
-			emW2DlM4OvJ+r0YsdF3MLFLkljPijLZoDakLfpo/n3w=
+			b8skOpy7f7K5AUxLckFC8dnamcncBOgB1ElwtPhdx2o=
 			</data>
 		</dict>
 		<key>PrivateHeaders/PGPElgamal.h</key>
@@ -717,6 +725,17 @@
 			<key>hash2</key>
 			<data>
 			9NCVAC48q/uyu1twKcxai9bri4zQNaYUHQjbhcfMmxY=
+			</data>
+		</dict>
+		<key>PrivateHeaders/PGPKeySpec.h</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			10/ApFfEwv0D9oycvTZFpJfYbFo=
+			</data>
+			<key>hash2</key>
+			<data>
+			7VDnPwssYaCluTJjMr2NkD1OCQk9ni+pkmborrc0BOE=
 			</data>
 		</dict>
 		<key>PrivateHeaders/PGPKeyring+Private.h</key>
@@ -1020,11 +1039,11 @@
 		<dict>
 			<key>hash</key>
 			<data>
-			WfmidlDve8/gAEsb5YhXlsvCjT4=
+			YQ7YJfIcOXyk3KQtiWvR9t8uLAI=
 			</data>
 			<key>hash2</key>
 			<data>
-			qKkuXqq3JaKWLLzLy0az/8rsppy4dMo21AkAfLVsAbk=
+			TA2x0DBnvkcSgf17bDkgPtBV7hcbqNPMqdTzh5tQfmQ=
 			</data>
 		</dict>
 		<key>PrivateHeaders/PGPSignatureSubpacket+Private.h</key>
@@ -1179,6 +1198,17 @@
 			<key>hash2</key>
 			<data>
 			5TFWoo0AQkyJeaR8eXgqDOh46hFnwB6M4cjIldrBkjQ=
+			</data>
+		</dict>
+		<key>PrivateHeaders/twofish.h</key>
+		<dict>
+			<key>hash</key>
+			<data>
+			AMY0FaRQ7Zxid0/gi181bmY3ivU=
+			</data>
+			<key>hash2</key>
+			<data>
+			SKea7F0KgHHOUjWGth0udtnqxgprAA3ExEjjRN3y5xw=
 			</data>
 		</dict>
 	</dict>

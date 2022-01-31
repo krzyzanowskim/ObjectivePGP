@@ -17,4 +17,6 @@ NS_SWIFT_NAME(Fingerprint) @interface PGPFingerprint : NSObject
 - (NSString *)description;
 - (NSUInteger)hashLength;
 
+- (NSData*)exportV4HashedData;
+
 @end

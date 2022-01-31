@@ -1,3 +1,8 @@
+Version 0.99.1
+- Fix ED25119 signature calculation. #192
+- Generate ECC keys. #190
+- Support compression in siguature packet. #191
+
 Version 0.99.0
 - Elliptic-Curves support (RFC6637 https://datatracker.ietf.org/doc/html/rfc6637). #141
     - Elliptic-curve Diffie–Hellman.

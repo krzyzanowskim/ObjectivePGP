@@ -18,10 +18,13 @@ NS_SWIFT_NAME(KeyGenerator) @interface PGPKeyGenerator : NSObject
 @property (nonatomic) PGPPublicKeyAlgorithm keyAlgorithm;
 @property (nonatomic) PGPSymmetricAlgorithm cipherAlgorithm;
 @property (nonatomic) PGPHashAlgorithm hashAlgorithm;
+@property (nonatomic) PGPCurve curveKind;
 @property (nonatomic) UInt8 version;
 @property (nonatomic) NSDate *createDate;
 
 - (PGPKey *)generateFor:(NSString *)userID passphrase:(nullable NSString *)passphrase;
+
+- (instancetype)initWithAlgorithm:(PGPPublicKeyAlgorithm)algorithm keyBitsLength:(int)bits cipherAlgorithm:(PGPSymmetricAlgorithm)cipherAlgorithm hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm;
 
 @end
 
