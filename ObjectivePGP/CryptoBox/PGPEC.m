@@ -8,6 +8,7 @@
 
 #import "PGPEC.h"
 #import "PGPMPI.h"
+#import "PGPKeyMaterial.h"
 #import "PGPSecretKeyPacket.h"
 #import "PGPSecretKeyPacket+Private.h"
 #import "PGPPublicKeyPacket+Private.h"
@@ -221,14 +222,14 @@ NS_ASSUME_NONNULL_BEGIN
     return NO;
 }
 
-+ (NSArray<PGPMPI *> *)sign:(NSData *)toSign key:(PGPKey *)key {
++ (NSArray<PGPMPI *> *)sign:(NSData *)toSign key:(PGPKey *)key withHashAlgorithm:(PGPHashAlgorithm)hashAlgorithm {
     switch (key.signingSecretKey.publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmEdDSA: {
             if (key.signingSecretKey.curveOID.curveKind != PGPCurveEd25519) {
                 PGPLogWarning(@"Unsupported curve %@ kind for EdDSA algorithm", @(key.signingSecretKey.curveOID.curveKind));
                 return @[];
             }
-
+        
             let SEED = [[key.signingSecretKey secretMPI:PGPMPIdentifierD] bodyData]; //
             let pkey = EVP_PKEY_new_raw_private_key(EVP_PKEY_ED25519, NULL, SEED.bytes, SEED.length);
             if (!pkey) {
@@ -254,9 +255,11 @@ NS_ASSUME_NONNULL_BEGIN
                 #endif
                 return @[];
             }
-
+            
+            NSData* hash = [toSign pgp_HashedWithAlgorithm:hashAlgorithm];
             size_t siglen = 0;
-            if (EVP_DigestSign(ctx, NULL, &siglen, toSign.bytes, toSign.length) <= 0) {
+            
+            if (EVP_DigestSign(ctx, NULL, &siglen, hash.bytes, hash.length) <= 0) {
 #if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
                 char *err_str = ERR_error_string(ERR_get_error(), NULL);
                 PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
@@ -268,7 +271,7 @@ NS_ASSUME_NONNULL_BEGIN
             pgp_defer {
                 OPENSSL_clear_free(sigret, siglen);
             };
-            if (EVP_DigestSign(ctx, sigret, &siglen, toSign.bytes, toSign.length) <= 0) {
+            if (EVP_DigestSign(ctx, sigret, &siglen, hash.bytes, hash.length) <= 0) {
 #if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
                 char *err_str = ERR_error_string(ERR_get_error(), NULL);
                 PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
@@ -324,7 +327,7 @@ NS_ASSUME_NONNULL_BEGIN
     return @[];
 }
 
-+ (BOOL)verify:(NSData *)toVerify signature:(PGPSignaturePacket *)signaturePacket withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket {
++ (BOOL)verify:(NSData *)toVerify signature:(PGPSignaturePacket *)signaturePacket withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket withHashAlgorithm:(PGPHashAlgorithm)hashAlgorithm {
     switch (publicKeyPacket.publicKeyAlgorithm) {
         case PGPPublicKeyAlgorithmEdDSA: {
             if (publicKeyPacket.curveOID.curveKind != PGPCurveEd25519) {
@@ -350,7 +353,7 @@ NS_ASSUME_NONNULL_BEGIN
             pgp_defer {
                 EVP_MD_CTX_free(ctx);
             };
-
+            
             if (EVP_DigestVerifyInit(ctx, NULL, NULL, NULL, pkey) <= 0) {
 #if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
                 char *err_str = ERR_error_string(ERR_get_error(), NULL);
@@ -364,8 +367,11 @@ NS_ASSUME_NONNULL_BEGIN
             let signatureData = [NSMutableData data];
             [signatureData appendData:r];
             [signatureData appendData:s];
-
-            let ret = EVP_DigestVerify(ctx, signatureData.bytes, signatureData.length, toVerify.bytes, toVerify.length);
+            
+            NSData* hash = [toVerify pgp_HashedWithAlgorithm:hashAlgorithm];
+            
+            //let ret = EVP_DigestVerify(ctx, signatureData.bytes, signatureData.length, toVerify.bytes, toVerify.length);
+            let ret = EVP_DigestVerify(ctx, signatureData.bytes, signatureData.length, hash.bytes, hash.length);
             if (ret < 0) {
 #if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
                 char *err_str = ERR_error_string(ERR_get_error(), NULL);
@@ -373,7 +379,7 @@ NS_ASSUME_NONNULL_BEGIN
 #endif
                 return NO;
             }
-
+            
             if (ret == 1) {
                 return YES;
             }
@@ -408,6 +414,76 @@ NS_ASSUME_NONNULL_BEGIN
     return NO;
 }
 
++ (nullable PGPKeyMaterial *)generateNewKeyMPIArray:(PGPCurve)curve {
+    
+    let keyMaterial = [[PGPKeyMaterial alloc] init];
+    int curveID = - 1;
+    
+    switch(curve) {
+        case PGPCurve25519:
+            curveID = EVP_PKEY_X25519;
+            break;
+        case PGPCurveEd25519:
+            curveID = EVP_PKEY_ED25519;
+            break;
+        case PGPCurveP256:
+        case PGPCurveP384:
+        case PGPCurveP521:
+        case PGPCurveBrainpoolP256r1:
+        case PGPCurveBrainpoolP512r1:
+            // TODO: implement NIST curves
+            curveID = -1;
+            break;
+    }
+
+    if (curveID == -1) {
+        return nil;
+    }
+    
+    NSData* private_key_d = [[PGPCryptoUtils randomData:32] mutableCopy];
+    let secret_key = [private_key_d pgp_reversed];
+    let pkey_private_key = EVP_PKEY_new_raw_private_key(curveID, NULL, secret_key.bytes , secret_key.length);
+    if (!pkey_private_key) {
+        // TODO: set error
+        return nil;
+    }
+    pgp_defer {
+        EVP_PKEY_free(pkey_private_key);
+    };
+
+    // get public key from private key
+    size_t public_key_buf_length = 0;
+    if (EVP_PKEY_get_raw_public_key(pkey_private_key, NULL, &public_key_buf_length) == 0) {
+        return nil;
+    }
+
+    unsigned char *public_key_buffer = OPENSSL_secure_malloc(public_key_buf_length);
+    pgp_defer {
+        OPENSSL_secure_clear_free(public_key_buffer, public_key_buf_length);
+    };
+
+    if (EVP_PKEY_get_raw_public_key(pkey_private_key, public_key_buffer, &public_key_buf_length) == 0) {
+        return nil;
+    }
+
+    // 0x40 | public_key
+    let public_key = [NSMutableData data];
+    [public_key pgp_appendByte:0x40];
+    [public_key appendBytes:public_key_buffer length:public_key_buf_length];
+    
+    // Ed25519 private key MPI should be in little-endian order
+    // https://www.gniibe.org/log/bugreport/openpgp/ecc-in-openpgp.html
+    let private_key = [NSMutableData data];
+    [private_key appendBytes:(curve == PGPCurveEd25519 ? secret_key.bytes : private_key_d.bytes) length:(curve == PGPCurveEd25519 ? secret_key.length : private_key_d.length)];
+    
+    let mpiQ = [[PGPMPI alloc] initWithData:public_key identifier:PGPMPIdentifierQ];
+    var mpiD = [[PGPMPI alloc] initWithData:private_key identifier:PGPMPIdentifierD];
+    
+    keyMaterial.q = mpiQ;
+    keyMaterial.d = mpiD;
+    
+    return keyMaterial;
+}
 
 @end
 

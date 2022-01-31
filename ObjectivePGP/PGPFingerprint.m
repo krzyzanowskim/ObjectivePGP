@@ -54,4 +54,12 @@
     return result;
 }
 
+- (NSData *)exportV4HashedData {
+    NSMutableData *result = [[NSMutableData alloc] initWithCapacity:21];
+    uint8_t version = 0x04;
+    [result appendBytes:&version length:1];
+    [result appendBytes:_hashedData.bytes length:20];
+    return [NSData dataWithData:result];
+}
+
 @end

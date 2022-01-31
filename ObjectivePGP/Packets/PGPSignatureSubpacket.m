@@ -221,6 +221,10 @@ NS_ASSUME_NONNULL_BEGIN
 
             self.value = featuresArray;
         } break;
+        case PGPSignatureSubpacketTypeIssuerFingerprint:
+        {
+            self.value = packetBodyData;
+        } break;
         default:
             if (self.type & 0x80) {
                 PGPLogWarning(@"Unsupported critical subpacket type %d", self.type);
@@ -395,6 +399,14 @@ NS_ASSUME_NONNULL_BEGIN
                 flagByte = flagByte | ((UInt8)[flagByteNumber unsignedIntValue]);
             }
             [data appendBytes:&flagByte length:sizeof(PGPSignatureFlags)];
+        } break;
+        case PGPSignatureSubpacketTypeIssuerFingerprint:
+        {
+            let fpData = PGPCast(self.value, NSData);
+            if (!fpData) {
+                break;
+            }
+            [data appendData:fpData];
         } break;
         default:
             if (self.type & 0x80) {

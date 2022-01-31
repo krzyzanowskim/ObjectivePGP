@@ -251,29 +251,30 @@ NS_ASSUME_NONNULL_BEGIN
             position = position + mpiEC_Q.packetLength;
 
             self.publicMPIs = @[mpiEC_Q];
+            if (position < packetBody.length) {
+                // KDF parameters
+                // a variable-length field containing KDF parameters, formatted as follows
 
-            // KDF parameters
-            // a variable-length field containing KDF parameters, formatted as follows
+                // - a one-octet size of the following fields; values 0 and 0xff are reserved for future extensions
+                UInt8 kdfSize = 0;
+                [packetBody getBytes:&kdfSize range:(NSRange){position, 1}];
+                position = position + 1;
 
-            // - a one-octet size of the following fields; values 0 and 0xff are reserved for future extensions
-            UInt8 kdfSize = 0;
-            [packetBody getBytes:&kdfSize range:(NSRange){position, 1}];
-            position = position + 1;
+                // - a one-octet value 01, reserved for future extensions
+                position = position + 1;
+                
+                    // - a one-octet hash function ID used with a KDF
+                PGPHashAlgorithm kdfHashAlgorithm = PGPHashUnknown;
+                [packetBody getBytes:&kdfHashAlgorithm range:(NSRange){position, 1}];
+                position = position + 1;
 
-            // - a one-octet value 01, reserved for future extensions
-            position = position + 1;
+                // - a one-octet algorithm ID for the symmetric algorithm used to wrap the symmetric key used for the message encryption;
+                PGPSymmetricAlgorithm kdfSymmetricAlgorithm = PGPSymmetricPlaintext;
+                [packetBody getBytes:&kdfSymmetricAlgorithm range:(NSRange){position, 1}];
+                position = position + 1;
 
-            // - a one-octet hash function ID used with a KDF
-            PGPHashAlgorithm kdfHashAlgorithm = PGPHashUnknown;
-            [packetBody getBytes:&kdfHashAlgorithm range:(NSRange){position, 1}];
-            position = position + 1;
-
-            // - a one-octet algorithm ID for the symmetric algorithm used to wrap the symmetric key used for the message encryption;
-            PGPSymmetricAlgorithm kdfSymmetricAlgorithm = PGPSymmetricPlaintext;
-            [packetBody getBytes:&kdfSymmetricAlgorithm range:(NSRange){position, 1}];
-            position = position + 1;
-
-            self.curveKDFParameters = [[PGPCurveKDFParameters alloc] initWithHashAlgorithm:kdfHashAlgorithm symmetricAlgorithm:kdfSymmetricAlgorithm];
+                self.curveKDFParameters = [[PGPCurveKDFParameters alloc] initWithHashAlgorithm:kdfHashAlgorithm symmetricAlgorithm:kdfSymmetricAlgorithm];
+            }
         } break;
         case PGPPublicKeyAlgorithmDiffieHellman:
         case PGPPublicKeyAlgorithmPrivate1:

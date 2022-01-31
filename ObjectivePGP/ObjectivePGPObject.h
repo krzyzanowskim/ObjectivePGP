@@ -73,6 +73,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (BOOL)verify:(NSData *)data withSignature:(nullable NSData *)signature usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error;
 
++ (BOOL)verify:(NSData *)data withSignature:(nullable NSData *)signature usingKeys:(NSArray<PGPKey *> *)keys certifyWithRootKey:(BOOL)certifyWithRootKey passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error;
+
 /**
  Verify if signature was signed with one of the given keys.
  */
@@ -109,13 +111,40 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (nullable NSData *)decrypt:(NSData *)data andVerifySignature:(BOOL)verifySignature usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error;
 
-+ (nullable NSData *)decrypt:(NSData *)data verified:(BOOL * _Nullable)verified usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock decryptionError:(NSError * __autoreleasing _Nullable *)decryptionError verificationError:(NSError * __autoreleasing _Nullable *)verificationError;
+/**
+ Decrypt PGP encrypted data.
+
+ @param data data to decrypt.
+ @param verified Verification result code. It is 0 if success, else the verification error code.
+ @param keys private keys to use.
+ @param passphraseForKeyBlock Optional. Handler for passphrase protected keys. Return passphrase for a key in question.
+ @param decryptionError Optional. Error of decryption phase.
+ @param verificationError Optional. Error of verification phase..
+ @return Decrypted data, or `nil` if failed.
+ */
++ (nullable NSData *)decrypt:(NSData *)data verified:(int * _Nullable)verified usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock decryptionError:(NSError * __autoreleasing _Nullable *)decryptionError verificationError:(NSError * __autoreleasing _Nullable *)verificationError;
+
+/**
+ Decrypt PGP encrypted data.
+
+ @param data data to decrypt.
+ @param verified Verification result code. It is 0 if success, else the verification error code.
+ @param certifyWithRootKey `YES` if signer key should verify with a root key.
+ @param keys private keys to use.
+ @param passphraseForKeyBlock Optional. Handler for passphrase protected keys. Return passphrase for a key in question.
+ @param decryptionError Optional. Error of decryption phase.
+ @param verificationError Optional. Error of verification phase..
+ @return Decrypted data, or `nil` if failed.
+ */
+
++ (nullable NSData *)decrypt:(NSData *)data verified:(int * _Nullable)verified certifyWithRootKey:(BOOL)certifyWithRootKey usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock decryptionError:(NSError * __autoreleasing _Nullable *)decryptionError verificationError:(NSError * __autoreleasing _Nullable *)verificationError;
 
 
 /**
  Return list of key identifiers used in the given message. Determine keys that a message has been encrypted.
  */
 + (nullable NSArray<PGPKeyID *> *)recipientsKeyIDForMessage:(NSData *)data error:(NSError * __autoreleasing _Nullable *)error;
+
 
 @end
 

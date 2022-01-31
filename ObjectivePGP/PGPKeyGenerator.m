@@ -24,10 +24,12 @@
 #import "PGPFoundation.h"
 #import "PGPRSA.h"
 #import "PGPDSA.h"
+#import "PGPEC.h"
 #import "PGPCryptoCFB.h"
 #import "PGPMacros+Private.h"
 #import "NSData+PGPUtils.h"
 #import "NSMutableData+PGPUtils.h"
+#import "PGPKeySpec.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -38,13 +40,28 @@ NS_ASSUME_NONNULL_BEGIN
 @implementation PGPKeyGenerator
 
 - (instancetype)init {
+    return [self initWithAlgorithm:PGPPublicKeyAlgorithmRSA keyBitsLength:3072 cipherAlgorithm:PGPSymmetricAES256 hashAlgorithm:PGPHashSHA256];
+}
+
+- (instancetype)initWithAlgorithm:(PGPPublicKeyAlgorithm)algorithm keyBitsLength:(int)bits cipherAlgorithm:(PGPSymmetricAlgorithm)cipherAlgorithm hashAlgorithm:(PGPHashAlgorithm)hashAlgorithm {
     if ((self = [super init])) {
-        _keyAlgorithm = PGPPublicKeyAlgorithmRSA;
-        _keyBitsLength = 3072;
+        _keyAlgorithm = algorithm;
+        _keyBitsLength = bits;
         _createDate = NSDate.date;
         _version = 0x04;
-        _cipherAlgorithm = PGPSymmetricAES256;
-        _hashAlgorithm = PGPHashSHA256;
+        _cipherAlgorithm = cipherAlgorithm;
+        _hashAlgorithm = hashAlgorithm;
+        switch(algorithm) {
+            case PGPPublicKeyAlgorithmEdDSA:
+                _curveKind = PGPCurveEd25519;
+                break;
+            case PGPPublicKeyAlgorithmECDH:
+                _curveKind = PGPCurve25519;
+                break;
+            default:
+                // TODO: check other algorithms
+                break;
+        }
     }
     return self;
 }
@@ -66,11 +83,21 @@ NS_ASSUME_NONNULL_BEGIN
             secretKeyPacket.secretMPIs = @[keyMaterial.x];
         } break;
         case PGPPublicKeyAlgorithmElgamal:
-        case PGPPublicKeyAlgorithmECDH:
+        case PGPPublicKeyAlgorithmECDH: {
+            keyMaterial = [PGPEC generateNewKeyMPIArray:PGPCurve25519];
+            publicKeyPacket.publicMPIs = @[keyMaterial.q];
+            secretKeyPacket.secretMPIs = @[keyMaterial.d];
+        } break;
         case PGPPublicKeyAlgorithmECDSA:
         case PGPPublicKeyAlgorithmElgamalEncryptorSign:
         case PGPPublicKeyAlgorithmDiffieHellman:
-        case PGPPublicKeyAlgorithmEdDSA:
+            PGPLogWarning(@"Not implemented");
+            break;
+        case PGPPublicKeyAlgorithmEdDSA: {
+            keyMaterial = [PGPEC generateNewKeyMPIArray:PGPCurveEd25519];
+            publicKeyPacket.publicMPIs = @[keyMaterial.q];
+            secretKeyPacket.secretMPIs = @[keyMaterial.d];
+        } break;
         case PGPPublicKeyAlgorithmPrivate1:
         case PGPPublicKeyAlgorithmPrivate2:
         case PGPPublicKeyAlgorithmPrivate3:
@@ -96,14 +123,17 @@ NS_ASSUME_NONNULL_BEGIN
     publicKeyPacket.version = self.version;
     publicKeyPacket.publicKeyAlgorithm = self.keyAlgorithm;
     publicKeyPacket.createDate = self.createDate;
-
+    publicKeyPacket.curveOID = [[PGPCurveOID alloc] initWithCurveKind:_curveKind];
+    
     // Secret Key
     let secretKeyPacket = [[PGPSecretKeyPacket alloc] init];
     secretKeyPacket.version = self.version;
     secretKeyPacket.publicKeyAlgorithm = publicKeyPacket.publicKeyAlgorithm;
     secretKeyPacket.symmetricAlgorithm = self.cipherAlgorithm;
     secretKeyPacket.createDate = publicKeyPacket.createDate;
-
+    secretKeyPacket.curveOID = [[PGPCurveOID alloc] initWithCurveKind:_curveKind];
+    
+    
     // Fill MPIs
     [self fillMPIForPublic:publicKeyPacket andSecret:secretKeyPacket withKeyAlgorithm:self.keyAlgorithm bits:self.keyBitsLength];
 
@@ -154,22 +184,26 @@ NS_ASSUME_NONNULL_BEGIN
     return [[PGPKey alloc] initWithSecretKey:partialSecretKey publicKey:partialPublicKey];
 }
 
-- (PGPKey *)addSubKeyTo:(PGPKey *)parentKey passphrase:(nullable NSString *)passphrase {
+- (PGPKey *)addSubKeyTo:(PGPKey *)parentKey passphrase:(nullable NSString *)passphrase spec:(PGPKeySpec*)keySpec {
     let publicSubKeyPacket = [[PGPPublicSubKeyPacket alloc] init];
     publicSubKeyPacket.version = self.version;
-    publicSubKeyPacket.publicKeyAlgorithm = self.keyAlgorithm;
+    publicSubKeyPacket.publicKeyAlgorithm = keySpec.keyAlgorithm;
+    publicSubKeyPacket.curveKDFParameters = keySpec.kdfParameters;
     publicSubKeyPacket.createDate = self.createDate;
-
+    publicSubKeyPacket.curveOID = keySpec.curve;
+    
     // Secret Key
     let secretSubKeyPacket = [[PGPSecretSubKeyPacket alloc] init];
     secretSubKeyPacket.version = self.version;
     secretSubKeyPacket.publicKeyAlgorithm = publicSubKeyPacket.publicKeyAlgorithm;
+    secretSubKeyPacket.curveKDFParameters = publicSubKeyPacket.curveKDFParameters;
     secretSubKeyPacket.symmetricAlgorithm = self.cipherAlgorithm;
     secretSubKeyPacket.createDate = publicSubKeyPacket.createDate;
-
+    secretSubKeyPacket.curveOID = publicSubKeyPacket.curveOID;
+    
     // Fill MPIs
-    [self fillMPIForPublic:publicSubKeyPacket andSecret:secretSubKeyPacket withKeyAlgorithm:self.keyAlgorithm bits:self.keyBitsLength];
-
+    [self fillMPIForPublic:publicSubKeyPacket andSecret:secretSubKeyPacket withKeyAlgorithm:keySpec.keyAlgorithm bits:keySpec.keyBitsLength];
+    
     // TODO: refactor duplicated code
     NSUInteger blockSize = [PGPCryptoUtils blockSizeOfSymmetricAlhorithm:secretSubKeyPacket.symmetricAlgorithm];
     if (!passphrase) {
@@ -221,13 +255,19 @@ NS_ASSUME_NONNULL_BEGIN
     return [[PGPKey alloc] initWithSecretKey:secretSubKey publicKey:publicSubKey];
 }
 
+// original solution for RSA key pair
+- (PGPKey *)addSubKeyTo:(PGPKey *)parentKey passphrase:(nullable NSString *)passphrase {
+    let spec = [[PGPKeySpec alloc] initWithKeyAlgorithm:self.keyAlgorithm withKeyBitsLength:3072];
+    return [self addSubKeyTo:parentKey passphrase:passphrase spec:spec];
+}
+
 - (NSArray<PGPSignatureSubpacket *> *)signatureCommonHashedSubpackets {
     return @[
              [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeSignatureCreationTime andValue:self.createDate],
              [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeKeyFlags andValue:@[@(PGPSignatureFlagAllowSignData), @(PGPSignatureFlagAllowCertifyOtherKeys)]],
              [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypePreferredHashAlgorithm andValue:@[@(PGPHashSHA256), @(PGPHashSHA384), @(PGPHashSHA512)]],
              [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypePreferredSymetricAlgorithm andValue:@[@(PGPSymmetricAES256), @(PGPSymmetricAES192), @(PGPSymmetricAES128), @(PGPSymmetricCAST5), @(PGPSymmetricTripleDES), @(PGPSymmetricIDEA)]],
-             [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypePreferredCompressionAlgorithm andValue:@[@(PGPCompressionBZIP2), @(PGPCompressionZLIB), @(PGPCompressionZIP)]],
+             [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypePreferredCompressionAlgorithm andValue:@[@(PGPCompressionZLIB), @(PGPCompressionZIP), @(PGPCompressionBZIP2)]],
              [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeFeatures andValue:@[@(PGPFeatureModificationDetection)]],
              [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeKeyServerPreference andValue:@[@(PGPKeyServerPreferenceNoModify)]]
      ];
@@ -241,9 +281,11 @@ NS_ASSUME_NONNULL_BEGIN
     publicKeySignaturePacket.publicKeyAlgorithm = publicKeyPacket.publicKeyAlgorithm;
 
     let issuerKeyIDSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeIssuerKeyID andValue:publicKeyPacket.keyID];
-
+    
+    let fingerprintSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeIssuerFingerprint andValue:[publicKeyPacket.fingerprint exportV4HashedData]];
+    
     publicKeySignaturePacket.hashedSubpackets = [self.signatureCommonHashedSubpackets arrayByAddingObject:[[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypePrimaryUserID andValue:@(YES)]];
-    publicKeySignaturePacket.unhashedSubpackets = @[issuerKeyIDSubpacket];
+    publicKeySignaturePacket.unhashedSubpackets = @[issuerKeyIDSubpacket, fingerprintSubpacket];
 
     // self sign the signature
     NSError *error;
@@ -263,9 +305,10 @@ NS_ASSUME_NONNULL_BEGIN
     secretKeySignaturePacket.publicKeyAlgorithm = secretKeyPacket.publicKeyAlgorithm;
 
     let issuerKeyIDSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeIssuerKeyID andValue:secretKeyPacket.keyID];
-
-    secretKeySignaturePacket.hashedSubpackets = self.signatureCommonHashedSubpackets;
-    secretKeySignaturePacket.unhashedSubpackets = @[issuerKeyIDSubpacket];
+    let fingerprintSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeIssuerFingerprint andValue:[secretKeyPacket.fingerprint exportV4HashedData]];
+    
+    secretKeySignaturePacket.hashedSubpackets = [self.signatureCommonHashedSubpackets arrayByAddingObject:[[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypePrimaryUserID andValue:@(YES)]];
+    secretKeySignaturePacket.unhashedSubpackets = @[issuerKeyIDSubpacket, fingerprintSubpacket];
 
     // self sign the signature
     NSError *error;
@@ -285,7 +328,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     let publicSubKeySignaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureSubkeyBinding hashAlgorithm:self.hashAlgorithm];
     publicSubKeySignaturePacket.version = publicSubKeyPacket.version;
-    publicSubKeySignaturePacket.publicKeyAlgorithm = publicSubKeyPacket.publicKeyAlgorithm;
+    publicSubKeySignaturePacket.publicKeyAlgorithm = parentKey.signingSecretKey.publicKeyAlgorithm;
 
     let creationTimeSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeSignatureCreationTime andValue:NSDate.date];
     let keyFlagsSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeKeyFlags andValue:@[@(PGPSignatureFlagAllowEncryptCommunications), @(PGPSignatureFlagAllowEncryptStorage)]];
@@ -294,17 +337,19 @@ NS_ASSUME_NONNULL_BEGIN
     // embeded signature
     let embeddedSignaturePacket = [PGPSignaturePacket signaturePacket:PGPSignaturePrimaryKeyBinding hashAlgorithm:self.hashAlgorithm];
     embeddedSignaturePacket.version = 0x04;
-    embeddedSignaturePacket.publicKeyAlgorithm = publicSubKeyPacket.publicKeyAlgorithm;
-    [embeddedSignaturePacket signData:nil withKey:subKey subKey:nil passphrase:nil userID:nil error:&error];
+    embeddedSignaturePacket.publicKeyAlgorithm = parentKey.signingSecretKey.publicKeyAlgorithm; //publicSubKeyPacket.publicKeyAlgorithm;
+    //[embeddedSignaturePacket signData:nil withKey:subKey subKey:nil passphrase:nil userID:nil error:&error];
+    [embeddedSignaturePacket signData:nil withKey:parentKey subKey:subKey passphrase:nil  userID:nil error:&error];
     let subpacketEmbeddedSignature = [[PGPSignatureSubpacketEmbeddedSignature alloc] initWithSignature:embeddedSignaturePacket];
     let embeddedSignatureSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeEmbeddedSignature andValue:subpacketEmbeddedSignature];
-
+    let fingerprintSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeIssuerFingerprint andValue:[parentKey.signingSecretKey.fingerprint exportV4HashedData]];
+    
     publicSubKeySignaturePacket.hashedSubpackets = @[creationTimeSubpacket, keyFlagsSubpacket, embeddedSignatureSubpacket];
-    publicSubKeySignaturePacket.unhashedSubpackets = @[issuerKeyIDSubpacket];
+    publicSubKeySignaturePacket.unhashedSubpackets = @[issuerKeyIDSubpacket, fingerprintSubpacket];
 
     // self sign the signature
     let userID = parentKey.publicKey.users.firstObject.userID;
-    if (![publicSubKeySignaturePacket signData:nil withKey:parentKey subKey:subKey passphrase:nil userID:userID error:&error]) {
+    if (![publicSubKeySignaturePacket signData:nil withKey:parentKey subKey:subKey passphrase:nil  userID:userID error:&error]) {
         return nil;
     }
 
@@ -316,9 +361,9 @@ NS_ASSUME_NONNULL_BEGIN
 
     let secretSubKeyPacket = PGPCast(subKey.secretKey.primaryKeyPacket, PGPSecretSubKeyPacket);
 
-    let secretSubKeySignaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureSubkeyBinding hashAlgorithm:self.hashAlgorithm];
+    let secretSubKeySignaturePacket = [PGPSignaturePacket signaturePacket:PGPSignatureSubkeyBinding hashAlgorithm:PGPHashSHA256];//self.hashAlgorithm];
     secretSubKeySignaturePacket.version = secretSubKeyPacket.version;
-    secretSubKeySignaturePacket.publicKeyAlgorithm = secretSubKeyPacket.publicKeyAlgorithm;
+    secretSubKeySignaturePacket.publicKeyAlgorithm = parentKey.signingSecretKey.publicKeyAlgorithm; // secretSubKeyPacket.publicKeyAlgorithm;
 
     let creationTimeSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeSignatureCreationTime andValue:NSDate.date];
     let keyFlagsSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeKeyFlags andValue:@[@(PGPSignatureFlagAllowEncryptCommunications), @(PGPSignatureFlagAllowEncryptStorage)]];
@@ -327,17 +372,18 @@ NS_ASSUME_NONNULL_BEGIN
     // embeded signature
     let embeddedSignaturePacket = [PGPSignaturePacket signaturePacket:PGPSignaturePrimaryKeyBinding hashAlgorithm:self.hashAlgorithm];
     embeddedSignaturePacket.version = secretSubKeyPacket.version;
-    embeddedSignaturePacket.publicKeyAlgorithm = secretSubKeyPacket.publicKeyAlgorithm;
-    [embeddedSignaturePacket signData:nil withKey:subKey subKey:nil passphrase:nil userID:nil error:&error];
+    embeddedSignaturePacket.publicKeyAlgorithm = parentKey.signingSecretKey.publicKeyAlgorithm; //secretSubKeyPacket.publicKeyAlgorithm;
+    [embeddedSignaturePacket signData:nil withKey:parentKey subKey:subKey passphrase:nil  userID:nil error:&error];
     let subpacketEmbeddedSignature = [[PGPSignatureSubpacketEmbeddedSignature alloc] initWithSignature:embeddedSignaturePacket];
     let embeddedSignatureSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeEmbeddedSignature andValue:subpacketEmbeddedSignature];
-
+    let fingerprintSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeIssuerFingerprint andValue:[parentKey.signingSecretKey.fingerprint exportV4HashedData]];
+    
     secretSubKeySignaturePacket.hashedSubpackets = @[creationTimeSubpacket, keyFlagsSubpacket, embeddedSignatureSubpacket];
-    secretSubKeySignaturePacket.unhashedSubpackets = @[issuerKeyIDSubpacket];
+    secretSubKeySignaturePacket.unhashedSubpackets = @[issuerKeyIDSubpacket, fingerprintSubpacket];
 
     // self sign the signature
     let userID = parentKey.secretKey.users.firstObject.userID;
-    if (![secretSubKeySignaturePacket signData:nil withKey:parentKey subKey:subKey passphrase:nil userID:userID error:&error]) {
+    if (![secretSubKeySignaturePacket signData:nil withKey:subKey subKey:nil passphrase:nil  userID:userID error:&error]) {
         return nil;
     }
 
@@ -346,7 +392,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (PGPKey *)generateFor:(NSString *)userID passphrase:(nullable NSString *)passphrase {
     let key = [self buildKeyWithPassphrase:passphrase];
-    let subKey = [self addSubKeyTo:key passphrase:passphrase];
+    let subKey = (self.keyAlgorithm == PGPPublicKeyAlgorithmEdDSA) ?
+        [self addSubKeyTo:key passphrase:passphrase spec:[[PGPKeySpec alloc] initWithKeyAlgorithm:PGPPublicKeyAlgorithmECDH withCurve:PGPCurve25519 withKdfParameters:[PGPCurveKDFParameters defaultParameters]]] :
+        [self addSubKeyTo:key passphrase:passphrase];
 
     let userPublic = [[PGPUser alloc] initWithUserIDPacket:[[PGPUserIDPacket alloc] initWithUserID:userID]];
     let userSecret = [[PGPUser alloc] initWithUserIDPacket:[[PGPUserIDPacket alloc] initWithUserID:userID]];
@@ -368,7 +416,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     let secretSubKeySignaturePacket = [self buildSecretSignaturePacketForSubKey:subKey parentKey:key];
     key.secretKey.subKeys.firstObject.bindingSignature = secretSubKeySignaturePacket;
-
+    
     return key;
 }
 

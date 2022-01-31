@@ -57,6 +57,13 @@ static UInt8 pgp_curve_identifier_curve25519[] = {0x2B, 0x06, 0x01, 0x04, 0x01, 
     return self;
 }
 
+- (nullable instancetype)initWithCurveKind:(PGPCurve)kind {
+    if ((self = [self init])) {
+        _curveKind = kind;
+    }
+    return self;
+}
+
 - (NSString *)description {
     return [NSString stringWithFormat:@"%@. curveKind: %@", super.description, @(self.curveKind)];
 }

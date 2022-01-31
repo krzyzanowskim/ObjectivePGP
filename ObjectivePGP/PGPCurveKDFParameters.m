@@ -44,6 +44,10 @@ NS_ASSUME_NONNULL_BEGIN
     return data;
 }
 
++ (instancetype)defaultParameters {
+    return [[PGPCurveKDFParameters alloc] initWithHashAlgorithm:PGPHashSHA256 symmetricAlgorithm:PGPSymmetricAES128];
+}
+
 @end
 
 NS_ASSUME_NONNULL_END
