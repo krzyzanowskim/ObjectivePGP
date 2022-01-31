@@ -43,4 +43,7 @@ DerivedData
 DerivedData.noindex
 *.xcuserstate
 *.swp
->>>>>>> master
+
+# Generated vendor libs
+vendor/libs/ios/
+vendor/libs/macosx/
