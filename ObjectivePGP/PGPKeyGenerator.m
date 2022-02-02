@@ -383,7 +383,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     // self sign the signature
     let userID = parentKey.secretKey.users.firstObject.userID;
-    if (![secretSubKeySignaturePacket signData:nil withKey:subKey subKey:nil passphrase:nil  userID:userID error:&error]) {
+    if (![secretSubKeySignaturePacket signData:nil withKey:parentKey subKey:subKey passphrase:nil  userID:userID error:&error]) {
         return nil;
     }
 
