@@ -36,7 +36,7 @@ Not sure what to choose? check [FAQ](https://github.com/krzyzanowskim/ObjectiveP
 
 ```
 dependencies: [
-    .package(url: "https://github.com/krzyzanowskim/ObjectivePGP.git", .upToNextMinor(from: "0.99.1"))
+    .package(url: "https://github.com/krzyzanowskim/ObjectivePGP.git", .upToNextMinor(from: "0.99.2"))
 ]
 ```
 

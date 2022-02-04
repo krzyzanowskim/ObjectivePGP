@@ -1,3 +1,6 @@
+Version 0.99.2
+- Fix ECDH secret subkey binding signature generation. #195
+
 Version 0.99.1
 - Fix ED25119 signature calculation. #192
 - Generate ECC keys. #190
