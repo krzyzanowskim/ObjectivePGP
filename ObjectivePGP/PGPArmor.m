@@ -251,21 +251,26 @@ NS_ASSUME_NONNULL_BEGIN
                 }
             }
         }];
-
+        
+        NSError *armorError = nil;
         let extractedData = [[NSMutableArray<NSData *> alloc] init];
         for (NSString *extractedString in extractedBlocks) {
             @autoreleasepool {
-                NSError *armorError = nil;
-                let armoredData = [PGPArmor readArmored:extractedString error:&armorError];
-                if (!armoredData || armorError) {
+                NSError *internalArmorError = nil;
+                let armoredData = [PGPArmor readArmored:extractedString error:&internalArmorError];
+                if (!armoredData || internalArmorError) {
                     if (error) {
-                        *error = armorError;
+                        armorError = [internalArmorError copy];
                     }
-                    return nil;
+                    break;
                 }
                 
                 [extractedData pgp_addObject:armoredData];
             }
+        }
+        if (armorError) {
+            * error = armorError;
+            return nil;
         }
         return extractedData;
     }
