@@ -1,7 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    CFPropertyList (3.0.5)
+    CFPropertyList (3.0.6)
       rexml
     atomos (0.1.3)
     claide (1.1.0)
@@ -17,10 +17,10 @@ GEM
       rexml (~> 3.2.4)
 
 PLATFORMS
-  ruby
+  arm64-darwin-22
 
 DEPENDENCIES
   xcodeproj
 
 BUNDLED WITH
-   2.1.4
+   2.4.7
