@@ -41,42 +41,39 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 + (NSString *)armored:(NSData *)data as:(PGPArmorType)type part:(NSUInteger)part of:(NSUInteger)ofParts {
-    NSMutableDictionary *headers = [@{ @"Version": @"ObjectivePGP", @"Comment": @"https://www.objectivepgp.com", @"Charset": @"UTF-8" } mutableCopy];
+    NSMutableDictionary *headers = [@{ @"Version": @"ObjectivePGP", @"Comment": @"https://objectivepgp.com", @"Charset": @"UTF-8" } mutableCopy];
 
-    NSMutableString *headerString = [NSMutableString stringWithString:@"-----"];
-    NSMutableString *footerString = [NSMutableString stringWithString:@"-----"];
+    let headerString = [NSMutableString string];
+    let footerString = [NSMutableString string];
     switch (type) {
         case PGPArmorPublicKey:
-            [headerString appendString:@"BEGIN PGP PUBLIC KEY BLOCK"];
-            [footerString appendString:@"END PGP PUBLIC KEY BLOCK"];
+            [headerString appendString:@"-----BEGIN PGP PUBLIC KEY BLOCK-----\n"];
+            [footerString appendString:@"-----END PGP PUBLIC KEY BLOCK-----\n"];
             break;
         case PGPArmorSecretKey:
-            [headerString appendString:@"BEGIN PGP PRIVATE KEY BLOCK"];
-            [footerString appendString:@"END PGP PRIVATE KEY BLOCK"];
+            [headerString appendString:@"-----BEGIN PGP PRIVATE KEY BLOCK-----\n"];
+            [footerString appendString:@"-----END PGP PRIVATE KEY BLOCK-----\n"];
             break;
         case PGPArmorSignature:
-            [headerString appendString:@"BEGIN PGP SIGNATURE"];
-            [footerString appendString:@"END PGP SIGNATURE"];
+            [headerString appendString:@"-----BEGIN PGP SIGNATURE-----\n"];
+            [footerString appendString:@"-----END PGP SIGNATURE-----\n"];
             break;
         case PGPArmorMessage:
-            [headerString appendString:@"BEGIN PGP MESSAGE"];
-            [footerString appendString:@"END PGP MESSAGE"];
+            [headerString appendString:@"-----BEGIN PGP MESSAGE-----\n"];
+            [footerString appendString:@"-----END PGP MESSAGE-----\n"];
             break;
         case PGPArmorMultipartMessagePartX:
-            [headerString appendFormat:@"BEGIN PGP MESSAGE, PART %@", @(part)];
-            [footerString appendFormat:@"END PGP MESSAGE, PART %@", @(part)];
+            [headerString appendFormat:@"-----BEGIN PGP MESSAGE, PART %@-----\n", @(part)];
+            [footerString appendFormat:@"-----END PGP MESSAGE, PART %@-----\n", @(part)];
             break;
         case PGPArmorMultipartMessagePartXOfY:
-            [headerString appendFormat:@"BEGIN PGP MESSAGE, PART %@/%@", @(part), @(ofParts)];
-            [footerString appendFormat:@"END PGP MESSAGE, PART %@/%@", @(part), @(ofParts)];
+            [headerString appendFormat:@"-----BEGIN PGP MESSAGE, PART %@/%@-----\n", @(part), @(ofParts)];
+            [footerString appendFormat:@"-----END PGP MESSAGE, PART %@/%@-----\n", @(part), @(ofParts)];
             break;
         default:
             NSAssert(true, @"Message type not supported");
-            break;
+            return @"";
     }
-
-    [headerString appendString:@"-----\n"];
-    [footerString appendString:@"-----\n"];
 
     NSMutableString *armoredMessage = [NSMutableString string];
     // - An Armor Header Line, appropriate for the type of data
