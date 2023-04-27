@@ -5,8 +5,8 @@ TARGETED_DEVICE_FAMILY = 1,2,3,4
 CODE_SIGNING_REQUIRED = NO
 
 // Deployment targets
-MACOSX_DEPLOYMENT_TARGET = 10.13
-IPHONEOS_DEPLOYMENT_TARGET = 9.0
+MACOSX_DEPLOYMENT_TARGET = 10.15
+IPHONEOS_DEPLOYMENT_TARGET = 11.0
 
 HEADER_SEARCH_PATHS[sdk=iphoneos*] = $(SRCROOT)/vendor/libs/iphoneos/include
 HEADER_SEARCH_PATHS[sdk=iphonesimulator*] = $(SRCROOT)/vendor/libs/iphonesimulator/include
