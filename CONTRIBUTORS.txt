@@ -3,6 +3,7 @@ organizations who have contributed source code to ObjectivePGP.
 
 ### Contributors
 
+- Akazm <37962180+Akazm@users.noreply.github.com>
 - Anders Borum <anders@algoritmer.dk>
 - Blake Jakopovic <wakoinc@gmail.com>
 - Bob Sun <bob@mssun.me>
@@ -10,16 +11,17 @@ organizations who have contributed source code to ObjectivePGP.
 - Fábio Bernardo <mantyftw@gmail.com>
 - James Pang <james.pang@tigerspike.com>
 - James Smith <james@immedia.co.za>
-- Marcin Krzyzanowski <marcin.krzyzanowski@gmail.com>
+- Marcin Krzyzanowski <marcin@krzyzanowskim.com>
 - Matthew Wong <matthewwong.wong@mail.utoronto.ca>
 - Moritz Grosch (LittleFox) <littlefox@fsfe.org>
 - Oliver Wiese <oliver.wiese@fu-berlin.de>
 - Peter Breitling <peter.breitling@1und1.de>
+- Péter Barabás <dr.peter.barabas@gmail.com>
+- Péter Barabás <peter.barabas@arenim.com>
 - Sasha Baranov <sashabaranov@users.noreply.github.com>
 - Stefano Dissegna <stefano.dissegna@gmail.com>
 - Steve Simpson <steve@leeson.co.nz>
 - ghaarsma <ghaarsma@gmail.com>
-- p-barabas <48322346+p-barabas@users.noreply.github.com>
 
 **Updating this list**
 
