@@ -1,3 +1,9 @@
+Versuin 0.99.3
+- Update build targets to match recent Xcode requirements.
+- Stop providing armv7 binaries.
+- Prevent crash when read armored message. #219
+- `decrypt` return plaintext (eg. from signed data).
+
 Version 0.99.2
 - Fix ECDH secret subkey binding signature generation. #195
 

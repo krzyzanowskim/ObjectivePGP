@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>BuildMachineOSBuild</key>
-	<string>21D49</string>
+	<string>22E261</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleExecutable</key>
@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>FMWK</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.99.2</string>
+	<string>0.99.3</string>
 	<key>CFBundleSupportedPlatforms</key>
 	<array>
 		<string>MacOSX</string>
@@ -27,20 +27,20 @@
 	<key>DTCompiler</key>
 	<string>com.apple.compilers.llvm.clang.1_0</string>
 	<key>DTPlatformBuild</key>
-	<string>13C100</string>
+	<string></string>
 	<key>DTPlatformName</key>
 	<string>macosx</string>
 	<key>DTPlatformVersion</key>
-	<string>12.1</string>
+	<string>13.3</string>
 	<key>DTSDKBuild</key>
-	<string>21C46</string>
+	<string>22E245</string>
 	<key>DTSDKName</key>
-	<string>macosx12.1</string>
+	<string>macosx13.3</string>
 	<key>DTXcode</key>
-	<string>1321</string>
+	<string>1430</string>
 	<key>DTXcodeBuild</key>
-	<string>13C100</string>
+	<string>14E222b</string>
 	<key>LSMinimumSystemVersion</key>
-	<string>10.10</string>
+	<string>10.15</string>
 </dict>
 </plist>

@@ -1,12 +1,12 @@
-// swift-tools-version:5.3
+// swift-tools-version:5.6
  
 import PackageDescription
  
 let package = Package(
     name: "ObjectivePGP",
     platforms: [
-        .iOS(.v9),
-        .macOS(.v10_10)
+        .iOS(.v11),
+        .macOS(.v10_15)
     ],
     products: [
         .library(

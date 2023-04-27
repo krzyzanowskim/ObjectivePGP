@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "ObjectivePGP"
-  s.version      = "0.99.2"
+  s.version      = "0.99.3"
   s.summary      = "OpenPGP for iOS and macOS"
   s.description  = "Native OpenPGP (RFC 4880) implementation for iOS and macOS."
   s.homepage     = "http://objectivepgp.com"
@@ -11,8 +11,8 @@ Pod::Spec.new do |s|
   s.social_media_url   = "https://twitter.com/krzyzanowskim"
 
   s.cocoapods_version = '>= 1.9'
-  s.ios.deployment_target = '9.0'
-  s.osx.deployment_target = '10.10'
+  s.ios.deployment_target = '11.0'
+  s.osx.deployment_target = '10.15'
   s.vendored_frameworks = 'Frameworks/ObjectivePGP.xcframework'
 
   s.pod_target_xcconfig = { 'OTHER_LDFLAGS' => '-lObjC' }
