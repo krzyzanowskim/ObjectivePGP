@@ -835,4 +835,22 @@ Ie6jnY0zP2ldtS4JmhKBa43qmOHCxHc=\n\
     XCTAssertFalse(verified);
 }
 
+- (void)testDecryptSignedDataPlaintext {
+    let plaintext = [@"test message" dataUsingEncoding:NSUTF8StringEncoding];
+
+    let keySec = [[PGPTestUtils readKeysFromPath:@"ecc-curve25519-sec1.asc"] firstObject];
+    XCTAssertNotNil(keySec);
+    XCTAssertEqualObjects(keySec.keyID.longIdentifier, @"753EC78567FE1231");
+
+    NSError *signError;
+    let signedData = [ObjectivePGP sign:plaintext detached:NO usingKeys:@[keySec] passphraseForKey:^NSString * _Nullable(PGPKey *k) { return @"1234567890"; } error:&signError];
+    XCTAssertNil(signError);
+    XCTAssertNotNil(signedData);
+
+    NSError *decryptError;
+    let decryptedPlaintext = [ObjectivePGP decrypt:signedData andVerifySignature:YES usingKeys:@[keySec] passphraseForKey:^NSString * _Nullable(PGPKey *k) { return @"1234567890"; } error:&decryptError];
+    XCTAssertNotNil(decryptedPlaintext);
+    XCTAssertEqualObjects(decryptedPlaintext, plaintext);
+}
+
 @end

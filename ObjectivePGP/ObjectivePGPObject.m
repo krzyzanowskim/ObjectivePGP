@@ -211,38 +211,33 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    if (!eskPacket) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Unable to decrypt. Invalid message or missing key to decrypt message." }];
+    if (eskPacket && sessionKeyData) {
+        // 2 Decrypt encrypted data
+        for (PGPPacket *packet in packets) {
+            switch (packet.tag) {
+                case PGPSymmetricallyEncryptedIntegrityProtectedDataPacketTag: {
+                    // decrypt PGPSymmetricallyEncryptedIntegrityProtectedDataPacket
+                    let symEncryptedDataPacket = PGPCast(packet, PGPSymmetricallyEncryptedIntegrityProtectedDataPacket);
+                    let decryptedPackets = [symEncryptedDataPacket decryptWithSessionKeyAlgorithm:sessionKeyAlgorithm sessionKeyData:sessionKeyData error:error];
+                    [packets addObjectsFromArray:decryptedPackets];
+                } break;
+                case PGPSymmetricallyEncryptedDataPacketTag: {
+                    let symEncryptedDataPacket = PGPCast(packet, PGPSymmetricallyEncryptedDataPacket);
+                    let decryptedPackets = [symEncryptedDataPacket decryptWithSessionKeyAlgorithm:sessionKeyAlgorithm sessionKeyData:sessionKeyData error:error];
+                    [packets addObjectsFromArray:decryptedPackets];
+                } break;
+                default:
+                    break;
+            }
         }
-        return encryptedPackets;
     }
 
-    if (!sessionKeyData) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Missing session key" }];
-        }
-        return encryptedPackets;
-    }
-
-    // 2
-    for (PGPPacket *packet in packets) {
-        switch (packet.tag) {
-            case PGPSymmetricallyEncryptedIntegrityProtectedDataPacketTag: {
-                // decrypt PGPSymmetricallyEncryptedIntegrityProtectedDataPacket
-                let symEncryptedDataPacket = PGPCast(packet, PGPSymmetricallyEncryptedIntegrityProtectedDataPacket);
-                let decryptedPackets = [symEncryptedDataPacket decryptWithSessionKeyAlgorithm:sessionKeyAlgorithm sessionKeyData:sessionKeyData error:error];
-                [packets addObjectsFromArray:decryptedPackets];
-            } break;
-            case PGPSymmetricallyEncryptedDataPacketTag: {
-                let symEncryptedDataPacket = PGPCast(packet, PGPSymmetricallyEncryptedDataPacket);
-                let decryptedPackets = [symEncryptedDataPacket decryptWithSessionKeyAlgorithm:sessionKeyAlgorithm sessionKeyData:sessionKeyData error:error];
-                [packets addObjectsFromArray:decryptedPackets];
-            } break;
-            default:
-                break;
-        }
-    }
+    // 3 append any non-encrypted literal data
+    let literalPackets = [packets pgp_objectsPassingTest:^BOOL(PGPPacket *packet, BOOL *stop) {
+        *stop = NO;
+        return packet.tag == PGPLiteralDataPacketTag;
+    }];
+    [packets addObjectsFromArray:literalPackets];
 
     if (packets.count == 0) {
         if (error) {
