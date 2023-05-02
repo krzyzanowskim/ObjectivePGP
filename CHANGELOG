@@ -1,4 +1,7 @@
-Versuin 0.99.3
+Version 0.99.4
+- Signature verification properly handle compressed messages #224
+
+Version 0.99.3
 - Update build targets to match recent Xcode requirements.
 - Stop providing armv7 binaries.
 - Prevent crash when read armored message. #219
