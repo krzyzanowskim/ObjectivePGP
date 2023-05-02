@@ -888,10 +888,15 @@ Hy2rxOlSAfBZaJr9A7XSPlU=\n\
 -----END PGP PUBLIC KEY BLOCK-----\n\
 " dataUsingEncoding:NSUTF8StringEncoding];
 
-
     let keys = [ObjectivePGP readKeysFromData:publicKey error:nil];
     BOOL success = [ObjectivePGP verify:signedMessage withSignature:nil usingKeys:keys passphraseForKey:nil error:nil];
     XCTAssertTrue(success);
+
+    int verificationStatus = 9;
+    let decrypted = [ObjectivePGP decrypt:signedMessage verified:&verificationStatus certifyWithRootKey:NO usingKeys:keys passphraseForKey:nil decryptionError:nil verificationError:nil];
+    XCTAssertNotNil(decrypted);
+    XCTAssertEqual(verificationStatus, 0);
+    XCTAssertEqualObjects(@"Hi Marcin, this a signed message", [[NSString alloc] initWithData:decrypted encoding:NSUTF8StringEncoding]);
 }
 
 @end
