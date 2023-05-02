@@ -853,4 +853,45 @@ Ie6jnY0zP2ldtS4JmhKBa43qmOHCxHc=\n\
     XCTAssertEqualObjects(decryptedPlaintext, plaintext);
 }
 
+-(void)testCompressedSignatureValidation {
+    let signedMessage = [@"-----BEGIN PGP MESSAGE-----\n\
+\n\
+owEBbQGS/pANAwAKARmMxIvG/bOiAcsmYgAAAAAASGkgTWFyY2luLCB0aGlzIGEg\n\
+c2lnbmVkIG1lc3NhZ2WJATMEAAEKACcFAmRJBcIJEBmMxIvG/bOiFiEE5ysHA1Lt\n\
+xQXVwQb7GYzEi8b9s6IAAKgkB/9clRRT5HJwUOXUiHEXB2hPm03Uak4jrX+qcPqw\n\
+K0WiWFcXIkN1K4WdTzqSIRgQfTK75aQGFcffwvG67esl+sX66JtwgM/i0UKN/5zL\n\
+gL09qAiAYVEFjGKdvuXMRi8atfaU5513W7r86WXDxE+lhZKwtqyKHZl2y6Pfosm4\n\
++yd2QKYSm+Lc9yUrxK9tVA7uPYoryJjmk7ns7lC2wdpRTVLJEfLDgzo26dCgjEkk\n\
+VeRZK3B9rDy0pOJ+32l8lIvTs8JoDXtlWznNYBtgyTehjwKHlxEpPv4conHZ9a5k\n\
+u4s6IFLF3vbpdUbfmDe5LaXfJwbFZN5/NXuzApSvBFq610ra\n\
+=WK6L\n\
+-----END PGP MESSAGE-----\n\
+    " dataUsingEncoding:NSUTF8StringEncoding];
+
+    let publicKey = [@"-----BEGIN PGP PUBLIC KEY BLOCK-----\n\
+\n\
+mQENBGRGLoABCADAkcrTpiNCTYJ6XbA1sNe6eSbmG/ziQx9Z5hWEgT9p6naRxKYa\n\
+xVDT4nNMy63bj1twNqjJPGIr/L8AzRzYJygXrQfLrlNWoJT1vCh1vKaIBNEMjTnY\n\
+AMnNC3rI19huTk7uCB2mrXFPGrXlCqBdbsdfF/VdTrPvZ/rg+vwgOGti4GjIga5J\n\
+cawtYwzgyfwhjsMCJX4W55dbIsR4hGMA7A+pCHxAekh/gFgsm3D8YpzoHKo346s0\n\
+zcF11oMr98ZPeqGiI2+7j0uDNfI3/9kWxWnS1c5Y44g6wMCtMIP6gmlB3+78H+SX\n\
+bj5KS0cnBiOACz7YWaK9cB59+jQLbHB/PdSHABEBAAG0H0dsYWRpdXMgMSA8Z2xh\n\
+ZGl1c0B0ZXN0aW5nLmNvbT6JAU0EEwEKAEEFAmRGLoAJEBmMxIvG/bOiFiEE5ysH\n\
+A1LtxQXVwQb7GYzEi8b9s6ICngECmwcFFgIDAQAECwkIBwUVCgkICwKZAQAAuNUI\n\
+AJ18MJ4K92kYoMAN70q32E/s44J9igjbV0IFxXAxjSxgYQxmJKKAM/vsH6tXuO8g\n\
+GVXxNX4tLxFOljsa7lKVK2xLk+1P+Sj6yWRV1hfqyjYjqid2eHAstp4jWvxW+6Bs\n\
+jDK6wJv2GDCytP1UWHi0IX9mC05BKTeU+E3k7jS7piQiSH9m5zT+VILhDGkJMrQW\n\
+d90rPpiUeuveRYz/uFFJeA62j0BJJ6rF/adBW0t+PaJA3nlXdm9mzQCP/xa1iB8x\n\
+XtJ5MwHRRoj5aaG7Q0KaEo//S83Ijwf+WpDmCJ2Wxi61lvlzRNVtIHRCfVsHXDAw\n\
+Hy2rxOlSAfBZaJr9A7XSPlU=\n\
+=8L1W\n\
+-----END PGP PUBLIC KEY BLOCK-----\n\
+" dataUsingEncoding:NSUTF8StringEncoding];
+
+
+    let keys = [ObjectivePGP readKeysFromData:publicKey error:nil];
+    BOOL success = [ObjectivePGP verify:signedMessage withSignature:nil usingKeys:keys passphraseForKey:nil error:nil];
+    XCTAssertTrue(success);
+}
+
 @end

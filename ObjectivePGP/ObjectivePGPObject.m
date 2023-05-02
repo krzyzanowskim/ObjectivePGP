@@ -515,18 +515,7 @@ NS_ASSUME_NONNULL_BEGIN
     // I belive this is unecessary but require more work. Schedule to v2.0.
 
     // search for signature packet
-    var accumulatedPackets = [NSMutableArray<PGPPacket *> array];
-    NSUInteger offset = 0;
-    NSUInteger consumedBytes = 0;
-
-    @autoreleasepool {
-        // TODO: don't parse data here, get raw data and pass to verify:withsignature:
-        while (offset < binarySignedData.length) {
-            let packet = [PGPPacketFactory packetWithData:binarySignedData offset:offset consumedBytes:&consumedBytes];
-            [accumulatedPackets pgp_addObject:packet];
-            offset += consumedBytes;
-        }
-    }
+    var accumulatedPackets = [self readPacketsFromData:binarySignedData];
 
     //Try to decrypt first, in case of encrypted message inside
     //Not every message needs decryption though! Check for ESK to reason about it
@@ -773,26 +762,38 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Private
 
-+ (NSArray<PGPPacket *> *)readPacketsFromData:(NSData *)keyringData {
-    PGPAssertClass(keyringData, NSData);
++ (NSArray<PGPPacket *> *)readPacketsFromData:(NSData *)data {
+    return [self readPacketsFromData:data offset:0];
+}
 
-    if (keyringData.length == 0) {
++ (NSArray<PGPPacket *> *)readPacketsFromData:(NSData *)data offset:(NSUInteger)offsetPosition {
+    PGPAssertClass(data, NSData);
+
+    if (data.length == 0) {
         return @[];
     }
 
     let accumulatedPackets = [NSMutableArray<PGPPacket *> array];
-    NSUInteger offset = 0;
+    NSUInteger offset = offsetPosition;
     NSUInteger consumedBytes = 0;
+    while (offset < data.length) {
+        @autoreleasepool {
+            let packet = [PGPPacketFactory packetWithData:data offset:offset consumedBytes:&consumedBytes];
+            [accumulatedPackets pgp_addObject:packet];
 
-    while (offset < keyringData.length) {
-        let packet = [PGPPacketFactory packetWithData:keyringData offset:offset consumedBytes:&consumedBytes];
-        [accumulatedPackets pgp_addObject:packet];
+            // A compressed Packet contains more packets.
+            let _Nullable compressedPacket = PGPCast(packet, PGPCompressedPacket);
+            if (compressedPacket) {
+                let uncompressedPackets = [self readPacketsFromData:compressedPacket.decompressedData offset:0];
+                [accumulatedPackets addObjectsFromArray:uncompressedPackets ?: @[]];
+            }
 
-        // corrupted data. Move by one byte in hope we find some packet there, or EOF.
-        if (consumedBytes == 0) {
-            offset++;
+            // corrupted data. Move by one byte in hope we find some packet there, or EOF.
+            if (consumedBytes == 0) {
+                offset++;
+            }
+            offset += consumedBytes;
         }
-        offset += consumedBytes;
     }
 
     return accumulatedPackets;

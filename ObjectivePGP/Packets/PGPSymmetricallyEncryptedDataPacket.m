@@ -56,6 +56,8 @@ NS_ASSUME_NONNULL_BEGIN
     return self.encryptedData;
 }
 
+/// Duplicate of -[ObjectivePGPPbject readPacketsFromData:offset:]
+/// to be removed and replaced common call
 - (NSArray<PGPPacket *> *)readPacketsFromData:(NSData *)data offset:(NSUInteger)offsetPosition {
     let accumulatedPackets = [NSMutableArray<PGPPacket *> array];
     NSInteger offset = offsetPosition;
@@ -66,7 +68,6 @@ NS_ASSUME_NONNULL_BEGIN
             [accumulatedPackets pgp_addObject:packet];
             
             // A compressed Packet contains more packets.
-            // TODO: Compression should be moved outside, be more generic to handle compressed packet from anywhere
             let _Nullable compressedPacket = PGPCast(packet, PGPCompressedPacket);
             if (compressedPacket) {
                 let uncompressedPackets = [self readPacketsFromData:compressedPacket.decompressedData offset:0];
