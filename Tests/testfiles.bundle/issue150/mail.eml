@@ -1,0 +1,110 @@
+Return-Path: <alice@enzevalos.de>
+Delivered-To: bob@enzevalos.de
+To: Bob <bob@enzevalos.de>
+From: alice <alice@enzevalos.de>
+Subject: signed from Thunderbird
+Openpgp: preference=signencrypt
+Autocrypt: addr=alice@enzevalos.de; prefer-encrypt=mutual; keydata=
+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
+FRdV+uRcABCD6OuDTg==
+Message-ID: <310eef89-5be5-6018-3ded-a9cda76a0342@enzevalos.de>
+Date: Wed, 31 Oct 2018 12:15:17 +0100
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
+Gecko/20100101 Thunderbird/52.9.1
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+protocol="application/pgp-signature";
+boundary="jGY9eHsM08PgfVXXPT2f3AZCPJW4IwZj4"
+
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--jGY9eHsM08PgfVXXPT2f3AZCPJW4IwZj4
+Content-Type: multipart/mixed; boundary="dibSubdyFVMsrRSzHsR83Pehjj4u2PlX3";
+protected-headers="v1"
+From: alice <alice@enzevalos.de>
+To: Bob <bob@enzevalos.de>
+Message-ID: <310eef89-5be5-6018-3ded-a9cda76a0342@enzevalos.de>
+Subject: signed from Thunderbird
+
+--dibSubdyFVMsrRSzHsR83Pehjj4u2PlX3
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque dapibus
+id diam ac volutpat. Sed quis cursus ante. Vestibulum eget gravida
+felis. Nullam accumsan diam quis sem ornare lacinia. Aenean risus risus,
+maximus quis faucibus et, maximus at nunc. Duis pharetra augue libero,
+et congue diam varius eget. Nullam efficitur ex purus, non accumsan
+tellus laoreet hendrerit. Suspendisse gravida interdum eros, eu
+venenatis ante suscipit nec. Class aptent taciti sociosqu ad litora
+torquent per conubia nostra, per inceptos himenaeos. Praesent
+pellentesque cursus sem, non ornare nunc commodo vel. Praesent sed magna
+at ligula ultricies sagittis malesuada non est. Nam maximus varius
+mauris. Etiam dignissim congue ligula eu porta. Nunc rutrum nisl id
+mauris efficitur ultrices. Maecenas sit amet velit ac mauris consequat
+sagittis at et lorem.
+
+
+
+--dibSubdyFVMsrRSzHsR83Pehjj4u2PlX3--
+
+--jGY9eHsM08PgfVXXPT2f3AZCPJW4IwZj4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQGzBAEBCgAdFiEEJRxNIIPfYdSrprTDTbvambTX/SgFAlvZjsUACgkQTbvambTX
+/Sj26gv/VN0k/cDybI5RUU/qCIxcivOy3qM/9AauHjQQ/RJWlBAsVy/JU04xS+Qi
+DdLmXP9LJa8np5T9B/rVJZrVbv5FjidsY6UsPbcqRcTZGe/X8ikscpRqUlYqkeAI
+F4u2tKQiSaxbB4J9Mj4WindG3y3kcRUoTizFv7I7Zl6rLc2WVayLwFaA79pDv3M9
+NEgwv5i7gE48dppEJLUBeXtpK00N5/BxJ0w7L0hirQZFo7FMTkDgCbYA+9seDfS4
+lx4aHYjB+BUsV1n7dO6bdumnutP3eK1awk2Yyq4EJHizLNd/SsWVltOxukRqrUAp
+qFlwclAEOxlWs0uLckMU6jZnhk4nUC8S20MLznNN4ASBjdo4mRIZFHIq9X8qLikl
+uUvxM1Tj3+Vx/6JvHI3kxrq68QARkvTKOMOcLnPUOlQgEvUe9JZvJfSdm2xhqVa+
+vBWUTsso1k+G40NdpH72SlTxFdIOlg5GX4MVVXzDyt+t2z+PVZFOPhMyp25h7efS
+JPEF5Jke
+=SZPp
+-----END PGP SIGNATURE-----
+
+--jGY9eHsM08PgfVXXPT2f3AZCPJW4IwZj4--
+
