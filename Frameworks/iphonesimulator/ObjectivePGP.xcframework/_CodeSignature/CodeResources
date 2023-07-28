@@ -6,11 +6,11 @@
 	<dict>
 		<key>Headers/ObjectivePGP.h</key>
 		<data>
-		kgG+xJU2hwCrdDuHdZG4Q42Nbnc=
+		VpFukYIqJCsE1qtIfxBH6vtveaY=
 		</data>
 		<key>Headers/ObjectivePGPObject.h</key>
 		<data>
-		dB1F+X/bH3CctatS4jpoMTVUQpQ=
+		u0+tVsHJtEypE3LmnzSs6vWYwfg=
 		</data>
 		<key>Headers/PGPArmor.h</key>
 		<data>
@@ -26,7 +26,7 @@
 		</data>
 		<key>Headers/PGPKey.h</key>
 		<data>
-		UXF4t6wsM3p/CVCqrRisZ1BS+mw=
+		+f5vWE6QsWQgC+H/P/e4GtxbpJk=
 		</data>
 		<key>Headers/PGPKeyGenerator.h</key>
 		<data>
@@ -60,9 +60,13 @@
 		<data>
 		IgArSnpuVy5dewd9SekOSirFjXc=
 		</data>
+		<key>Headers/PGPVerification.h</key>
+		<data>
+		w+o1PSoHqQ9qccP6ad6RzLdputM=
+		</data>
 		<key>Info.plist</key>
 		<data>
-		BlOR/KzJoN1yPdrovQHs7/i9v4g=
+		yYdRc6R1ISve+NnGGwa3yLiQQf4=
 		</data>
 		<key>LICENSE.txt</key>
 		<data>
@@ -70,7 +74,7 @@
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
-		S9K5HNYHyy50h124Onm46QSCaa0=
+		h46Acg2VAgI29bolt2LrGt0Dj1E=
 		</data>
 		<key>PrivateHeaders/NSArray+PGPUtils.h</key>
 		<data>
@@ -335,14 +339,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			FB93PM7m/Nbd7eJMQDc4vkuPYd0NfsQ0V4rBFtG0bvw=
+			AYGyW5cHr0EYff/xLKSTpC0HtEYUnuTKGUS5sXin2mY=
 			</data>
 		</dict>
 		<key>Headers/ObjectivePGPObject.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			aNHRbAD9N83l/bOELz4BGmEftms5UC4RsjzDhrzN3ho=
+			X5XPJcwdmMD2G/a2jChQInjxwBqdr0gKJ7Mmxt9tO7A=
 			</data>
 		</dict>
 		<key>Headers/PGPArmor.h</key>
@@ -370,7 +374,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			XQaKODG3os0zH+GZDlrz6ukoyJPVep8xaaNcAq7lO2w=
+			WK8oE6/XdoX98Le0eiLGdelDV3xQhcFRM1YtGoD3FuM=
 			</data>
 		</dict>
 		<key>Headers/PGPKeyGenerator.h</key>
@@ -429,6 +433,13 @@
 			VRtsecUs1puXDgl8IaI1sggPC7vNRCjjJATzBZ4DgJo=
 			</data>
 		</dict>
+		<key>Headers/PGPVerification.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			4yZHPYlQ8RJUcHxlZXdZyFzMU8nC1n5IrwjMbQRubc4=
+			</data>
+		</dict>
 		<key>LICENSE.txt</key>
 		<dict>
 			<key>hash2</key>
@@ -440,7 +451,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			yo4kRyVWr6QvgpBQYISiI2kWwOBbbybdVNrDU4gNR3k=
+			CPOMxF6gTcpnfOOpDmK+bdT5k0/BXMToFIuybKKsEts=
 			</data>
 		</dict>
 		<key>PrivateHeaders/NSArray+PGPUtils.h</key>
