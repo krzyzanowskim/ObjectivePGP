@@ -19,6 +19,10 @@
 #import "PGPSignatureSubpacket+Private.h"
 #import "PGPRSA.h"
 #import "PGPDSA.h"
+#import "PGPUser+Private.h"
+#import "PGPUserIDPacket.h"
+
+
 #import "NSMutableData+PGPUtils.h"
 
 NS_ASSUME_NONNULL_BEGIN
@@ -103,6 +107,142 @@ NS_ASSUME_NONNULL_BEGIN
 
     return result;
 }
+
+#pragma mark - Modifying Users
+
+-(void)addUserId:(NSString*)userId  passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseBlock{
+    if (self.secretKey){
+        
+        PGPUserIDPacket * packet = [PGPUserIDPacket.alloc initWithUserID:userId];
+        PGPUser * secretUser = [PGPUser.alloc initWithUserIDPacket:packet];
+        
+        // selfCertify the user with the secret key
+        let secretKeySignaturePacket = [self buildSignaturePacketForKeyPacket:self.secretKey.primaryKeyPacket
+                                                                         user:secretUser
+                                                                isPrimaryUser:NO
+                                                             passphraseForKey:passphraseBlock];
+        if (secretKeySignaturePacket){
+            secretUser.selfCertifications = [secretUser.selfCertifications arrayByAddingObject:secretKeySignaturePacket];
+        }
+        
+        NSMutableArray* muSecretUsers = [self.secretKey.users mutableCopy] ? : NSMutableArray.new;
+        [muSecretUsers addObject:secretUser];
+        self.secretKey.users = muSecretUsers.copy;
+    }
+    if (self.publicKey){
+        
+        PGPUserIDPacket * packet = [PGPUserIDPacket.alloc initWithUserID:userId];
+        PGPUser * publicUser = [PGPUser.alloc initWithUserIDPacket:packet];
+       
+        // selfCertify the user with the public key
+        let publicKeySignaturePacket = [self buildSignaturePacketForKeyPacket:self.publicKey.primaryKeyPacket
+                                                                         user:publicUser
+                                                                isPrimaryUser:NO
+                                                             passphraseForKey:passphraseBlock];
+        if (publicKeySignaturePacket){
+            publicUser.selfCertifications = [publicUser.selfCertifications arrayByAddingObject:publicKeySignaturePacket];
+        }
+        
+        NSMutableArray* muPublicUsers = [self.publicKey.users mutableCopy] ? : NSMutableArray.new;
+        [muPublicUsers addObject:publicUser];
+        self.publicKey.users = muPublicUsers.copy;
+    }
+}
+
+-(void)removeUserId:(NSString*)userId{
+    if (!userId) return;
+    
+    if (self.secretKey){
+        let idxs = NSMutableIndexSet.new;
+        [self.secretKey.users enumerateObjectsUsingBlock:^(PGPUser * _Nonnull user, NSUInteger idx, __unused BOOL * _Nonnull stop) {
+            if ([userId isEqualToString:user.userID]) {
+                [idxs addIndex:idx];
+            }
+        }];
+        if (idxs.count){
+            NSMutableArray* muSecretUsers = [self.secretKey.users mutableCopy] ? : NSMutableArray.new;
+        
+            [muSecretUsers removeObjectsAtIndexes:idxs];
+            self.secretKey.users = muSecretUsers.copy;
+        }
+    }
+    if (self.publicKey){
+        let idxs = NSMutableIndexSet.new;
+        [self.publicKey.users enumerateObjectsUsingBlock:^(PGPUser * _Nonnull user, NSUInteger idx, __unused BOOL * _Nonnull stop) {
+            if ([userId isEqualToString:user.userID]) {
+                [idxs addIndex:idx];
+            }
+        }];
+        if (idxs.count){
+            NSMutableArray* muPublicUsers = [self.publicKey.users mutableCopy] ? : NSMutableArray.new;
+            [muPublicUsers removeObjectsAtIndexes:idxs];
+            self.publicKey.users = muPublicUsers.copy;
+        }
+    }
+}
+
+- (NSArray<PGPSignatureSubpacket *> *)signatureCommonHashedSubpackets {
+    return @[
+             [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeSignatureCreationTime andValue:NSDate.now],
+             [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeKeyFlags andValue:@[@(PGPSignatureFlagAllowSignData), @(PGPSignatureFlagAllowCertifyOtherKeys)]],
+             [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypePreferredHashAlgorithm andValue:@[@(PGPHashSHA256), @(PGPHashSHA384), @(PGPHashSHA512)]],
+             [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypePreferredSymetricAlgorithm andValue:@[@(PGPSymmetricAES256), @(PGPSymmetricAES192), @(PGPSymmetricAES128), @(PGPSymmetricCAST5), @(PGPSymmetricTripleDES), @(PGPSymmetricIDEA)]],
+             [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypePreferredCompressionAlgorithm andValue:@[@(PGPCompressionZLIB), @(PGPCompressionZIP), @(PGPCompressionBZIP2)]],
+             [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeFeatures andValue:@[@(PGPFeatureModificationDetection)]],
+             [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeKeyServerPreference andValue:@[@(PGPKeyServerPreferenceNoModify)]]
+             
+     ];
+}
+
+
+- (nullable PGPSignaturePacket *)buildSignaturePacketForKeyPacket:(PGPPacket*)packet
+                                                             user:(PGPUser*)user
+                                                    isPrimaryUser:(BOOL)isPrimary
+                                                 passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseBlock{
+    let keyPacket = PGPCast(packet,PGPPublicKeyPacket);
+   
+    if (!keyPacket){
+        return nil;
+    }
+    
+    let signaturePacket = [PGPSignaturePacket signaturePacket:PGPSignaturePositiveCertificationUserIDandPublicKey hashAlgorithm:PGPHashSHA256];
+    signaturePacket.version = keyPacket.version;
+    signaturePacket.publicKeyAlgorithm = keyPacket.publicKeyAlgorithm;
+
+    let issuerKeyIDSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeIssuerKeyID andValue:keyPacket.keyID];
+    let fingerprintSubpacket = [[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypeIssuerFingerprint andValue:[keyPacket.fingerprint exportV4HashedData]];
+    var preferredKeyServer = (PGPSignatureSubpacket*)nil;
+    
+    NSMutableArray * hashedSubPackets = [self.signatureCommonHashedSubpackets mutableCopy]?:NSMutableArray.new;
+    
+    [hashedSubPackets addObject:[[PGPSignatureSubpacket alloc] initWithType:PGPSignatureSubpacketTypePrimaryUserID andValue:@(isPrimary)]];
+    
+    
+    signaturePacket.hashedSubpackets = hashedSubPackets.copy;
+
+    if (preferredKeyServer){
+        signaturePacket.unhashedSubpackets = @[issuerKeyIDSubpacket, fingerprintSubpacket,preferredKeyServer];
+    }
+    else{
+        signaturePacket.unhashedSubpackets = @[issuerKeyIDSubpacket, fingerprintSubpacket];
+    }
+
+    // self sign the signature -- requires passphrase
+    NSError *error;
+    let userID = user.userID;
+    
+    let passPhrase = passphraseBlock ? passphraseBlock(self) : nil;
+    
+    if (![signaturePacket signData:nil withKey:self subKey:nil passphrase:passPhrase userID:userID error:&error]) {
+        return nil;
+    }
+
+    return signaturePacket;
+
+}
+
+
+
 
 #pragma mark - NSCopying
 
