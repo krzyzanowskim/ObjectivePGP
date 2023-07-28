@@ -14,9 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 @class PGPKeyID;
 
 @interface PGPVerification : NSObject
-@property (assign) int verificationCode;
-@property (strong,nullable) PGPKeyID* keyID;
-@property (strong,nullable) NSError * verificationError;
+@property (nonatomic,assign) int verificationCode;
+@property (nonatomic,strong,nullable) PGPKeyID* keyID;
+@property (nonatomic,strong,nullable) NSError * verificationError;
 
 @end
 
