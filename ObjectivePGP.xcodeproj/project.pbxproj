@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		32DF7EB42A7442BC0023B5B8 /* PGPVerification.h in Headers */ = {isa = PBXBuildFile; fileRef = 32DF7EB22A7442BC0023B5B8 /* PGPVerification.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		32DF7EB52A7442BC0023B5B8 /* PGPVerification.m in Sources */ = {isa = PBXBuildFile; fileRef = 32DF7EB32A7442BC0023B5B8 /* PGPVerification.m */; };
 		3590CA6527A80F6100FE5542 /* PGPKeySpec.h in Headers */ = {isa = PBXBuildFile; fileRef = 3590CA6327A80F6000FE5542 /* PGPKeySpec.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		3590CA6627A80F6100FE5542 /* PGPKeySpec.m in Sources */ = {isa = PBXBuildFile; fileRef = 3590CA6427A80F6000FE5542 /* PGPKeySpec.m */; };
 		75040AB21926BB35000CEA93 /* PGPTestArmor.m in Sources */ = {isa = PBXBuildFile; fileRef = 75040AB11926BB35000CEA93 /* PGPTestArmor.m */; };
@@ -170,6 +172,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		32DF7EB22A7442BC0023B5B8 /* PGPVerification.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPVerification.h; sourceTree = "<group>"; };
+		32DF7EB32A7442BC0023B5B8 /* PGPVerification.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PGPVerification.m; sourceTree = "<group>"; };
 		3590CA6327A80F6000FE5542 /* PGPKeySpec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPKeySpec.h; sourceTree = "<group>"; };
 		3590CA6427A80F6000FE5542 /* PGPKeySpec.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PGPKeySpec.m; sourceTree = "<group>"; };
 		75040AB11926BB35000CEA93 /* PGPTestArmor.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPTestArmor.m; sourceTree = "<group>"; };
@@ -562,6 +566,8 @@
 				756299BB1914DE1A00C5AD3B /* Supporting Files */,
 				3590CA6327A80F6000FE5542 /* PGPKeySpec.h */,
 				3590CA6427A80F6000FE5542 /* PGPKeySpec.m */,
+				32DF7EB22A7442BC0023B5B8 /* PGPVerification.h */,
+				32DF7EB32A7442BC0023B5B8 /* PGPVerification.m */,
 			);
 			path = ObjectivePGP;
 			sourceTree = "<group>";
@@ -679,6 +685,7 @@
 				752725B41FEB1B3C00301E98 /* PGPEncryptedSessionKeyPacketProtocol.h in Headers */,
 				751373DE1F6537490067A343 /* PGPSymmetricallyEncryptedDataPacket.h in Headers */,
 				756BCC8F208A837F001A8EC6 /* PGPMarkerPacket.h in Headers */,
+				32DF7EB42A7442BC0023B5B8 /* PGPVerification.h in Headers */,
 				3590CA6527A80F6100FE5542 /* PGPKeySpec.h in Headers */,
 				7514B8E726B1F77B00617BD8 /* PGPEC.h in Headers */,
 				7537A6D51F0D739A00892829 /* PGPPKCSEmsa.h in Headers */,
@@ -852,6 +859,7 @@
 				751373881F65363C0067A343 /* NSData+PGPUtils.m in Sources */,
 				75D1E2621FCAE60D00D55F60 /* PGPPacketHeader.m in Sources */,
 				750F89571F0D6EF100B99726 /* PGPMPI.m in Sources */,
+				32DF7EB52A7442BC0023B5B8 /* PGPVerification.m in Sources */,
 				751373D31F6537490067A343 /* PGPSecretSubKeyPacket.m in Sources */,
 				750F89581F0D6EF100B99726 /* PGPFingerprint.m in Sources */,
 				750F89591F0D6EF100B99726 /* PGPS2K.m in Sources */,
