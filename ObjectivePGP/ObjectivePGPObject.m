@@ -38,6 +38,7 @@
 #import "PGPLogging.h"
 #import "PGPMacros+Private.h"
 #import "PGPUser+Private.h"
+#import "PGPVerification.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -81,13 +82,36 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 + (nullable NSData *)decrypt:(NSData *)data verified:(int * _Nullable)verified usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock decryptionError:(NSError * __autoreleasing _Nullable *)decryptionError verificationError:(NSError * __autoreleasing _Nullable *)verificationError {
-    return [self decrypt:data verified:verified certifyWithRootKey:YES usingKeys:keys passphraseForKey:passphraseForKeyBlock decryptionError:decryptionError verificationError:verificationError];
+    
+    PGPVerification * verification = nil;
+    if (verified || verificationError){
+        verification = [PGPVerification new];
+    }
+    
+    NSData * result =  [self decrypt:data verify:&verification certifyWithRootKey:YES usingKeys:keys passphraseForKey:passphraseForKeyBlock decryptionError:decryptionError];
+    if (verified) *verified = verification.verificationCode == 0;
+    if (verificationError) *verificationError = verification.verificationError;
+    return result;
 }
 
-+ (nullable NSData *)decrypt:(NSData *)data verified:(int * _Nullable)verified certifyWithRootKey:(BOOL)certifyWithRootKey usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock decryptionError:(NSError * __autoreleasing _Nullable *)decryptionError verificationError:(NSError * __autoreleasing _Nullable *)verificationError {
+
++ (nullable NSData *)decrypt:(NSData *)data
+                      verify:(PGPVerification * __autoreleasing _Nullable * )verification
+                   usingKeys:(NSArray<PGPKey *> *)keys
+            passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock
+             decryptionError:(NSError * __autoreleasing _Nullable *)decryptionError{
+    return [self decrypt:data verify:verification certifyWithRootKey:NO usingKeys:keys passphraseForKey:passphraseForKeyBlock decryptionError:decryptionError ];
+}
+
++ (nullable NSData *)decrypt:(NSData *)data
+                      verify:(PGPVerification * __autoreleasing _Nullable *)verification
+          certifyWithRootKey:(BOOL)certifyWithRootKey
+                   usingKeys:(NSArray<PGPKey *> *)keys
+            passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock
+             decryptionError:(NSError * __autoreleasing _Nullable *)decryptionError{
     PGPAssertClass(data, NSData);
     PGPAssertClass(keys, NSArray);
-
+    
     // TODO: Decrypt all messages
     let binaryMessage = [PGPArmor convertArmoredMessage2BinaryBlocksWhenNecessary:data error:decryptionError].firstObject;
     if (!binaryMessage) {
@@ -96,21 +120,21 @@ NS_ASSUME_NONNULL_BEGIN
         }
         return nil;
     }
-
+    
     // Parse packets. Decrypt encrypted packages if needed
     let allPackets = [ObjectivePGP readPacketsFromData:binaryMessage];
     let decryptedPackets = [self decryptPacketsIfNeeded:allPackets usingKeys:keys passphrase:passphraseForKeyBlock error:decryptionError];
     if (decryptionError && *decryptionError) {
         return nil;
     }
-
+    
     // If the packet list of a message contains multiple literal packets, the first literal packet should
     // be considered as the correct one and any additional literal packets should be ignored.
     let literalPacket = PGPCast([[decryptedPackets pgp_objectsPassingTest:^BOOL(PGPPacket *packet, BOOL *stop) {
         *stop = packet.tag == PGPLiteralDataPacketTag;
         return *stop;
     }] firstObject], PGPLiteralPacket);
-
+    
     // Plaintext is available if literalPacket is available
     let plaintextData = literalPacket.literalRawData;
     if (!literalPacket || !plaintextData) {
@@ -119,22 +143,16 @@ NS_ASSUME_NONNULL_BEGIN
         }
         return nil;
     }
-
+    
     // Verify
-    if (verified) {
-        if (![self verifyPackets:decryptedPackets usingKeys:keys certifyWithRootKey:certifyWithRootKey passphraseForKey:passphraseForKeyBlock error:verificationError]) {
-            if (verificationError) {
-                *verified = (int)((*verificationError).code);
-            }
-            else {
-                *verified = PGPErrorInvalidSignature;
-            }
-        }
-        else {
-            *verified = 0;
-        }
+    
+    if (verification) {
+        let result = [self verifyPackets:decryptedPackets usingKeys:keys certifyWithRootKey:certifyWithRootKey passphraseForKey:passphraseForKeyBlock];
+        
+        *verification = result;
     }
-
+    
+    
     return plaintextData;
 }
 
@@ -147,27 +165,27 @@ NS_ASSUME_NONNULL_BEGIN
     // or more passphrases.
     PGPSymmetricAlgorithm sessionKeyAlgorithm = PGPSymmetricPlaintext;
     let packets = [NSMutableArray arrayWithArray:encryptedPackets];
-
+    
     // 1. search for valid and known (do I have specified key?) ESK
     id <PGPEncryptedSessionKeyPacketProtocol> _Nullable eskPacket = nil;
     NSData * _Nullable sessionKeyData = nil;
-
+    
     // Resolve session key: PGPSymetricKeyEncryptedSessionKeyPacket and/or PGPPublicKeyEncryptedSessionKeyPacket is expected
     for (PGPPacket *packet in packets) {
         if (packet.tag == PGPSymetricKeyEncryptedSessionKeyPacketTag) {
             let sESKPacket = PGPCast(packet, PGPSymetricKeyEncryptedSessionKeyPacket);
             sessionKeyAlgorithm = sESKPacket.symmetricAlgorithm;
             sessionKeyData = sESKPacket.encryptedSessionKey;
-
+            
             // The S2K algorithm applied to the passphrase produces the session key for decrypting the file
             let passphrase = passphraseBlock ? passphraseBlock(nil) : nil;
             if (passphrase && !sESKPacket.encryptedSessionKey) {
                 sessionKeyData = [sESKPacket.s2k produceSessionKeyWithPassphrase:passphrase symmetricAlgorithm:sESKPacket.symmetricAlgorithm];
             }
-
+            
             eskPacket = sESKPacket;
         }
-
+        
         if (packet.tag == PGPPublicKeyEncryptedSessionKeyPacketTag) {
             let pkESKPacket = PGPCast(packet, PGPPublicKeyEncryptedSessionKeyPacket);
             let decryptionKey = [PGPKeyring findKeyWithKeyID:pkESKPacket.keyID type:PGPKeyTypeSecret in:keys];
@@ -175,7 +193,7 @@ NS_ASSUME_NONNULL_BEGIN
                 // Can't proceed with this packet, but there may be other valid packet.
                 continue;
             }
-
+            
             // Found (match) secret key is used to decrypt
             var decryptionSecretKeyPacket = PGPCast([decryptionKey.secretKey decryptionPacketForKeyID:pkESKPacket.keyID error:error], PGPSecretKeyPacket);
             if (!decryptionSecretKeyPacket) {
@@ -192,7 +210,7 @@ NS_ASSUME_NONNULL_BEGIN
                     PGPLogWarning(@"Can't use key \"%@\". Passphrase is required to decrypt.", decryptionSecretKeyPacket.fingerprint);
                     return nil;
                 }
-
+                
                 decryptionSecretKeyPacket = [decryptionSecretKeyPacket decryptedWithPassphrase:passphrase error:error];
                 if (!decryptionSecretKeyPacket || (error && *error)) {
                     PGPLogWarning(@"Can't use key \"%@\".", decryptionKey.secretKey.fingerprint);
@@ -201,16 +219,16 @@ NS_ASSUME_NONNULL_BEGIN
                 }
             }
             eskPacket = pkESKPacket;
-
+            
             sessionKeyData = [pkESKPacket decryptSessionKeyData:PGPNN(decryptionSecretKeyPacket) sessionKeyAlgorithm:&sessionKeyAlgorithm error:error];
             NSAssert(sessionKeyAlgorithm < PGPSymmetricMax, @"Invalid session key algorithm");
         }
     }
-
+    
     if (error && *error) {
         return nil;
     }
-
+    
     if (eskPacket && sessionKeyData) {
         // 2 Decrypt encrypted data
         for (PGPPacket *packet in packets) {
@@ -231,21 +249,21 @@ NS_ASSUME_NONNULL_BEGIN
             }
         }
     }
-
+    
     // 3 append any non-encrypted literal data
     let literalPackets = [packets pgp_objectsPassingTest:^BOOL(PGPPacket *packet, BOOL *stop) {
         *stop = NO;
         return packet.tag == PGPLiteralDataPacketTag;
     }];
     [packets addObjectsFromArray:literalPackets];
-
+    
     if (packets.count == 0) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Unable to find valid data to decrypt." }];
         }
         return encryptedPackets;
     }
-
+    
     return packets;
 }
 
@@ -254,27 +272,27 @@ NS_ASSUME_NONNULL_BEGIN
     for (PGPKey *key in keys) {
         [publicPartialKeys pgp_addObject:key.publicKey];
     }
-
+    
     let encryptedMessage = [NSMutableData data];
-
+    
     // PGPPublicKeyEncryptedSessionKeyPacket goes here
     let preferredSymmeticAlgorithm = [PGPPartialKey preferredSymmetricAlgorithmForKeys:publicPartialKeys];
-
+    
     // Random bytes as a string to be used as a key
     NSUInteger keySize = [PGPCryptoUtils keySizeOfSymmetricAlgorithm:preferredSymmeticAlgorithm];
     let sessionKeyData = [PGPCryptoUtils randomData:keySize];
-
+    
     for (PGPPartialKey *publicPartialKey in publicPartialKeys) {
         // Encrypted Message :- Encrypted Data | ESK Sequence, Encrypted Data.
         // Encrypted Data :- Symmetrically Encrypted Data Packet | Symmetrically Encrypted Integrity Protected Data Packet
         // ESK :- Public-Key Encrypted Session Key Packet | Symmetric-Key Encrypted Session Key Packet.
-
+        
         // ESK
         let encryptionKeyPacket = PGPCast([publicPartialKey encryptionKeyPacket:error], PGPPublicKeyPacket);
         if (!encryptionKeyPacket) {
             continue;
         }
-
+        
         let pkESKeyPacket = [[PGPPublicKeyEncryptedSessionKeyPacket alloc] init];
         pkESKeyPacket.keyID = encryptionKeyPacket.keyID;
         pkESKeyPacket.publicKeyAlgorithm = encryptionKeyPacket.publicKeyAlgorithm;
@@ -288,10 +306,10 @@ NS_ASSUME_NONNULL_BEGIN
             PGPLogDebug(@"Missing literal data. Error: %@", error ? *error : @"Unknown");
             return nil;
         }
-
+        
         // TODO: find the compression type most common to the used keys
     }
-
+    
     NSData *content;
     if (shouldSign) {
         // sign data if requested
@@ -303,7 +321,7 @@ NS_ASSUME_NONNULL_BEGIN
         let literalPacket = [PGPLiteralPacket literalPacket:PGPLiteralPacketBinary withData:dataToEncrypt];
         literalPacket.filename = nil;
         literalPacket.timestamp = NSDate.date;
-
+        
         let literalPacketData = [literalPacket export:error];
         if (error && *error) {
             PGPLogDebug(@"Missing literal packet data. Error: %@", *error);
@@ -317,19 +335,19 @@ NS_ASSUME_NONNULL_BEGIN
     if (!content || (error && *error)) {
         return nil;
     }
-
+    
     let symEncryptedDataPacket = [[PGPSymmetricallyEncryptedIntegrityProtectedDataPacket alloc] init];
     [symEncryptedDataPacket encrypt:content symmetricAlgorithm:preferredSymmeticAlgorithm sessionKeyData:sessionKeyData error:error];
-
+    
     if (error && *error) {
         return nil;
     }
-
+    
     [encryptedMessage pgp_appendData:[symEncryptedDataPacket export:error]];
     if (error && *error) {
         return nil;
     }
-
+    
     return encryptedMessage;
 }
 
@@ -338,10 +356,10 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable NSData *)sign:(NSData *)data detached:(BOOL)detached usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(data, NSData);
     PGPAssertClass(keys, NSArray);
-
+    
     // TODO: Use prefered hash alhorithm for key
     PGPHashAlgorithm preferedHashAlgorithm = PGPHashSHA512;
-
+    
     // Calculate signatures signatures
     let signatures = [NSMutableArray<PGPSignaturePacket *> array];
     for (PGPKey *key in keys) {
@@ -356,19 +374,19 @@ NS_ASSUME_NONNULL_BEGIN
             PGPLogDebug(@"Can't sign data");
             continue;
         }
-
+        
         [signatures pgp_addObject:signaturePacket];
     }
-
+    
     if (signatures.count == 0) {
         if (error) {
             *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Unable to sign. Can't create any signature for keys." }];
             return nil;
         }
     }
-
+    
     let outputData = [NSMutableData data];
-
+    
     // Detached - export only signatures
     if (detached) {
         for (PGPSignaturePacket *signaturePacket in signatures) {
@@ -385,11 +403,11 @@ NS_ASSUME_NONNULL_BEGIN
         // Detached return early with just signature packets.
         return outputData;
     }
-
+    
     // Otherwise create sequence of:
     // OnePassSignature-Literal-Signature
     // Order: 1,2,3-Literal-3,2,1
-
+    
     // Add One Pass Signature in order
     for (PGPSignaturePacket *signaturePacket in signatures) {
         // One Pass signature
@@ -408,12 +426,12 @@ NS_ASSUME_NONNULL_BEGIN
             return nil;
         }
     }
-
+    
     // Literal
     let literalPacket = [PGPLiteralPacket literalPacket:PGPLiteralPacketBinary withData:data];
     literalPacket.filename = nil;
     literalPacket.timestamp = [NSDate date];
-
+    
     NSError *literalExportError = nil;
     [outputData pgp_appendData:[literalPacket export:&literalExportError]];
     if (literalExportError) {
@@ -436,17 +454,17 @@ NS_ASSUME_NONNULL_BEGIN
         }
         [outputData pgp_appendData:signaturePacketData];
     }
-
-/*    // Compressed
-    NSError *literalExportError = nil;
-    let literalPacketData = [literalPacket export:&literalExportError];
-    if (literalExportError) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing literal data" }];
-        }
-        return nil;
-    }*/
-   
+    
+    /*    // Compressed
+     NSError *literalExportError = nil;
+     let literalPacketData = [literalPacket export:&literalExportError];
+     if (literalExportError) {
+     if (error) {
+     *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorGeneral userInfo:@{ NSLocalizedDescriptionKey: @"Missing literal data" }];
+     }
+     return nil;
+     }*/
+    
     return outputData;
 }
 
@@ -460,7 +478,7 @@ NS_ASSUME_NONNULL_BEGIN
         }
         return NO;
     }
-
+    
     // TODO: check expiration and revocation
     let packet = [PGPPacketFactory packetWithData:binarySignature offset:0 consumedBytes:nil];
     let signaturePacket = PGPCast(packet, PGPSignaturePacket);
@@ -469,13 +487,13 @@ NS_ASSUME_NONNULL_BEGIN
         let issuerKey = [PGPKeyring findKeyWithKeyID:issuerKeyID type:PGPKeyTypePublic in:keys];
         return issuerKey != nil;
     }
-
+    
     return NO;
 }
 
 + (BOOL)verify:(NSData *)signedData withSignature:(nullable NSData *)detachedSignature usingKeys:(NSArray<PGPKey *> *)keys certifyWithRootKey:(BOOL)certifyWithRootKey passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseForKeyBlock error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(signedData, NSData);
-
+    
     let binaryMessages = [PGPArmor convertArmoredMessage2BinaryBlocksWhenNecessary:signedData error:error];
     // TODO: Process all messages
     let binarySignedData = binaryMessages.count > 0 ? binaryMessages.firstObject : nil;
@@ -485,7 +503,7 @@ NS_ASSUME_NONNULL_BEGIN
         }
         return NO;
     }
-
+    
     // Use detached signature if provided.
     // In that case treat input data as blob to be verified with the signature. Don't parse it.
     if (detachedSignature) {
@@ -507,16 +525,16 @@ NS_ASSUME_NONNULL_BEGIN
         }
         return NO;
     }
-
+    
     // Otherwise treat input data as PGP Message and process for literal data.
-
+    
     // Propably not the best solution when it comes to memory consumption.
     // Literal data is copied more than once (first at parse phase, then when is come to build signature packet data.
     // I belive this is unecessary but require more work. Schedule to v2.0.
-
+    
     // search for signature packet
     var accumulatedPackets = [self readPacketsFromData:binarySignedData];
-
+    
     //Try to decrypt first, in case of encrypted message inside
     //Not every message needs decryption though! Check for ESK to reason about it
     BOOL isEncrypted = [[accumulatedPackets pgp_objectsPassingTest:^BOOL(PGPPacket *packet, BOOL *stop) {
@@ -524,7 +542,7 @@ NS_ASSUME_NONNULL_BEGIN
         *stop = found;
         return found;
     }] firstObject] != nil;
-
+    
     if (isEncrypted) {
         NSError *decryptError = nil;
         accumulatedPackets = [[self.class decryptPacketsIfNeeded:accumulatedPackets usingKeys:keys passphrase:passphraseForKeyBlock error:&decryptError] mutableCopy];
@@ -535,15 +553,20 @@ NS_ASSUME_NONNULL_BEGIN
             return NO;
         }
     }
-
-    return [self verifyPackets:accumulatedPackets usingKeys:keys certifyWithRootKey:certifyWithRootKey passphraseForKey:passphraseForKeyBlock error:error];
+    let result =  [self verifyPackets:accumulatedPackets
+                            usingKeys:keys
+                   certifyWithRootKey:certifyWithRootKey
+                     passphraseForKey:passphraseForKeyBlock];
+    return result.verificationCode == 0;
 }
 
 + (BOOL)verify:(NSData *)signedData withSignature:(nullable NSData *)detachedSignature usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseForKeyBlock error:(NSError * __autoreleasing _Nullable *)error {
     return [self verify:signedData withSignature:detachedSignature usingKeys:keys certifyWithRootKey:NO passphraseForKey:passphraseForKeyBlock error:error];
 }
-
-+ (BOOL)verifyPackets:(NSArray *)accumulatedPackets usingKeys:(NSArray<PGPKey *> *)keys certifyWithRootKey:(BOOL)certifyWithRootKey passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseForKeyBlock error:(NSError * __autoreleasing _Nullable *)error {
++ (PGPVerification*) verifyPackets:(NSArray *)accumulatedPackets usingKeys:(NSArray<PGPKey *> *)keys certifyWithRootKey:(BOOL)certifyWithRootKey passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseForKeyBlock {
+    
+    let verResult = PGPVerification.new;
+   
     // PGPSignaturePacket * _Nullable signaturePacket = nil;
     let signatures = [NSMutableArray<PGPSignaturePacket *> array];
     PGPLiteralPacket * _Nullable literalPacket = nil;
@@ -577,59 +600,52 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     if (onePassSignatureCount != signatureCount) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorMissingSignature userInfo:@{ NSLocalizedDescriptionKey: @"Message is not properly signed." }];
-        }
-        return NO;
+        verResult.verificationCode = PGPErrorMissingSignature;
+        verResult.verificationError = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorMissingSignature userInfo:@{ NSLocalizedDescriptionKey: @"Message is not properly signed." }];
+        return verResult;
     }
 
     if (signatures.count == 0) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorNotSigned userInfo:@{ NSLocalizedDescriptionKey: @"Message is not signed." }];
-        }
-        return NO;
+        verResult.verificationCode = PGPErrorNotSigned;
+        verResult.verificationError  = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorNotSigned userInfo:@{ NSLocalizedDescriptionKey: @"Message is not signed." }];
+        return verResult;
     }
 
     if (!literalPacket) {
-        if (error) {
-            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"Message is not valid. Missing literal data." }];
-        }
-        return NO;
+        verResult.verificationCode = PGPErrorInvalidSignature;
+        verResult.verificationError = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"Message is not valid. Missing literal data." }];
+        return verResult;
     }
 
 
     // Validate signatures
-    BOOL isValid = YES;
+    BOOL isValid = NO;
 
     for (PGPSignaturePacket *signaturePacket in signatures) {
-        if (!isValid) {
-            continue;
-        }
-
         let signedLiteralData = literalPacket.literalRawData;
-        isValid = signedLiteralData && (!error || (error && *error == nil));
-        if (isValid) {
+        if (signedLiteralData) {
             let issuerKeyID = signaturePacket.issuerKeyID;
-            isValid = issuerKeyID != nil;
-            if (isValid) {
+            if (issuerKeyID != nil) {
                 let issuerKey = [PGPKeyring findKeyWithKeyID:issuerKeyID type:PGPKeyTypePublic in:keys];
-                isValid = issuerKey != nil;
-                if (!isValid) {
-                    if (error) {
-                        *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"Unable to check signature. No public key." }];
-                    }
-                    continue;
+                if (issuerKey == nil) {
+                    verResult.verificationCode = PGPErrorInvalidSignature;
+                    verResult.verificationError =  [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"Unable to check signature. No public key." }];
+                    return verResult;
                 }
-                isValid = isValid && [signaturePacket verifyData:signedLiteralData publicKey:issuerKey error:error];
+                NSError * error = nil;
+                isValid = [signaturePacket verifyData:signedLiteralData publicKey:issuerKey error:&error];
                 
-                if (certifyWithRootKey) {
-                    isValid = isValid && [self verifyCertification:issuerKey usingKeys:keys error:error];
+                if (isValid && certifyWithRootKey) {
+                    isValid = [self verifyCertification:issuerKey usingKeys:keys error:&error];
+                }
+                if (isValid){
+                    verResult.keyID = issuerKey.keyID;
                 }
             }
         }
     }
 
-    return isValid;
+    return verResult;
 }
 
 + (BOOL)verifyCertification:(PGPKey*)issuerKey usingKeys:(NSArray<PGPKey *> *)keys error:(NSError * __autoreleasing _Nullable *)error {
@@ -752,6 +768,10 @@ NS_ASSUME_NONNULL_BEGIN
             case PGPPublicKeyEncryptedSessionKeyPacketTag: {
                 let publicKeyEncrypteSessionKey = PGPCast(packet, PGPPublicKeyEncryptedSessionKeyPacket);
                 [foundKeys addObject:publicKeyEncrypteSessionKey.keyID];
+            } break;
+            case PGPSignaturePacketTag: {
+                let signaturePacket = PGPCast(packet,PGPSignaturePacket);
+                [foundKeys addObject:signaturePacket.issuerKeyID];
             } break;
             default:
                 break;
