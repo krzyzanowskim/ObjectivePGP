@@ -32,50 +32,93 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPDSA
++ (BOOL)verify:(NSData *)hash signature:(PGPSignaturePacket *)signaturePacket withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket{
+    return [self verify:hash signature:signaturePacket withPublicKeyPacket:publicKeyPacket error:nil];
+}
 
-+ (BOOL)verify:(NSData *)toVerify signature:(PGPSignaturePacket *)signaturePacket withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket {
++ (BOOL)verify:(NSData *)hash signature:(PGPSignaturePacket *)signaturePacket withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket error:(NSError * __autoreleasing _Nullable * _Nullable)error{
+    if (error) * error = nil;
+    
     let sig = DSA_SIG_new();
     if (!sig) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorSignatureVerificationFailure userInfo:@{ NSLocalizedDescriptionKey: @"Could not initialize DSA Signature" }];
+        }
         return NO;
     }
+    // setup DSA Signature
+    let r = BN_dup([[[signaturePacket signatureMPI:PGPMPIdentifierR] bigNum] bignumRef]);
+    let s = BN_dup([[[signaturePacket signatureMPI:PGPMPIdentifierS] bigNum] bignumRef]);
+    
+    if (!r || !s) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorSignatureVerificationFailure userInfo:@{ NSLocalizedDescriptionKey: @"Missing DSA Signature values" }];
+        }
+        PGPLogError(@"Missing DSA Signature values. r=%p, s=%p",r,s);
+        return NO;
+    }
+    
+    DSA_SIG_set0(sig, r, s);
+    
+    
     pgp_defer { DSA_SIG_free(sig); };
     
     let dsa = DSA_new();
     if (!dsa) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorSignatureVerificationFailure userInfo:@{ NSLocalizedDescriptionKey: @"Could not initialize DSA Hash Validation" }];
+        }
         return NO;
     }
     pgp_defer { DSA_free(dsa); };
 
+   
+    
+    // set up DSA pgq
     let p = BN_dup([[[publicKeyPacket publicMPI:PGPMPIdentifierP] bigNum] bignumRef]);
     let q = BN_dup([[[publicKeyPacket publicMPI:PGPMPIdentifierQ] bigNum] bignumRef]);
     let g = BN_dup([[[publicKeyPacket publicMPI:PGPMPIdentifierG] bigNum] bignumRef]);
-    let pub_key = BN_dup([[[publicKeyPacket publicMPI:PGPMPIdentifierY] bigNum] bignumRef]);
-
-    DSA_set0_pqg(dsa, p, q, g);
-    DSA_set0_key(dsa, pub_key, NULL);
-
-    let r = BN_dup([[[signaturePacket signatureMPI:PGPMPIdentifierR] bigNum] bignumRef]);
-    let s = BN_dup([[[signaturePacket signatureMPI:PGPMPIdentifierS] bigNum] bignumRef]);
-
-    DSA_SIG_set0(sig, r, s);
-
-    if (!p || !q || !g || !pub_key || r || s) {
-        PGPLogError(@"Missing DSA values.");
+    
+    if (!p || !q || !g ) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorSignatureVerificationFailure userInfo:@{ NSLocalizedDescriptionKey: @"Missing DSA PGQ values" }];
+        }
+        PGPLogError(@"Missing DSA values. p=%p, q=%p, g=%p",p,q,g);
         return NO;
     }
-
-    var hashLen = toVerify.length;
+    DSA_set0_pqg(dsa, p, q, g);
+   
+    // set up DSA pgq
+    let pub_key = BN_dup([[[publicKeyPacket publicMPI:PGPMPIdentifierY] bigNum] bignumRef]);
+    
+    if (!pub_key) {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorSignatureVerificationFailure userInfo:@{ NSLocalizedDescriptionKey: @"Missing DSA Y value" }];
+        }
+        PGPLogError(@"Missing DSA values. y=%p",pub_key);
+        return NO;
+    }
+    DSA_set0_key(dsa, pub_key, NULL);
+   
+    
+    var hashLen = (unsigned int)hash.length;
     unsigned int qlen = 0;
     if ((qlen = (unsigned int)BN_num_bytes(DSA_get0_q(dsa))) < hashLen) {
         hashLen = qlen;
     }
 
-    let ret = DSA_do_verify(toVerify.bytes, (int)hashLen, sig, dsa);
+    let ret = DSA_do_verify(hash.bytes, hashLen, sig, dsa);
+    PGPLogError(@"DSA_do_verify result. %d",ret);
+   
     if (ret < 0) {
-        #if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
+       // #if PGP_LOG_LEVEL >= PGP_DEBUG_LEVEL
         char *err_str = ERR_error_string(ERR_get_error(), NULL);
-        PGPLogDebug(@"%@", [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding]);
-        #endif
+        let errorString = [NSString stringWithCString:err_str encoding:NSASCIIStringEncoding];
+        PGPLogDebug(@"%@", errorString);
+      //  #endif
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorSignatureVerificationFailure userInfo:@{ NSLocalizedDescriptionKey: errorString?:@"Could not validate signing key" }];
+        }
         return NO;
     }
 
@@ -83,6 +126,9 @@ NS_ASSUME_NONNULL_BEGIN
         return YES;
     }
 
+    if (error) {
+        *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"Invalid signature" }];
+    }
     return NO;
 }
 

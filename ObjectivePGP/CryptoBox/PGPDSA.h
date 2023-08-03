@@ -21,6 +21,9 @@ PGP_EMPTY_INIT_UNAVAILABLE;
 
 // signature
 + (BOOL)verify:(NSData *)toVerify signature:(PGPSignaturePacket *)signaturePacket withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket;
+
++ (BOOL)verify:(NSData *)toVerify signature:(PGPSignaturePacket *)signaturePacket withPublicKeyPacket:(PGPPublicKeyPacket *)publicKeyPacket error:(NSError * __autoreleasing _Nullable * _Nullable)error;
+
 + (NSArray<PGPMPI *> *)sign:(NSData *)toSign key:(PGPKey *)key;
 
 // new keys
