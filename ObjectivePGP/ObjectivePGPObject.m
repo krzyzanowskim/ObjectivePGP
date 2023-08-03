@@ -507,7 +507,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (BOOL)verify:(NSData *)signedData withSignature:(nullable NSData *)detachedSignature usingKeys:(NSArray<PGPKey *> *)keys certifyWithRootKey:(BOOL)certifyWithRootKey passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseForKeyBlock error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(signedData, NSData);
-    
+    if (error) * error = nil;
+
     let binaryMessages = [PGPArmor convertArmoredMessage2BinaryBlocksWhenNecessary:signedData error:error];
     // TODO: Process all messages
     let binarySignedData = binaryMessages.count > 0 ? binaryMessages.firstObject : nil;
