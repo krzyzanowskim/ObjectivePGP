@@ -531,7 +531,10 @@ NS_ASSUME_NONNULL_BEGIN
                 let issuerKey = [PGPKeyring findKeyWithKeyID:issuerKeyID type:PGPKeyTypePublic in:keys];
                 if (!issuerKey) {
                     if (error) {
-                        *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"Unable to check signature. No public key." }];
+                        *error = [NSError errorWithDomain:PGPErrorDomain
+                                                     code:PGPErrorSignatureVerificationMissingKey
+                                                 userInfo:@{ NSLocalizedDescriptionKey: @"Unable to check signature. No public key.",
+                                                             PGPMissingPublicKeyIdUserInfoKey:issuerKeyID}];
                     }
                     return NO;
                 }
@@ -644,7 +647,10 @@ NS_ASSUME_NONNULL_BEGIN
                 let issuerKey = [PGPKeyring findKeyWithKeyID:issuerKeyID type:PGPKeyTypePublic in:keys];
                 if (issuerKey == nil) {
                     verResult.verificationCode = PGPErrorInvalidSignature;
-                    verResult.verificationError =  [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidSignature userInfo:@{ NSLocalizedDescriptionKey: @"Unable to check signature. No public key." }];
+                    verResult.verificationError =  [NSError errorWithDomain:PGPErrorDomain
+                                                                       code:PGPErrorSignatureVerificationMissingKey
+                                                                   userInfo:@{ NSLocalizedDescriptionKey: @"Unable to check signature. No public key." ,
+                                                                               PGPMissingPublicKeyIdUserInfoKey:issuerKeyID }];
                     return verResult;
                 }
                 NSError * error = nil;

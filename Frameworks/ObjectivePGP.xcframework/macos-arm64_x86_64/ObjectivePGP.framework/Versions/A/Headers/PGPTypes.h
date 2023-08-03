@@ -23,6 +23,7 @@
 
 static const UInt32 PGPUnknownLength = UINT32_MAX;
 static NSString *const PGPErrorDomain = @"com.objectivepgp";
+static NSString *const PGPMissingPublicKeyIdUserInfoKey = @"MissingPublicKeyID";
 
 typedef NS_ERROR_ENUM(PGPErrorDomain, PGPErrorCode) {
     PGPErrorGeneral = -1,
@@ -39,7 +40,9 @@ typedef NS_ERROR_ENUM(PGPErrorDomain, PGPErrorCode) {
     // for check signature with rootCA
     PGPErrorMissingPublicKeySignature = 12,
     PGPErrorMissingRootPublicKey = 13,
-    PGPErrorInvalidRootPublicKey = 14
+    PGPErrorInvalidRootPublicKey = 14,
+    PGPErrorSignatureVerificationFailure = 15,
+    PGPErrorSignatureVerificationMissingKey = 16
 
 };
 
