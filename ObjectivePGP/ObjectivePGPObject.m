@@ -71,38 +71,75 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Encrypt & Decrypt
 
-+ (nullable NSData *)decrypt:(NSData *)data andVerifySignature:(BOOL)verifySignature usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error {
-    if (verifySignature) {
++ (nullable NSData *)decrypt:(NSData *)data 
+                   usingKeys:(NSArray<PGPKey *> *)decryptionKeys
+          andVerifyUsingKeys:(nullable NSArray<PGPKey *> *)verificationKeys
+            passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error {
+    if (verificationKeys) {
         int isVerified;
-        return [self decrypt:data verified:&isVerified certifyWithRootKey:NO usingKeys:keys passphraseForKey:passphraseBlock decryptionError:error verificationError:error];
+        return [self decrypt:data
+                    verified:&isVerified
+          certifyWithRootKey:NO
+         usingDecryptionKeys:decryptionKeys 
+            verificationKeys:verificationKeys
+            passphraseForKey:passphraseBlock decryptionError:error verificationError:error];
     }
     else {
-        return [self decrypt:data verified:nil certifyWithRootKey:NO usingKeys:keys passphraseForKey:passphraseBlock decryptionError:error verificationError:error];
+        return [self decrypt:data 
+                    verified:nil
+          certifyWithRootKey:NO
+         usingDecryptionKeys:decryptionKeys
+            verificationKeys:verificationKeys
+            passphraseForKey:passphraseBlock
+             decryptionError:error
+           verificationError:error];
     }
 }
 
-+ (nullable NSData *)decrypt:(NSData *)data verified:(int * _Nullable)verified certifyWithRootKey:(BOOL)certifyWithRootKey usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock decryptionError:(NSError * __autoreleasing _Nullable *)decryptionError verificationError:(NSError * __autoreleasing _Nullable *)verificationError{
++ (nullable NSData *)decrypt:(NSData *)data 
+                    verified:(int * _Nullable)verified
+          certifyWithRootKey:(BOOL)certifyWithRootKey
+         usingDecryptionKeys:(NSArray<PGPKey *> *)decryptionKeys
+            verificationKeys:(NSArray<PGPKey *> *)verificationKeys
+            passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock decryptionError:(NSError * __autoreleasing _Nullable *)decryptionError verificationError:(NSError * __autoreleasing _Nullable *)verificationError{
     
     PGPVerification * verification = nil;
     if (verified || verificationError){
         verification = [PGPVerification new];
     }
     
-    NSData * result =  [self decrypt:data verify:&verification certifyWithRootKey:certifyWithRootKey usingKeys:keys passphraseForKey:passphraseForKeyBlock decryptionError:decryptionError];
+    NSData * result =  [self decrypt:data 
+                              verify:&verification
+                  certifyWithRootKey:certifyWithRootKey
+                 usingDecryptionKeys:decryptionKeys
+                    verificationKeys:verificationKeys
+                    passphraseForKey:passphraseForKeyBlock
+                     decryptionError:decryptionError];
     if (verified) *verified = verification.verificationCode == 0;
     if (verificationError) *verificationError = verification.verificationError;
     return result;
 }
 
 
-+ (nullable NSData *)decrypt:(NSData *)data verified:(int * _Nullable)verified usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock decryptionError:(NSError * __autoreleasing _Nullable *)decryptionError verificationError:(NSError * __autoreleasing _Nullable *)verificationError {
++ (nullable NSData *)decrypt:(NSData *)data 
+                    verified:(int * _Nullable)verified
+         usingDecryptionKeys:(NSArray<PGPKey *> *)decryptionKeys
+            verificationKeys:(NSArray<PGPKey *> *)verificationKeys
+            passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock
+             decryptionError:(NSError * __autoreleasing _Nullable *)decryptionError verificationError:(NSError * __autoreleasing _Nullable *)verificationError {
     
     PGPVerification * verification = nil;
     if (verified || verificationError){
         verification = [PGPVerification new];
     }
     
-    NSData * result =  [self decrypt:data verify:&verification certifyWithRootKey:YES usingKeys:keys passphraseForKey:passphraseForKeyBlock decryptionError:decryptionError];
+    NSData * result =  [self decrypt:data 
+                              verify:&verification
+                  certifyWithRootKey:YES   
+                 usingDecryptionKeys:decryptionKeys
+                    verificationKeys:verificationKeys 
+                    passphraseForKey:passphraseForKeyBlock
+                     decryptionError:decryptionError];
     if (verified) *verified = verification.verificationCode == 0;
     if (verificationError) *verificationError = verification.verificationError;
     return result;
@@ -111,20 +148,29 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (nullable NSData *)decrypt:(NSData *)data
                       verify:(PGPVerification * __autoreleasing _Nullable * )verification
-                   usingKeys:(NSArray<PGPKey *> *)keys
+         usingDecryptionKeys:(NSArray<PGPKey *> *)decryptionKeys
+            verificationKeys:(NSArray<PGPKey *> *)verificationKeys
             passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock
              decryptionError:(NSError * __autoreleasing _Nullable *)decryptionError{
-    return [self decrypt:data verify:verification certifyWithRootKey:NO usingKeys:keys passphraseForKey:passphraseForKeyBlock decryptionError:decryptionError ];
+    return [self decrypt:data 
+                  verify:verification
+      certifyWithRootKey:NO
+     usingDecryptionKeys:decryptionKeys
+        verificationKeys:verificationKeys
+        passphraseForKey:passphraseForKeyBlock
+         decryptionError:decryptionError ];
 }
 
 + (nullable NSData *)decrypt:(NSData *)data
                       verify:(PGPVerification * __autoreleasing _Nullable *)verification
           certifyWithRootKey:(BOOL)certifyWithRootKey
-                   usingKeys:(NSArray<PGPKey *> *)keys
+         usingDecryptionKeys:(NSArray<PGPKey *> *)decryptionKeys
+            verificationKeys:(NSArray<PGPKey *> *)verificationKeys
             passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock
              decryptionError:(NSError * __autoreleasing _Nullable *)decryptionError{
     PGPAssertClass(data, NSData);
-    PGPAssertClass(keys, NSArray);
+    PGPAssertClass(decryptionKeys, NSArray);
+    PGPAssertClass(verificationKeys, NSArray);
     
     // TODO: Decrypt all messages
     let binaryMessage = [PGPArmor convertArmoredMessage2BinaryBlocksWhenNecessary:data error:decryptionError].firstObject;
@@ -137,7 +183,10 @@ NS_ASSUME_NONNULL_BEGIN
     
     // Parse packets. Decrypt encrypted packages if needed
     let allPackets = [ObjectivePGP readPacketsFromData:binaryMessage];
-    let decryptedPackets = [self decryptPacketsIfNeeded:allPackets usingKeys:keys passphrase:passphraseForKeyBlock error:decryptionError];
+    let decryptedPackets = [self decryptPacketsIfNeeded:allPackets
+                                              usingKeys:decryptionKeys
+                                             passphrase:passphraseForKeyBlock
+                                                  error:decryptionError];
     if (decryptionError && *decryptionError) {
         return nil;
     }
@@ -161,7 +210,10 @@ NS_ASSUME_NONNULL_BEGIN
     // Verify
     
     if (verification) {
-        let result = [self verifyPackets:decryptedPackets usingKeys:keys certifyWithRootKey:certifyWithRootKey passphraseForKey:passphraseForKeyBlock];
+        let result = [self verifyPackets:decryptedPackets
+                               usingKeys:verificationKeys
+                      certifyWithRootKey:certifyWithRootKey
+                        passphraseForKey:passphraseForKeyBlock];
         
         *verification = result;
     }
