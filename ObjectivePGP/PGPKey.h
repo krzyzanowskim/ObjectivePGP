@@ -54,6 +54,25 @@ PGP_EMPTY_INIT_UNAVAILABLE;
 /// @discussion If you need ASCII format, you can use `PGPArmor`.
 - (nullable NSData *)export:(PGPKeyType)keyType error:(NSError * __autoreleasing _Nullable *)error NS_SWIFT_NAME(export(keyType:));
 
+/**
+*  Adds a UserId to both public and secret keys. The userid is self signed by the key
+*
+*  @param userId format generally name <email@address>
+*  @param passphraseBlock Passphrase
+*
+*/
+- (void)addUserId:(NSString*)userId
+ passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseBlock;
+
+/**
+*  Removes a UserId from both public and secret keys.
+*
+*  @param userId should be case sensitive identical to an existing userid on the key.
+*
+*/
+-(void)removeUserId:(NSString*)userId;
+
+
 @end
 
 NS_ASSUME_NONNULL_END

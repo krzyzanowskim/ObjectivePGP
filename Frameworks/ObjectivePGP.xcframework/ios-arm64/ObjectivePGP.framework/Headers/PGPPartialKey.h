@@ -33,6 +33,8 @@ NS_SWIFT_NAME(PartialKey) @interface PGPPartialKey : NSObject <PGPExportable, NS
 @property (nonatomic, nullable, copy, readonly) PGPSignaturePacket *revocationSignature;
 
 @property (nonatomic, readonly) BOOL isEncryptedWithPassword; // calculated
+@property (nonatomic, nullable, readonly) NSDate * creationDate; //caculated
+
 @property (nonatomic, nullable, readonly) NSDate *expirationDate; // calculated
 @property (nonatomic, readonly) PGPKeyID *keyID; // calculated
 @property (nonatomic, readonly) PGPFingerprint *fingerprint; // calculated

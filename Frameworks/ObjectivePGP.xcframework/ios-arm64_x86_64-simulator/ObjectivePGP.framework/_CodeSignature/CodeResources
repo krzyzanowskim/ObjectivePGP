@@ -6,11 +6,11 @@
 	<dict>
 		<key>Headers/ObjectivePGP.h</key>
 		<data>
-		kgG+xJU2hwCrdDuHdZG4Q42Nbnc=
+		VpFukYIqJCsE1qtIfxBH6vtveaY=
 		</data>
 		<key>Headers/ObjectivePGPObject.h</key>
 		<data>
-		dB1F+X/bH3CctatS4jpoMTVUQpQ=
+		mtzEnpif6zjIkoNfT7XCZLnpLjM=
 		</data>
 		<key>Headers/PGPArmor.h</key>
 		<data>
@@ -26,7 +26,7 @@
 		</data>
 		<key>Headers/PGPKey.h</key>
 		<data>
-		UXF4t6wsM3p/CVCqrRisZ1BS+mw=
+		+f5vWE6QsWQgC+H/P/e4GtxbpJk=
 		</data>
 		<key>Headers/PGPKeyGenerator.h</key>
 		<data>
@@ -46,7 +46,7 @@
 		</data>
 		<key>Headers/PGPPartialKey.h</key>
 		<data>
-		sRFglttHc1+Sswu6Usa3ZhNbZ8o=
+		Q5SXCxtA8D0pK0Jo3eAww6FPZxE=
 		</data>
 		<key>Headers/PGPPartialSubKey.h</key>
 		<data>
@@ -54,15 +54,19 @@
 		</data>
 		<key>Headers/PGPTypes.h</key>
 		<data>
-		LaaGJshRQURU4zgiIRQIJ/GnJEc=
+		kA3TdL1gPzdHjClFoByq6fjMvrc=
 		</data>
 		<key>Headers/PGPUser.h</key>
 		<data>
 		IgArSnpuVy5dewd9SekOSirFjXc=
 		</data>
+		<key>Headers/PGPVerification.h</key>
+		<data>
+		w+o1PSoHqQ9qccP6ad6RzLdputM=
+		</data>
 		<key>Info.plist</key>
 		<data>
-		BlOR/KzJoN1yPdrovQHs7/i9v4g=
+		ApBM+0IjzeGi7H835Ep/+qc26gE=
 		</data>
 		<key>LICENSE.txt</key>
 		<data>
@@ -70,7 +74,7 @@
 		</data>
 		<key>Modules/module.modulemap</key>
 		<data>
-		S9K5HNYHyy50h124Onm46QSCaa0=
+		h46Acg2VAgI29bolt2LrGt0Dj1E=
 		</data>
 		<key>PrivateHeaders/NSArray+PGPUtils.h</key>
 		<data>
@@ -126,7 +130,7 @@
 		</data>
 		<key>PrivateHeaders/PGPDSA.h</key>
 		<data>
-		EyqI0HPU2TY+OWr5GwYWzKGUuP8=
+		dHzABlbejMmqulWHx0+5l5lnlz4=
 		</data>
 		<key>PrivateHeaders/PGPEC.h</key>
 		<data>
@@ -335,14 +339,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			FB93PM7m/Nbd7eJMQDc4vkuPYd0NfsQ0V4rBFtG0bvw=
+			AYGyW5cHr0EYff/xLKSTpC0HtEYUnuTKGUS5sXin2mY=
 			</data>
 		</dict>
 		<key>Headers/ObjectivePGPObject.h</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			aNHRbAD9N83l/bOELz4BGmEftms5UC4RsjzDhrzN3ho=
+			+zoDRJv/o4+PHs5KiTPcgkdldr3jpEA6LtOXNEQUgkY=
 			</data>
 		</dict>
 		<key>Headers/PGPArmor.h</key>
@@ -370,7 +374,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			XQaKODG3os0zH+GZDlrz6ukoyJPVep8xaaNcAq7lO2w=
+			WK8oE6/XdoX98Le0eiLGdelDV3xQhcFRM1YtGoD3FuM=
 			</data>
 		</dict>
 		<key>Headers/PGPKeyGenerator.h</key>
@@ -405,7 +409,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			5s9Yq7+53K6W9FqfyzPKBQXQ+H5UTp+K0lhM7uzl9wo=
+			axkIcvXAqopbWGBSRxFD+sAcAJrKId4SoOrHxSaIxqI=
 			</data>
 		</dict>
 		<key>Headers/PGPPartialSubKey.h</key>
@@ -419,7 +423,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			WBm9B0onpOH4HioFtwu2R9112Giko3Kx5DCDpFtpHQE=
+			R3ywp91ksuSMF4iyfN+xC1M8BlKaftVuGBkAw2l8lRI=
 			</data>
 		</dict>
 		<key>Headers/PGPUser.h</key>
@@ -427,6 +431,13 @@
 			<key>hash2</key>
 			<data>
 			VRtsecUs1puXDgl8IaI1sggPC7vNRCjjJATzBZ4DgJo=
+			</data>
+		</dict>
+		<key>Headers/PGPVerification.h</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			4yZHPYlQ8RJUcHxlZXdZyFzMU8nC1n5IrwjMbQRubc4=
 			</data>
 		</dict>
 		<key>LICENSE.txt</key>
@@ -440,7 +451,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			yo4kRyVWr6QvgpBQYISiI2kWwOBbbybdVNrDU4gNR3k=
+			CPOMxF6gTcpnfOOpDmK+bdT5k0/BXMToFIuybKKsEts=
 			</data>
 		</dict>
 		<key>PrivateHeaders/NSArray+PGPUtils.h</key>
@@ -538,7 +549,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			lcnmch3POSLk3M1vcTHLdmVWp+Vi5JexBCdmVAAVnOg=
+			Fnf5VkiVmFqsyOvh8k3P3LEPNTwEbRkq+YZ+GSG/Wss=
 			</data>
 		</dict>
 		<key>PrivateHeaders/PGPEC.h</key>

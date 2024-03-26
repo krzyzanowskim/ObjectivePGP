@@ -67,6 +67,15 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // Key expiration date
+
+- (nullable NSDate *)creationDate{
+    let _Nullable keyPacket = PGPCast(self.primaryKeyPacket, PGPPublicKeyPacket);
+    if (keyPacket) {
+        return keyPacket.createDate;
+    }
+    return nil;
+}
+
 - (nullable NSDate *)expirationDate {
     let _Nullable primaryUserSelfCertificate = self.primaryUserSelfCertificate;
     if (primaryUserSelfCertificate && primaryUserSelfCertificate.keyExpirationTimeInterval != NSNotFound && !primaryUserSelfCertificate.isExpired) {

@@ -367,12 +367,15 @@ NS_ASSUME_NONNULL_BEGIN
     let toHashData = [NSMutableData dataWithData:toSignData];
     [toHashData appendData:signedPartData];
     [toHashData appendData:trailerData];
+    
+    let hashedData = [toHashData pgp_HashedWithAlgorithm:self.hashAlgoritm];
 
     // TODO: Investigate how to handle V3 scenario here
     // check signed hash value, should match
+    
     if (self.version == 0x04) {
         // Calculate hash value
-        let calculatedHashValueData = [[toHashData pgp_HashedWithAlgorithm:self.hashAlgoritm] subdataWithRange:(NSRange){0, 2}];
+        let calculatedHashValueData = [hashedData subdataWithRange:(NSRange){0, 2}];
 
         if (!PGPEqualObjects(self.signedHashValueData, calculatedHashValueData)) {
             if (error) {
@@ -405,7 +408,9 @@ NS_ASSUME_NONNULL_BEGIN
             }
         } break;
         case PGPPublicKeyAlgorithmDSA:{
-            return [PGPDSA verify:toHashData signature:self withPublicKeyPacket:signingKeyPacket];
+            // fixes issue where the data to hash was being verified by PGPDSA  (always resulting in a failure)
+            //  rather than the hash of the Data.
+            return [PGPDSA verify:hashedData signature:self withPublicKeyPacket:signingKeyPacket error:error];
         } break;
         case PGPPublicKeyAlgorithmEdDSA: {
             return [PGPEC verify:toHashData signature:self withPublicKeyPacket:signingKeyPacket withHashAlgorithm:self.hashAlgoritm];
