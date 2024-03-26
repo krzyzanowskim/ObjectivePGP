@@ -71,10 +71,37 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Encrypt & Decrypt
 
-+ (nullable NSData *)decrypt:(NSData *)data 
++ (nullable NSData *)decrypt:(NSData *)data
+          andVerifySignature:(BOOL)verify
+                   usingKeys:(nullable NSArray<PGPKey *> *)verificationKeys
+            passphraseForKey:(nullable NSString * _Nullable(^)(PGPKey * _Nullable key))passphraseBlock 
+                       error:(NSError * __autoreleasing _Nullable *)error {
+    if (verify) {
+        int isVerified;
+        return [self decrypt:data
+                    verified:&isVerified
+          certifyWithRootKey:NO
+         usingDecryptionKeys:verificationKeys
+            verificationKeys:verificationKeys
+            passphraseForKey:passphraseBlock decryptionError:error verificationError:error];
+    }
+    else {
+        return [self decrypt:data
+                    verified:nil
+          certifyWithRootKey:NO
+         usingDecryptionKeys:verificationKeys
+            verificationKeys:verificationKeys
+            passphraseForKey:passphraseBlock
+             decryptionError:error
+           verificationError:error];
+    }
+}
+
+
++ (nullable NSData *)decrypt:(NSData *)data
                    usingKeys:(NSArray<PGPKey *> *)decryptionKeys
           andVerifyUsingKeys:(nullable NSArray<PGPKey *> *)verificationKeys
-            passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error {
+            passphraseForKey:(nullable NSString * _Nullable(^)(PGPKey * _Nullable key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error {
     if (verificationKeys) {
         int isVerified;
         return [self decrypt:data
