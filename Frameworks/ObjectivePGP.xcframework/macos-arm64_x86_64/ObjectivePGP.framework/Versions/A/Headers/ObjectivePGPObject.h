@@ -175,6 +175,13 @@ NS_ASSUME_NONNULL_BEGIN
             passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock
              decryptionError:(NSError * __autoreleasing _Nullable *)decryptionError;
     
+
++ (nullable NSData *)decrypt:(NSData *)data
+          andVerifySignature:(BOOL)verify
+                   usingKeys:(nullable NSArray<PGPKey *> *)verificationKeys
+            passphraseForKey:(nullable NSString * _Nullable(^ NS_NOESCAPE)(PGPKey * _Nullable key))passphraseBlock
+                       error:(NSError * __autoreleasing _Nullable *)error;
+
 /**
  Return list of key identifiers used in the given message. Determine keys that a message has been encrypted.
  */

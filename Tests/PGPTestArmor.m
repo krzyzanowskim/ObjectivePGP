@@ -76,6 +76,28 @@
     XCTAssertEqualObjects(decodedData, keyData);
 }
 
+- (void)testLargeArmour {
+    NSError *loadError = nil;
+    let path = [PGPTestUtils pathToBundledFile:@"largeArmoredMessage.txt"];
+    NSString * armoredString = [NSString stringWithContentsOfFile:path encoding:NSASCIIStringEncoding error:&loadError];
+    
+    NSData * armoredData = [NSData dataWithContentsOfFile:path options:NSDataReadingMapped error:&loadError];
+    XCTAssertNil(loadError);
+    XCTAssertNotNil(armoredString);
+
+    NSError *readArmoredError = nil;
+    NSDate * start = [NSDate now];
+    NSData *decodedData = [PGPArmor readArmored:armoredString error:&readArmoredError];
+    NSLog(@"old method took %0.04f",-start.timeIntervalSinceNow);
+    start = [NSDate now];
+    NSData *decodedData2 = [PGPArmor readArmoredData:armoredData error:&readArmoredError];
+    NSLog(@"new method took %0.04f",-start.timeIntervalSinceNow);
+  
+    XCTAssertNil(readArmoredError);
+    XCTAssertNotNil(decodedData);
+
+    XCTAssertEqualObjects(decodedData, decodedData2);
+}
 //- (void) testEmbededArmoredData
 //{
 //    [keyring importKeysfromPath:self.pubKeyringPath];

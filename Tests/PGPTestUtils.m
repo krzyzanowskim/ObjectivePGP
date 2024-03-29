@@ -17,7 +17,13 @@ NS_ASSUME_NONNULL_BEGIN
 @implementation PGPTestUtils
 
 + (nullable NSBundle *)filesBundle {
-    NSString *path = [[NSBundle bundleForClass:self.class] pathForResource:@"testfiles" ofType:@"bundle"];
+    NSString *path = nil;
+    path = [[NSBundle bundleForClass:self.class] pathForResource:@"testfiles" ofType:@"bundle"];
+#ifdef SWIFTPM_MODULE_BUNDLE
+    if (!path){
+        path = [SWIFTPM_MODULE_BUNDLE pathForResource:@"testfiles" ofType:@"bundle"];
+    }
+#endif
     return [NSBundle bundleWithPath:path];
 }
 

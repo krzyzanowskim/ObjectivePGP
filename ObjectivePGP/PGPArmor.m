@@ -15,6 +15,8 @@
 #import "PGPFoundation.h"
 #import "PGPMacros+Private.h"
 
+#import "PGPDataScanner.h"
+
 NS_ASSUME_NONNULL_BEGIN
 
 @implementation PGPArmor
@@ -129,6 +131,132 @@ NS_ASSUME_NONNULL_BEGIN
     }
     [base64String setString:output];
     return checksumString;
+}
+
++ (nullable NSData *)readArmoredData:(NSData*)data error:(NSError * __autoreleasing _Nullable *)error {
+    let scanner = [[PGPDataScanner alloc] initWithData:data];
+    let crlf = [NSData dataWithBytes:"\r\n" length:2];
+    let cr = [NSData dataWithBytes:"\r" length:1];
+    let lf = [NSData dataWithBytes:"\n" length:1];
+
+    let headerDelimiter = [@"-----" dataUsingEncoding:NSASCIIStringEncoding];
+    
+    if (![scanner scanData:headerDelimiter intoData:nil]){
+        // error should have opening header delimeter
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Armoured data must begin with header" }];
+        }
+        return nil;
+    }
+    NSData * beginData;
+    if (![scanner scanUpToData:headerDelimiter intoData:&beginData]){
+        // error expecting BEGIN
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Malformed armor header" }];
+        }
+        return nil;
+    }
+    NSString* header = [NSString.alloc initWithData:beginData encoding:NSASCIIStringEncoding];
+    NSRange armorKindRange = [header rangeOfString:@"BEGIN " options:NSAnchoredSearch range:NSMakeRange(0,header.length)];
+    NSString * armorKind = [header substringFromIndex:NSMaxRange(armorKindRange)];
+    // test armorKind here
+    if (![armorKind hasPrefix:@"PGP "] &&
+        !PGPEqualObjects(armorKind, @"PGP MESSAGE") &&
+        !PGPEqualObjects(armorKind, @"PGP PUBLIC KEY BLOCK") &&
+        !PGPEqualObjects(armorKind, @"PGP PRIVATE KEY BLOCK") &&
+        !PGPEqualObjects(armorKind, @"PGP SECRET KEY BLOCK") && // PGP 2.x generates the header "BEGIN PGP SECRET KEY BLOCK" instead of "BEGIN PGP PRIVATE KEY BLOCK"
+        !PGPEqualObjects(armorKind, @"PGP SIGNATURE") &&
+        ![armorKind hasPrefix:@"PGP MESSAGE, PART"])
+    {
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Invalid armor header" }];
+        }
+        return nil;
+    }
+    
+    if (![scanner scanData:headerDelimiter intoData:nil]){
+        // error should have closing header delimeter
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Malformed armor header" }];
+        }
+        return nil;
+    }
+    // determine linebreakData from first line
+    NSData * lineBreak = nil;
+    if ([scanner scanData:crlf intoData:nil]) lineBreak = crlf;
+    else if ([scanner scanData:cr intoData:nil]) lineBreak = cr;
+    else if ([scanner scanData:lf intoData:nil]) lineBreak = lf;
+    else {
+        // not crlf, or cr or lf
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Malformed armor header" }];
+        }
+        return nil;
+    }
+    
+    
+    NSMutableData * tail = [lineBreak mutableCopy];
+    [tail appendData:headerDelimiter];
+    [tail appendData:[[@"END " stringByAppendingString:armorKind] dataUsingEncoding:NSASCIIStringEncoding]];
+    [tail appendData:headerDelimiter];
+    
+    // scann comments
+    while ([scanner scanUpToData:lineBreak intoData:nil]) {
+        if (![scanner scanData:lineBreak intoData:nil]){
+            if (error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Malformed armor header" }];
+            }
+            return nil;
+        }
+    }
+    // consume empty line after comments;
+    if (![scanner scanData:lineBreak intoData:nil]){
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Malformed armor header" }];
+        }
+        return nil;
+    }
+    
+    NSData * armorBody;
+    if (![scanner scanUpToData:tail intoData:&armorBody] || ![scanner scanData:tail intoData:nil]){
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Tail doesn't match armor header" }];
+        }
+    }
+    if (![scanner isAtEnd]){
+        if (error) {
+            *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"Unexpected data after armor tail" }];
+        }
+    }
+    
+    //see if the last line of data is the optional checksum
+    NSMutableData * checkSumDelimiter = [lineBreak mutableCopy];
+    [checkSumDelimiter appendData: [NSData dataWithBytes:"=" length:1]];
+    let delimChecksumLength = checkSumDelimiter.length+4;  //   <break>=<4char>
+    NSData * checksum = nil;
+    if (armorBody.length > delimChecksumLength){
+        if ([[armorBody subdataWithRange:NSMakeRange(armorBody.length-delimChecksumLength, checkSumDelimiter.length)] isEqualToData:checkSumDelimiter]){
+            let checksumData = [armorBody subdataWithRange:NSMakeRange(armorBody.length-4,4)];
+            checksum = [[NSData alloc] initWithBase64EncodedData:(NSData*)checksumData options:NSDataBase64DecodingIgnoreUnknownCharacters];
+            armorBody = [armorBody subdataWithRange:NSMakeRange(0, armorBody.length-delimChecksumLength)];
+        }
+    }
+    
+    let binaryData = [[NSData alloc] initWithBase64EncodedData:armorBody options:NSDataBase64DecodingIgnoreUnknownCharacters];
+    
+    if (checksum){
+        UInt32 calculatedCRC24 = [binaryData pgp_CRC24];
+        calculatedCRC24 = CFSwapInt32HostToBig(calculatedCRC24);
+        calculatedCRC24 = calculatedCRC24 >> 8;
+        let calculatedCRC24Data = [NSData dataWithBytes:&calculatedCRC24 length:3];
+        if (!PGPEqualObjects(calculatedCRC24Data, checksum)) {
+            if (error) {
+                *error = [NSError errorWithDomain:PGPErrorDomain code:PGPErrorInvalidMessage userInfo:@{ NSLocalizedDescriptionKey: @"PGP Armor Checksum mismatch" }];
+            }
+            return nil;
+        }
+    }
+    return binaryData;
 }
 
 + (nullable NSData *)readArmored:(NSString *)string error:(NSError * __autoreleasing _Nullable *)error {

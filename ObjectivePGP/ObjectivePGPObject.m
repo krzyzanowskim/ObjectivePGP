@@ -74,7 +74,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable NSData *)decrypt:(NSData *)data
           andVerifySignature:(BOOL)verify
                    usingKeys:(nullable NSArray<PGPKey *> *)verificationKeys
-            passphraseForKey:(nullable NSString * _Nullable(^)(PGPKey * _Nullable key))passphraseBlock 
+            passphraseForKey:(nullable NSString * _Nullable(^ __attribute__((noescape)))(PGPKey * _Nullable key))passphraseBlock
                        error:(NSError * __autoreleasing _Nullable *)error {
     if (verify) {
         int isVerified;
@@ -101,7 +101,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable NSData *)decrypt:(NSData *)data
                    usingKeys:(NSArray<PGPKey *> *)decryptionKeys
           andVerifyUsingKeys:(nullable NSArray<PGPKey *> *)verificationKeys
-            passphraseForKey:(nullable NSString * _Nullable(^)(PGPKey * _Nullable key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error {
+            passphraseForKey:(nullable NSString * _Nullable(^ __attribute__((noescape)))(PGPKey * _Nullable key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error {
     if (verificationKeys) {
         int isVerified;
         return [self decrypt:data
@@ -128,7 +128,7 @@ NS_ASSUME_NONNULL_BEGIN
           certifyWithRootKey:(BOOL)certifyWithRootKey
          usingDecryptionKeys:(NSArray<PGPKey *> *)decryptionKeys
             verificationKeys:(NSArray<PGPKey *> *)verificationKeys
-            passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock decryptionError:(NSError * __autoreleasing _Nullable *)decryptionError verificationError:(NSError * __autoreleasing _Nullable *)verificationError{
+            passphraseForKey:(nullable NSString * _Nullable(^__attribute__((noescape)))(PGPKey * _Nullable key))passphraseForKeyBlock decryptionError:(NSError * __autoreleasing _Nullable *)decryptionError verificationError:(NSError * __autoreleasing _Nullable *)verificationError{
     
     PGPVerification * verification = nil;
     if (verified || verificationError){
@@ -152,7 +152,7 @@ NS_ASSUME_NONNULL_BEGIN
                     verified:(int * _Nullable)verified
          usingDecryptionKeys:(NSArray<PGPKey *> *)decryptionKeys
             verificationKeys:(NSArray<PGPKey *> *)verificationKeys
-            passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock
+            passphraseForKey:(nullable NSString * _Nullable(^__attribute__((noescape)))(PGPKey * _Nullable key))passphraseForKeyBlock
              decryptionError:(NSError * __autoreleasing _Nullable *)decryptionError verificationError:(NSError * __autoreleasing _Nullable *)verificationError {
     
     PGPVerification * verification = nil;
@@ -177,7 +177,7 @@ NS_ASSUME_NONNULL_BEGIN
                       verify:(PGPVerification * __autoreleasing _Nullable * )verification
          usingDecryptionKeys:(NSArray<PGPKey *> *)decryptionKeys
             verificationKeys:(NSArray<PGPKey *> *)verificationKeys
-            passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock
+            passphraseForKey:(nullable NSString * _Nullable(^__attribute__((noescape)))(PGPKey * _Nullable key))passphraseForKeyBlock
              decryptionError:(NSError * __autoreleasing _Nullable *)decryptionError{
     return [self decrypt:data 
                   verify:verification
@@ -193,7 +193,7 @@ NS_ASSUME_NONNULL_BEGIN
           certifyWithRootKey:(BOOL)certifyWithRootKey
          usingDecryptionKeys:(NSArray<PGPKey *> *)decryptionKeys
             verificationKeys:(NSArray<PGPKey *> *)verificationKeys
-            passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseForKeyBlock
+            passphraseForKey:(nullable NSString * _Nullable(^__attribute__((noescape)))(PGPKey * _Nullable key))passphraseForKeyBlock
              decryptionError:(NSError * __autoreleasing _Nullable *)decryptionError{
     PGPAssertClass(data, NSData);
     PGPAssertClass(decryptionKeys, NSArray);
@@ -250,7 +250,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 // Decrypt packets. Passphrase may be related to the key or to the symmetric encrypted message (no key in that keys)
-+ (nullable NSArray<PGPPacket *> *)decryptPacketsIfNeeded:(NSArray<PGPPacket *> *)encryptedPackets usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey * _Nullable key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error {
++ (nullable NSArray<PGPPacket *> *)decryptPacketsIfNeeded:(NSArray<PGPPacket *> *)encryptedPackets usingKeys:(NSArray<PGPKey *> *)keys passphrase:(nullable NSString * _Nullable(^__attribute__((noescape)))(PGPKey * _Nullable key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error {
     // If the Symmetrically Encrypted Data packet is preceded by one or
     // more Symmetric-Key Encrypted Session Key packets, each specifies a
     // passphrase that may be used to decrypt the message.  This allows a
@@ -360,7 +360,7 @@ NS_ASSUME_NONNULL_BEGIN
     return packets;
 }
 
-+ (nullable NSData *)encrypt:(NSData *)dataToEncrypt addSignature:(BOOL)shouldSign usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseForKeyBlock error:(NSError * __autoreleasing _Nullable *)error {
++ (nullable NSData *)encrypt:(NSData *)dataToEncrypt addSignature:(BOOL)shouldSign usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^__attribute__((noescape)))(PGPKey *key))passphraseForKeyBlock error:(NSError * __autoreleasing _Nullable *)error {
     let publicPartialKeys = [NSMutableArray<PGPPartialKey *> array];
     for (PGPKey *key in keys) {
         [publicPartialKeys pgp_addObject:key.publicKey];
@@ -446,7 +446,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Sign & Verify
 
-+ (nullable NSData *)sign:(NSData *)data detached:(BOOL)detached usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error {
++ (nullable NSData *)sign:(NSData *)data detached:(BOOL)detached usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^__attribute__((noescape)))(PGPKey *key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(data, NSData);
     PGPAssertClass(keys, NSArray);
     
@@ -561,7 +561,7 @@ NS_ASSUME_NONNULL_BEGIN
     return outputData;
 }
 
-+ (BOOL)verifySignature:(NSData *)signature usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error {
++ (BOOL)verifySignature:(NSData *)signature usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^__attribute__((noescape)))(PGPKey *key))passphraseBlock error:(NSError * __autoreleasing _Nullable *)error {
     let binaryMessages = [PGPArmor convertArmoredMessage2BinaryBlocksWhenNecessary:signature error:error];
     // TODO: Process all messages
     let binarySignature = binaryMessages.count > 0 ? binaryMessages.firstObject : nil;
@@ -584,7 +584,7 @@ NS_ASSUME_NONNULL_BEGIN
     return NO;
 }
 
-+ (BOOL)verify:(NSData *)signedData withSignature:(nullable NSData *)detachedSignature usingKeys:(NSArray<PGPKey *> *)keys certifyWithRootKey:(BOOL)certifyWithRootKey passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseForKeyBlock error:(NSError * __autoreleasing _Nullable *)error {
++ (BOOL)verify:(NSData *)signedData withSignature:(nullable NSData *)detachedSignature usingKeys:(NSArray<PGPKey *> *)keys certifyWithRootKey:(BOOL)certifyWithRootKey passphraseForKey:(nullable NSString * _Nullable(^__attribute__((noescape)))(PGPKey *key))passphraseForKeyBlock error:(NSError * __autoreleasing _Nullable *)error {
     PGPAssertClass(signedData, NSData);
     if (error) * error = nil;
 
@@ -657,10 +657,10 @@ NS_ASSUME_NONNULL_BEGIN
     return result.verificationCode == 0;
 }
 
-+ (BOOL)verify:(NSData *)signedData withSignature:(nullable NSData *)detachedSignature usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseForKeyBlock error:(NSError * __autoreleasing _Nullable *)error {
++ (BOOL)verify:(NSData *)signedData withSignature:(nullable NSData *)detachedSignature usingKeys:(NSArray<PGPKey *> *)keys passphraseForKey:(nullable NSString * _Nullable(^__attribute__((noescape)))(PGPKey *key))passphraseForKeyBlock error:(NSError * __autoreleasing _Nullable *)error {
     return [self verify:signedData withSignature:detachedSignature usingKeys:keys certifyWithRootKey:NO passphraseForKey:passphraseForKeyBlock error:error];
 }
-+ (PGPVerification*) verifyPackets:(NSArray *)accumulatedPackets usingKeys:(NSArray<PGPKey *> *)keys certifyWithRootKey:(BOOL)certifyWithRootKey passphraseForKey:(nullable NSString * _Nullable(^NS_NOESCAPE)(PGPKey *key))passphraseForKeyBlock {
++ (PGPVerification*) verifyPackets:(NSArray *)accumulatedPackets usingKeys:(NSArray<PGPKey *> *)keys certifyWithRootKey:(BOOL)certifyWithRootKey passphraseForKey:(nullable NSString * _Nullable(^__attribute__((noescape)))(PGPKey *key))passphraseForKeyBlock {
     
     let verResult = PGPVerification.new;
    

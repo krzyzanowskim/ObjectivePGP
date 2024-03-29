@@ -31,6 +31,8 @@ NS_SWIFT_NAME(Armor) @interface PGPArmor : NSObject
 /// Convert ASCII armored PGP message to binary format.
 + (nullable NSData *)readArmored:(NSString *)string error:(NSError * __autoreleasing _Nullable *)error;
 
++ (nullable NSData *)readArmoredData:(NSData*)data error:(NSError * __autoreleasing _Nullable *)error;
+
 /// Whether the data is PGP ASCII armored message.
 + (BOOL)isArmoredData:(NSData *)data;
 

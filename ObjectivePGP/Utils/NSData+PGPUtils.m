@@ -157,6 +157,16 @@ NS_ASSUME_NONNULL_BEGIN
     return data;
 }
 
+- (NSString*)pgpDebugAscii{
+    return [[[[[[NSString.alloc initWithData:self encoding:NSASCIIStringEncoding]
+                stringByReplacingOccurrencesOfString:@"\r\n" withString:@"␍␊⏎"]
+                stringByReplacingOccurrencesOfString:@"\r" withString:@"␍⏎"]
+               stringByReplacingOccurrencesOfString:@"\n" withString:@"␊⏎"]
+              stringByReplacingOccurrencesOfString:@"\t" withString:@"␉"]
+             stringByReplacingOccurrencesOfString:@"⏎" withString:@"\n"];
+    
+
+}
 @end
 
 NS_ASSUME_NONNULL_END
