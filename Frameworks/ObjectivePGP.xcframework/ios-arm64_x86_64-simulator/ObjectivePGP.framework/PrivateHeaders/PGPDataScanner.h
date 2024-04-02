@@ -21,6 +21,8 @@ NS_ASSUME_NONNULL_BEGIN
 -(BOOL)scanUpToData:(NSData*)data
            intoData:(NSData* _Nullable * _Nullable)dataRef;
 
+-(BOOL)scanArmoredDataIntoBinaryData:(NSData* _Nullable __autoreleasing* _Nullable)binaryDataRef
+                error:(NSError*_Nullable __autoreleasing* _Nullable)error;
 @end
 
 NS_ASSUME_NONNULL_END

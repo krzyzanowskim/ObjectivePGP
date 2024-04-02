@@ -39,6 +39,7 @@ NS_SWIFT_NAME(Armor) @interface PGPArmor : NSObject
 /// Helper function to convert input data (ASCII or binary) to array of PGP messages.
 + (nullable NSArray<NSData *> *)convertArmoredMessage2BinaryBlocksWhenNecessary:(NSData *)binOrArmorData error:(NSError * __autoreleasing _Nullable *)error;
 
++ (nullable NSArray<NSData *> *)convertArmoredData2BinaryBlocksWhenNecessary:(NSData *)binOrArmorData error:(NSError * __autoreleasing _Nullable *)error;
 @end
 
 NS_ASSUME_NONNULL_END

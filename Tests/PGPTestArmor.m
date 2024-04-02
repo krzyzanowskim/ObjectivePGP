@@ -98,6 +98,69 @@
 
     XCTAssertEqualObjects(decodedData, decodedData2);
 }
+
+-(void)testConvertArmoredMessage2BinaryBlocks{
+    NSError *loadError = nil;
+    let path = [PGPTestUtils pathToBundledFile:@"largeArmoredMessage.txt"];
+
+    NSData * armoredData = [NSData dataWithContentsOfFile:path options:NSDataReadingMapped error:&loadError];
+    NSDate * start = [NSDate now];
+    NSError * error = nil;
+    let binRingDataOld = [PGPArmor convertArmoredMessage2BinaryBlocksWhenNecessary:armoredData error:&error];
+    XCTAssertNil(error);
+     NSLog(@"old method took %0.04f",-start.timeIntervalSinceNow);
+    start = [NSDate now];
+
+    let binRingDataNew = [PGPArmor convertArmoredData2BinaryBlocksWhenNecessary:armoredData error:&error];
+     NSLog(@"new method took %0.04f",-start.timeIntervalSinceNow);
+    
+    XCTAssertNil(error);
+    XCTAssertNotNil(binRingDataNew);
+
+    XCTAssertEqualObjects(binRingDataOld, binRingDataNew);
+    
+}
+
+-(void)testReadKeysFromArmoredData{
+    NSError *loadError = nil;
+    let path = [PGPTestUtils pathToBundledFile:@"issue62-keys.asc"];
+
+    NSData * armoredData = [NSData dataWithContentsOfFile:path options:NSDataReadingMapped error:&loadError];
+    NSDate * start = [NSDate now];
+    NSError * error = nil;
+    let keys1 = [ObjectivePGP readKeysFromData:armoredData error:&error];
+    
+    NSThread.currentThread.threadDictionary[@"USE_PGP_DATA_SCANNER"] = @YES;
+    let keys2 = [ObjectivePGP readKeysFromData:armoredData error:&error];
+    NSThread.currentThread.threadDictionary[@"USE_PGP_DATA_SCANNER"] = nil;
+    XCTAssertEqualObjects(keys1, keys2);
+    
+}
+-(void)testConvertMultipleArmoredMessage2BinaryBlocks{
+    NSError *loadError = nil;
+    let path = [PGPTestUtils pathToBundledFile:@"issue62-keys.asc"];
+
+    NSData * armoredData = [NSData dataWithContentsOfFile:path options:NSDataReadingMapped error:&loadError];
+    NSDate * start = [NSDate now];
+    NSError * error = nil;
+    let binRingDataOld = [PGPArmor convertArmoredMessage2BinaryBlocksWhenNecessary:armoredData error:&error];
+    XCTAssertNil(error);
+     NSLog(@"old method took %0.04f",-start.timeIntervalSinceNow);
+    start = [NSDate now];
+
+    let binRingDataNew = [PGPArmor convertArmoredData2BinaryBlocksWhenNecessary:armoredData error:&error];
+     NSLog(@"new method took %0.04f",-start.timeIntervalSinceNow);
+    
+    
+    
+    XCTAssertNil(error);
+    XCTAssertNotNil(binRingDataNew);
+
+    XCTAssertEqualObjects(binRingDataOld, binRingDataNew);
+    
+}
+
+
 //- (void) testEmbededArmoredData
 //{
 //    [keyring importKeysfromPath:self.pubKeyringPath];
