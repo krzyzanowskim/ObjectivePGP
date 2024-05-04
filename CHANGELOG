@@ -1,3 +1,7 @@
+Version 1.0
+- Add privacy manifest and signed framework binary
+- Adds methods to PGPKey to add and remove UserIds
+
 Version 0.99.4
 - Signature verification properly handle compressed messages #224
 

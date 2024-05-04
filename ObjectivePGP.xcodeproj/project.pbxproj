@@ -131,6 +131,7 @@
 		757B54CE1FE5C81500E974CB /* PGPKeyring+Private.h in Headers */ = {isa = PBXBuildFile; fileRef = 757B54CD1FE5C81500E974CB /* PGPKeyring+Private.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		758C9AA522563B53005F0D19 /* PGPCurveOID.h in Headers */ = {isa = PBXBuildFile; fileRef = 758C9AA322563B53005F0D19 /* PGPCurveOID.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		758C9AA622563B53005F0D19 /* PGPCurveOID.m in Sources */ = {isa = PBXBuildFile; fileRef = 758C9AA422563B53005F0D19 /* PGPCurveOID.m */; };
+		7592A1602BE65B29001E6D2E /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 7592A15F2BE65B29001E6D2E /* PrivacyInfo.xcprivacy */; };
 		759345561FE9C447004D5105 /* twofish.c in Sources */ = {isa = PBXBuildFile; fileRef = 759345541FE9C447004D5105 /* twofish.c */; };
 		759345571FE9C447004D5105 /* twofish.h in Headers */ = {isa = PBXBuildFile; fileRef = 759345551FE9C447004D5105 /* twofish.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		75AB35061F8819A600A1CDD6 /* testfiles.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 75AB35051F88193B00A1CDD6 /* testfiles.bundle */; };
@@ -294,6 +295,7 @@
 		758514EF1EDF3D7100CB313F /* PGPKey.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PGPKey.m; sourceTree = "<group>"; };
 		758C9AA322563B53005F0D19 /* PGPCurveOID.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PGPCurveOID.h; sourceTree = "<group>"; };
 		758C9AA422563B53005F0D19 /* PGPCurveOID.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PGPCurveOID.m; sourceTree = "<group>"; };
+		7592A15F2BE65B29001E6D2E /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		759345541FE9C447004D5105 /* twofish.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = twofish.c; sourceTree = "<group>"; };
 		759345551FE9C447004D5105 /* twofish.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = twofish.h; sourceTree = "<group>"; };
 		7597B79A192E9C7F003ABC65 /* PGPPKCSEmsa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PGPPKCSEmsa.h; sourceTree = "<group>"; };
@@ -571,6 +573,7 @@
 			children = (
 				75AB35361F8A30FD00A1CDD6 /* Info.plist */,
 				756299BC1914DE1A00C5AD3B /* ObjectivePGP-Prefix.pch */,
+				7592A15F2BE65B29001E6D2E /* PrivacyInfo.xcprivacy */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -786,6 +789,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7592A1602BE65B29001E6D2E /* PrivacyInfo.xcprivacy in Resources */,
 				75F6BAAE1F8AF29F00A0B885 /* LICENSE.txt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -817,7 +821,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = "/usr/bin/env zsh";
-			shellScript = "export LANG=en_US.UTF-8\nexport LANGUAGE=en_US.UTF-8\nexport LC_ALL=en_US.UTF-8\n\n[ -s \"$HOME/.zshrc\" ] && . \"$HOME/.zshrc\"\n\nbundle exec \"${PROJECT_DIR}/scripts/generate-umbrella-header.rb\" \"${PROJECT_FILE_PATH}\"\n";
+			shellScript = "export LANG=en_US.UTF-8\nexport LANGUAGE=en_US.UTF-8\nexport LC_ALL=en_US.UTF-8\n\n[ -s \"$HOME/.zshrc\" ] && . \"$HOME/.zshrc\"\n\n\"${PROJECT_DIR}/scripts/generate-umbrella-header.rb\" \"${PROJECT_FILE_PATH}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

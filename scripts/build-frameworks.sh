@@ -39,7 +39,7 @@ function build_framework {
 }
 
 # Build frameworks
-SDKs=(`xcrun xcodebuild -showsdks | grep -Eo "iphone.*|macosx11.*|macosx12.*|macosx13.*"`)
+SDKs=(`xcrun xcodebuild -showsdks | grep -Eo "iphone.*|macosx11.*|macosx12.*|macosx13.*|macosx14.*"`)
 for sdk in "${SDKs[@]}"; do
     build_framework "${sdk}"
 done
@@ -64,6 +64,10 @@ xcrun xcodebuild -quiet -create-xcframework \
 	-framework "${BUILD_DIR}/${CONFIGURATION}-iphonesimulator/${TARGET_NAME}.framework" \
 	-framework "${BUILD_DIR}/${CONFIGURATION}/${TARGET_NAME}.framework" \
 	-output "${SCRIPT_DIR}/../Frameworks/${TARGET_NAME}.xcframework"
+	
+echo "Signing xcframework"
+xcrun codesign --timestamp -s "Apple Distribution" "${SCRIPT_DIR}/../Frameworks/${TARGET_NAME}.xcframework"
+
 
 # No need to strip frameworks since no combined platforms in a single framework
 # cp "scripts/strip-frameworks.sh" "${IPHONE_UNIVERSAL_LIB_DIR}/${TARGET_NAME}.framework/strip-frameworks.sh"
